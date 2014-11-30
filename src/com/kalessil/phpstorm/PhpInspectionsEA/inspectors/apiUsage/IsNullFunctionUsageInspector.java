@@ -29,17 +29,17 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final String strFunctionName = reference.getName();
-                if (strFunctionName == null) {
-                    return;
-                }
+            final String strFunctionName = reference.getName();
+            if (strFunctionName == null) {
+                return;
+            }
 
-                final boolean isNullFunctionUsed = ("is_null").equals(strFunctionName.toLowerCase());
-                if (!isNullFunctionUsed) {
-                    return;
-                }
+            final boolean isNullFunctionUsed = ("is_null").equals(strFunctionName.toLowerCase());
+            if (!isNullFunctionUsed) {
+                return;
+            }
 
-                holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+            holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

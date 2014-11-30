@@ -39,7 +39,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    holder.registerProblem(parameter, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(parameter, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }
         };

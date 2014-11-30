@@ -8,8 +8,8 @@ import com.intellij.psi.PsiElementVisitor;
 
 import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
 import com.jetbrains.php.lang.psi.elements.PhpIsset;
-import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 
+import com.kalessil.phpstorm.PhpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpstorm.PhpInspectionsEA.openApi.BasePhpInspection;
 
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +32,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new PhpElementVisitor() {
+        return new BasePhpElementVisitor() {
             public void visitPhpIsset(PhpIsset issetExpression) {
                 for (PsiElement parameter : issetExpression.getVariables()) {
                     if (!(parameter instanceof ArrayAccessExpression)) {

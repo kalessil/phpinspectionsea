@@ -5,10 +5,9 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 
-import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.PhpIsset;
+
 import com.kalessil.phpstorm.PhpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpstorm.PhpInspectionsEA.openApi.BasePhpInspection;
 

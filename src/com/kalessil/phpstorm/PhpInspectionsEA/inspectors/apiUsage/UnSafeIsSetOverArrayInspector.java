@@ -21,7 +21,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "'isset' instead of 'array_key_exists'";
+        return "API: 'isset' instead of 'array_key_exists'";
     }
 
     @NotNull

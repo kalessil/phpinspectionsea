@@ -1,5 +1,5 @@
 <idea-plugin version="2">
-  <id>com.kalessil.phpstorm.PhpInspectionsEA</id>
+  <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
   <version>1.0</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
@@ -28,7 +28,7 @@
   -->
 
   <extensions defaultExtensionNs="com.intellij">
-    <inspectionToolProvider implementation="com.kalessil.phpstorm.PhpInspectionsEA.PhpInspectionsEAProvider"/>
+    <inspectionToolProvider implementation="com.kalessil.phpStorm.phpInspectionsEA.PhpInspectionsEAProvider"/>
   </extensions>
 
   <application-components>

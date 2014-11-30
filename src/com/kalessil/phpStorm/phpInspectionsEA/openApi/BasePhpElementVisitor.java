@@ -1,4 +1,4 @@
-package com.kalessil.phpstorm.PhpInspectionsEA.openApi;
+package com.kalessil.phpStorm.phpInspectionsEA.openApi;
 
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 

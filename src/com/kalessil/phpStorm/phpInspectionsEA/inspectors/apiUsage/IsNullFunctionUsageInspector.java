@@ -1,4 +1,4 @@
-package com.kalessil.phpstorm.PhpInspectionsEA.inspectors.apiUsage;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -6,13 +6,13 @@ import com.intellij.codeInspection.ProblemHighlightType;
 
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 
-import com.kalessil.phpstorm.PhpInspectionsEA.openApi.BasePhpElementVisitor;
-import com.kalessil.phpstorm.PhpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 
 import org.jetbrains.annotations.NotNull;
 
 public class IsNullFunctionUsageInspector extends BasePhpInspection {
-    public static final String strProblemDescription = "'is_null(...)' shall be replace with '... === null'";
+    private static final String strProblemDescription = "'is_null(...)' shall be replace with '... === null'";
 
     @NotNull
     public String getDisplayName() {

@@ -1,12 +1,13 @@
-package com.kalessil.phpstorm.PhpInspectionsEA.inspectors.languageConstructions;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns;
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 
-import com.kalessil.phpstorm.PhpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+
 import org.jetbrains.annotations.NotNull;
 
-public class TypeUnsafeComparisonInspector extends BasePhpInspection {
+class NestedPositiveIfStatementsInspector extends BasePhpInspection {
     @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

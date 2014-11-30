@@ -19,7 +19,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "'empty(...)' instead of type safe checks";
+        return "'empty(...)' usage";
     }
 
     @NotNull

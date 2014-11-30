@@ -16,7 +16,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "'is_null(...)' instead of '=== null'";
+        return "'is_null(...)' usage";
     }
 
     @NotNull

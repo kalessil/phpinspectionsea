@@ -16,12 +16,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     public static final String strProblemDescription =
-            "'isset(...)' can produce issues due to null values handling " +
-            "consider using 'array_key_exists(...)' instead.";
+            "'isset(...)' can produce issues due to null values handling. " +
+            "Consider using 'array_key_exists(...)' instead.";
 
     @NotNull
     public String getDisplayName() {
-        return "'isset(...)' instead of 'array_key_exists(...)' on array item";
+        return "'isset' instead of 'array_key_exists'";
     }
 
     @NotNull

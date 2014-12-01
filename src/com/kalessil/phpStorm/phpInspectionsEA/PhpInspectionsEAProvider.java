@@ -6,6 +6,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsEmptyFunctio
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnSafeIsSetOverArrayInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector;
 
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector;
+
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnNecessaryDoubleQuotesInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TypeUnsafeComparisonInspector;
 
@@ -13,7 +15,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MoreThanThree
 
 /*
 import com.kalessil.phpstorm.PhpInspectionsEA.inspectors.codeSmell.DefaultValuesForCallableParametersInspector;
-import com.kalessil.phpstorm.PhpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector;
 */
 public class PhpInspectionsEAProvider implements InspectionToolProvider {
     @Override
@@ -26,9 +27,9 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 UnNecessaryDoubleQuotesInspector.class,
                 TypeUnsafeComparisonInspector.class,
 
-                /*NestedPositiveIfStatementsInspector.class,
+                NestedPositiveIfStatementsInspector.class,
 
-                DefaultValuesForCallableParametersInspector.class,*/
+                /*DefaultValuesForCallableParametersInspector.class,*/
                 MoreThanThreeArgumentsInspector.class
         };
     }

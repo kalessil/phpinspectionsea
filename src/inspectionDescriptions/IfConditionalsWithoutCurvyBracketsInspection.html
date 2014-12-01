@@ -1,0 +1,14 @@
+<html>
+<body>
+Detects missing group statement for conditional, which can lead to confusing constructions like this:
+
+<pre>
+    if (...)
+        if (...) ...
+    else ...
+</pre>
+
+Here else is related to nested if and formatting lies about relations.
+
+</body>
+</html>

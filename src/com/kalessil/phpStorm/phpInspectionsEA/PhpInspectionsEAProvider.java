@@ -8,6 +8,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunction
 
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector;
 
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.IfConditionalsWithoutCurvyBracketsInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnNecessaryDoubleQuotesInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TypeUnsafeComparisonInspector;
 
@@ -27,6 +28,7 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 UnNecessaryDoubleQuotesInspector.class,
                 TypeUnsafeComparisonInspector.class,
 
+                IfConditionalsWithoutCurvyBracketsInspector.class,
                 NestedPositiveIfStatementsInspector.class,
 
                 /*DefaultValuesForCallableParametersInspector.class,*/

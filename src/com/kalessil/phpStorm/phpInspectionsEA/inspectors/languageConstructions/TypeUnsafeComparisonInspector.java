@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 
@@ -33,10 +34,15 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpBinaryExpression(BinaryExpression expression) {
-                final IElementType objOperation = expression.getOperationType();
+                PsiElement objOperation = expression.getOperation();
+                if (null == objOperation) {
+                    return;
+                }
+
+                final String strOperation = objOperation.getText();
                 if (
-                    objOperation != PhpTokenTypes.opEQUAL &&
-                    objOperation != PhpTokenTypes.opNOT_EQUAL
+                    !strOperation.equals("==") &&
+                    !strOperation.equals("!=")
                 ) {
                     return;
                 }

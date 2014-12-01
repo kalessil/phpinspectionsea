@@ -78,7 +78,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                 if (objIfCondition == null) {
                     return;
                 }
-                holder.registerProblem(objIfCondition, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(objIfCondition, strProblemDescription, ProblemHighlightType.GENERIC_ERROR);
             }
         };
     }

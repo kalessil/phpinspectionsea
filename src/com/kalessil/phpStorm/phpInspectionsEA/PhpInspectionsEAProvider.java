@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.codeInspection.InspectionToolProvider;
 
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ForgottenDebugOutputInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsEmptyFunctionUsageInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnSafeIsSetOverArrayInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector;
@@ -51,6 +52,7 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 IsNullFunctionUsageInspector.class,
                 IsEmptyFunctionUsageInspector.class,
                 UnSafeIsSetOverArrayInspector.class,
+                ForgottenDebugOutputInspector.class,
 
                 UnNecessaryDoubleQuotesInspector.class,
                 TypeUnsafeComparisonInspector.class,

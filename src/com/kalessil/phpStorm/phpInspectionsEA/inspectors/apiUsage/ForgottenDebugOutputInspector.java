@@ -10,12 +10,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class ForgottenDebugOutputInspector  extends BasePhpInspection {
-    private static final String strProblemDescription = "Please ensure this is not forgotten debug output.";
+    private static final String strProblemDescription = "Please ensure this is not forgotten debug statement";
     private final String strTargetFunctions = "print_r,var_export,var_dump";
 
     @NotNull
     public String getDisplayName() {
-        return "API: forgotten debug output";
+        return "API: forgotten debug statements";
     }
 
     @NotNull

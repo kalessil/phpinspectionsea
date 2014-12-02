@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunction
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector;
 
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.IfConditionalsWithoutCurvyBracketsInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TernaryOperatorSimplifyInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnNecessaryDoubleQuotesInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TypeUnsafeComparisonInspector;
 
@@ -59,6 +60,7 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
 
                 IfConditionalsWithoutCurvyBracketsInspector.class,
                 NestedPositiveIfStatementsInspector.class,
+                TernaryOperatorSimplifyInspector.class,
 
                 /*DefaultValuesForCallableParametersInspector.class,*/
                 MoreThanThreeArgumentsInspector.class

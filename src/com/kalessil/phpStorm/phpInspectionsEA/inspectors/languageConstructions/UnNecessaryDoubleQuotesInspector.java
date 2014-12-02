@@ -33,8 +33,11 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
                     return;
                 }
 
-                final boolean hasVariablesInside = strValueWithQuotes.contains("$");
-                if (hasVariablesInside) {
+                final boolean hasInlineExpressions = (
+                    strValueWithQuotes.contains("$") ||
+                    strValueWithQuotes.contains("\\")
+                );
+                if (hasInlineExpressions) {
                     return;
                 }
 

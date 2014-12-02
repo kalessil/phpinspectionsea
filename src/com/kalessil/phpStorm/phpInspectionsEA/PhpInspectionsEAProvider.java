@@ -2,10 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.codeInspection.InspectionToolProvider;
 
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ForgottenDebugOutputInspector;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsEmptyFunctionUsageInspector;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnSafeIsSetOverArrayInspector;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.*;
 
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector;
 
@@ -35,14 +32,7 @@ return false;
 
 sizeof(array?)
 
-
-date('H:i:s') - any pre-defined dates formats?
-
-
-===TO FIX===
-\n\r\t or single quotes in double quotes inspection
-'else if' in conditionals
-
+method_exists and other reflection workarounds instead of interfaces
 
 import com.kalessil.phpstorm.PhpInspectionsEA.inspectors.codeSmell.DefaultValuesForCallableParametersInspector;
 */
@@ -63,7 +53,8 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 TernaryOperatorSimplifyInspector.class,
 
                 /*DefaultValuesForCallableParametersInspector.class,*/
-                MoreThanThreeArgumentsInspector.class
+                MoreThanThreeArgumentsInspector.class,
+                dirnameCallOnFileConstantInspector.class
         };
     }
 }

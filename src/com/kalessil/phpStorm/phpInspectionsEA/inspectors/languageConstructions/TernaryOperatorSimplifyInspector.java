@@ -64,6 +64,7 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                         objCondition instanceof ParenthesizedExpression &&
                         ((ParenthesizedExpression) objCondition).getArgument() instanceof BinaryExpression
                     )
+                    /** or maybe try resolving type when not on-the-fly analysis is running */
                 );
                 if (!isBinaryExpressionInCondition) {
                     return;

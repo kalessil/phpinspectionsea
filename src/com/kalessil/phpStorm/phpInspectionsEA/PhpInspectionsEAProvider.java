@@ -18,19 +18,21 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformatio
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayTypeOfParameterByDefaultValueInspector;
 
 /*
-===TO ADD===
-if($changestatusqc = UserlogPeer::doSelectOne($c))                               - assignment in if/while
+Some cases of interest:
 
-if/elseif(...)                                                                   - argument to be boolean
-
-unset(...);
+unset(...);                     - sequential unset calls
 unset(...);
 
-for (.., ... count(...), ...)
+for (.., ... count(...), ...)   - count to be called only once
 
-method_exists and other reflection workarounds instead of interfaces
+foreach(...) {                  - code duplicates to be resolved
+    <children to check: assignments, call-expressions and nothing more>
+    <call-expressions without any parameters - eg getting env parameters>
+    ...
+    $container[<call-expression>]..[...]...[...] = <call expression>;
+    ...
+}
 
-import com.kalessil.phpstorm.PhpInspectionsEA.inspectors.codeSmell.DefaultValuesForCallableParametersInspector;
 */
 public class PhpInspectionsEAProvider implements InspectionToolProvider {
     @Override

@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.U
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TypeUnsafeComparisonInspector;
 
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MoreThanThreeArgumentsInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.IfReturnReturnSimplificationInspector;
 
 /*
 ===TO ADD===
@@ -23,12 +24,6 @@ if($changestatusqc = UserlogPeer::doSelectOne($c))                              
 
 
 if/elseif(...)                                                                   - argument to be boolean
-
-
-if(...)
-    return true;
-return false;
-
 
 sizeof(array?)
 
@@ -49,8 +44,10 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 TypeUnsafeComparisonInspector.class,
 
                 IfConditionalsWithoutCurvyBracketsInspector.class,
+
                 NestedPositiveIfStatementsInspector.class,
                 TernaryOperatorSimplifyInspector.class,
+                IfReturnReturnSimplificationInspector.class,
 
                 /*DefaultValuesForCallableParametersInspector.class,*/
                 MoreThanThreeArgumentsInspector.class,

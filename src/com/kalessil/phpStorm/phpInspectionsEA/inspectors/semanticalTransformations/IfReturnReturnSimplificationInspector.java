@@ -14,12 +14,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
-if (<binary operation>) {
-    return <boolean>;
-}
-return <boolean>;
-*/
 public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Can be simplified by replacing this with following " +
             "return with one return statement";

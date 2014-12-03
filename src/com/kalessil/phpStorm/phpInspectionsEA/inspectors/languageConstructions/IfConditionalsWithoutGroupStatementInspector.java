@@ -12,7 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 
 import org.jetbrains.annotations.NotNull;
 
-public class IfConditionalsWithoutCurvyBracketsInspector extends BasePhpInspection {
+public class IfConditionalsWithoutGroupStatementInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Wrap the conditional body with curvy brackets";
 
     @NotNull

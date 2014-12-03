@@ -39,6 +39,15 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpIf(If ifStatement) {
+                /** skip ifs with alternative branches */
+                final boolean hasAlternativeBranches = (
+                    null != ifStatement.getElseBranch() ||
+                    ifStatement.getElseIfBranches().length > 0
+                );
+                if (hasAlternativeBranches) {
+                    return;
+                }
+
                 /** next expression is not return */
                 PhpPsiElement objNextExpression = ifStatement.getNextPsiSibling();
                 if (!(objNextExpression instanceof PhpReturn)) {
@@ -56,7 +65,6 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 if (!isSecondReturnUsesBool) {
                     return;
                 }
-
 
                 /** Skip ifs without curvy brackets */
                 GroupStatement objIfBody = null;

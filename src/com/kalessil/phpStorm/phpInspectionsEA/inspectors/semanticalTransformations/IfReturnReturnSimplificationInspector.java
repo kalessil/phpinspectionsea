@@ -47,6 +47,19 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 if (hasAlternativeBranches) {
                     return;
                 }
+                /** or condition is binary expression */
+                final PsiElement objCondition = ifStatement.getCondition();
+                final boolean isBinaryExpressionInCondition = (
+                    objCondition instanceof BinaryExpression || (
+                        objCondition instanceof ParenthesizedExpression &&
+                        ((ParenthesizedExpression) objCondition).getArgument() instanceof BinaryExpression
+                    )
+                    /** or maybe try resolving type when not on-the-fly analysis is running */
+                );
+                if (!isBinaryExpressionInCondition) {
+                    return;
+                }
+
 
                 /** next expression is not return */
                 PhpPsiElement objNextExpression = ifStatement.getNextPsiSibling();
@@ -105,19 +118,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 if (!isFirstReturnUsesBool) {
                     return;
                 }
-                /** and condition is binary expression */
-                final PsiElement objCondition = ifStatement.getCondition();
-                final boolean isBinaryExpressionInCondition = (
-                    objCondition instanceof BinaryExpression ||
-                    (
-                        objCondition instanceof ParenthesizedExpression &&
-                        ((ParenthesizedExpression) objCondition).getArgument() instanceof BinaryExpression
-                    )
-                    /** or maybe try resolving type when not on-the-fly analysis is running */
-                );
-                if (!isBinaryExpressionInCondition) {
-                    return;
-                }
+
 
                 holder.registerProblem(ifStatement, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }

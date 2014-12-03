@@ -25,7 +25,10 @@ if($changestatusqc = UserlogPeer::doSelectOne($c))                              
 
 if/elseif(...)                                                                   - argument to be boolean
 
-sizeof(array?)
+unset(...);
+unset(...);
+
+for (.., ... count(...), ...)
 
 method_exists and other reflection workarounds instead of interfaces
 

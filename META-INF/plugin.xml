@@ -8,14 +8,15 @@
   <depends>com.intellij.modules.platform</depends>
 
   <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+Extended inspections set for PhpStorm.<br />
+Detects:<br/>
+- possibilities of language constructs simplification<br/>
+- weak types control (important in Enterprise Applications)<br/>
+- minor optimization cases (eg un-necessary double quotes)<br/>
+- confusing code structures<br/>
     ]]></description>
 
-  <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
-    ]]>
+  <change-notes><![CDATA[]]>
   </change-notes>
 
   <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->

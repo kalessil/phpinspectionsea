@@ -2,14 +2,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-
 import com.intellij.psi.PsiElementVisitor;
-
 import com.jetbrains.php.lang.psi.elements.PhpEmpty;
-
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
-
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class IsEmptyFunctionUsageInspector extends BasePhpInspection {

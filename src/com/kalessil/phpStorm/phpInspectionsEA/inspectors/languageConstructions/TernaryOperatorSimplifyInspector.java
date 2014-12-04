@@ -2,16 +2,15 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-
 import com.jetbrains.php.lang.PhpLangUtil;
-import com.jetbrains.php.lang.psi.elements.*;
-
+import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.ConstantReference;
+import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
+import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-
 import org.jetbrains.annotations.NotNull;
 
 public class TernaryOperatorSimplifyInspector extends BasePhpInspection {

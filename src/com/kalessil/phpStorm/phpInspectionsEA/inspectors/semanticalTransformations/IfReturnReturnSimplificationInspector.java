@@ -37,7 +37,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 if (hasAlternativeBranches) {
                     return;
                 }
-                /** or condition is binary expression */
+                /** or condition is not an binary expression */
                 final PsiElement objCondition = ifStatement.getCondition();
                 final boolean isBinaryExpressionInCondition = (
                     objCondition instanceof BinaryExpression || (

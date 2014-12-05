@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.codeInspection.InspectionToolProvider;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.*;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.AmbiguousMethodsCallsInArrayMappingInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MoreThanThreeArgumentsInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.*;
@@ -14,13 +15,12 @@ Some cases of interest:
 unset(...);                     - sequential unset calls
 unset(...);
 
-for (.., ... count(...), ...)   - count to be called only once
-
 foreach(...) {                  - code duplicates to be resolved
-    ...
     $container[<call-expression>]..[...]...[...] = <call expression>;
-    $container[<call-expression>]..[...]...[...] = <ternary operator with identical condition>;
-    ...
+    statement -> assignment expression (
+        array access expression[array access expression(...)], index
+        method reference
+    )
 }
 
 nested foreach / nested switch
@@ -49,7 +49,8 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 ArrayTypeOfParameterByDefaultValueInspector.class,
 
                 MoreThanThreeArgumentsInspector.class,
-                dirnameCallOnFileConstantInspector.class
+                dirnameCallOnFileConstantInspector.class,
+                AmbiguousMethodsCallsInArrayMappingInspector.class
         };
     }
 }

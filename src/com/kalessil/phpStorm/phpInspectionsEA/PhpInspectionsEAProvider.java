@@ -12,19 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 /*
 Some cases of interest:
 
-unset(...);                     - sequential unset calls
-unset(...);
-
-foreach(...) {                  - code duplicates to be resolved
-    $container[<call-expression>]..[...]...[...] = <call expression>;
-    statement -> assignment expression (
-        array access expression[array access expression(...)], index
-        method reference
-    )
-}
-
 nested foreach / nested switch
-
 */
 public class PhpInspectionsEAProvider implements InspectionToolProvider {
     @Override
@@ -50,7 +38,8 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
 
                 MoreThanThreeArgumentsInspector.class,
                 dirnameCallOnFileConstantInspector.class,
-                AmbiguousMethodsCallsInArrayMappingInspector.class
+                AmbiguousMethodsCallsInArrayMappingInspector.class,
+                SequentialUnSetCallsInspector.class
         };
     }
 }

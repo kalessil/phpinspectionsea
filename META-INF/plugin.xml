@@ -10,14 +10,18 @@
   <description><![CDATA[
 Extended inspections set for PhpStorm.<br />
 Detects:<br/>
-- possibilities of language constructs simplification<br/>
+- possible code constructs simplifications<br/>
 - weak types control (important in Enterprise Applications)<br/>
-- minor optimization cases (eg un-necessary double quotes)<br/>
-- confusing code structures<br/>
+- micro-optimization cases (eg un-necessary double quotes)<br/>
+- confusing code constructs<br/>
     ]]></description>
 
-  <change-notes><![CDATA[]]>
-  </change-notes>
+  <change-notes><![CDATA[
+6 Dec 2014: added 2 new inspections<br />
+    - non optimized arrays mapping locator<br />
+    - ambiguous count call in for loop<br />
+<hr />
+  ]]></change-notes>
 
   <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
   <idea-version since-build="131"/>

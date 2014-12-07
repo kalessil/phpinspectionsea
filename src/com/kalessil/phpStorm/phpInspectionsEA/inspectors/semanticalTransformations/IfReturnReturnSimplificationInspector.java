@@ -83,6 +83,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 for (PsiElement objIfChild : objGroupStatement.getChildren()) {
                     if (objIfChild instanceof PhpReturn) {
                         objFirstReturn = (PhpReturn) objIfChild;
+                        break;
                     }
                 }
                 if (null == objFirstReturn) {

@@ -36,7 +36,7 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
                     return;
                 }
 
-                holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(expression.getFirstChild(), strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

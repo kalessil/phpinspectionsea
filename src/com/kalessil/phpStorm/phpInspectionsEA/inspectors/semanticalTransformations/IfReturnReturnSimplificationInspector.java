@@ -36,7 +36,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 }
 
 
-                /** Skip ifs without curvy brackets */
+                /** Skip ifs without group statement */
                 GroupStatement objIfBody = ExpressionSemanticUtil.getGroupStatement(ifStatement);
                 if (null == objIfBody) {
                     return;

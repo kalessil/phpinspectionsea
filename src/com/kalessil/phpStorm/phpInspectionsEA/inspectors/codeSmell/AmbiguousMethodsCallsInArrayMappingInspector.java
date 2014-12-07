@@ -33,12 +33,12 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
              */
             public void visitPhpForeach(ForeachStatement foreach) {
                 /** check if group statement used */
-                GroupStatement objGroupExpression = ExpressionSemanticUtil.getGroupStatement(foreach);
-                if (objGroupExpression == null) {
+                GroupStatement objGroupStatement = ExpressionSemanticUtil.getGroupStatement(foreach);
+                if (objGroupStatement == null) {
                     return;
                 }
 
-                for (PsiElement objStatement : objGroupExpression.getStatements()) {
+                for (PsiElement objStatement : objGroupStatement.getStatements()) {
                     if (!(objStatement.getFirstChild() instanceof AssignmentExpression)) {
                         continue;
                     }

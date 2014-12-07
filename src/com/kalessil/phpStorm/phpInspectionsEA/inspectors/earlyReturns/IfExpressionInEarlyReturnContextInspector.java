@@ -32,6 +32,11 @@ public class IfExpressionInEarlyReturnContextInspector extends BasePhpInspection
                     return;
                 }
 
+                /** ensure if has no alternative branches as well */
+                if (ExpressionSemanticUtil.hasAlternativeBranches(ifStatement)) {
+                    return;
+                }
+
                 /** ensure it's right context */
                 GroupStatement objGroupExpression = (GroupStatement) ifStatement.getParent();
                 final boolean isTargetContext = (
@@ -40,12 +45,6 @@ public class IfExpressionInEarlyReturnContextInspector extends BasePhpInspection
                     objGroupExpression.getParent() instanceof For
                 );
                 if (!isTargetContext) {
-                    return;
-                }
-
-
-                /** ensure if has no alternative branches as well */
-                if (ExpressionSemanticUtil.hasAlternativeBranches(ifStatement)) {
                     return;
                 }
 

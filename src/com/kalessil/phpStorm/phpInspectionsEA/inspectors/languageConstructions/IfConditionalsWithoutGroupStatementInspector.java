@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class IfConditionalsWithoutGroupStatementInspector extends BasePhpInspection {
@@ -39,15 +40,8 @@ public class IfConditionalsWithoutGroupStatementInspector extends BasePhpInspect
             }
 
             private void checkBrackets(PhpPsiElement objConditional) {
-                boolean hasGroupStatement = false;
-                for (PsiElement objChild : objConditional.getChildren()) {
-                    if (objChild instanceof GroupStatement) {
-                        hasGroupStatement = true;
-                        break;
-                    }
-                }
-
-                if (hasGroupStatement) {
+                GroupStatement objGroupStatement = ExpressionSemanticUtil.getGroupStatement(objConditional);
+                if (null != objGroupStatement) {
                     return;
                 }
 

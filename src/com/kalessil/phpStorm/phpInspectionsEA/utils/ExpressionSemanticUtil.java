@@ -5,12 +5,14 @@ import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.If;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 
+import javax.annotation.Nullable;
+
 public class ExpressionSemanticUtil {
     /**
      * @param ifStatement if expression to check
      * @return boolean
      */
-    public static boolean hasAlternativeBranches (If ifStatement){
+    public static boolean hasAlternativeBranches(If ifStatement) {
         return (
             null != ifStatement.getElseBranch() ||
             ifStatement.getElseIfBranches().length > 0
@@ -33,5 +35,22 @@ public class ExpressionSemanticUtil {
         }
 
         return intCountStatements;
+    }
+
+    /**
+     * @param objControlExpression expression to scan for group definition
+     * @return null|GroupStatement
+     */
+    @Nullable
+    public static GroupStatement getGroupStatement(PsiElement objControlExpression) {
+        for (PsiElement objChild : objControlExpression.getChildren()) {
+            if (!(objChild instanceof GroupStatement)) {
+                continue;
+            }
+
+            return (GroupStatement) objChild;
+        }
+
+        return null;
     }
 }

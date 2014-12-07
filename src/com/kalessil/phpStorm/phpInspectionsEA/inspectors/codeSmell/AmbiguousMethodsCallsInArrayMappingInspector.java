@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspection {
@@ -32,18 +33,12 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
              */
             public void visitPhpForeach(ForeachStatement foreach) {
                 /** check if group statement used */
-                GroupStatement objForeachBody = null;
-                for (PsiElement objChild: foreach.getChildren()) {
-                    if (objChild instanceof GroupStatement) {
-                        objForeachBody = (GroupStatement) objChild;
-                        break;
-                    }
-                }
-                if (objForeachBody == null) {
+                GroupStatement objGroupExpression = ExpressionSemanticUtil.getGroupStatement(foreach);
+                if (objGroupExpression == null) {
                     return;
                 }
 
-                for (PsiElement objStatement : objForeachBody.getStatements()) {
+                for (PsiElement objStatement : objGroupExpression.getStatements()) {
                     if (!(objStatement.getFirstChild() instanceof AssignmentExpression)) {
                         continue;
                     }
@@ -75,8 +70,6 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
                     if (objIndex != null && objIndex.getValue() instanceof MethodReference) {
                         objIndexExpression = (MethodReference) objIndex.getValue();
 
-                        //if (objIndexExpression.textMatches(objValueExpression)) {
-                        //if (objIndexExpression.isEquivalentTo(objValueExpression)) {
                         if (PsiEquivalenceUtil.areElementsEquivalent(objIndexExpression, objValueExpression)) {
                             holder.registerProblem(objValueExpression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             break;

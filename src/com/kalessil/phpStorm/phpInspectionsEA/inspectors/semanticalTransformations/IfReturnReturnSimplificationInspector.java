@@ -35,6 +35,14 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                     return;
                 }
 
+
+                /** Skip ifs without curvy brackets */
+                GroupStatement objIfBody = ExpressionSemanticUtil.getGroupStatement(ifStatement);
+                if (null == objIfBody) {
+                    return;
+                }
+
+
                 /** or condition is not an binary expression */
                 final PsiElement objCondition = ifStatement.getCondition();
                 final boolean isBinaryExpressionInCondition = (
@@ -67,17 +75,6 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** Skip ifs without curvy brackets */
-                GroupStatement objIfBody = null;
-                for (PsiElement objIfChild : ifStatement.getChildren()) {
-                    if (objIfChild instanceof GroupStatement) {
-                        objIfBody = (GroupStatement) objIfChild;
-                        break;
-                    }
-                }
-                if (null == objIfBody) {
-                    return;
-                }
 
                 /** analyse if structure contains only one expression */
                 int intCountExpressionsInCurrentGroup = ExpressionSemanticUtil.countExpressionsInGroup(objIfBody);

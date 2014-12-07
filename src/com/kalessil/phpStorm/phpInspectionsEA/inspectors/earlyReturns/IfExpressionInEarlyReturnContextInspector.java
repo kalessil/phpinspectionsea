@@ -44,6 +44,16 @@ public class IfExpressionInEarlyReturnContextInspector extends BasePhpInspection
                 }
 
 
+                /** ensure if has no alternative branches as well */
+                final boolean isIfHasAlternativeBranches = (
+                    ifStatement.getElseBranch() != null ||
+                    ifStatement.getElseIfBranches().length > 0
+                );
+                if (isIfHasAlternativeBranches) {
+                    return;
+                }
+
+
                 /** ensure that if is single expression in group */
                 int countStatementsInParent = 0;
                 for (PsiElement objStatement : objGroupExpression.getChildren()) {

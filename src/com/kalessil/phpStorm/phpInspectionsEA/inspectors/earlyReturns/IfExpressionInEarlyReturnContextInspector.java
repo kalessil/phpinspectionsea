@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class IfExpressionInEarlyReturnContextInspector extends BasePhpInspection {
@@ -45,11 +46,7 @@ public class IfExpressionInEarlyReturnContextInspector extends BasePhpInspection
 
 
                 /** ensure if has no alternative branches as well */
-                final boolean isIfHasAlternativeBranches = (
-                    ifStatement.getElseBranch() != null ||
-                    ifStatement.getElseIfBranches().length > 0
-                );
-                if (isIfHasAlternativeBranches) {
+                if (ExpressionSemanticUtil.hasAlternativeBranches(ifStatement)) {
                     return;
                 }
 

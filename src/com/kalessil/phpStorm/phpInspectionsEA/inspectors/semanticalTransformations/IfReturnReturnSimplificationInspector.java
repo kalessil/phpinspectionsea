@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
@@ -30,13 +31,10 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpIf(If ifStatement) {
                 /** skip ifs with alternative branches */
-                final boolean hasAlternativeBranches = (
-                    null != ifStatement.getElseBranch() ||
-                    ifStatement.getElseIfBranches().length > 0
-                );
-                if (hasAlternativeBranches) {
+                if (ExpressionSemanticUtil.hasAlternativeBranches(ifStatement)) {
                     return;
                 }
+
                 /** or condition is not an binary expression */
                 final PsiElement objCondition = ifStatement.getCondition();
                 final boolean isBinaryExpressionInCondition = (

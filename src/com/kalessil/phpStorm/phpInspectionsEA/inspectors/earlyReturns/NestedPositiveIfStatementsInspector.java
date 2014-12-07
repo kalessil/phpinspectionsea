@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.If;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
@@ -40,21 +41,13 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                 }
 
                 /** ensure parent if has no alternative branches */
-                final boolean isParentHasAlternativeBranches = (
-                    ((If) objParent).getElseBranch() != null ||
-                    ((If) objParent).getElseIfBranches().length > 0
-                );
-                if (isParentHasAlternativeBranches) {
+                if (ExpressionSemanticUtil.hasAlternativeBranches((If) objParent)) {
                     return;
                 }
 
 
                 /** ensure if has no alternative branches as well */
-                final boolean isIfHasAlternativeBranches = (
-                        ifStatement.getElseBranch() != null ||
-                        ifStatement.getElseIfBranches().length > 0
-                );
-                if (isIfHasAlternativeBranches) {
+                if (ExpressionSemanticUtil.hasAlternativeBranches(ifStatement)) {
                     return;
                 }
 

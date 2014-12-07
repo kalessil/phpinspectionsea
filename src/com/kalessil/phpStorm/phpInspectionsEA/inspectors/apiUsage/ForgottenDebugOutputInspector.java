@@ -33,7 +33,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                 }
 
                 final String strFunction = reference.getName();
-                if (null == strFunction) {
+                if (null == strFunction || strFunction.equals("")) {
                     return;
                 }
 

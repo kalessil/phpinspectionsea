@@ -4,6 +4,7 @@ import com.intellij.codeInspection.InspectionToolProvider;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.AmbiguousMethodsCallsInArrayMappingInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MoreThanThreeArgumentsInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.IfExpressionInEarlyReturnContextInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.IfReturnReturnSimplificationInspector;
@@ -13,6 +14,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 Some cases of interest:
 
 nested foreach / nested switch
+
+switch inside foreach
+
+if only inside foreach/method/function
+
 */
 public class PhpInspectionsEAProvider implements InspectionToolProvider {
     @Override
@@ -31,7 +37,7 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 NestedPositiveIfStatementsInspector.class,
                 TernaryOperatorSimplifyInspector.class,
                 IfReturnReturnSimplificationInspector.class,
-                CountInSecondIterateExpressionInspector.class,
+                IfExpressionInEarlyReturnContextInspector.class,
 
                 /*DefaultValuesForCallableParametersInspector.class,*/
                 ArrayTypeOfParameterByDefaultValueInspector.class,
@@ -39,6 +45,7 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 MoreThanThreeArgumentsInspector.class,
                 dirnameCallOnFileConstantInspector.class,
                 AmbiguousMethodsCallsInArrayMappingInspector.class,
+                CountInSecondIterateExpressionInspector.class,
                 SequentialUnSetCallsInspector.class
         };
     }

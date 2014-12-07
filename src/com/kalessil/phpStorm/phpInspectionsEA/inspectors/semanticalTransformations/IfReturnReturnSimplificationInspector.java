@@ -78,20 +78,20 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 if (null == objIfBody) {
                     return;
                 }
-                /** analyse if structure contains only return inside */
-                int countExpressionInIf = 0;
+
+                /** analyse if structure contains only one expression */
+                int intCountExpressionsInCurrentGroup = ExpressionSemanticUtil.countExpressionsInGroup(objIfBody);
+                if (intCountExpressionsInCurrentGroup != 1) {
+                    return;
+                }
+                /** and it's a return expression */
                 PhpReturn objFirstReturn = null;
                 for (PsiElement objIfChild : objIfBody.getChildren()) {
-                    if (!(objIfChild instanceof PhpPsiElement)) {
-                        continue;
-                    }
-
-                    ++countExpressionInIf;
                     if (objIfChild instanceof PhpReturn) {
                         objFirstReturn = (PhpReturn) objIfChild;
                     }
                 }
-                if (countExpressionInIf != 1 || null == objFirstReturn) {
+                if (null == objFirstReturn) {
                     return;
                 }
 

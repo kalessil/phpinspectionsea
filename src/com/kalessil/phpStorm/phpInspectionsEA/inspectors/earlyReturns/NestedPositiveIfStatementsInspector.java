@@ -40,28 +40,19 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** ensure parent if has no alternative branches */
-                if (ExpressionSemanticUtil.hasAlternativeBranches((If) objParent)) {
-                    return;
-                }
-
-
-                /** ensure if has no alternative branches as well */
-                if (ExpressionSemanticUtil.hasAlternativeBranches(ifStatement)) {
+                /** ensure parent if and the expression has no alternative branches */
+                if (
+                    ExpressionSemanticUtil.hasAlternativeBranches(ifStatement) ||
+                    ExpressionSemanticUtil.hasAlternativeBranches((If) objParent)
+                ) {
                     return;
                 }
 
 
                 /** ensure that if is single expression in group */
-                int countStatementsInParent = 0;
-                for (PsiElement objStatement : ifStatement.getParent().getChildren()) {
-                    if (!(objStatement instanceof PhpPsiElement)) {
-                        continue;
-                    }
-
-                    ++countStatementsInParent;
-                }
-                if (countStatementsInParent > 1) {
+                GroupStatement objGroupStatement = (GroupStatement) ifStatement.getParent();
+                int intCountStatementsInParentGroup = ExpressionSemanticUtil.countExpressionsInGroup(objGroupStatement);
+                if (intCountStatementsInParentGroup > 1) {
                     return;
                 }
 
@@ -71,6 +62,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                 if (objIfCondition == null) {
                     return;
                 }
+
                 holder.registerProblem(objIfCondition, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };

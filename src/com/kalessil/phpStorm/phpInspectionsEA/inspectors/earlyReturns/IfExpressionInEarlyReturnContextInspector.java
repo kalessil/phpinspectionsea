@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -52,15 +51,8 @@ public class IfExpressionInEarlyReturnContextInspector extends BasePhpInspection
 
 
                 /** ensure that if is single expression in group */
-                int countStatementsInParent = 0;
-                for (PsiElement objStatement : objGroupExpression.getChildren()) {
-                    if (!(objStatement instanceof PhpPsiElement)) {
-                        continue;
-                    }
-
-                    ++countStatementsInParent;
-                }
-                if (countStatementsInParent > 1) {
+                int intCountStatementsInParentGroup = ExpressionSemanticUtil.countExpressionsInGroup(objGroupExpression);
+                if (intCountStatementsInParentGroup > 1) {
                     return;
                 }
 

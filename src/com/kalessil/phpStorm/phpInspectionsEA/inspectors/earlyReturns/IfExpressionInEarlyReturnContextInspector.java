@@ -55,7 +55,7 @@ public class IfExpressionInEarlyReturnContextInspector extends BasePhpInspection
                     return;
                 }
 
-
+                /** point the problem out */
                 holder.registerProblem(ifStatement.getFirstChild(), strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };

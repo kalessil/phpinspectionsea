@@ -59,7 +59,6 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
                 }
 
                 MethodReference objValueExpression = (MethodReference) objAssignment.getValue();
-                //holder.registerProblem(objValueExpression, "-pattern-", ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
 
                 ArrayIndex objIndex = null;
                 MethodReference objIndexExpression = null;

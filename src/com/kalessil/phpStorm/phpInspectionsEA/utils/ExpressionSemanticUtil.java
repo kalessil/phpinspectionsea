@@ -53,4 +53,9 @@ public class ExpressionSemanticUtil {
 
         return null;
     }
+
+    /** is boolean for
+     * IfReturnReturnSimplificationInspector,
+     * TernaryOperatorSimplifyInspector
+     */
 }

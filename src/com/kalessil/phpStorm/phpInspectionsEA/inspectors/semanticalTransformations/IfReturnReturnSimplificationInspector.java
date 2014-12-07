@@ -101,6 +101,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 }
 
 
+                /** point the problem out */
                 holder.registerProblem(ifStatement, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };

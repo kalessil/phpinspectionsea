@@ -17,7 +17,7 @@ nested foreach / nested switch
 
 switch inside foreach
 
-if only inside foreach/method/function
+readdir -> DirectoryIterator
 
 */
 public class PhpInspectionsEAProvider implements InspectionToolProvider {
@@ -41,6 +41,7 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
 
                 /*DefaultValuesForCallableParametersInspector.class,*/
                 ArrayTypeOfParameterByDefaultValueInspector.class,
+                SenselessCommaInArrayDefinitionInspector.class,
 
                 MoreThanThreeArgumentsInspector.class,
                 dirnameCallOnFileConstantInspector.class,

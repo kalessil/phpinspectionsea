@@ -4,23 +4,22 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "This colon";
+    private static final String strProblemDescription = "PHP will ignore this comma, so it can be dropped";
 
     @NotNull
     public String getDisplayName() {
-        return "API: an";
+        return "API: un-necessary comma in array definition";
     }
 
     @NotNull
     public String getShortName() {
-        return "SenselessColonInArrayDefinitionInspection";
+        return "SenselessCommaInArrayDefinitionInspection";
     }
 
     @NotNull
@@ -28,7 +27,16 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpArrayCreationExpression(ArrayCreationExpression expression) {
-//                holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                PsiElement objExpressionToTest = expression.getLastChild().getPrevSibling();
+                if (null == objExpressionToTest) {
+                    return;
+                }
+
+                if(!objExpressionToTest.getText().equals(",")) {
+                    return;
+                }
+
+                holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

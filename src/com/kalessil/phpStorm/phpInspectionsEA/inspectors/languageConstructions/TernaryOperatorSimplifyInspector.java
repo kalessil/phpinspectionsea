@@ -4,13 +4,13 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
@@ -33,24 +33,16 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
             public void visitPhpTernaryExpression(TernaryExpression expression) {
                 final PsiElement objTrueVariant = expression.getTrueVariant();
                 final PsiElement objFalseVariant = expression.getFalseVariant();
-                if (
-                    !(objTrueVariant instanceof ConstantReference) ||
-                    !(objFalseVariant instanceof ConstantReference)
-                ) {
+                if (!(objTrueVariant instanceof ConstantReference) || !(objFalseVariant instanceof ConstantReference)) {
                     return;
                 }
 
 
-                final boolean isTrueVariantBoolean = (
-                    PhpLangUtil.isTrue((ConstantReference) objTrueVariant) ||
-                    PhpLangUtil.isFalse((ConstantReference) objTrueVariant)
-                );
+                final boolean isTrueVariantBoolean = ExpressionSemanticUtil.isBoolean((ConstantReference) objTrueVariant);
                 /** skip false variant test if true one already did not meet pre-conditions */
                 final boolean isFalseVariantBoolean = (
-                    isTrueVariantBoolean && (
-                        PhpLangUtil.isTrue((ConstantReference) objFalseVariant) ||
-                        PhpLangUtil.isFalse((ConstantReference) objFalseVariant)
-                    )
+                    isTrueVariantBoolean &&
+                    ExpressionSemanticUtil.isBoolean((ConstantReference) objFalseVariant)
                 );
                 if (!isFalseVariantBoolean) {
                     return;

@@ -1,11 +1,12 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.psi.PsiElement;
+import com.jetbrains.php.lang.PhpLangUtil;
+import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.If;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class ExpressionSemanticUtil {
     /**
@@ -13,10 +14,7 @@ public class ExpressionSemanticUtil {
      * @return boolean
      */
     public static boolean hasAlternativeBranches(If ifStatement) {
-        return (
-            null != ifStatement.getElseBranch() ||
-            ifStatement.getElseIfBranches().length > 0
-        );
+        return (null != ifStatement.getElseBranch() || ifStatement.getElseIfBranches().length > 0);
     }
 
     /**
@@ -25,7 +23,6 @@ public class ExpressionSemanticUtil {
      */
     public static int countExpressionsInGroup(GroupStatement objGroupStatement) {
         int intCountStatements = 0;
-
         for (PsiElement objStatement : objGroupStatement.getChildren()) {
             if (!(objStatement instanceof PhpPsiElement)) {
                 continue;
@@ -54,8 +51,17 @@ public class ExpressionSemanticUtil {
         return null;
     }
 
-    /** is boolean for
-     * IfReturnReturnSimplificationInspector,
-     * TernaryOperatorSimplifyInspector
+    /**
+     * @param objConstant expression to check
+     * @return boolean
+     */
+    public static boolean isBoolean(ConstantReference objConstant){
+        return (PhpLangUtil.isTrue(objConstant) || PhpLangUtil.isFalse(objConstant));
+    }
+
+    /**
+     * condition extract: clip the parenthesis for:
+     *  - TernaryOperatorSimplifyInspector
+     *  - IfReturnReturnSimplificationInspector
      */
 }

@@ -4,7 +4,6 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -37,8 +36,8 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
 
 
                 /** Skip ifs without group statement */
-                GroupStatement objIfBody = ExpressionSemanticUtil.getGroupStatement(ifStatement);
-                if (null == objIfBody) {
+                GroupStatement objGroupStatement = ExpressionSemanticUtil.getGroupStatement(ifStatement);
+                if (null == objGroupStatement) {
                     return;
                 }
 
@@ -66,10 +65,8 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 /** or return not a boolean */
                 PhpReturn objSecondReturn = (PhpReturn) objNextExpression;
                 final boolean isSecondReturnUsesBool = (
-                    objSecondReturn.getArgument() instanceof ConstantReference && (
-                        PhpLangUtil.isTrue((ConstantReference) objSecondReturn.getArgument()) ||
-                        PhpLangUtil.isFalse((ConstantReference) objSecondReturn.getArgument())
-                    )
+                    objSecondReturn.getArgument() instanceof ConstantReference &&
+                    ExpressionSemanticUtil.isBoolean((ConstantReference) objSecondReturn.getArgument())
                 );
                 if (!isSecondReturnUsesBool) {
                     return;
@@ -77,13 +74,13 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
 
 
                 /** analyse if structure contains only one expression */
-                int intCountExpressionsInCurrentGroup = ExpressionSemanticUtil.countExpressionsInGroup(objIfBody);
+                int intCountExpressionsInCurrentGroup = ExpressionSemanticUtil.countExpressionsInGroup(objGroupStatement);
                 if (intCountExpressionsInCurrentGroup != 1) {
                     return;
                 }
                 /** and it's a return expression */
                 PhpReturn objFirstReturn = null;
-                for (PsiElement objIfChild : objIfBody.getChildren()) {
+                for (PsiElement objIfChild : objGroupStatement.getChildren()) {
                     if (objIfChild instanceof PhpReturn) {
                         objFirstReturn = (PhpReturn) objIfChild;
                     }
@@ -95,10 +92,8 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
 
                 /** check if first return also boolean */
                 final boolean isFirstReturnUsesBool = (
-                    objFirstReturn.getArgument() instanceof ConstantReference && (
-                        PhpLangUtil.isTrue((ConstantReference) objFirstReturn.getArgument()) ||
-                        PhpLangUtil.isFalse((ConstantReference) objFirstReturn.getArgument())
-                    )
+                    objFirstReturn.getArgument() instanceof ConstantReference &&
+                    ExpressionSemanticUtil.isBoolean((ConstantReference) objFirstReturn.getArgument())
                 );
                 if (!isFirstReturnUsesBool) {
                     return;

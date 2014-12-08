@@ -8,7 +8,8 @@
   <depends>com.intellij.modules.platform</depends>
 
   <description><![CDATA[
-Extended PHP code inspections<br />
+Extended PHP code inspections set.<br />
+<br />
 Detecting:<br/>
 - possible code constructs simplifications<br/>
 - weak types control (important in Enterprise Applications)<br/>

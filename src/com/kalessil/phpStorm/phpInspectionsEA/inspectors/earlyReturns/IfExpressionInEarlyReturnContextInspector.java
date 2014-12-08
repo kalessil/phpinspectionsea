@@ -41,6 +41,7 @@ public class IfExpressionInEarlyReturnContextInspector extends BasePhpInspection
                 GroupStatement objGroupExpression = (GroupStatement) ifStatement.getParent();
                 final boolean isTargetContext = (
                     objGroupExpression.getParent() instanceof ForeachStatement ||
+                    objGroupExpression.getParent() instanceof Method ||
                     objGroupExpression.getParent() instanceof Function ||
                     objGroupExpression.getParent() instanceof For
                 );

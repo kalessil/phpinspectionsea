@@ -8,16 +8,16 @@
   <depends>com.intellij.modules.platform</depends>
 
   <description><![CDATA[
-Extended inspections set for PhpStorm.<br />
-Detects:<br/>
+Extended PHP code inspections<br />
+Detecting:<br/>
 - possible code constructs simplifications<br/>
 - weak types control (important in Enterprise Applications)<br/>
 - micro-optimization cases (eg un-necessary double quotes)<br/>
 - confusing code constructs<br/>
 <br/>
-Some of inspections expecting that conditional statements (eg. if) are using
-group statement to wrap body expressions. If this requirement is fulfilled
-then additional inspections are taking place.
+Some of inspections are expecting conditional statements (eg. if) to use
+group statement for wrapping body expressions. When this requirement is met
+then additional inspections are applied to source code.
     ]]></description>
 
   <change-notes><![CDATA[

@@ -19,6 +19,12 @@ switch inside foreach
 
 readdir -> DirectoryIterator
 
+if (...) {
+    $var = expression | (constant reference|array|string|number)
+} else {
+    $var =  (constant reference|array|string|number) | (expression)
+}
+
 */
 public class PhpInspectionsEAProvider implements InspectionToolProvider {
     @Override

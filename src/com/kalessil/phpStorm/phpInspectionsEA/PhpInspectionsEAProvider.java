@@ -43,7 +43,7 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 NestedPositiveIfStatementsInspector.class,
                 TernaryOperatorSimplifyInspector.class,
                 IfReturnReturnSimplificationInspector.class,
-                IfExpressionInEarlyReturnContextInspector.class,
+                /*IfExpressionInEarlyReturnContextInspector.class,*/
 
                 /*DefaultValuesForCallableParametersInspector.class,*/
                 ArrayTypeOfParameterByDefaultValueInspector.class,

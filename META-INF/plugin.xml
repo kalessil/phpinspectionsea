@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.0</version>
+  <version>1.0.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -21,10 +21,14 @@ then additional inspections are taking place.
     ]]></description>
 
   <change-notes><![CDATA[
+Date here: added 2 new inspections, forgotten debug statements inspection buf-fix<br/>
+    - un-necessary last comma in array definition<br />
+    - sequential un-set calls<br />
+<hr/>
 6 Dec 2014: added 2 new inspections<br />
     - non optimized arrays mapping locator<br />
     - ambiguous count call in for loop<br />
-<hr />
+<hr/>
   ]]></change-notes>
 
   <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->

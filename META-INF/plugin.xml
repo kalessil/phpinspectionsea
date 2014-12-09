@@ -22,9 +22,10 @@ then additional inspections are applied to source code.
     ]]></description>
 
   <change-notes><![CDATA[
-Date here: added 2 new inspections, forgotten debug statements inspection buf-fix<br/>
+8 Dec 2014: added 3 new inspections, forgotten debug statements inspection buf-fix<br/>
     - un-necessary last comma in array definition<br />
     - sequential un-set calls<br />
+    - hidden default value in conditionals<br />
 <hr/>
 6 Dec 2014: added 2 new inspections<br />
     - non optimized arrays mapping locator<br />

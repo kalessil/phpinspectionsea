@@ -56,7 +56,6 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
                         return;
                     }
 
-
                     AssignmentExpression objAssignmentExpression = null;
                     for (PsiElement objIfChild : objGroup.getChildren()) {
                         if (objIfChild instanceof Statement && objIfChild.getFirstChild() instanceof AssignmentExpression) {
@@ -95,11 +94,14 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
                     }
                 }
 
+
+                /** verify candidate value: array/string/number/constant */
                 PhpPsiElement objCandidate = objAssignmentsList.getLast().getValue();
                 objAssignmentsList.clear();
                 if (!this.isDefaultValueCandidateFits(objCandidate)) {
                     return;
                 }
+
 
                 /** point the problem out */
                 holder.registerProblem(objElseStatement.getFirstChild(), strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
@@ -110,6 +112,7 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
              * @return boolean
              */
             private boolean isDefaultValueCandidateFits(PhpPsiElement objCandidate) {
+                /** quick check on expression type basis*/
                 if (
                     objCandidate instanceof StringLiteralExpression ||
                     objCandidate instanceof ArrayCreationExpression ||
@@ -118,13 +121,11 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
                     return true;
                 }
 
-                /** more complex check */
+                /** numbers check needs more detailed inspection */
                 //noinspection RedundantIfStatement
                 if (
                     objCandidate instanceof PhpExpression &&
-                    /** solve workaround */
                     objCandidate.getNode().getElementType() == PhpElementTypes.NUMBER
-                    //objCandidate.getNode().getElementType().toString().equals("Number")
                 ) {
                     return true;
                 }

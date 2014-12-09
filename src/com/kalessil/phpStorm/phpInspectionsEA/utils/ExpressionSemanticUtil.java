@@ -64,6 +64,6 @@ public class ExpressionSemanticUtil {
      *  - TernaryOperatorSimplifyInspector
      *  - IfReturnReturnSimplificationInspector
      *
-     * get first statement: globally
+     * get first statement: for all inspectors
      */
 }

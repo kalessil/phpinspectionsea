@@ -1,0 +1,17 @@
+<html>
+<body>
+Detects conditional constructions where due to specific code style default value
+assignment is placed in else condition. This default case should be placed before if
+to simplify code support.
+
+<pre>
+    if () {
+        $var = [expression];
+    }
+    [elseif () { ... }]
+    else {
+        $var = [array|string|constant|number];
+    }
+</pre>
+</body>
+</html>

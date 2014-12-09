@@ -63,5 +63,7 @@ public class ExpressionSemanticUtil {
      * condition extract: clip the parenthesis for:
      *  - TernaryOperatorSimplifyInspector
      *  - IfReturnReturnSimplificationInspector
+     *
+     * get first statement: globally
      */
 }

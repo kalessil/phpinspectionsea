@@ -29,7 +29,7 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             /**
-             * @param foreach
+             * @param foreach statement to inspect
              */
             public void visitPhpForeach(ForeachStatement foreach) {
                 /** check if group statement used */
@@ -48,7 +48,7 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
             }
 
             /**
-             * @param objAssignment
+             * @param objAssignment to inspect
              */
             private void isStatementMatchesInspection(AssignmentExpression objAssignment) {
                 if (
@@ -60,8 +60,8 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
 
                 MethodReference objValueExpression = (MethodReference) objAssignment.getValue();
 
-                ArrayIndex objIndex = null;
-                MethodReference objIndexExpression = null;
+                ArrayIndex objIndex;
+                MethodReference objIndexExpression;
 
                 PhpPsiElement objContainer = objAssignment.getVariable();
                 while (objContainer instanceof ArrayAccessExpression) {

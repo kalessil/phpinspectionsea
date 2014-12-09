@@ -4,9 +4,9 @@ import com.intellij.codeInspection.InspectionToolProvider;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.AmbiguousMethodsCallsInArrayMappingInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MoreThanThreeArgumentsInspector;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.IfExpressionInEarlyReturnContextInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.*;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DefaultValueInElseBranchInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.IfReturnReturnSimplificationInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayTypeOfParameterByDefaultValueInspector;
 
@@ -21,7 +21,10 @@ readdir -> DirectoryIterator
 
 if (...) {
     $var = expression | (constant reference|array|string|number)
+} elseif {
+    $var = expression | (constant reference|array|string|number)
 } else {
+    -- target expression --
     $var =  (constant reference|array|string|number) | (expression)
 }
 
@@ -44,6 +47,7 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 TernaryOperatorSimplifyInspector.class,
                 IfReturnReturnSimplificationInspector.class,
                 /*IfExpressionInEarlyReturnContextInspector.class,*/
+                DefaultValueInElseBranchInspector.class,
 
                 /*DefaultValuesForCallableParametersInspector.class,*/
                 ArrayTypeOfParameterByDefaultValueInspector.class,

@@ -21,10 +21,6 @@ foreach(... as ...) {
     ...
     $variable++||++$variable;
 }
-
-array type out of default value detection - change target to function/method,
-so suppression was not so confusing, highlight function name instead of param
-to reduce amount of warnings.
 */
 public class PhpInspectionsEAProvider implements InspectionToolProvider {
     @Override

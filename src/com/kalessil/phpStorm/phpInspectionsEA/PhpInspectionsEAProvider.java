@@ -13,8 +13,18 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 /*
 Some cases of interest:
 
+-- unsafe array item search
 array_search|in_array(..., ...[, true]) - 3rd parameter needs to be provided;
 
+-- suspicious counting in foreach
+foreach(... as ...) {
+    ...
+    $variable++||++$variable;
+}
+
+array type out of default value detection - change target to function/method,
+so suppression was not so confusing, highlight function name instead of param
+to reduce amount of warnings.
 */
 public class PhpInspectionsEAProvider implements InspectionToolProvider {
     @Override

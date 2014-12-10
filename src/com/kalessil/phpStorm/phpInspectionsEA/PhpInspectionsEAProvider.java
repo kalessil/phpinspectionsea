@@ -13,9 +13,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 /*
 Some cases of interest:
 
--- unsafe array item search
-array_search|in_array(..., ...[, true]) - 3rd parameter needs to be provided;
-
 -- suspicious counting in foreach
 foreach(... as ...) {
     ...
@@ -33,6 +30,7 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
 
                 UnNecessaryDoubleQuotesInspector.class,
                 TypeUnsafeComparisonInspector.class,
+                TypeUnsafeArraySearchInspector.class,
 
                 IfConditionalsWithoutGroupStatementInspector.class,
 

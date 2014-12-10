@@ -13,20 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 /*
 Some cases of interest:
 
-nested foreach / nested switch
-
-switch inside foreach
-
-readdir -> DirectoryIterator
-
-if (...) {
-    $var = expression | (constant reference|array|string|number)
-} elseif {
-    $var = expression | (constant reference|array|string|number)
-} else {
-    -- target expression --
-    $var =  (constant reference|array|string|number) | (expression)
-}
+array_search|in_array(..., ...[, true]) - 3rd parameter needs to be provided;
 
 */
 public class PhpInspectionsEAProvider implements InspectionToolProvider {

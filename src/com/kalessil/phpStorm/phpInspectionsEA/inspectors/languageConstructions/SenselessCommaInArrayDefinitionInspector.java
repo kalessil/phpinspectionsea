@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -31,6 +32,14 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
                 if (null == objExpressionToTest) {
                     return;
                 }
+
+                if (objExpressionToTest instanceof PsiWhiteSpace) {
+                    objExpressionToTest = objExpressionToTest.getPrevSibling();
+                }
+                if (null == objExpressionToTest) {
+                    return;
+                }
+
 
                 if(!objExpressionToTest.getText().equals(",")) {
                     return;

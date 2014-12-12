@@ -23,7 +23,7 @@ then additional inspections are applied to source code.
 
   <change-notes><![CDATA[
 12 Dec 2014:<br/>
-    - added type unsafe array search inspection
+    - added type unsafe array search inspection<br />
     - bug-fix for un-necessary last comma in array definition inspection<br />
     - updated array type parameters inspector (inspects method/function, not parameter expression)<br />
 <br />

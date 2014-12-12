@@ -15,7 +15,7 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: type un-safe array search";
+        return "API: type unsafe array search";
     }
 
     @NotNull

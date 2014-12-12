@@ -22,6 +22,12 @@ then additional inspections are applied to source code.
     ]]></description>
 
   <change-notes><![CDATA[
+12 Dec 2014:<br/>
+    - added type unsafe array search inspection
+    - bug-fix for un-necessary last comma in array definition inspection<br />
+    - updated array type parameters inspector (inspects method/function, not parameter expression)<br />
+<br />
+<hr/>
 8 Dec 2014: added 3 new inspections, forgotten debug statements inspection buf-fix<br/>
     - un-necessary last comma in array definition<br />
     - sequential un-set calls<br />

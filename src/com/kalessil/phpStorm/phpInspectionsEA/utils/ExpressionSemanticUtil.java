@@ -2,10 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.PhpLangUtil;
-import com.jetbrains.php.lang.psi.elements.ConstantReference;
-import com.jetbrains.php.lang.psi.elements.GroupStatement;
-import com.jetbrains.php.lang.psi.elements.If;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.Nullable;
 
 public class ExpressionSemanticUtil {
@@ -57,6 +54,24 @@ public class ExpressionSemanticUtil {
      */
     public static boolean isBoolean(ConstantReference objConstant){
         return (PhpLangUtil.isTrue(objConstant) || PhpLangUtil.isFalse(objConstant));
+    }
+
+    /**
+     * @param objExpression to process
+     * @return inner expression
+     */
+    @Nullable
+    public static PsiElement getExpressionTroughParenthesis(PsiElement objExpression) {
+        if (!(objExpression instanceof ParenthesizedExpression)) {
+            return objExpression;
+        }
+
+        PsiElement objInnerExpression = ((ParenthesizedExpression) objExpression).getArgument();
+        while (objInnerExpression instanceof ParenthesizedExpression) {
+            objInnerExpression = ((ParenthesizedExpression) objExpression).getArgument();
+        }
+
+        return objInnerExpression;
     }
 
     /**

@@ -68,12 +68,11 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
              * @param objTarget to analyse
              */
             private void analyseBinaryExpression(BinaryExpression objTarget) {
+                /** meet pre-conditions */
                 PsiElement objOperation = objTarget.getOperation();
                 if (null == objOperation) {
                     return;
                 }
-
-                /** extract conditions in natural order */
                 String strOperation = objOperation.getText();
                 if (
                     !strOperation.equals("&&") &&
@@ -81,6 +80,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 ) {
                     return;
                 }
+
+                /** extract conditions in natural order */
                 LinkedList<PsiElement> objPartsCollection = this.extractConditionParts(objTarget, strOperation);
 
                 /** verify if costs estimated are optimal */

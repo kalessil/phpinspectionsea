@@ -13,11 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
-    private static final String strProblemDescription = "This operation execution costs less than at previous one";
+    private static final String strProblemDescription = "This condition execution costs less than previous one";
 
     @NotNull
     public String getDisplayName() {
-        return "Semantics: not optimal order in if conditions";
+        return "Semantics: not optimal if conditions";
     }
 
     @NotNull
@@ -30,7 +30,18 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpIf(If ifStatement) {
-                PsiElement objCondition = ifStatement.getCondition();
+                this.inspectExpression(ifStatement.getCondition());
+
+                for (ElseIf objElseIf : ifStatement.getElseIfBranches()) {
+                    this.inspectExpression(objElseIf.getCondition());
+                }
+            }
+
+            /**
+             * @param objCondition to inspect
+             */
+            private void inspectExpression (PsiElement objCondition) {
+                /** full-fill pre-requirements */
                 if (null != objCondition) {
                     objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(objCondition);
                 }
@@ -44,20 +55,25 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
 
+                /** analyse expression */
                 if (!(objCondition instanceof BinaryExpression)) {
                     return;
                 }
-
-
                 this.analyseBinaryExpression((BinaryExpression) objCondition);
             }
 
+            /**
+             * Hi-level analysis on top of conditions and costs
+             *
+             * @param objTarget to analyse
+             */
             private void analyseBinaryExpression(BinaryExpression objTarget) {
                 PsiElement objOperation = objTarget.getOperation();
                 if (null == objOperation) {
                     return;
                 }
 
+                /** extract conditions in natural order */
                 String strOperation = objOperation.getText();
                 if (
                     !strOperation.equals("&&") &&
@@ -65,9 +81,9 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 ) {
                     return;
                 }
-
                 LinkedList<PsiElement> objPartsCollection = this.extractConditionParts(objTarget, strOperation);
 
+                /** verify if costs estimated are optimal */
                 int intLoopCurrentCost;
                 int intPreviousCost = 0;
                 for (PsiElement objCond : objPartsCollection) {
@@ -83,18 +99,27 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             }
 
             /**
+             * Estimates execution cost on basis 0-10 for simple parts. Complex constructions can be estimated
+             * to more than 10.
+             *
              * @param objExpression to estimate for execution cost
              * @return costs
              */
             private int getExpressionCost(PsiElement objExpression) {
                 objExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(objExpression);
 
-                if (objExpression instanceof ConstantReference || null == objExpression) {
+                if (
+                    objExpression instanceof ConstantReference ||
+                    objExpression instanceof StringLiteralExpression ||
+                    objExpression instanceof ClassReference ||
+                    null == objExpression
+                ) {
                     return 0;
                 }
 
                 if (
                     objExpression instanceof ClassConstantReference ||
+                    objExpression instanceof FieldReference ||
                     objExpression instanceof Variable
                 ) {
                     return 1;
@@ -127,6 +152,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             }
 
             /**
+             * Extracts conditions into naturally ordered list
+             *
              * @param objTarget expression for extracting sub-conditions
              * @param strOperation operator to take in consideration
              * @return list of sub-conditions in native order

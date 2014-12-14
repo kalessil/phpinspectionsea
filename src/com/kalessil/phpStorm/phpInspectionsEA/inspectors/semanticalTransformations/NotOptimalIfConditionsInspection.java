@@ -114,6 +114,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     objExpression instanceof ConstantReference ||
                     objExpression instanceof StringLiteralExpression ||
                     objExpression instanceof ClassReference ||
+                    objExpression instanceof Variable ||
                     null == objExpression
                 ) {
                     return 0;
@@ -121,13 +122,17 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                 if (
                     objExpression instanceof ClassConstantReference ||
-                    objExpression instanceof FieldReference ||
-                    objExpression instanceof Variable
+                    objExpression instanceof FieldReference
                 ) {
                     return 1;
                 }
 
-                if (objExpression instanceof ArrayAccessExpression) {
+                if (
+                    objExpression instanceof ArrayAccessExpression ||
+                    objExpression instanceof PhpEmpty ||
+                    objExpression instanceof PhpIsset ||
+                    objExpression instanceof PhpUnset
+                ) {
                     return 2;
                 }
 
@@ -135,21 +140,32 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     objExpression instanceof MethodReference ||
                     objExpression instanceof FunctionReference
                 ) {
-                    /** TODO: weight cases: isset(weight = 0) and parameters weight */
-                    return 10;
-                }
+                    int intArgumentsCost = 0;
+                    for (PsiElement objParameter : ((FunctionReference) objExpression).getParameters()) {
+                        intArgumentsCost += this.getExpressionCost(objParameter);
+                    }
 
-                /** TODO: TernaryExpression processing w1 + max(w2/w3)*/
+                    return (5 + intArgumentsCost);
+                }
 
                 if (objExpression instanceof UnaryExpression) {
                     return this.getExpressionCost(((UnaryExpression) objExpression).getValue());
                 }
 
+/*                if (objExpression instanceof TernaryExpression) {
+                    return
+                        this.getExpressionCost(((TernaryExpression) objExpression).getCondition()) +
+                        Math.max(
+                                this.getExpressionCost(((TernaryExpression) objExpression).getTrueVariant()),
+                                this.getExpressionCost(((TernaryExpression) objExpression).getFalseVariant())
+                        );
+                }
+*/
 
                 if (objExpression instanceof BinaryExpression) {
                     return
-                            this.getExpressionCost(((BinaryExpression) objExpression).getRightOperand()) +
-                            this.getExpressionCost(((BinaryExpression) objExpression).getLeftOperand());
+                        this.getExpressionCost(((BinaryExpression) objExpression).getRightOperand()) +
+                        this.getExpressionCost(((BinaryExpression) objExpression).getLeftOperand());
                 }
 
 

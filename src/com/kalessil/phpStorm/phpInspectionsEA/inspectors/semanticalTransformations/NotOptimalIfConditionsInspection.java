@@ -139,6 +139,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     return 10;
                 }
 
+                /** TODO: TernaryExpression processing w1 + max(w2/w3)*/
 
                 if (objExpression instanceof UnaryExpression) {
                     return this.getExpressionCost(((UnaryExpression) objExpression).getValue());

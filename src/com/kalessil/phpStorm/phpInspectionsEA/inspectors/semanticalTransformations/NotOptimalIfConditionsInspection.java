@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -147,6 +148,14 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     return
                             this.getExpressionCost(((BinaryExpression) objExpression).getRightOperand()) +
                             this.getExpressionCost(((BinaryExpression) objExpression).getLeftOperand());
+                }
+
+
+                if (
+                    objExpression instanceof PhpExpression &&
+                    objExpression.getNode().getElementType() == PhpElementTypes.NUMBER
+                ) {
+                    return 0;
                 }
 
                 return 10;

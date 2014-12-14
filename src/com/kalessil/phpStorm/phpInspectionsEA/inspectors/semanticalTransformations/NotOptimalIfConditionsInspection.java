@@ -135,6 +135,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     objExpression instanceof MethodReference ||
                     objExpression instanceof FunctionReference
                 ) {
+                    /** TODO: weight cases: isset(weight = 0) and parameters weight */
                     return 10;
                 }
 

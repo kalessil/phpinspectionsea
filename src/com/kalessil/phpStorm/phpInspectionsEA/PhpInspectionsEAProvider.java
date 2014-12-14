@@ -9,10 +9,20 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.*
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DefaultValueInElseBranchInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.IfReturnReturnSimplificationInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.NotOptimalIfConditionsInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.StrlenInEmptyStringCheckContextInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayTypeOfParameterByDefaultValueInspector;
 
 /*
 Some cases of interest:
+
+-- => === ''
+strlen() === 0
+strlen() == 0
+
+--- !== ''
+strlen() > 0
+strlen()
+
 
 -- suspicious counting in foreach
 foreach(... as ...) {
@@ -52,7 +62,8 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 SequentialUnSetCallsInspector.class,
 
 
-                NotOptimalIfConditionsInspection.class
+                NotOptimalIfConditionsInspection.class,
+                StrlenInEmptyStringCheckContextInspection.class
         };
     }
 }

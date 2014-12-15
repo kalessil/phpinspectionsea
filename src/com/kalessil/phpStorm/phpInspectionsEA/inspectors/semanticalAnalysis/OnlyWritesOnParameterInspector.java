@@ -60,7 +60,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     }
 
                     String parameterName = objParameter.getName();
-                    if (StringUtil.isEmpty(parameterName) || !parameterName.equals("qwerty")) {
+                    if (StringUtil.isEmpty(parameterName)/* || !parameterName.equals("qwerty")*/) {
                         continue;
                     }
 

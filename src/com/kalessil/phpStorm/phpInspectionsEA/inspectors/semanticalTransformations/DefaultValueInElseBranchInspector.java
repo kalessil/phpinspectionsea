@@ -116,7 +116,8 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
                 if (
                     objCandidate instanceof StringLiteralExpression ||
                     objCandidate instanceof ArrayCreationExpression ||
-                    objCandidate instanceof ConstantReference
+                    objCandidate instanceof ConstantReference ||
+                    objCandidate instanceof Variable
                 ) {
                     return true;
                 }

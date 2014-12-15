@@ -6,6 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.AmbiguousMeth
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MoreThanThreeArgumentsInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.*;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OnlyWritesOnParameterInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DefaultValueInElseBranchInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.IfReturnReturnSimplificationInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.NotOptimalIfConditionsInspection;
@@ -15,13 +16,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 /*
 Some cases of interest:
 
--- => === ''
-strlen() === 0
-strlen() == 0
-
---- !== ''
-strlen() > 0
-strlen()
+-- not needed initialization
+var $member = null;
 
 
 -- suspicious counting in foreach
@@ -29,6 +25,9 @@ foreach(... as ...) {
     ...
     $variable++||++$variable;
 }
+
+PhpCodeInsightUtil.isEmptyBody
+
 */
 public class PhpInspectionsEAProvider implements InspectionToolProvider {
     @Override
@@ -63,7 +62,8 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
 
 
                 NotOptimalIfConditionsInspection.class,
-                StrlenInEmptyStringCheckContextInspection.class
+                StrlenInEmptyStringCheckContextInspection.class,
+                OnlyWritesOnParameterInspector.class
         };
     }
 }

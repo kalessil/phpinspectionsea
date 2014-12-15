@@ -43,15 +43,9 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
 
 
                 /** or condition is not an binary expression */
-                final PsiElement objCondition = ifStatement.getCondition();
-                final boolean isBinaryExpressionInCondition = (
-                    objCondition instanceof BinaryExpression || (
-                        objCondition instanceof ParenthesizedExpression &&
-                        ((ParenthesizedExpression) objCondition).getArgument() instanceof BinaryExpression
-                    )
-                    /** or maybe try resolving type when not on-the-fly analysis is running */
-                );
-                if (!isBinaryExpressionInCondition) {
+                final PsiElement objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(ifStatement.getCondition());
+                /** or maybe try resolving type when not on-the-fly analysis is running */
+                if (!(objCondition instanceof BinaryExpression)) {
                     return;
                 }
 

@@ -6,7 +6,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
-import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -48,16 +47,9 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                     return;
                 }
 
-                final PsiElement objCondition = expression.getCondition();
-                final boolean isBinaryExpressionInCondition = (
-                    objCondition instanceof BinaryExpression ||
-                    (
-                        objCondition instanceof ParenthesizedExpression &&
-                        ((ParenthesizedExpression) objCondition).getArgument() instanceof BinaryExpression
-                    )
-                    /** or maybe try resolving type when not on-the-fly analysis is running */
-                );
-                if (!isBinaryExpressionInCondition) {
+                final PsiElement objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+                /** or maybe try resolving type when not on-the-fly analysis is running */
+                if (!(objCondition instanceof BinaryExpression)) {
                     return;
                 }
 

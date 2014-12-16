@@ -25,7 +25,7 @@ then additional inspections are applied to source code.
 16 Dec 2014: new inspections, bug-fix for hidden default value inspector<br/>
     - added not optimal if conditions inspection<br/>
     - added strlen usage for empty string check inspection<br/>
-    - added parameter usage in write context only<br/>
+    - added parameter usage in write context only inspection<br/>
 <br/>
 <hr/>
 12 Dec 2014:<br/>

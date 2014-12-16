@@ -23,7 +23,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "Semantics: callable parameter is used for writes only";
+        return "Semantics: callable parameter is used in write context only";
     }
 
     @NotNull
@@ -55,12 +55,12 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 /** TODO: indirect access check via arguments functions - too much effort at the moment */
 
                 for (Parameter objParameter : arrParameters) {
-                    if (objParameter.isPassByRef() /*|| objParameter.getDeclaredType() != PhpType.ARRAY*/) {
+                    if (objParameter.isPassByRef()) {
                         continue;
                     }
 
                     String parameterName = objParameter.getName();
-                    if (StringUtil.isEmpty(parameterName)/* || !parameterName.equals("qwerty")*/) {
+                    if (StringUtil.isEmpty(parameterName)) {
                         continue;
                     }
 
@@ -88,15 +88,23 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
                             /** estimate operation type */
                             if (
-                                (
-                                    objTopSemanticExpression instanceof AssignmentExpression &&
-                                    ((AssignmentExpression) objTopSemanticExpression).getVariable() == objLastSemanticExpression
-                                ) || objTopSemanticExpression instanceof UnaryExpression
+                                objTopSemanticExpression instanceof AssignmentExpression &&
+                                ((AssignmentExpression) objTopSemanticExpression).getVariable() == objLastSemanticExpression
                             ) {
                                 objTargetExpressions.add(objLastSemanticExpression);
 
                                 intCountWriteAccesses++;
                                 continue;
+                            }
+
+                            if (objTopSemanticExpression instanceof UnaryExpression) {
+                                PsiElement objOperation = ((UnaryExpression) objTopSemanticExpression).getOperation();
+                                if (null != objOperation && ("++,--").contains(objOperation.getText())) {
+                                    objTargetExpressions.add(objLastSemanticExpression);
+
+                                    intCountWriteAccesses++;
+                                    continue;
+                                }
                             }
 
                             intCountReadAccesses++;

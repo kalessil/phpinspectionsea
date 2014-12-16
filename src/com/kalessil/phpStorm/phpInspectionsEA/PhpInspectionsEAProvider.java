@@ -17,7 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 ===Bugs===:
 
 OnlyWritesOnParameterInspector:
-    - type casting is recognised as write operation
+    - type casting, silence, inversion constructions are recognised as write operation
     - think of applying on foreach
 
 

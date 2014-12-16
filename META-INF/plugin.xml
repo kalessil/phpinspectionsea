@@ -11,10 +11,10 @@
 Extended PHP code inspections set.<br />
 <br />
 Detecting:<br/>
-- possible code constructs simplifications<br/>
+- possible code constructs simplifications and confusing constructs<br/>
 - weak types control (important in Enterprise Applications)<br/>
 - micro-optimization cases (eg un-necessary double quotes)<br/>
-- confusing code constructs<br/>
+- not optimal if conditions<br/>
 <br/>
 Some of inspections are expecting conditional statements (eg. if) to use
 group statement for wrapping body expressions. When this requirement is met
@@ -23,9 +23,9 @@ then additional inspections are applied to source code.
 
   <change-notes><![CDATA[
 16 Dec 2014: new inspections, bug-fix for hidden default value inspector<br/>
-    -added not optimal if conditions inspection<br/>
-    -added strlen usage for empty string check inspection<br/>
-    -added parameter usage in write context only<br/>
+    - added not optimal if conditions inspection<br/>
+    - added strlen usage for empty string check inspection<br/>
+    - added parameter usage in write context only<br/>
 <br/>
 <hr/>
 12 Dec 2014:<br/>

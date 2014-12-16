@@ -107,6 +107,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         /** ok variable usage works well with openapi */
                         objAccess = objInstruction.getAccess();
                         if (objAccess.isWrite()) {
+                            objTargetExpressions.add(objInstruction.getAnchor());
                             intCountWriteAccesses++;
                         }
                         if (objAccess.isRead()) {

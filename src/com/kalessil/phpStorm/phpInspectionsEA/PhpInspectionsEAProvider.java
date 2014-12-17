@@ -17,9 +17,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 ===Bugs===:
 
 OnlyWritesOnParameterInspector:
-    - type casting, silence, inversion constructions are recognised as write operation
     - think of applying on foreach
-
+DefaultValueInElseBranchInspector
+    - false positives, when assignment is concatenation or array with calls inside
 
 ===Some cases of interest===:
 

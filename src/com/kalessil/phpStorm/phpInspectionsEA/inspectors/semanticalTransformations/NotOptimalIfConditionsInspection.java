@@ -188,24 +188,24 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
              */
             private LinkedList<PsiElement> extractConditionParts(BinaryExpression objTarget, String strOperation) {
                 LinkedList<PsiElement> objPartsCollection = new LinkedList<>();
+                PsiElement objItemToAdd;
 
-                objPartsCollection.add(ExpressionSemanticUtil.getExpressionTroughParenthesis(objTarget.getRightOperand()));
-                PsiElement objExpressionToExpand = ExpressionSemanticUtil.getExpressionTroughParenthesis(
-                        objTarget.getLeftOperand()
-                );
+                objItemToAdd = ExpressionSemanticUtil.getExpressionTroughParenthesis(objTarget.getRightOperand());
+                if (null != objItemToAdd) {
+                    objPartsCollection.add(objItemToAdd);
+                }
+                PsiElement objExpressionToExpand = ExpressionSemanticUtil.getExpressionTroughParenthesis(objTarget.getLeftOperand());
+
                 while (
                     objExpressionToExpand instanceof BinaryExpression &&
                     ((BinaryExpression) objExpressionToExpand).getOperation() != null &&
                     ((BinaryExpression) objExpressionToExpand).getOperation().getText().equals(strOperation)
                 ) {
-                    objPartsCollection.addFirst(
-                            ExpressionSemanticUtil.getExpressionTroughParenthesis(
-                                    ((BinaryExpression) objExpressionToExpand).getRightOperand()
-                            )
-                    );
-                    objExpressionToExpand = ExpressionSemanticUtil.getExpressionTroughParenthesis(
-                            ((BinaryExpression) objExpressionToExpand).getLeftOperand()
-                    );
+                    objItemToAdd = ExpressionSemanticUtil.getExpressionTroughParenthesis(((BinaryExpression) objExpressionToExpand).getRightOperand());
+                    if (null != objItemToAdd) {
+                        objPartsCollection.addFirst(objItemToAdd);
+                    }
+                    objExpressionToExpand = ExpressionSemanticUtil.getExpressionTroughParenthesis(((BinaryExpression) objExpressionToExpand).getLeftOperand());
                 }
 
 

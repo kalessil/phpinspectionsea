@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -58,7 +59,10 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
 
                     AssignmentExpression objAssignmentExpression = null;
                     for (PsiElement objIfChild : objGroup.getChildren()) {
-                        if (objIfChild instanceof Statement && objIfChild.getFirstChild() instanceof AssignmentExpression) {
+                        if (
+                            objIfChild instanceof Statement &&
+                            objIfChild.getFirstChild() instanceof AssignmentExpression
+                        ) {
                             objAssignmentExpression = (AssignmentExpression) objIfChild.getFirstChild();
                             break;
                         }
@@ -88,6 +92,17 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
                         return;
                     }
 
+                    /** check assignment type */
+                    PsiElement objOperation = objSubjectFromExpression.getNextSibling();
+                    if (objOperation instanceof PsiWhiteSpace) {
+                        objOperation = objOperation.getNextSibling();
+                    }
+                    if (!objOperation.getText().equals("=")) {
+                        objAssignmentsList.clear();
+                        return;
+                    }
+
+                    /** ensure subjects matched */
                     if (!PsiEquivalenceUtil.areElementsEquivalent(objSubjectToCompareWith, objSubjectFromExpression)) {
                         objAssignmentsList.clear();
                         return;

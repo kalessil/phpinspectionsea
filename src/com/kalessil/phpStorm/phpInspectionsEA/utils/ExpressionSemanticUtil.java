@@ -31,6 +31,19 @@ public class ExpressionSemanticUtil {
         return intCountStatements;
     }
 
+    public static PsiElement getLastStatement(GroupStatement objGroupStatement) {
+        PsiElement objLastChild = objGroupStatement.getLastChild();
+        while (null != objLastChild) {
+            if (objLastChild instanceof PhpPsiElement) {
+                return objLastChild;
+            }
+
+            objLastChild = objLastChild.getPrevSibling();
+        }
+
+        return null;
+    }
+
     /**
      * @param objControlExpression expression to scan for group definition
      * @return null|GroupStatement

@@ -21,6 +21,14 @@ OnlyWritesOnParameterInspector:
 DefaultValueInElseBranchInspector
     - false positives, when assignment is concatenation or array with calls inside
 
+Argument for @NotNull parameter 'psiElement' of com/intellij/codeInspection/ProblemsHolder.registerProblem must not be null
+java.lang.IllegalArgumentException: Argument for @NotNull parameter 'psiElement' of com/intellij/codeInspection/ProblemsHolder.registerProblem must not be null
+	at com.intellij.codeInspection.ProblemsHolder.registerProblem(ProblemsHolder.java)
+	at com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.NotOptimalIfConditionsInspection$1.analyseBinaryExpression(NotOptimalIfConditionsInspection.java:95)
+	at com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.NotOptimalIfConditionsInspection$1.inspectExpression(NotOptimalIfConditionsInspection.java:63)
+	at com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.NotOptimalIfConditionsInspection$1.visitPhpIf(NotOptimalIfConditionsInspection.java:34)
+
+
 ===Some cases of interest===:
 
 -- review open api

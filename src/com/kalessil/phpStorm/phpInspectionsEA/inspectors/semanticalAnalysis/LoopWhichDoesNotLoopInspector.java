@@ -11,8 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Initialization can be omitted, as null " +
-            "initialization is used by default";
+    private static final String strProblemDescription = "This loop does not loop";
 
     @NotNull
     public String getDisplayName() {

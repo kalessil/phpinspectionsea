@@ -22,17 +22,6 @@ OnlyWritesOnParameterInspector:
 
 ===Some cases of interest===:
 
--- review open api
-PhpCodeInsightUtil.isEmptyBody
-
--- not needed initialization
-var $member = null;
-
--- loop statement that doesn't loop
-foreach (...) {
-    throw|break|return;
-}
-
 -- suspicious counting in foreach
 foreach(... as ...) {
     ...

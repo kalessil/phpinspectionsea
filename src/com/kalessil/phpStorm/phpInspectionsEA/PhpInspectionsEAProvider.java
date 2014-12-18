@@ -15,12 +15,19 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformatio
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayTypeOfParameterByDefaultValueInspector;
 
 /*
-===Bugs===:
+===TODO===:
 
-OnlyWritesOnParameterInspector:
-    - think of applying on foreach
+Re-check wording and inspections descriptions
 
 ===Some cases of interest===:
+
+-- empty foreach/for/if/else/elseif
+
+-- if conditions check
+|| true   => always true  [warning]
+|| false  => not needed   [unused]
+&& true   => not needed   [unused]
+&& false  => always false [warning]
 
 -- suspicious counting in foreach
 foreach(... as ...) {

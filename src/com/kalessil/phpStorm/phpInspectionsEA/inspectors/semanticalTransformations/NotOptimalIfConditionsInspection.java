@@ -17,7 +17,7 @@ import java.util.LinkedList;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String strProblemDescriptionOrdering  = "This condition execution costs less than previous one";
-    private static final String strProblemDescriptionDuplicate = "This condition is a duplicate of one in if/elseif";
+    private static final String strProblemDescriptionDuplicate = "This condition duplicated in other if/elseif branch";
 
     @NotNull
     public String getDisplayName() {

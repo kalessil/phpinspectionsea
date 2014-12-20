@@ -18,6 +18,8 @@ import java.util.LinkedList;
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String strProblemDescriptionOrdering  = "This condition execution costs less than previous one";
     private static final String strProblemDescriptionDuplicate = "This condition duplicated in other if/elseif branch";
+    private static final String strProblemDescriptionBooleans  = "This boolean in condition makes no sense or enforces " +
+            "condition result";
 
     @NotNull
     public String getDisplayName() {
@@ -35,10 +37,13 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpIf(If ifStatement) {
                 LinkedList<PsiElement> objAllConditions = new LinkedList<>();
+                /** TODO: involve parent if/elseif */
 
                 LinkedList<PsiElement> objConditionsFromStatement = this.inspectExpression(ifStatement.getCondition());
                 if (null != objConditionsFromStatement) {
                     objAllConditions.addAll(objConditionsFromStatement);
+
+                    this.inspectConditionsWithBooleans(objConditionsFromStatement);
                     objConditionsFromStatement.clear();
                 }
 
@@ -46,11 +51,29 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     objConditionsFromStatement = this.inspectExpression(objElseIf.getCondition());
                     if (null != objConditionsFromStatement) {
                         objAllConditions.addAll(objConditionsFromStatement);
+
+                        this.inspectConditionsWithBooleans(objConditionsFromStatement);
                         objConditionsFromStatement.clear();
                     }
                 }
 
                 this.inspectDuplicatedConditions(objAllConditions);
+            }
+
+            /***
+             * Checks if any of conditions is boolean
+             * @param objBranchConditions to check
+             */
+            private void inspectConditionsWithBooleans(LinkedList<PsiElement> objBranchConditions) {
+                for (PsiElement objExpression : objBranchConditions) {
+                    if (!(objExpression instanceof ConstantReference)) {
+                        continue;
+                    }
+
+                    if (ExpressionSemanticUtil.isBoolean((ConstantReference) objExpression)) {
+                        holder.registerProblem(objExpression, strProblemDescriptionBooleans, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    }
+                }
             }
 
             /**
@@ -68,7 +91,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     objAllConditions.set(intOuterIndex, null);
 
                     /** ignore variables */
-                    if (objExpression instanceof Variable) {
+                    if (objExpression instanceof Variable || objExpression instanceof ConstantReference) {
                         continue;
                     }
 
@@ -79,12 +102,11 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         }
 
                         /**
-                         * not really helpful, needs to be extended by taking in account binary operations
-                         * with equal arguments
+                         * TODO: binary expressions with opposite operations
                          */
                         boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objInnerLoopExpression, objExpression);
                         if (isDuplicate) {
-                            holder.registerProblem(objInnerLoopExpression, strProblemDescriptionDuplicate, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(objInnerLoopExpression, strProblemDescriptionDuplicate, ProblemHighlightType.WEAK_WARNING);
 
                             int intInnerIndex = objAllConditions.indexOf(objInnerLoopExpression);
                             objAllConditions.set(intInnerIndex, null);

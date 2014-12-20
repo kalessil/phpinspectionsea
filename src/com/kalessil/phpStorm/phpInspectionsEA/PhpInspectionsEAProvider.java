@@ -17,23 +17,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 /*
 ===TODO===:
 
-Re-check wording and inspections descriptions
+NotOptimalIfConditionsInspection:
+    - involve parent (no depth limit) if/elseif into inspection
 
-===Some cases of interest===:
+IfConditionalsWithoutGroupStatementInspector
+    - empty if/else/elseif body
 
--- empty foreach/for/if/else/elseif
+===Cases of interest===
 
--- if conditions check
-|| true   => always true  [warning]
-|| false  => not needed   [unused]
-&& true   => not needed   [unused]
-&& false  => always false [warning]
-
--- suspicious counting in foreach
-foreach(... as ...) {
-    ...
-    $variable++||++$variable;
-}
+Binary comparison operations: boolean vs expression returning boolean
 
 */
 public class PhpInspectionsEAProvider implements InspectionToolProvider {

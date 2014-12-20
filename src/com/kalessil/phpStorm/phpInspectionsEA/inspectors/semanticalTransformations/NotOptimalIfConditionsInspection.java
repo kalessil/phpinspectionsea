@@ -63,9 +63,16 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         continue;
                     }
 
+                    /** put a stub */
                     int intOuterIndex = objAllConditions.indexOf(objExpression);
                     objAllConditions.set(intOuterIndex, null);
 
+                    /** ignore variables */
+                    if (objExpression instanceof Variable) {
+                        continue;
+                    }
+
+                    /** search duplicates */
                     for (PsiElement objInnerLoopExpression : objAllConditions) {
                         if (null == objInnerLoopExpression) {
                             continue;

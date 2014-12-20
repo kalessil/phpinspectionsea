@@ -44,11 +44,14 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
                 }
 
                 PsiElement objLastExpression = ExpressionSemanticUtil.getLastStatement(objGroupStatement);
-                if (
-                    !(objLastExpression instanceof PhpBreak) &&
-                    !(objLastExpression instanceof PhpReturn) &&
-                    !(objLastExpression instanceof PhpThrow)
-                ) {
+                boolean isLoopTerminatedWithLastExpression = (
+                    objLastExpression instanceof PhpBreak ||
+                    objLastExpression instanceof PhpReturn ||
+                    objLastExpression instanceof PhpThrow
+                );
+
+                /** loop is empty or terminates on first iteration */
+                if (null != objLastExpression && !isLoopTerminatedWithLastExpression) {
                     return;
                 }
 

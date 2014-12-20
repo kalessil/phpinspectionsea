@@ -42,12 +42,11 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
              */
             private void inspectCallable (Function callable) {
                 for (Parameter objParameter : callable.getParameters()) {
-                    if (!this.canBePrependedWithArrayType(objParameter)) {
-                        continue;
+                    if (this.canBePrependedWithArrayType(objParameter)) {
+                        holder.registerProblem(objParameter.getParent(), strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                        return;
                     }
 
-                    holder.registerProblem(objParameter.getParent(), strProblemDescription, ProblemHighlightType.WEAK_WARNING);
-                    return;
                 }
             }
 
@@ -65,6 +64,7 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
                     return false;
                 }
 
+                //noinspection RedundantIfStatement
                 if (!parameter.getDeclaredType().isEmpty()) {
                     return false;
                 }

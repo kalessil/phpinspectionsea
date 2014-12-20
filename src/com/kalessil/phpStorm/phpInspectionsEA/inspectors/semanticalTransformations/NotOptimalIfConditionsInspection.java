@@ -196,6 +196,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
                 PsiElement objExpressionToExpand = ExpressionSemanticUtil.getExpressionTroughParenthesis(objTarget.getLeftOperand());
 
+                //noinspection ConstantConditions
                 while (
                     objExpressionToExpand instanceof BinaryExpression &&
                     ((BinaryExpression) objExpressionToExpand).getOperation() != null &&

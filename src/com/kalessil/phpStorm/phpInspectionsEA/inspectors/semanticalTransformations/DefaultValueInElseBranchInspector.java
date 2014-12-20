@@ -113,13 +113,10 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
                 /** verify candidate value: array/string/number/constant */
                 PhpPsiElement objCandidate = objAssignmentsList.getLast().getValue();
                 objAssignmentsList.clear();
-                if (!this.isDefaultValueCandidateFits(objCandidate)) {
-                    return;
+                if (this.isDefaultValueCandidateFits(objCandidate)) {
+                    /** point the problem out */
+                    holder.registerProblem(objElseStatement.getFirstChild(), strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
-
-
-                /** point the problem out */
-                holder.registerProblem(objElseStatement.getFirstChild(), strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
 
             /**

@@ -41,6 +41,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
 
 
                 PsiElement objLeftOperand = expression.getLeftOperand();
+                //noinspection ConstantConditions
                 if (
                     !(objLeftOperand instanceof FunctionReference) ||
                     null == ((FunctionReference) objLeftOperand).getName() ||

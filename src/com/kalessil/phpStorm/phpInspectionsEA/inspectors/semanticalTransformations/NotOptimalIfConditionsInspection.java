@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations;
 
+import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -10,11 +11,13 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
-    private static final String strProblemDescription = "This condition execution costs less than previous one";
+    private static final String strProblemDescriptionOrdering  = "This condition execution costs less than previous one";
+    private static final String strProblemDescriptionDuplicate = "This condition is a duplicate of one in if/elseif";
 
     @NotNull
     public String getDisplayName() {
@@ -31,17 +34,63 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpIf(If ifStatement) {
-                this.inspectExpression(ifStatement.getCondition());
+                LinkedList<PsiElement> objAllConditions = new LinkedList<>();
+
+                LinkedList<PsiElement> objConditionsFromStatement = this.inspectExpression(ifStatement.getCondition());
+                if (null != objConditionsFromStatement) {
+                    objAllConditions.addAll(objConditionsFromStatement);
+                    objConditionsFromStatement.clear();
+                }
 
                 for (ElseIf objElseIf : ifStatement.getElseIfBranches()) {
-                    this.inspectExpression(objElseIf.getCondition());
+                    objConditionsFromStatement = this.inspectExpression(objElseIf.getCondition());
+                    if (null != objConditionsFromStatement) {
+                        objAllConditions.addAll(objConditionsFromStatement);
+                        objConditionsFromStatement.clear();
+                    }
+                }
+
+                this.inspectDuplicatedConditions(objAllConditions);
+            }
+
+            /**
+             * Checks if duplicates are introduced, conditions collection will be modified so it's empty in the end
+             * @param objAllConditions to check
+             */
+            private void inspectDuplicatedConditions(LinkedList<PsiElement> objAllConditions) {
+                for (PsiElement objExpression : objAllConditions) {
+                    if (null == objExpression) {
+                        continue;
+                    }
+
+                    int intOuterIndex = objAllConditions.indexOf(objExpression);
+                    objAllConditions.set(intOuterIndex, null);
+
+                    for (PsiElement objInnerLoopExpression : objAllConditions) {
+                        if (null == objInnerLoopExpression) {
+                            continue;
+                        }
+
+                        /**
+                         * not really helpful, needs to be extended by taking in account binary operations
+                         * with equal arguments
+                         */
+                        boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objInnerLoopExpression, objExpression);
+                        if (isDuplicate) {
+                            holder.registerProblem(objInnerLoopExpression, strProblemDescriptionDuplicate, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+
+                            int intInnerIndex = objAllConditions.indexOf(objInnerLoopExpression);
+                            objAllConditions.set(intInnerIndex, null);
+                        }
+                    }
                 }
             }
 
             /**
              * @param objCondition to inspect
              */
-            private void inspectExpression (PsiElement objCondition) {
+            @Nullable
+            private LinkedList<PsiElement> inspectExpression (PsiElement objCondition) {
                 /** full-fill pre-requirements */
                 if (null != objCondition) {
                     objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(objCondition);
@@ -52,15 +101,16 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     );
                 }
                 if (null == objCondition) {
-                    return;
+                    return null;
                 }
 
 
                 /** analyse expression */
                 if (!(objCondition instanceof BinaryExpression)) {
-                    return;
+                    return null;
                 }
-                this.analyseBinaryExpression((BinaryExpression) objCondition);
+
+                return this.analyseBinaryExpression((BinaryExpression) objCondition);
             }
 
             /**
@@ -68,18 +118,19 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
              *
              * @param objTarget to analyse
              */
-            private void analyseBinaryExpression(BinaryExpression objTarget) {
+            @Nullable
+            private LinkedList<PsiElement> analyseBinaryExpression(BinaryExpression objTarget) {
                 /** meet pre-conditions */
                 PsiElement objOperation = objTarget.getOperation();
                 if (null == objOperation) {
-                    return;
+                    return null;
                 }
                 String strOperation = objOperation.getText();
                 if (
                     !strOperation.equals("&&") &&
                     !strOperation.equals("||")
                 ) {
-                    return;
+                    return null;
                 }
 
                 /** extract conditions in natural order */
@@ -92,12 +143,12 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     intLoopCurrentCost = this.getExpressionCost(objCond);
 
                     if (intLoopCurrentCost < intPreviousCost) {
-                        holder.registerProblem(objCond, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(objCond, strProblemDescriptionOrdering, ProblemHighlightType.WEAK_WARNING);
                     }
 
                     intPreviousCost = intLoopCurrentCost;
                 }
-                objPartsCollection.clear();
+                return objPartsCollection;
             }
 
             /**

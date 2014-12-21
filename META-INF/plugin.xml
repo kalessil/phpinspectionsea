@@ -1,14 +1,14 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
   <depends>com.intellij.modules.platform</depends>
 
   <description><![CDATA[
-Extended PHP code inspections set.<br />
+Extended PHP code inspections and semantic analysers set.<br />
 <br />
 Detecting:<br/>
 - possible code constructs simplifications and confusing constructs<br/>
@@ -22,17 +22,17 @@ then additional inspections are applied to source code.
     ]]></description>
 
   <change-notes><![CDATA[
+21 Dec 2014: bug-fixes, improvements and new inspections:<br/>
+    - improved not optimal if conditions inspection (duplicate conditions, booleans checks)<br/>
+    - added ambiguous null field initialization inspection<br/>
+    - added loop which does not loop inspection<br/>
+<br/>
+<hr/>
 16 Dec 2014: new inspections, bug-fix for hidden default value inspector<br/>
     - added not optimal if conditions inspection<br/>
     - added strlen usage for empty string check inspection<br/>
     - added parameter usage in write context only inspection<br/>
 <br/>
-<hr/>
-12 Dec 2014:<br/>
-    - added type unsafe array search inspection<br />
-    - bug-fix for un-necessary last comma in array definition inspection<br />
-    - updated array type parameters inspector (inspects method/function, not parameter expression)<br />
-<br />
 <hr/>
   ]]></change-notes>
 

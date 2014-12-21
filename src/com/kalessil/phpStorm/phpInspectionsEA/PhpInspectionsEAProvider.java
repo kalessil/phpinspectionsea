@@ -17,9 +17,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 /*
 ===TODO===:
 
-NotOptimalIfConditionsInspection:
-    - involve parent (no depth limit) if/elseif into inspection
-
 IfConditionalsWithoutGroupStatementInspector
     - empty if/else/elseif body
 

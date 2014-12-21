@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
+import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -37,9 +38,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpIf(If ifStatement) {
                 LinkedList<PsiElement> objAllConditions = new LinkedList<>();
-                /** TODO: involve parent if/elseif */
 
-                LinkedList<PsiElement> objConditionsFromStatement = this.inspectExpression(ifStatement.getCondition());
+                LinkedList<PsiElement> objConditionsFromStatement = this.inspectExpressionsOrder(ifStatement.getCondition());
                 if (null != objConditionsFromStatement) {
                     objAllConditions.addAll(objConditionsFromStatement);
 
@@ -48,7 +48,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
                 for (ElseIf objElseIf : ifStatement.getElseIfBranches()) {
-                    objConditionsFromStatement = this.inspectExpression(objElseIf.getCondition());
+                    objConditionsFromStatement = this.inspectExpressionsOrder(objElseIf.getCondition());
                     if (null != objConditionsFromStatement) {
                         objAllConditions.addAll(objConditionsFromStatement);
 
@@ -57,7 +57,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     }
                 }
 
-                this.inspectDuplicatedConditions(objAllConditions);
+                this.inspectDuplicatedConditions(objAllConditions, ifStatement);
             }
 
             /***
@@ -79,8 +79,35 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             /**
              * Checks if duplicates are introduced, conditions collection will be modified so it's empty in the end
              * @param objAllConditions to check
+             * @param ifStatement current scope
              */
-            private void inspectDuplicatedConditions(LinkedList<PsiElement> objAllConditions) {
+            private void inspectDuplicatedConditions(LinkedList<PsiElement> objAllConditions, If ifStatement) {
+                LinkedList<PsiElement> objParentConditions = new LinkedList<>();
+
+                /** collect parent scopes conditions */
+                PsiElement objParent = ifStatement.getParent();
+                while (null != objParent && !(objParent instanceof PhpFile)) {
+                    if (objParent instanceof If) {
+                        LinkedList<PsiElement> tempList = ExpressionSemanticUtil.getConditions(((If) objParent).getCondition());
+                        if (null != tempList) {
+                            objParentConditions.addAll(tempList);
+                            tempList.clear();
+                        }
+
+                        for (ElseIf objParentElseIf : ((If) objParent).getElseIfBranches()) {
+                            tempList = ExpressionSemanticUtil.getConditions(objParentElseIf.getCondition());
+                            if (null != tempList) {
+                                objParentConditions.addAll(tempList);
+                                tempList.clear();
+                            }
+                        }
+                    }
+
+                    objParent = objParent.getParent();
+                }
+
+
+                /** scan for duplicates */
                 for (PsiElement objExpression : objAllConditions) {
                     if (null == objExpression) {
                         continue;
@@ -91,11 +118,15 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     objAllConditions.set(intOuterIndex, null);
 
                     /** ignore variables */
-                    if (objExpression instanceof Variable || objExpression instanceof ConstantReference) {
+                    if (
+                        objExpression instanceof Variable ||
+                        objExpression instanceof ConstantReference ||
+                        objExpression instanceof FieldReference
+                    ) {
                         continue;
                     }
 
-                    /** search duplicates */
+                    /** search duplicates in current scope */
                     for (PsiElement objInnerLoopExpression : objAllConditions) {
                         if (null == objInnerLoopExpression) {
                             continue;
@@ -112,58 +143,43 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                             objAllConditions.set(intInnerIndex, null);
                         }
                     }
+
+                    /** search duplicates in outer scopes */
+                    for (PsiElement objOuterScopeExpression : objParentConditions) {
+                        if (null == objOuterScopeExpression) {
+                            continue;
+                        }
+
+                        /**
+                         * TODO: binary expressions with opposite operations
+                         */
+                        boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objOuterScopeExpression, objExpression);
+                        if (isDuplicate) {
+                            holder.registerProblem(objExpression, strProblemDescriptionDuplicate, ProblemHighlightType.WEAK_WARNING);
+
+                            int intOuterScopeIndex = objParentConditions.indexOf(objOuterScopeExpression);
+                            objParentConditions.set(intOuterScopeIndex, null);
+                        }
+                    }
                 }
+
+                objParentConditions.clear();
             }
 
             /**
              * @param objCondition to inspect
              */
             @Nullable
-            private LinkedList<PsiElement> inspectExpression (PsiElement objCondition) {
-                /** full-fill pre-requirements */
-                if (null != objCondition) {
-                    objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(objCondition);
-                }
-                if (objCondition instanceof UnaryExpression) {
-                    objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(
-                        ((UnaryExpression) objCondition).getValue()
-                    );
-                }
-                if (null == objCondition) {
+            private LinkedList<PsiElement> inspectExpressionsOrder(PsiElement objCondition) {
+                LinkedList<PsiElement> objPartsCollection = ExpressionSemanticUtil.getConditions(objCondition);
+                if (null == objPartsCollection) {
                     return null;
                 }
 
-
-                /** analyse expression */
-                if (!(objCondition instanceof BinaryExpression)) {
-                    return null;
+                /** one item only, skip costs estimation */
+                if (objPartsCollection.size() < 2) {
+                    return objPartsCollection;
                 }
-
-                return this.analyseBinaryExpression((BinaryExpression) objCondition);
-            }
-
-            /**
-             * Hi-level analysis on top of conditions and costs
-             *
-             * @param objTarget to analyse
-             */
-            @Nullable
-            private LinkedList<PsiElement> analyseBinaryExpression(BinaryExpression objTarget) {
-                /** meet pre-conditions */
-                PsiElement objOperation = objTarget.getOperation();
-                if (null == objOperation) {
-                    return null;
-                }
-                String strOperation = objOperation.getText();
-                if (
-                    !strOperation.equals("&&") &&
-                    !strOperation.equals("||")
-                ) {
-                    return null;
-                }
-
-                /** extract conditions in natural order */
-                LinkedList<PsiElement> objPartsCollection = this.extractConditionParts(objTarget, strOperation);
 
                 /** verify if costs estimated are optimal */
                 int intLoopCurrentCost;
@@ -177,6 +193,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                     intPreviousCost = intLoopCurrentCost;
                 }
+
                 return objPartsCollection;
             }
 
@@ -257,44 +274,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
                 return 10;
-            }
-
-            /**
-             * Extracts conditions into naturally ordered list
-             *
-             * @param objTarget expression for extracting sub-conditions
-             * @param strOperation operator to take in consideration
-             * @return list of sub-conditions in native order
-             */
-            private LinkedList<PsiElement> extractConditionParts(BinaryExpression objTarget, String strOperation) {
-                LinkedList<PsiElement> objPartsCollection = new LinkedList<>();
-                PsiElement objItemToAdd;
-
-                objItemToAdd = ExpressionSemanticUtil.getExpressionTroughParenthesis(objTarget.getRightOperand());
-                if (null != objItemToAdd) {
-                    objPartsCollection.add(objItemToAdd);
-                }
-                PsiElement objExpressionToExpand = ExpressionSemanticUtil.getExpressionTroughParenthesis(objTarget.getLeftOperand());
-
-                //noinspection ConstantConditions
-                while (
-                    objExpressionToExpand instanceof BinaryExpression &&
-                    ((BinaryExpression) objExpressionToExpand).getOperation() != null &&
-                    ((BinaryExpression) objExpressionToExpand).getOperation().getText().equals(strOperation)
-                ) {
-                    objItemToAdd = ExpressionSemanticUtil.getExpressionTroughParenthesis(((BinaryExpression) objExpressionToExpand).getRightOperand());
-                    if (null != objItemToAdd) {
-                        objPartsCollection.addFirst(objItemToAdd);
-                    }
-                    objExpressionToExpand = ExpressionSemanticUtil.getExpressionTroughParenthesis(((BinaryExpression) objExpressionToExpand).getLeftOperand());
-                }
-
-
-                if (null != objExpressionToExpand) {
-                    objPartsCollection.addFirst(objExpressionToExpand);
-                }
-
-                return objPartsCollection;
             }
         };
     }

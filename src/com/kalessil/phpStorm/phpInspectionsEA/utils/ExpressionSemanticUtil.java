@@ -5,6 +5,8 @@ import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.LinkedList;
+
 public class ExpressionSemanticUtil {
     /**
      * @param ifStatement if expression to check
@@ -86,6 +88,90 @@ public class ExpressionSemanticUtil {
 
         return objInnerExpression;
     }
+
+    /**
+     * @param objCondition to process
+     * @return list of extracted conditions
+     */
+    @Nullable
+    public static LinkedList<PsiElement> getConditions(PsiElement objCondition) {
+        /** get through unary and parenthesis wrappers */
+        if (null != objCondition) {
+            objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(objCondition);
+        }
+        if (objCondition instanceof UnaryExpression) {
+            objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(
+                    ((UnaryExpression) objCondition).getValue()
+            );
+        }
+        if (null == objCondition) {
+            return null;
+        }
+
+        /** init container */
+        LinkedList<PsiElement> objPartsCollection = new LinkedList<>();
+
+        /** return non-binary expressions, eg. callable execution */
+        if (!(objCondition instanceof BinaryExpression)) {
+            objPartsCollection.add(objCondition);
+            return objPartsCollection;
+        }
+
+
+        /** check operation type and extract conditions */
+        PsiElement objOperation = ((BinaryExpression) objCondition).getOperation();
+        if (null == objOperation) {
+            return null;
+        }
+        String strOperation = objOperation.getText();
+        if (!strOperation.equals("&&") && !strOperation.equals("||")) {
+            return null;
+        }
+
+        return ExpressionSemanticUtil.getConditions((BinaryExpression) objCondition, strOperation);
+    }
+
+    /**
+     * Extracts conditions into naturally ordered list
+     *
+     * @param objTarget expression for extracting sub-conditions
+     * @param strOperation operator to take in consideration
+     * @return list of sub-conditions in native order
+     */
+    private static LinkedList<PsiElement> getConditions(BinaryExpression objTarget, String strOperation) {
+        LinkedList<PsiElement> objPartsCollection = new LinkedList<>();
+        PsiElement objItemToAdd;
+
+        /** right expression first */
+        objItemToAdd = ExpressionSemanticUtil.getExpressionTroughParenthesis(objTarget.getRightOperand());
+        if (null != objItemToAdd) {
+            objPartsCollection.add(objItemToAdd);
+        }
+        PsiElement objExpressionToExpand = ExpressionSemanticUtil.getExpressionTroughParenthesis(objTarget.getLeftOperand());
+
+        /** expand binary operation while it's a binary operation */
+        //noinspection ConstantConditions
+        while (
+                objExpressionToExpand instanceof BinaryExpression &&
+                ((BinaryExpression) objExpressionToExpand).getOperation() != null &&
+                ((BinaryExpression) objExpressionToExpand).getOperation().getText().equals(strOperation)
+        ) {
+            objItemToAdd = ExpressionSemanticUtil.getExpressionTroughParenthesis(((BinaryExpression) objExpressionToExpand).getRightOperand());
+            if (null != objItemToAdd) {
+                objPartsCollection.addFirst(objItemToAdd);
+            }
+            objExpressionToExpand = ExpressionSemanticUtil.getExpressionTroughParenthesis(((BinaryExpression) objExpressionToExpand).getLeftOperand());
+        }
+
+
+        /** don't forget very first one */
+        if (null != objExpressionToExpand) {
+            objPartsCollection.addFirst(objExpressionToExpand);
+        }
+
+        return objPartsCollection;
+    }
+
 
     /**
      * get first statement: for all inspectors

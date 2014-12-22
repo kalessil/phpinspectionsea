@@ -6,6 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.AmbiguousMeth
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MoreThanThreeArgumentsInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.*;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.propel16.countOnCollectionInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.LoopWhichDoesNotLoopInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OnlyWritesOnParameterInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DefaultValueInElseBranchInspector;
@@ -61,7 +62,10 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 StrlenInEmptyStringCheckContextInspection.class,
                 OnlyWritesOnParameterInspector.class,
                 AmbiguousMemberInitializationInspector.class,
-                LoopWhichDoesNotLoopInspector.class
+                LoopWhichDoesNotLoopInspector.class,
+
+
+                countOnCollectionInspector.class
         };
     }
 }

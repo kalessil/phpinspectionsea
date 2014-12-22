@@ -4,11 +4,15 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class countOnCollectionInspector extends BasePhpInspection {
     private static final String strProblemDescription = "This call is on propel collection";
@@ -28,6 +32,9 @@ public class countOnCollectionInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethodReference(MethodReference reference) {
+
+                //PhpIndex.getInstance(holder.getProject()).getClassByName("Propel");
+
                 /** only count calls to check */
                 String strName = reference.getName();
                 if (
@@ -41,6 +48,9 @@ public class countOnCollectionInspector extends BasePhpInspection {
             }
 
             public void visitPhpFunctionCall(FunctionReference reference) {
+
+                //PhpIndex.getInstance(holder.getProject()).getClassByName("Propel");
+
                 /** only count calls with one parameter to check */
                 String strName = reference.getName();
                 PsiElement[] arrParameters = reference.getParameters();
@@ -74,20 +84,49 @@ public class countOnCollectionInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** should contain .count */
+                /** should contain .count even if counted with function */
                 if (null != strMethodSuffix) {
                     strSignature += strMethodSuffix;
                 }
 
+
+                Pattern pattern = Pattern.compile(".+\\\\([\\w]+)\\.(get\\w+s)\\.count$");
+                Matcher matcher = pattern.matcher(strSignature);
+
+                /** find FKs collections usages */
                 final boolean isCountOnCollectionViaFK =
                     strSignature.contains(".get") &&
-                    strSignature.matches(".+\\.get\\w+s\\.count$")
+                    matcher.matches()
                 ;
                 if (isCountOnCollectionViaFK) {
+                    /** lookup class and method definition */
+                    PhpClass objObjectClass = PhpIndex.getInstance(holder.getProject()).getClassByName(matcher.group(1));
+                    if (null == objObjectClass) {
+                        return;
+                    }
+
+                    String strMethodName = matcher.group(2);
+                    for (Method objMethod: objObjectClass.getMethods()) {
+                        if (!objMethod.getName().equals(strMethodName)) {
+                            continue;
+                        }
+
+                        /** ensure propel generated method */
+                        if (
+                            objMethod.getParameters().length != 2 ||
+                            !objMethod.getType().toString().contains("PropelObjectCollection")
+                        ) {
+                            return;
+                        }
+                    }
+
+                    /** finally we are sure */
                     holder.registerProblem(objExpression, "FK collection count", ProblemHighlightType.LIKE_DEPRECATED);
                     return;
                 }
 
+
+                /** find search result collections usages */
                 final boolean isCountOnResults =
                     strSignature.contains(".create.") &&
                     strSignature.matches(".+\\.create(\\.\\w+)*\\.find(By\\w+)?(\\.toArray)?\\.count$")

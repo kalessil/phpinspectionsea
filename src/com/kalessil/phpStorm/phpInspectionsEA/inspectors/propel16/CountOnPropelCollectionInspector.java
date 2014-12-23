@@ -39,13 +39,12 @@ public class CountOnPropelCollectionInspector extends BasePhpInspection {
             private boolean hasPropel = false;
             private boolean hasPropelChecked = false;
 
+            /**
+             * Entry point: methods calls
+             * @param reference to inspect
+             */
             public void visitPhpMethodReference(MethodReference reference) {
-                /** check if propel main class exists */
-                /** TODO: shall I care about composer file? */
-                if (!this.hasPropelChecked) {
-                    hasPropel = (PhpIndex.getInstance(holder.getProject()).getClassesByName("Propel").size() > 0);
-                }
-                if (!hasPropel) {
+                if (!this.isPropelDefined()) {
                     return;
                 }
 
@@ -58,13 +57,12 @@ public class CountOnPropelCollectionInspector extends BasePhpInspection {
                 this.inspectSignature(reference.getSignature(), reference, null);
             }
 
+            /**
+             * Entry point: functions calls
+             * @param reference
+             */
             public void visitPhpFunctionCall(FunctionReference reference) {
-                /** check if propel main class exists */
-                /** TODO: shall I care about composer file? */
-                if (!this.hasPropelChecked) {
-                    hasPropel = (PhpIndex.getInstance(holder.getProject()).getClassesByName("Propel").size() > 0);
-                }
-                if (!hasPropel) {
+                if (!this.isPropelDefined()) {
                     return;
                 }
 
@@ -87,6 +85,18 @@ public class CountOnPropelCollectionInspector extends BasePhpInspection {
                 if (objParameter instanceof Variable) {
                     this.inspectSignature(((Variable) objParameter).getSignature(), objParameter, ".count");
                 }
+            }
+
+            /**
+             * test if propel defined in project
+             */
+            private boolean isPropelDefined() {
+                if (!this.hasPropelChecked) {
+                    this.hasPropel = (PhpIndex.getInstance(holder.getProject()).getClassesByName("Propel").size() > 0);
+                    this.hasPropelChecked = true;
+                }
+
+                return this.hasPropel;
             }
 
             private void inspectSignature(String strSignature, PsiElement objExpression, String strMethodSuffix) {

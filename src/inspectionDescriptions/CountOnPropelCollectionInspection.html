@@ -1,0 +1,19 @@
+<html>
+<body>
+Detects cases when count operation executed on a PropelCollection.
+In general recommended logic is first to do count with query object and
+only then to query data from database and construct a collection:
+
+<pre>
+    $objEntitiesQuery = EntityQuery::create()
+        ->filterByAttribute('value');
+
+    $intCountEntities = $objEntitiesQuery->count();
+    if ($intCountEntities > 0) {
+        $objEntitiesCollection = $objEntitiesQuery->find();
+
+        /** operate on collection */
+    }
+</pre>
+</body>
+</html>

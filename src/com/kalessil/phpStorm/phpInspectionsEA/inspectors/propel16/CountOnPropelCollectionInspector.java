@@ -14,33 +14,44 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class countOnCollectionInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "This call is on propel collection";
+public class CountOnPropelCollectionInspector extends BasePhpInspection {
+    private static final String strProblemDescriptionFkCollection = "This type of count in some cases shall be replaced " +
+            "with constructing query object and operating on it (if collection is not used of course)";
+    private static final String strProblemDescriptionSearchCollection = "This type of count can be performed on query object";
+    private static final String strProblemDescriptionPropelCollection = "This type of count shall be checked manually, " +
+            "possibly collection is result of a query and count can be performed on that query";
 
     @NotNull
     public String getDisplayName() {
-        return "Semantics: count on propel collection";
+        return "Propel API: count on collections";
     }
 
     @NotNull
     public String getShortName() {
-        return "countOnCollectionInspection";
+        return "CountOnPropelCollectionInspection";
     }
 
     @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMethodReference(MethodReference reference) {
 
-                //PhpIndex.getInstance(holder.getProject()).getClassByName("Propel");
+            private boolean hasPropel = false;
+            private boolean hasPropelChecked = false;
+
+            public void visitPhpMethodReference(MethodReference reference) {
+                /** check if propel main class exists */
+                /** TODO: shall I care about composer file? */
+                if (!this.hasPropelChecked) {
+                    hasPropel = (PhpIndex.getInstance(holder.getProject()).getClassesByName("Propel").size() > 0);
+                }
+                if (!hasPropel) {
+                    return;
+                }
 
                 /** only count calls to check */
                 String strName = reference.getName();
-                if (
-                    null == strName ||
-                    !strName.equals("count")
-                ) {
+                if (null == strName || !strName.equals("count")) {
                     return;
                 }
 
@@ -48,17 +59,19 @@ public class countOnCollectionInspector extends BasePhpInspection {
             }
 
             public void visitPhpFunctionCall(FunctionReference reference) {
-
-                //PhpIndex.getInstance(holder.getProject()).getClassByName("Propel");
+                /** check if propel main class exists */
+                /** TODO: shall I care about composer file? */
+                if (!this.hasPropelChecked) {
+                    hasPropel = (PhpIndex.getInstance(holder.getProject()).getClassesByName("Propel").size() > 0);
+                }
+                if (!hasPropel) {
+                    return;
+                }
 
                 /** only count calls with one parameter to check */
                 String strName = reference.getName();
                 PsiElement[] arrParameters = reference.getParameters();
-                if (
-                    null == strName ||
-                    arrParameters.length != 1 ||
-                    !strName.equals("count")
-                ) {
+                if (null == strName || arrParameters.length != 1 || !strName.equals("count")) {
                     return;
                 }
 
@@ -77,13 +90,13 @@ public class countOnCollectionInspector extends BasePhpInspection {
             }
 
             private void inspectSignature(String strSignature, PsiElement objExpression, String strMethodSuffix) {
+                /** re-dispatch poly-variant signatures */
                 if (strSignature.contains("|")) {
                     for (String strOneSignature : strSignature.split("\\|")) {
                         this.inspectSignature(strOneSignature, objExpression, strMethodSuffix);
                     }
                     return;
                 }
-
                 /** should contain .count even if counted with function */
                 if (null != strMethodSuffix) {
                     strSignature += strMethodSuffix;
@@ -93,11 +106,8 @@ public class countOnCollectionInspector extends BasePhpInspection {
                 Pattern pattern = Pattern.compile(".+\\\\([\\w]+)\\.(get\\w+s)\\.count$");
                 Matcher matcher = pattern.matcher(strSignature);
 
-                /** find FKs collections usages */
-                final boolean isCountOnCollectionViaFK =
-                    strSignature.contains(".get") &&
-                    matcher.matches()
-                ;
+                /** 1st case: FKs collections usages */
+                final boolean isCountOnCollectionViaFK = (strSignature.contains(".get") && matcher.matches());
                 if (isCountOnCollectionViaFK) {
                     /** lookup class and method definition */
                     PhpClass objObjectClass = PhpIndex.getInstance(holder.getProject()).getClassByName(matcher.group(1));
@@ -106,38 +116,43 @@ public class countOnCollectionInspector extends BasePhpInspection {
                     }
 
                     String strMethodName = matcher.group(2);
+                    /** lookup method, but base classes can be not generated yet */
                     for (Method objMethod: objObjectClass.getMethods()) {
                         if (!objMethod.getName().equals(strMethodName)) {
                             continue;
                         }
 
                         /** ensure propel generated method */
-                        if (
-                            objMethod.getParameters().length != 2 ||
-                            !objMethod.getType().toString().contains("PropelObjectCollection")
-                        ) {
+                        if (objMethod.getParameters().length != 2 || !objMethod.getType().toString().contains("PropelObjectCollection")) {
                             return;
                         }
                     }
 
                     /** finally we are sure */
-                    holder.registerProblem(objExpression, "FK collection count", ProblemHighlightType.LIKE_DEPRECATED);
+                    holder.registerProblem(objExpression, strProblemDescriptionFkCollection, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
 
 
-                /** find search result collections usages */
+                /** 2nd case: found results collections usages */
                 final boolean isCountOnResults =
                     strSignature.contains(".create.") &&
                     strSignature.matches(".+\\.create(\\.\\w+)*\\.find(By\\w+)?(\\.toArray)?\\.count$")
                 ;
                 if (isCountOnResults) {
-                    holder.registerProblem(objExpression, "Found collection count", ProblemHighlightType.LIKE_DEPRECATED);
+                    holder.registerProblem(objExpression, strProblemDescriptionSearchCollection, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
 
-                //?: #M#C\PropelCollection.count - expand if possible for scope
-                //holder.registerProblem(objExpression, "?: " + strSignature, ProblemHighlightType.LIKE_DEPRECATED);
+
+                /** 3rd case - signature affected by types annotating */
+                final boolean isCountOnCollection =
+                    strSignature.contains("\\Propel") && strSignature.endsWith("Collection.count")
+                ;
+                if (isCountOnCollection) {
+                    holder.registerProblem(objExpression, strProblemDescriptionPropelCollection, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    return;
+                }
             }
         };
     }

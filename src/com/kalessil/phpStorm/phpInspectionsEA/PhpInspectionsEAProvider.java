@@ -25,6 +25,9 @@ IfConditionalsWithoutGroupStatementInspector
 
 Binary comparison operations: boolean vs expression returning boolean
 
+Migration to Reflection API (ReflectionClass):
+        constant, is_a, method_exists, is_subclass_of are from PHP 4 world
+        and not dealing with traits, annotations and so on
 */
 public class PhpInspectionsEAProvider implements InspectionToolProvider {
     @Override

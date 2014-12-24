@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 public class ForeachSourceInspector extends BasePhpInspection {
+    private static final String strAlreadyHandled = "\\already-handled";
+
     private static final String strProblemResolvingMixed = "Could not resolve this source type, specify possible types instead of mixed";
     private static final String strProblemResolvingArrayItemType = "Could not resolve this source type, array item type annotation needed";
     private static final String strProblemResolvingClassSlotType = "Could not resolve this source type, method or property type annotation needed";
@@ -47,23 +49,33 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     return;
                 }
 
+                boolean isExpressionInspected = false;
                 LinkedList<String> listSignatureTypes = new LinkedList<>();
                 if (objSource instanceof Variable) {
                     this.lookupType(((Variable) objSource).getSignature(), objSource, listSignatureTypes);
+                    isExpressionInspected = true;
                 }
                 if (objSource instanceof FieldReference) {
                     this.lookupType(((FieldReference) objSource).getSignature(), objSource, listSignatureTypes);
+                    isExpressionInspected = true;
                 }
                 if (objSource instanceof MethodReference) {
                     this.lookupType(((MethodReference) objSource).getSignature(), objSource, listSignatureTypes);
+                    isExpressionInspected = true;
                 }
                 if (objSource instanceof FunctionReference && !(objSource instanceof MethodReference)) {
                     this.lookupType(((FunctionReference) objSource).getSignature(), objSource, listSignatureTypes);
+                    isExpressionInspected = true;
+                }
+
+                if (!isExpressionInspected) {
+                    /** TODO: check why, log warning */
+                    return;
                 }
 
                 this.analyseTypesProvided(objSource, listSignatureTypes);
-
                 final boolean isProcessed = this.analyseTypesProvided(objSource, listSignatureTypes);
+
                 if (!isProcessed) {
                     /** debug warnings */
                     String strTypes = "";
@@ -99,6 +111,10 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         holder.registerProblem(objTargetExpression, strProblemResolvingMixed, ProblemHighlightType.WEAK_WARNING);
                         return true;
                     }
+
+                    if (strType.equals("\\class-not-resolved") || strType .equals(strAlreadyHandled)) {
+                        return true;
+                    }
                 }
 
                 /** poly - variant analysis here*/
@@ -120,16 +136,19 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 /** === early returns=== **/
                 /** skip looking up into variable assignment / function */
                 if (strSignature.startsWith("#V") || strSignature.startsWith("#F")) {
-                    /** TODO: lookup assignments for types extraction, pipe check */
+                    /** TODO: lookup assignments for types extraction, un-mark as handled */
+                    listSignatureTypes.add(strAlreadyHandled);
                     return;
                 }
                 /** problem referenced to arguments */
                 if (strSignature.startsWith("#A")) {
+                    listSignatureTypes.add(strAlreadyHandled);
                     holder.registerProblem(objTargetExpression, strProblemResolvingParameterType, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
                 /** problem referenced to array item */
                 if (strSignature.startsWith("#E")) {
+                    listSignatureTypes.add(strAlreadyHandled);
                     holder.registerProblem(objTargetExpression, strProblemResolvingArrayItemType, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
@@ -141,6 +160,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 }
                 /** problem referenced to calls resolving */
                 if (strSignature.contains("?")) {
+                    listSignatureTypes.add(strAlreadyHandled);
                     holder.registerProblem(objTargetExpression, strProblemResolvingClassSlotType, ProblemHighlightType.ERROR);
                     return;
                 }
@@ -155,13 +175,14 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     String[] arrParts = strSignature.split("#C");
                     if (arrParts.length != 2) {
                         /** lookup failed - eg not recognizable behind reflection */
+                        listSignatureTypes.add(strAlreadyHandled);
                         holder.registerProblem(objTargetExpression, strProblemResolvingClassSlot, ProblemHighlightType.ERROR);
                         return;
                     }
                     arrParts = arrParts[1].split("\\.");
                     if (arrParts.length != 2) {
-                        /** TODO: resolve chain type */
-                        //holder.registerProblem(objTargetExpression, "2+ call chain: " + strSignature, ProblemHighlightType.ERROR);
+                        /** TODO: resolve chain type, un-mark as handled */
+                        listSignatureTypes.add(strAlreadyHandled);
                         return;
                     }
 
@@ -189,6 +210,8 @@ public class ForeachSourceInspector extends BasePhpInspection {
                                 }
                             }
                         }
+                    } else {
+                        listSignatureTypes.add("\\class-not-resolved");
                     }
 
                     this.lookupType(strAllTypes, objTargetExpression, listSignatureTypes);

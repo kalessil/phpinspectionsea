@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.PhpClassHierarchyUtils;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -18,6 +19,9 @@ import java.util.LinkedList;
 public class ForeachSourceInspector extends BasePhpInspection {
     private static final String strAlreadyHandled = "\\already-handled";
 
+    private static final String strProblemResolvingDeclaration = "Could not resolve this source type, inspire of " +
+            "declaration. Following is nor resolved: ";
+    private static final String strProblemResolvingIsEmpty = "Could not resolve this source type, ensure it's type annotated at all";
     private static final String strProblemResolvingMixed = "Could not resolve this source type, specify possible types instead of mixed";
     private static final String strProblemResolvingArrayItemType = "Could not resolve this source type, array item type annotation needed";
     private static final String strProblemResolvingClassSlotType = "Could not resolve this source type, method or property type annotation needed";
@@ -72,55 +76,93 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     /** TODO: check why, log warning */
                     return;
                 }
+                if (listSignatureTypes.size() == 0) {
+                    /** resolving failed at all */
+                    holder.registerProblem(objSource, strProblemResolvingIsEmpty, ProblemHighlightType.ERROR);
+                    return;
+                }
 
                 this.analyseTypesProvided(objSource, listSignatureTypes);
-                final boolean isProcessed = this.analyseTypesProvided(objSource, listSignatureTypes);
-
-                if (!isProcessed) {
-                    /** debug warnings */
-                    String strTypes = "";
-                    String strGlue = "";
-                    for (String strType : listSignatureTypes) {
-                        strTypes += strGlue + strType;
-                        strGlue = "|";
-                    }
-
-                    holder.registerProblem(objSource, "types extracted: " + strTypes, ProblemHighlightType.WEAK_WARNING);
-                }
                 listSignatureTypes.clear();
             }
 
 
-            private boolean analyseTypesProvided(PsiElement objTargetExpression, LinkedList<String> listSignatureTypes) {
-                if (listSignatureTypes.size() == 0) {
-                    return false;
-                }
-
-                if (listSignatureTypes.size() == 1) {
-                    String strType = listSignatureTypes.get(0);
-                    if (strType.equals("\\array")) {
-                        return true;
+            /**
+             * Will check semantics for resolved types information
+             *
+             * @param objTargetExpression
+             * @param listSignatureTypes
+             */
+            private void analyseTypesProvided(PsiElement objTargetExpression, LinkedList<String> listSignatureTypes) {
+                for (String strType : listSignatureTypes) {
+                    if (
+                        strType.equals("\\array") ||
+                        strType.equals("\\string") ||
+                        strType.endsWith("[]") ||
+                        strType.equals("\\Traversable")
+                    ) {
+                        continue;
                     }
 
-                    if (strType.equals("\\string") || strType.equals("\\null") || strType.equals("\\bool")) {
-                        holder.registerProblem(objTargetExpression, strProblemDescription + strType, ProblemHighlightType.ERROR);
-                        return true;
-                    }
-
-                    if (strType.equals("\\mixed")) {
-                        holder.registerProblem(objTargetExpression, strProblemResolvingMixed, ProblemHighlightType.WEAK_WARNING);
-                        return true;
-                    }
 
                     if (strType.equals("\\class-not-resolved") || strType .equals(strAlreadyHandled)) {
-                        return true;
+                        continue;
+                    }
+
+
+                    if (strType.equals("\\mixed")) {
+                        if (listSignatureTypes.size() > 1) {
+                            holder.registerProblem(objTargetExpression, strProblemResolvingMixed, ProblemHighlightType.WEAK_WARNING);
+                            return;
+                        }
+                    }
+
+
+                    if (
+                        strType.equals("\\null") ||
+                        strType.equals("\\bool")
+                    ) {
+                        if (listSignatureTypes.size() == 1) {
+                            holder.registerProblem(objTargetExpression, strProblemDescription + strType, ProblemHighlightType.ERROR);
+                        } else {
+                            holder.registerProblem(objTargetExpression, strProblemDescription + strType + " possibly not handled", ProblemHighlightType.WEAK_WARNING);
+                        }
+                        return;
+                    }
+
+
+                    /** lookup class and check \Traversable support */
+                    Collection<PhpClass> objClasses = PhpIndex.getInstance(holder.getProject()).getClassesByName(strType);
+                    if (objClasses.size() == 0) {
+                        objClasses = PhpIndex.getInstance(holder.getProject()).getClassesByFQN(strType);
+                    }
+
+                    if (objClasses.size() > 0) {
+                        PhpClass objTraversable = PhpIndex.getInstance(holder.getProject()).getClassByName("\\Traversable");
+
+                        for (PhpClass objClass : objClasses) {
+                            if (PhpClassHierarchyUtils.isSuperClass(objTraversable, objClass, true)) {
+                                continue;
+                            }
+                        }
+
+                        holder.registerProblem(objTargetExpression, strProblemDescription + strType, ProblemHighlightType.ERROR);
+                        return;
+                    } else {
+                        holder.registerProblem(objTargetExpression, strProblemResolvingDeclaration + strType, ProblemHighlightType.ERROR);
+                        return;
                     }
                 }
-
-                /** poly - variant analysis here*/
-                return false;
             }
 
+            /**
+             * Will get back types information out of signature and put stubs where further lookup
+             * is not possible/implemented yet
+             *
+             * @param strSignature
+             * @param objTargetExpression
+             * @param listSignatureTypes
+             */
             private void lookupType (String strSignature, PsiElement objTargetExpression, LinkedList<String> listSignatureTypes) {
                 /** re-dispatch or terminate lookup */
                 if (null == strSignature || strSignature.equals("")) {
@@ -191,6 +233,9 @@ public class ForeachSourceInspector extends BasePhpInspection {
 
                     String strAllTypes = "";
                     Collection<PhpClass> objClasses = PhpIndex.getInstance(holder.getProject()).getClassesByName(strClassName);
+                    if (objClasses.size() == 0) {
+                        objClasses = PhpIndex.getInstance(holder.getProject()).getClassesByFQN(strClassName);
+                    }
                     /** resolve the slot in known classes */
                     if (objClasses.size() > 0) {
                         for (PhpClass objClass : objClasses) {
@@ -218,8 +263,12 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** TODO: remove error logging */
-                holder.registerProblem(objTargetExpression, "not handled: " + strSignature, ProblemHighlightType.ERROR);
+
+                /** here passing by types which does not need further handling - they simple ones already */
+                if (!strSignature.startsWith("\\")) {
+                    strSignature = "\\" + strSignature;
+                }
+                listSignatureTypes.add(strSignature);
             }
         };
     }

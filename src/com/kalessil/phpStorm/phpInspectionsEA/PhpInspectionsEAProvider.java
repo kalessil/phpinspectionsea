@@ -49,6 +49,8 @@ quick win:
 
 --- lower interest ---
 
+A extends B,C, B extends C - interface contracts or lack of structure?
+
 Binary comparison operations: boolean vs expression returning boolean
 
 Migration to Reflection API (ReflectionClass):

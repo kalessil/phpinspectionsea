@@ -115,6 +115,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                             holder.registerProblem(objTargetExpression, strProblemResolvingMixed, ProblemHighlightType.WEAK_WARNING);
                             return;
                         }
+                        continue;
                     }
 
 

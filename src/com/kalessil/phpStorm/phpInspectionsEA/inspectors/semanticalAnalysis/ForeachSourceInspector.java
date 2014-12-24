@@ -121,7 +121,8 @@ public class ForeachSourceInspector extends BasePhpInspection {
 
                     if (
                         strType.equals("\\null") ||
-                        strType.equals("\\bool")
+                        strType.equals("\\bool") ||
+                        strType.equals("\\void")
                     ) {
                         if (listSignatureTypes.size() == 1) {
                             holder.registerProblem(objTargetExpression, strProblemDescription + strType, ProblemHighlightType.ERROR);

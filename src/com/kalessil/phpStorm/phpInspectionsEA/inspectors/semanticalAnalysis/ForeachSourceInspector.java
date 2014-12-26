@@ -194,8 +194,9 @@ public class ForeachSourceInspector extends BasePhpInspection {
 
                 /** === early returns=== **/
                 /** skip looking up into variable assignment / function */
-                if (strSignature.startsWith("#V") || strSignature.startsWith("#F")) {
+                if (strSignature.startsWith("#V") || strSignature.startsWith("#F") || strSignature.contains("?")) {
                     /** TODO: lookup assignments for types extraction, un-mark as handled */
+                    //? => holder.registerProblem(objTargetExpression, strProblemResolvingClassSlotType, ProblemHighlightType.ERROR);
                     listSignatureTypes.add(strAlreadyHandled);
                     return;
                 }
@@ -215,12 +216,6 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 if (strSignature.startsWith("#C")) {
                     String strTypeExtracted = strSignature.replace("#C", "");
                     listSignatureTypes.add(strTypeExtracted);
-                    return;
-                }
-                /** problem referenced to calls resolving */
-                if (strSignature.contains("?")) {
-                    listSignatureTypes.add(strAlreadyHandled);
-                    holder.registerProblem(objTargetExpression, strProblemResolvingClassSlotType, ProblemHighlightType.ERROR);
                     return;
                 }
 

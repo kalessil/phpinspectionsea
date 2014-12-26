@@ -15,7 +15,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class ForeachSourceInspector extends BasePhpInspection {
+    private static PhpClass objTraversable = null;
     private static final String strAlreadyHandled = "\\already-handled";
+    private static final String strClassNotResolved= "\\class-not-resolved";
 
     private static final String strProblemResolvingDeclaration = "Could not resolve this source type, inspire of " +
             "declaration. Following is nor resolved: ";
@@ -111,13 +113,13 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     }
 
 
-                    if (strType.equals("\\class-not-resolved") || strType .equals(strAlreadyHandled)) {
+                    if (strType.equals(strClassNotResolved) || strType .equals(strAlreadyHandled)) {
                         continue;
                     }
 
 
                     if (strType.equals("\\mixed")) {
-                        if (listSignatureTypes.size() > 1) {
+                        if (listSignatureTypes.size() == 1) {
                             holder.registerProblem(objTargetExpression, strProblemResolvingMixed, ProblemHighlightType.WEAK_WARNING);
                             return;
                         }
@@ -146,7 +148,9 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     }
 
                     if (objClasses.size() > 0) {
-                        PhpClass objTraversable = PhpIndex.getInstance(holder.getProject()).getClassByName("\\Traversable");
+                        if (null == objTraversable) {
+                            objTraversable = PhpIndex.getInstance(holder.getProject()).getClassByName("\\Traversable");
+                        }
 
                         for (PhpClass objClass : objClasses) {
                             if (PhpClassHierarchyUtils.isSuperClass(objTraversable, objClass, true)) {
@@ -245,9 +249,9 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         /** break on poly-variants and missing classes */
                         if (
                             (intLeftItemsToProcess > 0 && strResolvedType.contains("|")) ||
-                            strResolvedType.equals("\\class-not-resolved")
+                            strResolvedType.equals(strClassNotResolved)
                         ) {
-                            strResolvedType = "\\class-not-resolved";
+                            strResolvedType = strClassNotResolved;
                             break;
                         }
                     }
@@ -279,11 +283,17 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     LinkedList<String> listTypes = new LinkedList<>();
 
                     for (PhpClass objClass : objClasses) {
+                        boolean isSlotFound = false;
+
                         for (Method objMethod : objClass.getMethods()) {
                             if (objMethod.getName().equals(strChain)) {
                                 listTypes.add(objMethod.getType().toString());
+                                isSlotFound = true;
                                 break;
                             }
+                        }
+                        if (isSlotFound) {
+                            continue;
                         }
 
                         for (Field objField : objClass.getFields()) {
@@ -300,7 +310,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     }
 
                     /** resolved in several classes - who knows why classes duplicated */
-                    List<String> listUniqueSignatures = new ArrayList<String>(new HashSet<String>(listTypes));
+                    List<String> listUniqueSignatures = new ArrayList<>(new HashSet<>(listTypes));
                     listTypes.clear();
 
                     String strSeparator = "";
@@ -314,7 +324,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     return strAllTypes;
                 }
 
-                return "\\class-not-resolved";
+                return strClassNotResolved;
             }
         };
     }

@@ -154,14 +154,19 @@ public class ForeachSourceInspector extends BasePhpInspection {
 
                         for (PhpClass objClass : objClasses) {
                             if (PhpClassHierarchyUtils.isSuperClass(objTraversable, objClass, true)) {
-                                continue;
+                                objClasses.clear();
+                                return;
                             }
                         }
 
                         holder.registerProblem(objTargetExpression, strProblemDescription + strType, ProblemHighlightType.ERROR);
+
+                        objClasses.clear();
                         return;
                     } else {
                         holder.registerProblem(objTargetExpression, strProblemResolvingDeclaration + strType, ProblemHighlightType.ERROR);
+
+                        objClasses.clear();
                         return;
                     }
                 }

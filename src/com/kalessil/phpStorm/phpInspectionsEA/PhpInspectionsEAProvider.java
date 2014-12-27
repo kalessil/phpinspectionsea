@@ -27,27 +27,10 @@ NotOptimalIfConditions
 IfConditionalsWithoutGroupStatementInspector
     - empty if/else/elseif body
 
-
-First 2 signature characters are type
-#P - property
-#C - core types
-#F - function
-#M - method
-#V - value
-
 ===Cases of interest===
 
-Foreach source verification (
-        variable (signature	#Fstr_split (lookup function), #C\array (ok), #Vtokens (lookup assigned value)),
-        field reference (signature #P#C\Swift.inits (lookup property)),
-        method reference (signature #M#C\Swift_Mime_Message.getTo (lookup member), #C\integer[] (ok), #C\string[] (ok))),
-        function call (signature #Fstr_split (lookup function)),
-        array access => variable/field reference
-quick win:
-        field reference, method reference, function reference
-        => null|boolean|string|array|int|...[]
 
---- lower interest ---
+Chain calls, where one of cell can return not an object, producing php fatal
 
 A extends B,C, B extends C - interface contracts or lack of structure?
 

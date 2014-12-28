@@ -10,11 +10,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class IfConditionalsWithoutGroupStatementInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Wrap the conditional body with curvy brackets";
+    private static final String strProblemMissingBrackets = "Wrap the conditional body with curvy brackets";
+    private static final String strProblemEmptyBody = "Empty group statement";
 
     @NotNull
     public String getDisplayName() {
-        return "API: if/else/elseif curvy brackets";
+        return "API: if/else/elseif group statement";
     }
 
     @NotNull
@@ -41,10 +42,14 @@ public class IfConditionalsWithoutGroupStatementInspector extends BasePhpInspect
             private void checkBrackets(PhpPsiElement objConditional) {
                 GroupStatement objGroupStatement = ExpressionSemanticUtil.getGroupStatement(objConditional);
                 if (null != objGroupStatement) {
+                    if (ExpressionSemanticUtil.countExpressionsInGroup(objGroupStatement) == 0) {
+                        holder.registerProblem(objConditional.getFirstChild(), strProblemEmptyBody, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    }
+
                     return;
                 }
 
-                holder.registerProblem(objConditional.getFirstChild(), strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(objConditional.getFirstChild(), strProblemMissingBrackets, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

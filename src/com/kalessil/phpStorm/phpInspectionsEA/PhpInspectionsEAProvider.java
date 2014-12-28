@@ -24,15 +24,11 @@ NotOptimalIfConditions
                 - stick to binary operations as well for order lookup
         - try resolving binary operations with constants and lookup types of both arguments
 
-IfConditionalsWithoutGroupStatementInspector
-    - empty if/else/elseif body
-
 ===Cases of interest===
-
 
 Chain calls, where one of cell can return not an object, producing php fatal
 
-A extends B,C, B extends C - interface contracts or lack of structure?
+A extends B,C, B extends C - interface contracts or lack of structure knowledge?
 
 Binary comparison operations: boolean vs expression returning boolean
 

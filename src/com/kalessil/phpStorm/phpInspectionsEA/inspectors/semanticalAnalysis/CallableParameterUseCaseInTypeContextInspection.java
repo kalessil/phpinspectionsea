@@ -48,7 +48,12 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                 for (Parameter objParameter : arrParameters) {
                     String strParameterName = objParameter.getName();
                     String strParameterType = objParameter.getType().toString();
-                    if (StringUtil.isEmpty(strParameterName) || StringUtil.isEmpty(strParameterType)) {
+                    if (
+                        StringUtil.isEmpty(strParameterName) ||
+                        StringUtil.isEmpty(strParameterType) ||
+                        strParameterType.contains("mixed") ||   /** fair enough */
+                        strParameterType.contains("#")          /** TODO: types lookup */
+                    ) {
                         continue;
                     }
 
@@ -118,7 +123,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             }
                         }
 
-                        /* TODO: can be analysed comparison operations, assignments */
+                        /* TODO: can be analysed comparison operations, assignments, instanceof */
                     }
                 }
             }

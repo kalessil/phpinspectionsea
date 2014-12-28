@@ -37,18 +37,11 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             /** re-dispatch to inspector */
             public void visitPhpMethod(Method method) {
-                this.inspectCallable(method);
+                this.getUnusedParameters(method.getParameters(), method);
             }
 
             public void visitPhpFunction(Function function) {
-                this.inspectCallable(function);
-            }
-
-            /**
-             * @param callable to inspect
-             */
-            private void inspectCallable(Function callable) {
-                this.getUnusedParameters(callable.getParameters(), callable);
+                this.getUnusedParameters(function.getParameters(), function);
             }
 
             private void getUnusedParameters(Parameter[] arrParameters, PhpScopeHolder objScopeHolder) {

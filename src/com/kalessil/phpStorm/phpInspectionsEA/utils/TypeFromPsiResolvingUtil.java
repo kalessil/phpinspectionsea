@@ -68,7 +68,15 @@ public class TypeFromPsiResolvingUtil {
 
 
         if (objExpression instanceof Variable) {
-            /** TODO: pre-defined variables */
+            String strVariableName = ((Variable) objExpression).getName();
+            if (null != strVariableName && strVariableName.startsWith("_")) {
+                if ("|_GET|_POST|_SESSION|_REQUEST|_FILES|_COOKIE|_ENV|_SERVER|".contains("|" + strVariableName + "|")) {
+                    storeAsTypeWithSignaturesImport(Types.strArray, objIndex, objTypesCollection);
+                    return;
+                }
+
+            }
+
             storeAsTypeWithSignaturesImport(((Variable) objExpression).getSignature(), objIndex, objTypesCollection);
             return;
         }
@@ -160,7 +168,7 @@ public class TypeFromPsiResolvingUtil {
 
         IElementType objType = objOperation.getNode().getElementType();
         if (PhpTokenTypes.CAST_OPERATORS.contains(objType)) {
-            // TODO: add this opOBJECT_CAST, opUNSET_CAST, opBINARY_CAST
+            //opOBJECT_CAST, opUNSET_CAST, opBINARY_CAST are out of interest
             if (objType == PhpTokenTypes.opINTEGER_CAST) {
                 objTypesCollection.add(Types.strInteger);
             } else if (objType == PhpTokenTypes.opARRAY_CAST) {

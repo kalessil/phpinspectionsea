@@ -3,12 +3,17 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpEmpty;
 import com.jetbrains.php.lang.psi.elements.PhpExpression;
 import com.jetbrains.php.lang.psi.elements.Variable;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.LinkedList;
 
 public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     private static final String strProblemDescriptionDoNotUse =
@@ -33,18 +38,16 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpEmpty(PhpEmpty emptyExpression) {
-                /**
-                 * TODO - dedicate types resolver, for using here.
-                 * TODO - review before re-publishing
-                 */
                 PhpExpression[] arrValues = emptyExpression.getVariables();
-                if (
-                    arrValues.length == 1 &&
-                    arrValues[0] instanceof Variable &&
-                    ((Variable) arrValues[0]).getSignature().equals("#C\\array")
-                ) {
-                    holder.registerProblem(emptyExpression, strProblemDescriptionUseCount, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                    return;
+                if (arrValues.length == 1) {
+                    PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
+                    LinkedList<String> objResolvedTypes = new LinkedList<>();
+                    TypeFromPsiResolvingUtil.resolveExpressionType(arrValues[0], objIndex, objResolvedTypes);
+
+                    if (objResolvedTypes.size() == 1 && objResolvedTypes.get(0).equals(Types.strArray)) {
+                        holder.registerProblem(emptyExpression, strProblemDescriptionUseCount, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        return;
+                    }
                 }
 
                 holder.registerProblem(emptyExpression, strProblemDescriptionDoNotUse, ProblemHighlightType.WEAK_WARNING);

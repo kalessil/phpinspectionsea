@@ -52,6 +52,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
              */
             private void inspectUsages(Parameter[] arrParameters, PhpScopeHolder objScopeHolder) {
                 PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
+                PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
 
                 for (Parameter objParameter : arrParameters) {
                     String strParameterName = objParameter.getName();
@@ -68,8 +69,6 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     /** too lazy to do anything more elegant */
                     strParameterType = strParameterType.replace("callable", "array|string");
 
-
-                    PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
                     PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, strParameterName, false);
                     if (arrUsages.length == 0) {
                         continue;
@@ -157,7 +156,10 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                                 boolean isCallViolatesDefinition;
                                 for (String strType : objTypesResolved) {
-                                    if (strType.equals(Types.strResolvingAbortedOnPsiLevel)) {
+                                    if (
+                                        strType.equals(Types.strResolvingAbortedOnPsiLevel) ||
+                                        strType.equals(Types.strMixed)
+                                    ) {
                                         continue;
                                     }
 

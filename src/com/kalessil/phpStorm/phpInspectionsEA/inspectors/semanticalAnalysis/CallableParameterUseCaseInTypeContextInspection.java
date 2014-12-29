@@ -50,11 +50,6 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
              * @param objScopeHolder
              */
             private void inspectUsages(Parameter[] arrParameters, PhpScopeHolder objScopeHolder) {
-                if (isOnTheFly) {
-                    /** takes some time and will take even more with signatures analysis */
-                    return;
-                }
-
                 for (Parameter objParameter : arrParameters) {
                     String strParameterName = objParameter.getName();
                     String strParameterType = objParameter.getType().toString();

@@ -3,23 +3,29 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 
 import java.util.LinkedList;
 
-public class TypeResolvingUtil {
+public class TypeFromPsiResolvingUtil {
     /** adds type, handling | and #, invoking signatures resolving */
-    private static void storeType(String strType, LinkedList<String> objTypesCollection) {
+    private static void storeAsTypeWithSignaturesImport(String strType, PhpIndex objIndex, LinkedList<String> objTypesCollection) {
         if (strType.contains("|")) {
             for (String strOneType : strType.split("\\|")) {
-                storeType(Types.getType(strOneType), objTypesCollection);
+                storeAsTypeWithSignaturesImport(Types.getType(strOneType), objIndex, objTypesCollection);
             }
             return;
         }
 
-        if (StringUtil.isEmpty(strType) || strType.contains("#") || strType.contains("?")) {
+        if (StringUtil.isEmpty(strType) || strType.equals("?")) {
+            return;
+        }
+
+        if (strType.contains("#")) {
+            TypeFromSignatureResolvingUtil.resolveSignature(strType, objIndex, objTypesCollection);
             return;
         }
 
@@ -27,7 +33,7 @@ public class TypeResolvingUtil {
     }
 
     /** high-level resolving logic */
-    public static void resolveExpressionType(PsiElement objExpression, LinkedList<String> objTypesCollection) {
+    public static void resolveExpressionType(PsiElement objExpression, PhpIndex objIndex, LinkedList<String> objTypesCollection) {
         objExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(objExpression);
 
         if (objExpression instanceof ArrayCreationExpression) {
@@ -38,55 +44,64 @@ public class TypeResolvingUtil {
             objTypesCollection.add(Types.strString);
             return;
         }
-
         if (objExpression instanceof ConstantReference) {
-            TypeResolvingUtil.resolveConstantReference((ConstantReference) objExpression, objTypesCollection);
-            return;
-        }
-        if (objExpression instanceof NewExpression) {
-            TypeResolvingUtil.resolveNewExpression((NewExpression) objExpression, objTypesCollection);
+            resolveConstantReference((ConstantReference) objExpression, objIndex, objTypesCollection);
             return;
         }
 
         if (objExpression instanceof TernaryExpression) {
-            TypeResolvingUtil.resolveTernaryOperator((TernaryExpression) objExpression, objTypesCollection);
+            resolveTernaryOperator((TernaryExpression) objExpression, objIndex, objTypesCollection);
             return;
         }
         if (objExpression instanceof UnaryExpression) {
-            TypeResolvingUtil.resolveUnaryExpression((UnaryExpression) objExpression, objTypesCollection);
+            resolveUnaryExpression((UnaryExpression) objExpression, objIndex, objTypesCollection);
             return;
         }
         if (objExpression instanceof BinaryExpression) {
-            TypeResolvingUtil.resolveBinaryExpression((BinaryExpression) objExpression, objTypesCollection);
+            resolveBinaryExpression((BinaryExpression) objExpression, objIndex, objTypesCollection);
             return;
         }
         if (objExpression instanceof SelfAssignmentExpression) {
-            TypeResolvingUtil.resolveSelfAssignmentExpression((SelfAssignmentExpression) objExpression, objTypesCollection);
+            resolveSelfAssignmentExpression((SelfAssignmentExpression) objExpression, objIndex, objTypesCollection);
             return;
         }
 
-        /** TODO: implement - start */
+
         if (objExpression instanceof Variable) {
-            return;
-        }
-        if (
-            objExpression instanceof MethodReference ||
-            objExpression instanceof FieldReference ||
-            objExpression instanceof ClassConstantReference
-        ) {
-            return;
-        }
-        if (objExpression instanceof FunctionReference) {
+            /** TODO: pre-defined variables */
+            storeAsTypeWithSignaturesImport(((Variable) objExpression).getSignature(), objIndex, objTypesCollection);
             return;
         }
         if (objExpression instanceof ArrayAccessExpression) {
+            storeAsTypeWithSignaturesImport(((ArrayAccessExpression) objExpression).getType().toString(), objIndex, objTypesCollection);
             return;
         }
-        /** TODO: end */
+
+
+        if (objExpression instanceof NewExpression) {
+            resolveNewExpression((NewExpression) objExpression, objTypesCollection);
+            return;
+        }
+        if (objExpression instanceof ClassConstantReference) {
+            storeAsTypeWithSignaturesImport(((ClassConstantReference) objExpression).getSignature(), objIndex, objTypesCollection);
+            return;
+        }
+        if (objExpression instanceof FieldReference) {
+            storeAsTypeWithSignaturesImport(((FieldReference) objExpression).getSignature(), objIndex, objTypesCollection);
+            return;
+        }
+        if (objExpression instanceof MethodReference) {
+            storeAsTypeWithSignaturesImport(((MethodReference) objExpression).getSignature(), objIndex, objTypesCollection);
+            return;
+        }
+        if (objExpression instanceof FunctionReference) {
+            storeAsTypeWithSignaturesImport(((FunctionReference) objExpression).getSignature(), objIndex, objTypesCollection);
+            return;
+        }
 
 
         if (objExpression instanceof PhpExpression) {
-            TypeResolvingUtil.resolvePhpExpression((PhpExpression) objExpression, objTypesCollection);
+            resolvePhpExpression((PhpExpression) objExpression, objIndex, objTypesCollection);
             return;
         }
 
@@ -95,23 +110,15 @@ public class TypeResolvingUtil {
     }
 
     /** resolve numbers and exotic structures, eg list() = .... */
-    private static void resolvePhpExpression(PhpExpression objExpression, LinkedList<String> objTypesCollection) {
+    private static void resolvePhpExpression(PhpExpression objExpression, PhpIndex objIndex, LinkedList<String> objTypesCollection) {
         String strType = objExpression.getType().toString();
-        if (StringUtil.isEmpty(strType)) {
-            return;
-        }
-
-        storeType(strType, objTypesCollection);
+        storeAsTypeWithSignaturesImport(strType, objIndex, objTypesCollection);
     }
 
     /** Will resolve self-assignments */
-    private static void resolveSelfAssignmentExpression(SelfAssignmentExpression objExpression, LinkedList<String> objTypesCollection) {
+    private static void resolveSelfAssignmentExpression(SelfAssignmentExpression objExpression, PhpIndex objIndex, LinkedList<String> objTypesCollection) {
         String strType = objExpression.getType().toString();
-        if (StringUtil.isEmpty(strType)) {
-            return;
-        }
-
-        storeType(strType, objTypesCollection);
+        storeAsTypeWithSignaturesImport(strType, objIndex, objTypesCollection);
     }
 
     /** Will resolve type of new expression */
@@ -126,7 +133,7 @@ public class TypeResolvingUtil {
     }
 
     /** resolve some of binary expressions . | && | || */
-    private static void resolveBinaryExpression (BinaryExpression objExpression, LinkedList<String> objTypesCollection) {
+    private static void resolveBinaryExpression (BinaryExpression objExpression, PhpIndex objIndex, LinkedList<String> objTypesCollection) {
         PsiElement objOperation = objExpression.getOperation();
         if (null == objOperation) {
             return;
@@ -141,11 +148,11 @@ public class TypeResolvingUtil {
             return;
         }
 
-        storeType(objExpression.getType().toString(), objTypesCollection);
+        storeAsTypeWithSignaturesImport(objExpression.getType().toString(), objIndex, objTypesCollection);
     }
 
     /** Resolve type casting expressions */
-    private static void resolveUnaryExpression (UnaryExpression objExpression, LinkedList<String> objTypesCollection) {
+    private static void resolveUnaryExpression (UnaryExpression objExpression, PhpIndex objIndex, LinkedList<String> objTypesCollection) {
         PsiElement objOperation = objExpression.getOperation();
         if (null == objOperation) {
             return;
@@ -169,11 +176,11 @@ public class TypeResolvingUtil {
             return;
         }
 
-        storeType(objExpression.getType().toString(), objTypesCollection);
+        storeAsTypeWithSignaturesImport(objExpression.getType().toString(), objIndex, objTypesCollection);
     }
 
     /** Will resolve constants references */
-    private static void resolveConstantReference (ConstantReference objExpression, LinkedList<String> objTypesCollection) {
+    private static void resolveConstantReference (ConstantReference objExpression, PhpIndex objIndex, LinkedList<String> objTypesCollection) {
         if (ExpressionSemanticUtil.isBoolean(objExpression)) {
             objTypesCollection.add(Types.strBoolean);
             return;
@@ -184,17 +191,17 @@ public class TypeResolvingUtil {
             return;
         }
 
-        storeType(objExpression.getType().toString(), objTypesCollection);
+        storeAsTypeWithSignaturesImport(objExpression.getType().toString(), objIndex, objTypesCollection);
     }
 
     /** Will resolve ternary operator */
-    private static void resolveTernaryOperator (TernaryExpression objExpression, LinkedList<String> objTypesCollection) {
+    private static void resolveTernaryOperator (TernaryExpression objExpression, PhpIndex objIndex, LinkedList<String> objTypesCollection) {
         if (null != objExpression.getTrueVariant()) {
-            TypeResolvingUtil.resolveExpressionType(objExpression.getTrueVariant(), objTypesCollection);
+            resolveExpressionType(objExpression.getTrueVariant(), objIndex, objTypesCollection);
         }
 
         if (null != objExpression.getFalseVariant()) {
-            TypeResolvingUtil.resolveExpressionType(objExpression.getFalseVariant(), objTypesCollection);
+            resolveExpressionType(objExpression.getFalseVariant(), objIndex, objTypesCollection);
         }
     }
 }

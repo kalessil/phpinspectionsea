@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromSignatureResolvingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -60,22 +61,24 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     return;
                 }
 
+                PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
+
                 boolean isExpressionInspected = false;
                 LinkedList<String> listSignatureTypes = new LinkedList<>();
                 if (objSource instanceof Variable) {
-                    this.lookupType(((Variable) objSource).getSignature(), objSource, listSignatureTypes);
+                    this.lookupType(((Variable) objSource).getSignature(), objSource, listSignatureTypes, objIndex);
                     isExpressionInspected = true;
                 }
                 if (objSource instanceof FieldReference) {
-                    this.lookupType(((FieldReference) objSource).getSignature(), objSource, listSignatureTypes);
+                    this.lookupType(((FieldReference) objSource).getSignature(), objSource, listSignatureTypes, objIndex);
                     isExpressionInspected = true;
                 }
                 if (objSource instanceof MethodReference) {
-                    this.lookupType(((MethodReference) objSource).getSignature(), objSource, listSignatureTypes);
+                    this.lookupType(((MethodReference) objSource).getSignature(), objSource, listSignatureTypes, objIndex);
                     isExpressionInspected = true;
                 }
                 if (objSource instanceof FunctionReference && !(objSource instanceof MethodReference)) {
-                    this.lookupType(((FunctionReference) objSource).getSignature(), objSource, listSignatureTypes);
+                    this.lookupType(((FunctionReference) objSource).getSignature(), objSource, listSignatureTypes, objIndex);
                     isExpressionInspected = true;
                 }
                 if (!isExpressionInspected) {
@@ -89,7 +92,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     return;
                 }
 
-                this.analyseTypesProvided(objSource, listSignatureTypes);
+                this.analyseTypesProvided(objSource, listSignatureTypes, objIndex);
                 listSignatureTypes.clear();
             }
 
@@ -100,7 +103,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
              * @param objTargetExpression
              * @param listSignatureTypes
              */
-            private void analyseTypesProvided(PsiElement objTargetExpression, LinkedList<String> listSignatureTypes) {
+            private void analyseTypesProvided(PsiElement objTargetExpression, LinkedList<String> listSignatureTypes, PhpIndex objIndex) {
                 for (String strType : listSignatureTypes) {
                     if (
                         strType.equals("\\array") ||
@@ -141,14 +144,14 @@ public class ForeachSourceInspector extends BasePhpInspection {
 
 
                     /** lookup class and check \Traversable support */
-                    Collection<PhpClass> objClasses = PhpIndex.getInstance(holder.getProject()).getClassesByName(strType);
+                    Collection<PhpClass> objClasses = objIndex.getClassesByName(strType);
                     if (objClasses.size() == 0) {
-                        objClasses = PhpIndex.getInstance(holder.getProject()).getClassesByFQN(strType);
+                        objClasses.addAll(objIndex.getClassesByFQN(strType));
                     }
 
                     if (objClasses.size() > 0) {
                         if (null == objTraversable) {
-                            objTraversable = PhpIndex.getInstance(holder.getProject()).getClassByName("\\Traversable");
+                            objTraversable = objIndex.getClassByName("\\Traversable");
                         }
 
                         for (PhpClass objClass : objClasses) {
@@ -157,15 +160,12 @@ public class ForeachSourceInspector extends BasePhpInspection {
                                 return;
                             }
                         }
+                        objClasses.clear();
 
                         holder.registerProblem(objTargetExpression, strProblemDescription + strType, ProblemHighlightType.ERROR);
-
-                        objClasses.clear();
                         return;
                     } else {
                         holder.registerProblem(objTargetExpression, strProblemResolvingDeclaration + strType, ProblemHighlightType.ERROR);
-
-                        objClasses.clear();
                         return;
                     }
                 }
@@ -179,14 +179,15 @@ public class ForeachSourceInspector extends BasePhpInspection {
              * @param objTargetExpression
              * @param listSignatureTypes
              */
-            private void lookupType (String strSignature, PsiElement objTargetExpression, LinkedList<String> listSignatureTypes) {
+            private void lookupType (String strSignature, PsiElement objTargetExpression, LinkedList<String> listSignatureTypes, PhpIndex objIndex) {
+
                 /** re-dispatch or terminate lookup */
                 if (null == strSignature || strSignature.equals("")) {
                     return;
                 }
                 if (strSignature.contains("|")) {
                     for (String strSignaturePart : strSignature.split("\\|")) {
-                        this.lookupType(strSignaturePart, objTargetExpression, listSignatureTypes);
+                        this.lookupType(strSignaturePart, objTargetExpression, listSignatureTypes, objIndex);
                     }
                     return;
                 }
@@ -244,10 +245,12 @@ public class ForeachSourceInspector extends BasePhpInspection {
                             continue;
                         }
 
-                        strResolvedType = this.lookupChain(strResolvedType, strSlot);
+                        List<String> listResolvedTypes = TypeFromSignatureResolvingUtil.resolveSlot(strResolvedType, strSlot, objIndex);
+                        strResolvedType = listResolvedTypes.get(0);
+
                         /** break on poly-variants and missing classes */
                         if (
-                            (intLeftItemsToProcess > 0 && strResolvedType.contains("|")) ||
+                            (intLeftItemsToProcess > 0 && listResolvedTypes.size() > 1) ||
                             strResolvedType.equals(strClassNotResolved)
                         ) {
                             strResolvedType = strClassNotResolved;
@@ -255,7 +258,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         }
                     }
 
-                    this.lookupType(strResolvedType, objTargetExpression, listSignatureTypes);
+                    this.lookupType(strResolvedType, objTargetExpression, listSignatureTypes, objIndex);
                     return;
                 }
 
@@ -265,65 +268,6 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     strSignature = "\\" + strSignature;
                 }
                 listSignatureTypes.add(strSignature);
-            }
-
-            /**
-             * @param strClass to lookup
-             * @param strChain to lookup
-             * @return String
-             */
-            private String lookupChain(String strClass, String strChain) {
-                Collection<PhpClass> objClasses = PhpIndex.getInstance(holder.getProject()).getClassesByName(strClass);
-                if (objClasses.size() == 0) {
-                    objClasses = PhpIndex.getInstance(holder.getProject()).getClassesByFQN(strClass);
-                }
-                /** resolve the slot in known classes */
-                if (objClasses.size() > 0) {
-                    LinkedList<String> listTypes = new LinkedList<>();
-
-                    for (PhpClass objClass : objClasses) {
-                        boolean isSlotFound = false;
-
-                        for (Method objMethod : objClass.getMethods()) {
-                            if (objMethod.getName().equals(strChain)) {
-                                listTypes.add(objMethod.getType().toString());
-                                isSlotFound = true;
-                                break;
-                            }
-                        }
-                        if (isSlotFound) {
-                            continue;
-                        }
-
-                        for (Field objField : objClass.getFields()) {
-                            if (objField.getName().equals(strChain)) {
-                                listTypes.add(objField.getType().toString());
-                                break;
-                            }
-                        }
-                    }
-
-                    /** only option */
-                    if (listTypes.size() == 1) {
-                        return listTypes.get(0);
-                    }
-
-                    /** resolved in several classes - who knows why classes duplicated */
-                    List<String> listUniqueSignatures = new ArrayList<>(new HashSet<>(listTypes));
-                    listTypes.clear();
-
-                    String strSeparator = "";
-                    String strAllTypes = "";
-                    for (String strOneItem : listUniqueSignatures) {
-                        strAllTypes += strSeparator + strOneItem;
-                        strSeparator = "|";
-                    }
-
-                    listUniqueSignatures.clear();
-                    return strAllTypes;
-                }
-
-                return strClassNotResolved;
             }
         };
     }

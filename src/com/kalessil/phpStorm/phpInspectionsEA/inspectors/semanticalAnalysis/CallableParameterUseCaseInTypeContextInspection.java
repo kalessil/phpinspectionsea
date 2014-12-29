@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
@@ -12,7 +13,7 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstr
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeResolvingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,6 +51,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
              * @param objScopeHolder
              */
             private void inspectUsages(Parameter[] arrParameters, PhpScopeHolder objScopeHolder) {
+                PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
+
                 for (Parameter objParameter : arrParameters) {
                     String strParameterName = objParameter.getName();
                     String strParameterType = objParameter.getType().toString();
@@ -149,7 +152,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 null != objVariable.getName() && objVariable.getName().equals(strParameterName)
                             ) {
                                 LinkedList<String> objTypesResolved = new LinkedList<>();
-                                TypeResolvingUtil.resolveExpressionType(objValue, objTypesResolved);
+                                TypeFromPsiResolvingUtil.resolveExpressionType(objValue, objIndex, objTypesResolved);
                                 /** TODO: make unique */
 
                                 boolean isCallViolatesDefinition;

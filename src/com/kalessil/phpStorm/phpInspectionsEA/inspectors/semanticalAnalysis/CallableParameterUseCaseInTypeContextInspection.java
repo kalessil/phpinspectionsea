@@ -20,7 +20,8 @@ import java.util.LinkedList;
 
 public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInspection {
     private static final String strProblemNoSense = "Has no sense, because it's always true (according to annotations)";
-    private static final String strProblemViolatesDefinition = "Has no sense, because this type in not defined in annotations";
+    private static final String strProblemCheckViolatesDefinition = "Has no sense, because this type in not defined in annotations";
+    private static final String strProblemAssignmentViolatesDefinition = "This assignment type violates types set defined in annotations";
 
     @NotNull
     public String getDisplayName() {
@@ -34,7 +35,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
     @NotNull
     @Override
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
                 this.inspectUsages(method.getParameters(), method);
@@ -49,6 +50,11 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
              * @param objScopeHolder
              */
             private void inspectUsages(Parameter[] arrParameters, PhpScopeHolder objScopeHolder) {
+                if (isOnTheFly) {
+                    /** takes some time and will take even more with signatures analysis */
+                    return;
+                }
+
                 for (Parameter objParameter : arrParameters) {
                     String strParameterName = objParameter.getName();
                     String strParameterType = objParameter.getType().toString();
@@ -73,8 +79,11 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                     PsiElement objExpression;
                     FunctionReference objFunctionCall;
+                    /** TODO: dedicate to method */
                     for (PhpAccessVariableInstruction objInstruction : arrUsages) {
                         objExpression = objInstruction.getAnchor().getParent();
+
+                        /** inspect type checks are used */
                         if (
                             objExpression instanceof ParameterList &&
                             objExpression.getParent() instanceof FunctionReference
@@ -122,13 +131,15 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                             isCallViolatesDefinition = !isTypeAnnounced;
                             if (isCallViolatesDefinition) {
-                                holder.registerProblem(objFunctionCall, strProblemViolatesDefinition, ProblemHighlightType.ERROR);
+                                holder.registerProblem(objFunctionCall, strProblemCheckViolatesDefinition, ProblemHighlightType.ERROR);
                                 continue;
                             }
 
                             continue;
                         }
 
+                        /** check if assignments not violating defined interfaces */
+                        /** TODO: dedicate to method */
                         if (objExpression instanceof AssignmentExpression) {
                             AssignmentExpression objAssignment = (AssignmentExpression) objExpression;
 
@@ -152,9 +163,10 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                         continue;
                                     }
 
+                                    /** TODO: lookup if resolved is class and extended from a defined class */
                                     isCallViolatesDefinition = !strParameterType.contains(strType);
                                     if (isCallViolatesDefinition) {
-                                        holder.registerProblem(objValue, strProblemViolatesDefinition + ": " + strType, ProblemHighlightType.ERROR);
+                                        holder.registerProblem(objValue, strProblemAssignmentViolatesDefinition + ": " + strType, ProblemHighlightType.ERROR);
                                         break;
                                     }
                                 }

@@ -2,6 +2,8 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+
 public class Types {
     final static public String strArray    = "array";
     final static public String strString   = "string";
@@ -18,58 +20,60 @@ public class Types {
     final static public String strClassNotResolved= "\\class-not-resolved";
     //final static public String strNotProcessed = "\\not-processed";
 
+    static private HashMap<String, String> mapTypes = null;
+    static private HashMap<String, String> getTypesMap () {
+        if (null == mapTypes) {
+            mapTypes = new HashMap<>();
+
+            mapTypes.put(strArray,     strArray);
+            mapTypes.put("\\array",    strArray);
+
+            mapTypes.put(strString,    strString);
+            mapTypes.put("\\string",   strString);
+
+            mapTypes.put(strBoolean,   strBoolean);
+            mapTypes.put("\\bool",     strBoolean);
+            mapTypes.put("boolean",    strBoolean);
+            mapTypes.put("\\boolean",  strBoolean);
+
+            mapTypes.put(strInteger,   strInteger);
+            mapTypes.put("\\int",      strInteger);
+            mapTypes.put("integer",    strInteger);
+            mapTypes.put("\\integer",  strInteger);
+
+            mapTypes.put(strFloat,     strFloat);
+            mapTypes.put("\\float",    strFloat);
+
+            mapTypes.put(strNull,      strNull);
+            mapTypes.put("\\null",     strNull);
+
+            mapTypes.put(strVoid,      strVoid);
+            mapTypes.put("\\void",     strVoid);
+
+            mapTypes.put(strMixed,     strMixed);
+            mapTypes.put("\\mixed",    strMixed);
+
+            mapTypes.put(strCallable,  strCallable);
+            mapTypes.put("\\callable", strCallable);
+
+            mapTypes.put(strResource,  strResource);
+            mapTypes.put("\\resource", strResource);
+        }
+
+        return mapTypes;
+    }
+
     @NotNull
     public static String getType (@NotNull String strGivenType) {
-
-        String strGivenTypeLowerCase = strGivenType.toLowerCase();
-
-        if (
-            strGivenTypeLowerCase.equals(strArray) || strGivenTypeLowerCase.equals("\\array") ||
-            strGivenTypeLowerCase.contains("[]"))
-        {
+        /** special case */
+        if (strGivenType.contains("[]")) {
             return strArray;
         }
 
-        if (strGivenTypeLowerCase.equals(strString) || strGivenTypeLowerCase.equals("\\string")) {
-            return strString;
-        }
-
-        if (
-            strGivenTypeLowerCase.equals(strBoolean) || strGivenTypeLowerCase.equals("\\bool") ||
-            strGivenTypeLowerCase.equals("boolean") || strGivenTypeLowerCase.equals("\\boolean")
-        ) {
-            return strBoolean;
-        }
-
-        if (
-            strGivenTypeLowerCase.equals(strInteger) || strGivenTypeLowerCase.equals("\\int") ||
-            strGivenTypeLowerCase.equals("integer") || strGivenTypeLowerCase.equals("\\integer")
-        ) {
-            return strInteger;
-        }
-
-        if (strGivenTypeLowerCase.equals(strFloat) || strGivenTypeLowerCase.equals("\\float")) {
-            return strFloat;
-        }
-
-        if (strGivenTypeLowerCase.equals(strNull) || strGivenTypeLowerCase.equals("\\null")) {
-            return strNull;
-        }
-
-        if (strGivenTypeLowerCase.equals(strVoid) || strGivenTypeLowerCase.equals("\\void")) {
-            return strVoid;
-        }
-
-        if (strGivenTypeLowerCase.equals(strMixed) || strGivenTypeLowerCase.equals("\\mixed")) {
-            return strMixed;
-        }
-
-        if (strGivenTypeLowerCase.equals(strCallable) || strGivenTypeLowerCase.equals("\\callable")) {
-            return strCallable;
-        }
-
-        if (strGivenTypeLowerCase.equals(strResource) || strGivenTypeLowerCase.equals("\\resource")) {
-            return strResource;
+        HashMap<String, String> mapping = getTypesMap();
+        String strResolvedType = mapping.get(strGivenType.toLowerCase());
+        if (null != strResolvedType) {
+            return strResolvedType;
         }
 
         return strGivenType;

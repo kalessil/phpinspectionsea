@@ -210,28 +210,29 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** === early returns=== **/
+                char charTypeOfSignature = (strSignature.length() >= 2 ? strSignature.charAt(1) : '?');
+
                 /** skip looking up into variable assignment / function */
-                if (strSignature.startsWith("#V") || strSignature.startsWith("#F") || strSignature.contains("?")) {
+                if (charTypeOfSignature == 'V' || charTypeOfSignature == 'F' || charTypeOfSignature == '?') {
                     /** TODO: lookup assignments for types extraction, un-mark as handled */
                     //? => holder.registerProblem(objTargetExpression, strProblemResolvingClassSlotType, ProblemHighlightType.ERROR);
                     listSignatureTypes.add(strAlreadyHandled);
                     return;
                 }
                 /** problem referenced to arguments */
-                if (strSignature.startsWith("#A")) {
+                if (charTypeOfSignature == 'A') {
                     listSignatureTypes.add(strAlreadyHandled);
                     holder.registerProblem(objTargetExpression, strProblemResolvingParameterType, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
                 /** problem referenced to array item */
-                if (strSignature.startsWith("#E")) {
+                if (charTypeOfSignature == 'E') {
                     listSignatureTypes.add(strAlreadyHandled);
                     holder.registerProblem(objTargetExpression, strProblemResolvingArrayItemType, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
                 /** lookup core types and classes */
-                if (strSignature.startsWith("#C")) {
+                if (charTypeOfSignature == 'C') {
                     String strTypeExtracted = strSignature.replace("#C", "");
                     listSignatureTypes.add(strTypeExtracted);
                     return;
@@ -240,9 +241,10 @@ public class ForeachSourceInspector extends BasePhpInspection {
 
                 /** === more complex analysis - classes are here === */
                 /** lookup for property or method */
-                final boolean isProperty = strSignature.startsWith("#P");
-                final boolean isMethod = strSignature.startsWith("#M");
-                if (isProperty || isMethod) {
+                final boolean isProperty = (charTypeOfSignature == 'P');
+                final boolean isMethod   = (charTypeOfSignature == 'M');
+                final boolean isConstant = (charTypeOfSignature == 'K');
+                if (isProperty || isMethod || isConstant) {
                     /** check signature structure */
                     String[] arrParts = strSignature.split("#C");
                     if (arrParts.length != 2) {

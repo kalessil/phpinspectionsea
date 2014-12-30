@@ -22,16 +22,19 @@ then additional inspections are applied to source code.
     ]]></description>
 
   <change-notes><![CDATA[
+NEW DATE: improvements and new inspections:<br/>
+    - IfConditionalsWithoutGroupStatementInspector: added empty group statement detection<br/>
+    - IsEmptyFunctionUsageInspector: added new suggestions for refactoring<br/>
+    <br/>
+    - CallableParameterUseCaseInTypeContextInspection added<br/>
+    - CountOnPropelCollectionInspector added<br/>
+    - ForeachSourceInspector added<br/>
+<br/>
+<hr/>
 21 Dec 2014: bug-fixes, improvements and new inspections:<br/>
     - improved not optimal if conditions inspection (duplicate conditions, booleans checks)<br/>
     - added ambiguous null field initialization inspection<br/>
     - added loop which does not loop inspection<br/>
-<br/>
-<hr/>
-16 Dec 2014: new inspections, bug-fix for hidden default value inspector<br/>
-    - added not optimal if conditions inspection<br/>
-    - added strlen usage for empty string check inspection<br/>
-    - added parameter usage in write context only inspection<br/>
 <br/>
 <hr/>
   ]]></change-notes>

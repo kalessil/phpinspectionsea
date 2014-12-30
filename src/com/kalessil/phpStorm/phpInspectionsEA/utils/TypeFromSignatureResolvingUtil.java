@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.Field;
+import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 
@@ -30,29 +31,36 @@ public class TypeFromSignatureResolvingUtil {
             return;
         }
 
+        char charTypeOfSignature = (strSignature.length() >= 2 ? strSignature.charAt(1) : '?');
         if (
-            strSignature.startsWith("#D") || /** pre-defined constants type is not resolved */
-            strSignature.equals("?")      || /** have no idea what does it mean */
-            strSignature.startsWith("#A") || /** parameter type is not resolved */
-            strSignature.startsWith("#E")    /** array item type is not resolved */
+            charTypeOfSignature == 'D' || /** pre-defined constants type is not resolved */
+            charTypeOfSignature == '?' || /** have no idea what does it mean */
+            charTypeOfSignature == 'A' || /** parameter type is not resolved */
+            charTypeOfSignature == 'E'    /** array item type is not resolved */
         ) {
             /** do nothing here */
             return;
         }
 
-        /** TODO: implement */
-        if (strSignature.startsWith("#F")) {
-            /** try resolving function name */
+        /** resolve functions */
+        if (charTypeOfSignature == 'F') {
+            Collection<Function> objFunctionsCollection = objIndex.getFunctionsByName(strSignature.replace("#F", ""));
+            for (Function objFunction : objFunctionsCollection) {
+                resolveSignature(objFunction.getType().toString(), objIndex, objTypesExtracted);
+            }
+            objFunctionsCollection.clear();
+
             return;
         }
+
         /** TODO: implement */
-        if (strSignature.startsWith("#V")){
+        if (charTypeOfSignature == 'V'){
             /** try resolving as parameter name, also it's local scope variables */
             return;
         }
 
         /** classes and core types */
-        if (strSignature.startsWith("#C")) {
+        if (charTypeOfSignature == 'C') {
             objTypesExtracted.add(Types.getType(strSignature.replace("#C", "")));
             return;
         }
@@ -62,9 +70,9 @@ public class TypeFromSignatureResolvingUtil {
          * while getting thought execution chain, until we run into poly-variants
          * or missing annotations.
          **/
-        final boolean isProperty = strSignature.startsWith("#P");
-        final boolean isMethod = strSignature.startsWith("#M");
-        final boolean isConstant = strSignature.startsWith("#K");
+        final boolean isProperty = (charTypeOfSignature == 'P');
+        final boolean isMethod   = (charTypeOfSignature == 'M');
+        final boolean isConstant = (charTypeOfSignature == 'K');
         if (isProperty || isMethod || isConstant) {
             String[] arrInternalsAndChain = strSignature.split("#C");
             /** { <some garbage>, <target chain> }  */
@@ -197,6 +205,7 @@ public class TypeFromSignatureResolvingUtil {
         if (listTypesResolved.size() == 0) {
             listTypesResolved.add(Types.strClassNotResolved);
         }
+        /** TODO: HashSet */
         List<String> listUniqueSignatures = new ArrayList<>(new HashSet<>(listTypesResolved));
 
         listTypesResolved.clear();

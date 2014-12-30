@@ -12,7 +12,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     private static final String strProblemDescriptionDoNotUse =
@@ -39,16 +42,20 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
             public void visitPhpEmpty(PhpEmpty emptyExpression) {
                 PhpExpression[] arrValues = emptyExpression.getVariables();
                 if (arrValues.length == 1) {
+                    /** extract types */
                     PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
                     LinkedList<String> objResolvedTypes = new LinkedList<>();
                     TypeFromPsiResolvingUtil.resolveExpressionType(arrValues[0], objIndex, objResolvedTypes);
 
+                    /** get unique values only, TODO: HashSet */
+                    List<String> listUniqueSignatures = new ArrayList<>(new HashSet<>(objResolvedTypes));
+                    objResolvedTypes.clear();
 
                     /** debug */
                     /*String strResolvedTypes = "Resolved: ";
                     String strGlue = "";
-                    for (String strOneType : objResolvedTypes) {
-                        strResolvedTypes += strOneType + strGlue;
+                    for (String strOneType : listUniqueSignatures) {
+                        strResolvedTypes += strGlue + strOneType;
                         strGlue = "|";
                     }
                     holder.registerProblem(emptyExpression, strResolvedTypes, ProblemHighlightType.LIKE_DEPRECATED);*/
@@ -57,7 +64,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
 
                     /** TODO: when it's class, suggest to use null comparison */
 
-                    if (objResolvedTypes.size() == 1 && objResolvedTypes.get(0).equals(Types.strArray)) {
+                    if (listUniqueSignatures.size() == 1 && listUniqueSignatures.get(0).equals(Types.strArray)) {
                         holder.registerProblem(emptyExpression, strProblemDescriptionUseCount, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         return;
                     }

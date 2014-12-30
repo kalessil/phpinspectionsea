@@ -14,9 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromSignatureResolvingUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class ForeachSourceInspector extends BasePhpInspection {
     private static PhpClass objTraversable = null;
@@ -89,14 +87,18 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (listSignatureTypes.size() == 0) {
+                /** get unique values only, TODO: HashSet */
+                List<String> listUniqueSignatures = new ArrayList<>(new HashSet<>(listSignatureTypes));
+                listSignatureTypes.clear();
+
+
+                if (listUniqueSignatures.size() == 0) {
                     /** resolving failed at all */
                     holder.registerProblem(objSource, strProblemResolvingIsEmpty, ProblemHighlightType.ERROR);
                     return;
                 }
 
-                this.analyseTypesProvided(objSource, listSignatureTypes, objIndex);
-                listSignatureTypes.clear();
+                this.analyseTypesProvided(objSource, listUniqueSignatures, objIndex);
             }
 
 
@@ -106,7 +108,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
              * @param objTargetExpression
              * @param listSignatureTypes
              */
-            private void analyseTypesProvided(PsiElement objTargetExpression, LinkedList<String> listSignatureTypes, PhpIndex objIndex) {
+            private void analyseTypesProvided(PsiElement objTargetExpression, List<String> listSignatureTypes, PhpIndex objIndex) {
                 for (String strType : listSignatureTypes) {
                     if (
                         strType.equals("\\array") ||
@@ -213,12 +215,23 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 char charTypeOfSignature = (strSignature.length() >= 2 ? strSignature.charAt(1) : '?');
 
                 /** skip looking up into variable assignment / function */
-                if (charTypeOfSignature == 'V' || charTypeOfSignature == 'F' || charTypeOfSignature == '?') {
+                if (charTypeOfSignature == 'V' || charTypeOfSignature == '?') {
                     /** TODO: lookup assignments for types extraction, un-mark as handled */
                     //? => holder.registerProblem(objTargetExpression, strProblemResolvingClassSlotType, ProblemHighlightType.ERROR);
                     listSignatureTypes.add(strAlreadyHandled);
                     return;
                 }
+
+                if (charTypeOfSignature == 'F') {
+                    Collection<Function> objFunctionsCollection = objIndex.getFunctionsByName(strSignature.replace("#F", ""));
+                    for (Function objFunction : objFunctionsCollection) {
+                        lookupType(objFunction.getType().toString(), objTargetExpression, listSignatureTypes, objIndex);
+                    }
+                    objFunctionsCollection.clear();
+
+                    return;
+                }
+
                 /** problem referenced to arguments */
                 if (charTypeOfSignature == 'A') {
                     listSignatureTypes.add(strAlreadyHandled);

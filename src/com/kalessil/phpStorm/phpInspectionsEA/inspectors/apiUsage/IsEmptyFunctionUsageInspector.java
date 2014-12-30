@@ -22,8 +22,8 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
             "'empty(...)' is not type safe and brings N-path complexity due to multiple types supported." +
             " Consider refactoring this code.";
 
-    private static final String strProblemDescriptionUseCount =
-            "Use 'count() <comparison> 0' construction instead";
+    private static final String strProblemDescriptionUseCount = "Use 'count() <?> 0' construction instead";
+    private static final String strProblemDescriptionUseNullComparison = "Probably it should be '$variable === null'";
 
     @NotNull
     public String getDisplayName() {
@@ -62,10 +62,22 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     /** /debug  */
 
 
-                    /** TODO: when it's class, suggest to use null comparison */
-
+                    /** Case 1: empty(array) - hidden logic */
                     if (listUniqueSignatures.size() == 1 && listUniqueSignatures.get(0).equals(Types.strArray)) {
                         holder.registerProblem(emptyExpression, strProblemDescriptionUseCount, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        return;
+                    }
+
+                    /** Case 2: empty(object) - error */
+                    boolean areVariantsObjectInterfaces = (listUniqueSignatures.size() > 0);
+                    for (String strOneType : listUniqueSignatures) {
+                        areVariantsObjectInterfaces = (
+                            areVariantsObjectInterfaces &&
+                            strOneType.charAt(0) == '\\' && !strOneType.equals(Types.strClassNotResolved)
+                        );
+                    }
+                    if (areVariantsObjectInterfaces) {
+                        holder.registerProblem(emptyExpression, strProblemDescriptionUseNullComparison, ProblemHighlightType.ERROR);
                         return;
                     }
                 }

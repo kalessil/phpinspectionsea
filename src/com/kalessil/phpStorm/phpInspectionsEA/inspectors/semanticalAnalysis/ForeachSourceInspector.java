@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpClassHierarchyUtils;
@@ -13,7 +14,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromSignatureResolvingUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ForeachSourceInspector extends BasePhpInspection {
     private static PhpClass objTraversable = null;
@@ -188,13 +191,22 @@ public class ForeachSourceInspector extends BasePhpInspection {
             private void lookupType (String strSignature, PsiElement objTargetExpression, LinkedList<String> listSignatureTypes, PhpIndex objIndex) {
 
                 /** re-dispatch or terminate lookup */
-                if (null == strSignature || strSignature.equals("")) {
+                if (StringUtil.isEmpty(strSignature)) {
                     return;
                 }
                 if (strSignature.contains("|")) {
                     for (String strSignaturePart : strSignature.split("\\|")) {
                         this.lookupType(strSignaturePart, objTargetExpression, listSignatureTypes, objIndex);
                     }
+                    return;
+                }
+
+                if (strSignature.charAt(0) != '#') {
+                    if (strSignature.charAt(0) != '\\') {
+                        strSignature = "\\" + strSignature;
+                    }
+                    listSignatureTypes.add(strSignature);
+
                     return;
                 }
 
@@ -265,15 +277,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     }
 
                     this.lookupType(strResolvedType, objTargetExpression, listSignatureTypes, objIndex);
-                    return;
                 }
-
-
-                /** here passing by types which does not need further handling - they simple ones already */
-                if (!strSignature.startsWith("\\")) {
-                    strSignature = "\\" + strSignature;
-                }
-                listSignatureTypes.add(strSignature);
             }
         };
     }

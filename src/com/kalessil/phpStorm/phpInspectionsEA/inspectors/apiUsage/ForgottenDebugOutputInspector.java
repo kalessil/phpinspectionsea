@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -33,7 +34,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                 }
 
                 final String strFunction = reference.getName();
-                if (null == strFunction || strFunction.equals("")) {
+                if (StringUtil.isEmpty(strFunction)) {
                     return;
                 }
 

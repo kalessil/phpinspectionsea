@@ -24,6 +24,12 @@ public class TypeFromSignatureResolvingUtil {
             return;
         }
 
+        /** skip primitive types */
+        if (strSignature.charAt(0) != '#') {
+            objTypesExtracted.add(Types.getType(strSignature));
+            return;
+        }
+
         if (
             strSignature.startsWith("#D") || /** pre-defined constants type is not resolved */
             strSignature.equals("?")      || /** have no idea what does it mean */
@@ -132,12 +138,7 @@ public class TypeFromSignatureResolvingUtil {
             for (String strType : listTypesOfSlot) {
                 resolveSignature(strType, objIndex, objTypesExtracted);
             }
-            return;
         }
-
-
-        /** here pure core types are passing through */
-        objTypesExtracted.add(Types.getType(strSignature));
     }
 
     static public List<String> resolveSlot(String strClass, String strSlot, PhpIndex objIndex) {

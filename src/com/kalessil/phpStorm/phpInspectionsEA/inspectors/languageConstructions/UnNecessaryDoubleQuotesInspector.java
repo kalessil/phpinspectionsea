@@ -27,7 +27,7 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpStringLiteralExpression(StringLiteralExpression expression) {
                 String strValueWithQuotes = expression.getText();
-                if (!strValueWithQuotes.startsWith("\"")) {
+                if (strValueWithQuotes.charAt(0) != '"') {
                     return;
                 }
 

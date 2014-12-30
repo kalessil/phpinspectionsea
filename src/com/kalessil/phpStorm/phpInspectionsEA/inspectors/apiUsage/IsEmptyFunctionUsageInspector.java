@@ -72,8 +72,18 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     boolean areVariantsObjectInterfaces = (listUniqueSignatures.size() > 0);
                     for (String strOneType : listUniqueSignatures) {
                         areVariantsObjectInterfaces = (
-                            areVariantsObjectInterfaces &&
-                            strOneType.charAt(0) == '\\' && !strOneType.equals(Types.strClassNotResolved)
+                            areVariantsObjectInterfaces && (
+                                (
+                                    /** class or interface is given */
+                                    strOneType.charAt(0) == '\\' && !strOneType.equals(Types.strClassNotResolved)
+                                )
+                                ||
+                                (
+                                    /** null among other types, so we can pass through */
+                                    (listUniqueSignatures.size() >= 2) && strOneType.equals(Types.strNull)
+                                )
+                            )
+
                         );
                     }
                     if (areVariantsObjectInterfaces) {

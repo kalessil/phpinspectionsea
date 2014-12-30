@@ -26,13 +26,22 @@ public class TypeFromSignatureResolvingUtil {
 
         if (
             strSignature.startsWith("#D") || /** pre-defined constants type is not resolved */
-            strSignature.startsWith("#F") || /** method reference TODO: resolve */
-            strSignature.startsWith("#V") || /** some value with not detected type - platform internals */
             strSignature.equals("?")      || /** have no idea what does it mean */
-            strSignature.startsWith("#A") || /** argument type is not resolved */
+            strSignature.startsWith("#A") || /** parameter type is not resolved */
             strSignature.startsWith("#E")    /** array item type is not resolved */
         ) {
             /** do nothing here */
+            return;
+        }
+
+        /** TODO: implement */
+        if (strSignature.startsWith("#F")) {
+            /** try resolving function name */
+            return;
+        }
+        /** TODO: implement */
+        if (strSignature.startsWith("#V")){
+            /** try resolving as parameter name, also it's local scope variables */
             return;
         }
 
@@ -64,6 +73,9 @@ public class TypeFromSignatureResolvingUtil {
             boolean isLastPair;
             boolean isPolyVariant;
 
+            String strFirstTypeResolved = null;
+            int intCountNotMixedTypes;
+
             int intCountItemsToProcess = arrChain.length;
             for (String strSlot : arrChain) {
                 -- intCountItemsToProcess;
@@ -77,10 +89,32 @@ public class TypeFromSignatureResolvingUtil {
 
                 /** resolve pair */
                 listTypesOfSlot = resolveSlot(strClassResolved, strSlot, objIndex);
-                strClassResolved = listTypesOfSlot.get(0);
+
+
+                /** if mixed is in mid of resolving, ignore it for poly-variants, so possibly more issues will be found */
+                intCountNotMixedTypes = listTypesOfSlot.size();
+                for (String strOne :listTypesOfSlot) {
+                    /** skip mixed types */
+                    if (
+                        !isLastPair && intCountNotMixedTypes > 1 &&
+                        Types.getType(strOne).equals(Types.strMixed)
+                    ) {
+                        --intCountNotMixedTypes;
+                        continue;
+                    }
+
+                    if (null == strFirstTypeResolved) {
+                        strFirstTypeResolved = strOne;
+                    }
+                }
+                /** finished handling poly-variants with mixed in mid of chain */
+
+
+                /** what was resolved and becomes class */
+                strClassResolved = strFirstTypeResolved;
 
                 /** break on poly-variant/no-variant in middle of chain */
-                isPolyVariant = (listTypesOfSlot.size() > 1);
+                isPolyVariant = (intCountNotMixedTypes > 1);
                 if (!isLastPair && (isPolyVariant || StringUtil.isEmpty(strClassResolved))) {
                     listTypesOfSlot.add(Types.strClassNotResolved);
                     return;
@@ -114,6 +148,15 @@ public class TypeFromSignatureResolvingUtil {
         if (objClasses.size() == 0) {
             objClasses.addAll(objIndex.getClassesByFQN(strClass));
         }
+        /** try looking up into interfaces */
+        if (objClasses.size() == 0) {
+            objClasses.addAll(objIndex.getInterfacesByName(strClass));
+        }
+        if (objClasses.size() == 0) {
+            objClasses.addAll(objIndex.getInterfacesByFQN(strClass));
+        }
+
+        /** terminate execution if nothing was found */
         if (objClasses.size() == 0) {
             listTypesResolved.add(Types.strClassNotResolved);
             return listTypesResolved;

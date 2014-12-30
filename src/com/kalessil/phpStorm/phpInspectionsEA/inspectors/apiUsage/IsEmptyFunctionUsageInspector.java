@@ -44,6 +44,20 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     LinkedList<String> objResolvedTypes = new LinkedList<>();
                     TypeFromPsiResolvingUtil.resolveExpressionType(arrValues[0], objIndex, objResolvedTypes);
 
+
+                    /** debug */
+                    /*String strResolvedTypes = "Resolved: ";
+                    String strGlue = "";
+                    for (String strOneType : objResolvedTypes) {
+                        strResolvedTypes += strOneType + strGlue;
+                        strGlue = "|";
+                    }
+                    holder.registerProblem(emptyExpression, strResolvedTypes, ProblemHighlightType.LIKE_DEPRECATED);*/
+                    /** /debug  */
+
+
+                    /** TODO: when it's class, suggest to use null comparison */
+
                     if (objResolvedTypes.size() == 1 && objResolvedTypes.get(0).equals(Types.strArray)) {
                         holder.registerProblem(emptyExpression, strProblemDescriptionUseCount, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         return;

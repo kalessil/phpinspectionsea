@@ -119,14 +119,12 @@ public class TypeFromPsiResolvingUtil {
 
     /** resolve numbers and exotic structures, eg list() = .... */
     private static void resolvePhpExpression(PhpExpression objExpression, PhpIndex objIndex, LinkedList<String> objTypesCollection) {
-        String strType = objExpression.getType().toString();
-        storeAsTypeWithSignaturesImport(strType, objIndex, objTypesCollection);
+        storeAsTypeWithSignaturesImport(objExpression.getType().toString(), objIndex, objTypesCollection);
     }
 
     /** Will resolve self-assignments */
     private static void resolveSelfAssignmentExpression(SelfAssignmentExpression objExpression, PhpIndex objIndex, LinkedList<String> objTypesCollection) {
-        String strType = objExpression.getType().toString();
-        storeAsTypeWithSignaturesImport(strType, objIndex, objTypesCollection);
+        storeAsTypeWithSignaturesImport(objExpression.getType().toString(), objIndex, objTypesCollection);
     }
 
     /** Will resolve type of new expression */

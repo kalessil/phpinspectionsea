@@ -143,10 +143,16 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     }
 
 
-                    /** lookup class and check \Traversable support */
+                    /** lookup class/interface and check \Traversable support */
                     Collection<PhpClass> objClasses = objIndex.getClassesByName(strType);
                     if (objClasses.size() == 0) {
                         objClasses.addAll(objIndex.getClassesByFQN(strType));
+                    }
+                    if (objClasses.size() == 0) {
+                        objClasses.addAll(objIndex.getInterfacesByName(strType));
+                    }
+                    if (objClasses.size() == 0) {
+                        objClasses.addAll(objIndex.getInterfacesByFQN(strType));
                     }
 
                     if (objClasses.size() > 0) {

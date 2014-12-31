@@ -153,17 +153,7 @@ public class TypeFromSignatureResolvingUtil {
         List<String> listTypesResolved = new LinkedList<>();
 
         /** try searching classes */
-        Collection<PhpClass> objClasses = objIndex.getClassesByName(strClass);
-        if (objClasses.size() == 0) {
-            objClasses.addAll(objIndex.getClassesByFQN(strClass));
-        }
-        /** try looking up into interfaces */
-        if (objClasses.size() == 0) {
-            objClasses.addAll(objIndex.getInterfacesByName(strClass));
-        }
-        if (objClasses.size() == 0) {
-            objClasses.addAll(objIndex.getInterfacesByFQN(strClass));
-        }
+        Collection<PhpClass> objClasses = PhpIndexUtil.getObjectInterfaces(strClass, objIndex);
 
         /** terminate execution if nothing was found */
         if (objClasses.size() == 0) {

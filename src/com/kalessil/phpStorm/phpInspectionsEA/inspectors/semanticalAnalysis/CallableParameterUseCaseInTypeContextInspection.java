@@ -14,6 +14,7 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstr
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromSignatureResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
@@ -195,17 +196,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                 if (strType.length() > 0 && strType.charAt(0) == '\\') {
                     /** collect test subjects */
-                    /** TODO: dedicate to util */
-                    Collection<PhpClass> classesToTest = objIndex.getClassesByName(strType);
-                    if (classesToTest.size() == 0) {
-                        classesToTest.addAll(objIndex.getClassesByFQN(strType));
-                    }
-                    if (classesToTest.size() == 0) {
-                        classesToTest.addAll(objIndex.getInterfacesByName(strType));
-                    }
-                    if (classesToTest.size() == 0) {
-                        classesToTest.addAll(objIndex.getInterfacesByFQN(strType));
-                    }
+                    Collection<PhpClass> classesToTest = PhpIndexUtil.getObjectInterfaces(strType, objIndex);
                     if (classesToTest.size() == 0) {
                         return false;
                     }
@@ -220,19 +211,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             continue;
                         }
 
-                        /** TODO: dedicate to util */
-                        Collection<PhpClass> classesForAllowedType = objIndex.getClassesByName(strAllowedType);
-                        if (classesForAllowedType.size() == 0) {
-                            classesForAllowedType.addAll(objIndex.getClassesByFQN(strAllowedType));
-                        }
-                        if (classesForAllowedType.size() == 0) {
-                            classesForAllowedType.addAll(objIndex.getInterfacesByName(strAllowedType));
-                        }
-                        if (classesForAllowedType.size() == 0) {
-                            classesForAllowedType.addAll(objIndex.getInterfacesByFQN(strAllowedType));
-                        }
-
-                        classesAllowed.addAll(classesForAllowedType);
+                        classesAllowed.addAll(PhpIndexUtil.getObjectInterfaces(strAllowedType, objIndex));
                     }
 
                     /** run test through 2 sets */

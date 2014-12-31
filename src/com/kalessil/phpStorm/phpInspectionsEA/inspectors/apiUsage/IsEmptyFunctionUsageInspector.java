@@ -22,8 +22,8 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
             "'empty(...)' is not type safe and brings N-path complexity due to multiple types supported." +
             " Consider refactoring this code.";
 
-    private static final String strProblemDescriptionUseCount = "Use 'count() <?> 0' construction instead";
-    private static final String strProblemDescriptionUseNullComparison = "Probably it should be '$variable === null'";
+    private static final String strProblemDescriptionUseCount = "Use 'count($...) === 0' construction instead";
+    private static final String strProblemDescriptionUseNullComparison = "Probably it should be 'null === $...'";
 
     @NotNull
     public String getDisplayName() {

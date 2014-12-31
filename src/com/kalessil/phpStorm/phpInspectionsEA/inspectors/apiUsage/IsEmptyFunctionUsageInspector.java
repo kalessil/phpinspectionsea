@@ -23,7 +23,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
             " Consider refactoring this code.";
 
     private static final String strProblemDescriptionUseCount = "Use 'count($...) === 0' construction instead";
-    private static final String strProblemDescriptionUseNullComparison = "Probably it should be 'null === $...'";
+    private static final String strProblemDescriptionUseNullComparison = "Probably it should be 'null === $...' construction used";
 
     @NotNull
     public String getDisplayName() {

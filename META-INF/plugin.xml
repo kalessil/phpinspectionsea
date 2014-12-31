@@ -25,6 +25,7 @@ then additional inspections are applied to source code.
 NEW DATE: improvements and new inspections:<br/>
     - IfConditionalsWithoutGroupStatementInspector: added empty group statement detection<br/>
     - IsEmptyFunctionUsageInspector: added new suggestions for refactoring<br/>
+    - NotOptimalIfConditionsInspection: reduced amount of false positives
     <br/>
     - CallableParameterUseCaseInTypeContextInspection added<br/>
     - CountOnPropelCollectionInspector added<br/>

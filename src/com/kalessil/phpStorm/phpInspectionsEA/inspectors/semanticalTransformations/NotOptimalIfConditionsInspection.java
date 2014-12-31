@@ -58,6 +58,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
                 this.inspectDuplicatedConditions(objAllConditions, ifStatement);
+                /** TODO: inspect if not a binary expression - should be clearly stated comparison */
             }
 
             /***
@@ -182,16 +183,28 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
                 /** verify if costs estimated are optimal */
-                int intLoopCurrentCost;
                 int intPreviousCost = 0;
+                PsiElement objPreviousCond = null;
+
+                int intLoopCurrentCost;
+                boolean isPreviousCondArrayKeyExists;
                 for (PsiElement objCond : objPartsCollection) {
                     intLoopCurrentCost = this.getExpressionCost(objCond);
 
-                    if (intLoopCurrentCost < intPreviousCost) {
+                    /** special case when costs estimation is overridden with general practices */
+                    isPreviousCondArrayKeyExists = (
+                        null != objPreviousCond &&
+                        objPreviousCond instanceof FunctionReference &&
+                        null != ((FunctionReference) objPreviousCond).getName() &&
+                        ((FunctionReference) objPreviousCond).getName().equals("array_key_exists")
+                    );
+
+                    if (intLoopCurrentCost < intPreviousCost && !isPreviousCondArrayKeyExists) {
                         holder.registerProblem(objCond, strProblemDescriptionOrdering, ProblemHighlightType.WEAK_WARNING);
                     }
 
                     intPreviousCost = intLoopCurrentCost;
+                    objPreviousCond = objCond;
                 }
 
                 return objPartsCollection;

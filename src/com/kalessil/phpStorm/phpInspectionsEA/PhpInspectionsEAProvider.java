@@ -27,6 +27,8 @@ NotOptimalIfConditions
 
 ===Cases of interest===
 
+condition: test if null and test type(s)/instance(s)of or test several types|instance(s)of
+
 Chain calls, where one of cell can return not an object, producing php fatal
 
 A extends B,C, B extends C - interface contracts or lack of structure knowledge?

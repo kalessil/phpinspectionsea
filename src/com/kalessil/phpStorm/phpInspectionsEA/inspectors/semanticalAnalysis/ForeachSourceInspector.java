@@ -15,7 +15,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromSignatureResolvingUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ForeachSourceInspector extends BasePhpInspection {
     private static PhpClass objTraversable = null;
@@ -88,26 +91,18 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** get unique values only, TODO: HashSet */
-                List<String> listUniqueSignatures = new ArrayList<>(new HashSet<>(listSignatureTypes));
-                listSignatureTypes.clear();
-
-
-                if (listUniqueSignatures.size() == 0) {
+                if (listSignatureTypes.size() == 0) {
                     /** resolving failed at all */
                     holder.registerProblem(objSource, strProblemResolvingIsEmpty, ProblemHighlightType.ERROR);
                     return;
                 }
 
-                this.analyseTypesProvided(objSource, listUniqueSignatures, objIndex);
+                this.analyseTypesProvided(objSource, listSignatureTypes, objIndex);
             }
 
 
             /**
              * Will check semantics for resolved types information
-             *
-             * @param objTargetExpression
-             * @param listSignatureTypes
              */
             private void analyseTypesProvided(PsiElement objTargetExpression, List<String> listSignatureTypes, PhpIndex objIndex) {
                 for (String strType : listSignatureTypes) {
@@ -157,6 +152,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         }
 
                         for (PhpClass objClass : objClasses) {
+                            //noinspection ConstantConditions
                             if (PhpClassHierarchyUtils.isSuperClass(objTraversable, objClass, true)) {
                                 objClasses.clear();
                                 return;
@@ -176,10 +172,6 @@ public class ForeachSourceInspector extends BasePhpInspection {
             /**
              * Will get back types information out of signature and put stubs where further lookup
              * is not possible/implemented yet
-             *
-             * @param strSignature
-             * @param objTargetExpression
-             * @param listSignatureTypes
              */
             private void lookupType (String strSignature, PsiElement objTargetExpression, LinkedList<String> listSignatureTypes, PhpIndex objIndex) {
 
@@ -269,8 +261,8 @@ public class ForeachSourceInspector extends BasePhpInspection {
                             continue;
                         }
 
-                        List<String> listResolvedTypes = TypeFromSignatureResolvingUtil.resolveSlot(strResolvedType, strSlot, objIndex);
-                        strResolvedType = listResolvedTypes.get(0);
+                        HashSet<String> listResolvedTypes = TypeFromSignatureResolvingUtil.resolveSlot(strResolvedType, strSlot, objIndex);
+                        strResolvedType = listResolvedTypes.iterator().next();
 
                         /** break on poly-variants and missing classes */
                         if (
@@ -278,8 +270,12 @@ public class ForeachSourceInspector extends BasePhpInspection {
                             strResolvedType.equals(strClassNotResolved)
                         ) {
                             strResolvedType = strClassNotResolved;
+
+                            listResolvedTypes.clear();
                             break;
                         }
+
+                        listResolvedTypes.clear();
                     }
 
                     this.lookupType(strResolvedType, objTargetExpression, listSignatureTypes, objIndex);

@@ -21,6 +21,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInspection {
@@ -50,10 +51,6 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                 this.inspectUsages(function.getParameters(), function);
             }
 
-            /**
-             * @param arrParameters
-             * @param objScopeHolder
-             */
             private void inspectUsages(Parameter[] arrParameters, PhpScopeHolder objScopeHolder) {
                 PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
                 PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
@@ -70,11 +67,11 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                         continue;
                     }
                     /** too lazy to do anything more elegant */
-                    strParameterType = strParameterType.replace("callable", "array|string");
+                    strParameterType = strParameterType.replace(Types.strCallable, "array|string");
 
 
                     /** resolve types for parameter */
-                    LinkedList<String> objParameterTypesResolved = new LinkedList<>();
+                    HashSet<String> objParameterTypesResolved = new HashSet<>();
                     TypeFromSignatureResolvingUtil.resolveSignature(strParameterType, objIndex, objParameterTypesResolved);
 
 
@@ -113,20 +110,28 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             boolean isCallViolatesDefinition;
                             boolean isTypeAnnounced;
 
-                            if (strFunctionName.equals("is_array")) {
-                                isTypeAnnounced = (strParameterType.contains(Types.strArray) || strParameterType.contains("[]"));
-                            } else if (strFunctionName.equals("is_string")) {
-                                isTypeAnnounced = strParameterType.contains(Types.strString);
-                            } else if (strFunctionName.equals("is_bool")) {
-                                isTypeAnnounced = strParameterType.contains(Types.strBoolean);
-                            } else if (strFunctionName.equals("is_int") || strFunctionName.equals("is_integer")) {
-                                isTypeAnnounced = strParameterType.contains(Types.strInteger);
-                            } else if (strFunctionName.equals("is_float")) {
-                                isTypeAnnounced = strParameterType.contains(Types.strFloat);
-                            } else if (strFunctionName.equals("is_resource")) {
-                                isTypeAnnounced = strParameterType.contains(Types.strResource);
-                            } else {
-                                continue;
+                            switch (strFunctionName) {
+                                case "is_array":
+                                    isTypeAnnounced = (strParameterType.contains(Types.strArray) || strParameterType.contains("[]"));
+                                    break;
+                                case "is_string":
+                                    isTypeAnnounced = strParameterType.contains(Types.strString);
+                                    break;
+                                case "is_bool":
+                                    isTypeAnnounced = strParameterType.contains(Types.strBoolean);
+                                    break;
+                                case "is_int":
+                                case "is_integer":
+                                    isTypeAnnounced = strParameterType.contains(Types.strInteger);
+                                    break;
+                                case "is_float":
+                                    isTypeAnnounced = strParameterType.contains(Types.strFloat);
+                                    break;
+                                case "is_resource":
+                                    isTypeAnnounced = strParameterType.contains(Types.strResource);
+                                    break;
+                                default:
+                                    continue;
                             }
 
                             isCallHasNoSense = !isTypeAnnounced && isReversedCheck;
@@ -159,9 +164,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 objVariable instanceof Variable &&
                                 null != objVariable.getName() && objVariable.getName().equals(strParameterName)
                             ) {
-                                LinkedList<String> objTypesResolved = new LinkedList<>();
+                                HashSet<String> objTypesResolved = new HashSet<>();
                                 TypeFromPsiResolvingUtil.resolveExpressionType(objValue, objIndex, objTypesResolved);
-                                /** TODO: make unique */
 
                                 boolean isCallViolatesDefinition;
                                 for (String strType : objTypesResolved) {
@@ -179,15 +183,18 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                         break;
                                     }
                                 }
+
                                 objTypesResolved.clear();
                             }
                         }
                         /* TODO: can be analysed comparison operations, instanceof */
                     }
+
+                    objParameterTypesResolved.clear();
                 }
             }
 
-            private boolean isTypeCompatible (String strType, LinkedList<String> listAllowedTypes, PhpIndex objIndex) {
+            private boolean isTypeCompatible (String strType, HashSet<String> listAllowedTypes, PhpIndex objIndex) {
                 for (String strPossibleType: listAllowedTypes) {
                     if (strPossibleType.equals(strType)) {
                         return true;

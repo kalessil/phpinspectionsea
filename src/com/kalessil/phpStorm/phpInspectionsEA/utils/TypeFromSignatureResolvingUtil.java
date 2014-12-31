@@ -7,31 +7,34 @@ import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 
 public class TypeFromSignatureResolvingUtil {
 
-    static public void resolveSignature (String strSignature, PhpIndex objIndex, LinkedList<String> objTypesExtracted) {
+    static public void resolveSignature (String strSignatureToResolve, PhpIndex objIndex, HashSet<String> extractedTypesSet) {
         /** do nothing with empty signatures */
-        if (StringUtil.isEmpty(strSignature)) {
+        if (StringUtil.isEmpty(strSignatureToResolve)) {
             return;
         }
 
-        /** re-dispatch poly-variants */
-        if (strSignature.contains("|")) {
-            for (String strOneVariant : strSignature.split("\\|")) {
-                resolveSignature(strOneVariant, objIndex, objTypesExtracted);
+        /** re-dispatch poly-variants to single-variant processing */
+        if (strSignatureToResolve.contains("|")) {
+            for (String strOneVariantFromSplitToResolve : strSignatureToResolve.split("\\|")) {
+                resolveSignature(strOneVariantFromSplitToResolve, objIndex, extractedTypesSet);
             }
             return;
         }
 
         /** skip primitive types */
-        if (strSignature.charAt(0) != '#') {
-            objTypesExtracted.add(Types.getType(strSignature));
+        if (strSignatureToResolve.charAt(0) != '#') {
+            extractedTypesSet.add(Types.getType(strSignatureToResolve));
             return;
         }
 
-        char charTypeOfSignature = (strSignature.length() >= 2 ? strSignature.charAt(1) : '?');
+
+        char charTypeOfSignature = ((strSignatureToResolve.length()) >= 2 ? strSignatureToResolve.charAt(1) : '?');
         if (
             charTypeOfSignature == 'D' || /** pre-defined constants type is not resolved */
             charTypeOfSignature == '?' || /** have no idea what does it mean */
@@ -44,16 +47,16 @@ public class TypeFromSignatureResolvingUtil {
 
         /** resolve functions */
         if (charTypeOfSignature == 'F') {
-            Collection<Function> objFunctionsCollection = objIndex.getFunctionsByName(strSignature.replace("#F", ""));
+            Collection<Function> objFunctionsCollection = objIndex.getFunctionsByName(strSignatureToResolve.replace("#F", ""));
             for (Function objFunction : objFunctionsCollection) {
-                resolveSignature(objFunction.getType().toString(), objIndex, objTypesExtracted);
+                resolveSignature(objFunction.getType().toString(), objIndex, extractedTypesSet);
             }
             objFunctionsCollection.clear();
 
             return;
         }
 
-        /** TODO: implement */
+        /** TODO: implement, needs callable scope */
         if (charTypeOfSignature == 'V'){
             /** try resolving as parameter name, also it's local scope variables */
             return;
@@ -61,7 +64,7 @@ public class TypeFromSignatureResolvingUtil {
 
         /** classes and core types */
         if (charTypeOfSignature == 'C') {
-            objTypesExtracted.add(Types.getType(strSignature.replace("#C", "")));
+            extractedTypesSet.add(Types.getType(strSignatureToResolve.replace("#C", "")));
             return;
         }
 
@@ -74,7 +77,7 @@ public class TypeFromSignatureResolvingUtil {
         final boolean isMethod   = (charTypeOfSignature == 'M');
         final boolean isConstant = (charTypeOfSignature == 'K');
         if (isProperty || isMethod || isConstant) {
-            String[] arrInternalsAndChain = strSignature.split("#C");
+            String[] arrInternalsAndChain = strSignatureToResolve.split("#C");
             /** { <some garbage>, <target chain> }  */
             if (arrInternalsAndChain.length != 2) {
                 return;
@@ -83,7 +86,7 @@ public class TypeFromSignatureResolvingUtil {
             String[] arrChain = arrInternalsAndChain[1].split("\\.");
             String strClassResolved = null;
 
-            List<String> listTypesOfSlot = null;
+            HashSet<String> typesOfSlotSet = null;
             boolean isLastPair;
             boolean isPolyVariant;
 
@@ -102,12 +105,15 @@ public class TypeFromSignatureResolvingUtil {
                 }
 
                 /** resolve pair */
-                listTypesOfSlot = resolveSlot(strClassResolved, strSlot, objIndex);
+                typesOfSlotSet = resolveSlot(strClassResolved, strSlot, objIndex);
 
 
-                /** if mixed is in mid of resolving, ignore it for poly-variants, so possibly more issues will be found */
-                intCountNotMixedTypes = listTypesOfSlot.size();
-                for (String strOne :listTypesOfSlot) {
+                /**
+                 * That's actually a hack, but assumption was correct for real-world frameworks.
+                 * if mixed is in mid of resolving, ignore it for poly-variants, so possibly more issues will be found
+                 */
+                intCountNotMixedTypes = typesOfSlotSet.size();
+                for (String strOne :typesOfSlotSet) {
                     /** skip mixed types */
                     if (
                         !isLastPair && intCountNotMixedTypes > 1 &&
@@ -130,47 +136,52 @@ public class TypeFromSignatureResolvingUtil {
                 /** break on poly-variant/no-variant in middle of chain */
                 isPolyVariant = (intCountNotMixedTypes > 1);
                 if (!isLastPair && (isPolyVariant || StringUtil.isEmpty(strClassResolved))) {
-                    listTypesOfSlot.add(Types.strClassNotResolved);
+                    typesOfSlotSet.add(Types.strClassNotResolved);
                     return;
                 }
 
-                /** break if pair is not resolved */
+                /** break looking up if pair is not resolved */
+                //noinspection ConstantConditions
                 if (strClassResolved.equals(Types.strClassNotResolved)) {
-                    listTypesOfSlot.add(Types.strClassNotResolved);
+                    typesOfSlotSet.add(Types.strClassNotResolved);
                     return;
                 }
             }
 
-            /** re-run resolving on resolved chain types */
-            //noinspection ConstantConditions
-            for (String strType : listTypesOfSlot) {
-                resolveSignature(strType, objIndex, objTypesExtracted);
+
+            /** store resolved types by re-running resolving */
+            for (String strType : typesOfSlotSet) {
+                resolveSignature(strType, objIndex, extractedTypesSet);
             }
+            typesOfSlotSet.clear();
         }
     }
 
-    static public List<String> resolveSlot(String strClass, String strSlot, PhpIndex objIndex) {
-        List<String> listTypesResolved = new LinkedList<>();
+    static public HashSet<String> resolveSlot(String strClass, String strSlot, PhpIndex objIndex) {
+        HashSet<String> resolvedTypesSet = new HashSet<>();
 
-        /** try searching classes */
+        /** try resolving an object interface */
         Collection<PhpClass> objClasses = PhpIndexUtil.getObjectInterfaces(strClass, objIndex);
-
-        /** terminate execution if nothing was found */
         if (objClasses.size() == 0) {
-            listTypesResolved.add(Types.strClassNotResolved);
-            return listTypesResolved;
+            resolvedTypesSet.add(Types.strClassNotResolved);
+            return resolvedTypesSet;
         }
 
-        /** iterate methods and properties for slat name match */
+        /** iterate methods and properties to match slot name */
         boolean isSlotFound;
         String strTypeExtracted;
+
+        char charSlotFirst = strSlot.charAt(0);
         for (PhpClass objClass : objClasses) {
             isSlotFound = false;
 
             for (Method objMethod : objClass.getMethods()) {
-                if (objMethod.getName().equals(strSlot)) {
+                String strMethodName = objMethod.getName();
+
+                /** match first chars and then complete names */
+                if (strMethodName.charAt(0) == charSlotFirst && strMethodName.equals(strSlot)) {
                     strTypeExtracted = objMethod.getType().toString();
-                    Collections.addAll(listTypesResolved, strTypeExtracted.split("\\|"));
+                    Collections.addAll(resolvedTypesSet, strTypeExtracted.split("\\|"));
 
                     isSlotFound = true;
                     break;
@@ -181,9 +192,12 @@ public class TypeFromSignatureResolvingUtil {
             }
 
             for (Field objField : objClass.getFields()) {
-                if (objField.getName().equals(strSlot)) {
+                String strFieldName = objField.getName();
+
+                /** match first chars and then complete names */
+                if (strFieldName.charAt(0) == charSlotFirst && strFieldName.equals(strSlot)) {
                     strTypeExtracted = objField.getType().toString();
-                    Collections.addAll(listTypesResolved, strTypeExtracted.split("\\|"));
+                    Collections.addAll(resolvedTypesSet, strTypeExtracted.split("\\|"));
 
                     break;
                 }
@@ -192,13 +206,10 @@ public class TypeFromSignatureResolvingUtil {
 
 
         /** can be resolved in several classes - often duplicated ones, or not resolved at all */
-        if (listTypesResolved.size() == 0) {
-            listTypesResolved.add(Types.strClassNotResolved);
+        if (resolvedTypesSet.size() == 0) {
+            resolvedTypesSet.add(Types.strClassNotResolved);
         }
-        /** TODO: HashSet */
-        List<String> listUniqueSignatures = new ArrayList<>(new HashSet<>(listTypesResolved));
 
-        listTypesResolved.clear();
-        return listUniqueSignatures;
+        return resolvedTypesSet;
     }
 }

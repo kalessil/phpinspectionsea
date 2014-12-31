@@ -12,10 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 
 public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     private static final String strProblemDescriptionDoNotUse =
@@ -43,53 +40,34 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                 PhpExpression[] arrValues = emptyExpression.getVariables();
                 if (arrValues.length == 1) {
                     /** extract types */
-                    PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
-                    LinkedList<String> objResolvedTypes = new LinkedList<>();
-                    TypeFromPsiResolvingUtil.resolveExpressionType(arrValues[0], objIndex, objResolvedTypes);
+                    HashSet<String> objResolvedTypes = new HashSet<>();
+                    TypeFromPsiResolvingUtil.resolveExpressionType(arrValues[0], PhpIndex.getInstance(holder.getProject()), objResolvedTypes);
 
-                    /** get unique values only, TODO: HashSet */
-                    List<String> listUniqueSignatures = new ArrayList<>(new HashSet<>(objResolvedTypes));
-                    objResolvedTypes.clear();
-
-                    /** debug */
-                    /*String strResolvedTypes = "Resolved: ";
-                    String strGlue = "";
-                    for (String strOneType : listUniqueSignatures) {
-                        strResolvedTypes += strGlue + strOneType;
-                        strGlue = "|";
-                    }
-                    holder.registerProblem(emptyExpression, strResolvedTypes, ProblemHighlightType.LIKE_DEPRECATED);*/
-                    /** /debug  */
-
-
-                    /** Case 1: empty(array) - hidden logic */
-                    if (listUniqueSignatures.size() == 1 && listUniqueSignatures.get(0).equals(Types.strArray)) {
+                    /** Case 1: empty(array) - hidden logic - empty array */
+                    if (objResolvedTypes.size() == 1 && objResolvedTypes.iterator().next().equals(Types.strArray)) {
                         holder.registerProblem(emptyExpression, strProblemDescriptionUseCount, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+
+                        objResolvedTypes.clear();
                         return;
                     }
 
-                    /** Case 2: empty(object) - error */
-                    boolean areVariantsObjectInterfaces = (listUniqueSignatures.size() > 0);
-                    for (String strOneType : listUniqueSignatures) {
-                        areVariantsObjectInterfaces = (
-                            areVariantsObjectInterfaces && (
-                                (
-                                    /** class or interface is given */
-                                    strOneType.charAt(0) == '\\' && !strOneType.equals(Types.strClassNotResolved)
-                                )
-                                ||
-                                (
-                                    /** null among other types, so we can pass through */
-                                    (listUniqueSignatures.size() >= 2) && strOneType.equals(Types.strNull)
-                                )
-                            )
+                    /** Case 2: empty(object) - hidden logic - can be not initialized */
+                    final boolean hasSeveralVariants = (objResolvedTypes.size() >= 2);
+                    boolean areVariantsObjectInterfaces = (objResolvedTypes.size() > 0);
+                    for (String strOneType : objResolvedTypes) {
+                        final boolean isObjectInterfaceGiven = (strOneType.charAt(0) == '\\' && !strOneType.equals(Types.strClassNotResolved));
+                        final boolean isNullAmongTypes       = (hasSeveralVariants && strOneType.equals(Types.strNull));
 
-                        );
+                        areVariantsObjectInterfaces = (areVariantsObjectInterfaces && (isObjectInterfaceGiven || isNullAmongTypes));
                     }
                     if (areVariantsObjectInterfaces) {
                         holder.registerProblem(emptyExpression, strProblemDescriptionUseNullComparison, ProblemHighlightType.ERROR);
+
+                        objResolvedTypes.clear();
                         return;
                     }
+
+                    objResolvedTypes.clear();
                 }
 
                 holder.registerProblem(emptyExpression, strProblemDescriptionDoNotUse, ProblemHighlightType.WEAK_WARNING);

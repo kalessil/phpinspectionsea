@@ -59,7 +59,6 @@ public class CountOnPropelCollectionInspector extends BasePhpInspection {
 
             /**
              * Entry point: functions calls
-             * @param reference
              */
             public void visitPhpFunctionCall(FunctionReference reference) {
                 if (!this.isPropelDefined()) {
@@ -161,7 +160,6 @@ public class CountOnPropelCollectionInspector extends BasePhpInspection {
                 ;
                 if (isCountOnCollection) {
                     holder.registerProblem(objExpression, strProblemDescriptionPropelCollection, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                    return;
                 }
             }
         };

@@ -17,7 +17,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
 
     @NotNull
     public String getDisplayName() {
-        return "Semantics: strlen in empty string context";
+        return "Semantics: strlen in empty string check context";
     }
 
     @NotNull

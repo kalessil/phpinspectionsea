@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.PhpClassHierarchyUtils;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
@@ -14,9 +15,11 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromSignatureResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.LinkedList;
 
 public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInspection {
@@ -65,9 +68,14 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     ) {
                         continue;
                     }
-
                     /** too lazy to do anything more elegant */
                     strParameterType = strParameterType.replace("callable", "array|string");
+
+
+                    /** resolve types for parameter */
+                    LinkedList<String> objParameterTypesResolved = new LinkedList<>();
+                    TypeFromSignatureResolvingUtil.resolveSignature(strParameterType, objIndex, objParameterTypesResolved);
+
 
                     PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, strParameterName, false);
                     if (arrUsages.length == 0) {
@@ -105,17 +113,17 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             boolean isTypeAnnounced;
 
                             if (strFunctionName.equals("is_array")) {
-                                isTypeAnnounced = strParameterType.contains("array") || strParameterType.contains("[]");
+                                isTypeAnnounced = (strParameterType.contains(Types.strArray) || strParameterType.contains("[]"));
                             } else if (strFunctionName.equals("is_string")) {
-                                isTypeAnnounced = strParameterType.contains("string");
+                                isTypeAnnounced = strParameterType.contains(Types.strString);
                             } else if (strFunctionName.equals("is_bool")) {
-                                isTypeAnnounced = strParameterType.contains("bool");
+                                isTypeAnnounced = strParameterType.contains(Types.strBoolean);
                             } else if (strFunctionName.equals("is_int") || strFunctionName.equals("is_integer")) {
-                                isTypeAnnounced = strParameterType.contains("int");
+                                isTypeAnnounced = strParameterType.contains(Types.strInteger);
                             } else if (strFunctionName.equals("is_float")) {
-                                isTypeAnnounced = strParameterType.contains("float");
+                                isTypeAnnounced = strParameterType.contains(Types.strFloat);
                             } else if (strFunctionName.equals("is_resource")) {
-                                isTypeAnnounced = strParameterType.contains("resource");
+                                isTypeAnnounced = strParameterType.contains(Types.strResource);
                             } else {
                                 continue;
                             }
@@ -158,13 +166,13 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 for (String strType : objTypesResolved) {
                                     if (
                                         strType.equals(Types.strResolvingAbortedOnPsiLevel) ||
+                                        strType.equals(Types.strClassNotResolved) ||
                                         strType.equals(Types.strMixed)
                                     ) {
                                         continue;
                                     }
 
-                                    /** TODO: lookup if resolved is class and extended from a defined class */
-                                    isCallViolatesDefinition = !strParameterType.contains(strType);
+                                    isCallViolatesDefinition = (!isTypeCompatible(strType, objParameterTypesResolved, objIndex));
                                     if (isCallViolatesDefinition) {
                                         holder.registerProblem(objValue, strProblemAssignmentViolatesDefinition + ": " + strType, ProblemHighlightType.ERROR);
                                         break;
@@ -176,6 +184,70 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                         /* TODO: can be analysed comparison operations, instanceof */
                     }
                 }
+            }
+
+            private boolean isTypeCompatible (String strType, LinkedList<String> listAllowedTypes, PhpIndex objIndex) {
+                for (String strPossibleType: listAllowedTypes) {
+                    if (strPossibleType.equals(strType)) {
+                        return true;
+                    }
+                }
+
+                if (strType.length() > 0 && strType.charAt(0) == '\\') {
+                    /** collect test subjects */
+                    /** TODO: dedicate to util */
+                    Collection<PhpClass> classesToTest = objIndex.getClassesByName(strType);
+                    if (classesToTest.size() == 0) {
+                        classesToTest.addAll(objIndex.getClassesByFQN(strType));
+                    }
+                    if (classesToTest.size() == 0) {
+                        classesToTest.addAll(objIndex.getInterfacesByName(strType));
+                    }
+                    if (classesToTest.size() == 0) {
+                        classesToTest.addAll(objIndex.getInterfacesByFQN(strType));
+                    }
+                    if (classesToTest.size() == 0) {
+                        return false;
+                    }
+
+                    /** collect base classes */
+                    LinkedList<PhpClass> classesAllowed = new LinkedList<>();
+                    for (String strAllowedType: listAllowedTypes) {
+                        if (
+                            strAllowedType.length() == 0 || strAllowedType.charAt(0) != '\\' ||
+                            strAllowedType.equals(Types.strClassNotResolved)
+                        ) {
+                            continue;
+                        }
+
+                        /** TODO: dedicate to util */
+                        Collection<PhpClass> classesForAllowedType = objIndex.getClassesByName(strAllowedType);
+                        if (classesForAllowedType.size() == 0) {
+                            classesForAllowedType.addAll(objIndex.getClassesByFQN(strAllowedType));
+                        }
+                        if (classesForAllowedType.size() == 0) {
+                            classesForAllowedType.addAll(objIndex.getInterfacesByName(strAllowedType));
+                        }
+                        if (classesForAllowedType.size() == 0) {
+                            classesForAllowedType.addAll(objIndex.getInterfacesByFQN(strAllowedType));
+                        }
+
+                        classesAllowed.addAll(classesForAllowedType);
+                    }
+
+                    /** run test through 2 sets */
+                    for (PhpClass testSubject: classesToTest) {
+                        for (PhpClass testAgainst: classesAllowed) {
+                            if (PhpClassHierarchyUtils.isSuperClass(testAgainst, testSubject, true)) {
+                                return true;
+                            }
+                        }
+                    }
+
+                    return false;
+                }
+
+                return false;
             }
         };
     }

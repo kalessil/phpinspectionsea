@@ -44,26 +44,18 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     TypeFromPsiResolvingUtil.resolveExpressionType(arrValues[0], PhpIndex.getInstance(holder.getProject()), objResolvedTypes);
 
                     /** Case 1: empty(array) - hidden logic - empty array */
-                    if (objResolvedTypes.size() == 1 && objResolvedTypes.iterator().next().equals(Types.strArray)) {
-                        holder.registerProblem(emptyExpression, strProblemDescriptionUseCount, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-
+                    if (this.isArrayType(objResolvedTypes)) {
                         objResolvedTypes.clear();
+
+                        holder.registerProblem(emptyExpression, strProblemDescriptionUseCount, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         return;
                     }
 
-                    /** Case 2: empty(object) - hidden logic - can be not initialized */
-                    final boolean hasSeveralVariants = (objResolvedTypes.size() >= 2);
-                    boolean areVariantsObjectInterfaces = (objResolvedTypes.size() > 0);
-                    for (String strOneType : objResolvedTypes) {
-                        final boolean isObjectInterfaceGiven = (strOneType.charAt(0) == '\\' && !strOneType.equals(Types.strClassNotResolved));
-                        final boolean isNullAmongTypes       = (hasSeveralVariants && strOneType.equals(Types.strNull));
-
-                        areVariantsObjectInterfaces = (areVariantsObjectInterfaces && (isObjectInterfaceGiven || isNullAmongTypes));
-                    }
-                    if (areVariantsObjectInterfaces) {
-                        holder.registerProblem(emptyExpression, strProblemDescriptionUseNullComparison, ProblemHighlightType.ERROR);
-
+                    /** case 2: nullable classes, int, float, resource */
+                    if (this.isNullableCoreType(objResolvedTypes) || this.isNullableObjectInterface(objResolvedTypes)) {
                         objResolvedTypes.clear();
+
+                        holder.registerProblem(emptyExpression, strProblemDescriptionUseNullComparison, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         return;
                     }
 
@@ -71,6 +63,48 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                 }
 
                 holder.registerProblem(emptyExpression, strProblemDescriptionDoNotUse, ProblemHighlightType.WEAK_WARNING);
+            }
+
+
+            /** check if only array type possible */
+            private boolean isArrayType(HashSet<String> resolvedTypesSet) {
+                return resolvedTypesSet.size() == 1 && resolvedTypesSet.iterator().next().equals(Types.strArray);
+            }
+
+            /** check if nullable int, float, resource */
+            private boolean isNullableCoreType(HashSet<String> resolvedTypesSet) {
+                if (resolvedTypesSet.size() != 2 || !resolvedTypesSet.contains(Types.strNull)) {
+                    return false;
+                }
+
+                return  resolvedTypesSet.contains(Types.strInteger) ||
+                        resolvedTypesSet.contains(Types.strFloat) ||
+                        resolvedTypesSet.contains(Types.strResource);
+            }
+
+            /** check if nullable object interfaces */
+            private boolean isNullableObjectInterface(HashSet<String> resolvedTypesSet) {
+                int intCountTypesToInspect = resolvedTypesSet.size();
+                if (resolvedTypesSet.contains(Types.strClassNotResolved)) {
+                    --intCountTypesToInspect;
+                }
+                if (resolvedTypesSet.contains(Types.strNull)) {
+                    --intCountTypesToInspect;
+                }
+                /** ensure we still have variants left */
+                if (intCountTypesToInspect == 0) {
+                    return false;
+                }
+
+                /** work through types, ensure it's null or classes references */
+                for (String strTypeToInspect : resolvedTypesSet) {
+                    /** skip core types, but null */
+                    if (strTypeToInspect.charAt(0) != '\\' && !strTypeToInspect.equals(Types.strNull)) {
+                        return false;
+                    }
+                }
+
+                return true;
             }
         };
     }

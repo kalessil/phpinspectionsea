@@ -6,7 +6,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
-import com.jetbrains.php.lang.psi.elements.FieldReference;
 import com.jetbrains.php.lang.psi.elements.PhpEmpty;
 import com.jetbrains.php.lang.psi.elements.PhpExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;

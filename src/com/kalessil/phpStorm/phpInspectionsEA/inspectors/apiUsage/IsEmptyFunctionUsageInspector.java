@@ -2,12 +2,16 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
+import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
+import com.jetbrains.php.lang.psi.elements.FieldReference;
 import com.jetbrains.php.lang.psi.elements.PhpEmpty;
 import com.jetbrains.php.lang.psi.elements.PhpExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
@@ -39,9 +43,16 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
             public void visitPhpEmpty(PhpEmpty emptyExpression) {
                 PhpExpression[] arrValues = emptyExpression.getVariables();
                 if (arrValues.length == 1) {
+                    PsiElement objParameterToInspect = ExpressionSemanticUtil.getExpressionTroughParenthesis(arrValues[0]);
+                    if (objParameterToInspect instanceof ArrayAccessExpression) {
+                        /** currently php docs lacks of array structure notations, skip it */
+                        return;
+                    }
+
+
                     /** extract types */
                     HashSet<String> objResolvedTypes = new HashSet<>();
-                    TypeFromPsiResolvingUtil.resolveExpressionType(arrValues[0], PhpIndex.getInstance(holder.getProject()), objResolvedTypes);
+                    TypeFromPsiResolvingUtil.resolveExpressionType(objParameterToInspect, PhpIndex.getInstance(holder.getProject()), objResolvedTypes);
 
                     /** Case 1: empty(array) - hidden logic - empty array */
                     if (this.isArrayType(objResolvedTypes)) {

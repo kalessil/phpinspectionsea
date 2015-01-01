@@ -8,12 +8,15 @@ import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
 import com.jetbrains.php.lang.psi.elements.PhpIsset;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     private static final String strProblemDescription =
-            "'isset(...)' can produce issues due to null values handling. " +
-            "Consider using 'array_key_exists(...)' instead.";
+            "'isset(...)' returns true when key is present and associated with null value. " +
+            "'array_key_exists(...)' construction can be used instead.";
+    private static final String strProblemDescriptionUseNullComparison = "Use 'null === $...' construction instead";
+
 
     @NotNull
     public String getDisplayName() {
@@ -31,11 +34,13 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpIsset(PhpIsset issetExpression) {
                 for (PsiElement parameter : issetExpression.getVariables()) {
-                    if (!(parameter instanceof ArrayAccessExpression)) {
-                        continue;
-                    }
+                    parameter = ExpressionSemanticUtil.getExpressionTroughParenthesis(parameter);
 
-                    holder.registerProblem(parameter, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    if (parameter instanceof ArrayAccessExpression) {
+                        holder.registerProblem(parameter, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    } else {
+                        holder.registerProblem(parameter, strProblemDescriptionUseNullComparison, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    }
                 }
             }
         };

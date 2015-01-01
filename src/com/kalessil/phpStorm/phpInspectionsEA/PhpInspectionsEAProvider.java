@@ -32,6 +32,10 @@ isset inspection: review
 
 ===Cases of interest===
 
+CallableParameterUseCaseInTypeContextInspection - but for return statements
+
+array_combine($keys, $values);
+
 condition: test if null and test type(s)/instance(s)of or test several types|instance(s)of
 
 Chain calls, where one of cell can return not an object, producing php fatal

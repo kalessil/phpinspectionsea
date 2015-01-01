@@ -177,7 +177,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                         continue;
                                     }
 
-                                    isCallViolatesDefinition = (!isTypeCompatible(strType, objParameterTypesResolved, objIndex));
+                                    isCallViolatesDefinition = (!this.isTypeCompatible(strType, objParameterTypesResolved, objIndex));
                                     if (isCallViolatesDefinition) {
                                         holder.registerProblem(objValue, strProblemAssignmentViolatesDefinition + ": " + strType, ProblemHighlightType.ERROR);
                                         break;
@@ -187,7 +187,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 objTypesResolved.clear();
                             }
                         }
-                        /* TODO: can be analysed comparison operations, instanceof */
+
+                        /* TODO: can be analysed comparison operations */
                     }
 
                     objParameterTypesResolved.clear();

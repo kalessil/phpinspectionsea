@@ -58,7 +58,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
                 this.inspectDuplicatedConditions(objAllConditions, ifStatement);
-                /** TODO: inspect if not a binary expression - should be clearly stated comparison */
             }
 
             /***
@@ -133,9 +132,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                             continue;
                         }
 
-                        /**
-                         * TODO: binary expressions with opposite operations
-                         */
                         boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objInnerLoopExpression, objExpression);
                         if (isDuplicate) {
                             holder.registerProblem(objInnerLoopExpression, strProblemDescriptionDuplicate, ProblemHighlightType.WEAK_WARNING);
@@ -151,9 +147,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                             continue;
                         }
 
-                        /**
-                         * TODO: binary expressions with opposite operations
-                         */
                         boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objOuterScopeExpression, objExpression);
                         if (isDuplicate) {
                             holder.registerProblem(objExpression, strProblemDescriptionDuplicate, ProblemHighlightType.WEAK_WARNING);

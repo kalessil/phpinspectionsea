@@ -1,10 +1,6 @@
 <html>
 <body>
-Detects sequential unset calls constructions:
-
-<pre>
-    unset(...);
-    unset(...);
-</pre>
+Analyses if 'unset(...)' function was called several times sequentially. This can be safely replaced
+with 'unset(..., ...[, ...])' construction.
 </body>
 </html>

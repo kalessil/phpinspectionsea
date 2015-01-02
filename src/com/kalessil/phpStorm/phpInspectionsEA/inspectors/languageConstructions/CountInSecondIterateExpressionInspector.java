@@ -18,7 +18,7 @@ public class CountInSecondIterateExpressionInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: ambiguous count call in for loop";
+        return "API: 'count(...)' calls in loops termination condition";
     }
 
     @NotNull

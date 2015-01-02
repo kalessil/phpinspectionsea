@@ -1,6 +1,15 @@
 <html>
 <body>
-Detects cases when 'isset' applied to an array.
-Causes issues when array item present and stores null, but isset says still false.
+Analyses 'isset(...)' function usages.<br />
+<br />
+As analysis performed, inspection suggests to use 'null !== ...', 'array_key_exists(..., ...)' instead.
+In cases when isset applied to array access expression, inspection checks if concatenation is used for
+an index.<br />
+<br />
+Couple words regarding array_key_exists: it will return true even if array item is null, so it's more about
+verifying data structures.<br />
+<br />
+Working out array_key_exists refactoring recommendation will cost additional development and legacy code
+reverse engineering, so it shall be planned accordingly.
 </body>
 </html>

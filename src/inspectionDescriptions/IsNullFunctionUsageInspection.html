@@ -1,5 +1,8 @@
 <html>
 <body>
-Detects 'is_null' function usage, considered redundant because of identical operations (===/!==) available.
+Analyses 'is_null(...)' function usages, which was introduced in PHP4.<br />
+<br />
+All 'is_null(...)' constructions can be safely replaced with 'null === ...' constructions.
+Or 'null !== ...' if original construction was inverted.
 </body>
 </html>

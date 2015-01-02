@@ -14,7 +14,7 @@ public class SequentialUnSetCallsInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: 'unset' called sequentially";
+        return "API: 'unset()' calls can be merged";
     }
 
     @NotNull

@@ -1,13 +1,7 @@
 <html>
 <body>
-Detects following structure:
-
-<pre>
-    for (..., ... count(...), ...) {
-        ...
-    }
-</pre>
-
-Here 'count' calls can be optimized, by storing count result in a local variable just before the loop.
+Analyses if 'for' constructions are using 'count(...)' in loop termination conditions.<br />
+<br />
+That's well known anti-pattern and result of 'count(...)' should be stored outside of the loop.
 </body>
 </html>

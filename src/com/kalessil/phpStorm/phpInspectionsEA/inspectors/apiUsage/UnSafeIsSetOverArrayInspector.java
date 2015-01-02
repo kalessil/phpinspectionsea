@@ -20,7 +20,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
             "'isset(...)' returns true when key is present and associated with null value. " +
             "'array_key_exists(...)' construction can be used instead.";
 
-    private static final String strProblemDescriptionUseNullComparison = "Use 'null === $...' construction instead";
+    private static final String strProblemDescriptionUseNullComparison = "Use 'null !== $...' construction instead";
 
     private static final String strProblemDescriptionConcatenationInIndex = "Contains concatenation expression as index. " +
             "Define this index as variable.";

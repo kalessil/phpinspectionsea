@@ -26,17 +26,20 @@ NotOptimalIfConditions
         - null comparison && instanceof: null comparison not needed (check if instanceof, take argument,
                 find if used with !is_null, !== null - no sense or logical error)
 
-===Cases of interest===
+ForeachSourceInspector
+        foreach source modification within loop
+        foreach ($source as $k => $v) {
+                ...
+                unset($source[$k]);
+                ...
+        }
 
+
+===Cases of interest===
 
 CallableParameterUseCaseInTypeContextInspection - but for return statements
 
-
 condition: test if null and test type(s)/instance(s)of or test several types|instance(s)of
-
-
-Chain calls, where one of cell can return not an object, producing php fatal
-
 
 A extends B,C, B extends C - interface contracts or lack of structure knowledge?
 

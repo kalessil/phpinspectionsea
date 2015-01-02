@@ -28,8 +28,9 @@ NEW DATE: improvements and new inspections:<br/>
     - NotOptimalIfConditionsInspection: reduced amount of false positives
     <br/>
     - CallableParameterUseCaseInTypeContextInspection added<br/>
-    - CountOnPropelCollectionInspector added<br/>
     - ForeachSourceInspector added<br/>
+    - TypesCastingWithFunctionsInspector added<br />
+    - CountOnPropelCollectionInspector added<br/>
 <br/>
 <hr/>
 21 Dec 2014: bug-fixes, improvements and new inspections:<br/>

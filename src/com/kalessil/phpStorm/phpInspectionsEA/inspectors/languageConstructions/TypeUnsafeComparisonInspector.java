@@ -15,7 +15,7 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: type-unsafe comparison";
+        return "API: type unsafe comparison";
     }
 
     @NotNull

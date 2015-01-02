@@ -13,10 +13,10 @@ import java.util.HashSet;
 public class TypeFromPsiResolvingUtil {
 
     /** adds type, handling | and #, invoking signatures resolving */
-    private static void storeAsTypeWithSignaturesImport(String strTypeToImport, PhpIndex objIndex, HashSet<String> objTypesSet) {
+    private static void storeAsTypeWithSignaturesImport(String strTypeToImport, Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
         if (strTypeToImport.contains("|")) {
             for (String strOneType : strTypeToImport.split("\\|")) {
-                storeAsTypeWithSignaturesImport(Types.getType(strOneType), objIndex, objTypesSet);
+                storeAsTypeWithSignaturesImport(Types.getType(strOneType), objScope, objIndex, objTypesSet);
             }
             return;
         }
@@ -26,7 +26,7 @@ public class TypeFromPsiResolvingUtil {
         }
 
         if (strTypeToImport.contains("#")) {
-            TypeFromSignatureResolvingUtil.resolveSignature(strTypeToImport, objIndex, objTypesSet);
+            TypeFromSignatureResolvingUtil.resolveSignature(strTypeToImport, objScope, objIndex, objTypesSet);
             return;
         }
 
@@ -34,7 +34,7 @@ public class TypeFromPsiResolvingUtil {
     }
 
     /** high-level resolving logic */
-    public static void resolveExpressionType(PsiElement objSubjectExpression, PhpIndex objIndex, HashSet<String> objTypesSet) {
+    public static void resolveExpressionType(PsiElement objSubjectExpression, Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
         objSubjectExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(objSubjectExpression);
 
         if (objSubjectExpression instanceof ArrayCreationExpression) {
@@ -46,24 +46,24 @@ public class TypeFromPsiResolvingUtil {
             return;
         }
         if (objSubjectExpression instanceof ConstantReference) {
-            resolveConstantReference((ConstantReference) objSubjectExpression, objIndex, objTypesSet);
+            resolveConstantReference((ConstantReference) objSubjectExpression, objScope, objIndex, objTypesSet);
             return;
         }
 
         if (objSubjectExpression instanceof TernaryExpression) {
-            resolveTernaryOperator((TernaryExpression) objSubjectExpression, objIndex, objTypesSet);
+            resolveTernaryOperator((TernaryExpression) objSubjectExpression, objScope, objIndex, objTypesSet);
             return;
         }
         if (objSubjectExpression instanceof UnaryExpression) {
-            resolveUnaryExpression((UnaryExpression) objSubjectExpression, objIndex, objTypesSet);
+            resolveUnaryExpression((UnaryExpression) objSubjectExpression, objScope, objIndex, objTypesSet);
             return;
         }
         if (objSubjectExpression instanceof BinaryExpression) {
-            resolveBinaryExpression((BinaryExpression) objSubjectExpression, objIndex, objTypesSet);
+            resolveBinaryExpression((BinaryExpression) objSubjectExpression, objScope, objIndex, objTypesSet);
             return;
         }
         if (objSubjectExpression instanceof SelfAssignmentExpression) {
-            resolveSelfAssignmentExpression((SelfAssignmentExpression) objSubjectExpression, objIndex, objTypesSet);
+            resolveSelfAssignmentExpression((SelfAssignmentExpression) objSubjectExpression, objScope, objIndex, objTypesSet);
             return;
         }
 
@@ -72,17 +72,17 @@ public class TypeFromPsiResolvingUtil {
             String strVariableName = ((Variable) objSubjectExpression).getName();
             if (null != strVariableName && strVariableName.charAt(0) == '_') {
                 if ("|_GET|_POST|_SESSION|_REQUEST|_FILES|_COOKIE|_ENV|_SERVER|".contains("|" + strVariableName + "|")) {
-                    storeAsTypeWithSignaturesImport(Types.strArray, objIndex, objTypesSet);
+                    storeAsTypeWithSignaturesImport(Types.strArray, objScope, objIndex, objTypesSet);
                     return;
                 }
 
             }
 
-            storeAsTypeWithSignaturesImport(((Variable) objSubjectExpression).getSignature(), objIndex, objTypesSet);
+            storeAsTypeWithSignaturesImport(((Variable) objSubjectExpression).getSignature(), objScope, objIndex, objTypesSet);
             return;
         }
         if (objSubjectExpression instanceof ArrayAccessExpression) {
-            storeAsTypeWithSignaturesImport(((ArrayAccessExpression) objSubjectExpression).getType().toString(), objIndex, objTypesSet);
+            storeAsTypeWithSignaturesImport(((ArrayAccessExpression) objSubjectExpression).getType().toString(), objScope, objIndex, objTypesSet);
             return;
         }
 
@@ -92,38 +92,38 @@ public class TypeFromPsiResolvingUtil {
             return;
         }
         if (objSubjectExpression instanceof ClassConstantReference) {
-            storeAsTypeWithSignaturesImport(((ClassConstantReference) objSubjectExpression).getSignature(), objIndex, objTypesSet);
+            storeAsTypeWithSignaturesImport(((ClassConstantReference) objSubjectExpression).getSignature(), objScope, objIndex, objTypesSet);
             return;
         }
         if (objSubjectExpression instanceof FieldReference) {
-            storeAsTypeWithSignaturesImport(((FieldReference) objSubjectExpression).getSignature(), objIndex, objTypesSet);
+            storeAsTypeWithSignaturesImport(((FieldReference) objSubjectExpression).getSignature(), objScope, objIndex, objTypesSet);
             return;
         }
         if (objSubjectExpression instanceof MethodReference) {
-            storeAsTypeWithSignaturesImport(((MethodReference) objSubjectExpression).getSignature(), objIndex, objTypesSet);
+            storeAsTypeWithSignaturesImport(((MethodReference) objSubjectExpression).getSignature(), objScope, objIndex, objTypesSet);
             return;
         }
         if (objSubjectExpression instanceof FunctionReference) {
-            storeAsTypeWithSignaturesImport(((FunctionReference) objSubjectExpression).getSignature(), objIndex, objTypesSet);
+            storeAsTypeWithSignaturesImport(((FunctionReference) objSubjectExpression).getSignature(), objScope, objIndex, objTypesSet);
             return;
         }
 
 
         if (objSubjectExpression instanceof PhpExpression) {
-            resolvePhpExpression((PhpExpression) objSubjectExpression, objIndex, objTypesSet);
+            resolvePhpExpression((PhpExpression) objSubjectExpression, objScope, objIndex, objTypesSet);
         }
 
         /** TODO: check which case is not worked out */
     }
 
     /** resolve numbers and exotic structures, eg list() = .... */
-    private static void resolvePhpExpression(PhpExpression objSubjectExpression, PhpIndex objIndex, HashSet<String> objTypesSet) {
-        storeAsTypeWithSignaturesImport(objSubjectExpression.getType().toString(), objIndex, objTypesSet);
+    private static void resolvePhpExpression(PhpExpression objSubjectExpression, Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
+        storeAsTypeWithSignaturesImport(objSubjectExpression.getType().toString(), objScope, objIndex, objTypesSet);
     }
 
     /** Will resolve self-assignments */
-    private static void resolveSelfAssignmentExpression(SelfAssignmentExpression objSubjectExpression, PhpIndex objIndex, HashSet<String> objTypesSet) {
-        storeAsTypeWithSignaturesImport(objSubjectExpression.getType().toString(), objIndex, objTypesSet);
+    private static void resolveSelfAssignmentExpression(SelfAssignmentExpression objSubjectExpression, Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
+        storeAsTypeWithSignaturesImport(objSubjectExpression.getType().toString(), objScope, objIndex, objTypesSet);
     }
 
     /** Will resolve type of new expression */
@@ -138,7 +138,7 @@ public class TypeFromPsiResolvingUtil {
     }
 
     /** resolve some of binary expressions . | && | || */
-    private static void resolveBinaryExpression (BinaryExpression objSubjectExpression, PhpIndex objIndex, HashSet<String> objTypesSet) {
+    private static void resolveBinaryExpression (BinaryExpression objSubjectExpression, Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
         PsiElement objOperation = objSubjectExpression.getOperation();
         if (null == objOperation) {
             return;
@@ -153,11 +153,11 @@ public class TypeFromPsiResolvingUtil {
             return;
         }
 
-        storeAsTypeWithSignaturesImport(objSubjectExpression.getType().toString(), objIndex, objTypesSet);
+        storeAsTypeWithSignaturesImport(objSubjectExpression.getType().toString(), objScope, objIndex, objTypesSet);
     }
 
     /** Resolve type casting expressions */
-    private static void resolveUnaryExpression (UnaryExpression objSubjectExpression, PhpIndex objIndex, HashSet<String> objTypesSet) {
+    private static void resolveUnaryExpression (UnaryExpression objSubjectExpression, Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
         PsiElement objOperation = objSubjectExpression.getOperation();
         if (null == objOperation) {
             return;
@@ -181,11 +181,11 @@ public class TypeFromPsiResolvingUtil {
             return;
         }
 
-        storeAsTypeWithSignaturesImport(objSubjectExpression.getType().toString(), objIndex, objTypesSet);
+        storeAsTypeWithSignaturesImport(objSubjectExpression.getType().toString(), objScope, objIndex, objTypesSet);
     }
 
     /** Will resolve constants references */
-    private static void resolveConstantReference (ConstantReference objSubjectExpression, PhpIndex objIndex, HashSet<String> objTypesSet) {
+    private static void resolveConstantReference (ConstantReference objSubjectExpression, Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
         if (ExpressionSemanticUtil.isBoolean(objSubjectExpression)) {
             objTypesSet.add(Types.strBoolean);
             return;
@@ -196,17 +196,17 @@ public class TypeFromPsiResolvingUtil {
             return;
         }
 
-        storeAsTypeWithSignaturesImport(objSubjectExpression.getType().toString(), objIndex, objTypesSet);
+        storeAsTypeWithSignaturesImport(objSubjectExpression.getType().toString(), objScope, objIndex, objTypesSet);
     }
 
     /** Will resolve ternary operator */
-    private static void resolveTernaryOperator (TernaryExpression objSubjectExpression, PhpIndex objIndex, HashSet<String> objTypesSet) {
+    private static void resolveTernaryOperator (TernaryExpression objSubjectExpression, Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
         if (null != objSubjectExpression.getTrueVariant()) {
-            resolveExpressionType(objSubjectExpression.getTrueVariant(), objIndex, objTypesSet);
+            resolveExpressionType(objSubjectExpression.getTrueVariant(), objScope, objIndex, objTypesSet);
         }
 
         if (null != objSubjectExpression.getFalseVariant()) {
-            resolveExpressionType(objSubjectExpression.getFalseVariant(), objIndex, objTypesSet);
+            resolveExpressionType(objSubjectExpression.getFalseVariant(), objScope, objIndex, objTypesSet);
         }
     }
 }

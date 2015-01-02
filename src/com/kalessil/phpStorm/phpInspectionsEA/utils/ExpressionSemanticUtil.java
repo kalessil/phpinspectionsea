@@ -2,7 +2,9 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.PhpLangUtil;
+import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
@@ -172,6 +174,19 @@ public class ExpressionSemanticUtil {
         return objPartsCollection;
     }
 
+    @Nullable
+    public static Function getScope(@NotNull PsiElement objExpression) {
+        PsiElement objParent = objExpression.getParent();
+        while (null != objParent && !(objParent instanceof PhpFile)) {
+            if (objParent instanceof Function) {
+                return (Function) objParent;
+            }
+
+            objParent = objParent.getParent();
+        }
+
+        return null;
+    }
 
     /**
      * get first statement: for all inspectors

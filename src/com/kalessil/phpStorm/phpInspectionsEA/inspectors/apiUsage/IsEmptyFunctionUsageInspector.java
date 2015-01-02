@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
+import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.PhpEmpty;
 import com.jetbrains.php.lang.psi.elements.PhpExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -50,8 +51,9 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
 
 
                     /** extract types */
+                    Function objScope = ExpressionSemanticUtil.getScope(emptyExpression);
                     HashSet<String> objResolvedTypes = new HashSet<>();
-                    TypeFromPsiResolvingUtil.resolveExpressionType(objParameterToInspect, PhpIndex.getInstance(holder.getProject()), objResolvedTypes);
+                    TypeFromPsiResolvingUtil.resolveExpressionType(objParameterToInspect, objScope, PhpIndex.getInstance(holder.getProject()), objResolvedTypes);
 
                     /** Case 1: empty(array) - hidden logic - empty array */
                     if (this.isArrayType(objResolvedTypes)) {

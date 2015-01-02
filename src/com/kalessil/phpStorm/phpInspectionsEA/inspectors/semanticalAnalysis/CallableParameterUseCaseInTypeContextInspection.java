@@ -72,7 +72,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                     /** resolve types for parameter */
                     HashSet<String> objParameterTypesResolved = new HashSet<>();
-                    TypeFromSignatureResolvingUtil.resolveSignature(strParameterType, objIndex, objParameterTypesResolved);
+                    TypeFromSignatureResolvingUtil.resolveSignature(strParameterType, (Function) objScopeHolder, objIndex, objParameterTypesResolved);
 
 
                     PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, strParameterName, false);
@@ -165,7 +165,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 null != objVariable.getName() && objVariable.getName().equals(strParameterName)
                             ) {
                                 HashSet<String> objTypesResolved = new HashSet<>();
-                                TypeFromPsiResolvingUtil.resolveExpressionType(objValue, objIndex, objTypesResolved);
+                                TypeFromPsiResolvingUtil.resolveExpressionType(objValue, (Function) objScopeHolder, objIndex, objTypesResolved);
 
                                 boolean isCallViolatesDefinition;
                                 for (String strType : objTypesResolved) {

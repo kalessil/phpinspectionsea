@@ -2,10 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.php.PhpIndex;
-import com.jetbrains.php.lang.psi.elements.Field;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.*;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -13,7 +10,7 @@ import java.util.HashSet;
 
 public class TypeFromSignatureResolvingUtil {
 
-    static public void resolveSignature (String strSignatureToResolve, PhpIndex objIndex, HashSet<String> extractedTypesSet) {
+    static public void resolveSignature (String strSignatureToResolve, Function objScope, PhpIndex objIndex, HashSet<String> extractedTypesSet) {
         /** do nothing with empty signatures */
         if (StringUtil.isEmpty(strSignatureToResolve)) {
             return;
@@ -22,7 +19,7 @@ public class TypeFromSignatureResolvingUtil {
         /** re-dispatch poly-variants to single-variant processing */
         if (strSignatureToResolve.contains("|")) {
             for (String strOneVariantFromSplitToResolve : strSignatureToResolve.split("\\|")) {
-                resolveSignature(strOneVariantFromSplitToResolve, objIndex, extractedTypesSet);
+                resolveSignature(strOneVariantFromSplitToResolve, objScope, objIndex, extractedTypesSet);
             }
             return;
         }
@@ -49,16 +46,25 @@ public class TypeFromSignatureResolvingUtil {
         if (charTypeOfSignature == 'F') {
             Collection<Function> objFunctionsCollection = objIndex.getFunctionsByName(strSignatureToResolve.replace("#F", ""));
             for (Function objFunction : objFunctionsCollection) {
-                resolveSignature(objFunction.getType().toString(), objIndex, extractedTypesSet);
+                resolveSignature(objFunction.getType().toString(), objScope, objIndex, extractedTypesSet);
             }
             objFunctionsCollection.clear();
 
             return;
         }
 
-        /** TODO: implement, needs callable scope */
+        /** resolve params and scope variables */
         if (charTypeOfSignature == 'V'){
-            /** try resolving as parameter name, also it's local scope variables */
+            String strParameterOrVariableName = strSignatureToResolve.replace("#V", "");
+            for (Parameter objParam : objScope.getParameters()) {
+                if (objParam.getName().equals(strParameterOrVariableName)) {
+                    resolveSignature(objParam.getType().toString(), objScope, objIndex, extractedTypesSet);
+                    return;
+                }
+            }
+
+            /** TODO: resolve local vars - find assignments */
+
             return;
         }
 
@@ -151,7 +157,7 @@ public class TypeFromSignatureResolvingUtil {
 
             /** store resolved types by re-running resolving */
             for (String strType : typesOfSlotSet) {
-                resolveSignature(strType, objIndex, extractedTypesSet);
+                resolveSignature(strType, objScope, objIndex, extractedTypesSet);
             }
             typesOfSlotSet.clear();
         }

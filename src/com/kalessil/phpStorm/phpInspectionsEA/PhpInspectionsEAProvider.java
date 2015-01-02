@@ -25,6 +25,8 @@ NotOptimalIfConditions
         - method/function references with bool result should be explicitly compared with bool
         - null comparison && instanceof: null comparison not needed (check if instanceof, take argument,
                 find if used with !is_null, !== null - no sense or logical error)
+                not null and type test: instanceof, is_*
+        - $objDateTime->format('N') == 7 || $objDateTime->format('N') == 6
 
 ForeachSourceInspector
         foreach source modification within loop
@@ -33,16 +35,6 @@ ForeachSourceInspector
                 unset($source[$k]);
                 ...
         }
-
-
-===Cases of interest===
-
-CallableParameterUseCaseInTypeContextInspection - but for return statements
-
-condition: test if null and test type(s)/instance(s)of or test several types|instance(s)of
-
-A extends B,C, B extends C - interface contracts or lack of structure knowledge?
-
 
 ===PHP5 transition===
 

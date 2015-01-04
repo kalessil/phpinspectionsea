@@ -16,7 +16,7 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
 
     @NotNull
     public String getDisplayName() {
-        return "Clean code: non optimized arrays mapping";
+        return "Performance: not optimized arrays mapping";
     }
 
     @NotNull

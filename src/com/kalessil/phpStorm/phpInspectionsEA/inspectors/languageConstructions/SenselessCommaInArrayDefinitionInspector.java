@@ -15,7 +15,7 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
 
     @NotNull
     public String getDisplayName() {
-        return "API: un-necessary comma in array definition";
+        return "Code style: unnecessary comma in array definition";
     }
 
     @NotNull

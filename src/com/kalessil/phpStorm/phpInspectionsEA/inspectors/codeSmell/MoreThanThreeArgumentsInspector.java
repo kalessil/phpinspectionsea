@@ -15,7 +15,7 @@ public class MoreThanThreeArgumentsInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "Clean code: amount of parameters up to 3";
+        return "Architecture: more than 3 parameters in callable";
     }
 
     @NotNull
@@ -28,10 +28,7 @@ public class MoreThanThreeArgumentsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
-                PsiElement objFunctionName = method.getNameIdentifier();
-                if (objFunctionName != null && method.getParameters().length > 3) {
-                    holder.registerProblem(objFunctionName, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
-                }
+                this.visitPhpFunction(method);
             }
 
             public void visitPhpFunction(Function function) {

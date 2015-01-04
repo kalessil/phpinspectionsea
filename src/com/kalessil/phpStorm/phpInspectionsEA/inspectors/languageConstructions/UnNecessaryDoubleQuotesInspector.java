@@ -13,7 +13,7 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: unnecessary double quotes";
+        return "Performance: unnecessary double quotes";
     }
 
     @NotNull

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ForgottenDebugOutputInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Please ensure this is not forgotten debug statement";
-    private final String strTargetFunctions = "print_r,var_export,var_dump";
+    private final String strTargetFunctions = "|print_r|var_export|var_dump|";
 
     @NotNull
     public String getDisplayName() {
@@ -38,7 +38,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                     return;
                 }
 
-                final boolean isTargetFunction = strTargetFunctions.contains(strFunction.toLowerCase());
+                final boolean isTargetFunction = strTargetFunctions.contains("|" + strFunction + "|");
                 if (!isTargetFunction) {
                     return;
                 }

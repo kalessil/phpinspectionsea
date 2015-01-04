@@ -13,11 +13,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Initialization can be omitted, as null " +
-            "initialization is used by default";
+            "initialization is applied by default";
 
     @NotNull
     public String getDisplayName() {
-        return "API: ambiguous null field initialization";
+        return "API: ambiguous class field initialization";
     }
 
     @NotNull

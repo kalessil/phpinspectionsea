@@ -15,7 +15,7 @@ public class dirnameCallOnFileConstantInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: outdated __DIR__ equivalent";
+        return "API: __DIR__ equivalent construction";
     }
 
     @NotNull
@@ -42,12 +42,12 @@ public class dirnameCallOnFileConstantInspector extends BasePhpInspection {
                 PsiElement objFirstParameter = reference.getParameters()[0];
                 final boolean isFileConstantPassed = (
                     objFirstParameter instanceof ConstantReference &&
-                    objFirstParameter.getText().toUpperCase().equals("__FILE__")
+                    objFirstParameter.getText().equals("__FILE__")
                 );
                 /** if pre-conditions are not met, don't test function name */
                 final boolean isTargetFunction = (
                     isFileConstantPassed &&
-                    strFunction.toLowerCase().equals("dirname")
+                    strFunction.equals("dirname")
                 );
                 if (!isTargetFunction) {
                     return;

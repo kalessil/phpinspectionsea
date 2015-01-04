@@ -1,14 +1,9 @@
 <html>
 <body>
-Detects missing group statement for conditional, which can lead to confusing constructions like this:
-
-<pre>
-    if (...)
-        if (...) ...
-    else ...
-</pre>
-
-Here else is related to nested if and formatting lies about relations.
-
+Analyses if conditionals (if/elseif/else) has no or has empty group statements.<br />
+<br />
+You shall add group statements so other inspections could be applied.<br />
+Empty group statements are normally never finished errors handling, so it's up to domain/solution
+architects to make decision: to remove or refactor this code.
 </body>
 </html>

@@ -10,12 +10,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class IfConditionalsWithoutGroupStatementInspector extends BasePhpInspection {
-    private static final String strProblemMissingBrackets = "Wrap the conditional body with curvy brackets";
+    private static final String strProblemMissingBrackets = "Wrap the conditional body with group statement";
     private static final String strProblemEmptyBody = "Empty group statement";
 
     @NotNull
     public String getDisplayName() {
-        return "API: if/else/elseif group statement";
+        return "API: missing or empty conditionals group statement";
     }
 
     @NotNull

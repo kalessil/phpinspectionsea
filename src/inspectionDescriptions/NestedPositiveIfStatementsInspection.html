@@ -1,14 +1,7 @@
 <html>
 <body>
-Detects confusing nested ifs structures like this:
-
-<pre>
-if (...) {
-    if (...) {
-        /** other nested ifs */
-    }
-}
-</pre>
-
+Analyses if nested positive ifs structures are introduced. It's often called "bow-style programming" and came from C-development world.<br />
+<br />
+Suggested refactoring if risks-free, plus not optimal if conditions analysis will be possible.
 </body>
 </html>

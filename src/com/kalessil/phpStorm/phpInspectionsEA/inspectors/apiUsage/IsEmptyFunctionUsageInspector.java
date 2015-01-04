@@ -28,7 +28,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: 'empty(...)' usage";
+        return "Type compatibility: 'empty(...)' usage";
     }
 
     @NotNull

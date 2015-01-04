@@ -17,7 +17,7 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: type unsafe equality operators";
+        return "Type compatibility: type unsafe equality operators";
     }
 
     @NotNull

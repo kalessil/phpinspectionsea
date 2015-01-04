@@ -17,7 +17,7 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
 
     @NotNull
     public String getDisplayName() {
-        return "Types safety: a parameter can be declared as array";
+        return "Type compatibility: a parameter can be declared as array";
     }
 
     @NotNull

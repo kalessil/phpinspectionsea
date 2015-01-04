@@ -16,7 +16,7 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: 'in_array(...)', 'array_search()' type unsafe usage";
+        return "Type compatibility: 'in_array(...)', 'array_search()' type unsafe usage";
     }
 
     @NotNull

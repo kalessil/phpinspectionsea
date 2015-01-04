@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -97,7 +98,7 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
                     if (objOperation instanceof PsiWhiteSpace) {
                         objOperation = objOperation.getNextSibling();
                     }
-                    if (!objOperation.getText().equals("=")) {
+                    if (objOperation.getNode().getElementType() != PhpTokenTypes.opASGN) {
                         objAssignmentsList.clear();
                         return;
                     }

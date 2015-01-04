@@ -11,6 +11,7 @@ import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -102,7 +103,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 UnaryExpression objCallWrapper = (UnaryExpression) objFunctionCall.getParent();
                                 isReversedCheck = (
                                     null != objCallWrapper.getOperation() &&
-                                    objCallWrapper.getOperation().getText().equals("!")
+                                    objCallWrapper.getOperation().getNode().getElementType() == PhpTokenTypes.opNOT
                                 );
                             }
 

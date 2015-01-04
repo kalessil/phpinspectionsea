@@ -21,7 +21,7 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "Semantics: hidden default value in conditionals";
+        return "Control flow: default value is hidden in else branch";
     }
 
     @NotNull

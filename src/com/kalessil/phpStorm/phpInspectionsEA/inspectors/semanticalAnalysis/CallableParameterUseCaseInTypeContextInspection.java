@@ -32,7 +32,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
     @NotNull
     public String getDisplayName() {
-        return "Semantics: callable parameter usages in type context";
+        return "Architecture: callable parameter usage violates definition";
     }
 
     @NotNull

@@ -23,7 +23,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "Semantics: callable parameter is used in write context only";
+        return "Unused: callable parameter is not used";
     }
 
     @NotNull

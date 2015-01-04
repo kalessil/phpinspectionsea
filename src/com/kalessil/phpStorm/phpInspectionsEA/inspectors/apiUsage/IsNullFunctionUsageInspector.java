@@ -36,7 +36,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                     return;
                 }
 
-                final boolean isNullFunctionUsed = ("is_null").equals(strFunctionName.toLowerCase());
+                final boolean isNullFunctionUsed = ("is_null").equals(strFunctionName);
                 if (!isNullFunctionUsed) {
                     return;
                 }

@@ -13,7 +13,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: 'is_null(...)' usage";
+        return "Performance: 'is_null(...)' usage";
     }
 
     @NotNull

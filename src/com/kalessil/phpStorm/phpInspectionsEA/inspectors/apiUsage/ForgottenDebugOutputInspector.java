@@ -15,7 +15,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: forgotten debug statements";
+        return "Probable bugs: forgotten debug statements";
     }
 
     @NotNull

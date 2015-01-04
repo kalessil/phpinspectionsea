@@ -15,7 +15,7 @@ public class IfConditionalsWithoutGroupStatementInspector extends BasePhpInspect
 
     @NotNull
     public String getDisplayName() {
-        return "API: missing or empty conditionals group statement";
+        return "Code style: missing or empty conditionals group statement";
     }
 
     @NotNull

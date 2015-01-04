@@ -29,7 +29,7 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: types casting via PHP4 functions";
+        return "Performance: types casting via PHP4 functions";
     }
 
     @NotNull

@@ -23,7 +23,7 @@ public class CountOnPropelCollectionInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "Propel API: count on collections";
+        return "Performance: 'count(...)' calls on Propel collection";
     }
 
     @NotNull

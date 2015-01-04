@@ -15,7 +15,7 @@ public class dirnameCallOnFileConstantInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: __DIR__ equivalent construction";
+        return "Performance: __DIR__ equivalent construction";
     }
 
     @NotNull

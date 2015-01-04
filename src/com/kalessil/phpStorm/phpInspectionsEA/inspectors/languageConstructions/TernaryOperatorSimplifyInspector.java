@@ -17,7 +17,7 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: ternary operator simplification";
+        return "Control flow: ternary operator simplification";
     }
 
     @NotNull

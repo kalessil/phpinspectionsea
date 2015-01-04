@@ -28,7 +28,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: 'isset(...)' usage";
+        return "Control flow: 'isset(...)' usage";
     }
 
     @NotNull

@@ -17,7 +17,7 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: ambiguous class property initialization";
+        return "Unused: ambiguous class property initialization";
     }
 
     @NotNull

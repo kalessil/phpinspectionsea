@@ -18,7 +18,7 @@ public class CountInSecondIterateExpressionInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: 'count(...)' calls in loops termination condition";
+        return "Performance: 'count(...)' calls in loops termination condition";
     }
 
     @NotNull

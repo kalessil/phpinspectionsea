@@ -17,7 +17,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: nested positive ifs";
+        return "Control flow: nested positive ifs";
     }
 
     @NotNull

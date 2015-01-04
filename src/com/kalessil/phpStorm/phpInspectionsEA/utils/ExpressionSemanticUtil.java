@@ -1,7 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.PhpLangUtil;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
@@ -125,22 +127,22 @@ public class ExpressionSemanticUtil {
         if (null == objOperation) {
             return null;
         }
-        String strOperation = objOperation.getText();
-        if (!strOperation.equals("&&") && !strOperation.equals("||")) {
+        IElementType operationType = objOperation.getNode().getElementType();
+        if (operationType != PhpTokenTypes.opOR && operationType != PhpTokenTypes.opAND) {
             return null;
         }
 
-        return ExpressionSemanticUtil.getConditions((BinaryExpression) objCondition, strOperation);
+        return ExpressionSemanticUtil.getConditions((BinaryExpression) objCondition, operationType);
     }
 
     /**
      * Extracts conditions into naturally ordered list
      *
      * @param objTarget expression for extracting sub-conditions
-     * @param strOperation operator to take in consideration
+     * @param operationType operator to take in consideration
      * @return list of sub-conditions in native order
      */
-    private static LinkedList<PsiElement> getConditions(BinaryExpression objTarget, String strOperation) {
+    private static LinkedList<PsiElement> getConditions(BinaryExpression objTarget, IElementType operationType) {
         LinkedList<PsiElement> objPartsCollection = new LinkedList<>();
         PsiElement objItemToAdd;
 
@@ -156,7 +158,7 @@ public class ExpressionSemanticUtil {
         while (
                 objExpressionToExpand instanceof BinaryExpression &&
                 ((BinaryExpression) objExpressionToExpand).getOperation() != null &&
-                ((BinaryExpression) objExpressionToExpand).getOperation().getText().equals(strOperation)
+                ((BinaryExpression) objExpressionToExpand).getOperation().getNode().getElementType() == operationType
         ) {
             objItemToAdd = ExpressionSemanticUtil.getExpressionTroughParenthesis(((BinaryExpression) objExpressionToExpand).getRightOperand());
             if (null != objItemToAdd) {

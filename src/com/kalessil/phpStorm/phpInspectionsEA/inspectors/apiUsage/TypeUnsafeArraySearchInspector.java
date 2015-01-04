@@ -12,11 +12,11 @@ import org.jetbrains.annotations.NotNull;
 public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
     private static final String strProblemDescription = "By default this call is type un-safe. Provide third " +
             "parameter to make it type sensitive.";
-    private final String strTargetFunctions = "array_search,in_array";
+    private final String strTargetFunctions = "|array_search|in_array|";
 
     @NotNull
     public String getDisplayName() {
-        return "API: type unsafe array search";
+        return "API: 'in_array(...)', 'array_search()' type unsafe usage";
     }
 
     @NotNull
@@ -39,7 +39,7 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
                     return;
                 }
 
-                final boolean isTargetFunction = strTargetFunctions.contains(strFunction.toLowerCase());
+                final boolean isTargetFunction = strTargetFunctions.contains("|" + strFunction + "|");
                 if (!isTargetFunction) {
                     return;
                 }

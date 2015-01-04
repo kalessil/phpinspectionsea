@@ -4,6 +4,8 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -15,7 +17,7 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "API: type unsafe comparison";
+        return "API: type unsafe equality operators";
     }
 
     @NotNull
@@ -33,10 +35,10 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                     return;
                 }
 
-                final String strOperation = objOperation.getText();
+                final IElementType operationType = objOperation.getNode().getElementType();
                 if (
-                    !strOperation.equals("==") &&
-                    !strOperation.equals("!=")
+                    operationType != PhpTokenTypes.opEQUAL &&
+                    operationType != PhpTokenTypes.opNOT_EQUAL
                 ) {
                     return;
                 }

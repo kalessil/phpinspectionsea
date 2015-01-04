@@ -24,7 +24,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "Semantics: not optimal if conditions";
+        return "Control flow: not optimal if conditions";
     }
 
     @NotNull

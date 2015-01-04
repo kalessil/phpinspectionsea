@@ -16,7 +16,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "Semantics: if-return-return simplification";
+        return "Control flow: if-return-return simplification";
     }
 
     @NotNull

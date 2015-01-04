@@ -1,6 +1,5 @@
 <html>
 <body>
-Detects cases when strlen result compared with 0, semantically it's
-a comparison with empty string.
+Analyses 'strlen(...)' usages and reports if construction can be replaced with '$... (=/!)== '''.
 </body>
 </html>

@@ -17,7 +17,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
 
     @NotNull
     public String getDisplayName() {
-        return "Semantics: strlen in empty string check context";
+        return "Performance: 'strlen(...)' used to check if string is empty";
     }
 
     @NotNull
@@ -45,7 +45,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                 if (
                     !(objLeftOperand instanceof FunctionReference) ||
                     null == ((FunctionReference) objLeftOperand).getName() ||
-                    !((FunctionReference) objLeftOperand).getName().toLowerCase().equals("strlen")
+                    !((FunctionReference) objLeftOperand).getName().equals("strlen")
                 ) {
                     return;
                 }

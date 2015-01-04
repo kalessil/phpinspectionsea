@@ -15,7 +15,7 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "Semantics: loop which does not loop";
+        return "Control flow: loop which does not loop";
     }
 
     @NotNull

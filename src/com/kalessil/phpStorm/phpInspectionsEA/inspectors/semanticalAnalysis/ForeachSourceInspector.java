@@ -36,7 +36,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "type compatibility: foreach source to iterate over";
+        return "Type compatibility: foreach source to iterate over";
     }
 
     @NotNull

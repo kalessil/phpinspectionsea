@@ -4,6 +4,8 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
@@ -33,9 +35,24 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                 PsiElement objRightOperand = expression.getRightOperand();
                 if (
                     !(objRightOperand instanceof PhpExpression) ||
-                    !(objRightOperand.getNode().getElementType() == PhpElementTypes.NUMBER) ||
-                    !objRightOperand.getText().equals("0")
+                    !(objRightOperand.getNode().getElementType() == PhpElementTypes.NUMBER)
                 ) {
+                    return;
+                }
+
+                String strRightOperand = objRightOperand.getText();
+                IElementType operationType = expression.getOperation().getNode().getElementType();
+
+                /** tests types: zero any comparison, one: less, greater or equals */
+                boolean isEmptyTestByZeroComparison = (strRightOperand.equals("0"));
+                boolean isEmptyTestByOneComparison = (
+                    strRightOperand.equals("1") && (
+                        operationType == PhpTokenTypes.opLESS ||
+                        operationType == PhpTokenTypes.opGREATER_OR_EQUAL
+                    )
+                );
+
+                if (!isEmptyTestByZeroComparison && !isEmptyTestByOneComparison) {
                     return;
                 }
 

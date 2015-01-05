@@ -18,9 +18,9 @@ import java.util.LinkedList;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String strProblemDescriptionOrdering  = "This condition execution costs less than previous one";
-    private static final String strProblemDescriptionDuplicate = "This condition duplicated in other if/elseif branch";
-    private static final String strProblemDescriptionBooleans  = "This boolean in condition makes no sense or enforces " +
-            "condition result";
+    private static final String strProblemDescriptionDuplicateConditions = "This condition duplicated in other if/elseif branch";
+    private static final String strProblemDescriptionBooleans  = "This boolean in condition makes no sense or enforces condition result";
+    private static final String strProblemDescriptionDuplicateConditionPart = "This call is duplicated in conditions set";
 
     @NotNull
     public String getDisplayName() {
@@ -44,6 +44,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     objAllConditions.addAll(objConditionsFromStatement);
 
                     this.inspectConditionsWithBooleans(objConditionsFromStatement);
+                    this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
                     objConditionsFromStatement.clear();
                 }
 
@@ -53,6 +54,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         objAllConditions.addAll(objConditionsFromStatement);
 
                         this.inspectConditionsWithBooleans(objConditionsFromStatement);
+                        this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
                         objConditionsFromStatement.clear();
                     }
                 }
@@ -61,6 +63,57 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 /** TODO: If not binary/ternary/assignment/array access expression,  */
                 /** TODO: perform types lookup - nullable core types/classes shall be compared with null.  */
                 /** TODO: Inversion should be un-boxed to get expression. */
+            }
+
+            private void inspectConditionsForDuplicatedCalls(LinkedList<PsiElement> objBranchConditions) {
+                if (objBranchConditions.size() < 2) {
+                    return;
+                }
+
+                /** extract calls */
+                LinkedList<PsiElement> objCallsExtracted = new LinkedList<>();
+                for (PsiElement objCondition : objBranchConditions) {
+                    if (!(objCondition instanceof BinaryExpression)) {
+                        continue;
+                    }
+
+                    PsiElement tempExpression = ((BinaryExpression) objCondition).getLeftOperand();
+                    if (tempExpression instanceof MethodReference || tempExpression instanceof FunctionReference) {
+                        objCallsExtracted.add(tempExpression);
+                    }
+
+                    tempExpression = ((BinaryExpression) objCondition).getRightOperand();
+                    if (tempExpression instanceof MethodReference || tempExpression instanceof FunctionReference) {
+                        objCallsExtracted.add(tempExpression);
+                    }
+                }
+
+                /** scan for duplicates */
+                for (PsiElement objExpression : objCallsExtracted) {
+                    if (null == objExpression) {
+                        continue;
+                    }
+
+                    /** put a stub */
+                    int intOuterIndex = objCallsExtracted.indexOf(objExpression);
+                    objCallsExtracted.set(intOuterIndex, null);
+
+                    /** search duplicates in current scope */
+                    for (PsiElement objInnerLoopExpression : objCallsExtracted) {
+                        if (null == objInnerLoopExpression) {
+                            continue;
+                        }
+
+                        boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objInnerLoopExpression, objExpression);
+                        if (isDuplicate) {
+                            holder.registerProblem(objInnerLoopExpression, strProblemDescriptionDuplicateConditionPart, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+
+                            int intInnerIndex = objCallsExtracted.indexOf(objInnerLoopExpression);
+                            objCallsExtracted.set(intInnerIndex, null);
+                        }
+                    }
+                }
+
             }
 
             /***
@@ -137,7 +190,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                         boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objInnerLoopExpression, objExpression);
                         if (isDuplicate) {
-                            holder.registerProblem(objInnerLoopExpression, strProblemDescriptionDuplicate, ProblemHighlightType.WEAK_WARNING);
+                            holder.registerProblem(objInnerLoopExpression, strProblemDescriptionDuplicateConditions, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
 
                             int intInnerIndex = objAllConditions.indexOf(objInnerLoopExpression);
                             objAllConditions.set(intInnerIndex, null);
@@ -152,7 +205,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                         boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objOuterScopeExpression, objExpression);
                         if (isDuplicate) {
-                            holder.registerProblem(objExpression, strProblemDescriptionDuplicate, ProblemHighlightType.WEAK_WARNING);
+                            holder.registerProblem(objExpression, strProblemDescriptionDuplicateConditions, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
 
                             int intOuterScopeIndex = objParentConditions.indexOf(objOuterScopeExpression);
                             objParentConditions.set(intOuterScopeIndex, null);

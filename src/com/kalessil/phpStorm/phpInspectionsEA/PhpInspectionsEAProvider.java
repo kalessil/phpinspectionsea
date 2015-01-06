@@ -81,6 +81,7 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 LoopWhichDoesNotLoopInspector.class,
 
                 TypesCastingWithFunctionsInspector.class,
+                ElvisOperatorCanBeUsedInspector.class,
 
                 CountOnPropelCollectionInspector.class,
                 ForeachSourceInspector.class,

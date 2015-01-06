@@ -80,7 +80,7 @@ public class ExpressionSemanticUtil {
      * @return inner expression
      */
     @Nullable
-    public static PsiElement getExpressionTroughParenthesis(PsiElement objExpression) {
+    public static PsiElement getExpressionTroughParenthesis(@Nullable PsiElement objExpression) {
         if (!(objExpression instanceof ParenthesizedExpression)) {
             return objExpression;
         }

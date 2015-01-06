@@ -186,7 +186,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (strSignature.charAt(0) != '#') {
+                if (strSignature.charAt(0) != '#' && strSignature.charAt(0) != '?') {
                     if (strSignature.charAt(0) != '\\') {
                         strSignature = "\\" + strSignature;
                     }

@@ -25,7 +25,7 @@ public class TypeFromSignatureResolvingUtil {
         }
 
         /** skip primitive types */
-        if (strSignatureToResolve.charAt(0) != '#') {
+        if (strSignatureToResolve.charAt(0) != '#' && strSignatureToResolve.charAt(0) != '?') {
             extractedTypesSet.add(Types.getType(strSignatureToResolve));
             return;
         }
@@ -56,10 +56,12 @@ public class TypeFromSignatureResolvingUtil {
         /** resolve params and scope variables */
         if (charTypeOfSignature == 'V'){
             String strParameterOrVariableName = strSignatureToResolve.replace("#V", "");
-            for (Parameter objParam : objScope.getParameters()) {
-                if (objParam.getName().equals(strParameterOrVariableName)) {
-                    resolveSignature(objParam.getType().toString(), objScope, objIndex, extractedTypesSet);
-                    return;
+            if (null != objScope) {
+                for (Parameter objParam : objScope.getParameters()) {
+                    if (objParam.getName().equals(strParameterOrVariableName)) {
+                        resolveSignature(objParam.getType().toString(), objScope, objIndex, extractedTypesSet);
+                        return;
+                    }
                 }
             }
 

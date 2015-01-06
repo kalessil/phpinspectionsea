@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -10,7 +11,7 @@ import java.util.HashSet;
 
 public class TypeFromSignatureResolvingUtil {
 
-    static public void resolveSignature (String strSignatureToResolve, Function objScope, PhpIndex objIndex, HashSet<String> extractedTypesSet) {
+    static public void resolveSignature (String strSignatureToResolve, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> extractedTypesSet) {
         /** do nothing with empty signatures */
         if (StringUtil.isEmpty(strSignatureToResolve)) {
             return;
@@ -157,11 +158,13 @@ public class TypeFromSignatureResolvingUtil {
             }
 
 
-            /** store resolved types by re-running resolving */
-            for (String strType : typesOfSlotSet) {
-                resolveSignature(strType, objScope, objIndex, extractedTypesSet);
+            if (null != typesOfSlotSet) {
+                /** store resolved types by re-running resolving */
+                for (String strType : typesOfSlotSet) {
+                    resolveSignature(strType, objScope, objIndex, extractedTypesSet);
+                }
+                typesOfSlotSet.clear();
             }
-            typesOfSlotSet.clear();
         }
     }
 

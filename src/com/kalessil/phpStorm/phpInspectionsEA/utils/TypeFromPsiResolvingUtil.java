@@ -7,13 +7,14 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 
 public class TypeFromPsiResolvingUtil {
 
     /** adds type, handling | and #, invoking signatures resolving */
-    private static void storeAsTypeWithSignaturesImport(String strTypeToImport, Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
+    private static void storeAsTypeWithSignaturesImport(String strTypeToImport, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
         if (strTypeToImport.contains("|")) {
             for (String strOneType : strTypeToImport.split("\\|")) {
                 storeAsTypeWithSignaturesImport(Types.getType(strOneType), objScope, objIndex, objTypesSet);
@@ -34,7 +35,7 @@ public class TypeFromPsiResolvingUtil {
     }
 
     /** high-level resolving logic */
-    public static void resolveExpressionType(PsiElement objSubjectExpression, Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
+    public static void resolveExpressionType(PsiElement objSubjectExpression, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
         objSubjectExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(objSubjectExpression);
 
         if (objSubjectExpression instanceof ArrayCreationExpression) {
@@ -117,12 +118,12 @@ public class TypeFromPsiResolvingUtil {
     }
 
     /** resolve numbers and exotic structures, eg list() = .... */
-    private static void resolvePhpExpression(PhpExpression objSubjectExpression, Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
+    private static void resolvePhpExpression(PhpExpression objSubjectExpression, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
         storeAsTypeWithSignaturesImport(objSubjectExpression.getType().toString(), objScope, objIndex, objTypesSet);
     }
 
     /** Will resolve self-assignments */
-    private static void resolveSelfAssignmentExpression(SelfAssignmentExpression objSubjectExpression, Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
+    private static void resolveSelfAssignmentExpression(SelfAssignmentExpression objSubjectExpression, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
         storeAsTypeWithSignaturesImport(objSubjectExpression.getType().toString(), objScope, objIndex, objTypesSet);
     }
 
@@ -138,7 +139,7 @@ public class TypeFromPsiResolvingUtil {
     }
 
     /** resolve some of binary expressions . | && | || */
-    private static void resolveBinaryExpression (BinaryExpression objSubjectExpression, Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
+    private static void resolveBinaryExpression (BinaryExpression objSubjectExpression, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
         PsiElement objOperation = objSubjectExpression.getOperation();
         if (null == objOperation) {
             return;
@@ -157,7 +158,7 @@ public class TypeFromPsiResolvingUtil {
     }
 
     /** Resolve type casting expressions */
-    private static void resolveUnaryExpression (UnaryExpression objSubjectExpression, Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
+    private static void resolveUnaryExpression (UnaryExpression objSubjectExpression, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
         PsiElement objOperation = objSubjectExpression.getOperation();
         if (null == objOperation) {
             return;
@@ -185,7 +186,7 @@ public class TypeFromPsiResolvingUtil {
     }
 
     /** Will resolve constants references */
-    private static void resolveConstantReference (ConstantReference objSubjectExpression, Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
+    private static void resolveConstantReference (ConstantReference objSubjectExpression, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
         if (ExpressionSemanticUtil.isBoolean(objSubjectExpression)) {
             objTypesSet.add(Types.strBoolean);
             return;
@@ -200,7 +201,7 @@ public class TypeFromPsiResolvingUtil {
     }
 
     /** Will resolve ternary operator */
-    private static void resolveTernaryOperator (TernaryExpression objSubjectExpression, Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
+    private static void resolveTernaryOperator (TernaryExpression objSubjectExpression, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
         if (null != objSubjectExpression.getTrueVariant()) {
             resolveExpressionType(objSubjectExpression.getTrueVariant(), objScope, objIndex, objTypesSet);
         }

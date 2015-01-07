@@ -38,6 +38,8 @@ ForeachSourceInspector
 
 ===PHP5 transition===
 
+... !== null ? ... : null
+
 Migration to Reflection API (ReflectionClass):
         constant, is_a, method_exists, property_exists, is_subclass_of are from PHP 4 world
         and not dealing with traits, annotations and so on. Mark deprecated.

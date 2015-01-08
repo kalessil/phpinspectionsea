@@ -25,7 +25,6 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
         return "TypeUnsafeComparisonInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

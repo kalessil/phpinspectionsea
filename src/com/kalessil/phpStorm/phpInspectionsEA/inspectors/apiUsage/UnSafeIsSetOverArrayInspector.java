@@ -36,7 +36,6 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
         return "UnSafeIsSetOverArrayInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

@@ -10,7 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
-public class dirnameCallOnFileConstantInspector extends BasePhpInspection {
+public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Can be replaced with __DIR__ constant";
 
     @NotNull
@@ -23,7 +23,6 @@ public class dirnameCallOnFileConstantInspector extends BasePhpInspection {
         return "dirnameCallOnFileConstantInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

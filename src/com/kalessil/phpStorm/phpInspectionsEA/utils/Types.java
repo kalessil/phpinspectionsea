@@ -63,7 +63,6 @@ public class Types {
         return mapTypes;
     }
 
-    @NotNull
     public static String getType (@NotNull String strGivenType) {
         /** special case */
         if (strGivenType.contains("[]")) {

@@ -26,7 +26,6 @@ public class CountInSecondIterateExpressionInspector extends BasePhpInspection {
         return "CountInSecondIterateExpressionInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

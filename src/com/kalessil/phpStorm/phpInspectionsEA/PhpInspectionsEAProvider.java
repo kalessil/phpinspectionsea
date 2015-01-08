@@ -65,7 +65,7 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 SenselessCommaInArrayDefinitionInspector.class,
 
                 MoreThanThreeArgumentsInspector.class,
-                dirnameCallOnFileConstantInspector.class,
+                DirnameCallOnFileConstantInspector.class,
                 AmbiguousMethodsCallsInArrayMappingInspector.class,
                 CountInSecondIterateExpressionInspector.class,
                 SequentialUnSetCallsInspector.class,

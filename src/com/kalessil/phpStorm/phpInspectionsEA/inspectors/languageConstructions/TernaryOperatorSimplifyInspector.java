@@ -25,7 +25,6 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
         return "TernaryOperatorSimplifyInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

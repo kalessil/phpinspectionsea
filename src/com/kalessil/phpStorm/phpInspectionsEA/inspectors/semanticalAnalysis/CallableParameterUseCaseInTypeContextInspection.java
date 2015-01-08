@@ -40,7 +40,6 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
         return "CallableParameterUseCaseInTypeContextInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

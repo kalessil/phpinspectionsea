@@ -24,7 +24,6 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
         return "SenselessCommaInArrayDefinitionInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

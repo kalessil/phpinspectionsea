@@ -35,7 +35,9 @@ ForeachSourceInspector
 
 ===PHP5 transition===
 
-... !== null ? ... : null
+binary ? bool|binary : bool|binary
+
+private getters/setters
 
 Migration to Reflection API (ReflectionClass):
         constant, is_a, method_exists, property_exists, is_subclass_of are from PHP 4 world

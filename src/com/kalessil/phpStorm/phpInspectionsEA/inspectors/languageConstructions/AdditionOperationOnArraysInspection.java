@@ -75,11 +75,12 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
                 HashSet<String> typesResolved = new HashSet<>();
                 TypeFromPsiResolvingUtil.resolveExpressionType(expression, objScope, objIndex, typesResolved);
                 if (typesResolved.size() != 1 || !typesResolved.iterator().next().equals(Types.strArray)) {
+                    typesResolved.clear();
                     return;
                 }
 
+                typesResolved.clear();
                 holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.ERROR);
-
             }
         };
     }

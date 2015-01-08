@@ -32,7 +32,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
         return "NotOptimalIfConditionsInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

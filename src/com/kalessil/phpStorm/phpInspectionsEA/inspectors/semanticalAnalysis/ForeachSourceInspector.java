@@ -44,7 +44,6 @@ public class ForeachSourceInspector extends BasePhpInspection {
         return "ForeachSourceInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

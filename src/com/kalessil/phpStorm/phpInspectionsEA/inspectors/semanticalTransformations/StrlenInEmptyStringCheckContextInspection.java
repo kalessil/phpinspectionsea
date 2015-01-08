@@ -27,7 +27,6 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
         return "StrlenInEmptyStringCheckContextInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

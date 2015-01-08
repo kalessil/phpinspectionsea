@@ -11,10 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Call
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ForeachSourceInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.LoopWhichDoesNotLoopInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OnlyWritesOnParameterInspector;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DefaultValueInElseBranchInspector;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.IfReturnReturnSimplificationInspector;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.NotOptimalIfConditionsInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.StrlenInEmptyStringCheckContextInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayTypeOfParameterByDefaultValueInspector;
 
 /*
@@ -70,11 +67,10 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 SenselessCommaInArrayDefinitionInspector.class,
 
                 MoreThanThreeArgumentsInspector.class,
-                dirnameCallOnFileConstantInspector.class,
+                DirnameCallOnFileConstantInspector.class,
                 AmbiguousMethodsCallsInArrayMappingInspector.class,
                 CountInSecondIterateExpressionInspector.class,
                 SequentialUnSetCallsInspector.class,
-
 
                 NotOptimalIfConditionsInspection.class,
                 StrlenInEmptyStringCheckContextInspection.class,
@@ -84,6 +80,7 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
 
                 TypesCastingWithFunctionsInspector.class,
                 ElvisOperatorCanBeUsedInspector.class,
+                SenselessTernaryOperatorInspector.class,
 
                 CountOnPropelCollectionInspector.class,
                 ForeachSourceInspector.class,

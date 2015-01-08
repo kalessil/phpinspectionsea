@@ -23,7 +23,6 @@ public class MoreThanThreeArgumentsInspector extends BasePhpInspection {
         return "MoreThanThreeArgumentsInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

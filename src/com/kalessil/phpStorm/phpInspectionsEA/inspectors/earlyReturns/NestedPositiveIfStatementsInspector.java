@@ -25,7 +25,6 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
         return "NestedPositiveIfStatementsInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

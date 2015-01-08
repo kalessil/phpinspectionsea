@@ -22,7 +22,6 @@ public class SequentialUnSetCallsInspector extends BasePhpInspection {
         return "SequentialUnSetCallsInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

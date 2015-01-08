@@ -31,7 +31,6 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
         return "OnlyWritesOnParameterInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

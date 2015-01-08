@@ -24,7 +24,6 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
         return "IfReturnReturnSimplificationInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

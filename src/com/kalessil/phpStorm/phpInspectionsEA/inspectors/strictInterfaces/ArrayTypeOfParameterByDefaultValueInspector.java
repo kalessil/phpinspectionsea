@@ -25,7 +25,6 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
         return "ArrayTypeOfParameterByDefaultValueInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

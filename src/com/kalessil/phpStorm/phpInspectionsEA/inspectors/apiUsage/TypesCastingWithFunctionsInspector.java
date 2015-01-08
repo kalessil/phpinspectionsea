@@ -37,7 +37,6 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
         return "TypesCastingWithFunctionsInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

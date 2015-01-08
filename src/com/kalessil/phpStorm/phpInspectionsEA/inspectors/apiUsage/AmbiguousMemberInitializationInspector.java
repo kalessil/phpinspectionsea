@@ -25,7 +25,6 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
         return "AmbiguousMemberInitializationInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

@@ -36,7 +36,6 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
         return "IsEmptyFunctionUsageInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

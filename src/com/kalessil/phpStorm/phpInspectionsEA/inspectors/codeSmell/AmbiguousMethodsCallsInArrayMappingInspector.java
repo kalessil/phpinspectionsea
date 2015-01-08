@@ -24,7 +24,6 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
         return "AmbiguousMethodsCallsInArrayMappingInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

@@ -23,7 +23,6 @@ public class IfExpressionInEarlyReturnContextInspector extends BasePhpInspection
         return "IfExpressionInEarlyReturnContextInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

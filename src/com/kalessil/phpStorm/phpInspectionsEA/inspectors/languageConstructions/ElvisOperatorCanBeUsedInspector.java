@@ -25,7 +25,6 @@ public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
         return "ElvisOperatorCanBeUsedInspection";
     }
 
-    @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

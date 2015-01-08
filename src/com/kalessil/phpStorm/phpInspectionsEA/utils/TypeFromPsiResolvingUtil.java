@@ -149,7 +149,7 @@ public class TypeFromPsiResolvingUtil {
         if (objOperationType == PhpTokenTypes.opCONCAT) {
             objTypesSet.add(Types.strString);
             return;
-        } else if (objOperationType == PhpTokenTypes.opAND || objOperationType == PhpTokenTypes.opAND) {
+        } else if (objOperationType == PhpTokenTypes.opAND || objOperationType == PhpTokenTypes.opOR) {
             objTypesSet.add(Types.strBoolean);
             return;
         }

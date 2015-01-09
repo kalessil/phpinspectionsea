@@ -85,7 +85,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                     ++intIssetCallsCount;
                     if (intIssetCallsCount > 1) {
-                        holder.registerProblem(objExpression, strProblemDescriptionIssetCanBeMerged, ProblemHighlightType.ERROR);
+                        holder.registerProblem(objExpression, strProblemDescriptionIssetCanBeMerged, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                 }
             }

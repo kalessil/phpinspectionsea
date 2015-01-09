@@ -37,6 +37,8 @@ ForeachSourceInspector
 
 binary ? bool|binary : bool|binary
 
+concatenation in loop - use str_repeat instead
+
 private getters/setters
 
 Migration to Reflection API (ReflectionClass):

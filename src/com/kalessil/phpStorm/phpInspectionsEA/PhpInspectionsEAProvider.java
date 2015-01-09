@@ -32,25 +32,27 @@ ForeachSourceInspector
                 ...
         }
 
-===PHP5 transition===
 
-binary ? bool|binary : bool|binary
+Probable bug: missing parent::__construct(), parent::__clone()
 
-concatenation in loop - use str_repeat instead
+Probable bug: Field name hides field in superclass
 
-private getters/setters
 
-missing parent::__construct(), parent::__clone()
+Architecture: CallableParameterUseCaseInTypeContextInspection, but for return statements
+
+Architecture: private getters/setters
 
 Architecture: return core type/class and boolean - preferred to return null instead
 
-Unnecessary 'return/continue' statement
 
-IfReturnReturnSimplificationInspector:
+Confusing construct: BO ? bool|BO : BO|bool
+
+Confusing construct: Unnecessary 'return/continue' statement
+
+Confusing construct: IfReturnReturnSimplificationInspector:
         ifReturnElseReturn
         ifReturn[,ElseIfReturn]{1,}ElseReturn - possibly some branches can be merged
 
-CallableParameterUseCaseInTypeContextInspection, but for return statements
 
 Migration to Reflection API (ReflectionClass):
         constant, is_a, method_exists, property_exists, is_subclass_of are from PHP 4 world

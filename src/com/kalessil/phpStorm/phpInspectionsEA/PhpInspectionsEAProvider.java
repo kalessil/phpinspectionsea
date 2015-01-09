@@ -23,7 +23,6 @@ NotOptimalIfConditions
         - null comparison && instanceof: null comparison not needed (check if instanceof, take argument,
                 find if used with !is_null, !== null - no sense or logical error)
                 not null and type test: instanceof, is_*
-        - $objDateTime->format('N') == 7 || $objDateTime->format('N') == 6
 
 ForeachSourceInspector
         foreach source modification within loop

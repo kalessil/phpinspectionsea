@@ -5,6 +5,8 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -21,6 +23,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String strProblemDescriptionDuplicateConditions = "This condition duplicated in other if/elseif branch";
     private static final String strProblemDescriptionBooleans  = "This boolean in condition makes no sense or enforces condition result";
     private static final String strProblemDescriptionDuplicateConditionPart = "This call is duplicated in conditions set";
+    private static final String strProblemDescriptionIssetCanBeMerged = "This can be merged into previous 'isset(..., ...[, ...])'";
 
     @NotNull
     public String getDisplayName() {
@@ -37,23 +40,28 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpIf(If ifStatement) {
                 LinkedList<PsiElement> objAllConditions = new LinkedList<>();
+                IElementType[] arrOperationHolder = { null };
 
-                LinkedList<PsiElement> objConditionsFromStatement = this.inspectExpressionsOrder(ifStatement.getCondition());
+                LinkedList<PsiElement> objConditionsFromStatement = this.inspectExpressionsOrder(ifStatement.getCondition(), arrOperationHolder);
                 if (null != objConditionsFromStatement) {
                     objAllConditions.addAll(objConditionsFromStatement);
 
                     this.inspectConditionsWithBooleans(objConditionsFromStatement);
                     this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
+                    this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
+
                     objConditionsFromStatement.clear();
                 }
 
                 for (ElseIf objElseIf : ifStatement.getElseIfBranches()) {
-                    objConditionsFromStatement = this.inspectExpressionsOrder(objElseIf.getCondition());
+                    objConditionsFromStatement = this.inspectExpressionsOrder(objElseIf.getCondition(), arrOperationHolder);
                     if (null != objConditionsFromStatement) {
                         objAllConditions.addAll(objConditionsFromStatement);
 
                         this.inspectConditionsWithBooleans(objConditionsFromStatement);
                         this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
+                        this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
+
                         objConditionsFromStatement.clear();
                     }
                 }
@@ -64,7 +72,25 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 /** TODO: Inversion should be un-boxed to get expression. */
             }
 
-            private void inspectConditionsForDuplicatedCalls(LinkedList<PsiElement> objBranchConditions) {
+            private void inspectConditionsForMultipleIsSet(@NotNull LinkedList<PsiElement> objBranchConditions, @Nullable IElementType operationType) {
+                if (operationType != PhpTokenTypes.opAND) {
+                    return;
+                }
+
+                int intIssetCallsCount = 0;
+                for (PsiElement objExpression : objBranchConditions) {
+                    if (!(objExpression instanceof PhpIsset)) {
+                        continue;
+                    }
+
+                    ++intIssetCallsCount;
+                    if (intIssetCallsCount > 1) {
+                        holder.registerProblem(objExpression, strProblemDescriptionIssetCanBeMerged, ProblemHighlightType.ERROR);
+                    }
+                }
+            }
+
+            private void inspectConditionsForDuplicatedCalls(@NotNull LinkedList<PsiElement> objBranchConditions) {
                 if (objBranchConditions.size() < 2) {
                     return;
                 }
@@ -143,14 +169,14 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 PsiElement objParent = ifStatement.getParent();
                 while (null != objParent && !(objParent instanceof PhpFile)) {
                     if (objParent instanceof If) {
-                        LinkedList<PsiElement> tempList = ExpressionSemanticUtil.getConditions(((If) objParent).getCondition());
+                        LinkedList<PsiElement> tempList = ExpressionSemanticUtil.getConditions(((If) objParent).getCondition(), null);
                         if (null != tempList) {
                             objParentConditions.addAll(tempList);
                             tempList.clear();
                         }
 
                         for (ElseIf objParentElseIf : ((If) objParent).getElseIfBranches()) {
-                            tempList = ExpressionSemanticUtil.getConditions(objParentElseIf.getCondition());
+                            tempList = ExpressionSemanticUtil.getConditions(objParentElseIf.getCondition(), null);
                             if (null != tempList) {
                                 objParentConditions.addAll(tempList);
                                 tempList.clear();
@@ -219,8 +245,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
              * @param objCondition to inspect
              */
             @Nullable
-            private LinkedList<PsiElement> inspectExpressionsOrder(PsiElement objCondition) {
-                LinkedList<PsiElement> objPartsCollection = ExpressionSemanticUtil.getConditions(objCondition);
+            private LinkedList<PsiElement> inspectExpressionsOrder(PsiElement objCondition, @Nullable IElementType[] arrOperationHolder) {
+                LinkedList<PsiElement> objPartsCollection = ExpressionSemanticUtil.getConditions(objCondition, arrOperationHolder);
                 if (null == objPartsCollection) {
                     return null;
                 }

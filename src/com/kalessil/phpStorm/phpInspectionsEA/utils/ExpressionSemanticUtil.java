@@ -98,7 +98,7 @@ public class ExpressionSemanticUtil {
      * @return list of extracted conditions
      */
     @Nullable
-    public static LinkedList<PsiElement> getConditions(PsiElement objCondition) {
+    public static LinkedList<PsiElement> getConditions(@Nullable PsiElement objCondition, @Nullable IElementType[] arrOperationHolder) {
         /** get through unary and parenthesis wrappers */
         if (null != objCondition) {
             objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(objCondition);
@@ -130,6 +130,10 @@ public class ExpressionSemanticUtil {
         IElementType operationType = objOperation.getNode().getElementType();
         if (operationType != PhpTokenTypes.opOR && operationType != PhpTokenTypes.opAND) {
             return null;
+        }
+
+        if (null != arrOperationHolder) {
+            arrOperationHolder[0] = operationType;
         }
 
         return ExpressionSemanticUtil.getConditions((BinaryExpression) objCondition, operationType);

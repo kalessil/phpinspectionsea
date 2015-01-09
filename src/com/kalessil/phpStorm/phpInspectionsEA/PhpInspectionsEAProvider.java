@@ -40,6 +40,12 @@ concatenation in loop - use str_repeat instead
 
 private getters/setters
 
+missing parent::__construct(), parent::__clone()
+
+Architecture: return core type/class and boolean - preferred to return null instead
+
+CallableParameterUseCaseInTypeContextInspection, but for return statements
+
 Migration to Reflection API (ReflectionClass):
         constant, is_a, method_exists, property_exists, is_subclass_of are from PHP 4 world
         and not dealing with traits, annotations and so on. Mark deprecated.

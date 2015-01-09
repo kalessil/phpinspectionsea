@@ -51,22 +51,22 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
              */
             private void isStatementMatchesInspection(AssignmentExpression objAssignment) {
                 if (
-                    !(objAssignment.getValue() instanceof MethodReference) ||
+                    !(objAssignment.getValue() instanceof FunctionReference) ||
                     !(objAssignment.getVariable() instanceof ArrayAccessExpression)
                 ) {
                     return;
                 }
 
-                MethodReference objValueExpression = (MethodReference) objAssignment.getValue();
+                FunctionReference objValueExpression = (FunctionReference) objAssignment.getValue();
 
                 ArrayIndex objIndex;
-                MethodReference objIndexExpression;
+                FunctionReference objIndexExpression;
 
                 PhpPsiElement objContainer = objAssignment.getVariable();
                 while (objContainer instanceof ArrayAccessExpression) {
                     objIndex = ((ArrayAccessExpression) objContainer).getIndex();
-                    if (objIndex != null && objIndex.getValue() instanceof MethodReference) {
-                        objIndexExpression = (MethodReference) objIndex.getValue();
+                    if (objIndex != null && objIndex.getValue() instanceof FunctionReference) {
+                        objIndexExpression = (FunctionReference) objIndex.getValue();
 
                         if (PsiEquivalenceUtil.areElementsEquivalent(objIndexExpression, objValueExpression)) {
                             holder.registerProblem(objValueExpression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);

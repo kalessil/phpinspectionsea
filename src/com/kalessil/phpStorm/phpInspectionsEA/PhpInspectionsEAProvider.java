@@ -44,6 +44,12 @@ missing parent::__construct(), parent::__clone()
 
 Architecture: return core type/class and boolean - preferred to return null instead
 
+Unnecessary 'return/continue' statement
+
+IfReturnReturnSimplificationInspector:
+        ifReturnElseReturn
+        ifReturn[,ElseIfReturn]{1,}ElseReturn - possibly some branches can be merged
+
 CallableParameterUseCaseInTypeContextInspection, but for return statements
 
 Migration to Reflection API (ReflectionClass):

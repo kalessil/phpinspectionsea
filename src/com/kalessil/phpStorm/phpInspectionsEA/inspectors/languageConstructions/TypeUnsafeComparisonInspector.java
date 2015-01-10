@@ -2,18 +2,20 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class TypeUnsafeComparisonInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "'==' and '!=' are not type sensitive. " +
-            "Hardening to '===' and '!==' will cover/point to types casting issues.";
+    private static final String strProblemDescription = "Hardening to type safe '===', '!==' will cover/point to types casting issues";
+    private static final String strProblemDescriptionSafeToReplace = "Safely use '... === ...', '... !== ...' constructions instead";
 
     @NotNull
     public String getDisplayName() {
@@ -34,15 +36,37 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                     return;
                 }
 
+                /**  */
                 final IElementType operationType = objOperation.getNode().getElementType();
-                if (
-                    operationType != PhpTokenTypes.opEQUAL &&
-                    operationType != PhpTokenTypes.opNOT_EQUAL
-                ) {
+                if (operationType != PhpTokenTypes.opEQUAL && operationType != PhpTokenTypes.opNOT_EQUAL) {
                     return;
                 }
 
-                holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                this.triggerProblem(expression);
+            }
+
+            /** generates more specific warnings for given expression */
+            private void triggerProblem(BinaryExpression objExpression) {
+                PsiElement objLeftOperand = objExpression.getLeftOperand();
+                PsiElement objRightOperand = objExpression.getRightOperand();
+                if (
+                    objRightOperand instanceof StringLiteralExpression ||
+                    objLeftOperand instanceof StringLiteralExpression
+                ) {
+                    String strLiteralValue;
+                    if (objRightOperand instanceof StringLiteralExpression) {
+                        strLiteralValue = ((StringLiteralExpression) objRightOperand).getContents();
+                    } else {
+                        strLiteralValue = ((StringLiteralExpression) objLeftOperand).getContents();
+                    }
+
+                    if (strLiteralValue.length() > 0 && !strLiteralValue.matches("^[0-9\\+\\-]+$")) {
+                        holder.registerProblem(objExpression, strProblemDescriptionSafeToReplace, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        return;
+                    }
+                }
+
+                holder.registerProblem(objExpression, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
             }
         };
     }

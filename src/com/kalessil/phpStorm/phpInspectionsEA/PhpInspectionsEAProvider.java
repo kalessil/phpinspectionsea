@@ -14,9 +14,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 /*
 ===TODO===:
 
-TypeUnsafeComparisonInspector:
-        - when comparing with string literal/class constant and it's non-numeric and not empty - use '===' 100% is possible
-
 Architecture: Method name matches existing field name
 
 Probable bugs: Class overrides field of superclass

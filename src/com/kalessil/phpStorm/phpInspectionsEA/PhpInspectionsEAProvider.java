@@ -15,31 +15,21 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 ===TODO===:
 
 NotOptimalIfConditions
-        - try resolving binary operations with constants and lookup types of both arguments
-        - method/function references with bool result should be explicitly compared with bool
-        - null comparison && instanceof: null comparison not needed (check if instanceof, take argument,
-                find if used with !is_null, !== null - no sense or logical error)
-                not null and type test: instanceof, is_*
-
-ForeachSourceInspector
-        foreach source modification within loop
-        foreach ($source as $k => $v) {
-                ...
-                unset($source[$k]);
-                ...
-        }
+        - when comparing with string literal/class constant and it's non-numeric and not empty - use '===' 100% is possible
+        - '... instanceof ...'|'is_*(...)' vs 'is_null(...)'|'=== null'
 
 Probable bugs: Field name hides field in superclass
 
 Probable bugs: Method name matches field name
 
-Architecture: Class re-implements interface of superclass
 
-Architecture: CallableParameterUseCaseInTypeContextInspection, but for return statements
+Architecture: Class re-implements interface of superclass
 
 Architecture: private getters/setters
 
 Architecture: return core type/class and boolean - preferred to return null instead
+
+Architecture: CallableParameterUseCaseInTypeContextInspection, but for return statements
 
 
 Confusing construct: BO ? bool|BO : BO|bool
@@ -50,8 +40,7 @@ Confusing construct: IfReturnReturnSimplificationInspector:
         ifReturnElseReturn
         ifReturn[,ElseIfReturn]{1,}ElseReturn - possibly some branches can be merged
 
-
-Migration to Reflection API (ReflectionClass):
+PHP 5 migration: reflection API usage (ReflectionClass):
         constant, is_a, method_exists, property_exists, is_subclass_of are from PHP 4 world
         and not dealing with traits, annotations and so on. Mark deprecated.
 */

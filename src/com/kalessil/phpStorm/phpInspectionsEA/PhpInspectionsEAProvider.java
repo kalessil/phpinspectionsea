@@ -7,10 +7,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MoreThanThree
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.propel16.CountOnPropelCollectionInspector;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.CallableParameterUseCaseInTypeContextInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ForeachSourceInspector;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.LoopWhichDoesNotLoopInspector;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OnlyWritesOnParameterInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayTypeOfParameterByDefaultValueInspector;
 
@@ -102,7 +99,8 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
 
                 CountOnPropelCollectionInspector.class,
                 ForeachSourceInspector.class,
-                CallableParameterUseCaseInTypeContextInspection.class
+                CallableParameterUseCaseInTypeContextInspection.class,
+                MissingParentConstructorCallInspector.class
         };
     }
 }

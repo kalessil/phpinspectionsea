@@ -37,7 +37,8 @@ public class ExpressionSemanticUtil {
         return intCountStatements;
     }
 
-    public static PsiElement getLastStatement(GroupStatement objGroupStatement) {
+    @Nullable
+    public static PsiElement getLastStatement(@NotNull GroupStatement objGroupStatement) {
         PsiElement objLastChild = objGroupStatement.getLastChild();
         while (null != objLastChild) {
             if (objLastChild instanceof PhpPsiElement) {
@@ -193,8 +194,4 @@ public class ExpressionSemanticUtil {
 
         return null;
     }
-
-    /**
-     * get first statement: for all inspectors
-     */
 }

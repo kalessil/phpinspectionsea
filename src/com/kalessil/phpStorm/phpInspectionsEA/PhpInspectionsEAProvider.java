@@ -29,11 +29,11 @@ ForeachSourceInspector
                 ...
         }
 
+Probable bugs: Field name hides field in superclass
 
-Probable bug: missing parent::__construct(), parent::__clone()
+Probable bugs: Method name matches field name
 
-Probable bug: Field name hides field in superclass
-
+Architecture: Class re-implements interface of superclass
 
 Architecture: CallableParameterUseCaseInTypeContextInspection, but for return statements
 

@@ -69,19 +69,20 @@ public class ForeachSourceInspector extends BasePhpInspection {
 
                 boolean isExpressionInspected = false;
                 LinkedList<String> listSignatureTypes = new LinkedList<>();
-                if (objSource instanceof Variable) {
-                    this.lookupType(((Variable) objSource).getSignature(), objSource, listSignatureTypes, objIndex);
-                    isExpressionInspected = true;
-                }
-                if (objSource instanceof FieldReference) {
+                //noinspection ConstantConditions
+                if (!isExpressionInspected && objSource instanceof FieldReference) {
                     this.lookupType(((FieldReference) objSource).getSignature(), objSource, listSignatureTypes, objIndex);
                     isExpressionInspected = true;
                 }
-                if (objSource instanceof MethodReference) {
+                if (!isExpressionInspected && objSource instanceof MethodReference) {
                     this.lookupType(((MethodReference) objSource).getSignature(), objSource, listSignatureTypes, objIndex);
                     isExpressionInspected = true;
                 }
-                if (objSource instanceof FunctionReference && !(objSource instanceof MethodReference)) {
+                if (!isExpressionInspected && objSource instanceof Variable) {
+                    this.lookupType(((Variable) objSource).getSignature(), objSource, listSignatureTypes, objIndex);
+                    isExpressionInspected = true;
+                }
+                if (!isExpressionInspected && objSource instanceof FunctionReference) {
                     this.lookupType(((FunctionReference) objSource).getSignature(), objSource, listSignatureTypes, objIndex);
                     isExpressionInspected = true;
                 }

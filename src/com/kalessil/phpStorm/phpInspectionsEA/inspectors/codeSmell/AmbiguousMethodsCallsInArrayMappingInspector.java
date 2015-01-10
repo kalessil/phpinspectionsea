@@ -63,6 +63,7 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
                 FunctionReference objIndexExpression;
 
                 PhpPsiElement objContainer = objAssignment.getVariable();
+                /** TODO: iterator for array access expression */
                 while (objContainer instanceof ArrayAccessExpression) {
                     objIndex = ((ArrayAccessExpression) objContainer).getIndex();
                     if (objIndex != null && objIndex.getValue() instanceof FunctionReference) {

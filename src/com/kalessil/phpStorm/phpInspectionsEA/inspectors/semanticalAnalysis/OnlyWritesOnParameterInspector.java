@@ -73,6 +73,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                             /** find out which expression is holder */
                             PsiElement objLastSemanticExpression = objInstruction.getAnchor();
                             PsiElement objTopSemanticExpression = objLastSemanticExpression.getParent();
+                            /** TODO: iterator for array access expression */
                             while (objTopSemanticExpression instanceof ArrayAccessExpression) {
                                 objLastSemanticExpression = objTopSemanticExpression;
                                 objTopSemanticExpression = objTopSemanticExpression.getParent();

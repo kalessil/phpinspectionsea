@@ -59,8 +59,8 @@ public class ForeachSourceInspector extends BasePhpInspection {
 
                 /** skip arrays-related operations */
                 if (
-                    objSource instanceof ArrayCreationExpression ||
-                    objSource instanceof ArrayAccessExpression
+                    objSource instanceof ArrayAccessExpression ||
+                    objSource instanceof ArrayCreationExpression
                 ) {
                     return;
                 }

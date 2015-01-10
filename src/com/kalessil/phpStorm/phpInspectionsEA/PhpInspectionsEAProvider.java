@@ -14,16 +14,20 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 /*
 ===TODO===:
 
-NotOptimalIfConditions
+TypeUnsafeComparisonInspector:
         - when comparing with string literal/class constant and it's non-numeric and not empty - use '===' 100% is possible
+
+Architecture: Method name matches existing field name
+
+Probable bugs: Class overrides field of superclass
+
+NotOptimalIfConditions
         - '... instanceof ...'|'is_*(...)' vs 'is_null(...)'|'=== null'
 
-Probable bugs: Field name hides field in superclass
-
-Probable bugs: Method name matches field name
-
-
 Architecture: Class re-implements interface of superclass
+
+
+===POOL===
 
 Architecture: private getters/setters
 

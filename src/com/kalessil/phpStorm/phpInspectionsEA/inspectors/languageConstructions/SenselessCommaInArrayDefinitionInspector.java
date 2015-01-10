@@ -12,11 +12,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "PHP will ignore this comma, so it can be dropped";
+    private static final String strProblemDescription = "Safely can be dropped: the comma will be ignored by PHP";
 
     @NotNull
     public String getDisplayName() {
-        return "Code style: unnecessary comma in array definition";
+        return "Code style: unnecessary last comma in array definition";
     }
 
     @NotNull
@@ -29,10 +29,6 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
         return new BasePhpElementVisitor() {
             public void visitPhpArrayCreationExpression(ArrayCreationExpression expression) {
                 PsiElement objExpressionToTest = expression.getLastChild().getPrevSibling();
-                if (null == objExpressionToTest) {
-                    return;
-                }
-
                 if (objExpressionToTest instanceof PsiWhiteSpace) {
                     objExpressionToTest = objExpressionToTest.getPrevSibling();
                 }
@@ -40,12 +36,9 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
                     return;
                 }
 
-
-                if (objExpressionToTest.getNode().getElementType() != PhpTokenTypes.opCOMMA) {
-                    return;
+                if (objExpressionToTest.getNode().getElementType() == PhpTokenTypes.opCOMMA) {
+                    holder.registerProblem(objExpressionToTest, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
-
-                holder.registerProblem(expression.getFirstChild(), strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

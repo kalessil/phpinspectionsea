@@ -9,7 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Use single quotes instead";
+    private static final String strProblemDescription = "Safely use single quotes instead";
 
     @NotNull
     public String getDisplayName() {
@@ -30,11 +30,7 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
                     return;
                 }
 
-                final boolean hasInlineExpressions = (
-                    strValueWithQuotes.contains("$") ||
-                    strValueWithQuotes.contains("\\")
-                );
-                if (hasInlineExpressions) {
+                if (strValueWithQuotes.indexOf('$') >= 0 || strValueWithQuotes.indexOf('\\') >= 0) {
                     return;
                 }
 

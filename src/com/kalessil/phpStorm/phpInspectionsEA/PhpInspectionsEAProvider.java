@@ -14,8 +14,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 /*
 ===TODO===:
 
-Confusing construct: Method name matches existing field name
-
 Probable bugs: Class overrides field of superclass
 
 NotOptimalIfConditions

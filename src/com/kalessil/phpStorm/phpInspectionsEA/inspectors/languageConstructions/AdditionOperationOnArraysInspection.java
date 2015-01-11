@@ -20,11 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 
 public class AdditionOperationOnArraysInspection extends BasePhpInspection {
-    private static final String strProblemDescription = "Use 'array_merge(...)' to merge arrays";
+    private static final String strProblemDescription = "Probably it shall be 'array_merge(...)' instead, which behaves slightly different";
 
     @NotNull
     public String getDisplayName() {
-        return "Probable bugs: plus operator on arrays";
+        return "Probable bugs: addition operator on arrays";
     }
 
     @NotNull
@@ -40,7 +40,6 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
                 if (null == objOperation) {
                     return;
                 }
-
                 final IElementType operationType = objOperation.getNode().getElementType();
                 if (operationType != PhpTokenTypes.opPLUS) {
                     return;
@@ -69,6 +68,7 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
                     return;
                 }
 
+                /** TODO: code duplicate */
                 PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
                 Function objScope = ExpressionSemanticUtil.getScope(expression);
 

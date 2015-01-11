@@ -20,6 +20,7 @@ Probable bugs: Class overrides field of superclass
 
 NotOptimalIfConditions
         - '... instanceof ...'|'is_*(...)' vs 'is_null(...)'|'=== null'
+        - ... && [(] ... || ... [)], ... || [(] ... && ... [)] - parenthesis brackets are missing
 
 Architecture: Class re-implements interface of superclass
 
@@ -93,7 +94,8 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 CountOnPropelCollectionInspector.class,
                 ForeachSourceInspector.class,
                 CallableParameterUseCaseInTypeContextInspection.class,
-                MissingParentConstructorCallInspector.class
+                MissingParentConstructorCallInspector.class,
+                ClassMethodNameMatchesFieldNameInspector.class
         };
     }
 }

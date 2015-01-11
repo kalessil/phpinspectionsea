@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
@@ -11,7 +12,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Can be replaced with __DIR__ constant";
+    private static final String strProblemDescription = "__DIR__ shall be used instead";
+    private static final String strFile = "__FILE__";
+    private static final String strDirName = "dirname";
 
     @NotNull
     public String getDisplayName() {
@@ -27,32 +30,22 @@ public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final int intArgumentsCount = reference.getParameters().length;
-                if (intArgumentsCount != 1) {
-                    return;
-                }
-
+                /** check requirements */
+                final PsiElement[] arrParams = reference.getParameters();
                 final String strFunction = reference.getName();
-                if (null == strFunction) {
+                if (arrParams.length != 1 || StringUtil.isEmpty(strFunction)) {
+                    return;
+                }
+                PsiElement objFirstParameter = arrParams[0];
+                if (!(objFirstParameter instanceof ConstantReference)) {
                     return;
                 }
 
-                /** since we already checked amount of arguments, lets reverse regular check logic */
-                PsiElement objFirstParameter = reference.getParameters()[0];
-                final boolean isFileConstantPassed = (
-                    objFirstParameter instanceof ConstantReference &&
-                    objFirstParameter.getText().equals("__FILE__")
-                );
-                /** if pre-conditions are not met, don't test function name */
-                final boolean isTargetFunction = (
-                    isFileConstantPassed &&
-                    strFunction.equals("dirname")
-                );
-                if (!isTargetFunction) {
-                    return;
+                /** inspect given construct */
+                String strConstant = ((ConstantReference) objFirstParameter).getName();
+                if (!StringUtil.isEmpty(strConstant) && strConstant.equals(strFile) && strFunction.equals(strDirName)) {
+                    holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.LIKE_DEPRECATED);
                 }
-
-                holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.LIKE_DEPRECATED);
             }
         };
     }

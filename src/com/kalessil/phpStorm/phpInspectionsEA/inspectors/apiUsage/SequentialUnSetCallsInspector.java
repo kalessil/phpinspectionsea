@@ -9,8 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SequentialUnSetCallsInspector extends BasePhpInspection {
-    private static final String strProblemDescription =
-            "This call is ambiguous: unset accepts multiple arguments";
+    private static final String strProblemDescription = "Can be safely replaced with 'unset(..., ...[, ...])' construction";
 
     @NotNull
     public String getDisplayName() {
@@ -26,11 +25,9 @@ public class SequentialUnSetCallsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpUnset(PhpUnset unsetStatement) {
-                if (!(unsetStatement.getPrevPsiSibling() instanceof PhpUnset)) {
-                    return;
+                if (unsetStatement.getPrevPsiSibling() instanceof PhpUnset) {
+                    holder.registerProblem(unsetStatement, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
-
-                holder.registerProblem(unsetStatement, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

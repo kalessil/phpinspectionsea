@@ -9,10 +9,22 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+
 public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "By default this call is type un-safe. Provide third " +
-            "parameter to make it type sensitive.";
-    private final String strTargetFunctions = "|array_search|in_array|";
+    private static final String strProblemDescription = "Third parameter shall be provided to clarify if types safety important in this context";
+
+    private HashSet<String> functionsSet = null;
+    private HashSet<String> getFunctionsSet() {
+        if (null == functionsSet) {
+            functionsSet = new HashSet<>();
+
+            functionsSet.add("array_search");
+            functionsSet.add("in_array");
+        }
+
+        return functionsSet;
+    }
 
     @NotNull
     public String getDisplayName() {
@@ -29,21 +41,14 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final int intArgumentsCount = reference.getParameters().length;
-                if (intArgumentsCount != 2) {
-                    return;
-                }
-
                 final String strFunction = reference.getName();
-                if (StringUtil.isEmpty(strFunction)) {
+                if (intArgumentsCount != 2 || StringUtil.isEmpty(strFunction)) {
                     return;
                 }
 
-                final boolean isTargetFunction = strTargetFunctions.contains("|" + strFunction + "|");
-                if (!isTargetFunction) {
-                    return;
+                if (getFunctionsSet().contains(strFunction)) {
+                    holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
-
-                holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

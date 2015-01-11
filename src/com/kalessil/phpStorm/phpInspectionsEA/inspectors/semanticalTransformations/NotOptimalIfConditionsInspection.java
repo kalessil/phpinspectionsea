@@ -72,6 +72,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 /** TODO: Inversion should be un-boxed to get expression. */
             }
 
+            /** TODO: !isset(...) || ... => !isset(..., ...) */
             private void inspectConditionsForMultipleIsSet(@NotNull LinkedList<PsiElement> objBranchConditions, @Nullable IElementType operationType) {
                 if (operationType != PhpTokenTypes.opAND) {
                     return;

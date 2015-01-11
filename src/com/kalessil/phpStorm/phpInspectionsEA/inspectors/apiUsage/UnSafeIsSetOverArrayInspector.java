@@ -45,6 +45,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                         continue;
                     }
 
+                    /** TODO: has method/function reference as index */
                     if (this.hasConcatenationAsIndex((ArrayAccessExpression) parameter)) {
                         holder.registerProblem(parameter, strProblemDescriptionConcatenationInIndex, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         continue;

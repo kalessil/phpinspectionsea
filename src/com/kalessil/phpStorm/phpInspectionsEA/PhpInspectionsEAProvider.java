@@ -14,7 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 /*
 ===TODO===:
 
-Architecture: Method name matches existing field name
+Confusing construct: Method name matches existing field name
 
 Probable bugs: Class overrides field of superclass
 
@@ -44,6 +44,9 @@ Confusing construct: IfReturnReturnSimplificationInspector:
 PHP 5 migration: reflection API usage (ReflectionClass):
         constant, is_a, method_exists, property_exists, is_subclass_of are from PHP 4 world
         and not dealing with traits, annotations and so on. Mark deprecated.
+
+Hacks: is_array($) => (array)$ === $ - promised to be a performance improvement
+
 */
 public class PhpInspectionsEAProvider implements InspectionToolProvider {
     @Override

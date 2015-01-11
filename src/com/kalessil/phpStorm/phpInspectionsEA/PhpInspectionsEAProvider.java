@@ -14,6 +14,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 /*
 ===TODO===:
 
+Performance: '(array) ...' equivalent construction
+        - is_array($...) ? $... : array($...)
+
 Probable bugs: Class overrides field of superclass
 
 NotOptimalIfConditions

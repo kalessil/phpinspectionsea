@@ -9,7 +9,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class IsNullFunctionUsageInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "'is_null(...)' shall be replace with '... === null'";
+    private static final String strProblemDescription = "'null === ...' construction shall be used instead";
+    private static final String strIsNull = "is_null";
 
     @NotNull
     public String getDisplayName() {
@@ -31,12 +32,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                 }
 
                 final String strFunctionName = reference.getName();
-                if (strFunctionName == null) {
-                    return;
-                }
-
-                final boolean isNullFunctionUsed = ("is_null").equals(strFunctionName);
-                if (!isNullFunctionUsed) {
+                if (strFunctionName == null || !strFunctionName.equals(strIsNull)) {
                     return;
                 }
 

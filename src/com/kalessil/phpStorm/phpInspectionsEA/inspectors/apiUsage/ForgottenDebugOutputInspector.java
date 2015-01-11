@@ -9,9 +9,23 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+
 public class ForgottenDebugOutputInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Please ensure this is not forgotten debug statement";
-    private final String strTargetFunctions = "|print_r|var_export|var_dump|";
+
+    private HashSet<String> functionsSet = null;
+    private HashSet<String> getFunctionsSet() {
+        if (null == functionsSet) {
+            functionsSet = new HashSet<>();
+
+            functionsSet.add("print_r");
+            functionsSet.add("var_export");
+            functionsSet.add("var_dump" );
+        }
+
+        return functionsSet;
+    }
 
     @NotNull
     public String getDisplayName() {
@@ -33,12 +47,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                 }
 
                 final String strFunction = reference.getName();
-                if (StringUtil.isEmpty(strFunction)) {
-                    return;
-                }
-
-                final boolean isTargetFunction = strTargetFunctions.contains("|" + strFunction + "|");
-                if (!isTargetFunction) {
+                if (StringUtil.isEmpty(strFunction) || !getFunctionsSet().contains(strFunction)) {
                     return;
                 }
 

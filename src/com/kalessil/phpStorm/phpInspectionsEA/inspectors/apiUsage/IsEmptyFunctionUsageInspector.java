@@ -19,11 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 
 public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
-    private static final String strProblemDescriptionDoNotUse =
-            "'empty(...)' is not type safe and brings N-path complexity due to multiple types supported." +
-            " Consider refactoring this code.";
-
-    private static final String strProblemDescriptionUseCount = "Use 'count($...) === 0' construction instead";
+    private static final String strProblemDescriptionDoNotUse = "'empty(...)' counts too much values as empty, consider refactoring with type sensitive checks";
+    private static final String strProblemDescriptionUseCount = "'count($...) === 0' construction shall be used instead";
     private static final String strProblemDescriptionUseNullComparison = "Probably it should be 'null === $...' construction used";
 
     @NotNull
@@ -50,14 +47,14 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
 
 
                     /** extract types */
+                    PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
                     Function objScope = ExpressionSemanticUtil.getScope(emptyExpression);
                     HashSet<String> objResolvedTypes = new HashSet<>();
-                    TypeFromPsiResolvingUtil.resolveExpressionType(objParameterToInspect, objScope, PhpIndex.getInstance(holder.getProject()), objResolvedTypes);
+                    TypeFromPsiResolvingUtil.resolveExpressionType(objParameterToInspect, objScope, objIndex, objResolvedTypes);
 
                     /** Case 1: empty(array) - hidden logic - empty array */
                     if (this.isArrayType(objResolvedTypes)) {
                         objResolvedTypes.clear();
-
                         holder.registerProblem(emptyExpression, strProblemDescriptionUseCount, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         return;
                     }
@@ -65,7 +62,6 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     /** case 2: nullable classes, int, float, resource */
                     if (this.isNullableCoreType(objResolvedTypes) || this.isNullableObjectInterface(objResolvedTypes)) {
                         objResolvedTypes.clear();
-
                         holder.registerProblem(emptyExpression, strProblemDescriptionUseNullComparison, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         return;
                     }
@@ -79,11 +75,12 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
 
             /** check if only array type possible */
             private boolean isArrayType(HashSet<String> resolvedTypesSet) {
-                return resolvedTypesSet.size() == 1 && resolvedTypesSet.iterator().next().equals(Types.strArray);
+                return resolvedTypesSet.size() == 1 && resolvedTypesSet.contains(Types.strArray);
             }
 
             /** check if nullable int, float, resource */
             private boolean isNullableCoreType(HashSet<String> resolvedTypesSet) {
+                //noinspection SimplifiableIfStatement
                 if (resolvedTypesSet.size() != 2 || !resolvedTypesSet.contains(Types.strNull)) {
                     return false;
                 }

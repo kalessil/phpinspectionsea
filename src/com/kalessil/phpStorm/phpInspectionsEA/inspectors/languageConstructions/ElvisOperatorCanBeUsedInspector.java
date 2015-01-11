@@ -13,7 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Use '?:' (elvis operator) instead";
+    private static final String strProblemDescription = "' ... ?: ...' construction shall be used instead";
 
     @NotNull
     public String getDisplayName() {
@@ -29,22 +29,20 @@ public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpTernaryExpression(TernaryExpression expression) {
+                /** construction requirements */
                 final PsiElement objTrueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
                 if (null == objTrueVariant) {
                     return;
                 }
-
                 final PsiElement objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
                 if (null == objCondition) {
                     return;
                 }
 
                 /** if true variant is the object or expressions are not equals */
-                if (objCondition == objTrueVariant || !PsiEquivalenceUtil.areElementsEquivalent(objCondition, objTrueVariant)) {
-                    return;
+                if (objCondition != objTrueVariant && PsiEquivalenceUtil.areElementsEquivalent(objCondition, objTrueVariant)) {
+                    holder.registerProblem(objTrueVariant, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
-
-                holder.registerProblem(objTrueVariant, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

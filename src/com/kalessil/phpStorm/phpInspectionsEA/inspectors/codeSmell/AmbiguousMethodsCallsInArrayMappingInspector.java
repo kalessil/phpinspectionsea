@@ -12,7 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "This method call is duplicate in assignment expression";
+    private static final String strProblemDescription = "Duplicated in indexes and shall be moved to local variable";
 
     @NotNull
     public String getDisplayName() {
@@ -38,11 +38,9 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
                 }
 
                 for (PsiElement objStatement : objGroupStatement.getStatements()) {
-                    if (!(objStatement.getFirstChild() instanceof AssignmentExpression)) {
-                        continue;
+                    if (objStatement.getFirstChild() instanceof AssignmentExpression) {
+                        this.isStatementMatchesInspection((AssignmentExpression) objStatement.getFirstChild());
                     }
-
-                    this.isStatementMatchesInspection((AssignmentExpression) objStatement.getFirstChild());
                 }
             }
 
@@ -59,16 +57,12 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
 
                 FunctionReference objValueExpression = (FunctionReference) objAssignment.getValue();
 
-                ArrayIndex objIndex;
-                FunctionReference objIndexExpression;
-
                 PhpPsiElement objContainer = objAssignment.getVariable();
                 /** TODO: iterator for array access expression */
                 while (objContainer instanceof ArrayAccessExpression) {
-                    objIndex = ((ArrayAccessExpression) objContainer).getIndex();
+                    ArrayIndex objIndex = ((ArrayAccessExpression) objContainer).getIndex();
                     if (objIndex != null && objIndex.getValue() instanceof FunctionReference) {
-                        objIndexExpression = (FunctionReference) objIndex.getValue();
-
+                        FunctionReference objIndexExpression = (FunctionReference) objIndex.getValue();
                         if (PsiEquivalenceUtil.areElementsEquivalent(objIndexExpression, objValueExpression)) {
                             holder.registerProblem(objValueExpression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             break;

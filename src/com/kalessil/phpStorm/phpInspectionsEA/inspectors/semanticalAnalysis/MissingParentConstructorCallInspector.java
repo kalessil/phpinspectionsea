@@ -11,8 +11,23 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+
 public class MissingParentConstructorCallInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Missing 'parent::%s(...);' call";
+    private static final String strParent = "parent";
+
+    private HashSet<String> functionsSet = null;
+    private HashSet<String> getFunctionsSet() {
+        if (null == functionsSet) {
+            functionsSet = new HashSet<>();
+
+            functionsSet.add("__construct");
+            functionsSet.add("__clone");
+        }
+
+        return functionsSet;
+    }
 
     @NotNull
     public String getDisplayName() {
@@ -28,19 +43,19 @@ public class MissingParentConstructorCallInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
+                /** construction requirements */
                 String strMethodName = method.getName();
                 if (StringUtil.isEmpty(strMethodName) || strMethodName.charAt(0) != '_') {
+                    return;
+                }
+                GroupStatement objBody = ExpressionSemanticUtil.getGroupStatement(method);
+                if (null == objBody) {
                     return;
                 }
 
                 /** test method name and containing class */
                 PhpClass objClassForIteration = method.getContainingClass();
-                if (null == objClassForIteration) {
-                    return;
-                }
-                final boolean isConstructor = strMethodName.equals("__construct");
-                final boolean isClone = !isConstructor && strMethodName.equals("__clone");
-                if (!isClone && !isConstructor) {
+                if (null == objClassForIteration || !getFunctionsSet().contains(strMethodName)) {
                     return;
                 }
 
@@ -51,6 +66,7 @@ public class MissingParentConstructorCallInspector extends BasePhpInspection {
                 while (null != objClassForIteration) {
                     for (Method objMethod : objClassForIteration.getMethods()) {
                         if (objMethod.getName().equals(strMethodName)) {
+                            /** TODO: assumed we are ignoring private ones, but that's not good decision */
                             hasGivenMethod = !(objMethod.getAccess().isPrivate());
                             break;
                         }
@@ -69,12 +85,9 @@ public class MissingParentConstructorCallInspector extends BasePhpInspection {
                 }
 
                 /** check body for parent function usages */
-                GroupStatement objBody = ExpressionSemanticUtil.getGroupStatement(method);
-                if (null == objBody) {
-                    return;
-                }
                 boolean isParentFunctionUsed = false;
                 for (PsiElement objStatement: objBody.getStatements()) {
+                    /** skip non-method invocations */
                     if (!(objStatement instanceof Statement)) {
                         continue;
                     }
@@ -83,15 +96,16 @@ public class MissingParentConstructorCallInspector extends BasePhpInspection {
                         continue;
                     }
 
+                    /** construction requirements */
                     MethodReference objCall = (MethodReference) objStatement;
-
                     PhpExpression objSubject = objCall.getClassReference();
                     String strCallMethodName = objCall.getName();
                     if (null == objSubject || null == strCallMethodName) {
                         continue;
                     }
 
-                    if (strCallMethodName.equals(strMethodName) && objSubject.getText().equals("parent")) {
+                    /** check if parent method invocation */
+                    if (strCallMethodName.equals(strMethodName) && objSubject.getText().equals(strParent)) {
                         isParentFunctionUsed = true;
                         break;
                     }

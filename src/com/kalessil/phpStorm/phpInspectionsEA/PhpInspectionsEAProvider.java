@@ -25,6 +25,9 @@ NotOptimalIfConditions
 
 Architecture: Class re-implements interface of superclass
 
+Architecture: singleton inspection
+    - private constructor and public getInstance - both should be presented
+
 
 ===POOL===
 
@@ -33,7 +36,6 @@ Architecture: private getters/setters
 Architecture: return core type/class and boolean - preferred to return null instead
 
 Architecture: CallableParameterUseCaseInTypeContextInspection, but for return statements
-
 
 Confusing construct: BO ? bool|BO : BO|bool
 

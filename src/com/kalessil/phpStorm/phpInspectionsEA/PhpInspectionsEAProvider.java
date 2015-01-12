@@ -98,6 +98,7 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 ElvisOperatorCanBeUsedInspector.class,
                 SenselessTernaryOperatorInspector.class,
                 AdditionOperationOnArraysInspection.class,
+                ArrayCastingEquivalentInspector.class,
 
                 CountOnPropelCollectionInspector.class,
                 ForeachSourceInspector.class,

@@ -14,6 +14,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 /*
 ===TODO===:
 
+NotOptimalIfConditionsInspection:
+        - extend special case: is_[type]() functions
+UnNecessaryDoubleQuotesInspector
+        - ignore "'" case
+
 Performance: '(array) ...' equivalent construction
         - is_array($...) ? $... : array($...)
 

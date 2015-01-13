@@ -64,6 +64,7 @@ public class MissingParentConstructorCallInspector extends BasePhpInspection {
                 boolean hasGivenMethod = false;
                 objClassForIteration = objClassForIteration.getSuperClass();
                 while (null != objClassForIteration) {
+                    /** TODO: use getMethodByName() instead of this loop */
                     for (Method objMethod : objClassForIteration.getMethods()) {
                         if (objMethod.getName().equals(strMethodName)) {
                             /** TODO: assumed we are ignoring private ones, but that's not good decision */

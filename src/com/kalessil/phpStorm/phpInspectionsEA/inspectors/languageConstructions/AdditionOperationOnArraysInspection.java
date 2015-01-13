@@ -4,7 +4,6 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
@@ -37,50 +36,28 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpBinaryExpression(BinaryExpression expression) {
                 PsiElement objOperation = expression.getOperation();
-                if (null == objOperation) {
-                    return;
+                if (null != objOperation && PhpTokenTypes.opPLUS == objOperation.getNode().getElementType()) {
+                    this.inspectExpression(objOperation, expression);
                 }
-                final IElementType operationType = objOperation.getNode().getElementType();
-                if (operationType != PhpTokenTypes.opPLUS) {
-                    return;
-                }
-
-                PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
-                Function objScope = ExpressionSemanticUtil.getScope(expression);
-
-                HashSet<String> typesResolved = new HashSet<>();
-                TypeFromPsiResolvingUtil.resolveExpressionType(expression, objScope, objIndex, typesResolved);
-                if (typesResolved.size() != 1 || !typesResolved.iterator().next().equals(Types.strArray)) {
-                    return;
-                }
-
-                holder.registerProblem(objOperation, strProblemDescription, ProblemHighlightType.ERROR);
             }
-
             public void visitPhpSelfAssignmentExpression(SelfAssignmentExpression expression) {
                 PsiElement objOperation = expression.getOperation();
-                if (null == objOperation) {
-                    return;
+                if (null != objOperation && PhpTokenTypes.opPLUS_ASGN == objOperation.getNode().getElementType()) {
+                    this.inspectExpression(objOperation, expression);
                 }
+            }
 
-                final IElementType operationType = objOperation.getNode().getElementType();
-                if (operationType != PhpTokenTypes.opPLUS_ASGN) {
-                    return;
-                }
-
-                /** TODO: code duplicate */
+            /** inspection itself */
+            private void inspectExpression(PsiElement objOperation, PsiElement expression) {
                 PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
                 Function objScope = ExpressionSemanticUtil.getScope(expression);
 
                 HashSet<String> typesResolved = new HashSet<>();
                 TypeFromPsiResolvingUtil.resolveExpressionType(expression, objScope, objIndex, typesResolved);
-                if (typesResolved.size() != 1 || !typesResolved.iterator().next().equals(Types.strArray)) {
-                    typesResolved.clear();
-                    return;
+                if (typesResolved.size() == 1 && typesResolved.iterator().next().equals(Types.strArray)) {
+                    holder.registerProblem(objOperation, strProblemDescription, ProblemHighlightType.ERROR);
                 }
-
                 typesResolved.clear();
-                holder.registerProblem(objOperation, strProblemDescription, ProblemHighlightType.ERROR);
             }
         };
     }

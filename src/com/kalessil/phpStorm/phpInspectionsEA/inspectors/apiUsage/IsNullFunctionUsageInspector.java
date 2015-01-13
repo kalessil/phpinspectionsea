@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -26,17 +27,16 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final int intArgumentsCount = reference.getParameters().length;
-                if (intArgumentsCount != 1) {
-                    return;
-                }
-
                 final String strFunctionName = reference.getName();
-                if (strFunctionName == null || !strFunctionName.equals(strIsNull)) {
+                if (
+                    reference.getParameters().length != 1 ||
+                    StringUtil.isEmpty(strFunctionName) ||
+                    !strFunctionName.equals(strIsNull)
+                ) {
                     return;
                 }
 
-                holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
             }
         };
     }

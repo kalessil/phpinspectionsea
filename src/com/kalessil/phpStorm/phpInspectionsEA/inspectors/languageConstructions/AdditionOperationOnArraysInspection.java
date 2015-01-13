@@ -54,7 +54,7 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
                     return;
                 }
 
-                holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.ERROR);
+                holder.registerProblem(objOperation, strProblemDescription, ProblemHighlightType.ERROR);
             }
 
             public void visitPhpSelfAssignmentExpression(SelfAssignmentExpression expression) {
@@ -80,7 +80,7 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
                 }
 
                 typesResolved.clear();
-                holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.ERROR);
+                holder.registerProblem(objOperation, strProblemDescription, ProblemHighlightType.ERROR);
             }
         };
     }

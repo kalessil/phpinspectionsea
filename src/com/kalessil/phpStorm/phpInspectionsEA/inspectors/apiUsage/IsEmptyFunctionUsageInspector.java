@@ -91,6 +91,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
             }
 
             /** check if nullable object interfaces */
+            /** TODO: move to utils */
             private boolean isNullableObjectInterface(HashSet<String> resolvedTypesSet) {
                 int intCountTypesToInspect = resolvedTypesSet.size();
                 if (resolvedTypesSet.contains(Types.strClassNotResolved)) {

@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.0.5</version>
+  <version>1.0.6</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -22,25 +22,19 @@ then additional inspections are applied to source code.
     ]]></description>
 
   <change-notes><![CDATA[
-5 Jan 2015: improvements and new inspections:<br/>
+11 Jan 2015: improvements and new inspections:<br/>
 <br/>
-    - re-worked inspections classification and descriptions<br />
-<br />
-    - 'empty(...)' usage: added new suggestions for refactoring<br/>
-    - 'isset(...)' usage: added new suggestions for refactoring<br/>
-    - missing or empty conditionals group statement: added empty group statement detection<br/>
-    - not optimal if conditions inspection: reduced amount of false positives<br/>
+    - re-worked inspections hints wording<br />
 <br/>
-    - callable parameter usage violates definition inspection added<br/>
-    - foreach source to iterate over inspection added<br/>
-    - types casting via PHP4 functions inspection added<br />
-    - 'count(...)' calls on Propel collection inspection added<br/>
+    - unnecessary last comma in array definition - changed warning target<br/>
+    - not optimized arrays mapping - added function calls detection a well<br/>
+    - not optimal if conditions: checks if isset calls can be merged now<br/>
 <br/>
-<hr/>
-21 Dec 2014: bug-fixes, improvements and new inspections:<br/>
-    - improved not optimal if conditions inspection (duplicate conditions, booleans checks)<br/>
-    - added ambiguous null field initialization inspection<br/>
-    - added loop which does not loop inspection<br/>
+    - missing parent constructor/clone call inspection added<br/>
+    - method name matches existing field name inspection added<br/>
+    - addition operator on arrays inspection added<br/>
+    - suspicious ternary operator inspection added<br/>
+    - elvis operator can be used inspection added<br/>
 <br/>
 <hr/>
   ]]></change-notes>

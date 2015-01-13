@@ -41,17 +41,13 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final int intArgumentsCount = reference.getParameters().length;
-                if (intArgumentsCount != 1) {
-                    return;
-                }
-
                 final String strFunction = reference.getName();
-                if (StringUtil.isEmpty(strFunction) || !getFunctionsSet().contains(strFunction)) {
-                    return;
+                if (
+                    reference.getParameters().length == 1 &&
+                    !StringUtil.isEmpty(strFunction) && getFunctionsSet().contains(strFunction)
+                ) {
+                    holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
-
-                holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

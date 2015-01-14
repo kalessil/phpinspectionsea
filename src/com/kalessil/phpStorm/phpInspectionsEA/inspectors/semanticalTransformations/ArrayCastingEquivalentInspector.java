@@ -19,10 +19,11 @@ import java.util.LinkedList;
 
 public class ArrayCastingEquivalentInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Can be safely replaced with '(array) ...' construction";
+    private static final String strIsArray = "is_array";
 
     @NotNull
     public String getDisplayName() {
-        return "Performance: array casting equivalent construction";
+        return "Performance: '(array) ...' equivalent construction";
     }
 
     @NotNull
@@ -100,7 +101,7 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
                 String strFunctionName = objCondition.getName();
                 if (
                     objCondition.getParameters().length != 1 ||
-                    StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("is_array")
+                    StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals(strIsArray)
                 ) {
                     return false;
                 }

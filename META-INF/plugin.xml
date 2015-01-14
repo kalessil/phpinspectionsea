@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.0.6</version>
+  <version>1.0.6.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -22,19 +22,15 @@ then additional inspections are applied to source code.
     ]]></description>
 
   <change-notes><![CDATA[
-11 Jan 2015: improvements and new inspections:<br/>
+14 Jan 2015: improvements and new inspections:<br/>
 <br/>
-    - re-worked inspections hints wording<br />
+    - not optimal if conditions - fixes for execution costs estimation<br/>
+    - unnecessary double quotes - ignore inspection of annotations<br/>
+    - addition operator on arrays - changed error target<br/>
+    - type unsafe equality operators - false positive resolved: object and string comparison<br/>
+    - 'is_null(...)' usage - weak warning level assigned<br/>
 <br/>
-    - unnecessary last comma in array definition - changed warning target<br/>
-    - not optimized arrays mapping - added function calls detection a well<br/>
-    - not optimal if conditions: checks if isset calls can be merged now<br/>
-<br/>
-    - missing parent constructor/clone call inspection added<br/>
-    - method name matches existing field name inspection added<br/>
-    - addition operator on arrays inspection added<br/>
-    - suspicious ternary operator inspection added<br/>
-    - elvis operator can be used inspection added<br/>
+    - '(array) ...' equivalent construction inspection added<br/>
 <br/>
 <hr/>
   ]]></change-notes>

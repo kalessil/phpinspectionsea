@@ -73,7 +73,8 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                         objNonStringOperand = objRightOperand;
                     }
 
-                    /** resolve 2nd operand type */
+
+                    /** resolve 2nd operand type, if class ensure __toString is implemented */
                     objNonStringOperand = ExpressionSemanticUtil.getExpressionTroughParenthesis(objNonStringOperand);
                     if (null != objNonStringOperand) {
                         PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
@@ -85,7 +86,9 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                             /** collect classes to check if __toString() is there */
                             LinkedList<PhpClass> listClasses = new LinkedList<>();
                             for (String strClass : objResolvedTypes) {
-                                listClasses.addAll(PhpIndexUtil.getObjectInterfaces(strClass, objIndex));
+                                if (strClass.charAt(0) == '\\') {
+                                    listClasses.addAll(PhpIndexUtil.getObjectInterfaces(strClass, objIndex));
+                                }
                             }
 
                             /** check methods, error on first one violated requirements */
@@ -105,6 +108,7 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                             return;
                         }
                     }
+
 
                     if (strLiteralValue.length() > 0 && !strLiteralValue.matches("^[0-9\\+\\-]+$")) {
                         holder.registerProblem(objExpression, strProblemDescriptionSafeToReplace, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);

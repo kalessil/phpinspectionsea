@@ -3,9 +3,11 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
@@ -26,15 +28,17 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpStringLiteralExpression(StringLiteralExpression expression) {
                 String strValueWithQuotes = expression.getText();
-                if (strValueWithQuotes.charAt(0) != '"') {
+                if (
+                    strValueWithQuotes.charAt(0) != '"' ||
+                    strValueWithQuotes.indexOf('$') >= 0 ||
+                    strValueWithQuotes.indexOf('\\') >= 0
+                ) {
                     return;
                 }
 
-                if (strValueWithQuotes.indexOf('$') >= 0 || strValueWithQuotes.indexOf('\\') >= 0) {
-                    return;
+                if (!(ExpressionSemanticUtil.getBlockScope(expression) instanceof PhpDocComment)) {
+                    holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
-
-                holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

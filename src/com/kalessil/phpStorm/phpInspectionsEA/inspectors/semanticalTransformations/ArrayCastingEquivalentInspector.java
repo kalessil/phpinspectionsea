@@ -34,14 +34,18 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpIf(If expression) {
-                /** has alternative branches, skip it */
-                if (expression.getElseIfBranches().length > 0 || null != expression.getElseBranch()){
+                if (ExpressionSemanticUtil.hasAlternativeBranches(expression)){
                     return;
                 }
 
-                /** body has only assignment */
+                /** body has only assignment, which to be extracted */
                 GroupStatement objBody = ExpressionSemanticUtil.getGroupStatement(expression);
                 if (null == objBody || ExpressionSemanticUtil.countExpressionsInGroup(objBody) != 1) {
+                    return;
+                }
+                PsiElement objAction = ExpressionSemanticUtil.getLastStatement(objBody);
+                objAction = (null == objAction ? null : objAction.getFirstChild());
+                if (!(objAction instanceof AssignmentExpression)) {
                     return;
                 }
 
@@ -57,59 +61,46 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** expecting assignment in body */
-                PsiElement objAction = ExpressionSemanticUtil.getLastStatement(objBody);
-                objAction = (null == objAction ? null : objAction.getFirstChild());
-                if (!(objAction instanceof AssignmentExpression)) {
-                    return;
-                }
-
-
+                /** inspect expression */
                 AssignmentExpression objAssignment = (AssignmentExpression) objAction;
                 PsiElement objTrueVariant = objAssignment.getVariable();
                 PsiElement objFalseVariant = objAssignment.getValue();
-                if (null == objTrueVariant || null == objFalseVariant) {
-                    return;
-                }
-
-                /** analyse valuable part */
-                if (this.isArrayCasting(objConditionExpression, objTrueVariant, objFalseVariant)) {
+                if (
+                    null != objTrueVariant && null != objFalseVariant &&
+                    this.isArrayCasting((FunctionReference) objConditionExpression, objTrueVariant, objFalseVariant)
+                ) {
                     holder.registerProblem(expression.getFirstChild(), strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }
 
+            /** expecting !function(...), true and false expressions */
             public void visitPhpTernaryExpression(TernaryExpression expression) {
-                /** expecting !function(...) in condition */
-                PsiElement objConditionExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
-                if (!(objConditionExpression instanceof FunctionReference)) {
-                    return;
-                }
-
                 PsiElement objTrueVariant = expression.getTrueVariant();
                 PsiElement objFalseVariant = expression.getFalseVariant();
-                if (null == objTrueVariant || null == objFalseVariant) {
-                    return;
-                }
 
-                /** analyse valuable parts */
-                if (this.isArrayCasting(objConditionExpression, objTrueVariant, objFalseVariant)) {
-                    holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                if (null != objTrueVariant && null != objFalseVariant) {
+                    PsiElement objConditionExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+
+                    if (
+                        objConditionExpression instanceof FunctionReference &&
+                        this.isArrayCasting((FunctionReference) objConditionExpression, objTrueVariant, objFalseVariant)
+                    ) {
+                        holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    }
                 }
             }
 
-            private boolean isArrayCasting(@NotNull PsiElement objCondition, @NotNull PsiElement objTrue, @NotNull PsiElement objFalse) {
+            private boolean isArrayCasting(@NotNull FunctionReference objCondition, @NotNull PsiElement objTrue, @NotNull PsiElement objFalse) {
                 /** false variant should be array creation */
                 if (!(objFalse instanceof ArrayCreationExpression)) {
                     return false;
                 }
 
                 /** condition expected to be is_array(arg) */
-                FunctionReference objConditionExpression = (FunctionReference) objCondition;
-                String strFunctionName = objConditionExpression.getName();
+                String strFunctionName = objCondition.getName();
                 if (
-                    objConditionExpression.getParameters().length != 1 ||
-                    StringUtil.isEmpty(strFunctionName) ||
-                    !strFunctionName.equals("is_array")
+                    objCondition.getParameters().length != 1 ||
+                    StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("is_array")
                 ) {
                     return false;
                 }
@@ -126,9 +117,11 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
                     return false;
                 }
 
+                PsiElement firstValue = valuesSet.getFirst();
+                valuesSet.clear();
                 return
-                    PsiEquivalenceUtil.areElementsEquivalent(objTrue, objConditionExpression.getParameters()[0]) &&
-                    PsiEquivalenceUtil.areElementsEquivalent(objTrue, valuesSet.getFirst());
+                    PsiEquivalenceUtil.areElementsEquivalent(objTrue, objCondition.getParameters()[0]) &&
+                    PsiEquivalenceUtil.areElementsEquivalent(objTrue, firstValue);
             }
         };
     }

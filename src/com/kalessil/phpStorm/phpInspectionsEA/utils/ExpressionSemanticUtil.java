@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.PhpLangUtil;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -194,6 +195,25 @@ public class ExpressionSemanticUtil {
 
         return null;
     }
+
+    @Nullable
+    public static PsiElement getBlockScope(@NotNull PsiElement objExpression) {
+        PsiElement objParent = objExpression.getParent();
+        while (null != objParent && !(objParent instanceof PhpFile)) {
+            if (
+                objParent instanceof Function ||
+                objParent instanceof PhpDocComment ||
+                objParent instanceof PhpClass
+            ) {
+                return objParent;
+            }
+
+            objParent = objParent.getParent();
+        }
+
+        return null;
+    }
+
 
     /** TODO: get BO type */
 }

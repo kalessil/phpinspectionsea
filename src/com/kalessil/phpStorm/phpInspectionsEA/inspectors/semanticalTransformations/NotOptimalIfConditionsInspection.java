@@ -267,6 +267,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     intLoopCurrentCost = this.getExpressionCost(objCond);
 
                     /** special case when costs estimation is overridden with general practices */
+                    /** TODO: is_* - types check area lso shall not generate false positives */
                     isPreviousCondArrayKeyExists = (
                         null != objPreviousCond &&
                         objPreviousCond instanceof FunctionReference &&
@@ -330,6 +331,9 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         intArgumentsCost += this.getExpressionCost(objParameter);
                     }
 
+                    if (objExpression instanceof MethodReference) {
+                        intArgumentsCost += this.getExpressionCost(((MethodReference) objExpression).getFirstPsiChild());
+                    }
                     return (5 + intArgumentsCost);
                 }
 
@@ -353,6 +357,14 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         this.getExpressionCost(((BinaryExpression) objExpression).getLeftOperand());
                 }
 
+                if (objExpression instanceof ArrayCreationExpression) {
+                    int intCosts = 0;
+                    for (ArrayHashElement objEntry : ((ArrayCreationExpression) objExpression).getHashElements()) {
+                        intCosts += this.getExpressionCost(objEntry.getKey());
+                        intCosts += this.getExpressionCost(objEntry.getValue());
+                    }
+                    return intCosts;
+                }
 
                 if (
                     objExpression instanceof PhpExpression &&

@@ -16,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 
 NotOptimalIfConditionsInspection:
         - extend special case: is_[type]() functions
+
 UnNecessaryDoubleQuotesInspector
         - ignore "'" case
 
@@ -27,10 +28,6 @@ NotOptimalIfConditions
 
 Architecture: singleton/factory pattern violation inspection
     - getInstance|create expected when __construct is protected
-
-Missing parenthesis when instantiating an object
-    new extWidgetFormInputHidden;
-    new extWidgetFormInputHidden,
 
 ===POOL===
 
@@ -101,9 +98,11 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 CountOnPropelCollectionInspector.class,
                 ForeachSourceInspector.class,
                 CallableParameterUseCaseInTypeContextInspection.class,
+
                 MissingParentConstructorCallInspector.class,
                 ClassMethodNameMatchesFieldNameInspector.class,
-                ClassReImplementsParentInterfaceInspector.class
+                ClassReImplementsParentInterfaceInspector.class,
+                ClassOverridesFieldOfSuperClassInspector.class
         };
     }
 }

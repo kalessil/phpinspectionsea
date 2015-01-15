@@ -12,11 +12,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Interface %s% is already implemented in a parent class";
+    private static final String strProblemDescription = "Interface %s% is already defined in a parent class.";
 
     @NotNull
     public String getDisplayName() {
-        return "Architecture: Class re-implements interface of a superclass";
+        return "Architecture: class re-implements interface of a superclass";
     }
 
     @NotNull
@@ -53,7 +53,7 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                         if (ownInterfaceFQN.equals(parentInterfaceFQN)) {
                             String strWarning = strProblemDescription.replace("%s%", ownInterfaceFQN);
                             holder.registerProblem(clazz.getNameIdentifier(), strWarning, ProblemHighlightType.WEAK_WARNING);
-                            return;
+                            break;
                         }
                     }
                 }

@@ -25,10 +25,8 @@ NotOptimalIfConditions
         - '... instanceof ...'|'is_*(...)' vs 'is_null(...)'|'=== null'
         - ... && [(] ... || ... [)], ... || [(] ... && ... [)] - parenthesis brackets are missing
 
-Architecture: Class re-implements interface of superclass
-
-Architecture: singleton inspection
-    - private constructor and public getInstance - both should be presented
+Architecture: singleton/factory pattern violation inspection
+    - getInstance|create expected when __construct is protected
 
 Missing parenthesis when instantiating an object
     new extWidgetFormInputHidden;
@@ -104,7 +102,8 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 ForeachSourceInspector.class,
                 CallableParameterUseCaseInTypeContextInspection.class,
                 MissingParentConstructorCallInspector.class,
-                ClassMethodNameMatchesFieldNameInspector.class
+                ClassMethodNameMatchesFieldNameInspector.class,
+                ClassReImplementsParentInterfaceInspector.class
         };
     }
 }

@@ -60,6 +60,7 @@ public class MissingParentConstructorCallInspector extends BasePhpInspection {
                 }
 
                 /** find super class with given method */
+                /** TODO: use clazz.getSupers() */
                 PhpClass objParentWithGivenMethod = null;
                 boolean hasGivenMethod = false;
                 objClassForIteration = objClassForIteration.getSuperClass();

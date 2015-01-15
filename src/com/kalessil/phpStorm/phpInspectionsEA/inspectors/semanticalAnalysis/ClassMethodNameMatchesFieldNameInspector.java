@@ -31,7 +31,7 @@ public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection 
                 /** TODO: stick to class */
                 PhpClass objClass = method.getContainingClass();
                 String strMethodName = method.getName();
-                if (null == objClass || StringUtil.isEmpty(strMethodName)) {
+                if (null == objClass || StringUtil.isEmpty(strMethodName) || null == method.getNameIdentifier()) {
                     return;
                 }
 

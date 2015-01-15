@@ -33,14 +33,14 @@ public class ClassOverridesFieldOfSuperClassInspector  extends BasePhpInspection
                 }
 
                 for (Field ownField : clazz.getOwnFields()) {
-                    if (null == ownField.getNameIdentifier()) {
+                    if (ownField.isConstant() || null == ownField.getNameIdentifier()) {
                         continue;
                     }
 
                     String strOwnField = ownField.getName();
                     for (Field superclassField : objParentClass.getFields()) {
                         /** not possible to check access level */
-                        if (!superclassField.isConstant() && superclassField.getName().equals(strOwnField)) {
+                        if (superclassField.getName().equals(strOwnField)) {
                             String strWarning = strProblemDescription.replace("%s%", strOwnField);
                             holder.registerProblem(ownField.getNameIdentifier(), strWarning, ProblemHighlightType.WEAK_WARNING);
                             break;

@@ -19,9 +19,6 @@ NotOptimalIfConditionsInspection:
 UnNecessaryDoubleQuotesInspector
         - ignore "'" case
 
-Performance: '(array) ...' equivalent construction
-        - is_array($...) ? $... : array($...)
-
 Probable bugs: Class overrides field of superclass
 
 NotOptimalIfConditions
@@ -33,6 +30,9 @@ Architecture: Class re-implements interface of superclass
 Architecture: singleton inspection
     - private constructor and public getInstance - both should be presented
 
+Missing parenthesis when instantiating an object
+    new extWidgetFormInputHidden;
+    new extWidgetFormInputHidden,
 
 ===POOL===
 

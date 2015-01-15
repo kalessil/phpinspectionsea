@@ -59,32 +59,19 @@ public class MissingParentConstructorCallInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** find super class with given method */
-                /** TODO: use clazz.getSupers() */
+                /** find parent with protected/public method, if not overrides anything, terminate inspection */
                 PhpClass objParentWithGivenMethod = null;
-                boolean hasGivenMethod = false;
-                objClassForIteration = objClassForIteration.getSuperClass();
-                while (null != objClassForIteration) {
-                    /** TODO: use getMethodByName() instead of this loop */
-                    for (Method objMethod : objClassForIteration.getMethods()) {
-                        if (objMethod.getName().equals(strMethodName)) {
-                            /** TODO: assumed we are ignoring private ones, but that's not good decision */
-                            hasGivenMethod = !(objMethod.getAccess().isPrivate());
-                            break;
-                        }
-                    }
-
-                    if (hasGivenMethod) {
-                        objParentWithGivenMethod = objClassForIteration;
+                for (PhpClass superClass : objClassForIteration.getSupers()) {
+                    Method objMethod = superClass.findOwnMethodByName(strMethodName);
+                    if (null != objMethod && !objMethod.getAccess().isPrivate()) {
+                        objParentWithGivenMethod = superClass;
                         break;
                     }
-
-                    objClassForIteration = objClassForIteration.getSuperClass();
                 }
-                /** not overrides anything, terminate inspection */
                 if (null == objParentWithGivenMethod) {
                     return;
                 }
+
 
                 /** check body for parent function usages */
                 boolean isParentFunctionUsed = false;

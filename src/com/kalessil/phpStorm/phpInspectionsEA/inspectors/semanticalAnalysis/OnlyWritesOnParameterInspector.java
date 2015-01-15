@@ -44,8 +44,6 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
             }
 
             private void getUnusedParameters(Parameter[] arrParameters, PhpScopeHolder objScopeHolder) {
-                /** TODO: indirect access check via arguments functions - too much effort at the moment */
-
                 for (Parameter objParameter : arrParameters) {
                     if (objParameter.isPassByRef()) {
                         continue;

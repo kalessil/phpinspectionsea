@@ -23,7 +23,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String strProblemDescriptionDuplicateConditions = "This condition duplicated in other if/elseif branch";
     private static final String strProblemDescriptionBooleans  = "This boolean in condition makes no sense or enforces condition result";
     private static final String strProblemDescriptionDuplicateConditionPart = "This call is duplicated in conditions set";
-    private static final String strProblemDescriptionIssetCanBeMerged = "This can be merged into previous 'isset(..., ...[, ...])'";
+    private static final String strProblemDescriptionIssetCanBeMergedAndCase = "This can be merged into previous 'isset(..., ...[, ...])'";
+    private static final String strProblemDescriptionIssetCanBeMergedOrCase = "This can be merged into previous '!isset(..., ...[, ...])'";
 
     @NotNull
     public String getDisplayName() {
@@ -72,21 +73,40 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 /** TODO: Inversion should be un-boxed to get expression. */
             }
 
-            /** TODO: !isset(...) || ... => !isset(..., ...) */
             private void inspectConditionsForMultipleIsSet(@NotNull LinkedList<PsiElement> objBranchConditions, @Nullable IElementType operationType) {
-                if (operationType != PhpTokenTypes.opAND) {
+                /** handle isset && isset ... */
+                if (operationType == PhpTokenTypes.opAND) {
+                    int intIssetCallsCount = 0;
+                    for (PsiElement objExpression : objBranchConditions) {
+                        if (!(objExpression instanceof PhpIsset)) {
+                            continue;
+                        }
+
+                        ++intIssetCallsCount;
+                        if (intIssetCallsCount > 1) {
+                            holder.registerProblem(objExpression, strProblemDescriptionIssetCanBeMergedAndCase, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        }
+                    }
+
                     return;
                 }
 
-                int intIssetCallsCount = 0;
-                for (PsiElement objExpression : objBranchConditions) {
-                    if (!(objExpression instanceof PhpIsset)) {
-                        continue;
-                    }
+                /** handle !isset || !isset ... */
+                if (operationType == PhpTokenTypes.opOR) {
+                    int intIssetCallsCount = 0;
+                    for (PsiElement objExpression : objBranchConditions) {
+                        if (!(objExpression instanceof UnaryExpression)) {
+                            continue;
+                        }
+                        objExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(((UnaryExpression) objExpression).getValue());
+                        if (!(objExpression instanceof PhpIsset)) {
+                            continue;
+                        }
 
-                    ++intIssetCallsCount;
-                    if (intIssetCallsCount > 1) {
-                        holder.registerProblem(objExpression, strProblemDescriptionIssetCanBeMerged, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        ++intIssetCallsCount;
+                        if (intIssetCallsCount > 1) {
+                            holder.registerProblem(objExpression, strProblemDescriptionIssetCanBeMergedOrCase, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        }
                     }
                 }
             }

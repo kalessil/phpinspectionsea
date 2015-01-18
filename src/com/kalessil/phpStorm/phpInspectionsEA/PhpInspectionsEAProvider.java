@@ -20,20 +20,13 @@ NotOptimalIfConditionsInspection:
 UnNecessaryDoubleQuotesInspector
         - ignore "'" case
 
-Probable bugs: Class overrides field of superclass
-
 NotOptimalIfConditions
-        - '... instanceof ...'|'is_*(...)' vs 'is_null(...)'|'=== null'
-        - ... && [(] ... || ... [)], ... || [(] ... && ... [)] - parenthesis brackets are missing
+        - '... instanceof ...'|'is_*(...)' vs '=== null'
 
 Architecture: singleton/factory pattern violation inspection
     - getInstance|create expected when __construct is protected
 
 ===POOL===
-
-Architecture: private getters/setters
-
-Architecture: return core type/class and boolean - preferred to return null instead
 
 Architecture: CallableParameterUseCaseInTypeContextInspection, but for return statements
 

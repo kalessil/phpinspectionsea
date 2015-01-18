@@ -25,6 +25,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String strProblemDescriptionDuplicateConditionPart = "This call is duplicated in conditions set";
     private static final String strProblemDescriptionIssetCanBeMergedAndCase = "This can be merged into previous 'isset(..., ...[, ...])'";
     private static final String strProblemDescriptionIssetCanBeMergedOrCase = "This can be merged into previous '!isset(..., ...[, ...])'";
+    private static final String strProblemDescriptionConditionShallBeWrapped = "Confusing conditions structure: please wrap with '(...)'";
 
     @NotNull
     public String getDisplayName() {
@@ -48,6 +49,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     objAllConditions.addAll(objConditionsFromStatement);
 
                     this.inspectConditionsWithBooleans(objConditionsFromStatement);
+                    this.inspectConditionsForMissingParenthesis(objConditionsFromStatement);
                     this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
                     this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
 
@@ -60,6 +62,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         objAllConditions.addAll(objConditionsFromStatement);
 
                         this.inspectConditionsWithBooleans(objConditionsFromStatement);
+                        this.inspectConditionsForMissingParenthesis(objConditionsFromStatement);
                         this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
                         this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
 
@@ -71,6 +74,27 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 /** TODO: If not binary/ternary/assignment/array access expression,  */
                 /** TODO: perform types lookup - nullable core types/classes shall be compared with null.  */
                 /** TODO: Inversion should be un-boxed to get expression. */
+            }
+
+            private void inspectConditionsForMissingParenthesis(@NotNull LinkedList<PsiElement> objBranchConditions) {
+                for (PsiElement objCondition : objBranchConditions) {
+                    if (!(objCondition instanceof BinaryExpression)) {
+                        continue;
+                    }
+
+                    PsiElement objOperation = ((BinaryExpression) objCondition).getOperation();
+                    if (null == objOperation) {
+                        continue;
+                    }
+                    IElementType operationType = objOperation.getNode().getElementType();
+                    if (operationType != PhpTokenTypes.opAND && operationType != PhpTokenTypes.opOR) {
+                        continue;
+                    }
+
+                    if (!(objCondition.getParent() instanceof ParenthesizedExpression)) {
+                        holder.registerProblem(objCondition, strProblemDescriptionConditionShallBeWrapped, ProblemHighlightType.ERROR);
+                    }
+                }
             }
 
             private void inspectConditionsForMultipleIsSet(@NotNull LinkedList<PsiElement> objBranchConditions, @Nullable IElementType operationType) {

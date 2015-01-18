@@ -12,10 +12,13 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.PhpExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ClassInStringContextStrategy;
 import org.jetbrains.annotations.NotNull;
 
 public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection {
     private static final String strProblemDescription = "Can be replaced by comparing with empty string";
+    private static final String strProblemDescriptionObjectUsed = "Can be replaced with '$... == ''' construction";
+    private static final String strProblemDescriptionMissingToStringMethod = "Class %class% must implement __toString()";
 
     @NotNull
     public String getDisplayName() {
@@ -63,6 +66,16 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                     null == ((FunctionReference) objLeftOperand).getName() ||
                     !((FunctionReference) objLeftOperand).getName().equals("strlen")
                 ) {
+                    return;
+                }
+
+                if (ClassInStringContextStrategy.apply(
+                        ((FunctionReference) objLeftOperand).getParameters()[0],
+                        holder,
+                        expression,
+                        strProblemDescriptionMissingToStringMethod)
+                ) {
+                    holder.registerProblem(expression, strProblemDescriptionObjectUsed, ProblemHighlightType.WEAK_WARNING);
                     return;
                 }
 

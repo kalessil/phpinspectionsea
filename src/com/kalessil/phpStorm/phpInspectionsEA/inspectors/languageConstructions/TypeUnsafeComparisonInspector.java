@@ -17,6 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ClassInStringContextStrategy;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -76,37 +77,12 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
 
                     /** resolve 2nd operand type, if class ensure __toString is implemented */
                     objNonStringOperand = ExpressionSemanticUtil.getExpressionTroughParenthesis(objNonStringOperand);
-                    if (null != objNonStringOperand) {
-                        PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
-                        Function objScope = ExpressionSemanticUtil.getScope(objNonStringOperand);
-
-                        HashSet<String> objResolvedTypes = new HashSet<>();
-                        TypeFromPsiResolvingUtil.resolveExpressionType(objNonStringOperand, objScope, objIndex, objResolvedTypes);
-                        if (this.isNullableObjectInterface(objResolvedTypes)) {
-                            /** collect classes to check if __toString() is there */
-                            LinkedList<PhpClass> listClasses = new LinkedList<>();
-                            for (String strClass : objResolvedTypes) {
-                                if (strClass.charAt(0) == '\\') {
-                                    listClasses.addAll(PhpIndexUtil.getObjectInterfaces(strClass, objIndex));
-                                }
-                            }
-
-                            /** check methods, error on first one violated requirements */
-                            for (PhpClass objClass : listClasses) {
-                                if (null == objClass.findMethodByName("__toString")) {
-                                    String strError = strProblemDescriptionMissingToStringMethod.replace("%class%", objClass.getFQN());
-                                    holder.registerProblem(objExpression, strError, ProblemHighlightType.ERROR);
-
-                                    listClasses.clear();
-                                    return;
-                                }
-
-                            }
-
-                            /** terminate inspection, php will call __toString() */
-                            listClasses.clear();
-                            return;
-                        }
+                    if (
+                        null != objNonStringOperand &&
+                        ClassInStringContextStrategy.apply(objNonStringOperand, holder, objExpression, strProblemDescriptionMissingToStringMethod)
+                    ) {
+                        /** TODO: weak warning regarding under-the-hood string casting */
+                        return;
                     }
 
 
@@ -119,31 +95,7 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                 holder.registerProblem(objExpression, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
             }
 
-            /** check if nullable object interfaces */
-            /** TODO: move to utils */
-            private boolean isNullableObjectInterface(HashSet<String> resolvedTypesSet) {
-                int intCountTypesToInspect = resolvedTypesSet.size();
-                if (resolvedTypesSet.contains(Types.strClassNotResolved)) {
-                    --intCountTypesToInspect;
-                }
-                if (resolvedTypesSet.contains(Types.strNull)) {
-                    --intCountTypesToInspect;
-                }
-                /** ensure we still have variants left */
-                if (intCountTypesToInspect == 0) {
-                    return false;
-                }
 
-                /** work through types, ensure it's null or classes references */
-                for (String strTypeToInspect : resolvedTypesSet) {
-                    /** skip core types, but null */
-                    if (strTypeToInspect.charAt(0) != '\\' && !strTypeToInspect.equals(Types.strNull)) {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
 
         };
     }

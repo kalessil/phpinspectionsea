@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -60,7 +61,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     }
 
                     /** case 2: nullable classes, int, float, resource */
-                    if (this.isNullableCoreType(objResolvedTypes) || this.isNullableObjectInterface(objResolvedTypes)) {
+                    if (this.isNullableCoreType(objResolvedTypes) || TypesSemanticsUtil.isNullableObjectInterface(objResolvedTypes)) {
                         objResolvedTypes.clear();
                         holder.registerProblem(emptyExpression, strProblemDescriptionUseNullComparison, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         return;
@@ -88,32 +89,6 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                 return  resolvedTypesSet.contains(Types.strInteger) ||
                         resolvedTypesSet.contains(Types.strFloat) ||
                         resolvedTypesSet.contains(Types.strResource);
-            }
-
-            /** check if nullable object interfaces */
-            /** TODO: move to utils */
-            private boolean isNullableObjectInterface(HashSet<String> resolvedTypesSet) {
-                int intCountTypesToInspect = resolvedTypesSet.size();
-                if (resolvedTypesSet.contains(Types.strClassNotResolved)) {
-                    --intCountTypesToInspect;
-                }
-                if (resolvedTypesSet.contains(Types.strNull)) {
-                    --intCountTypesToInspect;
-                }
-                /** ensure we still have variants left */
-                if (intCountTypesToInspect == 0) {
-                    return false;
-                }
-
-                /** work through types, ensure it's null or classes references */
-                for (String strTypeToInspect : resolvedTypesSet) {
-                    /** skip core types, but null */
-                    if (strTypeToInspect.charAt(0) != '\\' && !strTypeToInspect.equals(Types.strNull)) {
-                        return false;
-                    }
-                }
-
-                return true;
             }
         };
     }

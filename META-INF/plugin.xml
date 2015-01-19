@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.0.6.1</version>
+  <version>1.0.7</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -22,15 +22,14 @@ then additional inspections are applied to source code.
     ]]></description>
 
   <change-notes><![CDATA[
-14 Jan 2015: improvements and new inspections:<br/>
+19 Jan 2015: improvements and new inspections:<br/>
 <br/>
-    - not optimal if conditions - fixes for execution costs estimation<br/>
-    - unnecessary double quotes - ignore inspection of annotations<br/>
-    - addition operator on arrays - changed error target<br/>
-    - type unsafe equality operators - false positive resolved: object and string comparison<br/>
-    - 'is_null(...)' usage - weak warning level assigned<br/>
+    - foreach source to iterate over - fixed IllegalArgumentException on VCS commit<br/>
+    - 'strlen(...)' used to check if string is empty - added support for object in string context<br/>
+    - not optimal if conditions - added '!isset() || !isset()' pattern and confusing logical constructions lookups<br/>
 <br/>
-    - '(array) ...' equivalent construction inspection added<br/>
+    - class re-implements interface of a superclass inspection added<br/>
+    - class overrides a field of superclass inspection added<br/>
 <br/>
 <hr/>
   ]]></change-notes>

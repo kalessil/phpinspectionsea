@@ -150,13 +150,13 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         if (null == objTraversable) {
                             objTraversable = objIndex.getClassByName("\\Traversable");
                         }
-                        if (null == objTraversable) {
-                            /** TODO: not clear why, but happens on VCS commit */
-                            objClasses.clear();
-                            return;
-                        }
 
                         for (PhpClass objClass : objClasses) {
+                            /** TODO: not clear why, but isSuperClass receives a null on VCS commit */
+                            if (null == objClass || null == objTraversable) {
+                                continue;
+                            }
+
                             if (PhpClassHierarchyUtils.isSuperClass(objTraversable, objClass, true)) {
                                 objClasses.clear();
                                 return;

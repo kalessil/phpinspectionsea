@@ -225,6 +225,11 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     /** run test through 2 sets */
                     for (PhpClass testSubject: classesToTest) {
                         for (PhpClass testAgainst: classesAllowed) {
+                            /** TODO: not clear why, but isSuperClass receives a null on VCS commit */
+                            if (null == testAgainst || null == testSubject) {
+                                continue;
+                            }
+
                             if (PhpClassHierarchyUtils.isSuperClass(testAgainst, testSubject, true)) {
                                 return true;
                             }

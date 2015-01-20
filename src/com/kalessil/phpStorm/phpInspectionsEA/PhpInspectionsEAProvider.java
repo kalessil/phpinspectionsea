@@ -17,9 +17,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 NotOptimalIfConditions
         - '... instanceof ...'|'is_*(...)' vs '=== null'
 
-Architecture: singleton/factory pattern violation inspection
-    - getInstance|create expected when __construct is protected
-
 ===POOL===
 
 Confusing construct: BO ? bool|BO : BO|bool

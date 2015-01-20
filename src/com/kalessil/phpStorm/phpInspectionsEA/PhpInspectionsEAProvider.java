@@ -14,12 +14,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 /*
 ===TODO===:
 
-NotOptimalIfConditionsInspection:
-        - extend special case: is_[type]() functions
-
-UnNecessaryDoubleQuotesInspector
-        - ignore "'" case
-
 NotOptimalIfConditions
         - '... instanceof ...'|'is_*(...)' vs '=== null'
 
@@ -27,8 +21,6 @@ Architecture: singleton/factory pattern violation inspection
     - getInstance|create expected when __construct is protected
 
 ===POOL===
-
-Architecture: CallableParameterUseCaseInTypeContextInspection, but for return statements
 
 Confusing construct: BO ? bool|BO : BO|bool
 
@@ -41,8 +33,6 @@ Confusing construct: IfReturnReturnSimplificationInspector:
 PHP 5 migration: reflection API usage (ReflectionClass):
         constant, is_a, method_exists, property_exists, is_subclass_of are from PHP 4 world
         and not dealing with traits, annotations and so on. Mark deprecated.
-
-Hacks: is_array($) => (array)$ === $ - promised to be a performance improvement
 
 */
 public class PhpInspectionsEAProvider implements InspectionToolProvider {

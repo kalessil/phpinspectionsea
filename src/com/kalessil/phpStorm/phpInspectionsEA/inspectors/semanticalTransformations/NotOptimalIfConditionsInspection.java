@@ -16,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
@@ -35,6 +36,24 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     @NotNull
     public String getShortName() {
         return "NotOptimalIfConditionsInspection";
+    }
+
+    private HashSet<String> functionsSet = null;
+    private HashSet<String> getFunctionsSet() {
+        if (null == functionsSet) {
+            functionsSet = new HashSet<>();
+
+            functionsSet.add("array_key_exists");
+            functionsSet.add("is_array");
+            functionsSet.add("is_string");
+            functionsSet.add("is_bool");
+            functionsSet.add("is_int");
+            functionsSet.add("is_integer");
+            functionsSet.add("is_float");
+            functionsSet.add("is_resource");
+        }
+
+        return functionsSet;
     }
 
     @Override
@@ -304,22 +323,20 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 /** verify if costs estimated are optimal */
                 int intPreviousCost = 0;
                 PsiElement objPreviousCond = null;
+                HashSet<String> functionsSetToAllow = getFunctionsSet();
 
                 int intLoopCurrentCost;
-                boolean isPreviousCondArrayKeyExists;
+                boolean isPreviousCondCostCanBeBigger;
                 for (PsiElement objCond : objPartsCollection) {
                     intLoopCurrentCost = this.getExpressionCost(objCond);
 
                     /** special case when costs estimation is overridden with general practices */
-                    /** TODO: is_* - types check area lso shall not generate false positives */
-                    isPreviousCondArrayKeyExists = (
-                        null != objPreviousCond &&
+                    isPreviousCondCostCanBeBigger = (
                         objPreviousCond instanceof FunctionReference &&
-                        null != ((FunctionReference) objPreviousCond).getName() &&
-                        ((FunctionReference) objPreviousCond).getName().equals("array_key_exists")
+                        functionsSetToAllow.contains(((FunctionReference) objPreviousCond).getName())
                     );
 
-                    if (intLoopCurrentCost < intPreviousCost && !isPreviousCondArrayKeyExists) {
+                    if (!isPreviousCondCostCanBeBigger && intLoopCurrentCost < intPreviousCost) {
                         holder.registerProblem(objCond, strProblemDescriptionOrdering, ProblemHighlightType.WEAK_WARNING);
                     }
 

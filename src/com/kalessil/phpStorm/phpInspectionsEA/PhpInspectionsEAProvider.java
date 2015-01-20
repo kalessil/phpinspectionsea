@@ -85,7 +85,8 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 MissingParentConstructorCallInspector.class,
                 ClassMethodNameMatchesFieldNameInspector.class,
                 ClassReImplementsParentInterfaceInspector.class,
-                ClassOverridesFieldOfSuperClassInspector.class
+                ClassOverridesFieldOfSuperClassInspector.class,
+                SingletonFactoryPatternViolationInspector.class
         };
     }
 }

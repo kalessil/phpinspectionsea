@@ -23,6 +23,9 @@ CountInSecondIterateExpressionInspector:
 AdditionOperationOnArraysInspection:
         - re-implement to check any of binary/mathematical operations has been applied on an array
 
+SingletonFactoryPatternViolationInspector:
+        - getInstance -> constructor shall be protected
+
 ===POOL===
 
 Confusing construct: BO ? bool|BO : BO|bool

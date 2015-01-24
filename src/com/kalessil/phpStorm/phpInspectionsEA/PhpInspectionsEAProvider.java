@@ -25,8 +25,6 @@ AdditionOperationOnArraysInspection:
 
 ===POOL===
 
-Util/Constants pool pattern: only static methods/only constants shall be contained
-
 Confusing construct: BO ? bool|BO : BO|bool
 
 Confusing construct: Unnecessary 'return/continue' statement
@@ -91,7 +89,8 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 ClassMethodNameMatchesFieldNameInspector.class,
                 ClassReImplementsParentInterfaceInspector.class,
                 ClassOverridesFieldOfSuperClassInspector.class,
-                SingletonFactoryPatternViolationInspector.class
+                SingletonFactoryPatternViolationInspector.class,
+                PrivateConstructorSemanticsInspector.class
         };
     }
 }

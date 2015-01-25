@@ -3,9 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -30,11 +28,7 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
                 Method objConstructor = clazz.getOwnConstructor();
-                if (
-                    null == objConstructor ||
-                    !objConstructor.getAccess().isProtected() ||
-                    null == clazz.getNameIdentifier()
-                ) {
+                if (null == objConstructor || !objConstructor.getAccess().isProtected() || null == clazz.getNameIdentifier()) {
                     return;
                 }
 

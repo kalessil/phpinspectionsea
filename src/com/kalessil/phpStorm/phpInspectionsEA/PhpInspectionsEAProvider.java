@@ -17,14 +17,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 NotOptimalIfConditions
         - '... instanceof ...'|'is_*(...)' vs '=== null'
 
-CountInSecondIterateExpressionInspector:
-        - re-implement to detect any function/method references in termination check
-
 AdditionOperationOnArraysInspection:
         - re-implement to check any of binary/mathematical operations has been applied on an array
-
-SingletonFactoryPatternViolationInspector:
-        - getInstance -> constructor shall be protected
 
 ===POOL===
 
@@ -69,7 +63,6 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 MoreThanThreeArgumentsInspector.class,
                 DirnameCallOnFileConstantInspector.class,
                 AmbiguousMethodsCallsInArrayMappingInspector.class,
-                CountInSecondIterateExpressionInspector.class,
                 SequentialUnSetCallsInspector.class,
 
                 NotOptimalIfConditionsInspection.class,
@@ -93,7 +86,9 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 ClassReImplementsParentInterfaceInspector.class,
                 ClassOverridesFieldOfSuperClassInspector.class,
                 SingletonFactoryPatternViolationInspector.class,
-                PrivateConstructorSemanticsInspector.class
+                PrivateConstructorSemanticsInspector.class,
+
+                CallableInLoopTerminationConditionInspector.class
         };
     }
 }

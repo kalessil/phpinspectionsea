@@ -49,7 +49,7 @@ public class MissingParentConstructorCallInspector extends BasePhpInspection {
                     return;
                 }
                 GroupStatement objBody = ExpressionSemanticUtil.getGroupStatement(method);
-                if (null == objBody) {
+                if (null == objBody || null == method.getNameIdentifier()) {
                     return;
                 }
 

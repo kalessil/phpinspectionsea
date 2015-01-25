@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SingletonFactoryPatternViolationInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Ensure appropriate method is defined and public: getInstance, create, create*";
+    private static final String strProblemConstructorNotProtected = "Singleton constructor shall be protected";
 
     @NotNull
     public String getDisplayName() {
@@ -28,16 +29,25 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
                 Method objConstructor = clazz.getOwnConstructor();
-                if (null == objConstructor || !objConstructor.getAccess().isProtected() || null == clazz.getNameIdentifier()) {
+                if (null == objConstructor || null == clazz.getNameIdentifier()) {
                     return;
                 }
 
                 Method getInstance = clazz.findOwnMethodByName("getInstance");
                 boolean hasGetInstance = (null != getInstance && getInstance.getAccess().isPublic());
                 if (hasGetInstance) {
+                    if (objConstructor.getAccess().isPublic()){
+                        /** private ones already covered with other inspections */
+                        holder.registerProblem(clazz.getNameIdentifier(), strProblemConstructorNotProtected, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    }
+
                     return;
                 }
 
+                if (!objConstructor.getAccess().isProtected()) {
+                    /** ignore private / public constructors in factories */
+                    return;
+                }
                 for (Method ownMethod: clazz.getOwnMethods()) {
                     if (ownMethod.getName().startsWith("create")) {
                         return;

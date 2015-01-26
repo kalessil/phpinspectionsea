@@ -88,7 +88,8 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 SingletonFactoryPatternViolationInspector.class,
                 PrivateConstructorSemanticsInspector.class,
 
-                CallableInLoopTerminationConditionInspector.class
+                CallableInLoopTerminationConditionInspector.class,
+                SlowArrayOperationsInLoopInspector.class
         };
     }
 }

@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
+import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
@@ -47,18 +48,33 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
                 }
 
                 PsiElement objParent = reference.getParent();
+                if (!(objParent instanceof AssignmentExpression)) {
+                    /** let's focus on assignment expressions */
+                    return;
+                }
+
                 while (null != objParent && !(objParent instanceof PhpFile)) {
+                    /** terminate if reached callable */
                     if (objParent instanceof Function) {
                         return;
                     }
 
-                    /** TODO: allow usage when wrapped with conditional statements? */
-
                     if (objParent instanceof ForeachStatement || objParent instanceof For || objParent instanceof While) {
-                        String strError = strProblemDescription.replace("%s%", strFunctionName);
-                        holder.registerProblem(reference, strError, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        /** loop test is positive, check pattern */
+                        PhpPsiElement objContainer = ((AssignmentExpression) reference.getParent()).getVariable();
+                        if (null == objContainer) {
+                            return;
+                        }
 
-                        return;
+                        /** pattern itself: container overridden */
+                        for (PsiElement objParameter : reference.getParameters()) {
+                            if (PsiEquivalenceUtil.areElementsEquivalent(objContainer, objParameter)) {
+                                String strError = strProblemDescription.replace("%s%", strFunctionName);
+                                holder.registerProblem(reference, strError, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+
+                                return;
+                            }
+                        }
                     }
 
                     objParent = objParent.getParent();

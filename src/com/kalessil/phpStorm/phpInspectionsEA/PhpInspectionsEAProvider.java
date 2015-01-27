@@ -20,6 +20,9 @@ NotOptimalIfConditions
 AdditionOperationOnArraysInspection:
         - re-implement to check any of binary/mathematical operations has been applied on an array
 
+SlowArrayOperationsInLoopInspector:
+        - more functions with O(n) complexity, e.g. array_unique
+
 ===POOL===
 
 Confusing construct: BO ? bool|BO : BO|bool

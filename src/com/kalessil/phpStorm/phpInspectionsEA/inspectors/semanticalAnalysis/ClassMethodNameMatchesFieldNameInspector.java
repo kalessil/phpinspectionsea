@@ -16,7 +16,7 @@ public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection 
 
     @NotNull
     public String getDisplayName() {
-        return "Confusing construct: method name matches existing field name";
+        return "Confusing constructs: method name matches existing field name";
     }
 
     @NotNull

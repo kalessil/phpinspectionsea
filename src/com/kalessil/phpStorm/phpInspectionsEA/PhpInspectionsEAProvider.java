@@ -92,7 +92,8 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 PrivateConstructorSemanticsInspector.class,
 
                 CallableInLoopTerminationConditionInspector.class,
-                SlowArrayOperationsInLoopInspector.class
+                SlowArrayOperationsInLoopInspector.class,
+                NestedTernaryOperatorInspector.class
         };
     }
 }

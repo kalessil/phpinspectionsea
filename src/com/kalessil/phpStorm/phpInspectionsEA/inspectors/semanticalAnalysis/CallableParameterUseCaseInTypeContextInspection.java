@@ -22,6 +22,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -196,20 +197,22 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
             }
 
             private boolean isTypeCompatible (String strType, HashSet<String> listAllowedTypes, PhpIndex objIndex) {
+                /** identical definitions */
                 for (String strPossibleType: listAllowedTypes) {
                     if (strPossibleType.equals(strType)) {
                         return true;
                     }
                 }
 
+                /** classes/interfaces */
                 if (strType.length() > 0 && strType.charAt(0) == '\\') {
-                    /** collect test subjects */
+                    /** collect classes/interfaces for type we going to analyse for compatibility */
                     Collection<PhpClass> classesToTest = PhpIndexUtil.getObjectInterfaces(strType, objIndex);
                     if (classesToTest.size() == 0) {
                         return false;
                     }
 
-                    /** collect base classes */
+                    /** collect parent classes/interfaces for bulk check */
                     LinkedList<PhpClass> classesAllowed = new LinkedList<>();
                     for (String strAllowedType: listAllowedTypes) {
                         if (
@@ -224,16 +227,39 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                     /** run test through 2 sets */
                     for (PhpClass testSubject: classesToTest) {
+                        /** collect hierarchy chain for interface inheritance checks */
+                        LinkedList<PhpClass> testSubjectInheritanceChain = new LinkedList<>();
+                        testSubjectInheritanceChain.add(testSubject);
+                        Collections.addAll(testSubjectInheritanceChain, testSubject.getSupers());
+
                         for (PhpClass testAgainst: classesAllowed) {
                             /** TODO: not clear why, but isSuperClass receives a null on VCS commit */
                             if (null == testAgainst || null == testSubject) {
                                 continue;
                             }
 
+                            /** interface implementation checks */
+                            if (testAgainst.isInterface()) {
+                                /**
+                                 * PhpClassHierarchyUtils.isSuperClass not handling interfaces,
+                                 * so scan complete inheritance tree
+                                 */
+                                for (PhpClass oneClassForInterfaceCheck : testSubjectInheritanceChain) {
+                                    for (PhpClass objInterface : oneClassForInterfaceCheck.getImplementedInterfaces()) {
+                                        if (null != objInterface.getFQN() && objInterface.getFQN().equals(testAgainst.getFQN())) {
+                                            return true;
+                                        }
+                                    }
+                                }
+                            }
+
+                            /** class-hierarchy checks */
                             if (PhpClassHierarchyUtils.isSuperClass(testAgainst, testSubject, true)) {
                                 return true;
                             }
                         }
+
+                        testSubjectInheritanceChain.clear();
                     }
 
                     return false;

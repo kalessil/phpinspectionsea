@@ -30,13 +30,11 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
                 PsiElement objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
                 if (objCondition instanceof TernaryExpression) {
                     holder.registerProblem(objCondition, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                    return;
                 }
 
                 PsiElement objTrueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
                 if (objTrueVariant instanceof TernaryExpression) {
                     holder.registerProblem(objTrueVariant, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                    return;
                 }
 
                 PsiElement objFalseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());

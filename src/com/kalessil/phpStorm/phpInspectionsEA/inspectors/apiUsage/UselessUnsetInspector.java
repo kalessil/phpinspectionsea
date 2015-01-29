@@ -15,7 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class UselessUnsetInspector extends BasePhpInspection {
-    private static final String strProblemNoSense = "Only local copy/reference will be unset";
+    private static final String strProblemNoSense = "Only local copy/reference will be unset. Probably this unset can be removed.";
 
     @NotNull
     public String getDisplayName() {
@@ -30,7 +30,7 @@ public class UselessUnsetInspector extends BasePhpInspection {
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            /** Todo: handle foreach */
+            /** Todo: handle foreach, unset via operator */
 
             public void visitPhpMethod(Method method) {
                 this.inspectUsages(method.getParameters(), method);

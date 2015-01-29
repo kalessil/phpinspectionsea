@@ -30,6 +30,8 @@ public class UselessUnsetInspector extends BasePhpInspection {
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
+            /** Todo: handle foreach */
+
             public void visitPhpMethod(Method method) {
                 this.inspectUsages(method.getParameters(), method);
             }

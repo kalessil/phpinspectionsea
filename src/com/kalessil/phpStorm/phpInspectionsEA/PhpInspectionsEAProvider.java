@@ -41,6 +41,13 @@ DefaultValueInElseBranchInspector
 
 ===POOL===
 
+API usage: do not use aliases
+        is_double	    is_float
+        is_integer	    is_int
+        is_long	        is_int
+        is_real	        is_float
+        sizeof	        count
+
 Confusing construct: BO ? bool|BO : BO|bool
 
 Confusing construct: Unnecessary 'return/continue' statement

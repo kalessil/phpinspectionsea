@@ -25,13 +25,6 @@ SlowArrayOperationsInLoopInspector:
 
 ===POOL===
 
-API usage: do not use aliases
-        is_double	    is_float
-        is_integer	    is_int
-        is_long	        is_int
-        is_real	        is_float
-        sizeof	        count
-
 Confusing construct: BO ? bool|BO : BO|bool
 
 Confusing construct: Unnecessary 'return/continue' statement
@@ -101,7 +94,8 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 CallableInLoopTerminationConditionInspector.class,
                 SlowArrayOperationsInLoopInspector.class,
                 NestedTernaryOperatorInspector.class,
-                UselessUnsetInspector.class
+                UselessUnsetInspector.class,
+                AliasFunctionsUsageInspector.class
         };
     }
 }

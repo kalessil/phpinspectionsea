@@ -23,6 +23,19 @@ AdditionOperationOnArraysInspection:
 SlowArrayOperationsInLoopInspector:
         - more functions with O(n) complexity, e.g. array_unique
 
+DefaultValueInElseBranchInspector
+        - new pattern:
+                if (...) {
+                    ...
+                    if (...) {
+                        $var = <expression 1>;
+                    } else {
+                        $var = <expression 2>;
+                    }
+                } else {
+                    $var = <expression 2>;
+                }
+
 ===POOL===
 
 Confusing construct: BO ? bool|BO : BO|bool

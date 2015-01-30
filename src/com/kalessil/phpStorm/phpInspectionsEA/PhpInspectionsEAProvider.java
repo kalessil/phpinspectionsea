@@ -17,27 +17,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 NotOptimalIfConditions
         - '... instanceof ...'|'is_*(...)' vs '=== null'
 
-IsNullFunctionUsageInspector
-        - !is_null -> show different message
-
 AdditionOperationOnArraysInspection:
         - re-implement to check any of binary/mathematical operations has been applied on an array
 
 SlowArrayOperationsInLoopInspector:
         - more functions with O(n) complexity, e.g. array_unique
-
-DefaultValueInElseBranchInspector
-        - new pattern:
-                if (...) {
-                    ...
-                    if (...) {
-                        $var = <expression 1>;
-                    } else {
-                        $var = <expression 2>;
-                    }
-                } else {
-                    $var = <expression 2>;
-                }
 
 ===POOL===
 

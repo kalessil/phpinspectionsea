@@ -14,9 +14,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 /*
 ===TODO===:
 
-NotOptimalIfConditions
-        - '... instanceof ...'|'is_*(...)' vs '=== null'
-
 AdditionOperationOnArraysInspection:
         - re-implement to check any of binary/mathematical operations has been applied on an array
 

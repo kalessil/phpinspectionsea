@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
+    private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behave properly with instanceof in this conditions set";
     private static final String strProblemDescriptionOrdering  = "This condition execution costs less than previous one";
     private static final String strProblemDescriptionDuplicateConditions = "This condition duplicated in other if/elseif branch";
     private static final String strProblemDescriptionBooleans  = "This boolean in condition makes no sense or enforces condition result";
@@ -70,6 +71,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     this.inspectConditionsForMissingParenthesis(objConditionsFromStatement);
                     this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
                     this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
+                    this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
 
                     objConditionsFromStatement.clear();
                 }
@@ -83,6 +85,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         this.inspectConditionsForMissingParenthesis(objConditionsFromStatement);
                         this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
                         this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
+                        this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
 
                         objConditionsFromStatement.clear();
                     }
@@ -111,6 +114,52 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                     if (!(objCondition.getParent() instanceof ParenthesizedExpression)) {
                         holder.registerProblem(objCondition, strProblemDescriptionConditionShallBeWrapped, ProblemHighlightType.ERROR);
+                    }
+                }
+            }
+
+            /** TODO: is_* functions */
+            private void inspectConditionsForInstanceOfAndIdentityOperations(@NotNull LinkedList<PsiElement> objBranchConditions, @Nullable IElementType operationType) {
+                if (operationType != PhpTokenTypes.opAND || objBranchConditions.size() < 2) {
+                    return;
+                }
+
+                PsiElement objTestSubject = null;
+                for (PsiElement objExpression : objBranchConditions) {
+                    if (objExpression instanceof BinaryExpression) {
+                        BinaryExpression objInstanceOfExpression = (BinaryExpression) objExpression;
+                        if (
+                            null != objInstanceOfExpression.getOperation() &&
+                            objInstanceOfExpression.getOperation().getNode().getElementType() == PhpTokenTypes.kwINSTANCEOF
+                        ) {
+                            objTestSubject = objInstanceOfExpression.getLeftOperand();
+                            break;
+                        }
+                    }
+                }
+                if (null == objTestSubject) {
+                    return;
+                }
+
+                for (PsiElement objExpression : objBranchConditions) {
+                    if (objExpression instanceof BinaryExpression) {
+                        BinaryExpression objBinaryExpression = (BinaryExpression) objExpression;
+                        if (
+                            null != objBinaryExpression.getOperation() &&
+                            null != objBinaryExpression.getLeftOperand() &&
+                            null != objBinaryExpression.getRightOperand()
+
+                        ) {
+                            IElementType objConditionOperation = objBinaryExpression.getOperation().getNode().getElementType();
+                            if (objConditionOperation == PhpTokenTypes.opIDENTICAL || objConditionOperation == PhpTokenTypes.opNOT_IDENTICAL) {
+                                if (
+                                    PsiEquivalenceUtil.areElementsEquivalent(objTestSubject, objBinaryExpression.getLeftOperand()) ||
+                                    PsiEquivalenceUtil.areElementsEquivalent(objTestSubject, objBinaryExpression.getRightOperand())
+                                ) {
+                                    holder.registerProblem(objExpression, strProblemDescriptionInstanceOfComplementarity, ProblemHighlightType.WEAK_WARNING);
+                                }
+                            }
+                        }
                     }
                 }
             }

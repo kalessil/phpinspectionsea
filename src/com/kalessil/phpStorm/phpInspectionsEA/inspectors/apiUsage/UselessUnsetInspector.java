@@ -29,9 +29,12 @@ public class UselessUnsetInspector extends BasePhpInspection {
 
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
-        return new BasePhpElementVisitor() {
-            /** Todo: handle foreach, unset via operator */
 
+        /**
+         * foreach is also a case, but there is no way to get flow entry point in actual JB platform API
+         */
+
+        return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
                 this.inspectUsages(method.getParameters(), method);
             }

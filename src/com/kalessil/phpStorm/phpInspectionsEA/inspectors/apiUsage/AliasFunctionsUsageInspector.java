@@ -24,6 +24,10 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
             mapping.put("is_long",    "is_int");
             mapping.put("is_real",    "is_float");
             mapping.put("sizeof",     "count");
+            mapping.put("doubleval",  "floatval");
+            mapping.put("fputs",      "fwrite");
+            mapping.put("join",       "implode");
+            mapping.put("key_exists", "array_key_exists");
         }
 
         return mapping;

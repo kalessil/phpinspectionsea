@@ -12,6 +12,19 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformatio
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayTypeOfParameterByDefaultValueInspector;
 
 /*
+1.0.9 release scope:
+
+Fixes and improvements
+- NotOptimalIfConditionsInspection - added experimental check instanceof and identity check ops are probable bugs
+- IsNullFunctionUsageInspector - null, not null checks are warned with different messages
+- CallableParameterUseCaseInTypeContextInspection - fixed #9 - class-interface link recognition was broken
+
+New inspections
+- AliasFunctionsUsageInspector - added
+- UselessUnsetInspector - added
+- NestedTernaryOperatorInspector - added
+- SlowArrayOperationsInLoopInspector added
+
 ===TODO===:
 
 AdditionOperationOnArraysInspection:

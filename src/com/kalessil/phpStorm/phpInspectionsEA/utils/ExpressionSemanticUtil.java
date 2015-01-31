@@ -21,6 +21,17 @@ public class ExpressionSemanticUtil {
         return (null != ifStatement.getElseBranch() || ifStatement.getElseIfBranches().length > 0);
     }
 
+    @Nullable
+    public static PhpExpression getReturnValue(@NotNull PhpReturn objReturn) {
+        for (PsiElement objChild : objReturn.getChildren()) {
+            if (objChild instanceof PhpExpression) {
+                return (PhpExpression) objChild;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * @param objGroupStatement group expression to check
      * @return integer

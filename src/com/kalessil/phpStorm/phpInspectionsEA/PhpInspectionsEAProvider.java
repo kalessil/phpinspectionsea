@@ -15,6 +15,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 
 ===TODO===:
 
+UselessReturnInspector:
+    - return value for following methods will be ignored: (warning)
+        __construct, __destruct, __set, __clone, __unset
+    - void return in callable has no sense (unused)
+
 AdditionOperationOnArraysInspection:
         - re-implement to check any of binary/mathematical operations has been applied on an array
 
@@ -93,7 +98,9 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 SlowArrayOperationsInLoopInspector.class,
                 NestedTernaryOperatorInspector.class,
                 UselessUnsetInspector.class,
-                AliasFunctionsUsageInspector.class
+                AliasFunctionsUsageInspector.class,
+
+                UselessReturnInspector.class
         };
     }
 }

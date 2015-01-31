@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.0.8</version>
+  <version>1.0.9</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -15,7 +15,7 @@ Detecting:<br />
 - possible code constructs simplifications<br />
 - weak types control (important in Enterprise Applications)<br />
 - micro-optimization cases (eg. un-necessary double quotes)<br />
-- not optimal and duplicate if conditions<br />
+- not optimal, duplicate and suspicious if conditions<br />
 <br />
 Some of inspections are expecting conditional statements (eg. if) to use
 group statement for wrapping body expressions. When this requirement is met
@@ -23,14 +23,16 @@ then additional inspections are applied to source code.
     ]]></description>
 
   <change-notes><![CDATA[
-25 Jan 2015: improvements and new inspections:<br/>
+31 Jan 2015: bug-fixes, improvements and new inspections:<br/>
 <br/>
-    - unnecessary double quotes - reduced amount of false positives<br/>
-    - not optimal if conditions - reduced amount of false positives<br/>
+    - not optimal if conditions: added new pattern (instanceof and identity operations)<br/>
+    - 'is_null(...)' usage: null and not null replacement hints separated<br/>
+    - callable parameter usage violates definition: fixed class-interface link recognition, reduced amount of false-positives<br/>
 <br/>
-    - private constructor semantics inspection added<br/>
-    - class violates singleton/factory pattern definition inspection added<br/>
-    - 'count(...)' calls in loops termination condition inspection replaced with callable calls in loops termination condition inspection<br/>
+    - alias functions usage inspection added<br/>
+    - useless unset inspection added<br/>
+    - nested ternary operator inspection added<br/>
+    - resources consuming array function used in loop inspection added<br/>
 <br/>
 <hr/>
   ]]></change-notes>

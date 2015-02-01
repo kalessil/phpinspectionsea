@@ -15,6 +15,7 @@ import java.util.HashSet;
 public class UselessReturnInspector extends BasePhpInspection {
     private static final String strProblemUselessReturnValue = "%s% method shall not return any value";
     private static final String strProblemUseless = "Senseless statement: safely remove it";
+    private static final String strProblemConfusing = "Confusing statement: shall be re-factored";
 
     private HashSet<String> methodsSet = null;
     private HashSet<String> getMethodsSet() {
@@ -47,6 +48,14 @@ public class UselessReturnInspector extends BasePhpInspection {
             public void visitPhpReturn(PhpReturn returnStatement) {
                 PhpExpression objReturnValue = ExpressionSemanticUtil.getReturnValue(returnStatement);
                 if (null == objReturnValue) {
+                    return;
+                }
+
+                if (
+                    objReturnValue instanceof AssignmentExpression &&
+                    ((AssignmentExpression) objReturnValue).getVariable() instanceof Variable
+                ) {
+                    holder.registerProblem(returnStatement, strProblemConfusing, ProblemHighlightType.WEAK_WARNING);
                     return;
                 }
 

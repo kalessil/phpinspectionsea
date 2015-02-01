@@ -15,10 +15,16 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 
 ===TODO===:
 
-UselessReturnInspector:
-    - return value for following methods will be ignored: (warning)
-        __construct, __destruct, __set, __clone, __unset
-    - void return in callable has no sense (unused)
+AlterInForeachInspector (inspect assignment expressions):
+        left is array access
+        wrapped within foreach
+            - index is foreach key
+            - container is foreach source
+
+AmbiguousMethodsCallsInArrayMappingInspector:
+        foreach ($content['multifiles'] as $multifile) {
+            $found[] = $multifile;
+        }
 
 AdditionOperationOnArraysInspection:
         - re-implement to check any of binary/mathematical operations has been applied on an array
@@ -100,7 +106,8 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
                 UselessUnsetInspector.class,
                 AliasFunctionsUsageInspector.class,
 
-                UselessReturnInspector.class
+                UselessReturnInspector.class,
+                AlterInForeachInspector.class
         };
     }
 }

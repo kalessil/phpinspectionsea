@@ -15,6 +15,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 
 ===TODO===:
 
+$this->staticMemberOrFunction call
+        shall be static::staticMemberOrFunction
+
 AlterInForeachInspector (inspect assignment expressions):
         left is array access
         wrapped within foreach

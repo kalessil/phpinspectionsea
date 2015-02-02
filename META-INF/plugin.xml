@@ -48,6 +48,12 @@ then additional inspections are applied to source code.
 
   <extensions defaultExtensionNs="com.intellij">
     <inspectionToolProvider implementation="com.kalessil.phpStorm.phpInspectionsEA.PhpInspectionsEAProvider"/>
+
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="IsNullFunctionUsageInspection" displayName="Performance: 'is_null(...)' usage"
+        groupName="Php Inspections (EA Extended)"
+        enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector"/>
   </extensions>
 
   <application-components>

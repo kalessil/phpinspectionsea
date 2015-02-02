@@ -15,12 +15,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayT
 
 ===TODO===:
 
-re-defined inspections invocation as individual ones:
-        <localInspection language="XML" shortName="PluginXmlValidity" displayName="Plugin.xml Validity"
-             bundle="org.jetbrains.idea.devkit.DevKitBundle"
-             groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
-             implementationClass="org.jetbrains.idea.devkit.inspections.PluginXmlDomInspection"/>
-
 $this->staticMemberOrFunction call
         shall be static::staticMemberOrFunction
 
@@ -60,7 +54,6 @@ public class PhpInspectionsEAProvider implements InspectionToolProvider {
     @Override
     public Class[] getInspectionClasses() {
         return new Class[]{
-                IsNullFunctionUsageInspector.class,
                 IsEmptyFunctionUsageInspector.class,
                 UnSafeIsSetOverArrayInspector.class,
                 ForgottenDebugOutputInspector.class,

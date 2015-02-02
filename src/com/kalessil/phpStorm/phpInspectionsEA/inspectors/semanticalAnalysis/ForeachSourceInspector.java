@@ -68,7 +68,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
 
                 boolean isExpressionInspected = false;
-                LinkedList<String> listSignatureTypes = new LinkedList<>();
+                LinkedList<String> listSignatureTypes = new LinkedList<String>();
                 //noinspection ConstantConditions
                 if (!isExpressionInspected && objSource instanceof FieldReference) {
                     this.lookupType(((FieldReference) objSource).getSignature(), objSource, listSignatureTypes, objIndex);

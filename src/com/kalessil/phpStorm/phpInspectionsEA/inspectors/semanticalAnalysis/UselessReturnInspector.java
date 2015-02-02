@@ -20,7 +20,7 @@ public class UselessReturnInspector extends BasePhpInspection {
     private HashSet<String> methodsSet = null;
     private HashSet<String> getMethodsSet() {
         if (null == methodsSet) {
-            methodsSet = new HashSet<>();
+            methodsSet = new HashSet<String>();
 
             methodsSet.add("__construct");
             methodsSet.add("__destruct");

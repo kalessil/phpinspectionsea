@@ -17,7 +17,7 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
     private static HashMap<String, String> mapping = null;
     private static HashMap<String, String> getMapping() {
         if (null == mapping) {
-            mapping = new HashMap<>();
+            mapping = new HashMap<String, String>();
 
             mapping.put("intval",    "int");
             mapping.put("floatval",  "float");

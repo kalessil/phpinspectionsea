@@ -23,7 +23,7 @@ public class Types {
     static private HashMap<String, String> mapTypes = null;
     static private HashMap<String, String> getTypesMap () {
         if (null == mapTypes) {
-            mapTypes = new HashMap<>();
+            mapTypes = new HashMap<String, String>();
 
             mapTypes.put(strArray,     strArray);
             mapTypes.put("\\array",    strArray);

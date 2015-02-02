@@ -42,7 +42,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private HashSet<String> functionsSet = null;
     private HashSet<String> getFunctionsSet() {
         if (null == functionsSet) {
-            functionsSet = new HashSet<>();
+            functionsSet = new HashSet<String>();
 
             functionsSet.add("array_key_exists");
             functionsSet.add("is_array");
@@ -60,7 +60,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpIf(If ifStatement) {
-                LinkedList<PsiElement> objAllConditions = new LinkedList<>();
+                LinkedList<PsiElement> objAllConditions = new LinkedList<PsiElement>();
                 IElementType[] arrOperationHolder = { null };
 
                 LinkedList<PsiElement> objConditionsFromStatement = this.inspectExpressionsOrder(ifStatement.getCondition(), arrOperationHolder);
@@ -208,7 +208,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
                 /** extract calls */
-                LinkedList<PsiElement> objCallsExtracted = new LinkedList<>();
+                LinkedList<PsiElement> objCallsExtracted = new LinkedList<PsiElement>();
                 for (PsiElement objCondition : objBranchConditions) {
                     if (!(objCondition instanceof BinaryExpression)) {
                         continue;
@@ -275,7 +275,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
              * @param ifStatement current scope
              */
             private void inspectDuplicatedConditions(LinkedList<PsiElement> objAllConditions, If ifStatement) {
-                LinkedList<PsiElement> objParentConditions = new LinkedList<>();
+                LinkedList<PsiElement> objParentConditions = new LinkedList<PsiElement>();
 
                 /** collect parent scopes conditions */
                 PsiElement objParent = ifStatement.getParent();

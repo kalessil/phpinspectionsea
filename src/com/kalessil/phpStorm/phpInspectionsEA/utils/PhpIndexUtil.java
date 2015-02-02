@@ -8,7 +8,7 @@ import java.util.LinkedList;
 public class PhpIndexUtil {
 
     static public LinkedList<PhpClass> getObjectInterfaces(String strName, PhpIndex objIndex) {
-        LinkedList<PhpClass> collection = new LinkedList<>();
+        LinkedList<PhpClass> collection = new LinkedList<PhpClass>();
 
         collection.addAll(objIndex.getClassesByFQN(strName));
         collection.addAll(objIndex.getInterfacesByFQN(strName));

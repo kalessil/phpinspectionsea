@@ -17,7 +17,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     private HashSet<String> functionsSet = null;
     private HashSet<String> getFunctionsSet() {
         if (null == functionsSet) {
-            functionsSet = new HashSet<>();
+            functionsSet = new HashSet<String>();
 
             functionsSet.add("print_r");
             functionsSet.add("var_export");

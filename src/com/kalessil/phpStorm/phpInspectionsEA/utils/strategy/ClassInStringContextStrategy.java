@@ -28,14 +28,14 @@ public class ClassInStringContextStrategy {
         PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
         Function objScope = ExpressionSemanticUtil.getScope(objNonStringOperand);
 
-        HashSet<String> objResolvedTypes = new HashSet<>();
+        HashSet<String> objResolvedTypes = new HashSet<String>();
         TypeFromPsiResolvingUtil.resolveExpressionType(objNonStringOperand, objScope, objIndex, objResolvedTypes);
         if (!TypesSemanticsUtil.isNullableObjectInterface(objResolvedTypes)) {
             return false;
         }
 
         /** collect classes to check if __toString() is there */
-        LinkedList<PhpClass> listClasses = new LinkedList<>();
+        LinkedList<PhpClass> listClasses = new LinkedList<PhpClass>();
         for (String strClass : objResolvedTypes) {
             if (strClass.charAt(0) == '\\') {
                 listClasses.addAll(PhpIndexUtil.getObjectInterfaces(strClass, objIndex));

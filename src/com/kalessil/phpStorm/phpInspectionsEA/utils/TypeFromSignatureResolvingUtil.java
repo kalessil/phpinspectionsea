@@ -169,7 +169,7 @@ public class TypeFromSignatureResolvingUtil {
     }
 
     static public HashSet<String> resolveSlot(String strClass, String strSlot, PhpIndex objIndex) {
-        HashSet<String> resolvedTypesSet = new HashSet<>();
+        HashSet<String> resolvedTypesSet = new HashSet<String>();
 
         /** try resolving an object interface */
         Collection<PhpClass> objClasses = PhpIndexUtil.getObjectInterfaces(strClass, objIndex);

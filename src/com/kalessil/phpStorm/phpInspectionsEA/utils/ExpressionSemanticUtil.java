@@ -126,7 +126,7 @@ public class ExpressionSemanticUtil {
         }
 
         /** init container */
-        LinkedList<PsiElement> objPartsCollection = new LinkedList<>();
+        LinkedList<PsiElement> objPartsCollection = new LinkedList<PsiElement>();
 
         /** return non-binary expressions, eg. callable execution */
         if (!(objCondition instanceof BinaryExpression)) {
@@ -160,7 +160,7 @@ public class ExpressionSemanticUtil {
      * @return list of sub-conditions in native order
      */
     private static LinkedList<PsiElement> getConditions(BinaryExpression objTarget, IElementType operationType) {
-        LinkedList<PsiElement> objPartsCollection = new LinkedList<>();
+        LinkedList<PsiElement> objPartsCollection = new LinkedList<PsiElement>();
         PsiElement objItemToAdd;
 
         /** right expression first */

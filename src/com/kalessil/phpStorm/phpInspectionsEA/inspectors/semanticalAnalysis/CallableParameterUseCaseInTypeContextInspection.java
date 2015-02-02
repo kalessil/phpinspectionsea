@@ -72,7 +72,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
 
                     /** resolve types for parameter */
-                    HashSet<String> objParameterTypesResolved = new HashSet<>();
+                    HashSet<String> objParameterTypesResolved = new HashSet<String>();
                     TypeFromSignatureResolvingUtil.resolveSignature(strParameterType, (Function) objScopeHolder, objIndex, objParameterTypesResolved);
 
 
@@ -111,28 +111,20 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             boolean isCallViolatesDefinition;
                             boolean isTypeAnnounced;
 
-                            switch (strFunctionName) {
-                                case "is_array":
-                                    isTypeAnnounced = (strParameterType.contains(Types.strArray) || strParameterType.contains("[]"));
-                                    break;
-                                case "is_string":
-                                    isTypeAnnounced = strParameterType.contains(Types.strString);
-                                    break;
-                                case "is_bool":
-                                    isTypeAnnounced = strParameterType.contains(Types.strBoolean);
-                                    break;
-                                case "is_int":
-                                    isTypeAnnounced = strParameterType.contains(Types.strInteger);
-                                    break;
-                                case "is_float":
-                                    isTypeAnnounced = strParameterType.contains(Types.strFloat);
-                                    break;
-                                case "is_resource":
-                                    isTypeAnnounced = strParameterType.contains(Types.strResource);
-                                    break;
-                                default:
-                                    continue;
-                            }
+                            if (strFunctionName.equals("is_array"))
+                                isTypeAnnounced = (strParameterType.contains(Types.strArray) || strParameterType.contains("[]"));
+                            else if (strFunctionName.equals("is_string"))
+                                isTypeAnnounced = strParameterType.contains(Types.strString);
+                            else if (strFunctionName.equals("is_bool"))
+                                isTypeAnnounced = strParameterType.contains(Types.strBoolean);
+                            else if (strFunctionName.equals("is_int"))
+                                isTypeAnnounced = strParameterType.contains(Types.strInteger);
+                            else if (strFunctionName.equals("is_float"))
+                                isTypeAnnounced = strParameterType.contains(Types.strFloat);
+                            else if (strFunctionName.equals("is_resource"))
+                                isTypeAnnounced = strParameterType.contains(Types.strResource);
+                            else
+                                continue;
 
                             isCallHasNoSense = !isTypeAnnounced && isReversedCheck;
                             if (isCallHasNoSense) {
@@ -164,7 +156,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 objVariable instanceof Variable &&
                                 null != objVariable.getName() && objVariable.getName().equals(strParameterName)
                             ) {
-                                HashSet<String> objTypesResolved = new HashSet<>();
+                                HashSet<String> objTypesResolved = new HashSet<String>();
                                 TypeFromPsiResolvingUtil.resolveExpressionType(objValue, (Function) objScopeHolder, objIndex, objTypesResolved);
 
                                 boolean isCallViolatesDefinition;
@@ -212,7 +204,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     }
 
                     /** collect parent classes/interfaces for bulk check */
-                    LinkedList<PhpClass> classesAllowed = new LinkedList<>();
+                    LinkedList<PhpClass> classesAllowed = new LinkedList<PhpClass>();
                     for (String strAllowedType: listAllowedTypes) {
                         if (
                             strAllowedType.length() == 0 || strAllowedType.charAt(0) != '\\' ||
@@ -227,7 +219,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     /** run test through 2 sets */
                     for (PhpClass testSubject: classesToTest) {
                         /** collect hierarchy chain for interface inheritance checks */
-                        LinkedList<PhpClass> testSubjectInheritanceChain = new LinkedList<>();
+                        LinkedList<PhpClass> testSubjectInheritanceChain = new LinkedList<PhpClass>();
                         testSubjectInheritanceChain.add(testSubject);
                         Collections.addAll(testSubjectInheritanceChain, testSubject.getSupers());
 

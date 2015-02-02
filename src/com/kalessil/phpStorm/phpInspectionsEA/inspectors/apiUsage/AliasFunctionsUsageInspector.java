@@ -17,7 +17,7 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
     private static HashMap<String, String> mapping = null;
     private static HashMap<String, String> getMapping() {
         if (null == mapping) {
-            mapping = new HashMap<>();
+            mapping = new HashMap<String, String>();
 
             mapping.put("is_double",  "is_float");
             mapping.put("is_integer", "is_int");

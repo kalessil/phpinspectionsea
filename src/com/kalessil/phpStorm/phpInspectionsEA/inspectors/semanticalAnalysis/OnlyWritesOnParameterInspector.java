@@ -60,7 +60,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    LinkedList<PsiElement> objTargetExpressions = new LinkedList<>();
+                    LinkedList<PsiElement> objTargetExpressions = new LinkedList<PsiElement>();
 
                     int intCountReadAccesses = 0;
                     int intCountWriteAccesses = 0;

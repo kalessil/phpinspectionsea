@@ -50,7 +50,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     /** extract types */
                     PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
                     Function objScope = ExpressionSemanticUtil.getScope(emptyExpression);
-                    HashSet<String> objResolvedTypes = new HashSet<>();
+                    HashSet<String> objResolvedTypes = new HashSet<String>();
                     TypeFromPsiResolvingUtil.resolveExpressionType(objParameterToInspect, objScope, objIndex, objResolvedTypes);
 
                     /** Case 1: empty(array) - hidden logic - empty array */

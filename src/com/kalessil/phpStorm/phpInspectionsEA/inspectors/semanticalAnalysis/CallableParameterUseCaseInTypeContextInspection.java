@@ -128,13 +128,13 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                             isCallHasNoSense = !isTypeAnnounced && isReversedCheck;
                             if (isCallHasNoSense) {
-                                holder.registerProblem(objFunctionCall, strProblemNoSense, ProblemHighlightType.ERROR);
+                                holder.registerProblem(objFunctionCall, strProblemNoSense, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                                 continue;
                             }
 
                             isCallViolatesDefinition = !isTypeAnnounced;
                             if (isCallViolatesDefinition) {
-                                holder.registerProblem(objFunctionCall, strProblemCheckViolatesDefinition, ProblemHighlightType.ERROR);
+                                holder.registerProblem(objFunctionCall, strProblemCheckViolatesDefinition, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                                 continue;
                             }
 
@@ -171,7 +171,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                                     isCallViolatesDefinition = (!this.isTypeCompatible(strType, objParameterTypesResolved, objIndex));
                                     if (isCallViolatesDefinition) {
-                                        holder.registerProblem(objValue, strProblemAssignmentViolatesDefinition + ": " + strType, ProblemHighlightType.ERROR);
+                                        holder.registerProblem(objValue, strProblemAssignmentViolatesDefinition + ": " + strType, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                                         break;
                                     }
                                 }

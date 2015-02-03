@@ -47,13 +47,190 @@ then additional inspections are applied to source code.
   -->
 
   <extensions defaultExtensionNs="com.intellij">
-    <inspectionToolProvider implementation="com.kalessil.phpStorm.phpInspectionsEA.PhpInspectionsEAProvider"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="IsNullFunctionUsageInspection"                 displayName="Performance: 'is_null(...)' usage"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="dirnameCallOnFileConstantInspection"           displayName="Performance: __DIR__ equivalent construction"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.DirnameCallOnFileConstantInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="AmbiguousMethodsCallsInArrayMappingInspection" displayName="Performance: not optimized arrays mapping"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.AmbiguousMethodsCallsInArrayMappingInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="SequentialUnSetCallsInspection"                displayName="Performance: 'unset(...)' calls can be merged"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SequentialUnSetCallsInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="StrlenInEmptyStringCheckContextInspection"     displayName="Performance: 'strlen(...)' used to check if string is empty"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.StrlenInEmptyStringCheckContextInspection"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="TypesCastingWithFunctionsInspection"           displayName="Performance: types casting via PHP4 functions"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.TypesCastingWithFunctionsInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="ArrayCastingEquivalentInspection"              displayName="Performance: '(array) ...' equivalent construction"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.ArrayCastingEquivalentInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="CountOnPropelCollectionInspection"             displayName="Performance: 'count(...)' calls on Propel collection"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.propel16.CountOnPropelCollectionInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="CallableInLoopTerminationConditionInspection"  displayName="Performance: callable calls in loops termination condition"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.CallableInLoopTerminationConditionInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="SlowArrayOperationsInLoopInspection"           displayName="Performance: resources consuming array function used in loop"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SlowArrayOperationsInLoopInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
-        shortName="IsNullFunctionUsageInspection" displayName="Performance: 'is_null(...)' usage"
-        groupName="Php Inspections (EA Extended)"
-        enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector"/>
+        shortName="IsEmptyFunctionUsageInspection"                displayName="Type compatibility: 'empty(...)' usage"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsEmptyFunctionUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="TypeUnsafeComparisonInspection"                displayName="Type compatibility: type unsafe equality operators"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TypeUnsafeComparisonInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="TypeUnsafeArraySearchInspection"               displayName="Type compatibility: 'in_array(...)', 'array_search()' type unsafe usage"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.TypeUnsafeArraySearchInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="ArrayTypeOfParameterByDefaultValueInspection"  displayName="Type compatibility: a parameter can be declared as array"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayTypeOfParameterByDefaultValueInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="ForeachSourceInspection"                       displayName="Type compatibility: foreach source to iterate over"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ForeachSourceInspector"/>
+
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="UnSafeIsSetOverArrayInspection"                displayName="Control flow: 'isset(...)' usage"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnSafeIsSetOverArrayInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="NestedPositiveIfStatementsInspection"          displayName="Control flow: nested positive ifs"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="TernaryOperatorSimplifyInspection"             displayName="Control flow: ternary operator simplification"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TernaryOperatorSimplifyInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="IfReturnReturnSimplificationInspection"        displayName="Control flow: if-return-return simplification"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.IfReturnReturnSimplificationInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="DefaultValueInElseBranchInspection"            displayName="Control flow: default value is hidden in else branch"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DefaultValueInElseBranchInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="NotOptimalIfConditionsInspection"              displayName="Control flow: not optimal if conditions"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.NotOptimalIfConditionsInspection"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="LoopWhichDoesNotLoopInspection"                displayName="Control flow: loop which does not loop"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.LoopWhichDoesNotLoopInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="AlterInForeachInspection"                      displayName="Control flow: not optimal alter in foreach"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.AlterInForeachInspector"/>
+
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="ForgottenDebugOutputInspection"                displayName="Probable bugs: forgotten debug statements"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ForgottenDebugOutputInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="AdditionOperationOnArraysInspection"           displayName="Probable bugs: addition operator on arrays"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.AdditionOperationOnArraysInspection"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="MissingParentConstructorCallInspection"        displayName="Probable bugs: missing parent constructor/clone call"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.MissingParentConstructorCallInspector"/>
+
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="SenselessTernaryOperatorInspection"            displayName="Confusing constructs: suspicious ternary operator"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.SenselessTernaryOperatorInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="ClassMethodNameMatchesFieldNameInspection"     displayName="Confusing constructs: method name matches existing field name"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ClassMethodNameMatchesFieldNameInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="NestedTernaryOperatorInspection"               displayName="Confusing constructs: nested ternary operator"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.NestedTernaryOperatorInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="UselessReturnInspection"                       displayName="Confusing constructs: useless return"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UselessReturnInspector"/>
+
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="OnlyWritesOnParameterInspection"               displayName="Unused: callable parameter is not used"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OnlyWritesOnParameterInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="AmbiguousMemberInitializationInspection"       displayName="Unused: ambiguous class property initialization"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.AmbiguousMemberInitializationInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="UselessUnsetInspection"                        displayName="Unused: useless unset"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UselessUnsetInspector"/>
+
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="UnNecessaryDoubleQuotesInspection"             displayName="Code style: unnecessary double quotes"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnNecessaryDoubleQuotesInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="IfConditionalsWithoutCurvyBracketsInspection"  displayName="Code style: missing or empty conditionals group statement"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.IfConditionalsWithoutGroupStatementInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="SenselessCommaInArrayDefinitionInspection"     displayName="Code style: unnecessary last comma in array definition"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.SenselessCommaInArrayDefinitionInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="ElvisOperatorCanBeUsedInspection"              displayName="Code style: elvis operator can be used"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ElvisOperatorCanBeUsedInspector"/>
+
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="MoreThanThreeArgumentsInspection"                displayName="Architecture: more than 3 parameters in callable"
+        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MoreThanThreeArgumentsInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="CallableParameterUseCaseInTypeContextInspection" displayName="Architecture: callable parameter usage violates definition"
+        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.CallableParameterUseCaseInTypeContextInspection"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="ClassReImplementsParentInterfaceInspection"      displayName="Architecture: class re-implements interface of a superclass"
+        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ClassReImplementsParentInterfaceInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="ClassOverridesFieldOfSuperClassInspection"       displayName="Architecture: class overrides a field of superclass"
+        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ClassOverridesFieldOfSuperClassInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="SingletonFactoryPatternViolationInspection"      displayName="Architecture: class violates singleton/factory pattern definition"
+        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SingletonFactoryPatternViolationInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="PrivateConstructorSemanticsInspection"           displayName="Architecture: private constructor semantics"
+        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.PrivateConstructorSemanticsInspector"/>
+
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="AliasFunctionsUsageInspection"                   displayName="Compatibility: alias functions usage"
+        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.AliasFunctionsUsageInspector"/>
   </extensions>
 
   <application-components>

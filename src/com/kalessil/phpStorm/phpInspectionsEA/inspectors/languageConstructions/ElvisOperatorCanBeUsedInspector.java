@@ -17,7 +17,7 @@ public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
 
     @NotNull
     public String getDisplayName() {
-        return "Performance: elvis operator can be used";
+        return "Code style: elvis operator can be used";
     }
 
     @NotNull

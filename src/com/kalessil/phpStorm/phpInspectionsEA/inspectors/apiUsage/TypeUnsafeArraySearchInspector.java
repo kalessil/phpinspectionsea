@@ -26,16 +26,6 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
         return functionsSet;
     }
 
-    @NotNull
-    public String getDisplayName() {
-        return "Type compatibility: 'in_array(...)', 'array_search()' type unsafe usage";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "TypeUnsafeArraySearchInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

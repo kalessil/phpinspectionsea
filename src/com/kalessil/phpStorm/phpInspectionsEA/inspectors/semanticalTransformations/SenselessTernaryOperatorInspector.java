@@ -17,16 +17,6 @@ import org.jetbrains.annotations.NotNull;
 public class SenselessTernaryOperatorInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Can be replaced with comparison operand";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Confusing constructs: suspicious ternary operator";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "SenselessTernaryOperatorInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

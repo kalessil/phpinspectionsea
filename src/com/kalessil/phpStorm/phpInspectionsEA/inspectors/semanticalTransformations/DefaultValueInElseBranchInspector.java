@@ -19,16 +19,6 @@ import java.util.LinkedList;
 public class DefaultValueInElseBranchInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Assignment in this branch shall be moved before if";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Control flow: default value is hidden in else branch";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "DefaultValueInElseBranchInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

@@ -13,16 +13,6 @@ public class IfConditionalsWithoutGroupStatementInspector extends BasePhpInspect
     private static final String strProblemMissingBrackets = "Wrap the conditional body with group statement";
     private static final String strProblemEmptyBody = "Empty group statement";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Code style: missing or empty conditionals group statement";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "IfConditionalsWithoutCurvyBracketsInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

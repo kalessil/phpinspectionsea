@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.0.9</version>
+  <version>1.1.0</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -23,16 +23,16 @@ then additional inspections are applied to source code.
     ]]></description>
 
   <change-notes><![CDATA[
-31 Jan 2015: bug-fixes, improvements and new inspections:<br/>
+03 Feb 2015: improvements and new inspections:<br/>
 <br/>
-    - not optimal if conditions: added new pattern (instanceof and identity operations)<br/>
-    - 'is_null(...)' usage: null and not null replacement hints separated<br/>
-    - callable parameter usage violates definition: fixed class-interface link recognition, reduced amount of false-positives<br/>
+    - Inspections re-located in own group, added support for JDK 1.6 (PhpStorm on MacOS)<br/>
+    - callable parameter usage violates definition - messages level decreased to warning<br/>
+    - unnecessary double quotes - reconsidered to be code style issue<br/>
+    - elvis operator can be used - reconsidered to be code style issue<br/>
+
 <br/>
-    - alias functions usage inspection added<br/>
-    - useless unset inspection added<br/>
-    - nested ternary operator inspection added<br/>
-    - resources consuming array function used in loop inspection added<br/>
+    - not optimal alter in foreach inspection added<br/>
+    - useless return inspection added<br/>
 <br/>
 <hr/>
   ]]></change-notes>

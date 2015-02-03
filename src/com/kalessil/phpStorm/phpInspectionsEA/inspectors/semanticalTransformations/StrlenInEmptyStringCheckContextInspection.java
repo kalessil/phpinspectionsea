@@ -20,16 +20,6 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
     private static final String strProblemDescriptionObjectUsed = "Can be replaced with '$... == ''' construction";
     private static final String strProblemDescriptionMissingToStringMethod = "Class %class% must implement __toString()";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Performance: 'strlen(...)' used to check if string is empty";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "StrlenInEmptyStringCheckContextInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

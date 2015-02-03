@@ -17,16 +17,6 @@ import org.jetbrains.annotations.NotNull;
 public class UselessUnsetInspector extends BasePhpInspection {
     private static final String strProblemNoSense = "Only local copy/reference will be unset. Probably this unset can be removed.";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Unused: useless unset";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "UselessUnsetInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
 

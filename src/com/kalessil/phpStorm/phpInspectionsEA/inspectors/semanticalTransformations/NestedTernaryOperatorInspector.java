@@ -13,16 +13,6 @@ import org.jetbrains.annotations.NotNull;
 public class NestedTernaryOperatorInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Nested ternary operator shall not be used";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Confusing constructs: nested ternary operator";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "NestedTernaryOperatorInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

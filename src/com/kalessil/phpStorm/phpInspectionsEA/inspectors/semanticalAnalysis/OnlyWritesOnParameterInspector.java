@@ -21,16 +21,6 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Parameter is overridden, but never used or appears " +
             "outside of the scope";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Unused: callable parameter is not used";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "OnlyWritesOnParameterInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

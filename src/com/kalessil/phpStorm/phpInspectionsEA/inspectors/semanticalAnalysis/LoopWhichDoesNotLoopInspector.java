@@ -13,16 +13,6 @@ import org.jetbrains.annotations.NotNull;
 public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
     private static final String strProblemDescription = "This loop does not loop";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Control flow: loop which does not loop";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "LoopWhichDoesNotLoopInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

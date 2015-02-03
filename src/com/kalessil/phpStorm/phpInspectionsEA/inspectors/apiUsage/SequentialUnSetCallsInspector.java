@@ -11,16 +11,6 @@ import org.jetbrains.annotations.NotNull;
 public class SequentialUnSetCallsInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Can be safely replaced with 'unset(..., ...[, ...])' construction";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Performance: 'unset(...)' calls can be merged";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "SequentialUnSetCallsInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

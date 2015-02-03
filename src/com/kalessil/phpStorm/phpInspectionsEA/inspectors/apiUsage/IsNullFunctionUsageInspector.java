@@ -16,16 +16,6 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
     private static final String strProblemDescriptionNotNull = "'null !== ...' construction shall be used instead";
     private static final String strIsNull = "is_null";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Performance: 'is_null(...)' usage";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "IsNullFunctionUsageInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

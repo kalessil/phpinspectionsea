@@ -33,16 +33,6 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         return mapping;
     }
 
-    @NotNull
-    public String getDisplayName() {
-        return "Compatibility: alias functions usage";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "AliasFunctionsUsageInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

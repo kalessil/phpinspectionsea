@@ -14,16 +14,6 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
     private static final String strProblemDescription = "Ensure appropriate method is defined and public: getInstance, create, create*";
     private static final String strProblemConstructorNotProtected = "Singleton constructor shall be protected";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Architecture: class violates singleton/factory pattern definition";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "SingletonFactoryPatternViolationInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

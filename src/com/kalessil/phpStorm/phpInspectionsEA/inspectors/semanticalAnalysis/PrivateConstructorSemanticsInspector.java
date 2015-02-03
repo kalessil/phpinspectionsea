@@ -17,16 +17,6 @@ public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
     private static final String strProblemUtilNotFinal = "Utility class shall be final";
     private static final String strProblemUtilNaming = "Utility class name shall end up with 'Util'";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Architecture: private constructor semantics";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "PrivateConstructorSemanticsInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

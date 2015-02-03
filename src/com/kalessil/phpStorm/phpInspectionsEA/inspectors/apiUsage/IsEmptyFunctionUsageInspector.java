@@ -24,16 +24,6 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     private static final String strProblemDescriptionUseCount = "'count($...) === 0' construction shall be used instead";
     private static final String strProblemDescriptionUseNullComparison = "Probably it should be 'null === $...' construction used";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Type compatibility: 'empty(...)' usage";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "IsEmptyFunctionUsageInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

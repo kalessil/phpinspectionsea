@@ -14,16 +14,6 @@ import org.jetbrains.annotations.NotNull;
 public class AlterInForeachInspector  extends BasePhpInspection {
     private static final String strProblemDescription = "Can be refactored as '$%c% = ...' if $%v% is defined as reference";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Control flow: not optimal alter in foreach";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "AlterInForeachInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

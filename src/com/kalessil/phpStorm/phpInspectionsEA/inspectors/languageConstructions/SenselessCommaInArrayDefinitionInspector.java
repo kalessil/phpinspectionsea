@@ -14,16 +14,6 @@ import org.jetbrains.annotations.NotNull;
 public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Safely can be dropped: the comma will be ignored by PHP";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Code style: unnecessary last comma in array definition";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "SenselessCommaInArrayDefinitionInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

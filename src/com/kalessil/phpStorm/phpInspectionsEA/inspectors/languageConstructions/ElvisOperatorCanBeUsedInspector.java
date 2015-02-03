@@ -15,16 +15,6 @@ import org.jetbrains.annotations.NotNull;
 public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
     private static final String strProblemDescription = "' ... ?: ...' construction shall be used instead";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Code style: elvis operator can be used";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "ElvisOperatorCanBeUsedInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

@@ -14,16 +14,6 @@ import org.jetbrains.annotations.NotNull;
 public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection {
     private static final String strProblemDescription = "There is a field with the same name, please give the method other name like is*, get*";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Confusing constructs: method name matches existing field name";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "ClassMethodNameMatchesFieldNameInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

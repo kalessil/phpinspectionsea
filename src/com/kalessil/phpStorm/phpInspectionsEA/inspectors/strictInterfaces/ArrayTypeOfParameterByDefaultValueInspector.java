@@ -15,16 +15,6 @@ import org.jetbrains.annotations.NotNull;
 public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Types safety: declare parameter as 'array' type";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Type compatibility: a parameter can be declared as array";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "ArrayTypeOfParameterByDefaultValueInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

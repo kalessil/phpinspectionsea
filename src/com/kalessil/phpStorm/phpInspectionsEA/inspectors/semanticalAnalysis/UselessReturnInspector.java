@@ -32,16 +32,6 @@ public class UselessReturnInspector extends BasePhpInspection {
         return methodsSet;
     }
 
-    @NotNull
-    public String getDisplayName() {
-        return "Confusing constructs: useless return";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "UselessReturnInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

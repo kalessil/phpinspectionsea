@@ -31,16 +31,6 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
     private static final String strProblemCheckViolatesDefinition = "Has no sense, because this type in not defined in annotations";
     private static final String strProblemAssignmentViolatesDefinition = "This assignment type violates types set defined in annotations";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Architecture: callable parameter usage violates definition";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "CallableParameterUseCaseInTypeContextInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

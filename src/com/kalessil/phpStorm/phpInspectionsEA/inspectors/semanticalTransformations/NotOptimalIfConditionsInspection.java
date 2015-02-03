@@ -29,16 +29,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String strProblemDescriptionIssetCanBeMergedOrCase = "This can be merged into previous '!isset(..., ...[, ...])'";
     private static final String strProblemDescriptionConditionShallBeWrapped = "Confusing conditions structure: please wrap with '(...)'";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Control flow: not optimal if conditions";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "NotOptimalIfConditionsInspection";
-    }
-
     private HashSet<String> functionsSet = null;
     private HashSet<String> getFunctionsSet() {
         if (null == functionsSet) {

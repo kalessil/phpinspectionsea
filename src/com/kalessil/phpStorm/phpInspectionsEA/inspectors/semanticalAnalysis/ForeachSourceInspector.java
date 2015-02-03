@@ -34,16 +34,6 @@ public class ForeachSourceInspector extends BasePhpInspection {
     private static final String strProblemResolvingClassSlot = "Could not resolve this source type, expression  type annotation needed";
     private static final String strProblemDescription = "This source type can not be iterated: given ";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Type compatibility: foreach source to iterate over";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "ForeachSourceInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

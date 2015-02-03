@@ -19,16 +19,6 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
     private static final String strProblemDescriptionSafeToReplace = "Safely use '... === ...', '... !== ...' constructions instead";
     private static final String strProblemDescriptionMissingToStringMethod = "Class %class% must implement __toString()";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Type compatibility: type unsafe equality operators";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "TypeUnsafeComparisonInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

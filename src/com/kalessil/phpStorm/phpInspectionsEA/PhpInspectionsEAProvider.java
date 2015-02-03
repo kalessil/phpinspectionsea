@@ -4,15 +4,6 @@ import com.intellij.codeInspection.InspectionToolProvider;
 
 /*
 
-
-AlterInForeachInspector - added
-UselessReturnInspector - added
-
-CallableParameterUseCaseInTypeContextInspection - warning level decreased to warning level
-UnNecessaryDoubleQuotesInspector -reconsidered to be a code style issue
-ElvisOperatorCanBeUsedInspector - reconsidered to be a code style issue
-
-
 ===TODO===:
 
 $this->staticMemberOrFunction call

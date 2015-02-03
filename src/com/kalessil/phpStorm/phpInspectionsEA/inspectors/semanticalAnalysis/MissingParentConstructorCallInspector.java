@@ -29,16 +29,6 @@ public class MissingParentConstructorCallInspector extends BasePhpInspection {
         return functionsSet;
     }
 
-    @NotNull
-    public String getDisplayName() {
-        return "Probable bugs: missing parent constructor/clone call";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "MissingParentConstructorCallInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

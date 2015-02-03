@@ -21,16 +21,6 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Can be safely replaced with '(array) ...' construction";
     private static final String strIsArray = "is_array";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Performance: '(array) ...' equivalent construction";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "ArrayCastingEquivalentInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

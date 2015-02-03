@@ -27,16 +27,6 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
         return mapping;
     }
 
-    @NotNull
-    public String getDisplayName() {
-        return "Performance: types casting via PHP4 functions";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "TypesCastingWithFunctionsInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

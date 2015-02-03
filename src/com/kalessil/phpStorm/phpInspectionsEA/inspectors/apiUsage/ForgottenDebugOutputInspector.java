@@ -27,16 +27,6 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         return functionsSet;
     }
 
-    @NotNull
-    public String getDisplayName() {
-        return "Probable bugs: forgotten debug statements";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "ForgottenDebugOutputInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

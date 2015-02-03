@@ -14,16 +14,6 @@ import java.util.List;
 public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Interface %s% is already defined in a parent class.";
 
-    @NotNull
-    public String getDisplayName() {
-        return "Architecture: class re-implements interface of a superclass";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "ClassReImplementsParentInterfaceInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

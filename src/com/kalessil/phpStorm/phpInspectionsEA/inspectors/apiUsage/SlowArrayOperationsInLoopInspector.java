@@ -28,16 +28,6 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
         return functionsSet;
     }
 
-    @NotNull
-    public String getDisplayName() {
-        return "Performance: resources consuming array function used in loop";
-    }
-
-    @NotNull
-    public String getShortName() {
-        return "SlowArrayOperationsInLoopInspection";
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

@@ -6,9 +6,6 @@ import com.intellij.codeInspection.InspectionToolProvider;
 
 ===TODO===:
 
-array_search in in_array context:
-        binary operation with false
-
 Method/Property definition:
         always with access modifier
 

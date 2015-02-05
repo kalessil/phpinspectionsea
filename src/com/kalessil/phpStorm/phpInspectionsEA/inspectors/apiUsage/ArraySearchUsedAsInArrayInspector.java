@@ -42,7 +42,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                                     objSecondOperand instanceof ConstantReference &&
                                     ExpressionSemanticUtil.isBoolean((ConstantReference) objSecondOperand)
                                 ) {
-                                    holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.LIKE_DEPRECATED);
+                                    holder.registerProblem(objParent, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                                 }
                             }
                         }

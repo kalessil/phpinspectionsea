@@ -6,9 +6,6 @@ import com.intellij.codeInspection.InspectionToolProvider;
 
 ===TODO===:
 
-Method/Property definition:
-        always with access modifier
-
 $this->staticMemberOrFunction call
         shall be static::staticMemberOrFunction
 

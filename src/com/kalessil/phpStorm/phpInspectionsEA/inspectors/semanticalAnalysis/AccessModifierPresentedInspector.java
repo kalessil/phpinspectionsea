@@ -21,55 +21,60 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
             public void visitPhpClass(PhpClass clazz) {
                 /** inspect methods */
                 for (Method objMethod : clazz.getOwnMethods()) {
-                    /** find modifiers list */
-                    String strModifiers = null;
-                    for (PsiElement objChild : objMethod.getChildren()) {
-                        if (objChild instanceof PhpModifierList) {
-                            strModifiers = objChild.getText();
-                            break;
+                    if (objMethod.getAccess().isPublic()) {
+                        /** find modifiers list */
+                        String strModifiers = null;
+                        for (PsiElement objChild : objMethod.getChildren()) {
+                            if (objChild instanceof PhpModifierList) {
+                                strModifiers = objChild.getText();
+                                break;
+                            }
                         }
-                    }
 
-                    if (null != strModifiers && null != objMethod.getNameIdentifier()) {
-                        /** scan modifiers defined */
-                        /** scan modifiers defined */
-                        /** TODO: re-evaluate if JB completed modifiers list construction */
-                        boolean hasAccessModifiers =
-                                strModifiers.contains("public") ||
-                                strModifiers.contains("protected") ||
-                                strModifiers.contains("private");
+                        if (null != strModifiers && null != objMethod.getNameIdentifier()) {
+                            /** scan modifiers defined */
+                            /** scan modifiers defined */
+                            /** TODO: re-evaluate if JB completed modifiers list construction */
+                            boolean hasAccessModifiers =
+                                    strModifiers.contains("public") ||
+                                    strModifiers.contains("protected") ||
+                                    strModifiers.contains("private");
 
-                        /** scan modifiers defined */
-                        if (!hasAccessModifiers) {
-                            String strWarning = strProblemDescription.replace("%s%", objMethod.getName());
-                            holder.registerProblem(objMethod.getNameIdentifier(), strWarning, ProblemHighlightType.WEAK_WARNING);
+                            /** scan modifiers defined */
+                            if (!hasAccessModifiers) {
+                                String strWarning = strProblemDescription.replace("%s%", objMethod.getName());
+                                holder.registerProblem(objMethod.getNameIdentifier(), strWarning, ProblemHighlightType.WEAK_WARNING);
+                            }
                         }
                     }
                 }
 
                 /** inspect fields */
                 for (Field objField : clazz.getOwnFields()) {
-                    /** find modifiers list */
-                    String strModifiers = null;
-                    for (PsiElement objChild : objField.getParent().getChildren()) {
-                        if (objChild instanceof PhpModifierList) {
-                            strModifiers = objChild.getText();
-                            break;
+                    /** TODO: re-evaluate if JB added access api to fields */
+                    if (!objField.isConstant()) {
+                        /** find modifiers list */
+                        String strModifiers = null;
+                        for (PsiElement objChild : objField.getParent().getChildren()) {
+                            if (objChild instanceof PhpModifierList) {
+                                strModifiers = objChild.getText();
+                                break;
+                            }
                         }
-                    }
 
-                    if (null != strModifiers && null != objField.getNameIdentifier()) {
-                        /** scan modifiers defined */
-                        /** TODO: re-evaluate if JB completed modifiers list construction */
-                        boolean hasAccessModifiers =
-                                strModifiers.contains("public") ||
-                                strModifiers.contains("protected") ||
-                                strModifiers.contains("private");
+                        if (null != strModifiers && null != objField.getNameIdentifier()) {
+                            /** scan modifiers defined */
+                            /** TODO: re-evaluate if JB completed modifiers list construction */
+                            boolean hasAccessModifiers =
+                                    strModifiers.contains("public") ||
+                                    strModifiers.contains("protected") ||
+                                    strModifiers.contains("private");
 
-                        /** report issues */
-                        if (!hasAccessModifiers) {
-                            String strWarning = strProblemDescription.replace("%s%", objField.getName());
-                            holder.registerProblem(objField.getNameIdentifier(), strWarning, ProblemHighlightType.WEAK_WARNING);
+                            /** report issues */
+                            if (!hasAccessModifiers) {
+                                String strWarning = strProblemDescription.replace("%s%", objField.getName());
+                                holder.registerProblem(objField.getNameIdentifier(), strWarning, ProblemHighlightType.WEAK_WARNING);
+                            }
                         }
                     }
                 }

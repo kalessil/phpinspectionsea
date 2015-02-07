@@ -10,7 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class ClassOverridesFieldOfSuperClassInspector  extends BasePhpInspection {
+public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Field %s% is already defined in a parent class. See inspection description for details.";
 
     @Override

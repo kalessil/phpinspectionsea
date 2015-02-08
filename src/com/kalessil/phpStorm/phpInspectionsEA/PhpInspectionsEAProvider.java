@@ -6,19 +6,8 @@ import com.intellij.codeInspection.InspectionToolProvider;
 
 ===TODO===:
 
-$this->staticMemberOrFunction call
-        shall be static::staticMemberOrFunction
-
-AmbiguousMethodsCallsInArrayMappingInspector:
-        foreach ($content['multifiles'] as $multifile) {
-            $found[] = $multifile;
-        }
-
 AdditionOperationOnArraysInspection:
-        - re-implement to check any of binary/mathematical operations has been applied on an array
-
-SlowArrayOperationsInLoopInspector:
-        - more functions with O(n) complexity, e.g. array_unique
+    - re-implement to check any of binary/mathematical operations has been applied on an array
 
 ===POOL===
 

@@ -145,6 +145,10 @@ then additional inspections are applied to source code.
         shortName="AlterInForeachInspection"                      displayName="Control flow: not optimal alter in foreach"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.AlterInForeachInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="ThrowRawExceptionInspection"                   displayName="Control flow: throw of general \\Exception"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ThrowRawExceptionInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="ForgottenDebugOutputInspection"                displayName="Probable bugs: forgotten debug statements"

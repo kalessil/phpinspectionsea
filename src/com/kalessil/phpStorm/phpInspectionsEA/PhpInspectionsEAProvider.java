@@ -9,9 +9,6 @@ import com.intellij.codeInspection.InspectionToolProvider;
 AdditionOperationOnArraysInspection:
     - re-implement to check any of binary/mathematical operations has been applied on an array
 
-Throwing if \Exception
-    shall not happen - there are more specific SPL exceptions - weak warning level (confusing constructs)
-
 '$... (+=|-=) 1', '$... = $... (+|-) 1'
     shall be refactored as (--|++)$... - weak warning level (code style)
 

@@ -146,7 +146,7 @@ then additional inspections are applied to source code.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.AlterInForeachInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="ThrowRawExceptionInspection"                   displayName="Control flow: throw of general \\Exception"
+        shortName="ThrowRawExceptionInspection"                   displayName="Control flow: throw of general \Exception"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ThrowRawExceptionInspector"/>
 

@@ -217,6 +217,10 @@ then additional inspections are applied to source code.
         shortName="AccessModifierPresentedInspection"             displayName="Code style: access modifiers shall be defined"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.AccessModifierPresentedInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="PrefixedIncDecrementEquivalentInspector"       displayName="Code style: prefixed increment/decrement equivalent"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.PrefixedIncDecrementEquivalentInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="MoreThanThreeArgumentsInspection"                displayName="Architecture: more than 3 parameters in callable"

@@ -24,17 +24,23 @@ public class PrefixedIncDecrementEquivalentInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             /** self assignments */
             public void visitPhpSelfAssignmentExpression(SelfAssignmentExpression expression) {
-                IElementType operation = expression.getOperationType();
-                if (null != expression.getVariable()) {
+                IElementType  operation = expression.getOperationType();
+                PhpPsiElement value = expression.getValue();
+                if (null != value && null != expression.getVariable()) {
                     if (operation == PhpTokenTypes.opPLUS_ASGN) {
-                        String strMessage = strProblemDescriptionIncrement.replace("%s%", expression.getVariable().getText());
-                        holder.registerProblem(expression, strMessage, ProblemHighlightType.WEAK_WARNING);
+                        if (value.getText().equals("1")) {
+                            String strMessage = strProblemDescriptionIncrement.replace("%s%", expression.getVariable().getText());
+                            holder.registerProblem(expression, strMessage, ProblemHighlightType.WEAK_WARNING);
+                        }
+
                         return;
                     }
 
                     if (operation == PhpTokenTypes.opMINUS_ASGN) {
-                        String strMessage = strProblemDescriptionDecrement.replace("%s%", expression.getVariable().getText());
-                        holder.registerProblem(expression, strMessage, ProblemHighlightType.WEAK_WARNING);
+                        if (value.getText().equals("1")) {
+                            String strMessage = strProblemDescriptionDecrement.replace("%s%", expression.getVariable().getText());
+                            holder.registerProblem(expression, strMessage, ProblemHighlightType.WEAK_WARNING);
+                        }
                         //return;
                     }
                 }
@@ -47,13 +53,13 @@ public class PrefixedIncDecrementEquivalentInspector extends BasePhpInspection {
                     BinaryExpression value = (BinaryExpression) assignmentExpression.getValue();
 
                     /** operation and operands provided */
-                    IElementType operation  = value.getOperationType();
                     PsiElement leftOperand  = value.getLeftOperand();
                     PsiElement rightOperand = value.getRightOperand();
-                    if (null == leftOperand || null == rightOperand || null == operation) {
+                    if (null == leftOperand || null == rightOperand) {
                         return;
                     }
 
+                    IElementType operation  = value.getOperationType();
                     if (operation == PhpTokenTypes.opPLUS) {
                         /** plus operation: operand position NOT important */
                         if (

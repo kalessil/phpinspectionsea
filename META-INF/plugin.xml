@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -23,16 +23,13 @@ then additional inspections are applied to source code.
     ]]></description>
 
   <change-notes><![CDATA[
-03 Feb 2015: improvements and new inspections:<br/>
+12 Feb 2015: new inspections:<br/>
 <br/>
-    - Inspections re-located in own group, added support for JDK 1.6 (PhpStorm on MacOS)<br/>
-    - callable parameter usage violates definition - messages level decreased to warning<br/>
-    - unnecessary double quotes - reconsidered to be code style issue<br/>
-    - elvis operator can be used - reconsidered to be code style issue<br/>
-
-<br/>
-    - not optimal alter in foreach inspection added<br/>
-    - useless return inspection added<br/>
+    - prefixed increment/decrement equivalent inspection added<br/>
+    - throw of general \Exception inspection added<br/>
+    - static method invocation via this inspection added<br/>
+    - access modifiers shall be defined inspection added<br/>
+    - 'array_search(...)' used as 'in_array(...)' inspection added<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -162,10 +159,6 @@ then additional inspections are applied to source code.
         shortName="MissingParentConstructorCallInspection"        displayName="Probable bugs: missing parent constructor/clone call"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.MissingParentConstructorCallInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="StaticInvocationViaThisInspection"             displayName="Probable bugs: static property/method invocation via this"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.StaticInvocationViaThisInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="SenselessTernaryOperatorInspection"            displayName="Confusing constructs: suspicious ternary operator"
@@ -183,6 +176,10 @@ then additional inspections are applied to source code.
         shortName="UselessReturnInspection"                       displayName="Confusing constructs: useless return"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UselessReturnInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="StaticInvocationViaThisInspection"             displayName="Confusing constructs: static method invocation via this"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.StaticInvocationViaThisInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="OnlyWritesOnParameterInspection"               displayName="Unused: callable parameter is not used"
@@ -218,7 +215,7 @@ then additional inspections are applied to source code.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.AccessModifierPresentedInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="PrefixedIncDecrementEquivalentInspector"       displayName="Code style: prefixed increment/decrement equivalent"
+        shortName="PrefixedIncDecrementEquivalentInspection"       displayName="Code style: prefixed increment/decrement equivalent"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.PrefixedIncDecrementEquivalentInspector"/>
 

@@ -30,7 +30,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                         reference.getFirstChild().getText().equals("$this")
                     ) {
                         /** report an issue */
-                        holder.registerProblem(reference.getFirstChild(), strProblemDescription, ProblemHighlightType.ERROR);
+                        holder.registerProblem(reference.getFirstChild(), strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                 }
             }

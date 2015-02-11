@@ -43,7 +43,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                             /** scan modifiers defined */
                             if (!hasAccessModifiers) {
                                 String strWarning = strProblemDescription.replace("%s%", objMethod.getName());
-                                holder.registerProblem(objMethod.getNameIdentifier(), strWarning, ProblemHighlightType.WEAK_WARNING);
+                                holder.registerProblem(objMethod.getNameIdentifier(), strWarning, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         }
                     }
@@ -73,7 +73,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                             /** report issues */
                             if (!hasAccessModifiers) {
                                 String strWarning = strProblemDescription.replace("%s%", objField.getName());
-                                holder.registerProblem(objField.getNameIdentifier(), strWarning, ProblemHighlightType.WEAK_WARNING);
+                                holder.registerProblem(objField.getNameIdentifier(), strWarning, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         }
                     }

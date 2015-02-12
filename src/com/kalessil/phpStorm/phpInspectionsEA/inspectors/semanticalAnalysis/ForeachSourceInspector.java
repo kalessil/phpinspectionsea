@@ -147,6 +147,19 @@ public class ForeachSourceInspector extends BasePhpInspection {
                                 continue;
                             }
 
+                            /**
+                             * TODO: #15
+                             * PhpClassHierarchyUtils.isSuperClass not handling interfaces,
+                             * so scan complete inheritance tree
+                             */
+                            /*for (PhpClass oneClassForInterfaceCheck : testSubjectInheritanceChain) {
+                                for (PhpClass objInterface : oneClassForInterfaceCheck.getImplementedInterfaces()) {
+                                    if (null != objInterface.getFQN() && objInterface.getFQN().equals(testAgainst.getFQN())) {
+                                        return true;
+                                    }
+                                }
+                            }*/
+
                             if (PhpClassHierarchyUtils.isSuperClass(objTraversable, objClass, true)) {
                                 objClasses.clear();
                                 return;

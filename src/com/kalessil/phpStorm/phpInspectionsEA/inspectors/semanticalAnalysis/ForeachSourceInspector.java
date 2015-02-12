@@ -13,12 +13,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromSignatureResolvingUtil;
+import org.apache.tools.ant.util.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class ForeachSourceInspector extends BasePhpInspection {
     private static PhpClass objTraversable = null;
@@ -138,7 +136,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     Collection<PhpClass> objClasses = PhpIndexUtil.getObjectInterfaces(strType, objIndex);
                     if (objClasses.size() > 0) {
                         if (null == objTraversable) {
-                            objTraversable = objIndex.getClassByName("\\Traversable");
+                            objTraversable = objIndex.getInterfacesByFQN("\\Traversable").iterator().next();
                         }
 
                         for (PhpClass objClass : objClasses) {
@@ -148,22 +146,24 @@ public class ForeachSourceInspector extends BasePhpInspection {
                             }
 
                             /**
-                             * TODO: #15
                              * PhpClassHierarchyUtils.isSuperClass not handling interfaces,
                              * so scan complete inheritance tree
                              */
-                            /*for (PhpClass oneClassForInterfaceCheck : testSubjectInheritanceChain) {
-                                for (PhpClass objInterface : oneClassForInterfaceCheck.getImplementedInterfaces()) {
-                                    if (null != objInterface.getFQN() && objInterface.getFQN().equals(testAgainst.getFQN())) {
-                                        return true;
+                            LinkedList<PhpClass> classesToCheckForInterface = new LinkedList<PhpClass>();
+                            classesToCheckForInterface.add(objClass);
+                            Collections.addAll(classesToCheckForInterface, objClass.getSupers());
+
+                            for (PhpClass objOneParent : classesToCheckForInterface) {
+                                for (PhpClass objInterface : objOneParent.getImplementedInterfaces()) {
+                                    if (null != objInterface.getFQN() && objInterface.getFQN().equals(objTraversable.getFQN())) {
+                                        /** TODO: parent interfaces of objInterface */
+                                        objClasses.clear();
+                                        classesToCheckForInterface.clear();
+                                        return;
                                     }
                                 }
-                            }*/
-
-                            if (PhpClassHierarchyUtils.isSuperClass(objTraversable, objClass, true)) {
-                                objClasses.clear();
-                                return;
                             }
+                            classesToCheckForInterface.clear();
                         }
                         objClasses.clear();
 

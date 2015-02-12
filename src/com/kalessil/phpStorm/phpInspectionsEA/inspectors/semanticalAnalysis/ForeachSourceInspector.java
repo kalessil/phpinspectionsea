@@ -144,6 +144,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                             if (null == objClass || null == objTraversable) {
                                 continue;
                             }
+                            String strTraversableFQN = objTraversable.getFQN();
 
                             /**
                              * PhpClassHierarchyUtils.isSuperClass not handling interfaces,
@@ -153,10 +154,21 @@ public class ForeachSourceInspector extends BasePhpInspection {
                             classesToCheckForInterface.add(objClass);
                             Collections.addAll(classesToCheckForInterface, objClass.getSupers());
 
+                            /** work out class and it's super classes */
                             for (PhpClass objOneParent : classesToCheckForInterface) {
+                                /** workout all interfaces */
                                 for (PhpClass objInterface : objOneParent.getImplementedInterfaces()) {
-                                    if (null != objInterface.getFQN() && objInterface.getFQN().equals(objTraversable.getFQN())) {
-                                        /** TODO: parent interfaces of objInterface */
+                                    /** workout super interfaces */
+                                    for (PhpClass objSuperInterface : objInterface.getSupers()) {
+                                        if (null != objSuperInterface.getFQN() && objSuperInterface.getFQN().equals(strTraversableFQN)) {
+                                            objClasses.clear();
+                                            classesToCheckForInterface.clear();
+                                            return;
+                                        }
+                                    }
+
+                                    /**  work out interface itself */
+                                    if (null != objInterface.getFQN() && objInterface.getFQN().equals(strTraversableFQN)) {
                                         objClasses.clear();
                                         classesToCheckForInterface.clear();
                                         return;

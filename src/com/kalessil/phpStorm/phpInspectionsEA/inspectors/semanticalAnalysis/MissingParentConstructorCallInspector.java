@@ -52,10 +52,12 @@ public class MissingParentConstructorCallInspector extends BasePhpInspection {
                 /** find parent with protected/public method, if not overrides anything, terminate inspection */
                 PhpClass objParentWithGivenMethod = null;
                 for (PhpClass superClass : objClassForIteration.getSupers()) {
-                    Method objMethod = superClass.findOwnMethodByName(strMethodName);
-                    if (null != objMethod && !objMethod.getAccess().isPrivate()) {
-                        objParentWithGivenMethod = superClass;
-                        break;
+                    if (!superClass.isInterface()) {
+                        Method objMethod = superClass.findOwnMethodByName(strMethodName);
+                        if (null != objMethod && !objMethod.getAccess().isPrivate()) {
+                            objParentWithGivenMethod = superClass;
+                            break;
+                        }
                     }
                 }
                 if (null == objParentWithGivenMethod) {

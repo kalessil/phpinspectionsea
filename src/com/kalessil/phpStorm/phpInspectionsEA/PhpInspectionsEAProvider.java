@@ -9,10 +9,16 @@ import com.intellij.codeInspection.InspectionToolProvider;
 AdditionOperationOnArraysInspection:
     - re-implement to check any of binary/mathematical operations has been applied on an array
 
-'$... (+=|-=) 1', '$... = $... (+|-) 1'
-    shall be refactored as (--|++)$... - weak warning level (code style)
-
 ===POOL===
+
+StaticInvocationViaThisInspector:
+    - static calls on any objects, not only this (may be quite heavy due to index lookup)
+
+Empty functions/methods:
+    - stubs, design issues
+
+Empty try/catch
+    - bad code, like no scream
 
 'For' loops:
     use foreach instead

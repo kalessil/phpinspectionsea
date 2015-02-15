@@ -58,7 +58,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                         continue;
                     }
                     /** too lazy to do anything more elegant */
-                    strParameterType = strParameterType.replace(Types.strCallable, "array|string");
+                    strParameterType = strParameterType.replace(Types.strCallable, "array|string|callable");
 
 
                     /** resolve types for parameter */
@@ -159,7 +159,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                         continue;
                                     }
 
-                                    isCallViolatesDefinition = (!this.isTypeCompatible(strType, objParameterTypesResolved, objIndex));
+                                    isCallViolatesDefinition = (!this.isTypeCompatibleWith(strType, objParameterTypesResolved, objIndex));
                                     if (isCallViolatesDefinition) {
                                         holder.registerProblem(objValue, strProblemAssignmentViolatesDefinition + ": " + strType, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                                         break;
@@ -177,7 +177,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                 }
             }
 
-            private boolean isTypeCompatible (String strType, HashSet<String> listAllowedTypes, PhpIndex objIndex) {
+            private boolean isTypeCompatibleWith(String strType, HashSet<String> listAllowedTypes, PhpIndex objIndex) {
                 /** identical definitions */
                 for (String strPossibleType: listAllowedTypes) {
                     if (strPossibleType.equals(strType)) {

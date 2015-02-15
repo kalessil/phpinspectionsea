@@ -7,6 +7,7 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.FunctionImpl;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -109,6 +110,11 @@ public class TypeFromPsiResolvingUtil {
             return;
         }
 
+        /** lambda/anonymous function*/
+        if (objSubjectExpression instanceof FunctionImpl) {
+            objTypesSet.add(Types.strCallable);
+            return;
+        }
 
         if (objSubjectExpression instanceof PhpExpression) {
             resolvePhpExpression((PhpExpression) objSubjectExpression, objScope, objIndex, objTypesSet);

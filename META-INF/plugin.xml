@@ -17,9 +17,14 @@ Detecting:<br />
 - micro-optimization cases (eg. un-necessary double quotes)<br />
 - not optimal, duplicate and suspicious if conditions<br />
 <br />
-Some of inspections are expecting conditional statements (eg. if) to use
+Some of inspections are expecting conditional statements (e.g. if) to use
 group statement for wrapping body expressions. When this requirement is met
-then additional inspections are applied to source code.
+then additional inspections are applied to source code.<br />
+<br />
+To <b>support us</b> you can:<br />
+- provide feedback regarding English, default warning levels and other usability aspects<br />
+- mention this plugin in social media and personal blogs<br />
+- make a <a href="https://www.paypal.com/webapps/mpp/send-money-online">donation</a> to kalessil at gmail.com with PayPal
     ]]></description>
 
   <change-notes><![CDATA[

@@ -13,7 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Types safety: declare parameter as 'array' type";
+    private static final String strProblemDescription = "Declare this parameter with 'array' type";
 
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
@@ -32,10 +32,8 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
             private void inspectCallable (Function callable) {
                 for (Parameter objParameter : callable.getParameters()) {
                     if (this.canBePrependedWithArrayType(objParameter)) {
-                        holder.registerProblem(objParameter.getParent(), strProblemDescription, ProblemHighlightType.WEAK_WARNING);
-                        return;
+                        holder.registerProblem(objParameter, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
                     }
-
                 }
             }
 

@@ -185,6 +185,10 @@ To <b>support us</b> you can:<br />
         shortName="StaticInvocationViaThisInspection"             displayName="Confusing constructs: static method invocation via this"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.StaticInvocationViaThisInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="ParameterByRefWithDefaultInspection"           displayName="Confusing constructs: parameter by reference has default value"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ParameterByRefWithDefaultInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="OnlyWritesOnParameterInspection"               displayName="Unused: callable parameter is not used"

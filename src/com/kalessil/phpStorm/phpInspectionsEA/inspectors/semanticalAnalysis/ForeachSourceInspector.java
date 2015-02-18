@@ -96,7 +96,6 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 for (String strType : listSignatureTypes) {
                     if (
                         strType.equals("\\array") ||
-                        strType.equals("\\string") ||
                         strType.endsWith("[]") ||
                         strType.equals("\\Traversable")
                     ) {

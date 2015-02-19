@@ -79,7 +79,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
 
                 if (listSignatureTypes.size() == 0) {
                     /** resolving failed at all */
-                    holder.registerProblem(objSource, strProblemResolvingIsEmpty, ProblemHighlightType.ERROR);
+                    holder.registerProblem(objSource, strProblemResolvingIsEmpty, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
 

@@ -15,7 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
-    //private static final String strProblemDescription = "Probably 'array_key_exists(...)' construction should be used for better data *structure* control";
+    private static final String strProblemDescription = "Probably 'array_key_exists(...)' construction should be used for better data *structure* control";
     private static final String strProblemDescriptionUseNullComparison = "Probably it should be 'null === $...' construction used";
     private static final String strProblemDescriptionConcatenationInIndex = "Concatenation is used as an index, should be moved to a variable";
 
@@ -40,7 +40,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    //holder.registerProblem(parameter, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(parameter, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
                 }
             }
 

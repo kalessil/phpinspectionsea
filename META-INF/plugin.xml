@@ -29,10 +29,10 @@ To <b>support us</b> you can:<br />
 
   <change-notes><![CDATA[
 20 Feb 2015: buf-fixes and new inspections:<br/>
+<br/>
     - callable parameter usage violates definition - added anonymous functions support<br/>
     - missing parent constructor/clone call - interfaces constructors excluded from checks<br/>
     - foreach source to iterate over - fixed \Traversable check, traversing strings, missing annotation message level decreased<br/>
-<br/>
 <br/>
     - short syntax for applied operation inspection added<br/>
     - parameter by reference has default value inspection added<br/>

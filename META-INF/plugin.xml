@@ -8,7 +8,7 @@
   <depends>com.intellij.modules.platform</depends>
 
   <description><![CDATA[
-Extended PHP code inspections set.<br />
+Extended PHP code inspections set. For support and donations visit <a href="https://bitbucket.org/kalessil/phpinspectionsea">Bitbucket</a> | <a href="https://bitbucket.org/kalessil/phpinspectionsea/issues">Issues</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RK7DPPHTSZXTA">PayPal</a> | <a href="https://blockchain.info/address/1CTFHRRFUTpNrbEekwNVFiMzeWXiY9GgQR">Bitcoin</a>.<br />
 <br />
 Detecting:<br />
 - architecture related issues (e.g. design patterns violations)<br />
@@ -20,11 +20,6 @@ Detecting:<br />
 Some of inspections are expecting conditional statements (e.g. if) to use
 group statement for wrapping body expressions. When this requirement is met
 then additional inspections are applied to source code.<br />
-<br />
-To <b>support us</b> you can:<br />
-- provide feedback regarding English, default warning levels and other usability aspects<br />
-- mention this plugin in social media and personal blogs<br />
-- make a <a href="https://www.paypal.com/webapps/mpp/send-money-online">donation</a> to kalessil at gmail.com with PayPal
     ]]></description>
 
   <change-notes><![CDATA[

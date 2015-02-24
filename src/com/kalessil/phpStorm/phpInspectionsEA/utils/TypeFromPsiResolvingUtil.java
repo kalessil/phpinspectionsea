@@ -72,7 +72,7 @@ public class TypeFromPsiResolvingUtil {
 
         if (objSubjectExpression instanceof Variable) {
             String strVariableName = ((Variable) objSubjectExpression).getName();
-            if (null != strVariableName && strVariableName.charAt(0) == '_') {
+            if (!StringUtil.isEmpty(strVariableName) && strVariableName.charAt(0) == '_') {
                 if ("|_GET|_POST|_SESSION|_REQUEST|_FILES|_COOKIE|_ENV|_SERVER|".contains("|" + strVariableName + "|")) {
                     storeAsTypeWithSignaturesImport(Types.strArray, objScope, objIndex, objTypesSet);
                     return;

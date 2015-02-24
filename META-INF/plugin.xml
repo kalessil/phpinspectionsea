@@ -271,6 +271,10 @@ then additional inspections are applied to source code.<br />
 
   <actions>
     <!-- Add your actions here -->
+    <!--action id="EAInspections.toggle" class="ToggleInspections" text="Toggle EA Extended Inspections">
+      <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl C"/>
+    </action-->
+    <!-- Action implementation: https://github.com/renemaas/Zipper-IntelliJ-Plugin/blob/master/src/ZipProject.java -->
   </actions>
 
 </idea-plugin>

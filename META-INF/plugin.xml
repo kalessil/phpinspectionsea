@@ -8,13 +8,15 @@
   <depends>com.intellij.modules.platform</depends>
 
   <description><![CDATA[
-Extended PHP code inspections set. For support and donations visit <a href="https://bitbucket.org/kalessil/phpinspectionsea">Bitbucket</a> | <a href="https://bitbucket.org/kalessil/phpinspectionsea/issues">Issues</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RK7DPPHTSZXTA">PayPal</a> | <a href="https://blockchain.info/address/1CTFHRRFUTpNrbEekwNVFiMzeWXiY9GgQR">Bitcoin</a>.<br />
+For support and donations please visit <a href="https://bitbucket.org/kalessil/phpinspectionsea">Bitbucket</a> | <a href="https://bitbucket.org/kalessil/phpinspectionsea/issues">Issues</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RK7DPPHTSZXTA">PayPal</a> | <a href="https://blockchain.info/address/1CTFHRRFUTpNrbEekwNVFiMzeWXiY9GgQR">Bitcoin</a>.<br />
 <br />
-Detecting:<br />
+This plugin is Static Code Analysis tool for PHP (aka inspections in JetBrains products).<br />
+<br />
+And it covers:<br />
 - architecture related issues (e.g. design patterns violations)<br />
 - possible code constructs simplifications<br />
 - weak types control (important in Enterprise Applications)<br />
-- micro-optimization cases (eg. un-necessary double quotes)<br />
+- performance issues<br />
 - not optimal, duplicate and suspicious if conditions<br />
 <br />
 Some of inspections are expecting conditional statements (e.g. if) to use

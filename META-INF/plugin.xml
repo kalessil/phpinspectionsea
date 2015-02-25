@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.1.2</version>
+  <version>1.1.2.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -25,14 +25,11 @@ then additional inspections are applied to source code.<br />
     ]]></description>
 
   <change-notes><![CDATA[
-20 Feb 2015: buf-fixes and new inspections:<br/>
+25 Feb 2015: critical update<br/>
 <br/>
-    - callable parameter usage violates definition - added anonymous functions support<br/>
-    - missing parent constructor/clone call - interfaces constructors excluded from checks<br/>
-    - foreach source to iterate over - fixed \Traversable check, traversing strings, missing annotation message level decreased<br/>
-<br/>
-    - short syntax for applied operation inspection added<br/>
-    - parameter by reference has default value inspection added<br/>
+    - recovered context menu with fix options (critical, was broken in 1.1.x versions)<br/>
+    - fixed out of bound exception raised in certain cases<br/>
+    - slow alter in foreach relocated to performance section<br/>
 <br/>
 <hr/>
   ]]></change-notes>

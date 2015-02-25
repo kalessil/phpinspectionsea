@@ -15,7 +15,7 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "LoopWhichDoesNotLoopInspection";
     }
 
     @Override

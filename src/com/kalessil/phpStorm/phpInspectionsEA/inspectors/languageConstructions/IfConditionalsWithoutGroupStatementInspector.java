@@ -15,7 +15,7 @@ public class IfConditionalsWithoutGroupStatementInspector extends BasePhpInspect
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "IfConditionalsWithoutCurvyBracketsInspection";
     }
 
     @Override

@@ -23,7 +23,7 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "AdditionOperationOnArraysInspection";
     }
 
     @Override

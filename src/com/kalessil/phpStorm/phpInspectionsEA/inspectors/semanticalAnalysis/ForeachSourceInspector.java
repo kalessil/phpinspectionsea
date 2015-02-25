@@ -32,7 +32,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "ForeachSourceInspection";
     }
 
     @Override

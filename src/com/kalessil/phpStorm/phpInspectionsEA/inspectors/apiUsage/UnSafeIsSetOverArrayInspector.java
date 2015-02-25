@@ -21,7 +21,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "UnSafeIsSetOverArrayInspection";
     }
 
     @Override

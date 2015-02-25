@@ -23,7 +23,7 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "ArrayCastingEquivalentInspection";
     }
 
     @Override

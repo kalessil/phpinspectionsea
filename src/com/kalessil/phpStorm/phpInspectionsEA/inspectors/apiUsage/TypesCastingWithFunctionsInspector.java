@@ -16,7 +16,7 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "TypesCastingWithFunctionsInspection";
     }
 
     private static HashMap<String, String> mapping = null;

@@ -33,7 +33,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "CallableParameterUseCaseInTypeContextInspection";
     }
 
     @Override

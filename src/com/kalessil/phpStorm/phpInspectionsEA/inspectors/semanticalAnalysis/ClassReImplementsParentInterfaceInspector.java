@@ -16,7 +16,7 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "ClassReImplementsParentInterfaceInspection";
     }
 
     @Override

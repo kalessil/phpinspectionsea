@@ -17,7 +17,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "NestedPositiveIfStatementsInspection";
     }
 
     @Override

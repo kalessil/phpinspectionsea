@@ -17,7 +17,7 @@ public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "ElvisOperatorCanBeUsedInspection";
     }
 
     @Override

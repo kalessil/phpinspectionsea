@@ -22,7 +22,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "StrlenInEmptyStringCheckContextInspection";
     }
 
     @Override

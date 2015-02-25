@@ -16,7 +16,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "IfReturnReturnSimplificationInspection";
     }
 
     @Override

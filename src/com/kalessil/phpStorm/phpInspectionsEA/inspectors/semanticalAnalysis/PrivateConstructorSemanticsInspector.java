@@ -19,7 +19,7 @@ public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "PrivateConstructorSemanticsInspection";
     }
 
     @Override

@@ -16,7 +16,7 @@ public class AlterInForeachInspector  extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "AlterInForeachInspection";
     }
 
     @Override

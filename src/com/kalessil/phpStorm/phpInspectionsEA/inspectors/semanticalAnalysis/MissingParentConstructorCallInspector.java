@@ -19,7 +19,7 @@ public class MissingParentConstructorCallInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "MissingParentConstructorCallInspection";
     }
 
     private HashSet<String> functionsSet = null;

@@ -31,7 +31,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "NotOptimalIfConditionsInspection";
     }
 
     private HashSet<String> functionsSet = null;

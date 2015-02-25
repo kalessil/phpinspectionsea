@@ -16,7 +16,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "StaticInvocationViaThisInspection";
     }
 
     @Override

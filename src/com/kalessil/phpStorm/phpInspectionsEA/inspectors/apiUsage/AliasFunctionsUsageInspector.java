@@ -16,7 +16,7 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "AliasFunctionsUsageInspection";
     }
 
     private static HashMap<String, String> mapping = null;

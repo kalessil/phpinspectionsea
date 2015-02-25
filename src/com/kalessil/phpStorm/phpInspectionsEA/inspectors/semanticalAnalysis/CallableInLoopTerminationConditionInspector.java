@@ -14,7 +14,7 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "CallableInLoopTerminationConditionInspection";
     }
 
     @Override

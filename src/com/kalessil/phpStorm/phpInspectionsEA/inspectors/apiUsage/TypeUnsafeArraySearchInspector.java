@@ -16,7 +16,7 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "TypeUnsafeArraySearchInspection";
     }
 
     private HashSet<String> functionsSet = null;

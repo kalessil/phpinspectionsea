@@ -15,7 +15,7 @@ public class ParameterByRefWithDefaultInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "ParameterByRefWithDefaultInspection";
     }
 
     @Override

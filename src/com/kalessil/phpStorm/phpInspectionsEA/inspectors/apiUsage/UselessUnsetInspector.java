@@ -19,7 +19,7 @@ public class UselessUnsetInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "UselessUnsetInspection";
     }
 
     @Override

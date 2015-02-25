@@ -26,7 +26,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     
     @NotNull
     public String getShortName() {
-        return ...;
+        return "IsEmptyFunctionUsageInspection";
     }
 
     @Override

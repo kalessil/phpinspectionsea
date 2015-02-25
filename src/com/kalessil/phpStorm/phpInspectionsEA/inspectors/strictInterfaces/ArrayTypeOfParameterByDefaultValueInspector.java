@@ -17,7 +17,7 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "ArrayTypeOfParameterByDefaultValueInspection";
     }
 
     @Override

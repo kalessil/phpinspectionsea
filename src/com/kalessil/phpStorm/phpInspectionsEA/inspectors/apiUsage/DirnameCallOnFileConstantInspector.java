@@ -18,7 +18,7 @@ public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "dirnameCallOnFileConstantInspection";
     }
 
     @Override

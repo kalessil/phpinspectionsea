@@ -19,7 +19,7 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "SlowArrayOperationsInLoopInspection";
     }
 
     private HashSet<String> functionsSet = null;

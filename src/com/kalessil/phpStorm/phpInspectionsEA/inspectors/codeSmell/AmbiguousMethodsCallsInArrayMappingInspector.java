@@ -16,7 +16,7 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "AmbiguousMethodsCallsInArrayMappingInspection";
     }
 
     @Override

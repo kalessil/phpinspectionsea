@@ -15,7 +15,7 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "ThrowRawExceptionInspection";
     }
 
     @Override

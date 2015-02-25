@@ -13,7 +13,7 @@ public class SequentialUnSetCallsInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "SequentialUnSetCallsInspection";
     }
 
     @Override

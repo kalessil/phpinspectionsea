@@ -15,7 +15,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "ClassOverridesFieldOfSuperClassInspection";
     }
 
     @Override

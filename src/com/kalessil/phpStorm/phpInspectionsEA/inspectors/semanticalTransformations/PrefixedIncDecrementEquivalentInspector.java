@@ -21,7 +21,7 @@ public class PrefixedIncDecrementEquivalentInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "PrefixedIncDecrementEquivalentInspection";
     }
 
     @Override

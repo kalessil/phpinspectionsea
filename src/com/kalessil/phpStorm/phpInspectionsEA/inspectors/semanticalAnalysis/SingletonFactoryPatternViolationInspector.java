@@ -16,7 +16,7 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "SingletonFactoryPatternViolationInspection";
     }
 
     @Override

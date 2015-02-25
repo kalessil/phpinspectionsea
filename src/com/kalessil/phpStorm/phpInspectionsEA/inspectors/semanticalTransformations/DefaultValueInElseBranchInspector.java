@@ -21,7 +21,7 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "DefaultValueInElseBranchInspection";
     }
 
     @Override

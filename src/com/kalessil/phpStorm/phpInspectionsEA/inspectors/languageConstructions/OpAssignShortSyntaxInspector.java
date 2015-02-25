@@ -21,7 +21,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "OpAssignShortSyntaxInspection";
     }
 
     private static HashMap<IElementType, IElementType> mapping = null;

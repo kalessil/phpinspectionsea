@@ -19,7 +19,7 @@ public class UselessReturnInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "UselessReturnInspection";
     }
 
     private HashSet<String> methodsSet = null;

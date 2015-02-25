@@ -18,7 +18,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "IsNullFunctionUsageInspection";
     }
 
     @Override

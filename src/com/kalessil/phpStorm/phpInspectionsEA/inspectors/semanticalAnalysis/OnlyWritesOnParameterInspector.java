@@ -23,7 +23,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "OnlyWritesOnParameterInspection";
     }
 
     @Override

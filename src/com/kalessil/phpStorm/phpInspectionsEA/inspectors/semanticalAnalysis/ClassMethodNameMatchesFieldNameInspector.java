@@ -16,7 +16,7 @@ public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection 
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "ClassMethodNameMatchesFieldNameInspection";
     }
 
     @Override

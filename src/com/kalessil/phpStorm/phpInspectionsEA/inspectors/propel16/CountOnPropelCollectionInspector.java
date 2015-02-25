@@ -23,7 +23,7 @@ public class CountOnPropelCollectionInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "CountOnPropelCollectionInspection";
     }
 
     @Override

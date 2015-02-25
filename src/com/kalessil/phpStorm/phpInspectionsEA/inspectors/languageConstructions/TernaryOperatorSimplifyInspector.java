@@ -17,7 +17,7 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "TernaryOperatorSimplifyInspection";
     }
 
     @Override

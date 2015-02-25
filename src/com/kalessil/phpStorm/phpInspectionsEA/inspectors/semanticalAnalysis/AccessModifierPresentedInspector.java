@@ -17,7 +17,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "AccessModifierPresentedInspection";
     }
 
     @Override

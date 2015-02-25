@@ -15,7 +15,7 @@ public class MoreThanThreeArgumentsInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "MoreThanThreeArgumentsInspection";
     }
 
     @Override

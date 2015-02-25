@@ -15,7 +15,7 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "UnNecessaryDoubleQuotesInspection";
     }
 
     @Override

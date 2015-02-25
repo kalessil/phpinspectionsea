@@ -15,7 +15,7 @@ public class IfExpressionInEarlyReturnContextInspector extends BasePhpInspection
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "IfExpressionInEarlyReturnContextInspection";
     }
 
     @Override

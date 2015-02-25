@@ -16,7 +16,7 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "AmbiguousMemberInitializationInspection";
     }
 
     @Override

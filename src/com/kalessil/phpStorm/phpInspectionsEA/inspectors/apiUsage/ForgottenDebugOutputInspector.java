@@ -16,7 +16,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "ForgottenDebugOutputInspection";
     }
 
     private HashSet<String> functionsSet = null;

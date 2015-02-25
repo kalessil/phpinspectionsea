@@ -20,7 +20,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "ArraySearchUsedAsInArrayInspection";
     }
 
     @Override

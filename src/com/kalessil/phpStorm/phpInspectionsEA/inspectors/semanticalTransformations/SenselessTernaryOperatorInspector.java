@@ -19,7 +19,7 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "SenselessTernaryOperatorInspection";
     }
 
     @Override

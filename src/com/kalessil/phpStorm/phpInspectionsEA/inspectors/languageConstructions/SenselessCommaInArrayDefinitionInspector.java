@@ -16,7 +16,7 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
 
     @NotNull
     public String getShortName() {
-        return ...;
+        return "SenselessCommaInArrayDefinitionInspection";
     }
 
     @Override

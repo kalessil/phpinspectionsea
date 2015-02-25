@@ -14,6 +14,11 @@ import java.util.HashSet;
 public class ForgottenDebugOutputInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Please ensure this is not forgotten debug statement";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     private HashSet<String> functionsSet = null;
     private HashSet<String> getFunctionsSet() {
         if (null == functionsSet) {

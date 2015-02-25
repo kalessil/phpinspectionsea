@@ -14,6 +14,11 @@ import org.jetbrains.annotations.NotNull;
 public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Null assignment can be safely removed. Define null in annotations if it's important";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

@@ -17,6 +17,11 @@ import java.util.HashSet;
 public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
     private static final String strProblemDescription = "'%s%(...)' is used in loop - resources greedy construction. Check inspection description for a solution.";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     private HashSet<String> functionsSet = null;
     private HashSet<String> getFunctionsSet() {
         if (null == functionsSet) {

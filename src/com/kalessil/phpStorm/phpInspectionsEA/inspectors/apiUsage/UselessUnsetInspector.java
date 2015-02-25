@@ -17,13 +17,17 @@ import org.jetbrains.annotations.NotNull;
 public class UselessUnsetInspector extends BasePhpInspection {
     private static final String strProblemNoSense = "Only local copy/reference will be unset. Probably this unset can be removed.";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
 
         /**
          * foreach is also a case, but there is no way to get flow entry point in actual JB platform API
          */
-
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
                 this.inspectUsages(method.getParameters(), method);

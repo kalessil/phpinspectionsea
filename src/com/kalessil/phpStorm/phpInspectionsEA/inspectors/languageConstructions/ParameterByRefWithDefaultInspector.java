@@ -13,6 +13,11 @@ import org.jetbrains.annotations.NotNull;
 public class ParameterByRefWithDefaultInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Usually default value is not needed in this case";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

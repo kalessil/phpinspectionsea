@@ -14,6 +14,11 @@ import org.jetbrains.annotations.NotNull;
 public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Duplicated in indexes and shall be moved to local variable";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

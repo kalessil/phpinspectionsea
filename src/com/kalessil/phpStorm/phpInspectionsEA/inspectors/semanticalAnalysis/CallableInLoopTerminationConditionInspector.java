@@ -12,6 +12,11 @@ import org.jetbrains.annotations.NotNull;
 public class CallableInLoopTerminationConditionInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Callable result shall be stored outside of the loop for better performance";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

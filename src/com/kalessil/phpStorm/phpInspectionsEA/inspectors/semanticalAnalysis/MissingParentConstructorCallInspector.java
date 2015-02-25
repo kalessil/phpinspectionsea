@@ -17,6 +17,11 @@ public class MissingParentConstructorCallInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Missing 'parent::%s(...);' call";
     private static final String strParent = "parent";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     private HashSet<String> functionsSet = null;
     private HashSet<String> getFunctionsSet() {
         if (null == functionsSet) {

@@ -13,6 +13,11 @@ import org.jetbrains.annotations.NotNull;
 public class ThrowRawExceptionInspector extends BasePhpInspection {
     private static final String strProblemDescription = "One of SPL exceptions shall be thrown - \\Exception is too general";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

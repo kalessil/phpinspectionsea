@@ -11,6 +11,11 @@ import org.jetbrains.annotations.NotNull;
 public class SequentialUnSetCallsInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Can be safely replaced with 'unset(..., ...[, ...])' construction";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

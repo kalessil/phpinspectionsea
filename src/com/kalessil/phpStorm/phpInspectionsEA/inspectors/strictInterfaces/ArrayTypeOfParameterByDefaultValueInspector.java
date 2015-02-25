@@ -15,6 +15,11 @@ import org.jetbrains.annotations.NotNull;
 public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Declare this parameter with 'array' type";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

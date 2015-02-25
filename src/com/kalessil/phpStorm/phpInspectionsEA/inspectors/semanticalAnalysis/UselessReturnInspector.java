@@ -17,6 +17,11 @@ public class UselessReturnInspector extends BasePhpInspection {
     private static final String strProblemUseless = "Senseless statement: safely remove it";
     private static final String strProblemConfusing = "Confusing statement: shall be re-factored";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     private HashSet<String> methodsSet = null;
     private HashSet<String> getMethodsSet() {
         if (null == methodsSet) {

@@ -13,6 +13,11 @@ import org.jetbrains.annotations.NotNull;
 public class MoreThanThreeArgumentsInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Clean code: too much arguments, not more than 3 recommended";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

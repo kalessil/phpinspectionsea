@@ -14,6 +14,11 @@ import org.jetbrains.annotations.NotNull;
 public class StaticInvocationViaThisInspector extends BasePhpInspection {
     private static final String strProblemDescription = "'static::...' shall be used instead";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

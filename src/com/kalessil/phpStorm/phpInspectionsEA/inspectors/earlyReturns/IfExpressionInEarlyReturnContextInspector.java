@@ -13,6 +13,11 @@ public class IfExpressionInEarlyReturnContextInspector extends BasePhpInspection
     private static final String strProblemDescription = "Consider refactoring the statement, " +
             "so it follows early return approach.";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

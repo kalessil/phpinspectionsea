@@ -15,6 +15,11 @@ import org.jetbrains.annotations.NotNull;
 public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
     private static final String strProblemDescription = "If statement can be merged into parent one.";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

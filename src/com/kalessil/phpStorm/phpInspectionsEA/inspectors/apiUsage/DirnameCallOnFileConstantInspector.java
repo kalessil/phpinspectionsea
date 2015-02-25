@@ -16,6 +16,11 @@ public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
     private static final String strFile = "__FILE__";
     private static final String strDirName = "dirname";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

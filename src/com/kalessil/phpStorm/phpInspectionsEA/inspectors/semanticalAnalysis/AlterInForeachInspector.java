@@ -14,6 +14,11 @@ import org.jetbrains.annotations.NotNull;
 public class AlterInForeachInspector  extends BasePhpInspection {
     private static final String strProblemDescription = "Can be refactored as '$%c% = ...' if $%v% is defined as reference";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

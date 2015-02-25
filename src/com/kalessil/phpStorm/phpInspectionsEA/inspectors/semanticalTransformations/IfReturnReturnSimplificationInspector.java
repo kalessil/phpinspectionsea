@@ -14,6 +14,11 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Can be simplified by replacing this with following " +
             "return with one return statement";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

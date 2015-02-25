@@ -14,6 +14,11 @@ import java.util.HashMap;
 public class AliasFunctionsUsageInspector extends BasePhpInspection {
     private static final String strProblemDescription  = "'%a%(...)' is an alias function. Use '%f%(...)' instead";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     private static HashMap<String, String> mapping = null;
     private static HashMap<String, String> getMapping() {
         if (null == mapping) {

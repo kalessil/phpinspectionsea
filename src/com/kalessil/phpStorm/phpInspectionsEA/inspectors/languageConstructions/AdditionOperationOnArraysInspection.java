@@ -21,6 +21,11 @@ import java.util.HashSet;
 public class AdditionOperationOnArraysInspection extends BasePhpInspection {
     private static final String strProblemDescription = "Probably it shall be 'array_merge(...)' instead, which behaves slightly different";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

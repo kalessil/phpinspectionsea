@@ -13,6 +13,11 @@ import org.jetbrains.annotations.NotNull;
 public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Safely use single quotes instead";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

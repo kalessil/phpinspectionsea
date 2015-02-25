@@ -21,6 +21,11 @@ public class CountOnPropelCollectionInspector extends BasePhpInspection {
     private static final String strProblemDescriptionPropelCollection = "This type of count shall be checked manually, " +
             "possibly collection is result of a query and count can be performed on that query";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

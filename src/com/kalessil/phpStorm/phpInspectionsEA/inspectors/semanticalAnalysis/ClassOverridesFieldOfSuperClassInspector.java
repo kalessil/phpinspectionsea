@@ -13,6 +13,11 @@ import org.jetbrains.annotations.NotNull;
 public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Field %s% is already defined in a parent class. See inspection description for details.";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

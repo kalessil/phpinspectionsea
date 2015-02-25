@@ -14,6 +14,11 @@ import java.util.HashSet;
 public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Third parameter shall be provided to clarify if types safety important in this context";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     private HashSet<String> functionsSet = null;
     private HashSet<String> getFunctionsSet() {
         if (null == functionsSet) {

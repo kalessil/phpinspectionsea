@@ -15,6 +15,11 @@ import org.jetbrains.annotations.NotNull;
 public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Positive and negative variants can be skipped: condition already returns boolean";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

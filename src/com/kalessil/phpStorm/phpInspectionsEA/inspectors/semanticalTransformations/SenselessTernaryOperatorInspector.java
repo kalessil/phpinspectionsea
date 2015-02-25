@@ -17,6 +17,11 @@ import org.jetbrains.annotations.NotNull;
 public class SenselessTernaryOperatorInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Can be replaced with comparison operand";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

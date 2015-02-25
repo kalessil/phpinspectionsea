@@ -18,6 +18,11 @@ import org.jetbrains.annotations.NotNull;
 public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
     private static final String strProblemDescription  = "'in_array(...)' shall be used instead instead";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

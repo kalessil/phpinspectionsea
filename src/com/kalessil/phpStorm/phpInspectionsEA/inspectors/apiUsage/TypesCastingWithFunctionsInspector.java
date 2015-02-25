@@ -14,6 +14,11 @@ import java.util.HashMap;
 public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
     private static final String strProblemDescription = "'(%s) $...' construction shall be used instead";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     private static HashMap<String, String> mapping = null;
     private static HashMap<String, String> getMapping() {
         if (null == mapping) {

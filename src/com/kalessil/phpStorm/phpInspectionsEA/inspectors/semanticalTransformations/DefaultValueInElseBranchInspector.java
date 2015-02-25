@@ -19,6 +19,11 @@ import java.util.LinkedList;
 public class DefaultValueInElseBranchInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Assignment in this branch shall be moved before if";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

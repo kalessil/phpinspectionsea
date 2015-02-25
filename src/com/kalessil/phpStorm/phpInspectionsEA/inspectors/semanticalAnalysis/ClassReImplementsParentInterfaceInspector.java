@@ -14,6 +14,11 @@ import java.util.List;
 public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Interface %s% is already defined in a parent class.";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

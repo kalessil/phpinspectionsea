@@ -19,6 +19,11 @@ import java.util.HashMap;
 public class OpAssignShortSyntaxInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Can be safely refactored as '%v% %o%= %e%'";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     private static HashMap<IElementType, IElementType> mapping = null;
     private static HashMap<IElementType, IElementType> getMapping() {
         if (null == mapping) {

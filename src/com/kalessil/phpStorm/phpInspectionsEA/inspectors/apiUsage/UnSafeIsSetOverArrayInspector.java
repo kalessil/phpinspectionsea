@@ -19,6 +19,11 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     private static final String strProblemDescriptionUseNullComparison = "Probably it should be 'null === $...' construction used";
     private static final String strProblemDescriptionConcatenationInIndex = "Concatenation is used as an index, should be moved to a variable";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

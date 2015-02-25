@@ -19,6 +19,11 @@ public class PrefixedIncDecrementEquivalentInspector extends BasePhpInspection {
     private static final String strProblemDescriptionIncrement = "Can be safely replaced with '++%s%'";
     private static final String strProblemDescriptionDecrement = "Can be safely replaced with '--%s%'";
 
+    @NotNull
+    public String getShortName() {
+        return ...;
+    }
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {

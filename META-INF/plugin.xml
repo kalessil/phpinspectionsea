@@ -27,9 +27,10 @@ then additional inspections are applied to source code.<br />
   <change-notes><![CDATA[
 25 Feb 2015: critical update<br/>
 <br/>
-    - recovered context menu with fix options (critical, was broken in 1.1.x versions)<br/>
-    - fixed out of bound exception raised in certain cases<br/>
-    - slow alter in foreach relocated to performance section<br/>
+    - recovered context menus with fix options (critical, was broken in 1.1.x versions)<br/>
+    - fixed an out of bound exception raised in certain cases<br/>
+    - not optimal if conditions: fixed a false positive in costs estimations<br/>
+    - slow alter in foreach: relocated to performance section<br/>
 <br/>
 <hr/>
   ]]></change-notes>

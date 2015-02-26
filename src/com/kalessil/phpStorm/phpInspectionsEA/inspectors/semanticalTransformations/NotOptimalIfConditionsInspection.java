@@ -375,8 +375,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                     /** special case when costs estimation is overridden with general practices */
                     isPreviousCondCostCanBeBigger = (
-                        objPreviousCond instanceof FunctionReference &&
-                        functionsSetToAllow.contains(((FunctionReference) objPreviousCond).getName())
+                        (objPreviousCond instanceof FunctionReference && functionsSetToAllow.contains(((FunctionReference) objPreviousCond).getName())) ||
+                        objPreviousCond instanceof AssignmentExpression
                     );
 
                     if (!isPreviousCondCostCanBeBigger && intLoopCurrentCost < intPreviousCost) {

@@ -22,6 +22,10 @@ And it covers:<br />
 Some of inspections are expecting conditional statements (e.g. if) to use
 group statement for wrapping body expressions. When this requirement is met
 then additional inspections are applied to source code.<br />
+<br />
+For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation/PhpStorm_ReferenceCard.pdf">this reference card</a>. Windows/Linux ones are:<br />
+<b>Alt + Shift + I</b> to <b>inspect current file</b> with current profile<br />
+<b>Ctrl + Shift + F4</b> to <b>close results</b> of inspection<br />
     ]]></description>
 
   <change-notes><![CDATA[
@@ -269,10 +273,6 @@ then additional inspections are applied to source code.<br />
 
   <actions>
     <!-- Add your actions here -->
-    <!--action id="EAInspections.toggle" class="ToggleInspections" text="Toggle EA Extended Inspections">
-      <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl C"/>
-    </action-->
-    <!-- Action implementation: https://github.com/renemaas/Zipper-IntelliJ-Plugin/blob/master/src/ZipProject.java -->
   </actions>
 
 </idea-plugin>

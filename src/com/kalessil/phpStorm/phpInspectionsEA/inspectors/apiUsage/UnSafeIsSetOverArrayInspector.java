@@ -5,10 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
-import com.jetbrains.php.lang.psi.elements.ArrayIndex;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.PhpIsset;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -28,6 +25,11 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpIsset(PhpIsset issetExpression) {
+                final boolean isResultStored = (
+                    issetExpression.getParent() instanceof AssignmentExpression ||
+                    issetExpression.getParent() instanceof PhpReturn
+                );
+
                 for (PsiElement parameter : issetExpression.getVariables()) {
                     parameter = ExpressionSemanticUtil.getExpressionTroughParenthesis(parameter);
                     if (null == parameter) {
@@ -40,7 +42,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                     }
 
                     /** TODO: has method/function reference as index */
-                    if (this.hasConcatenationAsIndex((ArrayAccessExpression) parameter)) {
+                    if (!isResultStored && this.hasConcatenationAsIndex((ArrayAccessExpression) parameter)) {
                         holder.registerProblem(parameter, strProblemDescriptionConcatenationInIndex, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         continue;
                     }

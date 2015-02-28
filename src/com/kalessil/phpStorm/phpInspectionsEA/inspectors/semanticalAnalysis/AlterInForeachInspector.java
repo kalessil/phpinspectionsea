@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class AlterInForeachInspector  extends BasePhpInspection {
     private static final String strProblemDescription = "Can be refactored as '$%c% = ...' if $%v% is defined as reference";
+    private static final String strProblemUnsafeReference = "This variable must be unset just after foreach to prevent possible side-effects";
 
     @NotNull
     public String getShortName() {
@@ -22,6 +24,22 @@ public class AlterInForeachInspector  extends BasePhpInspection {
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
+
+            public void visitPhpForeach(ForeachStatement foreach) {
+                /** lookup for reference preceding value */
+                Variable objForeachValue = foreach.getValue();
+                if (
+                    null != objForeachValue &&
+                    objForeachValue.getPrevSibling().getNode().getElementType() == PhpTokenTypes.opBIT_AND
+                ) {
+                    /** test if it's immediately unset after foreach */
+                    PhpPsiElement nextExpression = foreach.getNextPsiSibling();
+                    if (null == nextExpression || !(nextExpression.getFirstChild() instanceof PhpUnset)) {
+                        holder.registerProblem(objForeachValue, strProblemUnsafeReference, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    }
+                }
+            }
+
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
                 PhpPsiElement objOperand = assignmentExpression.getVariable();
                 if (!(objOperand instanceof ArrayAccessExpression)) {

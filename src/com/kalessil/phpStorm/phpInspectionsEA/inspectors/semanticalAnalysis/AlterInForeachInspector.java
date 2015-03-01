@@ -34,7 +34,7 @@ public class AlterInForeachInspector  extends BasePhpInspection {
                 ) {
                     /** test if it's immediately unset after foreach */
                     PhpPsiElement nextExpression = foreach.getNextPsiSibling();
-                    if (null == nextExpression || !(nextExpression.getFirstChild() instanceof PhpUnset)) {
+                    if (null == nextExpression || !(nextExpression instanceof PhpUnset)) {
                         holder.registerProblem(objForeachValue, strProblemUnsafeReference, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                 }

@@ -29,7 +29,7 @@ import java.util.LinkedList;
 public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInspection {
     private static final String strProblemNoSense = "Has no sense, because it's always true (according to annotations)";
     private static final String strProblemCheckViolatesDefinition = "Has no sense, because this type in not defined in annotations";
-    private static final String strProblemAssignmentViolatesDefinition = "This assignment type violates types set defined in annotations";
+    private static final String strProblemAssignmentViolatesDefinition = "New value type (%s%) is not in annotated types";
 
     @NotNull
     public String getShortName() {
@@ -166,7 +166,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                                     isCallViolatesDefinition = (!this.isTypeCompatibleWith(strType, objParameterTypesResolved, objIndex));
                                     if (isCallViolatesDefinition) {
-                                        holder.registerProblem(objValue, strProblemAssignmentViolatesDefinition + ": " + strType, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                        String strMessage = strProblemAssignmentViolatesDefinition.replace("%s%", strType);
+                                        holder.registerProblem(objValue, strMessage, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                                         break;
                                     }
                                 }

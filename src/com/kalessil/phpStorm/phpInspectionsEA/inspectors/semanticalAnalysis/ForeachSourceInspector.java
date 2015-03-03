@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromSignatureResolvingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -121,9 +122,12 @@ public class ForeachSourceInspector extends BasePhpInspection {
 
 
                     if (
-                        strType.equals("\\null") ||
-                        strType.equals("\\bool") ||
-                        strType.equals("\\void")
+                        strType.equals("\\null")  ||
+                        strType.equals("\\bool")  ||
+                        strType.equals("\\void")  ||
+                        strType.equals("\\int")   ||
+                        strType.equals("\\float") ||
+                        strType.equals("\\string")
                     ) {
                         if (listSignatureTypes.size() == 1) {
                             holder.registerProblem(objTargetExpression, strProblemDescription + strType, ProblemHighlightType.ERROR);
@@ -146,38 +150,21 @@ public class ForeachSourceInspector extends BasePhpInspection {
                             if (null == objClass || null == objTraversable) {
                                 continue;
                             }
+
                             String strTraversableFQN = objTraversable.getFQN();
-
                             /**
-                             * PhpClassHierarchyUtils.isSuperClass not handling interfaces,
-                             * so scan complete inheritance tree
+                             * PhpClassHierarchyUtils.isSuperClass not handling interfaces, so scan complete inheritance tree
                              */
-                            LinkedList<PhpClass> classesToCheckForInterface = new LinkedList<PhpClass>();
-                            classesToCheckForInterface.add(objClass);
-                            Collections.addAll(classesToCheckForInterface, objClass.getSupers());
-
-                            /** work out class and it's super classes */
-                            for (PhpClass objOneParent : classesToCheckForInterface) {
-                                /** workout all interfaces */
-                                for (PhpClass objInterface : objOneParent.getImplementedInterfaces()) {
-                                    /** workout super interfaces */
-                                    for (PhpClass objSuperInterface : objInterface.getSupers()) {
-                                        if (null != objSuperInterface.getFQN() && objSuperInterface.getFQN().equals(strTraversableFQN)) {
-                                            objClasses.clear();
-                                            classesToCheckForInterface.clear();
-                                            return;
-                                        }
-                                    }
-
-                                    /**  work out interface itself */
-                                    if (null != objInterface.getFQN() && objInterface.getFQN().equals(strTraversableFQN)) {
-                                        objClasses.clear();
-                                        classesToCheckForInterface.clear();
-                                        return;
-                                    }
+                            HashSet<PhpClass> interfaces = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(objClass);
+                            for (PhpClass oneInterface : interfaces) {
+                                String strFQN = oneInterface.getFQN();
+                                if (null != strFQN && strFQN.equals(strTraversableFQN)) {
+                                    interfaces.clear();
+                                    objClasses.clear();
+                                    return;
                                 }
                             }
-                            classesToCheckForInterface.clear();
+                            interfaces.clear();
                         }
                         objClasses.clear();
 

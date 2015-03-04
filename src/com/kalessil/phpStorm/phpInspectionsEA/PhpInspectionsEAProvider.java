@@ -6,10 +6,6 @@ import com.intellij.codeInspection.InspectionToolProvider;
 
 ===TODO===:
 
-foreach (array_keys|array_values(...) as $keyWithoutValue)
-    - Performance: array_keys, array_values used as foreach array
-    - Probably classic foreach construction shall be used (can trigger unused variable warning)
-
 AdditionOperationOnArraysInspection:
     - re-implement to check any of binary/mathematical operations has been applied on an array
 

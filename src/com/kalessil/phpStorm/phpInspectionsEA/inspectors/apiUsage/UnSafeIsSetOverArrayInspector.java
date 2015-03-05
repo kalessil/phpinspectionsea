@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Probably 'array_key_exists(...)' construction should be used for better data *structure* control";
-    private static final String strProblemDescriptionUseNullComparison = "Probably it should be 'null === $...' construction used";
+    private static final String strProblemDescriptionUseNullComparison = "Probably it should be 'null !== $...' construction used";
     private static final String strProblemDescriptionConcatenationInIndex = "Concatenation is used as an index, should be moved to a variable";
 
     @NotNull
@@ -37,6 +37,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                     }
 
                     if (!(parameter instanceof ArrayAccessExpression)) {
+                        /** TODO: differentiate warning text message for 'isset()' and '! isset()' */
                         holder.registerProblem(parameter, strProblemDescriptionUseNullComparison, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         continue;
                     }

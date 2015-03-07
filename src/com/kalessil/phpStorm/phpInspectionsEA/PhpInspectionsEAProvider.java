@@ -8,6 +8,7 @@ import com.intellij.codeInspection.InspectionToolProvider;
 
 $cookies[count($cookies) - 1]
     - replacement is 'end(...)', but it changes internal pointer in array, so can introduce side-effects in loops
+    - legal in unset context (1 ... n parameters)
 
 AdditionOperationOnArraysInspection:
     - re-implement to check any of binary/mathematical operations has been applied on an array

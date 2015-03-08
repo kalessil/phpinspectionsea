@@ -6,10 +6,6 @@ import com.intellij.codeInspection.InspectionToolProvider;
 
 ===TODO===:
 
-(array) casting: warn regarding null handling
-    - broke S2.3 UTs
-    - suggest to test with '(array) ... !== ...'
-
 octdec -> intval(..., 8);
     - judge as an alias
 

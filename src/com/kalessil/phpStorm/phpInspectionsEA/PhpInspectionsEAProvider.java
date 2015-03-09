@@ -4,22 +4,6 @@ import com.intellij.codeInspection.InspectionToolProvider;
 
 /*
 
-Pre-collected release notes:
-
-Added shortcuts description
-
-ArrayCastingEquivalentInspector: message updated to warn about side-effects
-UnSafeIsSetOverArrayInspector: fixed warning text regarding null comparison
-CallableParameterUseCaseInTypeContextInspection: assignment type violation message updated
-
-ForeachSourceInspector: fixed \Traversable detection
-AlterInForeachInspector: added checks for unset on reference
-UnSafeIsSetOverArrayInspector: do not warn if context is return/assignment statement
-NotOptimalIfConditionsInspection - resolved false-positive with assignment expression
-
-ForeachOnArrayComponentsInspector: added
-
-
 ===TODO===:
 
 octdec -> intval(..., 8);

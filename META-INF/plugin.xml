@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.1.2.1</version>
+  <version>1.1.3</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -29,12 +29,19 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
     ]]></description>
 
   <change-notes><![CDATA[
-25 Feb 2015: critical update<br/>
+09 Mar 2015: improvements and new inspections<br/>
 <br/>
-    - recovered context menus with fix options (critical, was broken in 1.1.x versions)<br/>
-    - fixed an out of bound exception raised in certain cases<br/>
-    - not optimal if conditions: fixed a false positive in costs estimations<br/>
-    - slow alter in foreach: relocated to performance section<br/>
+    - Added toggle inspections shortcuts description<br/>
+    - '(array) ...' equivalent construction: message updated to warn about side-effects<br/>
+    - 'isset(...)' usage: fixed warning text regarding null comparison<br/>
+    - Callable parameter usage violates definition: assignment type violation message updated<br/>
+    - Foreach source to iterate over: fixed \Traversable detection<br/>
+    - Slow alter in foreach: added checks for unset on reference<br/>
+    - 'isset(...)' usage: do not warn if context is return/assignment statement<br/>
+    - not optimal if conditions - resolved false-positive with assignment expression<br/>
+    - Private constructor semantics: allow "Utils" in naming<br/>
+<br/>
+    - Array_keys(...), array_values(...) used as foreach array inspection added<br/>
 <br/>
 <hr/>
   ]]></change-notes>

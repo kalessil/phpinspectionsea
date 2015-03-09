@@ -61,7 +61,7 @@ public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
 
                 /** ensure utility class is defined properly */
                 String strFqn = clazz.getFQN();
-                if (null != strFqn && !strFqn.endsWith("Util")) {
+                if (null != strFqn && !strFqn.endsWith("Util") && !strFqn.endsWith("Utils")) {
                     holder.registerProblem(clazz.getNameIdentifier(), strProblemUtilNaming, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
                 if (!clazz.isFinal()) {

@@ -7,7 +7,7 @@ import com.intellij.codeInspection.InspectionToolProvider;
 ===TODO===:
 
 Property re-defined inspection:
-    - do not inspect static fields, which shall not be initialized in constructor
+    - if field is private, propose to make parent one protected
 
 private/protected members with hardcoded non-empty array shall be static
     - analyse values only: strings/constants

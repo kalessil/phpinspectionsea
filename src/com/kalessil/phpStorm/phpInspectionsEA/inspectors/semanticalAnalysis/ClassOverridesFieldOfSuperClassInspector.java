@@ -2,9 +2,12 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpModifierList;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -32,6 +35,20 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
                     if (ownField.isConstant() || null == ownField.getNameIdentifier()) {
                         continue;
                     }
+
+                    /** due to lack of api get raw text with all modifiers */
+                    String strModifiers = null;
+                    for (PsiElement objChild : ownField.getParent().getChildren()) {
+                        if (objChild instanceof PhpModifierList) {
+                            strModifiers = objChild.getText();
+                            break;
+                        }
+                    }
+                    /** skip static variables - they shall not be changed via constructor */
+                    if (!StringUtil.isEmpty(strModifiers) && strModifiers.contains("static")) {
+                        continue;
+                    }
+
 
                     String strOwnField = ownField.getName();
                     for (Field superclassField : objParentClass.getFields()) {

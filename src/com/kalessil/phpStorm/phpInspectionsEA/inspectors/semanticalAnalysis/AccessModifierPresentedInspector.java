@@ -38,7 +38,6 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
 
                         if (null != strModifiers && null != objMethod.getNameIdentifier()) {
                             /** scan modifiers defined */
-                            /** scan modifiers defined */
                             /** TODO: re-evaluate if JB completed modifiers list construction */
                             boolean hasAccessModifiers =
                                     strModifiers.contains("public") ||

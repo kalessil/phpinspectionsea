@@ -6,6 +6,9 @@ import com.intellij.codeInspection.InspectionToolProvider;
 
 ===TODO===:
 
+Property re-defined inspection:
+    - do not inspect static fields, which shall not be initialized in constructor
+
 private/protected members with hardcoded non-empty array shall be static
     - analyse values only: strings/constants
     - e.g. Symfony/Component/Validator/Constraints/IbanValidator::$countryFormats

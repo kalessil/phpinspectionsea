@@ -101,8 +101,9 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 int intCountWriteAccesses = 0;
                 PhpAccessInstruction.Access objAccess;
                 for (PhpAccessVariableInstruction objInstruction : arrUsages) {
+                    PsiElement objParent = objInstruction.getAnchor().getParent();
 
-                    if (objInstruction.getAnchor().getParent() instanceof ArrayAccessExpression) {
+                    if (objParent instanceof ArrayAccessExpression) {
                         /** find out which expression is holder */
                         PsiElement objLastSemanticExpression = objInstruction.getAnchor();
                         PsiElement objTopSemanticExpression = objLastSemanticExpression.getParent();
@@ -133,6 +134,15 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                             }
                         }
 
+                        intCountReadAccesses++;
+                        continue;
+                    }
+
+                    /** local variables access wrongly reported write in some cases, so rely on custom checks */
+                    if (
+                        objParent instanceof ParameterList ||
+                        objParent instanceof PhpUseList
+                    ) {
                         intCountReadAccesses++;
                         continue;
                     }

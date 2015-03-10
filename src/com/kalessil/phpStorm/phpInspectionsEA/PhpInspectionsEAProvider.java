@@ -6,8 +6,20 @@ import com.intellij.codeInspection.InspectionToolProvider;
 
 ===TODO===:
 
+private/protected members with hardcoded non-empty array shall be static
+    - analyse values only: strings/constants
+    - e.g. Symfony/Component/Validator/Constraints/IbanValidator::$countryFormats
+
+===POOL===
+
+ctype_alnum|ctype_alpha vs regular expressions test
+    - challenge is polymorphic pattern recognition
+
 octdec -> intval(..., 8);
     - judge as an alias
+
+current(array_keys(...)) => key(...)
+    - rare case, not sure if it worth implementing it
 
 $cookies[count($cookies) - 1]
     - replacement is 'end(...)', but it changes internal pointer in array, so can introduce side-effects in loops
@@ -15,10 +27,6 @@ $cookies[count($cookies) - 1]
 
 AdditionOperationOnArraysInspection:
     - re-implement to check any of binary/mathematical operations has been applied on an array
-
-===POOL===
-
-current(array_keys(...)) => key(...)
 
 StaticInvocationViaThisInspector:
     - static calls on any objects, not only this (may be quite heavy due to index lookup)

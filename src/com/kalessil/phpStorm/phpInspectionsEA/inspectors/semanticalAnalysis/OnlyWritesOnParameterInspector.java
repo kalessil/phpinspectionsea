@@ -160,8 +160,9 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     /** local variables access wrongly reported write in some cases, so rely on custom checks */
                     if (
                         objParent instanceof ParameterList ||
-                        objParent instanceof PhpUseList
-                        /** todo: empty, unset */
+                        objParent instanceof PhpUseList ||
+                        objParent instanceof PhpUnset ||
+                        objParent instanceof PhpEmpty
                     ) {
                         intCountReadAccesses++;
                         continue;

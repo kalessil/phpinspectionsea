@@ -61,10 +61,29 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                                 continue;
                             }
 
-                            /** skip assignment check - it's writes to parameter */
+                            /** skip assignment check - it writes to parameter */
                             if (parameterName.equals(variableName)) {
                                 return;
                             }
+                        }
+
+                        /** ensure it's not use list parameter of closure */
+                        LinkedList<Variable> useList = ExpressionSemanticUtil.getUseListVariables((Function) parentScope);
+                        if (null != useList) {
+                            /** use-list is found */
+                            for (Variable objUseVariable : useList) {
+                                String useVariableName = objUseVariable.getName();
+                                if (StringUtil.isEmpty(useVariableName)) {
+                                    continue;
+                                }
+
+                                /** skip assignment check - it writes to used variable */
+                                if (useVariableName.equals(variableName)) {
+                                    useList.clear();
+                                    return;
+                                }
+                            }
+                            useList.clear();
                         }
 
                         /** verify variable usage */
@@ -142,6 +161,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     if (
                         objParent instanceof ParameterList ||
                         objParent instanceof PhpUseList
+                        /** todo: empty, unset */
                     ) {
                         intCountReadAccesses++;
                         continue;

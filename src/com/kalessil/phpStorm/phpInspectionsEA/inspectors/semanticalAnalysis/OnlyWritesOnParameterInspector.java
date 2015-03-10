@@ -13,12 +13,13 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstr
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 
 public class OnlyWritesOnParameterInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Parameter is overridden, but never used or appears " +
+    private static final String strProblemDescription = "Parameter/variable is overridden, but never used or appears " +
             "outside of the scope";
 
     @NotNull
@@ -31,14 +32,48 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             /** re-dispatch to inspector */
             public void visitPhpMethod(Method method) {
-                this.getUnusedParameters(method.getParameters(), method);
+                this.checkParameters(method.getParameters(), method);
             }
 
             public void visitPhpFunction(Function function) {
-                this.getUnusedParameters(function.getParameters(), function);
+                this.checkParameters(function.getParameters(), function);
             }
 
-            private void getUnusedParameters(Parameter[] arrParameters, PhpScopeHolder objScopeHolder) {
+            public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
+                PsiElement objVariable = assignmentExpression.getVariable();
+                /** check assignments containing variable as container */
+                if (objVariable instanceof Variable) {
+                    String variableName = ((Variable) objVariable).getName();
+                    if (
+                        StringUtil.isEmpty(variableName) ||
+                        "|_GET|_POST|_SESSION|_REQUEST|_FILES|_COOKIE|_ENV|_SERVER|".contains("|" + variableName + "|")
+                    ) {
+                        return;
+                    }
+
+                    /** expression is located in function/method */
+                    PsiElement parentScope = ExpressionSemanticUtil.getScope(assignmentExpression);
+                    if (null != parentScope) {
+                        /** ensure it's not parameter, as it checked anyway */
+                        for (Parameter objParameter : ((Function) parentScope).getParameters()) {
+                            String parameterName = objParameter.getName();
+                            if (StringUtil.isEmpty(parameterName)) {
+                                continue;
+                            }
+
+                            /** skip assignment check - it's writes to parameter */
+                            if (parameterName.equals(variableName)) {
+                                return;
+                            }
+                        }
+
+                        /** verify variable usage */
+                        checkOneVariable(variableName, (PhpScopeHolder) parentScope);
+                    }
+                }
+            }
+
+            private void checkParameters(Parameter[] arrParameters, PhpScopeHolder objScopeHolder) {
                 for (Parameter objParameter : arrParameters) {
                     if (objParameter.isPassByRef()) {
                         continue;
@@ -49,74 +84,78 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
-                    PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, parameterName, false);
-                    if (arrUsages.length == 0) {
-                        continue;
-                    }
+                    checkOneVariable(parameterName, objScopeHolder);
+               }
+            }
 
-                    LinkedList<PsiElement> objTargetExpressions = new LinkedList<PsiElement>();
+            private void checkOneVariable(String parameterName, PhpScopeHolder objScopeHolder) {
+                PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
+                PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, parameterName, false);
+                if (arrUsages.length == 0) {
+                    return;
+                }
 
-                    int intCountReadAccesses = 0;
-                    int intCountWriteAccesses = 0;
-                    PhpAccessInstruction.Access objAccess;
-                    for (PhpAccessVariableInstruction objInstruction : arrUsages) {
+                LinkedList<PsiElement> objTargetExpressions = new LinkedList<PsiElement>();
 
-                        if (objInstruction.getAnchor().getParent() instanceof ArrayAccessExpression) {
-                            /** find out which expression is holder */
-                            PsiElement objLastSemanticExpression = objInstruction.getAnchor();
-                            PsiElement objTopSemanticExpression = objLastSemanticExpression.getParent();
-                            /** TODO: iterator for array access expression */
-                            while (objTopSemanticExpression instanceof ArrayAccessExpression) {
-                                objLastSemanticExpression = objTopSemanticExpression;
-                                objTopSemanticExpression = objTopSemanticExpression.getParent();
-                            }
+                int intCountReadAccesses  = 0;
+                int intCountWriteAccesses = 0;
+                PhpAccessInstruction.Access objAccess;
+                for (PhpAccessVariableInstruction objInstruction : arrUsages) {
 
-                            /** estimate operation type */
-                            if (
-                                objTopSemanticExpression instanceof AssignmentExpression &&
-                                ((AssignmentExpression) objTopSemanticExpression).getVariable() == objLastSemanticExpression
-                            ) {
+                    if (objInstruction.getAnchor().getParent() instanceof ArrayAccessExpression) {
+                        /** find out which expression is holder */
+                        PsiElement objLastSemanticExpression = objInstruction.getAnchor();
+                        PsiElement objTopSemanticExpression = objLastSemanticExpression.getParent();
+                        /** TODO: iterator for array access expression */
+                        while (objTopSemanticExpression instanceof ArrayAccessExpression) {
+                            objLastSemanticExpression = objTopSemanticExpression;
+                            objTopSemanticExpression = objTopSemanticExpression.getParent();
+                        }
+
+                        /** estimate operation type */
+                        if (
+                            objTopSemanticExpression instanceof AssignmentExpression &&
+                            ((AssignmentExpression) objTopSemanticExpression).getVariable() == objLastSemanticExpression
+                        ) {
+                            objTargetExpressions.add(objLastSemanticExpression);
+
+                            intCountWriteAccesses++;
+                            continue;
+                        }
+
+                        if (objTopSemanticExpression instanceof UnaryExpression) {
+                            PsiElement objOperation = ((UnaryExpression) objTopSemanticExpression).getOperation();
+                            if (null != objOperation && ("++,--").contains(objOperation.getText())) {
                                 objTargetExpressions.add(objLastSemanticExpression);
 
                                 intCountWriteAccesses++;
                                 continue;
                             }
-
-                            if (objTopSemanticExpression instanceof UnaryExpression) {
-                                PsiElement objOperation = ((UnaryExpression) objTopSemanticExpression).getOperation();
-                                if (null != objOperation && ("++,--").contains(objOperation.getText())) {
-                                    objTargetExpressions.add(objLastSemanticExpression);
-
-                                    intCountWriteAccesses++;
-                                    continue;
-                                }
-                            }
-
-                            intCountReadAccesses++;
-                            continue;
                         }
 
-
-                        /** ok variable usage works well with openapi */
-                        objAccess = objInstruction.getAccess();
-                        if (objAccess.isWrite()) {
-                            objTargetExpressions.add(objInstruction.getAnchor());
-                            intCountWriteAccesses++;
-                        }
-                        if (objAccess.isRead()) {
-                            intCountReadAccesses++;
-                        }
+                        intCountReadAccesses++;
+                        continue;
                     }
 
 
-                    if (intCountReadAccesses == 0 && intCountWriteAccesses > 0) {
-                        for (PsiElement objTargetExpression : objTargetExpressions) {
-                            holder.registerProblem(objTargetExpression, strProblemDescription, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
-                        }
+                    /** ok variable usage works well with openapi */
+                    objAccess = objInstruction.getAccess();
+                    if (objAccess.isWrite()) {
+                        objTargetExpressions.add(objInstruction.getAnchor());
+                        intCountWriteAccesses++;
                     }
-                    objTargetExpressions.clear();
+                    if (objAccess.isRead()) {
+                        intCountReadAccesses++;
+                    }
                 }
+
+
+                if (intCountReadAccesses == 0 && intCountWriteAccesses > 0) {
+                    for (PsiElement objTargetExpression : objTargetExpressions) {
+                        holder.registerProblem(objTargetExpression, strProblemDescription, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                    }
+                }
+                objTargetExpressions.clear();
             }
         };
     }

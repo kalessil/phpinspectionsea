@@ -206,7 +206,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ParameterByRefWithDefaultInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
-        shortName="OnlyWritesOnParameterInspection"               displayName="Unused: callable parameter is not used"
+        shortName="OnlyWritesOnParameterInspection"               displayName="Unused: parameter/variable is not used"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OnlyWritesOnParameterInspector"/>
     <localInspection language="PHP" groupPath="PHP"

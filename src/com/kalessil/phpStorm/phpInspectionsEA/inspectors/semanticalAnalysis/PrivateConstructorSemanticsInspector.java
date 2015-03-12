@@ -14,7 +14,7 @@ import java.util.List;
 
 public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
     private static final String strProblemSingletonConstructor = "Singleton constructor shall be protected";
-    private static final String strProblemUtilNotFinal = "Utility class shall be final";
+    private static final String strProblemUtilNotFinal = "Utility class shall be final (breaks backward compatibility)";
     private static final String strProblemUtilNaming = "Utility class name shall end up with 'Util'";
 
     @NotNull

@@ -26,6 +26,12 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
+                String strClassFQN = clazz.getFQN();
+                /** skip un-explorable and test classes */
+                if (StringUtil.isEmpty(strClassFQN) || strClassFQN.contains("/Tests/") || strClassFQN.endsWith("Test")) {
+                    return;
+                }
+
                 for (PhpClass objParentClass : clazz.getSupers()) {
                     /** ensure class and super are explorable */
                     String strSuperFQN = objParentClass.getFQN();

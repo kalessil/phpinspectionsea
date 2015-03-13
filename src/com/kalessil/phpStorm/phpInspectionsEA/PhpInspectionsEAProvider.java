@@ -11,13 +11,8 @@ Private/protected members with hardcoded non-empty array shall be static
     - e.g. Symfony/Component/Validator/Constraints/IbanValidator::$countryFormats
 
 Cascading str_replace:
-    1st pattern: sequential calls:
-        $string = str_replace('.', ‘_’, $string); 
-        $string = str_replace(' ', ‘-‘, $string);
-            => str_replace(array(‘.’, ' '), array(‘_’, ‘-‘), $string);
-    2nd pattern: replacements array contains identical elements:
-        $string = str_replace(array(’.’, ‘ '), array(’’, ‘'), $string);
-            => $string = str_replace(array(’.’, ‘ '), ’’, $string);
+    $string = str_replace(array(’.’, ‘ '), array(’’, ‘'), $string);
+        => $string = str_replace(array(’.’, ‘ '), ’’, $string);
 
 ===POOL===
 

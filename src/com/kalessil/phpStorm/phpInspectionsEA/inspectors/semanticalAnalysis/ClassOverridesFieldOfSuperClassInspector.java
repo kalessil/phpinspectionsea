@@ -28,7 +28,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
             public void visitPhpClass(PhpClass clazz) {
                 String strClassFQN = clazz.getFQN();
                 /** skip un-explorable and test classes */
-                if (StringUtil.isEmpty(strClassFQN) || strClassFQN.contains("/Tests/") || strClassFQN.endsWith("Test")) {
+                if (StringUtil.isEmpty(strClassFQN) || strClassFQN.contains("\\Tests\\") || strClassFQN.endsWith("Test")) {
                     return;
                 }
 

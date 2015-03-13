@@ -45,9 +45,15 @@ public class TypeFromSignatureResolvingUtil {
 
         /** resolve functions */
         if (charTypeOfSignature == 'F') {
-            Collection<Function> objFunctionsCollection = objIndex.getFunctionsByName(strSignatureToResolve.replace("#F", ""));
+            String strFunctionName = strSignatureToResolve.replace("#F", "");
+            Collection<Function> objFunctionsCollection = objIndex.getFunctionsByName(strFunctionName);
             for (Function objFunction : objFunctionsCollection) {
-                resolveSignature(objFunction.getType().toString(), objScope, objIndex, extractedTypesSet);
+                /**
+                 * infinity loop was discovered for drupal 7 (drupal_find_base_themes)
+                 * IDE for some reason resolved type including self-reference of this function
+                 */
+                String strTypeWithoutLoop = objFunction.getType().toString().replace("#F" + strFunctionName, "");
+                resolveSignature(strTypeWithoutLoop, objScope, objIndex, extractedTypesSet);
             }
             objFunctionsCollection.clear();
 

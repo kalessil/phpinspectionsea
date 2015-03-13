@@ -9,11 +9,25 @@ import com.intellij.codeInspection.InspectionToolProvider;
 Property re-defined inspection:
     - if field is private, propose to make parent one protected
 
-private/protected members with hardcoded non-empty array shall be static
+Private/protected members with hardcoded non-empty array shall be static
     - analyse values only: strings/constants
     - e.g. Symfony/Component/Validator/Constraints/IbanValidator::$countryFormats
 
 ===POOL===
+
+in_array used in comparison context
+    if(in_array($whatToSearchFor, array(<one item>)[, boolean])) {
+        => $whatToSearchFor ==[=] <one item>>;
+        => %s% for operator !==, ==, !=, ==
+
+Cascading str_replace:
+    1st pattern: sequential calls:
+        $string = str_replace('.', ‘_’, $string); 
+        $string = str_replace(' ', ‘-‘, $string);
+            => str_replace(array(‘.’, ' '), array(‘_’, ‘-‘), $string);
+    2nd pattern: replacements array contains identical elements:
+        $string = str_replace(array(’.’, ‘ '), array(’’, ‘'), $string);
+            => $string = str_replace(array(’.’, ‘ '), ’’, $string);
 
 ctype_alnum|ctype_alpha vs regular expressions test
     - challenge is polymorphic pattern recognition

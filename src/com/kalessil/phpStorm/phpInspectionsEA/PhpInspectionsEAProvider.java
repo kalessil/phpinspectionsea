@@ -9,9 +9,6 @@ import com.intellij.codeInspection.InspectionToolProvider;
 Property re-defined inspection:
     - if field is private, propose to make parent one protected
 
-octdec -> intval(..., 8);
-    - judge as an alias
-
 Private/protected members with hardcoded non-empty array shall be static
     - analyse values only: strings/constants
     - e.g. Symfony/Component/Validator/Constraints/IbanValidator::$countryFormats

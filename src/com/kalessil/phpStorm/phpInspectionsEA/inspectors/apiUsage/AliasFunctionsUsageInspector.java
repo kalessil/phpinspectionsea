@@ -13,6 +13,7 @@ import java.util.HashMap;
 
 public class AliasFunctionsUsageInspector extends BasePhpInspection {
     private static final String strProblemDescription  = "'%a%(...)' is an alias function. Use '%f%(...)' instead";
+    private static final String strProblemOctdec       = "'octdec(...)' better to replace with more general 'intval(..., 8)'";
 
     @NotNull
     public String getShortName() {
@@ -49,6 +50,11 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
 
                 HashMap<String, String> mapFunctions = getMapping();
                 if (!mapFunctions.containsKey(strFunctionName)) {
+                    /** some special cases, my personal preferences */
+                    if (strFunctionName.equals("octdec")) {
+                        holder.registerProblem(reference, strProblemOctdec, ProblemHighlightType.LIKE_DEPRECATED);
+                    }
+
                     return;
                 }
 

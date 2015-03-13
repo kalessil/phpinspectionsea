@@ -51,6 +51,7 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
                 HashMap<String, String> mapFunctions = getMapping();
                 if (!mapFunctions.containsKey(strFunctionName)) {
                     /** some special cases, my personal preferences */
+                    /** TODO: warn hexdec as octdec */
                     if (strFunctionName.equals("octdec")) {
                         holder.registerProblem(reference, strProblemOctdec, ProblemHighlightType.LIKE_DEPRECATED);
                     }

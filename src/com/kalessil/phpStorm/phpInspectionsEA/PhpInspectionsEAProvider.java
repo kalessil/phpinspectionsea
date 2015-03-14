@@ -10,10 +10,6 @@ Private/protected members with hardcoded non-empty array shall be static
     - analyse values only: strings/constants
     - e.g. Symfony/Component/Validator/Constraints/IbanValidator::$countryFormats
 
-Cascading str_replace:
-    $string = str_replace(array(’.’, ‘ '), array(’’, ‘'), $string);
-        => $string = str_replace(array(’.’, ‘ '), ’’, $string);
-
 ===POOL===
 
 in_array used in comparison context

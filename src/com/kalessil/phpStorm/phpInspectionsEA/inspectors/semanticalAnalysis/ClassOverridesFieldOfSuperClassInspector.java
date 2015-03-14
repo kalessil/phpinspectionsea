@@ -64,7 +64,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
 
 
                         String strOwnField = ownField.getName();
-                        for (Field superclassField : objParentClass.getFields()) {
+                        for (Field superclassField : objParentClass.getOwnFields()) {
                             /** not possible to check access level */
                             if (
                                 superclassField.getName().equals(strOwnField) &&
@@ -90,7 +90,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
                                 }
 
                                 /** fire warning */
-                                holder.registerProblem(ownField.getNameIdentifier(), strWarning, ProblemHighlightType.WEAK_WARNING);
+                                holder.registerProblem(ownField.getParent(), strWarning, ProblemHighlightType.WEAK_WARNING);
                                 break;
                             }
                         }

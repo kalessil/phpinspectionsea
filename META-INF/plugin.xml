@@ -271,6 +271,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="PrivateConstructorSemanticsInspection"           displayName="Architecture: private constructor semantics"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.PrivateConstructorSemanticsInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="LongInheritanceChainInspection"                  displayName="Architecture: long inheritance chain"
+        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.LongInheritanceChainInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="AliasFunctionsUsageInspection"                   displayName="Compatibility: alias functions usage"

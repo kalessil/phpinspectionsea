@@ -6,6 +6,9 @@ import com.intellij.codeInspection.InspectionToolProvider;
 
 ===TODO===:
 
+Long inheritance chain
+    - if more class is more than 3rd one in inheritance, it's helps growing "super"-classes
+
 Private/protected members with hardcoded non-empty array shall be static
     - analyse values only: strings/constants
     - e.g. Symfony/Component/Validator/Constraints/IbanValidator::$countryFormats

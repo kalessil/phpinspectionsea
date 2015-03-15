@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.1.3</version>
+  <version>1.1.4</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -29,19 +29,17 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
     ]]></description>
 
   <change-notes><![CDATA[
-09 Mar 2015: improvements and new inspections<br/>
+15 Mar 2015: improvements and new inspections<br/>
 <br/>
-    - Added toggle inspections shortcuts description<br/>
-    - '(array) ...' equivalent construction: message updated to warn about side-effects<br/>
-    - 'isset(...)' usage: fixed warning text regarding null comparison<br/>
-    - Callable parameter usage violates definition: assignment type violation message updated<br/>
-    - Foreach source to iterate over: fixed \Traversable detection<br/>
-    - Slow alter in foreach: added checks for unset on reference<br/>
-    - 'isset(...)' usage: do not warn if context is return/assignment statement<br/>
-    - not optimal if conditions - resolved false-positive with assignment expression<br/>
-    - Private constructor semantics: allow "Utils" in naming<br/>
+    - Class re-implements interface of a superclass: re-worked warning messages;<br/>
+    - Alias functions usage: added warnings for hexdec, octdec in favor of intval;<br/>
+    - '(array) ...' equivalent construction: warning message updated (code behavior change);<br/>
+    - Private constructor semantics: final modifier message updated (breaks BC);<br/>
 <br/>
-    - Array_keys(...), array_values(...) used as foreach array inspection added<br/>
+    - Long inheritance chain: implemented;<br/>
+    - Cascade str_replace(...) calls: implemented;<br/>
+    - Class overrides a field of superclass: completely re-worked;<br/>
+    - Parameter/variable is not used: implemented local variables checks;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

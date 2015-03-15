@@ -43,6 +43,7 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
 
                     /* check interfaces of a parent class */
                     for (ClassReference parentInterfaceRef : listImplementsParents) {
+                        /** TODO: merge this check into nested loop */
                         String parentInterfaceFQN = parentInterfaceRef.getFQN();
                         String parentInterfaceName = parentInterfaceRef.getName();
                         if (null == parentInterfaceFQN || null == parentInterfaceName) {

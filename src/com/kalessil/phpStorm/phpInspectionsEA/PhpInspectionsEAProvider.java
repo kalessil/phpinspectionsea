@@ -7,7 +7,7 @@ import com.intellij.codeInspection.InspectionToolProvider;
 
 ===TODO===:
 
-NotOptimalIfConditionsInspection:
+NotOptimalIfConditionsInspection (increment to 1.2.0):
     dedicate all comparisons to separate inspection, specialized in logical bugs.
     e.g. null/instanceof combination.
 

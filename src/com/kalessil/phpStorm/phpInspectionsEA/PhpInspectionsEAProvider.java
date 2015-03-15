@@ -7,6 +7,10 @@ import com.intellij.codeInspection.InspectionToolProvider;
 
 ===TODO===:
 
+NotOptimalIfConditionsInspection:
+    dedicate all comparisons to separate inspection, specialized in logical bugs.
+    e.g. null/instanceof combination.
+
 Private/protected members with hardcoded non-empty array shall be static
     - analyse values only: strings/constants
     - e.g. Symfony/Component/Validator/Constraints/IbanValidator::$countryFormats

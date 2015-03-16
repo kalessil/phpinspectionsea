@@ -25,8 +25,11 @@ in_array used in comparison context
 ctype_alnum|ctype_alpha vs regular expressions test
     - challenge is polymorphic pattern recognition
 
-current(array_keys(...)) => key(...)
-    - rare case, not sure if it worth implementing it
+current(array_keys(...))
+    => key(), rare case
+
+in_array($id, array_keys(...)
+    => array_key_exists(), rare case
 
 $cookies[count($cookies) - 1]
     - replacement is 'end(...)', but it changes internal pointer in array, so can introduce side-effects in loops

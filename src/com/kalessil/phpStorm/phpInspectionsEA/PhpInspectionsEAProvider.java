@@ -11,13 +11,6 @@ NotOptimalIfConditionsInspection (increment to 1.2.0):
     dedicate all comparisons to separate inspection, specialized in logical bugs.
     e.g. null/instanceof combination.
 
-in_array miss-use
-    if(in_array($whatToSearchFor, array(<one item>)[, boolean])) {
-        => $whatToSearchFor ==[=] <one item>>;
-        => %s% for operator !==, ==, !=, ==
-    in_array($id, array_keys(...)
-        => array_key_exists(), rare case
-
 ===POOL===
 
 ctype_alnum|ctype_alpha vs regular expressions test

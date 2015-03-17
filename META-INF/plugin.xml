@@ -114,6 +114,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="CascadeStringReplacementInspection"            displayName="Performance: cascade str_replace(...) calls"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.CascadeStringReplacementInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="InArrayMissUseInspection"                      displayName="Performance: in_array(...) miss-use"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.InArrayMissUseInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="IsEmptyFunctionUsageInspection"                displayName="Type compatibility: 'empty(...)' usage"

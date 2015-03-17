@@ -11,25 +11,20 @@ NotOptimalIfConditionsInspection (increment to 1.2.0):
     dedicate all comparisons to separate inspection, specialized in logical bugs.
     e.g. null/instanceof combination.
 
-Private/protected members with hardcoded non-empty array shall be static
-    - analyse values only: strings/constants
-    - e.g. Symfony/Component/Validator/Constraints/IbanValidator::$countryFormats
-
-===POOL===
-
-in_array used in comparison context
+in_array miss-use
     if(in_array($whatToSearchFor, array(<one item>)[, boolean])) {
         => $whatToSearchFor ==[=] <one item>>;
         => %s% for operator !==, ==, !=, ==
+    in_array($id, array_keys(...)
+        => array_key_exists(), rare case
+
+===POOL===
 
 ctype_alnum|ctype_alpha vs regular expressions test
     - challenge is polymorphic pattern recognition
 
 current(array_keys(...))
     => key(), rare case
-
-in_array($id, array_keys(...)
-    => array_key_exists(), rare case
 
 $cookies[count($cookies) - 1]
     - replacement is 'end(...)', but it changes internal pointer in array, so can introduce side-effects in loops

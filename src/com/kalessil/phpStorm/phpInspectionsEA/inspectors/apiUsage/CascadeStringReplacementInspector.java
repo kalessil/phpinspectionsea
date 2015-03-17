@@ -11,8 +11,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+
 public class CascadeStringReplacementInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "This str_replace(...) call can be merged with previous one";
+    private static final String strProblemCascading    = "This str_replace(...) call can be merged with previous one";
+    private static final String strProblemReplacements = "Can be replaced with the string duplicated in array";
 
     @NotNull
     public String getShortName() {
@@ -31,8 +34,9 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     while (null != previous && !(previous instanceof PhpPsiElement)) {
                         previous = previous.getPrevSibling();
                     }
+                    PsiElement [] params = functionCall.getParameters();
 
-
+                    /** === cascade calls check === */
                     /** previous assignment shall be inspected, probably we can merge this one into it */
                     if (
                         null != previous &&
@@ -40,7 +44,6 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                         null != getStrReplaceReference((AssignmentExpression) previous.getFirstChild())
                     ) {
                         /** ensure linking variable discoverable and call contains all params */
-                        PsiElement [] params = functionCall.getParameters();
                         PsiElement objLinkingVariable = ((AssignmentExpression) previous.getFirstChild()).getVariable();
                         if (
                             objLinkingVariable instanceof Variable
@@ -53,13 +56,37 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                                 !StringUtil.isEmpty(strCallSubject) && !StringUtil.isEmpty(strPreviousVariable) &&
                                 strCallSubject.equals(strPreviousVariable)
                             ) {
-                                holder.registerProblem(functionCall, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                holder.registerProblem(functionCall, strProblemCascading, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                                 return;
                             }
                         }
                     }
 
-                    /** TODO: 2nd parameter can contain array with identical replacement patterns - use it instead of array */
+                    /** === replacements uniqueness check === */
+                    if (params[1] instanceof ArrayCreationExpression) {
+                        HashSet<String> replacements = new HashSet<String>();
+
+                        for (PsiElement oneReplacement : params[1].getChildren()) {
+                            if (oneReplacement instanceof PhpPsiElement) {
+                                PhpPsiElement item = ((PhpPsiElement) oneReplacement).getFirstPsiChild();
+                                /** abort on non-string entries  */
+                                if (!(item instanceof StringLiteralExpression)) {
+                                    return;
+                                }
+
+                                replacements.add(item.getText());
+                            }
+                        }
+
+                        /** count unique replacements */
+                        final int uniqueReplacements = replacements.size();
+                        replacements.clear();
+
+                        if (1 == uniqueReplacements) {
+                            holder.registerProblem(params[1], strProblemReplacements, ProblemHighlightType.WEAK_WARNING);
+                            return;
+                        }
+                    }
                 }
             }
         };

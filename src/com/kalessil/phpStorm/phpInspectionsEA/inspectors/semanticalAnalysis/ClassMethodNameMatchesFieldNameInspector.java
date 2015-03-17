@@ -32,7 +32,7 @@ public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection 
 
                 for (Field objField : objClass.getFields()) {
                     if (objField.getName().equals(strMethodName)) {
-                        holder.registerProblem(method.getNameIdentifier(), strProblemDescription, ProblemHighlightType.ERROR);
+                        holder.registerProblem(method.getNameIdentifier(), strProblemDescription, ProblemHighlightType.WEAK_WARNING);
                         return;
                     }
                 }

@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -20,7 +21,19 @@ public class EmptyClassInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
-                if (null != clazz.getNameIdentifier()) {
+                String strClassFQN = clazz.getFQN();
+                /** skip un-explorable and test classes */
+                if (
+                    StringUtil.isEmpty(strClassFQN) ||
+                    strClassFQN.contains("\\Tests\\") || strClassFQN.contains("\\Test\\") ||
+                    strClassFQN.endsWith("Test") ||
+                    strClassFQN.endsWith("Exception")
+                ) {
+                    return;
+                }
+
+                /* require class with name which can be targeted by warning */
+                if (! clazz.isInterface() && null != clazz.getNameIdentifier()) {
                     final boolean isEmpty = ((clazz.getOwnFields().length + clazz.getOwnMethods().length) == 0);
                     if (isEmpty) {
                         holder.registerProblem( clazz.getNameIdentifier(), strProblemDescription, ProblemHighlightType.WEAK_WARNING);

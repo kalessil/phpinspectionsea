@@ -281,6 +281,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="PropertyCanBeStaticInspection"                   displayName="Architecture: property can be static"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.PropertyCanBeStaticInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="EmptyClassInspection"                            displayName="Architecture: empty classes introduction"
+        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.EmptyClassInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="AliasFunctionsUsageInspection"                   displayName="Compatibility: alias functions usage"

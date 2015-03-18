@@ -34,7 +34,9 @@ public class EmptyClassInspector extends BasePhpInspection {
 
                 /* require class with name which can be targeted by warning */
                 if (! clazz.isInterface() && null != clazz.getNameIdentifier()) {
-                    final boolean isEmpty = ((clazz.getOwnFields().length + clazz.getOwnMethods().length) == 0);
+                    final boolean isEmpty = (0 == (
+                            clazz.getOwnFields().length + clazz.getOwnMethods().length + clazz.getTraitUseRules().size()
+                        ));
                     if (isEmpty) {
                         holder.registerProblem( clazz.getNameIdentifier(), strProblemDescription, ProblemHighlightType.WEAK_WARNING);
                     }

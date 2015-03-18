@@ -162,7 +162,8 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         objParent instanceof ParameterList ||
                         objParent instanceof PhpUseList ||
                         objParent instanceof PhpUnset ||
-                        objParent instanceof PhpEmpty
+                        objParent instanceof PhpEmpty ||
+                        objParent instanceof PhpIsset
                     ) {
                         intCountReadAccesses++;
                         continue;

@@ -13,7 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Declare this parameter with 'array' type";
+    private static final String strProblemDescription = "Parameter $%p% can be declared as 'array $%p%'";
 
     @NotNull
     public String getShortName() {
@@ -35,9 +35,14 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
              * @param callable to inspect
              */
             private void inspectCallable (Function callable) {
+                if (null == callable.getNameIdentifier()) {
+                    return;
+                }
+
                 for (Parameter objParameter : callable.getParameters()) {
                     if (this.canBePrependedWithArrayType(objParameter)) {
-                        holder.registerProblem(objParameter, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                        String strWarning = strProblemDescription.replace("%p%", objParameter.getName());
+                        holder.registerProblem(callable.getNameIdentifier(), strWarning, ProblemHighlightType.WEAK_WARNING);
                     }
                 }
             }

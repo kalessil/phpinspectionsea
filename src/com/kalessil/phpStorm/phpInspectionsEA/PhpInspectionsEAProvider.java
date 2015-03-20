@@ -11,6 +11,10 @@ NotOptimalIfConditionsInspection (increment to 1.2.0):
     dedicate all comparisons to separate inspection, specialized in logical bugs.
     e.g. null/instanceof combination.
 
+$cookies[count($cookies) - 1]
+    - replacement is 'end(...)', but it changes internal pointer in array, so can introduce side-effects in loops
+    - legal in unset context (1 ... n parameters)
+
 ===POOL===
 
 ctype_alnum|ctype_alpha vs regular expressions test
@@ -18,10 +22,6 @@ ctype_alnum|ctype_alpha vs regular expressions test
 
 current(array_keys(...))
     => key(), rare case
-
-$cookies[count($cookies) - 1]
-    - replacement is 'end(...)', but it changes internal pointer in array, so can introduce side-effects in loops
-    - legal in unset context (1 ... n parameters)
 
 AdditionOperationOnArraysInspection:
     - re-implement to check any of binary/mathematical operations has been applied on an array

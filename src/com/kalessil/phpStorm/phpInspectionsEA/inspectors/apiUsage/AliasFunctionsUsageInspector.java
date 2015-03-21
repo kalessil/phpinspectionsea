@@ -26,15 +26,25 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         if (null == mapping) {
             mapping = new HashMap<String, String>();
 
-            mapping.put("is_double",  "is_float");
-            mapping.put("is_integer", "is_int");
-            mapping.put("is_long",    "is_int");
-            mapping.put("is_real",    "is_float");
-            mapping.put("sizeof",     "count");
-            mapping.put("doubleval",  "floatval");
-            mapping.put("fputs",      "fwrite");
-            mapping.put("join",       "implode");
-            mapping.put("key_exists", "array_key_exists");
+            mapping.put("is_double",            "is_float");
+            mapping.put("is_integer",           "is_int");
+            mapping.put("is_long",              "is_int");
+            mapping.put("is_real",              "is_float");
+            mapping.put("sizeof",               "count");
+            mapping.put("doubleval",            "floatval");
+            mapping.put("fputs",                "fwrite");
+            mapping.put("join",                 "implode");
+            mapping.put("key_exists",           "array_key_exists");
+
+            mapping.put("chop",                 "rtrim");
+            mapping.put("close",                "closedir");
+            mapping.put("ini_alter",            "ini_set");
+            mapping.put("is_writeable",         "is_writable");
+            mapping.put("magic_quotes_runtime", "set_magic_quotes_runtime");
+            mapping.put("pos",                  "current");
+            mapping.put("rewind",               "rewinddir");
+            mapping.put("show_source",          "highlight_file");
+            mapping.put("strchr",               "strstr");
         }
 
         return mapping;

@@ -13,8 +13,8 @@ import java.util.HashMap;
 
 public class AliasFunctionsUsageInspector extends BasePhpInspection {
     private static final String strProblemDescription  = "'%a%(...)' is an alias function. Use '%f%(...)' instead";
-    private static final String strProblemOctdec       = "'octdec(...)' can be replaced with 'intval(..., 8)' or 'intval('0...')'";
-    private static final String strProblemHexdec       = "'hexdec(...)' can be replaced with 'intval(..., 16)' or 'intval('0x...')'";
+    private static final String strProblemOctdec       = "'octdec(...)' can be replaced with 'intval(..., 8)'";
+    private static final String strProblemHexdec       = "'hexdec(...)' can be replaced with 'intval(..., 16)'";
 
     @NotNull
     public String getShortName() {

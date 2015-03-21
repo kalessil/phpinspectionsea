@@ -40,6 +40,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             functionsSet = new HashSet<String>();
 
             functionsSet.add("array_key_exists");
+            functionsSet.add("defined");
             functionsSet.add("is_array");
             functionsSet.add("is_string");
             functionsSet.add("is_bool");

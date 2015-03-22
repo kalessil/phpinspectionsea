@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.If;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -36,22 +37,40 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                     BinaryExpression objParent = (BinaryExpression) reference.getParent();
                     if (null != objParent.getOperation()) {
                         IElementType objOperation = objParent.getOperation().getNode().getElementType();
-                        if (objOperation == PhpTokenTypes.opIDENTICAL || objOperation == PhpTokenTypes.opNOT_IDENTICAL) {
-                            if (strFunctionName.equals("array_search")) {
-                                PsiElement objSecondOperand = objParent.getLeftOperand();
-                                if (objSecondOperand == reference) {
-                                    objSecondOperand = objParent.getRightOperand();
-                                }
+                        /** === use-case implicit boolean test === */
+                        if (
+                            (objOperation == PhpTokenTypes.opIDENTICAL || objOperation == PhpTokenTypes.opNOT_IDENTICAL) &&
+                            strFunctionName.equals("array_search")
+                        ) {
+                            PsiElement objSecondOperand = objParent.getLeftOperand();
+                            if (objSecondOperand == reference) {
+                                objSecondOperand = objParent.getRightOperand();
+                            }
 
-                                if (
-                                    objSecondOperand instanceof ConstantReference &&
-                                    ExpressionSemanticUtil.isBoolean((ConstantReference) objSecondOperand)
-                                ) {
-                                    holder.registerProblem(objParent, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                                }
+                            if (
+                                objSecondOperand instanceof ConstantReference &&
+                                ExpressionSemanticUtil.isBoolean((ConstantReference) objSecondOperand)
+                            ) {
+                                holder.registerProblem(objParent, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                return;
                             }
                         }
+
+                        /** === use-case complex NON implicit boolean test === */
+                        if (
+                            (objOperation == PhpTokenTypes.opAND || objOperation == PhpTokenTypes.opOR) &&
+                            strFunctionName.equals("array_search")
+                        ) {
+                            holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            return;
+                        }
                     }
+                }
+
+                /** === use-case single NON implicit boolean test === */
+                if (reference.getParent() instanceof If && strFunctionName.equals("array_search")) {
+                    holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    return;
                 }
             }
         };

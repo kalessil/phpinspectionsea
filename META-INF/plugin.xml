@@ -99,7 +99,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ArraySearchUsedAsInArrayInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="StrStrUsedAsStrPosInspection"                  displayName="Performance: strstr(...)' used as 'strpos(...)'"
+        shortName="StrStrUsedAsStrPosInspection"                  displayName="Performance: 'strstr(...)' used as 'strpos(...)'"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrStrUsedAsStrPosInspector"/>
     <localInspection language="PHP" groupPath="PHP"

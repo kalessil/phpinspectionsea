@@ -122,6 +122,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="InArrayMissUseInspection"                      displayName="Performance: in_array(...) miss-use"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.InArrayMissUseInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="LowPerformanceArrayUniqueUsageInspection"      displayName="Performance: array_unique() low performing usage"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.LowPerformanceArrayUniqueUsageInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="IsEmptyFunctionUsageInspection"                displayName="Type compatibility: 'empty(...)' usage"

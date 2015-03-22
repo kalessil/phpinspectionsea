@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.1.4</version>
+  <version>1.1.5</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -29,17 +29,24 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
     ]]></description>
 
   <change-notes><![CDATA[
-15 Mar 2015: improvements and new inspections<br/>
+23 Mar 2015: bug-fixes, improvements and new inspections<br/>
 <br/>
-    - Class re-implements interface of a superclass: re-worked warning messages;<br/>
-    - Alias functions usage: added warnings for hexdec, octdec in favor of intval;<br/>
-    - '(array) ...' equivalent construction: warning message updated (code behavior change);<br/>
-    - Private constructor semantics: final modifier message updated (breaks BC);<br/>
+    - A parameter can be declared as array: suppression shall be applied to callable itself;<br/>
+    - Parameter/variable is not used: false positive resolved (isset handling);<br/>
+    - Method name matches existing field name: severity lowered to weak warning;<br/>
+    - Not optimal if conditions: 'defined' added to special cases when estimating costs;<br/>
+    - Alias functions usage: hexdec/octdec warning messages updated;<br/>
 <br/>
-    - Long inheritance chain: implemented;<br/>
-    - Cascade str_replace(...) calls: implemented;<br/>
-    - Class overrides a field of superclass: completely re-worked;<br/>
-    - Parameter/variable is not used: implemented local variables checks;<br/>
+    - 'array_search(...)' used as 'in_array(...)': added new patterns;<br/>
+    - Alias functions usage: added all aliases for base syntax;<br/>
+    - Cascade str_replace(...) calls: check for replacements uniqueness;<br/>
+<br/>
+    - Suspicious loop: implemented;<br/>
+    - Empty classes introduction: implemented (deactivated by default);<br/>
+    - Property can be static: implemented;<br/>
+    - in_array(...) miss-use: implemented;<br/>
+    - array_unique() low performing usage: implemented;<br/>
+    - 'strstr(...)' used as 'strpos(...)': implemented;<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -295,7 +302,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.PropertyCanBeStaticInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="EmptyClassInspection"                            displayName="Architecture: empty classes introduction"
-        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+        groupName="Php Inspections (EA Extended)"                   enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.EmptyClassInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"

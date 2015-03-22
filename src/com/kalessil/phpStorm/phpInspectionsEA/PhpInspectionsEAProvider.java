@@ -35,7 +35,7 @@ Empty functions/methods:
 Empty try/catch
     - bad code, like no scream
 
-'For' loops:
+'For' loops, array_walk with closure:
     use foreach instead
 
 Magic numbers:

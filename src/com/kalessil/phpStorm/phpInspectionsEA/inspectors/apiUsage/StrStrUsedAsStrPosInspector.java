@@ -13,12 +13,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
-    private static final String strProblemDescription  = "'in_array(...)' shall be used instead";
+public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
+    private static final String strProblemDescription  = "'false <op> strpos(...)' shall be used instead";
 
     @NotNull
     public String getShortName() {
-        return "ArraySearchUsedAsInArrayInspection";
+        return "StrStrUsedAsStrPosInspection";
     }
 
     @Override
@@ -37,7 +37,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                         /** === use-case implicit boolean test === */
                         if (
                             (objOperation == PhpTokenTypes.opIDENTICAL || objOperation == PhpTokenTypes.opNOT_IDENTICAL) &&
-                            strFunctionName.equals("array_search")
+                            strFunctionName.equals("strstr")
                         ) {
                             PsiElement objSecondOperand = objParent.getLeftOperand();
                             if (objSecondOperand == reference) {
@@ -56,7 +56,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                         /** === use-case complex NON implicit boolean test === */
                         if (
                             (objOperation == PhpTokenTypes.opAND || objOperation == PhpTokenTypes.opOR) &&
-                            strFunctionName.equals("array_search")
+                            strFunctionName.equals("strstr")
                         ) {
                             holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             return;
@@ -69,7 +69,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                     PsiElement objOperation = ((UnaryExpression) reference.getParent()).getOperation();
                     if (null != objOperation) {
                         IElementType typeOperation = objOperation.getNode().getElementType();
-                        if (typeOperation == PhpTokenTypes.opNOT && strFunctionName.equals("array_search")) {
+                        if (typeOperation == PhpTokenTypes.opNOT && strFunctionName.equals("strstr")) {
                             holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             return;
                         }
@@ -77,7 +77,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                 }
 
                 /** === use-case single NON implicit boolean test === */
-                if (reference.getParent() instanceof If && strFunctionName.equals("array_search")) {
+                if (reference.getParent() instanceof If && strFunctionName.equals("strstr")) {
                     holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }

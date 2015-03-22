@@ -42,6 +42,7 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
 
 
                     /* look into array for key-value pairs */
+                    /** TODO: merge into next loop */
                     int intArrayOrStringCount = 0;
                     for (ArrayHashElement objEntry : ((ArrayCreationExpression) field.getDefaultValue()).getHashElements()) {
                         PhpPsiElement item = objEntry.getValue();

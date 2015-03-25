@@ -47,6 +47,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             functionsSet.add("is_int");
             functionsSet.add("is_float");
             functionsSet.add("is_resource");
+            functionsSet.add("is_numeric");
         }
 
         return functionsSet;

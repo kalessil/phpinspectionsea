@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
@@ -25,24 +26,24 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
+                /* check parameters amount and name */
                 final String strFunctionName = reference.getName();
-                if (
-                    reference.getParameters().length != 1 ||
-                    StringUtil.isEmpty(strFunctionName) ||
-                    !strFunctionName.equals(strIsNull)
-                ) {
+                final int parametersCount    = reference.getParameters().length;
+                if (1 != parametersCount || StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals(strIsNull)) {
                     return;
                 }
 
+                /* decide which message to use */
+                String strError = strProblemDescriptionIsNull;
                 if (reference.getParent() instanceof UnaryExpression) {
-                    UnaryExpression objParent = (UnaryExpression) reference.getParent();
-                    if (null != objParent.getOperation() && objParent.getOperation().getNode().getElementType() == PhpTokenTypes.opNOT) {
-                        holder.registerProblem(objParent, strProblemDescriptionNotNull, ProblemHighlightType.WEAK_WARNING);
-                        return;
+                    PsiElement objOperation = ((UnaryExpression) reference.getParent()).getOperation();
+                    if (null != objOperation && PhpTokenTypes.opNOT == objOperation.getNode().getElementType()) {
+                        strError = strProblemDescriptionNotNull;
                     }
                 }
 
-                holder.registerProblem(reference, strProblemDescriptionIsNull, ProblemHighlightType.WEAK_WARNING);
+                /* report the issue */
+                holder.registerProblem(reference, strError, ProblemHighlightType.WEAK_WARNING);
             }
         };
     }

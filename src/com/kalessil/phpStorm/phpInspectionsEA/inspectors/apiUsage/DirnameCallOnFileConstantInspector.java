@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
     private static final String strProblemDescription = "__DIR__ shall be used instead";
-    private static final String strFile = "__FILE__";
+    private static final String strFile    = "__FILE__";
     private static final String strDirName = "dirname";
 
     @NotNull
@@ -27,8 +27,8 @@ public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /** check requirements */
                 final PsiElement[] arrParams = reference.getParameters();
-                final String strFunction = reference.getName();
-                if (arrParams.length != 1 || StringUtil.isEmpty(strFunction)) {
+                final String strFunction     = reference.getName();
+                if (1 != arrParams.length || StringUtil.isEmpty(strFunction)) {
                     return;
                 }
                 PsiElement objFirstParameter = arrParams[0];

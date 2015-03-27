@@ -34,7 +34,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     while (null != previous && !(previous instanceof PhpPsiElement)) {
                         previous = previous.getPrevSibling();
                     }
-                    PsiElement [] params = functionCall.getParameters();
+                    PsiElement[] params = functionCall.getParameters();
 
                     /** === cascade calls check === */
                     /** previous assignment shall be inspected, probably we can merge this one into it */
@@ -45,10 +45,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     ) {
                         /** ensure linking variable discoverable and call contains all params */
                         PsiElement objLinkingVariable = ((AssignmentExpression) previous.getFirstChild()).getVariable();
-                        if (
-                            objLinkingVariable instanceof Variable
-                            && params.length == 3 && params[2] instanceof Variable
-                        ) {
+                        if (objLinkingVariable instanceof Variable && 3 == params.length && params[2] instanceof Variable) {
                             /** extract variable names from link points */
                             String strPreviousVariable = ((Variable) objLinkingVariable).getName();
                             String strCallSubject      = ((Variable) params[2]).getName();
@@ -63,7 +60,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     }
 
                     /** === replacements uniqueness check === */
-                    if (params[1] instanceof ArrayCreationExpression) {
+                    if (3 == params.length && params[1] instanceof ArrayCreationExpression) {
                         HashSet<String> replacements = new HashSet<String>();
 
                         for (PsiElement oneReplacement : params[1].getChildren()) {

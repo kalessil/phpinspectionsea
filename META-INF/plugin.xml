@@ -152,7 +152,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayTypeOfParameterByDefaultValueInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="ForeachSourceInspection"                       displayName="Type compatibility: foreach source to iterate over"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ForeachSourceInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"

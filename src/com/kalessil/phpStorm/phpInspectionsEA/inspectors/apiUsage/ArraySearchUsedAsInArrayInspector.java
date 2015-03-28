@@ -32,7 +32,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
 
                 if (reference.getParent() instanceof BinaryExpression) {
                     BinaryExpression objParent = (BinaryExpression) reference.getParent();
-                    if (null != objParent.getOperation()) {
+                    if (null != objParent.getOperation() && null != objParent.getOperation().getNode()) {
                         IElementType objOperation = objParent.getOperation().getNode().getElementType();
                         /** === use-case implicit boolean test === */
                         if (

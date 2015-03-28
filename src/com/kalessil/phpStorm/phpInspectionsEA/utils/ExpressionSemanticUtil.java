@@ -174,7 +174,8 @@ public class ExpressionSemanticUtil {
         //noinspection ConstantConditions
         while (
                 objExpressionToExpand instanceof BinaryExpression &&
-                ((BinaryExpression) objExpressionToExpand).getOperation() != null &&
+                null != ((BinaryExpression) objExpressionToExpand).getOperation() &&
+                null != ((BinaryExpression) objExpressionToExpand).getOperation().getNode() &&
                 ((BinaryExpression) objExpressionToExpand).getOperation().getNode().getElementType() == operationType
         ) {
             objItemToAdd = ExpressionSemanticUtil.getExpressionTroughParenthesis(((BinaryExpression) objExpressionToExpand).getRightOperand());

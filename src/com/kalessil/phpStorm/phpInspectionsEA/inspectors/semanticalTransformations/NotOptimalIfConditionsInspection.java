@@ -127,6 +127,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         BinaryExpression objInstanceOfExpression = (BinaryExpression) objExpression;
                         if (
                             null != objInstanceOfExpression.getOperation() &&
+                            null != objInstanceOfExpression.getOperation().getNode() &&
                             objInstanceOfExpression.getOperation().getNode().getElementType() == PhpTokenTypes.kwINSTANCEOF
                         ) {
                             objTestSubject = objInstanceOfExpression.getLeftOperand();
@@ -143,6 +144,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         BinaryExpression objBinaryExpression = (BinaryExpression) objExpression;
                         if (
                             null != objBinaryExpression.getOperation() &&
+                            null != objBinaryExpression.getOperation().getNode() &&
                             null != objBinaryExpression.getLeftOperand() &&
                             null != objBinaryExpression.getRightOperand()
 

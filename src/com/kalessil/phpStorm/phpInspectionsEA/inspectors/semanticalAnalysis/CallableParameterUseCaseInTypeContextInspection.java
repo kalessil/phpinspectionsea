@@ -98,7 +98,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 UnaryExpression objCallWrapper = (UnaryExpression) objFunctionCall.getParent();
                                 isReversedCheck = (
                                     null != objCallWrapper.getOperation() &&
-                                    objCallWrapper.getOperation().getNode().getElementType() == PhpTokenTypes.opNOT
+                                    null != objCallWrapper.getOperation().getNode() &&
+                                    PhpTokenTypes.opNOT == objCallWrapper.getOperation().getNode().getElementType()
                                 );
                             }
 

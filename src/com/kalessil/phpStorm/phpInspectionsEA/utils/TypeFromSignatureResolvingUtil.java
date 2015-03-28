@@ -196,7 +196,7 @@ public class TypeFromSignatureResolvingUtil {
                 String strMethodName = objMethod.getName();
 
                 /** match first chars and then complete names */
-                if (strMethodName.charAt(0) == charSlotFirst && strMethodName.equals(strSlot)) {
+                if (!StringUtil.isEmpty(strMethodName) && strMethodName.charAt(0) == charSlotFirst && strMethodName.equals(strSlot)) {
                     strTypeExtracted = objMethod.getType().toString();
                     Collections.addAll(resolvedTypesSet, strTypeExtracted.split("\\|"));
 
@@ -212,7 +212,7 @@ public class TypeFromSignatureResolvingUtil {
                 String strFieldName = objField.getName();
 
                 /** match first chars and then complete names */
-                if (strFieldName.charAt(0) == charSlotFirst && strFieldName.equals(strSlot)) {
+                if (!StringUtil.isEmpty(strFieldName) && strFieldName.charAt(0) == charSlotFirst && strFieldName.equals(strSlot)) {
                     strTypeExtracted = objField.getType().toString();
                     Collections.addAll(resolvedTypesSet, strTypeExtracted.split("\\|"));
 

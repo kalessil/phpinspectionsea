@@ -7,6 +7,12 @@ import com.intellij.codeInspection.InspectionToolProvider;
 
 ===TODO===:
 
+StrlenInEmptyStringCheckContextInspection: some patterns are not recognized
+    if (strlen(...))        - if
+    if (strlen(...) || ...) - binary expression
+    !strlen(...)            - unary expression
+
+
 NotOptimalIfConditionsInspection (increment to 1.2.0):
     dedicate all comparisons to separate inspection, specialized in logical bugs.
     e.g. null/instanceof combination.

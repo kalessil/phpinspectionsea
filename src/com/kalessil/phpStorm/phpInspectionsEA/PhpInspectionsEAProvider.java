@@ -13,6 +13,18 @@ NotOptimalIfConditionsInspection (increment to 1.2.0):
 
 ===POOL===
 
+Regex semantics lookup
+    [\x]          => \x
+    [0-9]         => \d
+    [seg][seq]... => [seq]{N}
+    [seg][seq]+   => [seq]{2,}
+    [seg][seq]*   => [seq]+
+    [seg][seq]?   => [seq]{1,2}
+    [:class:]     => \x
+    /^text/       => strpos === 0
+    /text/        => strpos !== false
+
+
 $cookies[count($cookies) - 1]
     - replacement is 'end(...)', but it changes internal pointer in array, so can introduce side-effects in loops
     - legal in unset context (1 ... n parameters)

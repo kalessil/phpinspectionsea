@@ -179,7 +179,7 @@ public class TypeFromSignatureResolvingUtil {
 
         /** try resolving an object interface */
         Collection<PhpClass> objClasses = PhpIndexUtil.getObjectInterfaces(strClass, objIndex);
-        if (objClasses.size() == 0) {
+        if (0 == objClasses.size() || StringUtil.isEmpty(strSlot)) {
             resolvedTypesSet.add(Types.strClassNotResolved);
             return resolvedTypesSet;
         }

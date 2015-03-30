@@ -28,6 +28,8 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
+            /* TODO: ExpressionSemanticUtil.isUsedAsLogicalOperand, serve FunctionReference */
+
             public void visitPhpBinaryExpression(BinaryExpression expression)  {
                 PsiElement objRightOperand = expression.getRightOperand();
                 if (

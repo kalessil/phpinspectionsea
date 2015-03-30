@@ -7,7 +7,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.ConstantReference;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -25,59 +27,36 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
+                /* check if it's the target function */
                 final String strFunctionName = reference.getName();
-                if (StringUtil.isEmpty(strFunctionName)) {
+                if (StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("strstr")) {
                     return;
                 }
 
+                /* checks implicit boolean comparison pattern */
                 if (reference.getParent() instanceof BinaryExpression) {
                     BinaryExpression objParent = (BinaryExpression) reference.getParent();
-                    if (null != objParent.getOperation() && null != objParent.getOperation().getNode()) {
-                        IElementType objOperation = objParent.getOperation().getNode().getElementType();
-                        /** === use-case implicit boolean test === */
-                        if (
-                            (objOperation == PhpTokenTypes.opIDENTICAL || objOperation == PhpTokenTypes.opNOT_IDENTICAL) &&
-                            strFunctionName.equals("strstr")
-                        ) {
+                    PsiElement objOperation    = objParent.getOperation();
+                    if (null != objOperation && null != objOperation.getNode()) {
+                        IElementType operationType = objOperation.getNode().getElementType();
+                        if (operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opNOT_IDENTICAL) {
+                            /* get second operand */
                             PsiElement objSecondOperand = objParent.getLeftOperand();
                             if (objSecondOperand == reference) {
                                 objSecondOperand = objParent.getRightOperand();
                             }
 
-                            if (
-                                objSecondOperand instanceof ConstantReference &&
-                                ExpressionSemanticUtil.isBoolean((ConstantReference) objSecondOperand)
-                            ) {
+                            /* verify if operand is a boolean and report an issue */
+                            if (objSecondOperand instanceof ConstantReference && ExpressionSemanticUtil.isBoolean((ConstantReference) objSecondOperand)) {
                                 holder.registerProblem(objParent, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                                 return;
                             }
                         }
-
-                        /** === use-case complex NON implicit boolean test === */
-                        if (
-                            (objOperation == PhpTokenTypes.opAND || objOperation == PhpTokenTypes.opOR) &&
-                            strFunctionName.equals("strstr")
-                        ) {
-                            holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                            return;
-                        }
                     }
                 }
 
-                /** === use-case single implicit boolean test with ! === */
-                if (reference.getParent() instanceof UnaryExpression) {
-                    PsiElement objOperation = ((UnaryExpression) reference.getParent()).getOperation();
-                    if (null != objOperation) {
-                        IElementType typeOperation = objOperation.getNode().getElementType();
-                        if (typeOperation == PhpTokenTypes.opNOT && strFunctionName.equals("strstr")) {
-                            holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                            return;
-                        }
-                    }
-                }
-
-                /** === use-case single NON implicit boolean test === */
-                if (reference.getParent() instanceof If && strFunctionName.equals("strstr")) {
+                /* checks NON-implicit boolean comparison patternS */
+                if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
                     holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }

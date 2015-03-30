@@ -246,5 +246,38 @@ public class ExpressionSemanticUtil {
         return null;
     }
 
+    public static boolean isUsedAsLogicalOperand(@NotNull PsiElement expression) {
+        PsiElement parent = expression.getParent();
+
+        /* NON-implicit logical operand */
+        if (parent instanceof If) {
+            return true;
+        }
+
+        /* implicit logical operand */
+        if (parent instanceof UnaryExpression) {
+            PsiElement objOperation = ((UnaryExpression) parent).getOperation();
+            if (null != objOperation && null != objOperation.getNode()){
+                IElementType operationType = objOperation.getNode().getElementType();
+                if (PhpTokenTypes.opNOT == operationType) {
+                    return true;
+                }
+            }
+        }
+
+        /* NON-implicit logical operation in a group */
+        if (parent instanceof BinaryExpression) {
+            PsiElement objOperation = ((BinaryExpression) parent).getOperation();
+            if (null != objOperation && null != objOperation.getNode()) {
+                IElementType operationType = objOperation.getNode().getElementType();
+                if (PhpTokenTypes.opAND == operationType || PhpTokenTypes.opOR == operationType) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     /** TODO: get BO type */
 }

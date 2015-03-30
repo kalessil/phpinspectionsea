@@ -81,6 +81,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                     holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
+                /* TODO: ExpressionSemanticUtil.isUsedAsLogicalOperand */
             }
         };
     }

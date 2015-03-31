@@ -57,7 +57,8 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                             /* check cases when comparing with 1 */
                             IElementType operationType = objOperation.getNode().getElementType();
                             if (operationType == PhpTokenTypes.opLESS || operationType == PhpTokenTypes.opGREATER_OR_EQUAL) {
-                                isMatchedPattern = strNumber.equals("1");
+                                /* comparison with 1 supported currently in NON-yoda style TODO: yoda style support */
+                                isMatchedPattern = strNumber.equals("1") && objParent.getLeftOperand() == reference;
                                 warningTarget    = objParent;
                             }
 

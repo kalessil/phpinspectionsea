@@ -38,6 +38,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                 }
 
                 boolean isMatchedPattern = false;
+                PsiElement warningTarget = null;
 
                 /* check explicit numbers comparisons */
                 if (reference.getParent() instanceof BinaryExpression) {
@@ -50,23 +51,24 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                             secondOperand = objParent.getRightOperand();
                         }
                         /* second operand shall be a number */
-                        if (!(secondOperand instanceof  PhpExpression) || !(PhpElementTypes.NUMBER == secondOperand.getNode().getElementType())) {
-                            return;
-                        }
-                        String strNumber = secondOperand.getText();
+                        if (secondOperand instanceof  PhpExpression && PhpElementTypes.NUMBER == secondOperand.getNode().getElementType()) {
+                            String strNumber = secondOperand.getText();
 
-                        /* check cases when comparing with 1 */
-                        IElementType operationType = objOperation.getNode().getElementType();
-                        if (operationType == PhpTokenTypes.opLESS || operationType == PhpTokenTypes.opGREATER_OR_EQUAL) {
-                            isMatchedPattern = strNumber.equals("1");
-                        }
+                            /* check cases when comparing with 1 */
+                            IElementType operationType = objOperation.getNode().getElementType();
+                            if (operationType == PhpTokenTypes.opLESS || operationType == PhpTokenTypes.opGREATER_OR_EQUAL) {
+                                isMatchedPattern = strNumber.equals("1");
+                                warningTarget    = objParent;
+                            }
 
-                        /* check cases when comparing with 0 */
-                        if (!isMatchedPattern && (
-                            operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opNOT_IDENTICAL ||
-                            operationType == PhpTokenTypes.opEQUAL || operationType == PhpTokenTypes.opNOT_EQUAL
-                        )) {
-                            isMatchedPattern = strNumber.equals("0");
+                            /* check cases when comparing with 0 */
+                            if (!isMatchedPattern && (
+                                operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opNOT_IDENTICAL ||
+                                operationType == PhpTokenTypes.opEQUAL || operationType == PhpTokenTypes.opNOT_EQUAL
+                            )) {
+                                isMatchedPattern = strNumber.equals("0");
+                                warningTarget    = objParent;
+                            }
                         }
                     }
                 }
@@ -74,12 +76,12 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                 /* checks NON-implicit boolean comparison patternS */
                 if (!isMatchedPattern && ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
                     isMatchedPattern = true;
+                    warningTarget    = reference;
                 }
 
                 /* investigate possible issues */
                 if (isMatchedPattern) {
                     final int argumentsCount       = reference.getParameters().length;
-                    final PsiElement warningTarget = reference.getParent() instanceof BinaryExpression ? reference.getParent() : reference;
 
                     /* first evaluate if any object casting issues presented */
                     if (

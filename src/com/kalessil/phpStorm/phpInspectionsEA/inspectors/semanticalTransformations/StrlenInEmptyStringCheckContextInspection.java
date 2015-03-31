@@ -18,9 +18,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ClassInStringContex
 import org.jetbrains.annotations.NotNull;
 
 public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection {
-    private static final String strProblemDescription = "Can be replaced by comparing with empty string";
-    private static final String strProblemDescriptionObjectUsed = "Can be replaced with '$... == ''' construction";
-    private static final String strProblemDescriptionMissingToStringMethod = "Class %class% must implement __toString()";
+    private static final String strProblemDescription                      = "Can be replaced by comparing with empty string";
+    private static final String strProblemDescriptionObjectUsed            = "Can be replaced with ''' == $...' construction";
+    private static final String strProblemDescriptionMissingToStringMethod = "%class% miss __toString() implementation";
 
     @NotNull
     public String getShortName() {

@@ -424,7 +424,12 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 /* additional factor is due to hash-maps internals */
                 if (objExpression instanceof ArrayAccessExpression) {
                     ArrayAccessExpression arrayAccess = (ArrayAccessExpression) objExpression;
-                    int intOwnCosts = getExpressionCost(arrayAccess.getValue()) + getExpressionCost(arrayAccess.getIndex());
+                    ArrayIndex arrayIndex             =  arrayAccess.getIndex();
+
+                    int intOwnCosts = getExpressionCost(arrayAccess.getValue());
+                    if (null != arrayIndex) {
+                        intOwnCosts += getExpressionCost(arrayIndex.getValue());
+                    }
 
                     return (1 + intOwnCosts);
                 }

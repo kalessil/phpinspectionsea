@@ -13,7 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class AlterInForeachInspector  extends BasePhpInspection {
-    private static final String strProblemDescription     = "Can be refactored as '$%c% = ...' if $%v% is defined as reference";
+    private static final String strProblemDescription     = "Can be refactored as '$%c% = ...' if $%v% is defined as reference (ensure that array supplied)";
     private static final String strProblemUnsafeReference = "This variable must be unset just after foreach to prevent possible side-effects";
 
     @NotNull

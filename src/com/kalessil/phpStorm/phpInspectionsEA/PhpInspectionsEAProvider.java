@@ -5,17 +5,6 @@ import com.intellij.codeInspection.InspectionToolProvider;
 /*
 ===Release notes===
 
-AlterInForeachInspection: deactivated by default needs to be complemented with reference mismatch inspection
-ForeachSourceInspector: deactivated to default due to lots of issues with it
-
-NotOptimalIfConditionsInspection: type check functions handling changed, reduced amount of false-positives, some string/null/number will be recovered in 1.2.x
-StrlenInEmptyStringCheckContextInspection: was one of first inspections, rewritten completely
-AliasFunctionsUsageInspector: rewind removed (AliasFunctionsFixer feedback)
-DefaultValueInElseBranchInspector: fixed false positives on array element addition (fixed #35), warning level lowered to weak warning
-TypeUnsafeArraySearchInspection: when 1st parameter is string show different message (fixed #29)
-
-StrStr, ArraySearch: complete
-
 ===TODO===:
 
 NotOptimalIfConditionsInspection:

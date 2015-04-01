@@ -13,7 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class AlterInForeachInspector  extends BasePhpInspection {
-    private static final String strProblemDescription = "Can be refactored as '$%c% = ...' if $%v% is defined as reference";
+    private static final String strProblemDescription     = "Can be refactored as '$%c% = ...' if $%v% is defined as reference";
     private static final String strProblemUnsafeReference = "This variable must be unset just after foreach to prevent possible side-effects";
 
     @NotNull
@@ -26,15 +26,19 @@ public class AlterInForeachInspector  extends BasePhpInspection {
         return new BasePhpElementVisitor() {
 
             public void visitPhpForeach(ForeachStatement foreach) {
-                /** lookup for reference preceding value */
+                /* lookup for reference preceding value */
                 Variable objForeachValue = foreach.getValue();
                 if (
                     null != objForeachValue &&
                     objForeachValue.getPrevSibling().getNode().getElementType() == PhpTokenTypes.opBIT_AND
                 ) {
-                    /** test if it's immediately unset after foreach */
+                    /* test if it's immediately unset after foreach, allow return as next expression */
                     PhpPsiElement nextExpression = foreach.getNextPsiSibling();
-                    if (null == nextExpression || !(nextExpression instanceof PhpUnset)) {
+                    if (
+                        null == nextExpression || (
+                            !(nextExpression instanceof PhpUnset) &&
+                            !(nextExpression instanceof PhpReturn)
+                    )) {
                         holder.registerProblem(objForeachValue, strProblemUnsafeReference, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                 }
@@ -62,7 +66,7 @@ public class AlterInForeachInspector  extends BasePhpInspection {
 
                 PsiElement objParent = assignmentExpression.getParent();
                 while (null != objParent && !(objParent instanceof PhpFile)) {
-                    /** terminate if reached callable */
+                    /* terminate if reached callable */
                     if (objParent instanceof Function) {
                         return;
                     }

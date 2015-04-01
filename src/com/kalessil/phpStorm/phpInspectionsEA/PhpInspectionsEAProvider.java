@@ -7,6 +7,9 @@ import com.intellij.codeInspection.InspectionToolProvider;
 
 ===TODO===:
 
+NotOptimalIfConditionsInspection:
+    null/string/number comparison with variable/property - additional check in costs analysis + own messages
+
 NotOptimalIfConditionsInspection (increment to 1.2.0):
     dedicate all comparisons to separate inspection, specialized in logical bugs.
     e.g. null/instanceof combination.

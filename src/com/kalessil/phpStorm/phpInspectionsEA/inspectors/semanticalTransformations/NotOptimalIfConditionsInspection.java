@@ -418,7 +418,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     return 0;
                 }
 
-                /* additional factor is due to hash-maps internals */
+                /* additional factor is due to hash-maps internals not considered */
                 if (objExpression instanceof ClassConstantReference || objExpression instanceof FieldReference) {
                     return 0;
                 }
@@ -436,7 +436,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     return (1 + intOwnCosts);
                 }
 
-                /* empty counts too much as empty, so it still sensitive overhead */
+                /* empty counts too much as empty, so it still sensitive overhead, but not add any factor */
                 if (objExpression instanceof PhpEmpty) {
                     int intArgumentsCost = 0;
                     for (PsiElement objParameter : ((PhpEmpty) objExpression).getVariables()) {

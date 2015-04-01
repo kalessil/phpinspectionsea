@@ -382,6 +382,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     isPreviousCondCostCanBeBigger = (
                         (objPreviousCond instanceof FunctionReference && functionsSetToAllow.contains(((FunctionReference) objPreviousCond).getName())) ||
                         objPreviousCond instanceof AssignmentExpression
+                        /* ! no isset, empty or array access here */
                     );
 
                     if (!isPreviousCondCostCanBeBigger && intLoopCurrentCost < intPreviousCost) {
@@ -402,39 +403,64 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
              * @param objExpression to estimate for execution cost
              * @return costs
              */
-            private int getExpressionCost(PsiElement objExpression) {
+            private int getExpressionCost(@Nullable PsiElement objExpression) {
                 objExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(objExpression);
 
                 if (
+                    null == objExpression ||
                     objExpression instanceof ConstantReference ||
                     objExpression instanceof StringLiteralExpression ||
                     objExpression instanceof ClassReference ||
-                    objExpression instanceof Variable ||
-                    null == objExpression
+                    objExpression instanceof Variable
                 ) {
                     return 0;
                 }
 
-                if (
-                    objExpression instanceof ClassConstantReference ||
-                    objExpression instanceof FieldReference
-                ) {
+                /* additional factor is due to hash-maps internals */
+                if (objExpression instanceof ClassConstantReference || objExpression instanceof FieldReference) {
                     return 1;
                 }
 
-                if (
-                    objExpression instanceof ArrayAccessExpression ||
-                    objExpression instanceof PhpEmpty ||
-                    objExpression instanceof PhpIsset ||
-                    objExpression instanceof PhpUnset
-                ) {
-                    return 2;
+                /* additional factor is due to hash-maps internals */
+                if (objExpression instanceof ArrayAccessExpression) {
+                    ArrayAccessExpression arrayAccess = (ArrayAccessExpression) objExpression;
+                    int intOwnCosts = getExpressionCost(arrayAccess.getValue()) + getExpressionCost(arrayAccess.getIndex());
+
+                    return (1 + intOwnCosts);
                 }
 
-                if (
-                    objExpression instanceof MethodReference ||
-                    objExpression instanceof FunctionReference
-                ) {
+                /* empty counts too much as empty, so it still sensitive overhead */
+                if (objExpression instanceof PhpEmpty) {
+                    int intArgumentsCost = 0;
+                    for (PsiElement objParameter : ((PhpEmpty) objExpression).getVariables()) {
+                        intArgumentsCost += this.getExpressionCost(objParameter);
+                    }
+
+                    return 2 + intArgumentsCost;
+                }
+
+                /* isset brings no additional costs, often used for aggressive optimization */
+                if (objExpression instanceof PhpIsset) {
+                    int intArgumentsCost = 0;
+                    for (PsiElement objParameter : ((PhpIsset) objExpression).getVariables()) {
+                        intArgumentsCost += this.getExpressionCost(objParameter);
+                    }
+
+                    return intArgumentsCost;
+                }
+
+                /* didn't see anu usages in if, but who knows */
+                if (objExpression instanceof PhpUnset) {
+                    int intArgumentsCost = 0;
+                    for (PsiElement objParameter : ((PhpUnset) objExpression).getArguments()) {
+                        intArgumentsCost += this.getExpressionCost(objParameter);
+                    }
+
+                    return intArgumentsCost;
+                }
+
+                /* can be tested as FunctionReference, but keep it for further maintainability */
+                if (objExpression instanceof MethodReference || objExpression instanceof FunctionReference) {
                     int intArgumentsCost = 0;
                     for (PsiElement objParameter : ((FunctionReference) objExpression).getParameters()) {
                         intArgumentsCost += this.getExpressionCost(objParameter);

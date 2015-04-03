@@ -1,6 +1,6 @@
 <?php
 
-    function x(&$a) {
+    function parameterUsageInAssignments(&$a) {
         /* reference mismatch, copy stored */
         $y = $a;
         $y []= '1'; //local copy modification
@@ -10,6 +10,16 @@
         $z = &$a;   unset($z);
 
         return $y;
+    }
+
+    function foreachValueReference() {
+        $types = array();
+        foreach ($types as $index => & $type) {
+            /* reference mismatch, copy supplied anyway */
+            $type = in_array('something', $type, true);
+        }
+
+        return $types;
     }
 
     function process(&$parameter) {

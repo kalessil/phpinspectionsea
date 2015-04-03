@@ -16,6 +16,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.jetbrains.php.refactoring.PhpRefactoringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class ReferenceMismatchInspector extends BasePhpInspection {
@@ -38,8 +39,6 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             /**
-             * TODO: do not report int, float, bool, string, object
-             * TODO: foreach, return for reference parameters
              * TODO: assignment (... = & property|variable) will require scoped + only following siblings processing
              */
 
@@ -50,15 +49,6 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
             public void visitPhpFunction(Function function) {
                 this.checkParameters(function.getParameters(), function);
             }
-
-            /* assign reference from function */
-            public void visitPhpMethodReference(MethodReference reference) {
-                this.checkReferenceReturnedByCallable(reference);
-            }
-            public void visitPhpFunctionCall(FunctionReference reference) {
-                this.checkReferenceReturnedByCallable(reference);
-            }
-
             private void checkParameters(Parameter[] arrParameters, PhpScopeHolder objScopeHolder) {
                 PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
 
@@ -69,73 +59,107 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    /* find usage inside scope */
-                    PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, strParameterName, false);
-                    for (PhpAccessVariableInstruction objInstruction : arrUsages) {
-                        PsiElement objExpression = objInstruction.getAnchor().getParent();
+                    inspectScopeForReferenceMissUsages(objEntryPoint, strParameterName);
+                }
+            }
 
-                        /* test if provided as non-reference argument (copy dispatched) */
-                        if (objExpression instanceof ParameterList && objExpression.getParent() instanceof FunctionReference) {
-                            FunctionReference reference = (FunctionReference) objExpression.getParent();
-                            /* not resolved */
-                            PsiElement callable = reference.resolve();
-                            if (!(callable instanceof Function)) {
-                                continue;
-                            }
+            /* assign reference from function */
+            public void visitPhpMethodReference(MethodReference reference) {
+                this.checkReferenceReturnedByCallable(reference);
+            }
+            public void visitPhpFunctionCall(FunctionReference reference) {
+                this.checkReferenceReturnedByCallable(reference);
+            }
 
-                            /* check if call arguments contains our parameter */
-                            int indexInArguments       = -1;
-                            boolean providedAsArgument = false;
-                            for (PsiElement callArgument : reference.getParameters()) {
-                                ++indexInArguments;
-                                if (callArgument instanceof Variable) {
-                                    Variable argument   = (Variable) callArgument;
-                                    String argumentName = argument.getName();
-                                    if (!StringUtil.isEmpty(argumentName) && argumentName.equals(strParameterName)) {
-                                        providedAsArgument = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            /* if not found, keep processing usages */
-                            if (!providedAsArgument) {
-                                continue;
-                            }
 
-                            /* now check what is declared in resolved callable */
-                            Parameter[] usageCallableParameters = ((Function) callable).getParameters();
-                            if (usageCallableParameters.length >= indexInArguments + 1) {
-                                Parameter parameterForAnalysis = usageCallableParameters[indexInArguments];
-                                if (!parameterForAnalysis.isPassByRef()) {
-                                    /* additionally try filtering types for reducing false-positives on scalars */
-                                    PhpType argumentType = PhpRefactoringUtil.getCompletedType(parameterForAnalysis, holder.getProject());
-                                    if (!PhpType.isSubType(argumentType, legalizedTypesForMismatchingSet)) {
-                                        holder.registerProblem(reference.getParameters()[indexInArguments], "Reference mismatch, copy will be dispatched into function", ProblemHighlightType.WEAK_WARNING);
-                                        continue;
-                                    }
+            /* aggressive foreach optimization when value is reference */
+            public void visitPhpForeach(ForeachStatement foreach) {
+                /* lookup for reference preceding value */
+                Variable objForeachValue = foreach.getValue();
+                if (null != objForeachValue) {
+                    String strVariable     = objForeachValue.getName();
+                    PsiElement prevElement = objForeachValue.getPrevSibling();
+                    if (prevElement instanceof PsiWhiteSpace) {
+                        prevElement = prevElement.getPrevSibling();
+                    }
+                    if (!StringUtil.isEmpty(strVariable) && null != prevElement && PhpTokenTypes.opBIT_AND == prevElement.getNode().getElementType()) {
+                        /* the case, scan for miss-usages assuming value is unique */
+                        Function scope = ExpressionSemanticUtil.getScope(foreach);
+                        if (null != scope) {
+                            inspectScopeForReferenceMissUsages(scope.getControlFlow().getEntryPoint(), strVariable);
+                        }
+                    }
+                }
+            }
+
+
+            private void inspectScopeForReferenceMissUsages(PhpEntryPointInstruction objEntryPoint, String strParameterName) {
+                /* find usage inside scope */
+                PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, strParameterName, false);
+                for (PhpAccessVariableInstruction objInstruction : arrUsages) {
+                    PsiElement objExpression = objInstruction.getAnchor().getParent();
+
+                    /* test if provided as non-reference argument (copy dispatched) */
+                    if (objExpression instanceof ParameterList && objExpression.getParent() instanceof FunctionReference) {
+                        FunctionReference reference = (FunctionReference) objExpression.getParent();
+                        /* not resolved */
+                        PsiElement callable = reference.resolve();
+                        if (!(callable instanceof Function)) {
+                            continue;
+                        }
+
+                        /* check if call arguments contains our parameter */
+                        int indexInArguments       = -1;
+                        boolean providedAsArgument = false;
+                        for (PsiElement callArgument : reference.getParameters()) {
+                            ++indexInArguments;
+                            if (callArgument instanceof Variable) {
+                                Variable argument   = (Variable) callArgument;
+                                String argumentName = argument.getName();
+                                if (!StringUtil.isEmpty(argumentName) && argumentName.equals(strParameterName)) {
+                                    providedAsArgument = true;
+                                    break;
                                 }
                             }
                         }
+                        /* if not found, keep processing usages */
+                        if (!providedAsArgument) {
+                            continue;
+                        }
 
-                        /* test is assigned to a variable without stating it's reference (copy stored) */
-                        if (objExpression instanceof AssignmentExpression) {
-                            /* assignment structure verify */
-                            AssignmentExpression assignment = (AssignmentExpression) objExpression;
-                            if (assignment.getValue() instanceof Variable) {
-                                Variable variable = (Variable) assignment.getValue();
-                                String strVariable = variable.getName();
-                                /* references parameter */
-                                if (!StringUtil.isEmpty(strVariable) && strVariable.equals(strParameterName)) {
-                                    /* check if assignments states reference usage */
-                                    PsiElement operation = variable.getPrevSibling();
-                                    if (operation instanceof PsiWhiteSpace) {
-                                        operation = operation.getPrevSibling();
-                                    }
+                            /* now check what is declared in resolved callable */
+                        Parameter[] usageCallableParameters = ((Function) callable).getParameters();
+                        if (usageCallableParameters.length >= indexInArguments + 1) {
+                            Parameter parameterForAnalysis = usageCallableParameters[indexInArguments];
+                            if (!parameterForAnalysis.isPassByRef()) {
+                                    /* additionally try filtering types for reducing false-positives on scalars */
+                                PhpType argumentType = PhpRefactoringUtil.getCompletedType(parameterForAnalysis, holder.getProject());
+                                if (!PhpType.isSubType(argumentType, legalizedTypesForMismatchingSet)) {
+                                    holder.registerProblem(reference.getParameters()[indexInArguments], "Reference mismatch, copy will be dispatched into function", ProblemHighlightType.WEAK_WARNING);
+                                    continue;
+                                }
+                            }
+                        }
+                    }
 
-                                    /* report if not */
-                                    if (null != operation && !operation.getText().replaceAll("\\s+","").equals("=&")) {
-                                        holder.registerProblem(objExpression, "Reference mismatch, copy will be stored (for non-objects)", ProblemHighlightType.WEAK_WARNING);
-                                    }
+                    /* test is assigned to a variable without stating it's reference (copy stored) */
+                    if (objExpression instanceof AssignmentExpression) {
+                        /* assignment structure verify */
+                        AssignmentExpression assignment = (AssignmentExpression) objExpression;
+                        if (assignment.getValue() instanceof Variable) {
+                            Variable variable = (Variable) assignment.getValue();
+                            String strVariable = variable.getName();
+                            /* references parameter */
+                            if (!StringUtil.isEmpty(strVariable) && strVariable.equals(strParameterName)) {
+                                /* check if assignments states reference usage */
+                                PsiElement operation = variable.getPrevSibling();
+                                if (operation instanceof PsiWhiteSpace) {
+                                    operation = operation.getPrevSibling();
+                                }
+
+                                /* report if not */
+                                if (null != operation && !operation.getText().replaceAll("\\s+","").equals("=&")) {
+                                    holder.registerProblem(objExpression, "Reference mismatch, copy will be stored (for non-objects)", ProblemHighlightType.WEAK_WARNING);
                                 }
                             }
                         }

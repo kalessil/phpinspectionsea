@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -28,18 +29,21 @@ public class AlterInForeachInspector  extends BasePhpInspection {
             public void visitPhpForeach(ForeachStatement foreach) {
                 /* lookup for reference preceding value */
                 Variable objForeachValue = foreach.getValue();
-                if (
-                    null != objForeachValue &&
-                    objForeachValue.getPrevSibling().getNode().getElementType() == PhpTokenTypes.opBIT_AND
-                ) {
+                if (null != objForeachValue) {
+                    PsiElement prevElement = objForeachValue.getPrevSibling();
+                    if (prevElement instanceof PsiWhiteSpace) {
+                        prevElement = prevElement.getPrevSibling();
+                    }
+                    if (null != prevElement && PhpTokenTypes.opBIT_AND == prevElement.getNode().getElementType()) {
                     /* test if it's immediately unset after foreach, allow return as next expression */
-                    PhpPsiElement nextExpression = foreach.getNextPsiSibling();
-                    if (
-                        null == nextExpression || (
-                            !(nextExpression instanceof PhpUnset) &&
-                            !(nextExpression instanceof PhpReturn)
-                    )) {
-                        holder.registerProblem(objForeachValue, strProblemUnsafeReference, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        PhpPsiElement nextExpression = foreach.getNextPsiSibling();
+                        if (
+                            null == nextExpression || (
+                                !(nextExpression instanceof PhpUnset) &&
+                                !(nextExpression instanceof PhpReturn)
+                        )) {
+                            holder.registerProblem(objForeachValue, strProblemUnsafeReference, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        }
                     }
                 }
             }

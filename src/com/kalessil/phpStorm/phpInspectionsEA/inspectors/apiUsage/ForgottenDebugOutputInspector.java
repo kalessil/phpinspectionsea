@@ -26,7 +26,8 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
 
             functionsSet.add("print_r");
             functionsSet.add("var_export");
-            functionsSet.add("var_dump" );
+            functionsSet.add("var_dump");
+            functionsSet.add("debug_zval_dump");
         }
 
         return functionsSet;

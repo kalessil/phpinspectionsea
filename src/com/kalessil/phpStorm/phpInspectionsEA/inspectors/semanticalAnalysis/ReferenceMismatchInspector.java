@@ -39,6 +39,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             /**
+             * TODO: checkReferenceReturnedByCallable - ternary operator, argument usages ?
              * TODO: assignment (... = & property|variable) will require scoped + only following siblings processing
              */
 

@@ -6,8 +6,11 @@
         $y []= '1'; //local copy modification
         $a []= '2'; //origin modification
 
+        $z = &$a;
         /* legal */
-        $z = &$a;   unset($z);
+        array_push($z, 'value');
+        /* reference mismatch */
+        $z = in_array('value', $z, true);
 
         return $y;
     }

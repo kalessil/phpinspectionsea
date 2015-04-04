@@ -40,7 +40,6 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             /**
              * TODO: checkReferenceReturnedByCallable - ternary operator, argument usages ?
-             * TODO: assignment (... = & property|variable) will require scoped + only following siblings processing
              */
 
             /* parameters by reference */
@@ -61,6 +60,26 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                     }
 
                     inspectScopeForReferenceMissUsages(objEntryPoint, strParameterName);
+                }
+            }
+
+            /* = & variable/property patterns */
+            public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
+                PsiElement value    = assignmentExpression.getValue();
+                PsiElement variable = assignmentExpression.getVariable();
+                if (variable instanceof Variable && (value instanceof Variable || value instanceof FieldReference)) {
+                    String strVariable   = ((Variable) variable).getName();
+                    PsiElement operation = value.getPrevSibling();
+                    if (operation instanceof PsiWhiteSpace) {
+                        operation = operation.getPrevSibling();
+                    }
+                    if (!StringUtil.isEmpty(strVariable) && null != operation && operation.getText().replaceAll("\\s+","").equals("=&")) {
+                        /* the case, scan for miss-usages assuming variable is unique */
+                        Function scope = ExpressionSemanticUtil.getScope(assignmentExpression);
+                        if (null != scope) {
+                            inspectScopeForReferenceMissUsages(scope.getControlFlow().getEntryPoint(), strVariable);
+                        }
+                    }
                 }
             }
 

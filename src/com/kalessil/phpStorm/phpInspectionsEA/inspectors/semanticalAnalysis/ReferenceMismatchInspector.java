@@ -27,6 +27,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
         legalizedTypesForMismatchingSet.add(PhpType.FLOAT);
         legalizedTypesForMismatchingSet.add(PhpType.INT);
         legalizedTypesForMismatchingSet.add(PhpType.BOOLEAN);
+        legalizedTypesForMismatchingSet.add(PhpType.NULL);
         legalizedTypesForMismatchingSet.add(PhpType._OBJECT);
         legalizedTypesForMismatchingSet.add(new PhpType().add("\\Traversable"));
     }

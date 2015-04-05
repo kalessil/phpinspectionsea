@@ -27,7 +27,9 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
         legalizedTypesForMismatchingSet.add(PhpType.FLOAT);
         legalizedTypesForMismatchingSet.add(PhpType.INT);
         legalizedTypesForMismatchingSet.add(PhpType.BOOLEAN);
+        legalizedTypesForMismatchingSet.add(PhpType.NULL);
         legalizedTypesForMismatchingSet.add(PhpType._OBJECT);
+        legalizedTypesForMismatchingSet.add(new PhpType().add("\\Traversable"));
     }
 
     @NotNull
@@ -39,7 +41,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             /**
-             * TODO: assignment (... = & property|variable) will require scoped + only following siblings processing
+             * TODO: checkReferenceReturnedByCallable - ternary operator, argument usages ?
              */
 
             /* parameters by reference */
@@ -60,6 +62,31 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                     }
 
                     inspectScopeForReferenceMissUsages(objEntryPoint, strParameterName);
+                }
+            }
+
+            /* = & variable/property patterns */
+            public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
+                PsiElement value    = assignmentExpression.getValue();
+                PsiElement variable = assignmentExpression.getVariable();
+                if (
+                    variable instanceof Variable && (
+                        value instanceof Variable ||
+                        value instanceof FieldReference ||
+                        value instanceof FunctionReference
+                )) {
+                    String strVariable   = ((Variable) variable).getName();
+                    PsiElement operation = value.getPrevSibling();
+                    if (operation instanceof PsiWhiteSpace) {
+                        operation = operation.getPrevSibling();
+                    }
+                    if (!StringUtil.isEmpty(strVariable) && null != operation && operation.getText().replaceAll("\\s+","").equals("=&")) {
+                        /* the case, scan for miss-usages assuming variable is unique */
+                        Function scope = ExpressionSemanticUtil.getScope(assignmentExpression);
+                        if (null != scope) {
+                            inspectScopeForReferenceMissUsages(scope.getControlFlow().getEntryPoint(), strVariable);
+                        }
+                    }
                 }
             }
 

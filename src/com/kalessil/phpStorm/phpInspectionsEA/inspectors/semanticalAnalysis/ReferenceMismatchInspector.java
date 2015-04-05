@@ -69,7 +69,12 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
                 PsiElement value    = assignmentExpression.getValue();
                 PsiElement variable = assignmentExpression.getVariable();
-                if (variable instanceof Variable && (value instanceof Variable || value instanceof FieldReference)) {
+                if (
+                    variable instanceof Variable && (
+                        value instanceof Variable ||
+                        value instanceof FieldReference ||
+                        value instanceof FunctionReference
+                )) {
                     String strVariable   = ((Variable) variable).getName();
                     PsiElement operation = value.getPrevSibling();
                     if (operation instanceof PsiWhiteSpace) {

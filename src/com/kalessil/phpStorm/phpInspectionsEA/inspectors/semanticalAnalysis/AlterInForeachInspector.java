@@ -48,7 +48,7 @@ public class AlterInForeachInspector  extends BasePhpInspection {
                     }
                 }
 
-                /* lookup for reference preceding value */
+                /* lookup for reference preceding key */
                 Variable objForeachKey = foreach.getKey();
                 if (null != objForeachKey) {
                     PsiElement prevElement = objForeachKey.getPrevSibling();

@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class AlterInForeachInspector  extends BasePhpInspection {
     private static final String strProblemDescription     = "Can be refactored as '$%c% = ...' if $%v% is defined as reference (ensure that array supplied)";
     private static final String strProblemUnsafeReference = "This variable must be unset just after foreach to prevent possible side-effects";
+    private static final String strProblemKeyReference    = "Provokes PHP Fatal error (Key element cannot be a reference)";
 
     @NotNull
     public String getShortName() {
@@ -44,6 +45,18 @@ public class AlterInForeachInspector  extends BasePhpInspection {
                         )) {
                             holder.registerProblem(objForeachValue, strProblemUnsafeReference, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         }
+                    }
+                }
+
+                /* lookup for reference preceding value */
+                Variable objForeachKey = foreach.getKey();
+                if (null != objForeachKey) {
+                    PsiElement prevElement = objForeachKey.getPrevSibling();
+                    if (prevElement instanceof PsiWhiteSpace) {
+                        prevElement = prevElement.getPrevSibling();
+                    }
+                    if (null != prevElement && PhpTokenTypes.opBIT_AND == prevElement.getNode().getElementType()) {
+                        holder.registerProblem(prevElement, strProblemKeyReference, ProblemHighlightType.ERROR);
                     }
                 }
             }

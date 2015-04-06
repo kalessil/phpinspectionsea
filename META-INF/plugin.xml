@@ -106,7 +106,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.OpAssignShortSyntaxInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="AlterInForeachInspection"                      displayName="Performance: slow alter in foreach"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="false" level="WARNING"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.AlterInForeachInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="ForeachOnArrayComponentsInspection"            displayName="Performance: array_keys(...), array_values(...) used as foreach array"

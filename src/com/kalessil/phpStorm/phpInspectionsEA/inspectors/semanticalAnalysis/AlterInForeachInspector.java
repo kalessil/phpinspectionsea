@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
@@ -17,6 +18,7 @@ public class AlterInForeachInspector  extends BasePhpInspection {
     private static final String strProblemDescription     = "Can be refactored as '$%c% = ...' if $%v% is defined as reference (ensure that array supplied)";
     private static final String strProblemUnsafeReference = "This variable must be unset just after foreach to prevent possible side-effects";
     private static final String strProblemKeyReference    = "Provokes PHP Fatal error (Key element cannot be a reference)";
+    private static final String strProblemAmbiguousUnset  = "This unset is not really needed as value not a reference";
 
     @NotNull
     public String getShortName() {
@@ -35,15 +37,33 @@ public class AlterInForeachInspector  extends BasePhpInspection {
                     if (prevElement instanceof PsiWhiteSpace) {
                         prevElement = prevElement.getPrevSibling();
                     }
-                    if (null != prevElement && PhpTokenTypes.opBIT_AND == prevElement.getNode().getElementType()) {
-                    /* test if it's immediately unset after foreach, allow return as next expression */
+                    if (null != prevElement) {
                         PhpPsiElement nextExpression = foreach.getNextPsiSibling();
-                        if (
-                            null == nextExpression || (
-                                !(nextExpression instanceof PhpUnset) &&
-                                !(nextExpression instanceof PhpReturn)
-                        )) {
-                            holder.registerProblem(objForeachValue, strProblemUnsafeReference, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+
+                        if (PhpTokenTypes.opBIT_AND == prevElement.getNode().getElementType()) {
+                            /* test if it's immediately unset after foreach, allow return as next expression */
+                            if (
+                                null == nextExpression || (
+                                    !(nextExpression instanceof PhpUnset) &&
+                                    !(nextExpression instanceof PhpReturn)
+                            )) {
+                                holder.registerProblem(objForeachValue, strProblemUnsafeReference, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            }
+                        } else {
+                            /* check if un-sets non-reference value - not needed at all, probably forgotten to cleanup */
+                            if (nextExpression instanceof PhpUnset) {
+                                PhpPsiElement[] unsetArguments = ((PhpUnset) nextExpression).getArguments();
+                                if (1 == unsetArguments.length && unsetArguments[0] instanceof Variable) {
+                                    String unsetArgumentName =  unsetArguments[0].getName();
+                                    String foreachValueName   =  objForeachValue.getName();
+                                    if (
+                                        !StringUtil.isEmpty(unsetArgumentName) && !StringUtil.isEmpty(foreachValueName) &&
+                                        unsetArgumentName.equals(foreachValueName)
+                                    ) {
+                                        holder.registerProblem(nextExpression, strProblemAmbiguousUnset, ProblemHighlightType.WEAK_WARNING);
+                                    }
+                                }
+                            }
                         }
                     }
                 }

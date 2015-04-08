@@ -19,9 +19,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+
 public class ReferenceMismatchInspector extends BasePhpInspection {
 
     private static final PhpType legalizedTypesForMismatchingSet = new PhpType();
+    private static final HashSet<String> legalizedMismatchingFunctions = new HashSet<String>();
     static {
         legalizedTypesForMismatchingSet.add(PhpType.STRING);
         legalizedTypesForMismatchingSet.add(PhpType.FLOAT);
@@ -30,6 +33,14 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
         legalizedTypesForMismatchingSet.add(PhpType.NULL);
         legalizedTypesForMismatchingSet.add(PhpType._OBJECT);
         legalizedTypesForMismatchingSet.add(new PhpType().add("\\Traversable"));
+
+        /* ref-unsafe nature */
+        legalizedMismatchingFunctions.add("is_array");
+        legalizedMismatchingFunctions.add("count");
+        legalizedMismatchingFunctions.add("is_object");
+        /* documentation issue */
+        legalizedMismatchingFunctions.add("property_exists");
+        legalizedMismatchingFunctions.add("method_exists");
     }
 
     @NotNull
@@ -129,11 +140,16 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                     /* test if provided as non-reference argument (copy dispatched) */
                     if (objExpression instanceof ParameterList && objExpression.getParent() instanceof FunctionReference) {
                         FunctionReference reference = (FunctionReference) objExpression.getParent();
-                        /* not resolved */
+                        /* not resolved or known re-unsafe function */
                         PsiElement callable = reference.resolve();
                         if (!(callable instanceof Function)) {
                             continue;
                         }
+                        String strCallableName = ((Function) callable).getName();
+                        if (!StringUtil.isEmpty(strCallableName) && legalizedMismatchingFunctions.contains(strCallableName)) {
+                            continue;
+                        }
+
 
                         /* check if call arguments contains our parameter */
                         int indexInArguments       = -1;
@@ -154,12 +170,12 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                             continue;
                         }
 
-                            /* now check what is declared in resolved callable */
+                        /* now check what is declared in resolved callable */
                         Parameter[] usageCallableParameters = ((Function) callable).getParameters();
                         if (usageCallableParameters.length >= indexInArguments + 1) {
                             Parameter parameterForAnalysis = usageCallableParameters[indexInArguments];
                             if (!parameterForAnalysis.isPassByRef()) {
-                                    /* additionally try filtering types for reducing false-positives on scalars */
+                                /* additionally try filtering types for reducing false-positives on scalars */
                                 PhpType argumentType = PhpRefactoringUtil.getCompletedType(parameterForAnalysis, holder.getProject());
                                 if (!PhpType.isSubType(argumentType, legalizedTypesForMismatchingSet)) {
                                     holder.registerProblem(reference.getParameters()[indexInArguments], "Reference mismatch, copy will be dispatched into function", ProblemHighlightType.WEAK_WARNING);

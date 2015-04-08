@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.1.6</version>
+  <version>1.1.7</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -29,15 +29,15 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
     ]]></description>
 
   <change-notes><![CDATA[
-01 Apr 2015: bug-fixes (including reported crashes)<br/>
+11 Apr 2015: improvements and new inspections<br/>
 <br/>
-    - Slow alter in foreach: updated warnings, inspection deactivated by default untill 1.2.x;<br/>
-    - Foreach source to iterate over: deactivated by default, needs improvements;<br/>
-    - Alias functions usage: rewind removed (not an alias);<br/>
-    - Default value is hidden in else branch: solved false positives;<br/>
-    - 'in_array(...)', 'array_search()' type unsafe usage: reporting improved;<br/>
-    - Not optimal if conditions: costs estimation re-worked;<br/>
-    - 'strlen(...)' used to check if string is empty: re-worked;<br/>
+    - 'isset(...)' usage: fixed false-positive with dynamic fields;<br/>
+    - Ambiguous class property initialization: resolved false positives with constants;<br/>
+    - Forgotten debug statements: debug_zval_dump support added;<br/>
+<br/>
+    - Slow alter in foreach: improved and re-activated by default;<br/>
+    - Deprecated constructor style inspection implemented (thank you to Denis Ryabov for a proposal);<br/>
+    - Reference mismatch inspection implemented;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

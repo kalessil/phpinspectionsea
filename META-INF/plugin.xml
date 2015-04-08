@@ -304,6 +304,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="AliasFunctionsUsageInspection"                   displayName="Compatibility: alias functions usage"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.AliasFunctionsUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="DeprecatedConstructorStyleInspection"            displayName="Compatibility: deprecated constructor style"
+        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.DeprecatedConstructorStyleInspector"/>
   </extensions>
 
   <application-components>

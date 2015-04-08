@@ -6,14 +6,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.jetbrains.php.refactoring.PhpRefactoringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Probably 'array_key_exists(...)' construction should be used for better data *structure* control";
-    private static final String strProblemDescriptionUseNullComparison = "Probably it should be 'null !== $...' construction used";
+    private static final String strProblemDescription                     = "Probably 'array_key_exists(...)' construction should be used for better data *structure* control";
+    private static final String strProblemDescriptionUseNullComparison    = "Probably it can be 'null === %s%' construction used instead";
+    private static final String strProblemDescriptionUseNotNullComparison = "Probably it can be 'null !== %s%' construction used instead";
     private static final String strProblemDescriptionConcatenationInIndex = "Concatenation is used as an index, should be moved to a variable";
 
     @NotNull
@@ -30,6 +33,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                     issetExpression.getParent() instanceof PhpReturn
                 );
 
+
                 for (PsiElement parameter : issetExpression.getVariables()) {
                     parameter = ExpressionSemanticUtil.getExpressionTroughParenthesis(parameter);
                     if (null == parameter) {
@@ -37,8 +41,26 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                     }
 
                     if (!(parameter instanceof ArrayAccessExpression)) {
-                        /** TODO: differentiate warning text message for 'isset()' and '! isset()' */
-                        holder.registerProblem(parameter, strProblemDescriptionUseNullComparison, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        if (parameter instanceof FieldReference) {
+                            FieldReference issetArgument = (FieldReference) parameter;
+                            /* if field is not resolved, it's probably dynamic and isset have a purpose */
+                            if (null == issetArgument.getReference() || null == issetArgument.getReference().resolve()) {
+                                continue;
+                            }
+                        }
+
+                        /* decide which message to use */
+                        String strError = strProblemDescriptionUseNotNullComparison;
+                        if (issetExpression.getParent() instanceof UnaryExpression) {
+                            PsiElement objOperation = ((UnaryExpression) issetExpression.getParent()).getOperation();
+                            if (null != objOperation && PhpTokenTypes.opNOT == objOperation.getNode().getElementType()) {
+                                strError = strProblemDescriptionUseNullComparison;
+                            }
+                        }
+                        /* personalize message for each parameter */
+                        strError = strError.replace("%s%", parameter.getText());
+
+                        holder.registerProblem(parameter, strError, ProblemHighlightType.WEAK_WARNING);
                         continue;
                     }
 

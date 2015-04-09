@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy.*;
@@ -22,54 +23,95 @@ public class PrototypeValidityInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
+                String strMethodName = method.getName();
+                if (StringUtil.isEmpty(strMethodName) || !strMethodName.startsWith("__")) {
+                    return;
+                }
 
-                //__construct:
+                if (strMethodName.equals("__construct")) {
                     CanNotBeStaticStrategy.apply();
                     CanNotReturnTypeStrategy.apply();
 
-                //__destruct, __clone:
+                    return;
+                }
+
+                if (
+                    strMethodName.equals("__destruct") ||
+                    strMethodName.equals("__clone")
+                ) {
                     CanNotBeStaticStrategy.apply();
                     CanNotReturnTypeStrategy.apply();
                     CanNotTakeArgumentsStrategy.apply();
 
-                //__get, __isset, __unset:
+                    return;
+                }
+
+                if (
+                    strMethodName.equals("__get") ||
+                    strMethodName.equals("__isset") ||
+                    strMethodName.equals("__unset")
+                ) {
                     CanNotBeStaticStrategy.apply();
                     MustBePublicStrategy.apply();
                     TakesExactAmountOfArgumentsStrategy.apply(1);
                     CanNotTakeArgumentsByReferenceStrategy.apply();
 
-                //__set, __call:
+                    return;
+                }
+
+                if (
+                    strMethodName.equals("__set") ||
+                    strMethodName.equals("__call")
+                ) {
                     CanNotBeStaticStrategy.apply();
                     MustBePublicStrategy.apply();
                     CanNotTakeArgumentsByReferenceStrategy.apply();
                     TakesExactAmountOfArgumentsStrategy.apply(2);
 
-                //__callStatic:
+                    return;
+                }
+
+                if (strMethodName.equals("__callStatic")) {
                     MustBePublicStrategy.apply();
                     CanNotTakeArgumentsByReferenceStrategy.apply();
                     TakesExactAmountOfArgumentsStrategy.apply(2);
                     MustBeStaticStrategy.apply();
 
-                //__toString:
+                    return;
+                }
+
+                if (strMethodName.equals("__toString")) {
                     CanNotBeStaticStrategy.apply();
                     CanNotTakeArgumentsStrategy.apply();
                     MustBePublicStrategy.apply();
                     MustNotThrowExceptionsStrategy.apply();
                     MustReturnSpecifiedTypeStrategy.apply("string");
 
-                //__debugInfo:
+                    return;
+                }
+
+                if (strMethodName.equals("__debugInfo")) {
                     CanNotBeStaticStrategy.apply();
                     CanNotTakeArgumentsStrategy.apply();
                     MustBePublicStrategy.apply();
                     MustReturnSpecifiedTypeStrategy.apply("array|null");
 
-                //__invoke:
+                    return;
+                }
+
+                if (strMethodName.equals("__invoke")) {
                     CanNotBeStaticStrategy.apply();
                     MustBePublicStrategy.apply();
 
-                //__autoload:
+                    return;
+                }
+
+                if (strMethodName.equals("__autoload")) {
                     TakesExactAmountOfArgumentsStrategy.apply(1);
                     // deprecate - use spl_autoload_register instead
+
+                    return;
+                }
             }
         };
     }

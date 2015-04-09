@@ -27,6 +27,8 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                     return;
                 }
 
+                /* TODO: relocate MissingParentConstructorCallInspector in here as a strategy */
+
                 if (strMethodName.equals("__construct")) {
                     CanNotBeStaticStrategy.apply(method, holder);
                     CanNotReturnTypeStrategy.apply();

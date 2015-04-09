@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods;
 
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
@@ -10,9 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class PrototypeValidityInspector extends BasePhpInspection {
-    /**
-     * static error messages here
-     */
+    static final String strProblemUseSplAutoloading = "Common recommendation is to use spl_autoload_register(...) instead";
 
     @NotNull
     public String getShortName() {
@@ -24,7 +23,7 @@ public class PrototypeValidityInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
                 String strMethodName = method.getName();
-                if (StringUtil.isEmpty(strMethodName) || !strMethodName.startsWith("__")) {
+                if (StringUtil.isEmpty(strMethodName) || !strMethodName.startsWith("__") || null == method.getNameIdentifier()) {
                     return;
                 }
 
@@ -52,7 +51,7 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                     strMethodName.equals("__unset")
                 ) {
                     CanNotBeStaticStrategy.apply(method, holder);
-                    MustBePublicStrategy.apply();
+                    MustBePublicStrategy.apply(method, holder);
                     TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
                     CanNotTakeArgumentsByReferenceStrategy.apply();
 
@@ -64,7 +63,7 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                     strMethodName.equals("__call")
                 ) {
                     CanNotBeStaticStrategy.apply(method, holder);
-                    MustBePublicStrategy.apply();
+                    MustBePublicStrategy.apply(method, holder);
                     CanNotTakeArgumentsByReferenceStrategy.apply();
                     TakesExactAmountOfArgumentsStrategy.apply(2, method, holder);
 
@@ -72,7 +71,7 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                 }
 
                 if (strMethodName.equals("__callStatic")) {
-                    MustBePublicStrategy.apply();
+                    MustBePublicStrategy.apply(method, holder);
                     CanNotTakeArgumentsByReferenceStrategy.apply();
                     TakesExactAmountOfArgumentsStrategy.apply(2, method, holder);
                     MustBeStaticStrategy.apply(method, holder);
@@ -83,7 +82,7 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                 if (strMethodName.equals("__toString")) {
                     CanNotBeStaticStrategy.apply(method, holder);
                     CanNotTakeArgumentsStrategy.apply(method, holder);
-                    MustBePublicStrategy.apply();
+                    MustBePublicStrategy.apply(method, holder);
                     MustNotThrowExceptionsStrategy.apply();
                     MustReturnSpecifiedTypeStrategy.apply("string");
 
@@ -93,7 +92,7 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                 if (strMethodName.equals("__debugInfo")) {
                     CanNotBeStaticStrategy.apply(method, holder);
                     CanNotTakeArgumentsStrategy.apply(method, holder);
-                    MustBePublicStrategy.apply();
+                    MustBePublicStrategy.apply(method, holder);
                     MustReturnSpecifiedTypeStrategy.apply("array|null");
 
                     return;
@@ -101,14 +100,14 @@ public class PrototypeValidityInspector extends BasePhpInspection {
 
                 if (strMethodName.equals("__invoke")) {
                     CanNotBeStaticStrategy.apply(method, holder);
-                    MustBePublicStrategy.apply();
+                    MustBePublicStrategy.apply(method, holder);
 
                     return;
                 }
 
                 if (strMethodName.equals("__autoload")) {
+                    holder.registerProblem(method.getNameIdentifier(), strProblemUseSplAutoloading, ProblemHighlightType.LIKE_DEPRECATED);
                     TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
-                    // deprecate - use spl_autoload_register instead
 
                     return;
                 }

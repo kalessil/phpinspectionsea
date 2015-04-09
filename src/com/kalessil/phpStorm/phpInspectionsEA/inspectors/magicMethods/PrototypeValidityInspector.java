@@ -29,7 +29,7 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                 }
 
                 if (strMethodName.equals("__construct")) {
-                    CanNotBeStaticStrategy.apply();
+                    CanNotBeStaticStrategy.apply(method, holder);
                     CanNotReturnTypeStrategy.apply();
 
                     return;
@@ -39,9 +39,9 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                     strMethodName.equals("__destruct") ||
                     strMethodName.equals("__clone")
                 ) {
-                    CanNotBeStaticStrategy.apply();
+                    CanNotBeStaticStrategy.apply(method, holder);
                     CanNotReturnTypeStrategy.apply();
-                    CanNotTakeArgumentsStrategy.apply();
+                    CanNotTakeArgumentsStrategy.apply(method, holder);
 
                     return;
                 }
@@ -51,7 +51,7 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                     strMethodName.equals("__isset") ||
                     strMethodName.equals("__unset")
                 ) {
-                    CanNotBeStaticStrategy.apply();
+                    CanNotBeStaticStrategy.apply(method, holder);
                     MustBePublicStrategy.apply();
                     TakesExactAmountOfArgumentsStrategy.apply(1);
                     CanNotTakeArgumentsByReferenceStrategy.apply();
@@ -63,7 +63,7 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                     strMethodName.equals("__set") ||
                     strMethodName.equals("__call")
                 ) {
-                    CanNotBeStaticStrategy.apply();
+                    CanNotBeStaticStrategy.apply(method, holder);
                     MustBePublicStrategy.apply();
                     CanNotTakeArgumentsByReferenceStrategy.apply();
                     TakesExactAmountOfArgumentsStrategy.apply(2);
@@ -81,8 +81,8 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                 }
 
                 if (strMethodName.equals("__toString")) {
-                    CanNotBeStaticStrategy.apply();
-                    CanNotTakeArgumentsStrategy.apply();
+                    CanNotBeStaticStrategy.apply(method, holder);
+                    CanNotTakeArgumentsStrategy.apply(method, holder);
                     MustBePublicStrategy.apply();
                     MustNotThrowExceptionsStrategy.apply();
                     MustReturnSpecifiedTypeStrategy.apply("string");
@@ -91,8 +91,8 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                 }
 
                 if (strMethodName.equals("__debugInfo")) {
-                    CanNotBeStaticStrategy.apply();
-                    CanNotTakeArgumentsStrategy.apply();
+                    CanNotBeStaticStrategy.apply(method, holder);
+                    CanNotTakeArgumentsStrategy.apply(method, holder);
                     MustBePublicStrategy.apply();
                     MustReturnSpecifiedTypeStrategy.apply("array|null");
 
@@ -100,7 +100,7 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                 }
 
                 if (strMethodName.equals("__invoke")) {
-                    CanNotBeStaticStrategy.apply();
+                    CanNotBeStaticStrategy.apply(method, holder);
                     MustBePublicStrategy.apply();
 
                     return;

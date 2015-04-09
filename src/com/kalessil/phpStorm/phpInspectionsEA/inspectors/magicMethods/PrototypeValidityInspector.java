@@ -53,7 +53,7 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                 ) {
                     CanNotBeStaticStrategy.apply(method, holder);
                     MustBePublicStrategy.apply();
-                    TakesExactAmountOfArgumentsStrategy.apply(1);
+                    TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
                     CanNotTakeArgumentsByReferenceStrategy.apply();
 
                     return;
@@ -66,7 +66,7 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                     CanNotBeStaticStrategy.apply(method, holder);
                     MustBePublicStrategy.apply();
                     CanNotTakeArgumentsByReferenceStrategy.apply();
-                    TakesExactAmountOfArgumentsStrategy.apply(2);
+                    TakesExactAmountOfArgumentsStrategy.apply(2, method, holder);
 
                     return;
                 }
@@ -74,8 +74,8 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                 if (strMethodName.equals("__callStatic")) {
                     MustBePublicStrategy.apply();
                     CanNotTakeArgumentsByReferenceStrategy.apply();
-                    TakesExactAmountOfArgumentsStrategy.apply(2);
-                    MustBeStaticStrategy.apply();
+                    TakesExactAmountOfArgumentsStrategy.apply(2, method, holder);
+                    MustBeStaticStrategy.apply(method, holder);
 
                     return;
                 }
@@ -107,7 +107,7 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                 }
 
                 if (strMethodName.equals("__autoload")) {
-                    TakesExactAmountOfArgumentsStrategy.apply(1);
+                    TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
                     // deprecate - use spl_autoload_register instead
 
                     return;

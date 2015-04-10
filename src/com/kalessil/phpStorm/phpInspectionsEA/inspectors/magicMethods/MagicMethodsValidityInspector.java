@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
-public class PrototypeValidityInspector extends BasePhpInspection {
+public class MagicMethodsValidityInspector extends BasePhpInspection {
     private static final String strProblemUseSplAutoloading = "Common recommendation is to use spl_autoload_register(...) instead";
 
     private static final PhpType stringType      = new PhpType();
@@ -25,7 +25,7 @@ public class PrototypeValidityInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return "PrototypeValidityInspection";
+        return "MagicMethodsValidityInspection";
     }
 
     @Override

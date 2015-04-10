@@ -39,7 +39,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
     - Slow alter in foreach: improved and re-activated by default;<br/>
     - Deprecated constructor style inspection added (thank you to Denis Ryabov for a proposal);<br/>
     - Reference mismatch inspection added;<br/>
-    - Magic methods prototypes validity inspection added;<br/>
+    - Magic methods validity inspection added;<br/>
     - array_push(...) miss-use inspection added;<br/>
 <br/>
 <hr/>
@@ -195,9 +195,9 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.AdditionOperationOnArraysInspection"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="PrototypeValidityInspecion"        displayName="Probable bugs: magic methods prototypes validity"
+        shortName="MagicMethodsValidityInspection"                displayName="Probable bugs: magic methods validity"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.PrototypeValidityInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.MagicMethodsValidityInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="SuspiciousLoopInspection"                      displayName="Probable bugs: suspicious loop"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"

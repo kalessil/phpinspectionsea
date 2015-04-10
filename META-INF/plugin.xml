@@ -193,9 +193,9 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.AdditionOperationOnArraysInspection"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="MissingParentConstructorCallInspection"        displayName="Probable bugs: missing parent constructor/clone call"
+        shortName="PrototypeValidityInspecion"        displayName="Probable bugs: magic methods prototypes validity"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.MissingParentConstructorCallInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.PrototypeValidityInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="SuspiciousLoopInspection"                      displayName="Probable bugs: suspicious loop"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"

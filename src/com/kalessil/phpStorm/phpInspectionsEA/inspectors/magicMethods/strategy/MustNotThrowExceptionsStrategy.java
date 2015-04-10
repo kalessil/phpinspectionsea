@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.elements.PhpThrow;
 import java.util.Collection;
 
 public class MustNotThrowExceptionsStrategy {
-    static final String strProblemDescription = "%m% must not throw exceptions";
+    private static final String strProblemDescription = "%m% must not throw exceptions";
 
     static public void apply(final Method method, final ProblemsHolder holder) {
         Collection<PhpThrow> throwStatements = PsiTreeUtil.findChildrenOfType(method, PhpThrow.class);

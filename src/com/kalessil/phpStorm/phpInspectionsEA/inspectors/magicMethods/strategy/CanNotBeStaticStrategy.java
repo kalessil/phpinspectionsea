@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.Method;
 
 public class CanNotBeStaticStrategy {
-    static final String strProblemDescription = "%m% cannot be static";
+    private static final String strProblemDescription = "%m% cannot be static";
 
     static public void apply(final Method method, final ProblemsHolder holder) {
         if (method.isStatic() && null != method.getNameIdentifier()) {

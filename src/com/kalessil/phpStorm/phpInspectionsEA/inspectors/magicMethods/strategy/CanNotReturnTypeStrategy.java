@@ -20,7 +20,7 @@ public class CanNotReturnTypeStrategy {
             String strMessage = strProblemDescription.replace("%m%", method.getName());
             for (PhpReturn returnExpression : returnStatements) {
                 PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue(returnExpression);
-                if (null != returnValue) {
+                if (null != returnValue && method == ExpressionSemanticUtil.getScope(returnExpression)) {
                     holder.registerProblem(returnExpression, strMessage, ProblemHighlightType.ERROR);
                 }
             }

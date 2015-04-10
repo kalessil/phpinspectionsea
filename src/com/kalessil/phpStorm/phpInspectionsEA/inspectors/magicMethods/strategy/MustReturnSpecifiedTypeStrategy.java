@@ -30,7 +30,7 @@ public class MustReturnSpecifiedTypeStrategy {
                 PsiElement returnValueExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(returnValue);
                 if (returnValueExpression instanceof PhpTypedElement) {
                     PhpType argumentType = PhpRefactoringUtil.getCompletedType((PhpTypedElement) returnValueExpression, holder.getProject());
-                    if (PhpType.isSubType(argumentType, allowedTypes)) {
+                    if (PhpType.isSubType(argumentType, allowedTypes) || method != ExpressionSemanticUtil.getScope(returnExpression)) {
                         /* safe escape path for legal cases */
                         continue;
                     }

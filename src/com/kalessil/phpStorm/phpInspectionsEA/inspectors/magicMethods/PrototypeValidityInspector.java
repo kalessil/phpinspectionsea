@@ -27,11 +27,10 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* TODO: relocate MissingParentConstructorCallInspector in here as a strategy */
-
                 if (strMethodName.equals("__construct")) {
                     CanNotBeStaticStrategy.apply(method, holder);
-                    CanNotReturnTypeStrategy.apply();
+                    CanNotReturnTypeStrategy.apply(method, holder);
+                    NormallyCallsParentMethodStrategy.apply();
 
                     return;
                 }
@@ -41,8 +40,9 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                     strMethodName.equals("__clone")
                 ) {
                     CanNotBeStaticStrategy.apply(method, holder);
-                    CanNotReturnTypeStrategy.apply();
+                    CanNotReturnTypeStrategy.apply(method, holder);
                     CanNotTakeArgumentsStrategy.apply(method, holder);
+                    NormallyCallsParentMethodStrategy.apply();
 
                     return;
                 }
@@ -85,7 +85,7 @@ public class PrototypeValidityInspector extends BasePhpInspection {
                     CanNotBeStaticStrategy.apply(method, holder);
                     CanNotTakeArgumentsStrategy.apply(method, holder);
                     MustBePublicStrategy.apply(method, holder);
-                    MustNotThrowExceptionsStrategy.apply();
+                    MustNotThrowExceptionsStrategy.apply(method, holder);
                     MustReturnSpecifiedTypeStrategy.apply("string");
 
                     return;

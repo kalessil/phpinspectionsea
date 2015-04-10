@@ -21,17 +21,17 @@ public class NormallyCallsParentMethodStrategy {
         }
 
         /* find parent with protected/public method, if not overrides anything, terminate inspection */
-        PhpClass objParentWithGivenMethod = null;
+        PhpClass parentWithGivenMethod = null;
         for (PhpClass superClass : ownerClass.getSupers()) {
             if (!superClass.isInterface()) {
                 Method objMethod = superClass.findOwnMethodByName(strMethodName);
                 if (null != objMethod && !objMethod.getAccess().isPrivate()) {
-                    objParentWithGivenMethod = superClass;
+                    parentWithGivenMethod = superClass;
                     break;
                 }
             }
         }
-        if (null == objParentWithGivenMethod) {
+        if (null == parentWithGivenMethod) {
             return;
         }
 
@@ -52,7 +52,7 @@ public class NormallyCallsParentMethodStrategy {
         if (!isParentCallFound) {
             String strMessage = strProblemDescription
                 .replace("%m%", method.getName())
-                .replace("%c%", ownerClass.getName());
+                .replace("%c%", parentWithGivenMethod.getName());
             holder.registerProblem(method.getNameIdentifier(), strMessage, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
         }
 

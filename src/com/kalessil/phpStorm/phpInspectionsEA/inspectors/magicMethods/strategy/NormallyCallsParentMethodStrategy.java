@@ -52,7 +52,7 @@ public class NormallyCallsParentMethodStrategy {
         if (!isParentCallFound) {
             String strMessage = strProblemDescription
                 .replace("%m%", method.getName())
-                .replace("%%c", ownerClass.getName());
+                .replace("%c%", ownerClass.getName());
             holder.registerProblem(method.getNameIdentifier(), strMessage, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
         }
 

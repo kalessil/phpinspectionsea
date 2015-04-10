@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.1.7</version>
+  <version>1.2.0</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -31,13 +31,15 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
   <change-notes><![CDATA[
 11 Apr 2015: improvements and new inspections<br/>
 <br/>
-    - 'isset(...)' usage: fixed false-positive with dynamic fields;<br/>
+    - Missing parent constructor/clone call removed (check for MissingParentConstructorCallInspection in suppressions);
     - Ambiguous class property initialization: resolved false positives with constants;<br/>
     - Forgotten debug statements: debug_zval_dump support added;<br/>
+    - 'isset(...)' usage: fixed false-positive with dynamic fields;<br/>
 <br/>
     - Slow alter in foreach: improved and re-activated by default;<br/>
     - Deprecated constructor style inspection added (thank you to Denis Ryabov for a proposal);<br/>
     - Reference mismatch inspection added;<br/>
+    - Magic methods prototypes validity inspection added;<br/>
     - array_push(...) miss-use inspection added;<br/>
 <br/>
 <hr/>

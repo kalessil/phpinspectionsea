@@ -39,7 +39,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
     - Slow alter in foreach: improved and re-activated by default;<br/>
     - Deprecated constructor style inspection added (thanks to Denis Ryabov for a proposal);<br/>
     - Reference mismatch inspection added;<br/>
-    - Magic methods validity inspection added;<br/>
+    - Magic methods validity inspection added (thanks to Denis Ryabov for a proposal);<br/>
     - array_push(...) miss-use inspection added;<br/>
 <br/>
 <hr/>

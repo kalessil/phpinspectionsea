@@ -206,6 +206,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="ReferenceMismatchInspection"                   displayName="Probable bugs: reference mismatch"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ReferenceMismatchInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="ImplicitMagicMethodCallInspection"             displayName="Probable bugs: implicit magic method calls"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.ImplicitMagicMethodCallInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="SenselessTernaryOperatorInspection"            displayName="Confusing constructs: suspicious ternary operator"

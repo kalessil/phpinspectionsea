@@ -6,3 +6,8 @@
         {
         }
     }
+
+    trait test {
+        public function test() {
+        }
+    }

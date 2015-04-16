@@ -24,7 +24,9 @@ public class DeprecatedConstructorStyleInspector extends BasePhpInspection {
             public void visitPhpMethod(Method method) {
                 PhpClass objClass = method.getContainingClass();
                 String strMethodName = method.getName();
-                if (null == objClass || StringUtil.isEmpty(strMethodName) || null == method.getNameIdentifier()) {
+                if (
+                    null == objClass || objClass.isTrait() || objClass.isInterface() ||
+                    StringUtil.isEmpty(strMethodName) || null == method.getNameIdentifier()) {
                     return;
                 }
 

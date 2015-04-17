@@ -6,7 +6,10 @@ import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
+import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -25,6 +28,8 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
     public String getShortName() {
         return "DisconnectedForeachInstructionInspection";
     }
+
+    private static enum ExpressionType { IF, INCREMENT, DECREMENT, CLONE, NEW, REASSIGN, OTHER }
 
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
@@ -75,14 +80,18 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
                             /* verify and report if violation detected */
                             if (!isDependOnModifiedVariables && hasDependencies) {
-                                boolean shallReport = !(oneInstruction instanceof If);
+                                ExpressionType target = getExpressionType(oneInstruction);
                                 /**
-                                 * TODO: do not report '$var = clone ...;', '$var = $var;'
-                                 * TODO: do not report '++$var;', '$var++;', '--$var;', '$var--;',
                                  * TODO: hint using clone instead of '$var = \DOMDocument::createElement(...)';
+                                 * TODO: hint using clone instead of '$var = new ...';
                                  */
-
-                                if (shallReport) {
+                                if (
+                                    ExpressionType.IF        != target &&
+                                    ExpressionType.REASSIGN  != target &&
+                                    ExpressionType.CLONE     != target &&
+                                    ExpressionType.INCREMENT != target &&
+                                    ExpressionType.DECREMENT != target
+                                ) {
                                     holder.registerProblem(oneInstruction, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
                                 }
                             }
@@ -111,16 +120,60 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             AssignmentExpression assignment = (AssignmentExpression) variable.getParent();
                             if (assignment.getVariable() == variable) {
                                 allModifiedVariables.add(variableName);
-                                //individualDependencies.add(variableName);
                                 continue;
                             }
                         }
 
-                        /* TODO: lookup for prefixed/suffixed operations, array access and property access */
+                        /* increment/decrement are also write operations */
+                        ExpressionType type = getExpressionType(variable.getParent());
+                        if (ExpressionType.INCREMENT == type || ExpressionType.DECREMENT == type) {
+                            allModifiedVariables.add(variableName);
+                            continue;
+                        }
+                        /* TODO: lookup for array access and property access */
 
                         individualDependencies.add(variableName);
                     }
                 }
+            }
+
+            private ExpressionType getExpressionType(PsiElement expression) {
+                if (expression instanceof If) {
+                    return ExpressionType.IF;
+                }
+
+                if (expression instanceof StatementImpl) {
+                    return getExpressionType(((StatementImpl) expression).getFirstPsiChild());
+                }
+
+                if (expression instanceof UnaryExpressionImpl) {
+                    PsiElement operation = ((UnaryExpressionImpl) expression).getOperation();
+                    if (null != operation && PhpTokenTypes.opINCREMENT == operation.getNode().getElementType()) {
+                        return ExpressionType.INCREMENT;
+
+                    }
+                    if (null != operation && PhpTokenTypes.opDECREMENT == operation.getNode().getElementType()) {
+                        return ExpressionType.DECREMENT;
+                    }
+                    if (null != operation && PhpTokenTypes.kwCLONE == operation.getNode().getElementType()) {
+                        return ExpressionType.CLONE;
+                    }
+                }
+
+                if (expression instanceof AssignmentExpression) {
+                    AssignmentExpression assignment = (AssignmentExpression) expression;
+                    if (assignment.getVariable() instanceof Variable) {
+                        PsiElement value = assignment.getValue();
+                        if (value instanceof NewExpression) {
+                            return ExpressionType.NEW;
+                        }
+                        if (value instanceof Variable) {
+                            return ExpressionType.REASSIGN;
+                        }
+                    }
+                }
+
+                return ExpressionType.OTHER;
             }
         };
     }

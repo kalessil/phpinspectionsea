@@ -16,7 +16,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "This statement seems to be not connected with parent foreach";
+    /**
+     * TODO: document examples with cloning options
+     */
+    private static final String strProblemDescription = "This statement seems to be not connected with parent foreach (use clone for objects reset)";
 
     @NotNull
     public String getShortName() {
@@ -58,10 +61,12 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     for (PsiElement oneInstruction : foreachBody.getStatements()) {
                         if (oneInstruction instanceof PhpPsiElement) {
                             boolean isDependOnModifiedVariables = false;
+                            boolean hasDependencies             = false;
 
                             /* check if any dependency is overridden */
                             HashSet<String> individualDependencies = instructionDependencies.get(oneInstruction);
                             if (null != individualDependencies && individualDependencies.size() > 1) {
+                                hasDependencies = true;
                                 /* contains not only this */
                                 for (String dependencyName : individualDependencies) {
                                     if (allModifiedVariables.contains(dependencyName)) {
@@ -72,10 +77,10 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             }
 
                             /* verify and report if violation detected */
-                            if (null != individualDependencies && !isDependOnModifiedVariables) {
+                            if (!isDependOnModifiedVariables && hasDependencies) {
                                 boolean shallReport = !(oneInstruction instanceof If);
                                 /**
-                                 * TODO: assign/append string, clone
+                                 * TODO: do not report '$var = clone ...;'
                                  */
 
                                 if (shallReport) {

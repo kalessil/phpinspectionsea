@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -44,7 +45,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     HashMap<PsiElement, HashSet<String>> instructionDependencies = new HashMap<PsiElement, HashSet<String>>();
                     /* iteration 1 - investigate what are dependencies and influence */
                     for (PsiElement oneInstruction : foreachBody.getStatements()) {
-                        if (oneInstruction instanceof PhpPsiElement) {
+                        if (oneInstruction instanceof PhpPsiElement && !(oneInstruction instanceof PsiComment)) {
                             HashSet<String> individualDependencies = new HashSet<String>();
                             individualDependencies.add("this");
 
@@ -57,21 +58,35 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     for (PsiElement oneInstruction : foreachBody.getStatements()) {
                         if (oneInstruction instanceof PhpPsiElement) {
                             boolean isDependOnModifiedVariables = false;
+
                             /* check if any dependency is overridden */
-                            for (String dependencyName : instructionDependencies.get(oneInstruction)) {
-                                if (allModifiedVariables.contains(dependencyName)) {
-                                    isDependOnModifiedVariables = true;
-                                    break;
+                            HashSet<String> individualDependencies = instructionDependencies.get(oneInstruction);
+                            if (null != individualDependencies && individualDependencies.size() > 1) {
+                                /* contains not only this */
+                                for (String dependencyName : individualDependencies) {
+                                    if (allModifiedVariables.contains(dependencyName)) {
+                                        isDependOnModifiedVariables = true;
+                                        break;
+                                    }
                                 }
                             }
 
-                            /* verify check and report if violation detected */
-                            if (!isDependOnModifiedVariables) {
-                                holder.registerProblem(oneInstruction, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                            /* verify and report if violation detected */
+                            if (null != individualDependencies && !isDependOnModifiedVariables) {
+                                boolean shallReport = !(oneInstruction instanceof If);
+                                /**
+                                 * TODO: assign/append string, clone
+                                 */
+
+                                if (shallReport) {
+                                    holder.registerProblem(oneInstruction, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                                }
                             }
 
                             /* cleanup dependencies details */
-                            instructionDependencies.get(oneInstruction).clear();
+                            if (null != individualDependencies) {
+                                individualDependencies.clear();
+                            }
                         }
                     }
                     /* empty dependencies details container */
@@ -86,18 +101,20 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
             ) {
                 for (PsiElement variable : PsiTreeUtil.findChildrenOfType(oneInstruction, Variable.class)) {
                     Variable castedVariable = (Variable) variable;
-                    if (null != castedVariable.getName()) {
+                    String variableName = castedVariable.getName();
+                    if (null != variableName) {
                         if (variable.getParent() instanceof AssignmentExpression) {
                             AssignmentExpression assignment = (AssignmentExpression) variable.getParent();
                             if (assignment.getVariable() == variable) {
-                                allModifiedVariables.add(castedVariable.getName());
+                                allModifiedVariables.add(variableName);
+                                //individualDependencies.add(variableName);
                                 continue;
                             }
                         }
 
                         /* TODO: lookup for prefixed/suffixed operations, array access and property access */
 
-                        individualDependencies.add(castedVariable.getName());
+                        individualDependencies.add(variableName);
                     }
                 }
             }

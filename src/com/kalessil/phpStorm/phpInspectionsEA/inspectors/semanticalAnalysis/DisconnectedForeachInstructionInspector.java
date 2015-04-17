@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "This statement seems to be not connected with parent foreach (use clone for objects reset)";
+    private static final String strProblemDescription = "This statement seems to be not connected with parent foreach";
     private static final String strProblemUseClone    = "Master object creation outside of loop and cloning it shall be used";
 
     @NotNull

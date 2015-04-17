@@ -42,9 +42,6 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                         allModifiedVariables.add(key.getName());
                     }
 
-                    HashSet<String> allReadVariables = new HashSet<String>();
-                    allReadVariables.add("this");
-
                     HashMap<PsiElement, HashSet<String>> instructionDependencies = new HashMap<PsiElement, HashSet<String>>();
                     /* iteration 1 - investigate what are dependencies and influence */
                     for (PsiElement oneInstruction : foreachBody.getStatements()) {
@@ -80,7 +77,9 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             if (!isDependOnModifiedVariables && hasDependencies) {
                                 boolean shallReport = !(oneInstruction instanceof If);
                                 /**
-                                 * TODO: do not report '$var = clone ...;'
+                                 * TODO: do not report '$var = clone ...;', '$var = $var;'
+                                 * TODO: do not report '++$var;', '$var++;', '--$var;', '$var--;',
+                                 * TODO: hint using clone instead of '$var = \DOMDocument::createElement(...)';
                                  */
 
                                 if (shallReport) {

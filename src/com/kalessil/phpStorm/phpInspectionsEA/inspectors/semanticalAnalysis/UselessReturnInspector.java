@@ -10,11 +10,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-
 public class UselessReturnInspector extends BasePhpInspection {
-    private static final String strProblemUselessReturnValue = "%s% method shall not return any value";
-    private static final String strProblemUseless = "Senseless statement: safely remove it";
+    private static final String strProblemUseless   = "Senseless statement: safely remove it";
     private static final String strProblemConfusing = "Confusing statement: shall be re-factored";
 
     @NotNull
@@ -22,45 +19,13 @@ public class UselessReturnInspector extends BasePhpInspection {
         return "UselessReturnInspection";
     }
 
-    private HashSet<String> methodsSet = null;
-    private HashSet<String> getMethodsSet() {
-        if (null == methodsSet) {
-            methodsSet = new HashSet<String>();
-
-            methodsSet.add("__construct");
-            methodsSet.add("__destruct");
-            methodsSet.add("__set");
-            methodsSet.add("__clone");
-            methodsSet.add("__unset");
-        }
-
-        return methodsSet;
-    }
-
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpReturn(PhpReturn returnStatement) {
-                PhpExpression objReturnValue = ExpressionSemanticUtil.getReturnValue(returnStatement);
-                if (null == objReturnValue) {
-                    return;
-                }
-
-                if (
-                    objReturnValue instanceof AssignmentExpression &&
-                    ((AssignmentExpression) objReturnValue).getVariable() instanceof Variable
-                ) {
+                PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue(returnStatement);
+                if (returnValue instanceof AssignmentExpression && ((AssignmentExpression) returnValue).getVariable() instanceof Variable) {
                     holder.registerProblem(returnStatement, strProblemConfusing, ProblemHighlightType.WEAK_WARNING);
-                    return;
-                }
-
-                Function objScope = ExpressionSemanticUtil.getScope(returnStatement);
-                if (objScope instanceof Method) {
-                    String strMethodName = objScope.getName();
-                    if (getMethodsSet().contains(strMethodName)) {
-                        String strMessage = strProblemUselessReturnValue.replace("%s%", strMethodName);
-                        holder.registerProblem(objReturnValue, strMessage, ProblemHighlightType.ERROR);
-                    }
                 }
             }
 

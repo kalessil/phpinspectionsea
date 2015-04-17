@@ -23,8 +23,12 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpField(Field field) {
+                if (field.isConstant()) {
+                    return;
+                }
+
                 PsiElement objDefaultValue = field.getDefaultValue();
-                if (objDefaultValue instanceof ConstantReference && ((ConstantReference) objDefaultValue).getType() == PhpType.NULL) {
+                if (objDefaultValue instanceof ConstantReference && PhpType.NULL == ((ConstantReference) objDefaultValue).getType()) {
                     holder.registerProblem(objDefaultValue, strProblemDescription, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                 }
             }

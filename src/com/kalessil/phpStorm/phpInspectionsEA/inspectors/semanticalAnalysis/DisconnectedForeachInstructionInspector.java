@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -19,17 +20,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
-    /**
-     * TODO: document examples with cloning options
-     */
     private static final String strProblemDescription = "This statement seems to be not connected with parent foreach (use clone for objects reset)";
+    private static final String strProblemUseClone    = "Master object creation outside of loop and cloning it shall be used";
 
     @NotNull
     public String getShortName() {
         return "DisconnectedForeachInstructionInspection";
     }
 
-    private static enum ExpressionType { IF, INCREMENT, DECREMENT, CLONE, NEW, REASSIGN, OTHER }
+    private static enum ExpressionType { IF, INCREMENT, DECREMENT, CLONE, NEW, REASSIGN, DOM_ELEMENT_CREATE, OTHER }
 
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
@@ -82,17 +81,21 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             if (!isDependOnModifiedVariables && hasDependencies) {
                                 ExpressionType target = getExpressionType(oneInstruction);
                                 /**
-                                 * TODO: hint using clone instead of '$var = \DOMDocument::createElement(...)';
                                  * TODO: hint using clone instead of '$var = new ...';
                                  */
                                 if (
-                                    ExpressionType.IF        != target &&
-                                    ExpressionType.REASSIGN  != target &&
-                                    ExpressionType.CLONE     != target &&
-                                    ExpressionType.INCREMENT != target &&
-                                    ExpressionType.DECREMENT != target
+                                    ExpressionType.IF                 != target &&
+                                    ExpressionType.REASSIGN           != target &&
+                                    ExpressionType.CLONE              != target &&
+                                    ExpressionType.INCREMENT          != target &&
+                                    ExpressionType.DECREMENT          != target &&
+                                    ExpressionType.DOM_ELEMENT_CREATE != target
                                 ) {
                                     holder.registerProblem(oneInstruction, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                                }
+
+                                if (ExpressionType.DOM_ELEMENT_CREATE == target) {
+                                    holder.registerProblem(oneInstruction, strProblemUseClone, ProblemHighlightType.WEAK_WARNING);
                                 }
                             }
 
@@ -169,6 +172,20 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                         }
                         if (value instanceof Variable) {
                             return ExpressionType.REASSIGN;
+                        }
+
+                        if (value instanceof MethodReference) {
+                            MethodReference call = (MethodReference) value;
+                            String methodName    = call.getName();
+                            if (!StringUtil.isEmpty(methodName) && methodName.equals("createElement")) {
+                                PsiElement resolved = call.resolve();
+                                if (resolved instanceof Method) {
+                                    String fqn = ((Method) resolved).getFQN();
+                                    if (!StringUtil.isEmpty(fqn) && fqn.equals("\\DOMDocument.createElement")) {
+                                        return ExpressionType.DOM_ELEMENT_CREATE;
+                                    }
+                                }
+                            }
                         }
                     }
                 }

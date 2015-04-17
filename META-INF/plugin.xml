@@ -185,6 +185,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="ThrowRawExceptionInspection"                   displayName="Control flow: throw of general \Exception"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ThrowRawExceptionInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="DisconnectedForeachInstructionInspection"      displayName="Control flow: statement can be decoupled from foreach"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.DisconnectedForeachInstructionInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="ForgottenDebugOutputInspection"                displayName="Probable bugs: forgotten debug statements"
@@ -275,7 +279,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.PrefixedIncDecrementEquivalentInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="CallableReferenceNameMismatchInspection"       displayName="Code style: callable name case mismatched in a call"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.CallableReferenceNameMismatchInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"

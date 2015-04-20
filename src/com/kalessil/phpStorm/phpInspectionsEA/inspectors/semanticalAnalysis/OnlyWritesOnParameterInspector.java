@@ -30,7 +30,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            /** re-dispatch to inspector */
+            /* re-dispatch to inspector */
             public void visitPhpMethod(Method method) {
                 this.checkParameters(method.getParameters(), method);
             }
@@ -41,7 +41,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
                 PsiElement objVariable = assignmentExpression.getVariable();
-                /** check assignments containing variable as container */
+                /* check assignments containing variable as container */
                 if (objVariable instanceof Variable) {
                     String variableName = ((Variable) objVariable).getName();
                     if (
@@ -51,33 +51,33 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         return;
                     }
 
-                    /** expression is located in function/method */
+                    /* expression is located in function/method */
                     PsiElement parentScope = ExpressionSemanticUtil.getScope(assignmentExpression);
                     if (null != parentScope) {
-                        /** ensure it's not parameter, as it checked anyway */
+                        /* ensure it's not parameter, as it checked anyway */
                         for (Parameter objParameter : ((Function) parentScope).getParameters()) {
                             String parameterName = objParameter.getName();
                             if (StringUtil.isEmpty(parameterName)) {
                                 continue;
                             }
 
-                            /** skip assignment check - it writes to parameter */
+                            /* skip assignment check - it writes to parameter */
                             if (parameterName.equals(variableName)) {
                                 return;
                             }
                         }
 
-                        /** ensure it's not use list parameter of closure */
+                        /* ensure it's not use list parameter of closure */
                         LinkedList<Variable> useList = ExpressionSemanticUtil.getUseListVariables((Function) parentScope);
                         if (null != useList) {
-                            /** use-list is found */
+                            /* use-list is found */
                             for (Variable objUseVariable : useList) {
                                 String useVariableName = objUseVariable.getName();
                                 if (StringUtil.isEmpty(useVariableName)) {
                                     continue;
                                 }
 
-                                /** skip assignment check - it writes to used variable */
+                                /* skip assignment check - it writes to used variable */
                                 if (useVariableName.equals(variableName)) {
                                     useList.clear();
                                     return;
@@ -86,7 +86,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                             useList.clear();
                         }
 
-                        /** verify variable usage */
+                        /* verify variable usage */
                         checkOneVariable(variableName, (PhpScopeHolder) parentScope);
                     }
                 }
@@ -123,16 +123,16 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     PsiElement objParent = objInstruction.getAnchor().getParent();
 
                     if (objParent instanceof ArrayAccessExpression) {
-                        /** find out which expression is holder */
+                        /* find out which expression is holder */
                         PsiElement objLastSemanticExpression = objInstruction.getAnchor();
                         PsiElement objTopSemanticExpression = objLastSemanticExpression.getParent();
-                        /** TODO: iterator for array access expression */
+                        /* TODO: iterator for array access expression */
                         while (objTopSemanticExpression instanceof ArrayAccessExpression) {
                             objLastSemanticExpression = objTopSemanticExpression;
                             objTopSemanticExpression = objTopSemanticExpression.getParent();
                         }
 
-                        /** estimate operation type */
+                        /* estimate operation type */
                         if (
                             objTopSemanticExpression instanceof AssignmentExpression &&
                             ((AssignmentExpression) objTopSemanticExpression).getVariable() == objLastSemanticExpression
@@ -157,20 +157,21 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    /** local variables access wrongly reported write in some cases, so rely on custom checks */
+                    /* local variables access wrongly reported write in some cases, so rely on custom checks */
                     if (
                         objParent instanceof ParameterList ||
                         objParent instanceof PhpUseList ||
                         objParent instanceof PhpUnset ||
                         objParent instanceof PhpEmpty ||
-                        objParent instanceof PhpIsset
+                        objParent instanceof PhpIsset ||
+                        objParent instanceof ForeachStatement
                     ) {
                         intCountReadAccesses++;
                         continue;
                     }
 
 
-                    /** ok variable usage works well with openapi */
+                    /* ok variable usage works well with openapi */
                     objAccess = objInstruction.getAccess();
                     if (objAccess.isWrite()) {
                         objTargetExpressions.add(objInstruction.getAnchor());

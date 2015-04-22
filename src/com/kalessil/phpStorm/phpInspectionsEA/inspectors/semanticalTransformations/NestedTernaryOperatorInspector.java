@@ -48,6 +48,8 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
 
                 /* check for confusing condition */
                 if (objCondition instanceof BinaryExpression && !(expression.getCondition() instanceof ParenthesizedExpression)) {
+
+                    /* TODO: do not warn on following operation types: &&, ||, ===, !==, ==, != */
                     holder.registerProblem(objCondition, strProblemPriorities, ProblemHighlightType.WEAK_WARNING);
                 }
             }

@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class DeprecatedConstructorStyleInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "%c% has a deprecated constructor";
+    private static final String strProblemDescription = "%s% has a deprecated constructor";
 
     @NotNull
     public String getShortName() {

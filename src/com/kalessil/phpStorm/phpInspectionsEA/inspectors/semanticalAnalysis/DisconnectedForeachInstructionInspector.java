@@ -6,6 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -150,16 +151,18 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 }
 
                 if (expression instanceof UnaryExpressionImpl) {
-                    PsiElement operation = ((UnaryExpressionImpl) expression).getOperation();
-                    if (null != operation && PhpTokenTypes.opINCREMENT == operation.getNode().getElementType()) {
+                    PsiElement operation       = ((UnaryExpressionImpl) expression).getOperation();
+                    IElementType operationType = null;
+                    if (null != operation) {
+                        operationType = operation.getNode().getElementType();
+                    }
+
+                    if (PhpTokenTypes.opINCREMENT == operationType) {
                         return ExpressionType.INCREMENT;
 
                     }
-                    if (null != operation && PhpTokenTypes.opDECREMENT == operation.getNode().getElementType()) {
+                    if (PhpTokenTypes.opDECREMENT == operationType) {
                         return ExpressionType.DECREMENT;
-                    }
-                    if (null != operation && PhpTokenTypes.kwCLONE == operation.getNode().getElementType()) {
-                        return ExpressionType.CLONE;
                     }
                 }
 
@@ -172,6 +175,13 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                         }
                         if (value instanceof Variable) {
                             return ExpressionType.REASSIGN;
+                        }
+
+                        if (value instanceof UnaryExpressionImpl) {
+                            PsiElement operation = ((UnaryExpressionImpl) value).getOperation();
+                            if (null != operation && PhpTokenTypes.kwCLONE == operation.getNode().getElementType()) {
+                                return ExpressionType.CLONE;
+                            }
                         }
 
                         if (value instanceof MethodReference) {

@@ -1,8 +1,13 @@
 <?php
+    $obj = new stdClass();
     /* @var string    $time */
     /* @var \DateTime $value */
 
-    foreach (array() as $value) {
+    foreach (array() as $index => $value) {
+        $x = clone $obj;
+        $value = (int) $index;
+
+        // warning here
         $objTime = new DateTime($time);
 
         $strValue = $value->format($time);

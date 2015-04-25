@@ -32,8 +32,8 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
 12 Apr 2015: improvements and new inspections<br/>
 <br/>
     - Slow alter in foreach: fixed following-up unset being applied to value-variable;<br/>
-    - Parameter/variable is not used: resolved false-positive with foreach (fixed #57);<br/>
-    - Deprecated constructor style: fixed false-positives in traits and interfaces (resolved #54);<br/>
+    - Parameter/variable is not used: resolved false-positive with foreach;<br/>
+    - Deprecated constructor style: fixed false-positives in traits and interfaces;<br/>
 <br/>
     - Nested ternary operator: more cases added;<br/>
     - Statement can be decoupled from foreach: inspection added;<br/>

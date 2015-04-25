@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.2.0</version>
+  <version>1.2.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -31,16 +31,14 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
   <change-notes><![CDATA[
 12 Apr 2015: improvements and new inspections<br/>
 <br/>
-    - Missing parent constructor/clone call removed (check for MissingParentConstructorCallInspection in suppressions);<br/>
-    - Ambiguous class property initialization: resolved false positives with constants;<br/>
-    - Forgotten debug statements: debug_zval_dump support added;<br/>
-    - 'isset(...)' usage: fixed false-positive with dynamic fields;<br/>
+    - Slow alter in foreach: fixed following-up unset being applied to value-variable;<br/>
+    - Parameter/variable is not used: resolved false-positive with foreach (fixed #57);<br/>
+    - Deprecated constructor style: fixed false-positives in traits and interfaces (resolved #54);<br/>
 <br/>
-    - Slow alter in foreach: improved and re-activated by default;<br/>
-    - Deprecated constructor style inspection added (thanks to Denis Ryabov for a proposal);<br/>
-    - Reference mismatch inspection added;<br/>
-    - Magic methods validity inspection added (thanks to Denis Ryabov for a proposal);<br/>
-    - array_push(...) miss-use inspection added;<br/>
+    - Nested ternary operator: more cases added;<br/>
+    - Statement can be decoupled from foreach: inspection added;<br/>
+    - Callable name case mismatched in a call: inspection added;<br/>
+    - Implicit magic method calls: inspection added;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

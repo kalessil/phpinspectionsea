@@ -41,12 +41,28 @@ public class AlterInForeachInspector  extends BasePhpInspection {
                         PhpPsiElement nextExpression = foreach.getNextPsiSibling();
 
                         if (PhpTokenTypes.opBIT_AND == prevElement.getNode().getElementType()) {
-                            /* test if it's immediately unset after foreach, allow return as next expression */
-                            if (
-                                null == nextExpression || (
-                                    !(nextExpression instanceof PhpUnset) &&
-                                    !(nextExpression instanceof PhpReturn)
-                            )) {
+                            /* allow return after loop - no issues can be introduced */
+                            boolean isRequirementFullFilled = false;
+                            if (nextExpression instanceof PhpReturn) {
+                                isRequirementFullFilled = true;
+                            }
+                            /* check unset is applied to value-variable */
+                            if (nextExpression instanceof PhpUnset) {
+                                PhpPsiElement[] unsetArguments = ((PhpUnset) nextExpression).getArguments();
+                                if (1 == unsetArguments.length && unsetArguments[0] instanceof Variable) {
+                                    String unsetArgumentName =  unsetArguments[0].getName();
+                                    String foreachValueName  =  objForeachValue.getName();
+                                    if (
+                                        !StringUtil.isEmpty(unsetArgumentName) && !StringUtil.isEmpty(foreachValueName) &&
+                                        unsetArgumentName.equals(foreachValueName)
+                                    ) {
+                                        isRequirementFullFilled = true;
+                                    }
+                                }
+                            }
+
+                            /* check if warning needs to be reported */
+                            if (null == nextExpression || !isRequirementFullFilled) {
                                 holder.registerProblem(objForeachValue, strProblemUnsafeReference, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         } else {
@@ -55,7 +71,7 @@ public class AlterInForeachInspector  extends BasePhpInspection {
                                 PhpPsiElement[] unsetArguments = ((PhpUnset) nextExpression).getArguments();
                                 if (1 == unsetArguments.length && unsetArguments[0] instanceof Variable) {
                                     String unsetArgumentName =  unsetArguments[0].getName();
-                                    String foreachValueName   =  objForeachValue.getName();
+                                    String foreachValueName  =  objForeachValue.getName();
                                     if (
                                         !StringUtil.isEmpty(unsetArgumentName) && !StringUtil.isEmpty(foreachValueName) &&
                                         unsetArgumentName.equals(foreachValueName)

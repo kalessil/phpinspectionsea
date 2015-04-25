@@ -14,3 +14,4 @@
         $value = (float) $value;
     }
     //unset($value);
+    unset($key);

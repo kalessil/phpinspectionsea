@@ -14,7 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
-public class AlterInForeachInspector  extends BasePhpInspection {
+public class AlterInForeachInspector extends BasePhpInspection {
     private static final String strProblemDescription     = "Can be refactored as '$%c% = ...' if $%v% is defined as reference (ensure that array supplied)";
     private static final String strProblemUnsafeReference = "This variable must be unset just after foreach to prevent possible side-effects";
     private static final String strProblemKeyReference    = "Provokes PHP Fatal error (Key element cannot be a reference)";
@@ -41,9 +41,24 @@ public class AlterInForeachInspector  extends BasePhpInspection {
                         PhpPsiElement nextExpression = foreach.getNextPsiSibling();
 
                         if (PhpTokenTypes.opBIT_AND == prevElement.getNode().getElementType()) {
+                            /* === requested by the community, not part of original idea  === */
+                            /* look up for parents which doesn't have following statements, eg #53 */
+                            PsiElement foreachParent = foreach.getParent();
+                            while (null == nextExpression && null != foreachParent) {
+                                if (!(foreachParent instanceof GroupStatement)) {
+                                    nextExpression = ((PhpPsiElement) foreachParent).getNextPsiSibling();
+                                }
+                                foreachParent = foreachParent.getParent();
+
+                                if (null == foreachParent || foreachParent instanceof Function || foreachParent instanceof PhpFile) {
+                                    break;
+                                }
+                            }
+                            /* === requested by the community, not part of original idea  === */
+
                             /* allow return after loop - no issues can be introduced */
                             boolean isRequirementFullFilled = false;
-                            if (nextExpression instanceof PhpReturn) {
+                            if (null == nextExpression || nextExpression instanceof PhpReturn) {
                                 isRequirementFullFilled = true;
                             }
                             /* check unset is applied to value-variable */
@@ -62,7 +77,7 @@ public class AlterInForeachInspector  extends BasePhpInspection {
                             }
 
                             /* check if warning needs to be reported */
-                            if (null == nextExpression || !isRequirementFullFilled) {
+                            if (!isRequirementFullFilled) {
                                 holder.registerProblem(objForeachValue, strProblemUnsafeReference, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         } else {

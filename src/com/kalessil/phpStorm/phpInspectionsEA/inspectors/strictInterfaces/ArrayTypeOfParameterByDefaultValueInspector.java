@@ -2,12 +2,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.Parameter;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -31,12 +29,22 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
                 this.inspectCallable(function);
             }
 
-            /**
-             * @param callable to inspect
-             */
             private void inspectCallable (Function callable) {
                 if (null == callable.getNameIdentifier()) {
                     return;
+                }
+
+                if (callable instanceof Method) {
+                    PhpClass clazz = ((Method) callable).getContainingClass();
+                    String methodName = callable.getName();
+                    if (!StringUtil.isEmpty(methodName) && null != clazz && !clazz.isInterface()) {
+                        /* ensure not reporting children classes, only parent definitions */
+                        for (PhpClass parent : clazz.getSupers()) {
+                            if (null != parent.findMethodByName(methodName)) {
+                                return;
+                            }
+                        }
+                    }
                 }
 
                 for (Parameter objParameter : callable.getParameters()) {
@@ -47,10 +55,6 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
                 }
             }
 
-            /**
-             * @param parameter to inspect
-             * @return boolean
-             */
             public boolean canBePrependedWithArrayType(Parameter parameter) {
                 if (!parameter.isOptional()) {
                     return false;

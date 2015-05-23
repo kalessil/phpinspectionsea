@@ -379,6 +379,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 boolean isPreviousCondCostCanBeBigger;
                 for (PsiElement objCond : objPartsCollection) {
                     intLoopCurrentCost = this.getExpressionCost(objCond, functionsSetToAllow);
+holder.registerProblem(objCond, "Cost: " + intLoopCurrentCost , ProblemHighlightType.LIKE_DEPRECATED);
 
                     /** special case when costs estimation is overridden with general practices */
                     isPreviousCondCostCanBeBigger = (
@@ -419,8 +420,11 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
                 /* additional factor is due to hash-maps internals not considered */
-                if (objExpression instanceof ClassConstantReference || objExpression instanceof FieldReference) {
+                if (objExpression instanceof ClassConstantReference) {
                     return 0;
+                }
+                if (objExpression instanceof FieldReference) {
+                    return getExpressionCost(((FieldReference) objExpression).getFirstPsiChild(), functionsSetToAllow);
                 }
 
                 /* additional factor is due to hash-maps internals */

@@ -379,7 +379,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 boolean isPreviousCondCostCanBeBigger;
                 for (PsiElement objCond : objPartsCollection) {
                     intLoopCurrentCost = this.getExpressionCost(objCond, functionsSetToAllow);
-holder.registerProblem(objCond, "Cost: " + intLoopCurrentCost , ProblemHighlightType.LIKE_DEPRECATED);
 
                     /** special case when costs estimation is overridden with general practices */
                     isPreviousCondCostCanBeBigger = (

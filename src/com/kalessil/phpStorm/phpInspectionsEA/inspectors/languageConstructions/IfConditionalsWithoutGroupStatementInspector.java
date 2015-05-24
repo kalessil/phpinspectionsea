@@ -43,6 +43,11 @@ public class IfConditionalsWithoutGroupStatementInspector extends BasePhpInspect
                     return;
                 }
 
+                /* community feedback: do not report "else if" constructions */
+                if (objConditional instanceof Else && objConditional.getFirstPsiChild() instanceof If) {
+                    return;
+                }
+
                 holder.registerProblem(objConditional.getFirstChild(), strProblemMissingBrackets, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };

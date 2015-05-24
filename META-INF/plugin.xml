@@ -154,10 +154,6 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnSafeIsSetOverArrayInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="NestedPositiveIfStatementsInspection"          displayName="Control flow: nested positive ifs"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
         shortName="TernaryOperatorSimplifyInspection"             displayName="Control flow: ternary operator simplification"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TernaryOperatorSimplifyInspector"/>
@@ -281,6 +277,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="CallableReferenceNameMismatchInspection"       displayName="Code style: callable name case mismatched in a call"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.CallableReferenceNameMismatchInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="NestedPositiveIfStatementsInspection"          displayName="Code style: nested positive ifs"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="MoreThanThreeArgumentsInspection"                displayName="Architecture: more than 3 parameters in callable"

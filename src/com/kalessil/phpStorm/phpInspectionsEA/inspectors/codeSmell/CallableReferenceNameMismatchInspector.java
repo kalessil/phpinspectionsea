@@ -65,10 +65,14 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            FunctionReference reference = (FunctionReference) descriptor.getPsiElement();
-            Function callable = (Function) reference.resolve();
-            reference.handleElementRename(callable.getName());
+            PsiElement target = descriptor.getPsiElement();
+            if (target instanceof FunctionReference) {
+                FunctionReference reference = (FunctionReference) target;
+                PsiElement callable         = reference.resolve();
+                if (callable instanceof Function) {
+                    reference.handleElementRename((((Function) callable)).getName());
+                }
+            }
         }
     }
-
 }

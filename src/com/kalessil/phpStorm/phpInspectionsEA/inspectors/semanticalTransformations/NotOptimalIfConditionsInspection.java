@@ -419,8 +419,11 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
                 /* additional factor is due to hash-maps internals not considered */
-                if (objExpression instanceof ClassConstantReference || objExpression instanceof FieldReference) {
+                if (objExpression instanceof ClassConstantReference) {
                     return 0;
+                }
+                if (objExpression instanceof FieldReference) {
+                    return getExpressionCost(((FieldReference) objExpression).getFirstPsiChild(), functionsSetToAllow);
                 }
 
                 /* additional factor is due to hash-maps internals */

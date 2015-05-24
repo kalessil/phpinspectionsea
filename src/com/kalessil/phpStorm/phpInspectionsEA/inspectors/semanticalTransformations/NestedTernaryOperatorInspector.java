@@ -5,6 +5,8 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
@@ -48,9 +50,28 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
 
                 /* check for confusing condition */
                 if (objCondition instanceof BinaryExpression && !(expression.getCondition() instanceof ParenthesizedExpression)) {
+                    PsiElement operation       = ((BinaryExpression) objCondition).getOperation();
+                    IElementType operationType = null;
+                    if (null != operation) {
+                        operationType = operation.getNode().getElementType();
+                    }
 
-                    /* TODO: do not warn on following operation types: &&, ||, ===, !==, ==, != */
-                    holder.registerProblem(objCondition, strProblemPriorities, ProblemHighlightType.WEAK_WARNING);
+                    /* don't report easily recognized cases */
+                    if (
+                            PhpTokenTypes.opAND              != operationType &&
+                            PhpTokenTypes.opOR               != operationType &&
+                            PhpTokenTypes.opIDENTICAL        != operationType &&
+                            PhpTokenTypes.opNOT_IDENTICAL    != operationType &&
+                            PhpTokenTypes.opEQUAL            != operationType &&
+                            PhpTokenTypes.opNOT_EQUAL        != operationType &&
+                            PhpTokenTypes.opGREATER          != operationType &&
+                            PhpTokenTypes.opGREATER_OR_EQUAL != operationType &&
+                            PhpTokenTypes.opLESS             != operationType &&
+                            PhpTokenTypes.opLESS_OR_EQUAL    != operationType &&
+                            PhpTokenTypes.kwINSTANCEOF       != operationType
+                    ) {
+                        holder.registerProblem(objCondition, strProblemPriorities, ProblemHighlightType.WEAK_WARNING);
+                    }
                 }
             }
         };

@@ -29,7 +29,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
         return "DisconnectedForeachInstructionInspection";
     }
 
-    private static enum ExpressionType { IF, INCREMENT, DECREMENT, CLONE, NEW, REASSIGN, DOM_ELEMENT_CREATE, OTHER }
+    private static enum ExpressionType { IF, INCREMENT, DECREMENT, CLONE, NEW, REASSIGN, DOM_ELEMENT_CREATE, ACCUMULATE_IN_ARRAY, OTHER }
 
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
@@ -85,12 +85,13 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                  * TODO: hint using clone instead of '$var = new ...';
                                  */
                                 if (
-                                    ExpressionType.IF                 != target &&
-                                    ExpressionType.REASSIGN           != target &&
-                                    ExpressionType.CLONE              != target &&
-                                    ExpressionType.INCREMENT          != target &&
-                                    ExpressionType.DECREMENT          != target &&
-                                    ExpressionType.DOM_ELEMENT_CREATE != target
+                                    ExpressionType.IF                  != target &&
+                                    ExpressionType.REASSIGN            != target &&
+                                    ExpressionType.CLONE               != target &&
+                                    ExpressionType.INCREMENT           != target &&
+                                    ExpressionType.DECREMENT           != target &&
+                                    ExpressionType.DOM_ELEMENT_CREATE  != target &&
+                                    ExpressionType.ACCUMULATE_IN_ARRAY != target
                                 ) {
                                     holder.registerProblem(oneInstruction, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
                                 }
@@ -168,7 +169,8 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
                 if (expression instanceof AssignmentExpression) {
                     AssignmentExpression assignment = (AssignmentExpression) expression;
-                    if (assignment.getVariable() instanceof Variable) {
+                    PsiElement variable = assignment.getVariable();
+                    if (variable instanceof Variable) {
                         PsiElement value = assignment.getValue();
                         if (value instanceof NewExpression) {
                             return ExpressionType.NEW;
@@ -196,6 +198,13 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                     }
                                 }
                             }
+                        }
+                    }
+
+                    if (variable instanceof ArrayAccessExpression) {
+                        ArrayAccessExpression storage = (ArrayAccessExpression) variable;
+                        if (null == storage.getIndex() || null == storage.getIndex().getValue()) {
+                            return ExpressionType.ACCUMULATE_IN_ARRAY;
                         }
                     }
                 }

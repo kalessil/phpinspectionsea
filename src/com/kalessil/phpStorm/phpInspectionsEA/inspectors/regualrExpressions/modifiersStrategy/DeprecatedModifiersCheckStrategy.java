@@ -11,7 +11,7 @@ public class DeprecatedModifiersCheckStrategy {
 
     static public void apply(final String modifiers, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
         if (!StringUtil.isEmpty(modifiers) && modifiers.indexOf('e') >= 0) {
-            holder.registerProblem(target, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+            holder.registerProblem(target, strProblemDescription, ProblemHighlightType.GENERIC_ERROR);
         }
     }
 }

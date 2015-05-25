@@ -6,8 +6,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.classesStrategy.ShortClassDefinitionStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.modifiersStrategy.AllowedModifierCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.modifiersStrategy.DeprecatedModifiersCheckStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.modifiersStrategy.UselessMultiLineModifierStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -75,14 +77,15 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
                 /**
                  * /no-az-chars/i => /no-az-chars/
                  * /no-dot-.-char/s => /no-dot-.-char/
-                 * /no-^-or-$/m => /no-^-or-$/
                  * /no-^-or-$/D => /no-^-or-$/
                  *
-                 * +/regexp/e => mark as deprecated, use preg_replace_callback instead
-                 * +Check allowed PHP modifiers: eimsuxADJSUX
+                 * + /no-^-or-$-occurrences/m => /no-^-or-$-occurrences/
+                 * + /regexp/e => mark as deprecated, use preg_replace_callback instead
+                 * + Check allowed PHP modifiers: eimsuxADJSUX
                  */
-                AllowedModifierCheckStrategy.apply(modifiers, target, holder);
                 DeprecatedModifiersCheckStrategy.apply(modifiers, target, holder);
+                AllowedModifierCheckStrategy.apply(modifiers, target, holder);
+                UselessMultiLineModifierStrategy.apply(modifiers, regex, target, holder);
 
                 /**
                  * Simplification
@@ -94,16 +97,15 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
                  * preg_quote => warning if second argument is not presented
                  */
 
-                /**
-                 * Classes
-                 *
-                 * [0-9] => \d
-                 * [^0-9] => \D
-                 * [:digit:] => \d
-                 * [:word:] => \w
-                 * [^\w] => \W
-                 * [^\s] => \S
+                /** Classes:
+                 * + [0-9] => \d
+                 * + [^0-9] => \D
+                 * + [:digit:] => \d
+                 * + [:word:] => \w
+                 * + [^\w] => \W
+                 * + [^\s] => \S
                  */
+                ShortClassDefinitionStrategy.apply(regex, target, holder);
 
                 /**
                  * Optimizations

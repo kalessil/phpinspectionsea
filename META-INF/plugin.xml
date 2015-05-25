@@ -127,6 +127,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="ArrayPushMissUseInspection"                    displayName="Performance: array_push(...) miss-use"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ArrayPushMissUseInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="NotOptimaRegularExpressionsInspection"         displayName="Performance: not optima regular expressions"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.NotOptimaRegularExpressionsInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="IsEmptyFunctionUsageInspection"                displayName="Type compatibility: 'empty(...)' usage"

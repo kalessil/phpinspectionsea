@@ -17,38 +17,39 @@ import java.util.List;
 import java.util.Map;
 
 public class DeprecatedIniOptionsInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "'%a%' is a deprecated option.";
-    private static final String strProblemDescriptionRecommend = "'%a%' is a deprecated option. Use %b% instead.";
     private static final List<String> INI_FUNCS = Arrays.asList(
             "\\ini_set", "\\ini_get", "\\ini_alter", "\\ini_restore"
     );
     private static final Map<String, String> INI_NAMES = new HashMap<String, String>();
     static {
-        INI_NAMES.put("iconv.input_encoding", "'default_charset'");
-        INI_NAMES.put("iconv.output_encoding", "'default_charset'");
-        INI_NAMES.put("iconv.internal_encoding", "'default_charset'");
-        INI_NAMES.put("mbstring.http_input", "'default_charset'");
-        INI_NAMES.put("mbstring.http_output", "'default_charset'");
-        INI_NAMES.put("mbstring.internal_encoding", "'default_charset'");
-        INI_NAMES.put("xsl.security_prefs", "XsltProcessor->setSecurityPrefs()");
-        INI_NAMES.put("allow_call_time_pass_reference", null);
-        INI_NAMES.put("define_syslog_variables", null);
-        INI_NAMES.put("highlight.bg", null);
-        INI_NAMES.put("magic_quotes_gpc", null);
-        INI_NAMES.put("magic_quotes_runtime", null);
-        INI_NAMES.put("magic_quotes_sybase", null);
-        INI_NAMES.put("register_globals", null);
-        INI_NAMES.put("register_long_arrays", null);
-        INI_NAMES.put("safe_mode", null);
-        INI_NAMES.put("safe_mode_gid", null);
-        INI_NAMES.put("safe_mode_include_dir", null);
-        INI_NAMES.put("safe_mode_exec_dir", null);
-        INI_NAMES.put("safe_mode_allowed_env_vars", null);
-        INI_NAMES.put("safe_mode_protected_env_vars", null);
-        INI_NAMES.put("zend.ze1_compatibility_mode", null);
-        INI_NAMES.put("session.bug_compat_42", null);
-        INI_NAMES.put("session.bug_compat_warn", null);
-        INI_NAMES.put("y2k_compliance", null);
+        INI_NAMES.put("iconv.input_encoding", "'iconv.input_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+        INI_NAMES.put("iconv.output_encoding", "'iconv.output_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+        INI_NAMES.put("iconv.internal_encoding", "'iconv.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+        INI_NAMES.put("mbstring.http_input", "'mbstring.http_input' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+        INI_NAMES.put("mbstring.http_output", "'mbstring.http_output' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+        INI_NAMES.put("mbstring.internal_encoding", "'mbstring.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+
+        INI_NAMES.put("xsl.security_prefs", "'xsl.security_prefs' is a deprecated option since PHP 5.4.0. Use XsltProcessor->setSecurityPrefs() instead.");
+
+        INI_NAMES.put("allow_call_time_pass_reference", "'allow_call_time_pass_reference' is a discontinued option since PHP 5.4.0.");
+        INI_NAMES.put("highlight.bg", "'highlight.bg' is a discontinued option since PHP 5.4.0.");
+        INI_NAMES.put("zend.ze1_compatibility_mode", "'zend.ze1_compatibility_mode' is a discontinued option since PHP 5.4.0.");
+        INI_NAMES.put("session.bug_compat_42", "'session.bug_compat_42' is a discontinued option since PHP 5.4.0.");
+        INI_NAMES.put("session.bug_compat_warn", "'session.bug_compat_warn' is a discontinued option since PHP 5.4.0.");
+        INI_NAMES.put("y2k_compliance", "'y2k_compliance' is a discontinued option since PHP 5.4.0.");
+
+        INI_NAMES.put("define_syslog_variables", "'define_syslog_variables' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        INI_NAMES.put("magic_quotes_gpc", "'magic_quotes_gpc' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        INI_NAMES.put("magic_quotes_runtime", "'magic_quotes_runtime' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        INI_NAMES.put("magic_quotes_sybase", "'magic_quotes_sybase' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        INI_NAMES.put("register_globals", "'register_globals' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        INI_NAMES.put("register_long_arrays", "'register_long_arrays' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        INI_NAMES.put("safe_mode", "'safe_mode' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        INI_NAMES.put("safe_mode_gid", "'safe_mode_gid' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        INI_NAMES.put("safe_mode_include_dir", "'safe_mode_include_dir' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        INI_NAMES.put("safe_mode_exec_dir", "'safe_mode_exec_dir' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        INI_NAMES.put("safe_mode_allowed_env_vars", "'safe_mode_allowed_env_vars' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        INI_NAMES.put("safe_mode_protected_env_vars", "'safe_mode_protected_env_vars' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
     }
 
     @NotNull
@@ -79,11 +80,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                     return;
                 }
 
-                final String replace = INI_NAMES.get(value);
-                final String strMessage = replace == null ?
-                        strProblemDescription.replace("%a%", value) :
-                        strProblemDescriptionRecommend.replace("%a%", value).replace("%b%", replace);
-                holder.registerProblem(parameters[0], strMessage, ProblemHighlightType.LIKE_DEPRECATED);
+                holder.registerProblem(parameters[0], INI_NAMES.get(value), ProblemHighlightType.LIKE_DEPRECATED);
             }
         };
     }

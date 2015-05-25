@@ -53,7 +53,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return "DeprecatedIniOptionsInspector";
+        return "DeprecatedIniOptionsInspection";
     }
 
     @Override

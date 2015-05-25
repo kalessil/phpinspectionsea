@@ -331,6 +331,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="DeprecatedConstructorStyleInspection"            displayName="Compatibility: deprecated constructor style"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.DeprecatedConstructorStyleInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="DeprecatedIniOptionsInspection"                  displayName="Compatibility: deprecated configuration options"
+        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DeprecatedIniOptionsInspector"/>
   </extensions>
 
   <application-components>

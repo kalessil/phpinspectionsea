@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.classesStrategy.ShortClassDefinitionStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.modifiersStrategy.*;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.optimizeStrategy.SequentialClassesCollapseCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +73,7 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
             }
 
             private void checkCall (String strFunctionName, StringLiteralExpression target, String regex, String modifiers) {
-                /** Modifiers validity:
+                /** Modifiers validity (done):
                  * + /no-az-chars/i => /no-az-chars/
                  * + /no-dot-char/s => /no-dot-char/
                  * + /no-$/D => /no-$/
@@ -95,7 +96,7 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
                  * preg_quote => warning if second argument is not presented
                  */
 
-                /** Classes shortening:
+                /** Classes shortening (done):
                  * + [0-9] => \d
                  * + [^0-9] => \D
                  * + [:digit:] => \d
@@ -106,13 +107,15 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
                 ShortClassDefinitionStrategy.apply(regex, target, holder);
 
                 /** Optimizations:
-                 * [seq][seq]... => [seq]{N}
-                 * [seq][seq]+ => [seq]{2,}
-                 * [seq][seq]* => [seq]+
-                 * [seq][seq]? => [seq]{1,2}
                  * /. * ···/, /···. * / => /···/ (remove leading and trailing .* without ^ or $, note: if no back-reference to \0)
                  * (...) => (?:...) (if there is no back-reference)
+                 *
+                 * + [seq][seq]... => [seq]{N}
+                 * + [seq][seq]+ => [seq]{2,}
+                 * + [seq][seq]* => [seq]+
+                 * + [seq][seq]? => [seq]{1,2}
                  */
+                SequentialClassesCollapseCheckStrategy.apply(regex, target, holder);
             }
         };
     }

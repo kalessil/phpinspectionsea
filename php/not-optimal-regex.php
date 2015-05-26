@@ -13,6 +13,9 @@
     preg_match('/^-no-[\\$]-occurrence/D', '');       //reported
     preg_match('/^-ignored-$/mD',          '');       //reported
 
+    preg_match('/.-provided/s',            '');       //ok
+    preg_match('/no-dot-char/s',           '');       //reported
+
     preg_match('/[0-9]/',     '');              //reported
     preg_match('/[^0-9]/',    '');              //reported
     preg_match('/[:digit:]/', '');              //reported

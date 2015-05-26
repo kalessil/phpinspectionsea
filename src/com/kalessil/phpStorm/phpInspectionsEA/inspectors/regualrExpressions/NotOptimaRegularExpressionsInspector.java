@@ -7,10 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.classesStrategy.ShortClassDefinitionStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.modifiersStrategy.AllowedModifierCheckStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.modifiersStrategy.DeprecatedModifiersCheckStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.modifiersStrategy.UselessDollarEndOnlyModifierStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.modifiersStrategy.UselessMultiLineModifierStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.modifiersStrategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -77,8 +74,8 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
             private void checkCall (String strFunctionName, StringLiteralExpression target, String regex, String modifiers) {
                 /**
                  * /no-az-chars/i => /no-az-chars/
-                 * /no-dot-.-char/s => /no-dot-.-char/
                  *
+                 * + /no-dot-char/s => /no-dot-char/
                  * + /no-$/D => /no-$/
                  * + /no-^-or-$-occurrences/m => /no-^-or-$-occurrences/
                  * + /regexp/e => mark as deprecated, use preg_replace_callback instead
@@ -88,6 +85,7 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
                 AllowedModifierCheckStrategy.apply(modifiers, target, holder);
                 UselessMultiLineModifierStrategy.apply(modifiers, regex, target, holder);
                 UselessDollarEndOnlyModifierStrategy.apply(modifiers, regex, target, holder);
+                UselessDotAllModifierCheckStrategy.apply(modifiers, regex, target, holder);
 
                 /**
                  * Simplification

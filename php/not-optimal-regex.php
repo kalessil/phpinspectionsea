@@ -16,6 +16,9 @@
     preg_match('/.-provided/s',            '');       //ok
     preg_match('/no-dot-char/s',           '');       //reported
 
+    preg_match('/a-z-provided/i',          '');       //ok
+    preg_match('/.{2}-.{2}/i',             '');       //reported
+
     preg_match('/[0-9]/',     '');              //reported
     preg_match('/[^0-9]/',    '');              //reported
     preg_match('/[:digit:]/', '');              //reported

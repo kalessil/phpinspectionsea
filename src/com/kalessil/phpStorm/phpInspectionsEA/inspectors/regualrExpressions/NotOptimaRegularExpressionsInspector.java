@@ -42,7 +42,7 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
 
     static private Pattern regexWithModifiers = null;
     static {
-        regexWithModifiers = Pattern.compile("^([\\/#~])(.*)\\1([a-z]+)?$");
+        regexWithModifiers = Pattern.compile("^([\\/#~])(.*)\\1([a-zA-Z]+)?$");
     }
 
     @Override
@@ -72,9 +72,8 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
             }
 
             private void checkCall (String strFunctionName, StringLiteralExpression target, String regex, String modifiers) {
-                /**
-                 * /no-az-chars/i => /no-az-chars/
-                 *
+                /** Modifiers validity:
+                 * + /no-az-chars/i => /no-az-chars/
                  * + /no-dot-char/s => /no-dot-char/
                  * + /no-$/D => /no-$/
                  * + /no-^-or-$-occurrences/m => /no-^-or-$-occurrences/
@@ -86,10 +85,9 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
                 UselessMultiLineModifierStrategy.apply(modifiers, regex, target, holder);
                 UselessDollarEndOnlyModifierStrategy.apply(modifiers, regex, target, holder);
                 UselessDotAllModifierCheckStrategy.apply(modifiers, regex, target, holder);
+                UselessIgnoreCaseModifierCheckStrategy.apply(modifiers, regex, target, holder);
 
-                /**
-                 * Simplification
-                 *
+                /** Plain API simplification:
                  * /^text/ => 0 === strpos(...) (match)
                  * /text/ => false !== strpos(...) (match) / str_replace (replace)
                  * /^text/i => 0 === stripos(...) (match)
@@ -97,7 +95,7 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
                  * preg_quote => warning if second argument is not presented
                  */
 
-                /** Classes:
+                /** Classes shortening:
                  * + [0-9] => \d
                  * + [^0-9] => \D
                  * + [:digit:] => \d
@@ -107,15 +105,13 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
                  */
                 ShortClassDefinitionStrategy.apply(regex, target, holder);
 
-                /**
-                 * Optimizations
-                 *
+                /** Optimizations:
                  * [seq][seq]... => [seq]{N}
                  * [seq][seq]+ => [seq]{2,}
                  * [seq][seq]* => [seq]+
                  * [seq][seq]? => [seq]{1,2}
                  * /. * ···/, /···. * / => /···/ (remove leading and trailing .* without ^ or $, note: if no back-reference to \0)
-                 * (...) => (?:...) (if there is no backreference)
+                 * (...) => (?:...) (if there is no back-reference)
                  */
             }
         };

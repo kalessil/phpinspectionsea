@@ -42,7 +42,7 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
 
     static private Pattern regexWithModifiers = null;
     static {
-        regexWithModifiers = Pattern.compile("^\\/(.*)\\/([a-zA-Z]+)?$");
+        regexWithModifiers = Pattern.compile("^([\\/#~])(.*)\\1([a-z]+)?$");
     }
 
     @Override
@@ -63,8 +63,8 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
                 if (!StringUtil.isEmpty(regex)) {
                     Matcher regexMatcher = regexWithModifiers.matcher(regex);
                     if (regexMatcher.find()) {
-                        String phpRegexPattern   = regexMatcher.group(1);
-                        String phpRegexModifiers = regexMatcher.group(2);
+                        String phpRegexPattern   = regexMatcher.group(2);
+                        String phpRegexModifiers = regexMatcher.group(3);
 
                         checkCall(strFunctionName, (StringLiteralExpression) params[0], phpRegexPattern, phpRegexModifiers);
                     }

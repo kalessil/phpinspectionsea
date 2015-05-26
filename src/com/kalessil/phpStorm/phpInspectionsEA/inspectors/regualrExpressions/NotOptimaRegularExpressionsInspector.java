@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.classesStrategy.ShortClassDefinitionStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.modifiersStrategy.AllowedModifierCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.modifiersStrategy.DeprecatedModifiersCheckStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.modifiersStrategy.UselessDollarEndOnlyModifierStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.modifiersStrategy.UselessMultiLineModifierStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -77,8 +78,8 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
                 /**
                  * /no-az-chars/i => /no-az-chars/
                  * /no-dot-.-char/s => /no-dot-.-char/
-                 * /no-^-or-$/D => /no-^-or-$/
                  *
+                 * + /no-$/D => /no-$/
                  * + /no-^-or-$-occurrences/m => /no-^-or-$-occurrences/
                  * + /regexp/e => mark as deprecated, use preg_replace_callback instead
                  * + Check allowed PHP modifiers: eimsuxADJSUX
@@ -86,6 +87,7 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
                 DeprecatedModifiersCheckStrategy.apply(modifiers, target, holder);
                 AllowedModifierCheckStrategy.apply(modifiers, target, holder);
                 UselessMultiLineModifierStrategy.apply(modifiers, regex, target, holder);
+                UselessDollarEndOnlyModifierStrategy.apply(modifiers, regex, target, holder);
 
                 /**
                  * Simplification

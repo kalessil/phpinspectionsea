@@ -7,17 +7,21 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-public class UselessMultiLineModifierStrategy {
-    private static final String strProblemDescription = "'m' modifier is ambiguous here (no ^ or $ in given pattern)";
+public class UselessDollarEndOnlyModifierStrategy {
+    private static final String strProblemDescription = "'D' modifier is ambiguous here (no $ in given pattern)";
+    private static final String strProblemIgnored = "'D' modifier will ignored because of 'm'";
 
     static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
-        if (!StringUtil.isEmpty(modifiers) && !StringUtil.isEmpty(pattern) && modifiers.indexOf('m') >= 0) {
-            int countBegins = StringUtils.countMatches(pattern, "^") - StringUtils.countMatches(pattern, "[^");
-            int countEnds   = StringUtils.countMatches(pattern, "$") - StringUtils.countMatches(pattern, "\\$");
-            if (0 == countBegins || 0 == countEnds) {
+        if (!StringUtil.isEmpty(modifiers) && !StringUtil.isEmpty(pattern) && modifiers.indexOf('D') >= 0) {
+            if (modifiers.indexOf('m') >= 0) {
+                holder.registerProblem(target, strProblemIgnored, ProblemHighlightType.WEAK_WARNING);
+                return;
+            }
+
+            int countEnds = StringUtils.countMatches(pattern, "$") - StringUtils.countMatches(pattern, "\\$");
+            if (0 == countEnds) {
                 holder.registerProblem(target, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
             }
         }
     }
 }
-

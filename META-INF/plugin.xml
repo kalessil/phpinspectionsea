@@ -128,9 +128,9 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ArrayPushMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="NotOptimaRegularExpressionsInspection"         displayName="Performance: not optimal regular expressions"
+        shortName="NotOptimalRegularExpressionsInspection"         displayName="Performance: not optimal regular expressions"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.NotOptimaRegularExpressionsInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.NotOptimalRegularExpressionsInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="IsEmptyFunctionUsageInspection"                displayName="Type compatibility: 'empty(...)' usage"

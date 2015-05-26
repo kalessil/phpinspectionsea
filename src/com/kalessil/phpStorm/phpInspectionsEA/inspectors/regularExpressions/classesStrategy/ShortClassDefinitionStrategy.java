@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.classesStrategy;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.classesStrategy;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;

@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions;
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
@@ -6,9 +6,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.classesStrategy.ShortClassDefinitionStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.modifiersStrategy.*;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regualrExpressions.optimizeStrategy.SequentialClassesCollapseCheckStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.classesStrategy.ShortClassDefinitionStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.modifiersStrategy.*;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.AmbiguousAnythingTrimCheckStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.SequentialClassesCollapseCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -17,11 +18,11 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
+public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return "NotOptimaRegularExpressionsInspection";
+        return "NotOptimalRegularExpressionsInspection";
     }
 
     private static HashSet<String> functions = null;
@@ -107,15 +108,16 @@ public class NotOptimaRegularExpressionsInspector extends BasePhpInspection {
                 ShortClassDefinitionStrategy.apply(regex, target, holder);
 
                 /** Optimizations:
-                 * /. * ···/, /···. * / => /···/ (remove leading and trailing .* without ^ or $, note: if no back-reference to \0)
                  * (...) => (?:...) (if there is no back-reference)
                  *
+                 * + / .* ··· /, / ···.* / => /···/ (remove leading and trailing .* without ^ or $, note: if no back-reference to \0)
                  * + [seq][seq]... => [seq]{N}
                  * + [seq][seq]+ => [seq]{2,}
                  * + [seq][seq]* => [seq]+
                  * + [seq][seq]? => [seq]{1,2}
                  */
                 SequentialClassesCollapseCheckStrategy.apply(regex, target, holder);
+                AmbiguousAnythingTrimCheckStrategy.apply(regex, target, holder);
             }
         };
     }

@@ -16,6 +16,13 @@
     preg_match('/.-provided/s',            '');       //ok
     preg_match('/no-dot-char/s',           '');       //reported
 
+    preg_match('/.*-report/',              '');       //reported
+    preg_match('/report-.*/',              '');       //reported
+    preg_match('/.*(no-report)-.*\0/',     '');       //ok
+    preg_match('/^.*-no-report/',          '');       //ok
+    preg_match('/no-report-.*$/',          '');       //ok
+
+
     preg_match('/a-z-provided/i',          '');       //ok
     preg_match('/.{2}-.{2}/i',             '');       //reported
 

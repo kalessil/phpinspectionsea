@@ -92,7 +92,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 UselessDotAllModifierCheckStrategy.apply(modifiers, regex, target, holder);
                 UselessIgnoreCaseModifierCheckStrategy.apply(modifiers, regex, target, holder);
 
-                /** Plain API simplification:
+                /** Plain API simplification (done):
                  * + /^text/ => 0 === strpos(...) (match)
                  * + /text/ => false !== strpos(...) (match) / str_replace (replace)
                  * + /^text/i => 0 === stripos(...) (match)

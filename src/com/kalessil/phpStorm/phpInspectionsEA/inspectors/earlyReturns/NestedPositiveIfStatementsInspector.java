@@ -57,7 +57,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                     return;
                 }
 
-                holder.registerProblem(objIfCondition, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(objIfCondition, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
             }
         };
     }

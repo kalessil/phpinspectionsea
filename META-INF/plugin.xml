@@ -127,6 +127,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="ArrayPushMissUseInspection"                    displayName="Performance: array_push(...) miss-use"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ArrayPushMissUseInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="NotOptimalRegularExpressionsInspection"         displayName="Performance: not optimal regular expressions"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.NotOptimalRegularExpressionsInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="IsEmptyFunctionUsageInspection"                displayName="Type compatibility: 'empty(...)' usage"
@@ -153,10 +157,6 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="UnSafeIsSetOverArrayInspection"                displayName="Control flow: 'isset(...)' usage"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnSafeIsSetOverArrayInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="NestedPositiveIfStatementsInspection"          displayName="Control flow: nested positive ifs"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="TernaryOperatorSimplifyInspection"             displayName="Control flow: ternary operator simplification"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
@@ -281,6 +281,14 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="CallableReferenceNameMismatchInspection"       displayName="Code style: callable name case mismatched in a call"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.CallableReferenceNameMismatchInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="NestedPositiveIfStatementsInspection"          displayName="Code style: nested positive ifs"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="ReferencingObjectsInspection"                  displayName="Code style: referencing objects"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ReferencingObjectsInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="MoreThanThreeArgumentsInspection"                displayName="Architecture: more than 3 parameters in callable"

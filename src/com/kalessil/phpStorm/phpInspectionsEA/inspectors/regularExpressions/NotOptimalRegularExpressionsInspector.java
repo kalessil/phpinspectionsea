@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.FunctionCallCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.classesStrategy.ShortClassDefinitionStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.modifiersStrategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.AmbiguousAnythingTrimCheckStrategy;
@@ -37,6 +38,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
             functions.add("preg_replace_callback");
             functions.add("preg_replace");
             functions.add("preg_split");
+            functions.add("preg_quote");
         }
 
         return functions;
@@ -57,7 +59,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 }
 
                 PsiElement[] params = reference.getParameters();
-                if (params.length < 2 || !(params[0] instanceof StringLiteralExpression)) {
+                if (params.length == 0 || !(params[0] instanceof StringLiteralExpression)) {
                     return;
                 }
 
@@ -68,12 +70,12 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                         String phpRegexPattern   = regexMatcher.group(2);
                         String phpRegexModifiers = regexMatcher.group(3);
 
-                        checkCall(strFunctionName, (StringLiteralExpression) params[0], phpRegexPattern, phpRegexModifiers);
+                        checkCall(strFunctionName, reference, (StringLiteralExpression) params[0], phpRegexPattern, phpRegexModifiers);
                     }
                 }
             }
 
-            private void checkCall (String strFunctionName, StringLiteralExpression target, String regex, String modifiers) {
+            private void checkCall (String strFunctionName, FunctionReference reference, StringLiteralExpression target, String regex, String modifiers) {
                 /** Modifiers validity (done):
                  * + /no-az-chars/i => /no-az-chars/
                  * + /no-dot-char/s => /no-dot-char/
@@ -94,8 +96,11 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  * /text/ => false !== strpos(...) (match) / str_replace (replace)
                  * /^text/i => 0 === stripos(...) (match)
                  * /text/i => false !== stripos(...) (match) / str_ireplace (replace)
-                 * preg_quote => warning if second argument is not presented
+                 *
+                 * + preg_quote => warning if second argument is not presented
+                 * + preg_match_all without match argument preg_match
                  */
+                FunctionCallCheckStrategy.apply(strFunctionName, reference.getParameters(), reference, holder);
 
                 /** Classes shortening (done):
                  * + [0-9] => \d

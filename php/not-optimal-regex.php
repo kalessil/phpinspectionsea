@@ -1,7 +1,10 @@
 <?php
 
-    preg_match('no-modifiers', '');             //ok
-    preg_match('/Valid/i', '');                 //ok
+    preg_match_all('/regex/', '');                    //report
+    preg_quote('/regex/');                            //report
+
+    preg_match('no-modifiers', '');                   //ok
+    preg_match('/Valid/i', '');                       //ok
 
     preg_match('/^-both-presented-$/m', '');          //ok
     preg_match('/both^-$presented/m', '');            //ok
@@ -21,7 +24,6 @@
     preg_match('/.*(no-report)-.*\0/',     '');       //ok
     preg_match('/^.*-no-report/',          '');       //ok
     preg_match('/no-report-.*$/',          '');       //ok
-
 
     preg_match('/a-z-provided/i',          '');       //ok
     preg_match('/.{2}-.{2}/i',             '');       //reported

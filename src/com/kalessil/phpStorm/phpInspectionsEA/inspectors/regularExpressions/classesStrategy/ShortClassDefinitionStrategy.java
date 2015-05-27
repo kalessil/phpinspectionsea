@@ -16,12 +16,20 @@ public class ShortClassDefinitionStrategy {
         if (null == mapping) {
             mapping = new HashMap<String, String>();
 
-            mapping.put("[0-9]",     "\\d");
-            mapping.put("[^0-9]",    "\\D");
-            mapping.put("[:digit:]", "\\d");
-            mapping.put("[:word:]",  "\\w");
-            mapping.put("[^\\w]",    "\\W");
-            mapping.put("[^\\s]",    "\\S");
+            mapping.put("[0-9]",         "\\d");
+            mapping.put("[:digit:]",     "\\d");
+
+            mapping.put("[^0-9]",        "\\D");
+            mapping.put("[^\\d]",        "\\D");
+
+            mapping.put("[:word:]",      "\\w");
+            mapping.put("[A-Za-z0-9_]",  "\\w");
+
+            mapping.put("[^\\w]",        "\\W");
+            mapping.put("[^A-Za-z0-9_]", "\\W");
+            mapping.put("[^a-zA-Z0-9_]", "\\W");
+
+            mapping.put("[^\\s]",        "\\S");
         }
 
         return mapping;

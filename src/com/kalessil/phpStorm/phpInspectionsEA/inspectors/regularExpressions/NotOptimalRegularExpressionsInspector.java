@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.FunctionCallCheckStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.PlainApiUseCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.classesStrategy.ShortClassDefinitionStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.modifiersStrategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.AmbiguousAnythingTrimCheckStrategy;
@@ -92,15 +93,15 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 UselessIgnoreCaseModifierCheckStrategy.apply(modifiers, regex, target, holder);
 
                 /** Plain API simplification:
-                 * /^text/ => 0 === strpos(...) (match)
-                 * /text/ => false !== strpos(...) (match) / str_replace (replace)
-                 * /^text/i => 0 === stripos(...) (match)
-                 * /text/i => false !== stripos(...) (match) / str_ireplace (replace)
-                 *
+                 * + /^text/ => 0 === strpos(...) (match)
+                 * + /text/ => false !== strpos(...) (match) / str_replace (replace)
+                 * + /^text/i => 0 === stripos(...) (match)
+                 * + /text/i => false !== stripos(...) (match) / str_ireplace (replace)
                  * + preg_quote => warning if second argument is not presented
                  * + preg_match_all without match argument preg_match
                  */
                 FunctionCallCheckStrategy.apply(strFunctionName, reference, holder);
+                PlainApiUseCheckStrategy.apply(strFunctionName, reference, modifiers, regex, holder);
 
                 /** Classes shortening (done):
                  * + [0-9] => \d

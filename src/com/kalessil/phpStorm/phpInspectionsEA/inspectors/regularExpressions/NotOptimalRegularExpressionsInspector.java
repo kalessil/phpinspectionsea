@@ -100,7 +100,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  * + preg_quote => warning if second argument is not presented
                  * + preg_match_all without match argument preg_match
                  */
-                FunctionCallCheckStrategy.apply(strFunctionName, reference.getParameters(), reference, holder);
+                FunctionCallCheckStrategy.apply(strFunctionName, reference, holder);
 
                 /** Classes shortening (done):
                  * + [0-9] => \d

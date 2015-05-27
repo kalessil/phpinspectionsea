@@ -1,6 +1,7 @@
 <?php
 
-    preg_match_all('/regex/', '');                    //report
+    preg_match_all('/regex/', '');                    //ok
+    if (preg_match_all('/regex/', '')) {}             //report
     preg_quote('/regex/');                            //report
 
     preg_match('no-modifiers', '');                   //ok

@@ -37,19 +37,6 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (callable instanceof Method) {
-                    PhpClass clazz = ((Method) callable).getContainingClass();
-                    String methodName = callable.getName();
-                    if (!StringUtil.isEmpty(methodName) && null != clazz && !clazz.isInterface()) {
-                        /* ensure not reporting children classes, only parent definitions */
-                        for (PhpClass parent : clazz.getSupers()) {
-                            if (null != parent.findMethodByName(methodName)) {
-                                return;
-                            }
-                        }
-                    }
-                }
-
                 for (Parameter objParameter : callable.getParameters()) {
                     /** TODO: php 7 scalar types */
                     if (objParameter.isPassByRef() && !objParameter.getDeclaredType() .isEmpty() && !PhpType.isSubType(objParameter.getDeclaredType(), PhpType.ARRAY)) {

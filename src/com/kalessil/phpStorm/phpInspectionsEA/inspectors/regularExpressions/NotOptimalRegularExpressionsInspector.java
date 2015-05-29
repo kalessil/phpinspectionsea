@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiU
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.classesStrategy.ShortClassDefinitionStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.modifiersStrategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.AmbiguousAnythingTrimCheckStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.NonGreedyTransformCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.SequentialClassesCollapseCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -116,11 +117,8 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 /** Optimizations:
                  * (...) => (?:...) (if there is no back-reference)
                  *
-                 * Non-greedy match simplification
-                 * .*?[symbol] at the end of regexp => [^symbol]*[symbol] (e.g. xml/html parsing using <.*?> vs <[^>]*>)
-                 * .+?[symbol] at the end of regexp => [^symbol]+[symbol]
-                 * regex => "\\.(\\*|\\+)\\?([^\\(\\)\\$\\\\]|\\\\.)"  => 1: +|?, 2: [character]
-                 *
+                 * + .*?[symbol] at the end of regexp => [^symbol]*[symbol] (e.g. xml/html parsing using <.*?> vs <[^>]*>)
+                 * + .+?[symbol] at the end of regexp => [^symbol]+[symbol]
                  * + / .* ··· /, / ···.* / => /···/ (remove leading and trailing .* without ^ or $, note: if no back-reference to \0)
                  * + [seq][seq]... => [seq]{N}
                  * + [seq][seq]+ => [seq]{2,}
@@ -129,6 +127,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  */
                 SequentialClassesCollapseCheckStrategy.apply(regex, target, holder);
                 AmbiguousAnythingTrimCheckStrategy.apply(regex, target, holder);
+                NonGreedyTransformCheckStrategy.apply(regex, target, holder);
             }
         };
     }

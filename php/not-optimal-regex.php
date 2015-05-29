@@ -14,10 +14,12 @@
     preg_replace('/^contains/',  '', '');             //ok
     preg_replace('/^contains/i', '', '');             //ok
 
-
     preg_match_all('/regex/', '');                    //ok
     if (preg_match_all('/regex/', '')) {}             //report
     preg_quote('/regex/');                            //report
+
+    preg_match('/(.*?)/', '');                        //ok
+    preg_match('/<.+?>/', '');                        //reported
 
     preg_match('no-modifiers', '');                   //ok
     preg_match('/Valid/i', '');                       //ok

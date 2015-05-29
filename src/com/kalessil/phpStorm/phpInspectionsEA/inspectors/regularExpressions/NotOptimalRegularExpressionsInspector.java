@@ -116,6 +116,10 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 /** Optimizations:
                  * (...) => (?:...) (if there is no back-reference)
                  *
+                 * .*?[symbol] at the end of regexp => [^symbol]*[symbol] (e.g. xml/html parsing using <.*?> vs <[^>]*>)
+                 * .+?[symbol] at the end of regexp => [^symbol]+[symbol]
+                 * regex => "\\.(\\*|\\+)\\?([^\\(\\)\\$\\\\]|\\\\.)"  => 1: +|?, 2: [character]
+                 *
                  * + / .* ··· /, / ···.* / => /···/ (remove leading and trailing .* without ^ or $, note: if no back-reference to \0)
                  * + [seq][seq]... => [seq]{N}
                  * + [seq][seq]+ => [seq]{2,}

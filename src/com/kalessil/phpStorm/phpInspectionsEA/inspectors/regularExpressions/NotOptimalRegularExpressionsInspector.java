@@ -116,6 +116,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 /** Optimizations:
                  * (...) => (?:...) (if there is no back-reference)
                  *
+                 * Non-greedy match simplification
                  * .*?[symbol] at the end of regexp => [^symbol]*[symbol] (e.g. xml/html parsing using <.*?> vs <[^>]*>)
                  * .+?[symbol] at the end of regexp => [^symbol]+[symbol]
                  * regex => "\\.(\\*|\\+)\\?([^\\(\\)\\$\\\\]|\\\\.)"  => 1: +|?, 2: [character]

@@ -18,6 +18,8 @@ public class AmbiguousAnythingTrimCheckStrategy {
                 return;
             }
 
+            /* allow preg_match_* only if no  match-container were provided */
+
             if (pattern.startsWith(".*")) {
                 holder.registerProblem(target, strProblemLeading, ProblemHighlightType.WEAK_WARNING);
             }

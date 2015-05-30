@@ -22,7 +22,7 @@
     preg_match('/<.+?>/', '');                        //reported
 
     preg_match('no-modifiers', '');                   //ok
-    preg_match('/Valid/i', '');                       //ok
+    preg_match('/Valid?/i', '');                      //ok
 
     preg_match('/^-both-presented-$/m', '');          //ok
     preg_match('/both^-$presented/m', '');            //ok
@@ -38,7 +38,11 @@
     preg_match('/no-dot-char/s',           '');       //reported
 
     preg_match('/.*-report/',              '');       //reported
+    preg_match('/.*-report/',              '', $m);   //ok
     preg_match('/report-.*/',              '');       //reported
+    preg_replace('/report-.*/',            '', '');   //ok
+    preg_match('/report-.*/',              '', $m);   //ok
+    preg_replace('/report-.*/',            '', '');   //ok
     preg_match('/.*(no-report)-.*\0/',     '');       //ok
     preg_match('/^.*-no-report/',          '');       //ok
     preg_match('/no-report-.*$/',          '');       //ok

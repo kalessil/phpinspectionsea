@@ -126,7 +126,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  * + [seq][seq]? => [seq]{1,2}
                  */
                 SequentialClassesCollapseCheckStrategy.apply(regex, target, holder);
-                AmbiguousAnythingTrimCheckStrategy.apply(regex, target, holder);
+                AmbiguousAnythingTrimCheckStrategy.apply(strFunctionName, reference, regex, target, holder);
                 NonGreedyTransformCheckStrategy.apply(regex, target, holder);
             }
         };

@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiU
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.classesStrategy.ShortClassDefinitionStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.modifiersStrategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.AmbiguousAnythingTrimCheckStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.NonGreedyTransformCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.SequentialClassesCollapseCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -46,8 +47,10 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
     }
 
     static private Pattern regexWithModifiers = null;
+    static private Pattern regexWithModifiersCurvy = null;
     static {
         regexWithModifiers = Pattern.compile("^([\\/#~])(.*)\\1([a-zA-Z]+)?$");
+        regexWithModifiersCurvy = Pattern.compile("^\\{(.*)\\}([a-zA-Z]+)?$");
     }
 
     @Override
@@ -72,6 +75,16 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                         String phpRegexModifiers = regexMatcher.group(3);
 
                         checkCall(strFunctionName, reference, (StringLiteralExpression) params[0], phpRegexPattern, phpRegexModifiers);
+                        return;
+                    }
+
+                    regexMatcher = regexWithModifiersCurvy.matcher(regex);
+                    if (regexMatcher.find()) {
+                        String phpRegexPattern   = regexMatcher.group(1);
+                        String phpRegexModifiers = regexMatcher.group(2);
+
+                        checkCall(strFunctionName, reference, (StringLiteralExpression) params[0], phpRegexPattern, phpRegexModifiers);
+                        return;
                     }
                 }
             }
@@ -87,7 +100,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  */
                 DeprecatedModifiersCheckStrategy.apply(modifiers, target, holder);
                 AllowedModifierCheckStrategy.apply(modifiers, target, holder);
-                UselessMultiLineModifierStrategy.apply(modifiers, regex, target, holder);
+                // UselessMultiLineModifierStrategy.apply(modifiers, regex, target, holder); -- we can not analyse if string has new lines
                 UselessDollarEndOnlyModifierStrategy.apply(modifiers, regex, target, holder);
                 UselessDotAllModifierCheckStrategy.apply(modifiers, regex, target, holder);
                 UselessIgnoreCaseModifierCheckStrategy.apply(modifiers, regex, target, holder);
@@ -116,6 +129,8 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 /** Optimizations:
                  * (...) => (?:...) (if there is no back-reference)
                  *
+                 * + .*?[symbol] at the end of regexp => [^symbol]*[symbol] (e.g. xml/html parsing using <.*?> vs <[^>]*>)
+                 * + .+?[symbol] at the end of regexp => [^symbol]+[symbol]
                  * + / .* ··· /, / ···.* / => /···/ (remove leading and trailing .* without ^ or $, note: if no back-reference to \0)
                  * + [seq][seq]... => [seq]{N}
                  * + [seq][seq]+ => [seq]{2,}
@@ -123,7 +138,8 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  * + [seq][seq]? => [seq]{1,2}
                  */
                 SequentialClassesCollapseCheckStrategy.apply(regex, target, holder);
-                AmbiguousAnythingTrimCheckStrategy.apply(regex, target, holder);
+                AmbiguousAnythingTrimCheckStrategy.apply(strFunctionName, reference, regex, target, holder);
+                NonGreedyTransformCheckStrategy.apply(regex, target, holder);
             }
         };
     }

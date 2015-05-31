@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
@@ -35,19 +34,6 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
             private void inspectCallable (Function callable) {
                 if (null == callable.getNameIdentifier()) {
                     return;
-                }
-
-                if (callable instanceof Method) {
-                    PhpClass clazz = ((Method) callable).getContainingClass();
-                    String methodName = callable.getName();
-                    if (!StringUtil.isEmpty(methodName) && null != clazz && !clazz.isInterface()) {
-                        /* ensure not reporting children classes, only parent definitions */
-                        for (PhpClass parent : clazz.getSupers()) {
-                            if (null != parent.findMethodByName(methodName)) {
-                                return;
-                            }
-                        }
-                    }
                 }
 
                 for (Parameter objParameter : callable.getParameters()) {

@@ -232,10 +232,6 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UselessReturnInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="StaticInvocationViaThisInspection"             displayName="Confusing constructs: static method invocation via this"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.StaticInvocationViaThisInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
         shortName="ParameterByRefWithDefaultInspection"           displayName="Confusing constructs: parameter by reference has default value"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ParameterByRefWithDefaultInspector"/>
@@ -289,6 +285,11 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="ReferencingObjectsInspection"                  displayName="Code style: referencing objects"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ReferencingObjectsInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="StaticInvocationViaThisInspection"             displayName="Code style: static method invocation via this"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.StaticInvocationViaThisInspector"/>
+
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="MoreThanThreeArgumentsInspection"                displayName="Architecture: more than 3 parameters in callable"

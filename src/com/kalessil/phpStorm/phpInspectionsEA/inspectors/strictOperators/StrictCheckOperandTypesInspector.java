@@ -181,7 +181,7 @@ public class StrictCheckOperandTypesInspector extends BasePhpInspection {
             public void visitPhpArrayAccessExpression(final ArrayAccessExpression expr) {
                 final PhpPsiElement value = expr.getValue();
                 final HashSet<String> type = resolveType(value);
-                if (isArray(type)) {
+                if (isArray(type) || isArrayAccess(type)) {
                     return;
                 }
                 final String strWarning = strProblemDescriptionArrayAccess
@@ -190,6 +190,16 @@ public class StrictCheckOperandTypesInspector extends BasePhpInspection {
             }
 
             public void visitPhpArrayIndex(final ArrayIndex index) {
+                PsiElement parent = index.getParent();
+                if (parent instanceof ArrayAccessExpression) {
+                    final ArrayAccessExpression var = (ArrayAccessExpression) parent;
+                    final PhpPsiElement value = var.getValue();
+                    final HashSet<String> type = resolveType(value);
+                    if (isArrayAccess(type)) {
+                        return;
+                    }
+                }
+
                 final PhpPsiElement key = index.getValue();
                 if (key instanceof PhpExpression) {
                     inspectArrayIndex((PhpExpression) key);
@@ -278,6 +288,20 @@ public class StrictCheckOperandTypesInspector extends BasePhpInspection {
 
             private boolean isMixed(final HashSet<String> type) {
                 return type.contains(Types.strMixed);
+            }
+
+            private boolean isArrayAccess(final HashSet<String> type) {
+                final PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
+                for (String s : type) {
+                    for (PhpClass phpClass : objIndex.getClassesByFQN(s)) {
+                        for (String strInterface : phpClass.getInterfaceNames()) {
+                            if (strInterface.equals("\\ArrayAccess")) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
             }
 
             private String formatType(final HashSet<String> type) {

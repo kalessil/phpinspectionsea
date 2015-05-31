@@ -46,6 +46,8 @@ public class ShortClassDefinitionStrategy {
                     holder.registerProblem(target, strError, ProblemHighlightType.WEAK_WARNING);
                 }
             }
+
+            //TODO: handle [0-9,] and similar cases when classes are part of allowed/escaped sets
         }
     }
 }

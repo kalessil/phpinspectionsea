@@ -29,6 +29,20 @@ public class PhpExpressionTypes {
         }
     }
 
+    public PhpExpressionTypes(final String strTypes, @NotNull final ProblemsHolder holder, boolean isString) {
+        objIndex = PhpIndex.getInstance(holder.getProject());
+
+        for (final String str : strTypes.split("\\|")) {
+            if (!str.isEmpty()) {
+                types.add(Types.getType(str));
+            }
+        }
+
+        if (types.isEmpty()) {
+            types.add(Types.strMixed);
+        }
+    }
+
     public boolean equals(@NotNull final PhpExpressionTypes another) {
         final HashSet<String> copy = new HashSet<String>(types);
         copy.retainAll(another.types);

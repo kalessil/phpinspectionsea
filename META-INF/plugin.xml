@@ -350,7 +350,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictArithmeticInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="StrictArrayAccessInspection"                      displayName="Type compatibility: [] for array and ArrayAccess"
+        shortName="StrictArrayAccessInspection"                     displayName="Type compatibility: [] for array and ArrayAccess"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictArrayAccessInspector"/>
     <localInspection language="PHP" groupPath="PHP"
@@ -362,7 +362,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictAssignmentInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="StrictBitwiseInspection"                      displayName="Type compatibility: integer operands in bitwise operators"
+        shortName="StrictBitwiseInspection"                         displayName="Type compatibility: integer operands in bitwise operators"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictBitwiseInspector"/>
     <localInspection language="PHP" groupPath="PHP"
@@ -374,15 +374,15 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictComparisonInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="StrictEqualityInspection"                      displayName="Type compatibility: match types in equality comparisons"
+        shortName="StrictEqualityInspection"                        displayName="Type compatibility: match types in equality comparisons"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictEqualityInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="StrictIncrementInspection"                      displayName="Type compatibility: increment/decrement of integers only"
+        shortName="StrictIncrementInspection"                       displayName="Type compatibility: increment/decrement of integers only"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictIncrementInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="StrictLogicalInspection"                      displayName="Type compatibility: boolean operands in logical operators"
+        shortName="StrictLogicalInspection"                         displayName="Type compatibility: boolean operands in logical operators"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictLogicalInspector"/>
     <localInspection language="PHP" groupPath="PHP"
@@ -394,7 +394,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictStringConcatInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="StrictTernaryInspection"                      displayName="Type compatibility: match types in branches of ternary operator"
+        shortName="StrictTernaryInspection"                         displayName="Type compatibility: match types in branches of ternary operator"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictTernaryInspector"/>
     <localInspection language="PHP" groupPath="PHP"
@@ -402,7 +402,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictUnaryMinusInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="StrictUnaryPlusInspection"                      displayName="Type compatibility: unary plus operator"
+        shortName="StrictUnaryPlusInspection"                       displayName="Type compatibility: unary plus operator"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictUnaryPlusInspector"/>
   </extensions>

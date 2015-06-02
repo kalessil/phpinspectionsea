@@ -29,7 +29,7 @@ public class PhpExpressionTypes {
         }
     }
 
-    public PhpExpressionTypes(final String strTypes, @NotNull final ProblemsHolder holder, boolean isString) {
+    public PhpExpressionTypes(final String strTypes, @NotNull final ProblemsHolder holder) {
         objIndex = PhpIndex.getInstance(holder.getProject());
 
         for (final String str : strTypes.split("\\|")) {

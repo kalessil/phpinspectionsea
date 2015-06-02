@@ -61,7 +61,7 @@ public class StrictArgumentsInspector extends BasePhpInspection {
                 final int length = Math.min(args.length, params.length);
                 for (int i = 0; i < length; ++i) {
                     final PhpExpressionTypes argType = new PhpExpressionTypes(args[i], holder);
-                    final PhpExpressionTypes paramType = new PhpExpressionTypes(params[i].getType().toString(), holder, true);
+                    final PhpExpressionTypes paramType = new PhpExpressionTypes(params[i].getType().toString(), holder);
 
                     if (!paramType.isMixed() && !argType.equals(paramType)) {
                         final String strWarning = strProblemDescriptionArgumentTypeMismatch

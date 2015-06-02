@@ -36,7 +36,7 @@ public class StrictReturnInspector extends BasePhpInspection {
                     return;
                 }
 
-                final PhpExpressionTypes funcType = new PhpExpressionTypes(((PhpTypedElement) func).getType().toString(), holder, true);
+                final PhpExpressionTypes funcType = new PhpExpressionTypes(((PhpTypedElement) func).getType().toString(), holder);
                 final PhpExpressionTypes returnType = new PhpExpressionTypes(value, holder);
                 if (funcType.isMixed() || funcType.equals(returnType)) {
                     return;

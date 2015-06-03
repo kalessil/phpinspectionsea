@@ -124,7 +124,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  * + [^\w] => \W
                  * + [^\s] => \S
                  */
-                ShortClassDefinitionStrategy.apply(regex, target, holder);
+                ShortClassDefinitionStrategy.apply(modifiers, regex, target, holder);
 
                 /** Optimizations:
                  * (...) => (?:...) (if there is no back-reference)

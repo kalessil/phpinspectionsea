@@ -17,9 +17,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.HashSet;
 
+// com.jetbrains.php.lang.inspections.phpdoc.PhpDocMissingThrowsInspection is not good enough
 public class ThrowsAnnotatedProperlyInspector extends BasePhpInspection {
     private static final String strProblemMissing       = "@throws annotation for implicitly thrown '%c%' is missing (ot exception handling is missing)";
-    private static final String strProblemInternalCalls = "@throws annotation for an internal call's '%c%' is missing (ot exception handling is missing)";
+//    private static final String strProblemInternalCalls = "@throws annotation for an internal call's '%c%' is missing (ot exception handling is missing)";
     private static final String strProblemViolates      = "throwing '%c%' is not declared in inherited @throws (incomplete contract definition or contract violation)";
 
     @NotNull

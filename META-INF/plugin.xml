@@ -343,7 +343,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="ThrowsAnnotatedProperlyInspection"               displayName="Php-Doc: missing @throws annotations"
-        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+        groupName="Php Inspections (EA Extended)"                   enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc.ThrowsAnnotatedProperlyInspector"/>
   </extensions>
 

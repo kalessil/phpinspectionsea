@@ -1,5 +1,17 @@
 <html>
 <body>
 Analyses array_unique(...) calls and reports slow usage cases.
+<!-- tooltip end -->
+To improve performance and memory usage following pattern shall be used.
+array_merge would create temporary object of growing size on each iteration.
+<code>
+    $arrSequencesContainer = array();
+
+    while (false !== ($arrSequence = $objSource->readValues())) {
+        $arrSequencesContainer []= $arrSequence;
+    }
+
+    $arrValues = call_user_func_array('array_merge', $arrSequencesContainer);
+</code>
 </body>
 </html>

@@ -22,5 +22,6 @@ final public class CollectPossibleThrowsUtil {
         }
         calls.clear();
 
+        // TODO: new statements -> inspect __construct
     }
 }

@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.tags.PhpDocExpectedExceptionImpl;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.tags.PhpDocTagImpl;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocReturnTag;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -65,6 +66,17 @@ public class ThrowsAnnotatedProperlyInspector extends BasePhpInspection {
                         }
                     }
                     returns.clear();
+
+                    // find all @expectedException and remember FQNs
+                    Collection<PhpDocExpectedExceptionImpl> expectsTags = PsiTreeUtil.findChildrenOfType(previous, PhpDocExpectedExceptionImpl.class);
+                    for (PhpDocExpectedExceptionImpl expect : expectsTags) {
+                        if (expect.getFirstPsiChild() instanceof PhpDocType) {
+                            PhpDocType type = (PhpDocType) expect.getFirstPsiChild();
+                            declared.add(type.getFQN());
+                            declared.add(type.getName());
+                        }
+                    }
+                    expectsTags.clear();
 
                     // process all throw new ... expressions
                     for (PhpThrow throwStatement : throwStatements) {

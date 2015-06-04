@@ -49,17 +49,6 @@ final public class ThrowsResolveUtil {
         }
         returns.clear();
 
-        // find all @expectedException and remember FQNs
-        Collection<PhpDocExpectedExceptionImpl> expectsTags = PsiTreeUtil.findChildrenOfType(previous, PhpDocExpectedExceptionImpl.class);
-        for (PhpDocExpectedExceptionImpl expect : expectsTags) {
-            if (expect.getFirstPsiChild() instanceof PhpDocType) {
-                PhpDocType type = (PhpDocType) expect.getFirstPsiChild();
-                declaredExceptions.add(type.getFQN());
-                declaredExceptions.add(type.getName());
-            }
-        }
-        expectsTags.clear();
-
         return ResolveType.RESOLVED;
     }
 

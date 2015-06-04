@@ -13,7 +13,7 @@ import java.util.HashSet;
 
 public class MustNotThrowExceptionsStrategy {
     private static final String strProblemDescription   = "%m% must not throw exceptions";
-    private static final String strProblemInternalCalls = "%m%'s internal calls can throw exceptions";
+    private static final String strProblemInternalCalls = "%m%'s internal calls throws exceptions";
 
     static public void apply(final Method method, final ProblemsHolder holder) {
         if (null != method.getNameIdentifier()) {
@@ -33,25 +33,10 @@ public class MustNotThrowExceptionsStrategy {
         /* check what internal calls can bring runtime */
         HashSet<String> possible = new HashSet<String>();
         CollectPossibleThrowsUtil.collectAnnotatedExceptions(method, possible);
-
-        /* obtain declared, overhead but fine for background analysis */
-        HashSet<String> declared = new HashSet<String>();
-        ThrowsResolveUtil.ResolveType resolvingStatus = ThrowsResolveUtil.resolveThrownExceptions(method, declared);
-        if (ThrowsResolveUtil.ResolveType.NOT_RESOLVED == resolvingStatus) {
-            declared.clear();
-            possible.clear();
-            return;
+        if (possible.size() > 0) {
+            String strError = strProblemInternalCalls.replace("%m%", method.getName());
+            holder.registerProblem(method.getNameIdentifier(), strError, ProblemHighlightType.GENERIC_ERROR);
         }
-
-        /* check possible - declared are covered properly */
-        for (String onePossible : possible) {
-            if (onePossible.indexOf('\\') == -1 && !declared.contains(onePossible)) {
-                String strError = strProblemInternalCalls.replace("%m%", onePossible);
-                holder.registerProblem(method.getNameIdentifier(), strError, ProblemHighlightType.GENERIC_ERROR);
-            }
-        }
-
-        declared.clear();
         possible.clear();
     }
 }

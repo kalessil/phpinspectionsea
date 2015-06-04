@@ -11,15 +11,16 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpDoc.ThrowsResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.phpExceptions.CollectPossibleThrowsUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashSet;
 
-// com.jetbrains.php.lang.inspections.phpdoc.PhpDocMissingThrowsInspection is not good enough
 public class ThrowsAnnotatedProperlyInspector extends BasePhpInspection {
-    private static final String strProblemMissing  = "Implicitly thrown exception is not handled/annotated: '%c%'";
-    private static final String strProblemViolates = "Implicitly thrown exception violates @inheritdoc (contract interface violation): '%c%'";
+    private static final String strProblemMissing       = "Implicitly thrown exception is not handled/annotated: '%c%'";
+    private static final String strProblemInternalCalls = "Nested call's exception is not handled/annotated: '%c%'";
+    private static final String strProblemViolates      = "Implicitly thrown exception violates @inheritdoc (contract interface violation): '%c%'";
 
     @NotNull
     public String getShortName() {
@@ -87,6 +88,33 @@ public class ThrowsAnnotatedProperlyInspector extends BasePhpInspection {
                     throwStatements.clear();
 
                     declared.clear();
+                }
+
+                /* heavy analysis with resolving all calls inside the method */
+                if (!isOnTheFly) {
+                    /* check what internal calls can bring runtime */
+                    HashSet<String> possible = new HashSet<String>();
+                    CollectPossibleThrowsUtil.collectAnnotatedExceptions(method, possible);
+
+                    /* once more obtain declared, overhead but fine for background analysis */
+                    HashSet<String> declared = new HashSet<String>();
+                    ThrowsResolveUtil.ResolveType resolvingStatus = ThrowsResolveUtil.resolveThrownExceptions(method, declared);
+                    if (ThrowsResolveUtil.ResolveType.NOT_RESOLVED == resolvingStatus) {
+                        declared.clear();
+                        possible.clear();
+                        return;
+                    }
+
+                    /* check possible - declared are covered properly */
+                    for (String onePossible : possible) {
+                        if (onePossible.indexOf('\\') == -1 && !declared.contains(onePossible)) {
+                            String strError = strProblemInternalCalls.replace("%c%", onePossible);
+                            holder.registerProblem(objMethodName, strError, ProblemHighlightType.WEAK_WARNING);
+                        }
+                    }
+
+                    declared.clear();
+                    possible.clear();
                 }
             }
         };

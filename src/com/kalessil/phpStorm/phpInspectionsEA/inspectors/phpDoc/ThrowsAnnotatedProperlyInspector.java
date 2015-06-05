@@ -54,6 +54,7 @@ public class ThrowsAnnotatedProperlyInspector extends BasePhpInspection {
                 }
 
                 // find all throw statements
+                HashSet<String> notCoveredThrows = new HashSet<String>();
                 Collection<PhpThrow> throwStatements = PsiTreeUtil.findChildrenOfType(method, PhpThrow.class);
                 if (throwStatements.size() > 0) {
                     HashSet<String> declared = new HashSet<String>();
@@ -76,12 +77,17 @@ public class ThrowsAnnotatedProperlyInspector extends BasePhpInspection {
                                 // match FQNs
                                 PhpClass resolved = (PhpClass) whatsClass.resolve();
                                 String strResolvedFQN = resolved.getFQN();
-                                if (!StringUtil.isEmpty(strResolvedFQN) && !declared.contains(strResolvedFQN)) {
+
+                                /* if not yet reported and not declared */
+                                if (!StringUtil.isEmpty(strResolvedFQN) && !notCoveredThrows.contains(strResolvedFQN) && !declared.contains(strResolvedFQN)) {
                                     /* no direct match, lookup parent exceptions covered */
                                     boolean isParentCovered = false;
                                     HashSet<PhpClass> resolvedParents = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(resolved);
                                     for (PhpClass resolvedParent : resolvedParents) {
-                                        if (declared.contains(resolvedParent.getFQN())) {
+                                        String strResolvedParentFQN = resolvedParent.getFQN();
+
+                                        /* if parent already reported or declared */
+                                        if (notCoveredThrows.contains(strResolvedParentFQN) || declared.contains(strResolvedParentFQN)) {
                                             isParentCovered = true;
                                             break;
                                         }
@@ -90,21 +96,25 @@ public class ThrowsAnnotatedProperlyInspector extends BasePhpInspection {
 
                                     /* report if even parent exceptions not covered */
                                     if (!isParentCovered) {
-                                        String strError = isInheritDoc ? strProblemViolates : strProblemMissing;
-                                        ProblemHighlightType highlight = isInheritDoc ?
-                                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING :
-                                                ProblemHighlightType.WEAK_WARNING;
-
-                                        strError = strError.replace("%c%", strResolvedFQN);
-                                        holder.registerProblem(objMethodName, strError, highlight);
+                                        notCoveredThrows.add(strResolvedFQN);
                                     }
                                 }
                             }
                         }
                     }
                     throwStatements.clear();
-
                     declared.clear();
+
+                    /* report for all violations at once */
+                    if (notCoveredThrows.size() > 0) {
+                        String strError = isInheritDoc ? strProblemViolates : strProblemMissing;
+                        ProblemHighlightType highlight = isInheritDoc ?
+                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING :
+                                ProblemHighlightType.WEAK_WARNING;
+
+                        strError = strError.replace("%c%", notCoveredThrows.toString());
+                        holder.registerProblem(objMethodName, strError, highlight);
+                    }
                 }
 
                 /* heavy analysis with resolving all calls inside the method */
@@ -126,7 +136,9 @@ public class ThrowsAnnotatedProperlyInspector extends BasePhpInspection {
                     PhpIndex index = PhpIndex.getInstance(holder.getProject());
                     HashSet<String> notCovered = new HashSet<String>();
                     for (String onePossible : possible) {
-                        if (!declared.contains(onePossible)) {
+
+                        /* if not reported and not declared */
+                        if (!notCoveredThrows.contains(onePossible) && !declared.contains(onePossible)) {
                             boolean isParentCovered = false;
 
                             /* no direct match, lookup parent exceptions covered */
@@ -135,7 +147,10 @@ public class ThrowsAnnotatedProperlyInspector extends BasePhpInspection {
                                 PhpClass firsPossibleClass = possibleClasses.iterator().next();
                                 HashSet<PhpClass> resolvedParents = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(firsPossibleClass);
                                 for (PhpClass resolvedParent : resolvedParents) {
-                                    if (declared.contains(resolvedParent.getFQN())) {
+                                    String strResolvedParentFQN = resolvedParent.getFQN();
+
+                                    /* if parent declared or reported already */
+                                    if (notCoveredThrows.contains(strResolvedParentFQN) || declared.contains(strResolvedParentFQN)) {
                                         isParentCovered = true;
                                         break;
                                     }
@@ -148,16 +163,19 @@ public class ThrowsAnnotatedProperlyInspector extends BasePhpInspection {
                             }
                         }
                     }
+                    declared.clear();
+                    possible.clear();
+
+                    /* report all nested once at once */
                     if (notCovered.size() > 0) {
                         String strError = strProblemInternalCalls.replace("%c%", notCovered.toString());
                         holder.registerProblem(objMethodName, strError, ProblemHighlightType.WEAK_WARNING);
 
                         notCovered.clear();
                     }
-
-                    declared.clear();
-                    possible.clear();
                 }
+
+                notCoveredThrows.clear();
             }
         };
     }

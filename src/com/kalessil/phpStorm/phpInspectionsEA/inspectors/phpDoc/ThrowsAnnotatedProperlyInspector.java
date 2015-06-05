@@ -7,9 +7,11 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpDoc.ThrowsResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpExceptions.CollectPossibleThrowsUtil;
 import org.jetbrains.annotations.NotNull;
@@ -73,14 +75,29 @@ public class ThrowsAnnotatedProperlyInspector extends BasePhpInspection {
                             if (null != whatsClass && whatsClass.resolve() instanceof PhpClass) {
                                 // match FQNs
                                 PhpClass resolved = (PhpClass) whatsClass.resolve();
-                                if (!declared.contains(resolved.getFQN()) && !declared.contains(resolved.getName())) {
-                                    String strError = isInheritDoc ? strProblemViolates : strProblemMissing;
-                                    ProblemHighlightType highlight = isInheritDoc ?
-                                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING :
-                                            ProblemHighlightType.WEAK_WARNING;
+                                String strResolvedFQN = resolved.getFQN();
+                                if (!StringUtil.isEmpty(strResolvedFQN) && !declared.contains(strResolvedFQN)) {
+                                    /* no direct match, lookup parent exceptions covered */
+                                    boolean isParentCovered = false;
+                                    HashSet<PhpClass> resolvedParents = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(resolved);
+                                    for (PhpClass resolvedParent : resolvedParents) {
+                                        if (declared.contains(resolvedParent.getFQN())) {
+                                            isParentCovered = true;
+                                            break;
+                                        }
+                                    }
+                                    resolvedParents.clear();
 
-                                    strError = strError.replace("%c%", resolved.getName());
-                                    holder.registerProblem(objMethodName, strError, highlight);
+                                    /* report if even parent exceptions not covered */
+                                    if (!isParentCovered) {
+                                        String strError = isInheritDoc ? strProblemViolates : strProblemMissing;
+                                        ProblemHighlightType highlight = isInheritDoc ?
+                                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING :
+                                                ProblemHighlightType.WEAK_WARNING;
+
+                                        strError = strError.replace("%c%", strResolvedFQN);
+                                        holder.registerProblem(objMethodName, strError, highlight);
+                                    }
                                 }
                             }
                         }
@@ -106,10 +123,29 @@ public class ThrowsAnnotatedProperlyInspector extends BasePhpInspection {
                     }
 
                     /* check possible - declared are covered properly */
+                    PhpIndex index = PhpIndex.getInstance(holder.getProject());
                     HashSet<String> notCovered = new HashSet<String>();
                     for (String onePossible : possible) {
-                        if (onePossible.indexOf('\\') != -1 && !declared.contains(onePossible)) {
-                            notCovered.add(onePossible);
+                        if (!declared.contains(onePossible)) {
+                            boolean isParentCovered = false;
+
+                            /* no direct match, lookup parent exceptions covered */
+                            Collection<PhpClass> possibleClasses = index.getClassesByFQN(onePossible);
+                            if (possibleClasses.size() > 0) {
+                                PhpClass firsPossibleClass = possibleClasses.iterator().next();
+                                HashSet<PhpClass> resolvedParents = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(firsPossibleClass);
+                                for (PhpClass resolvedParent : resolvedParents) {
+                                    if (declared.contains(resolvedParent.getFQN())) {
+                                        isParentCovered = true;
+                                        break;
+                                    }
+                                }
+                                resolvedParents.clear();
+                            }
+
+                            if (!isParentCovered) {
+                                notCovered.add(onePossible);
+                            }
                         }
                     }
                     if (notCovered.size() > 0) {

@@ -44,7 +44,6 @@ final public class ThrowsResolveUtil {
             if (returnOrThrow.getName().equals("@throws") && returnOrThrow.getFirstPsiChild() instanceof PhpDocType) {
                 PhpDocType type = (PhpDocType) returnOrThrow.getFirstPsiChild();
                 declaredExceptions.add(type.getFQN());
-                declaredExceptions.add(type.getName());
             }
         }
         returns.clear();

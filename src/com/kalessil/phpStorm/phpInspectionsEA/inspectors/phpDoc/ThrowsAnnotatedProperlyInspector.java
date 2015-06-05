@@ -106,11 +106,17 @@ public class ThrowsAnnotatedProperlyInspector extends BasePhpInspection {
                     }
 
                     /* check possible - declared are covered properly */
+                    HashSet<String> notCovered = new HashSet<String>();
                     for (String onePossible : possible) {
-                        if (onePossible.indexOf('\\') == -1 && !declared.contains(onePossible)) {
-                            String strError = strProblemInternalCalls.replace("%c%", onePossible);
-                            holder.registerProblem(objMethodName, strError, ProblemHighlightType.WEAK_WARNING);
+                        if (onePossible.indexOf('\\') != -1 && !declared.contains(onePossible)) {
+                            notCovered.add(onePossible);
                         }
+                    }
+                    if (notCovered.size() > 0) {
+                        String strError = strProblemInternalCalls.replace("%c%", notCovered.toString());
+                        holder.registerProblem(objMethodName, strError, ProblemHighlightType.WEAK_WARNING);
+
+                        notCovered.clear();
                     }
 
                     declared.clear();

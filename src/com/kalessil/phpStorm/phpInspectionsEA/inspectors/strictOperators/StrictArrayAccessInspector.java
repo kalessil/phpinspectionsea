@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class StrictArrayAccessInspector extends BasePhpInspection {
     private static final String strProblemDescriptionArrayAccess = "Index-based access to not array (type is %t%).";
+    private static final String strProblemDescriptionStringAccess = "Character offset access to not string (type is %t%).";
 
     @NotNull
     public String getShortName() {
@@ -21,12 +22,20 @@ public class StrictArrayAccessInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpArrayAccessExpression(final ArrayAccessExpression expr) {
                 final PhpExpressionTypes type = new PhpExpressionTypes(expr.getValue(), holder);
-                if (type.isArray() || type.isArrayAccess()) {
-                    return;
+                final String strWarning;
+
+                if (expr.textContains('[')) {
+                    if (type.isArray() || type.isString() || type.isArrayAccess()) {
+                        return;
+                    }
+                    strWarning = strProblemDescriptionArrayAccess.replace("%t%", type.toString());
+                } else {
+                    if (type.isString()) {
+                        return;
+                    }
+                    strWarning = strProblemDescriptionStringAccess.replace("%t%", type.toString());
                 }
 
-                final String strWarning = strProblemDescriptionArrayAccess
-                        .replace("%t%", type.toString());
                 holder.registerProblem(expr, strWarning, ProblemHighlightType.WEAK_WARNING);
             }
         };

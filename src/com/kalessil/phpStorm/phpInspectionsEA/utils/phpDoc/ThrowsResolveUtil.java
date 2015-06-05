@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils.phpDoc;
 
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
@@ -43,7 +44,10 @@ final public class ThrowsResolveUtil {
         for (PhpDocReturnTag returnOrThrow : returns) {
             if (returnOrThrow.getName().equals("@throws") && returnOrThrow.getFirstPsiChild() instanceof PhpDocType) {
                 PhpDocType type = (PhpDocType) returnOrThrow.getFirstPsiChild();
-                declaredExceptions.add(type.getFQN());
+                PsiElement typeResolved = type.resolve();
+                if (typeResolved instanceof PhpClass) {
+                    declaredExceptions.add(((PhpClass) typeResolved).getFQN());
+                }
             }
         }
         returns.clear();

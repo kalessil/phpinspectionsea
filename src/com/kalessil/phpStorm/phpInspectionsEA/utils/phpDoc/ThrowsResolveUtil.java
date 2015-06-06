@@ -5,7 +5,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.tags.PhpDocExpectedExceptionImpl;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.tags.PhpDocTagImpl;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocReturnTag;
 import com.jetbrains.php.lang.psi.elements.Method;
@@ -23,7 +22,7 @@ final public class ThrowsResolveUtil {
     /**
      * Return false if doc-block is not defined
      */
-    static public ResolveType resolveThrownExceptions(@NotNull final Method method, @NotNull HashSet<String> declaredExceptions) {
+    static public ResolveType resolveThrownExceptions(@NotNull final Method method, @NotNull HashSet<PhpClass> declaredExceptions) {
         PhpPsiElement previous = method.getPrevPsiSibling();
         if (!(previous instanceof PhpDocCommentImpl)) {
             return ResolveType.NOT_RESOLVED;
@@ -46,7 +45,7 @@ final public class ThrowsResolveUtil {
                 PhpDocType type = (PhpDocType) returnOrThrow.getFirstPsiChild();
                 PsiElement typeResolved = type.resolve();
                 if (typeResolved instanceof PhpClass) {
-                    declaredExceptions.add(((PhpClass) typeResolved).getFQN());
+                    declaredExceptions.add((PhpClass) typeResolved);
                 }
             }
         }
@@ -58,7 +57,7 @@ final public class ThrowsResolveUtil {
     /**
      * Resolves inherit doc recursively checking supers of the method owner.
      */
-    private static void resolveInheritDoc(@NotNull final Method method, @NotNull HashSet<String> declaredExceptions) {
+    private static void resolveInheritDoc(@NotNull final Method method, @NotNull HashSet<PhpClass> declaredExceptions) {
         PhpClass clazz = method.getContainingClass();
         String methodName = method.getName();
         if (null != clazz && !StringUtil.isEmpty(methodName)) {

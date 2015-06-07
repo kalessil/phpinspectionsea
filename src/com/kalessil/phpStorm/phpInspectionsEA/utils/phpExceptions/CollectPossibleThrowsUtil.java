@@ -110,6 +110,11 @@ final public class CollectPossibleThrowsUtil {
         /* process nested calls */
         Collection<MethodReference> calls = PsiTreeUtil.findChildrenOfType(scope, MethodReference.class);
         for (MethodReference call : calls) {
+            /* skip processed */
+            if (processed.contains(call)) {
+                continue;
+            }
+
             PsiElement methodResolved = call.resolve();
             if (methodResolved instanceof Method) {
                 /* lookup for annotated exceptions */

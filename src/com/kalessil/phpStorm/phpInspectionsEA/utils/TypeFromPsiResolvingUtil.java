@@ -41,6 +41,32 @@ public class TypeFromPsiResolvingUtil {
 
         if (objSubjectExpression instanceof ArrayCreationExpression) {
             objTypesSet.add(Types.strArray);
+
+            final PsiElement[] children = objSubjectExpression.getChildren();
+            if ((children.length == 2) && (children[0] instanceof PhpPsiElement) && (children[1] instanceof PhpPsiElement)) {
+                HashSet<String> itemMethodType = new HashSet<String>();
+                resolveExpressionType(((PhpPsiElement) children[1]).getFirstPsiChild(), objScope, objIndex, itemMethodType);
+                if (!itemMethodType.contains(Types.strString)) {
+                    return;
+                }
+
+                HashSet<String> itemClassType = new HashSet<String>();
+                resolveExpressionType(((PhpPsiElement) children[0]).getFirstPsiChild(), objScope, objIndex, itemClassType);
+                if (!itemClassType.contains(Types.strString)) {
+                    boolean isObject = false;
+                    for (final String type : itemClassType) {
+                        if (type.charAt(0) == '\\') {
+                            isObject = true;
+                            break;
+                        }
+                    }
+                    if (!isObject) {
+                        return;
+                    }
+                }
+
+                objTypesSet.add(Types.strCallable);
+            }
             return;
         }
         if (objSubjectExpression instanceof StringLiteralExpression) {

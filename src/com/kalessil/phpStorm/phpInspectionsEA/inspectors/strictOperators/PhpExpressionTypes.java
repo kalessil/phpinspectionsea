@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 public class PhpExpressionTypes {
@@ -70,6 +71,45 @@ public class PhpExpressionTypes {
         }
     }
 
+    public boolean contains(final String type) {
+        return types.contains(type);
+    }
+
+    public boolean instanceOf(final PhpExpressionTypes base) {
+        final boolean instanceOfObject = base.types.contains("object");
+        for (final String type1 : types) {
+            if (type1.charAt(0) == '\\') {
+                if (instanceOfObject) {
+                    return true;
+                }
+
+                final HashSet<String> extendslist = new HashSet<String>();
+                extendslist.add(type1);
+                final PhpClass typeclass = objIndex.getAnyByFQN(type1).iterator().next();
+                if (typeclass != null) {
+                    extendslist.addAll(Arrays.asList(typeclass.getInterfaceNames()));
+                    extendslist.addAll(Arrays.asList(typeclass.getTraitNames()));
+                    extendslist.addAll(Arrays.asList(typeclass.getMixinNames()));
+                    for (final PhpClass parentclass : typeclass.getSupers()) {
+                        extendslist.add(parentclass.getFQN());
+                        extendslist.addAll(Arrays.asList(parentclass.getInterfaceNames()));
+                        extendslist.addAll(Arrays.asList(parentclass.getTraitNames()));
+                        extendslist.addAll(Arrays.asList(parentclass.getMixinNames()));
+                    }
+                }
+
+                for (final String type2 : base.types) {
+                    if (type2.charAt(0) == '\\') {
+                        if (extendslist.contains(type2)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean isInt() {
         return types.contains(Types.strInteger);
     }
@@ -100,6 +140,15 @@ public class PhpExpressionTypes {
 
     public boolean isMixed() {
         return types.contains(Types.strMixed);
+    }
+
+    public boolean isObject() {
+        for (final String type : types) {
+            if (type.charAt(0) == '\\') {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isArrayAccess() {

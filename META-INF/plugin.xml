@@ -20,7 +20,7 @@ And it covers:<br />
 - not optimal, duplicate and suspicious if conditions<br />
 - magic methods validity<br />
 - regular expressions<br />
-- exceptions handling workflow<br />
+- exceptions handling workflow validity<br />
 - compatibility issues<br />
 <br />
 Some of inspections are expecting conditional statements (e.g. if) to use
@@ -33,20 +33,18 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
     ]]></description>
 
   <change-notes><![CDATA[
-25 May 2015: improvements and new inspections<br/>
+07 Jun 2015: improvements and new pro-inspections<br/>
 <br/>
-    - ;<br/>
-LowPerformanceArrayUniqueUsageInspector: added code example how to resolve the performance.
-ArraySearchUsedAsInArrayInspector: added explanations regarding overhead
-IfConditionalsWithoutGroupStatementInspector: do not report "else if" constructions (fixed #66)
-NestedPositiveIfStatementsInspector: relocated into code style group, weakened error level (fixed #65)
+    - array_unique() low performing usage: documentation updated;<br/>
+    - 'array_search(...)' used as 'in_array(...)': documentation updated;<br/>
+    - Missing or empty conditionals group statement: now not reporting 'else if';<br/>
+    - Nested positive ifs: relocated into code style group;<br/>
+    - Magic methods validity: re-implemented exceptions detection;<br/>
 <br/>
-    - ;<br/>
-MagicMethodsValidityInspector: re-implemented
-ReferencingObjectsInspector: implemented
-ExceptionsAnnotatingAndHandlingInspector: implemented
-NotOptimaRegularExpressionsInspector: implemented
-DeprecatedIniOptionsInspector: implemented by community
+    - Deprecated configuration options: implemented by Denis Ryabov;<br/>
+    - Referencing objects: implemented;<br/>
+    - Exceptions handling and annotating: implemented;<br/>
+    - Not optimal regular expressions: implemented (thanks to Denis Ryabov for working out specs);<br/>
 <br/>
 <hr/>
   ]]></change-notes>

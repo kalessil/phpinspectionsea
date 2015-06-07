@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptionsWorkflow;
 
 
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -15,14 +15,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.phpDoc.ThrowsResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpExceptions.CollectPossibleThrowsUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
-public class ThrowsAnnotatedProperlyInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Some of exceptions are not handled/annotated: '%c%'";
+public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection {
+    private static final String strProblemDescription = "Throws a not annotated/handled exception: '%c%'";
 
     @NotNull
     public String getShortName() {
-        return "ThrowsAnnotatedProperlyInspection";
+        return "ExceptionsAnnotatingAndHandlingInspection";
     }
 
     @Override
@@ -31,7 +32,7 @@ public class ThrowsAnnotatedProperlyInspector extends BasePhpInspection {
             public void visitPhpMethod(Method method) {
                 String strMethodName = method.getName();
                 PsiElement objMethodName = method.getNameIdentifier();
-                if (StringUtil.isEmpty(strMethodName) || null == objMethodName) {
+                if (StringUtil.isEmpty(strMethodName) || null == objMethodName || strMethodName.equals("__toString")) {
                     return;
                 }
 
@@ -55,42 +56,52 @@ public class ThrowsAnnotatedProperlyInspector extends BasePhpInspection {
                 }
 
                 HashSet<PsiElement> processedRegistry = new HashSet<PsiElement>();
-                HashSet<PhpClass> throwsExceptions = CollectPossibleThrowsUtil.collectNestedAndWorkflowExceptions(method, processedRegistry, holder);
+                HashMap<PhpClass, HashSet<PsiElement>> throwsExceptions = CollectPossibleThrowsUtil.collectNestedAndWorkflowExceptions(method, processedRegistry, holder);
 //holder.registerProblem(objMethodName, "Processed: " + processedRegistry.size(), ProblemHighlightType.WEAK_WARNING);
                 processedRegistry.clear();
 
+
                 /* exclude annotated exceptions */
-                throwsExceptions.removeAll(annotatedExceptions);
+                for (PhpClass annotated: annotatedExceptions) {
+                    if (throwsExceptions.containsKey(annotated)) {
+                        throwsExceptions.get(annotated).clear();
+                        throwsExceptions.remove(annotated);
+                    }
+                }
+
+                /* do reporting now */
                 if (throwsExceptions.size() > 0) {
                     /* deeper analysis needed */
-                    HashSet<PhpClass> unhandledExceptions = new HashSet<PhpClass>();
+                    HashMap<PhpClass, HashSet<PsiElement>> unhandledExceptions = new HashMap<PhpClass, HashSet<PsiElement>>();
                     for (PhpClass annotated : annotatedExceptions) {
-                        for (PhpClass thrown : throwsExceptions) {
+                        for (PhpClass thrown : throwsExceptions.keySet()) {
                             /* already reported */
-                            if (unhandledExceptions.contains(thrown)) {
+                            if (unhandledExceptions.containsKey(thrown)) {
                                 continue;
                             }
 
                             /* check thrown parents, as annotated not processed here */
                             HashSet<PhpClass> thrownVariants = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(thrown, true);
                             if (!thrownVariants.contains(annotated)) {
-                                unhandledExceptions.add(thrown);
+                                unhandledExceptions.put(thrown, throwsExceptions.get(thrown));
+                                throwsExceptions.put(thrown, null);
                             }
+                            thrownVariants.clear();
                         }
                     }
 
                     if (unhandledExceptions.size() > 0) {
-                        String strUnhandled = "";
+                        for (PhpClass classUnhandled : unhandledExceptions.keySet()) {
+                            String thrown = classUnhandled.getFQN();
+                            String strError = strProblemDescription.replace("%c%", thrown);
 
-                        String strDelimiter = "";
-                        for (PhpClass classUnhandled : unhandledExceptions) {
-                            strUnhandled += strDelimiter + classUnhandled.getFQN();
-                            strDelimiter = ", ";
+                            for (PsiElement blame : unhandledExceptions.get(classUnhandled)) {
+                                holder.registerProblem(blame, strError, ProblemHighlightType.WEAK_WARNING);
+                            }
+
+                            unhandledExceptions.get(classUnhandled).clear();
                         }
                         unhandledExceptions.clear();
-
-                        String strError = strProblemDescription.replace("%c%", strUnhandled);
-                        holder.registerProblem(objMethodName, strError, ProblemHighlightType.WEAK_WARNING);
                     }
 
                     throwsExceptions.clear();

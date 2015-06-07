@@ -185,6 +185,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="DisconnectedForeachInstructionInspection"      displayName="Control flow: statement can be decoupled from foreach"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.DisconnectedForeachInstructionInspector"/>
+  <localInspection language="PHP" groupPath="PHP"
+       shortName="ExceptionsAnnotatingAndHandlingInspection"       displayName="Control flow: exceptions handling and annotating"
+       groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptionsWorkflow.ExceptionsAnnotatingAndHandlingInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="ForgottenDebugOutputInspection"                displayName="Probable bugs: forgotten debug statements"
@@ -340,11 +344,6 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="DeprecatedIniOptionsInspection"                  displayName="Compatibility: deprecated configuration options"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DeprecatedIniOptionsInspector"/>
-
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="ThrowsAnnotatedProperlyInspection"               displayName="Php-Doc: missing @throws annotations"
-        groupName="Php Inspections (EA Extended)"                   enabledByDefault="false" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc.ThrowsAnnotatedProperlyInspector"/>
   </extensions>
 
   <application-components>

@@ -24,7 +24,9 @@ public class PhpExpressionTypes {
 
         types.remove(Types.strResolvingAbortedOnPsiLevel);
         types.remove(Types.strClassNotResolved);
-        if (types.isEmpty()) {
+        if (types.contains(Types.strCallable)) {
+            types.add(Types.strString);
+        } else if (types.isEmpty()) {
             types.add(Types.strMixed);
         }
     }
@@ -38,7 +40,9 @@ public class PhpExpressionTypes {
             }
         }
 
-        if (types.isEmpty()) {
+        if (types.contains(Types.strCallable)) {
+            types.add(Types.strString);
+        } else if (types.isEmpty()) {
             types.add(Types.strMixed);
         }
     }

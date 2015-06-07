@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionImpl;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashSet;
 
 public class TypeFromPsiResolvingUtil {
@@ -69,6 +70,7 @@ public class TypeFromPsiResolvingUtil {
             }
             return;
         }
+
         if (objSubjectExpression instanceof StringLiteralExpression) {
             objTypesSet.add(Types.strString);
             return;
@@ -229,7 +231,15 @@ public class TypeFromPsiResolvingUtil {
             return;
         }
 
-        storeAsTypeWithSignaturesImport(objSubjectExpression.getType().toString(), objScope, objIndex, objTypesSet);
+        final String types;
+        final Collection<? extends PhpNamedElement> declaration = objSubjectExpression.resolveGlobal(false);
+        if (declaration.size() > 0) {
+            types = declaration.iterator().next().getType().toString();
+        } else {
+            types = objSubjectExpression.getType().toString();
+        }
+
+        storeAsTypeWithSignaturesImport(types, objScope, objIndex, objTypesSet);
     }
 
     /** Will resolve ternary operator */

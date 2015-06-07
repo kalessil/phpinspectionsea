@@ -60,10 +60,12 @@ public class StrictArgumentsInspector extends BasePhpInspection {
             private void inspectArguments(final PsiElement[] args, final Parameter[] params) {
                 final int length = Math.min(args.length, params.length);
                 for (int i = 0; i < length; ++i) {
-                    final PhpExpressionTypes argType = new PhpExpressionTypes(args[i], holder);
+                    PhpExpressionTypes argType = new PhpExpressionTypes(args[i], holder);
                     final PhpExpressionTypes paramType = new PhpExpressionTypes(params[i].getType().toString(), holder);
 
-                    if (!paramType.isMixed() && !argType.equals(paramType)) {
+                    if (!paramType.isMixed()
+                            && !argType.equals(paramType)
+                            && !argType.instanceOf(paramType)) {
                         final String strWarning = strProblemDescriptionArgumentTypeMismatch
                                 .replace("%t1%", argType.toString())
                                 .replace("%t2%", paramType.toString());

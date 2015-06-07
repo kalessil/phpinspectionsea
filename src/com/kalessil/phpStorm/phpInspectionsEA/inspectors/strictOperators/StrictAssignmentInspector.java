@@ -22,7 +22,7 @@ public class StrictAssignmentInspector extends BasePhpInspection {
             public void visitPhpAssignmentExpression(final AssignmentExpression expr) {
                 final PhpExpressionTypes varT = new PhpExpressionTypes(expr.getVariable(), holder);
                 final PhpExpressionTypes valueT = new PhpExpressionTypes(expr.getValue(), holder);
-                if (varT.isMixed() || varT.equals(valueT)) {
+                if (varT.isMixed() || varT.equals(valueT) || valueT.instanceOf(varT)) {
                     return;
                 }
                 if (varT.isFloat() && valueT.isInt()) {

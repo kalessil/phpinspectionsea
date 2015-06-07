@@ -35,9 +35,13 @@ public class PhpExpressionTypes {
     public PhpExpressionTypes(final String strTypes, @NotNull final ProblemsHolder holder) {
         objIndex = PhpIndex.getInstance(holder.getProject());
 
-        for (final String str : strTypes.split("\\|")) {
-            if (!str.isEmpty()) {
-                types.add(Types.getType(str));
+        if ((strTypes.indexOf('?') >= 0) || (strTypes.indexOf('#') >= 0)) {
+            types.add(Types.strMixed);
+        } else {
+            for (final String str : strTypes.split("\\|")) {
+                if (!str.isEmpty()) {
+                    types.add(Types.getType(str));
+                }
             }
         }
 

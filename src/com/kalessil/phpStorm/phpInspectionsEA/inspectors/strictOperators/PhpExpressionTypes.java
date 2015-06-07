@@ -89,8 +89,7 @@ public class PhpExpressionTypes {
 
                 final HashSet<String> extendslist = new HashSet<String>();
                 extendslist.add(type1);
-                final PhpClass typeclass = objIndex.getAnyByFQN(type1).iterator().next();
-                if (typeclass != null) {
+                for (final PhpClass typeclass : objIndex.getAnyByFQN(type1)) {
                     extendslist.addAll(Arrays.asList(typeclass.getInterfaceNames()));
                     extendslist.addAll(Arrays.asList(typeclass.getTraitNames()));
                     extendslist.addAll(Arrays.asList(typeclass.getMixinNames()));

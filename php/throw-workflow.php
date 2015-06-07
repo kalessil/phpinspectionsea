@@ -3,6 +3,7 @@
 class clazz {
 
     /**
+     * @return string
      * @throws \RuntimeException
      */
     public function throwsRuntime(){
@@ -22,5 +23,12 @@ class clazz {
         } catch (\LogicException $e) {
             throw new \InvalidArgumentException();
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString() {
+        return $this->throwsRuntime();
     }
 }

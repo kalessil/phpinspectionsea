@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionImpl;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -112,6 +113,10 @@ public class TypeFromPsiResolvingUtil {
             return;
         }
         if (objSubjectExpression instanceof ArrayAccessExpression) {
+            PhpPsiElement var = ((ArrayAccessExpression) objSubjectExpression).getValue();
+            if ((var instanceof PhpTypedElement) && ((PhpTypedElement) var).getType().equals(PhpType.STRING)) {
+                objTypesSet.add(Types.strString);
+            }
             storeAsTypeWithSignaturesImport(((ArrayAccessExpression) objSubjectExpression).getType().toString(), objScope, objIndex, objTypesSet);
             return;
         }

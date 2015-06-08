@@ -71,22 +71,37 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
                 /* do reporting now */
                 if (throwsExceptions.size() > 0) {
+//holder.registerProblem(objMethodName, "Throws: " + throwsExceptions.keySet().toString(), ProblemHighlightType.WEAK_WARNING);
                     /* deeper analysis needed */
                     HashMap<PhpClass, HashSet<PsiElement>> unhandledExceptions = new HashMap<PhpClass, HashSet<PsiElement>>();
-                    for (PhpClass annotated : annotatedExceptions) {
+                    if (annotatedExceptions.size() > 0) {
+                        /* filter what to report based on annotated exceptions  */
+                        for (PhpClass annotated : annotatedExceptions) {
+                            for (PhpClass thrown : throwsExceptions.keySet()) {
+                                /* already reported */
+                                if (unhandledExceptions.containsKey(thrown)) {
+                                    continue;
+                                }
+
+                                /* check thrown parents, as annotated not processed here */
+                                HashSet<PhpClass> thrownVariants = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(thrown, true);
+                                if (!thrownVariants.contains(annotated)) {
+                                    unhandledExceptions.put(thrown, throwsExceptions.get(thrown));
+                                    throwsExceptions.put(thrown, null);
+                                }
+                                thrownVariants.clear();
+                            }
+                        }
+                    } else {
+                        /* report all, as nothing is annotated */
                         for (PhpClass thrown : throwsExceptions.keySet()) {
                             /* already reported */
                             if (unhandledExceptions.containsKey(thrown)) {
                                 continue;
                             }
 
-                            /* check thrown parents, as annotated not processed here */
-                            HashSet<PhpClass> thrownVariants = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(thrown, true);
-                            if (!thrownVariants.contains(annotated)) {
-                                unhandledExceptions.put(thrown, throwsExceptions.get(thrown));
-                                throwsExceptions.put(thrown, null);
-                            }
-                            thrownVariants.clear();
+                            unhandledExceptions.put(thrown, throwsExceptions.get(thrown));
+                            throwsExceptions.put(thrown, null);
                         }
                     }
 

@@ -55,6 +55,13 @@ public class PhpExpressionTypes {
     }
 
     public boolean equals(@NotNull final PhpExpressionTypes another) {
+        // skip if one of expressions has "mixed" type
+        // (otherwise many false-positives are generated)
+        // @todo remove if type deduction will be improved in next PhpStorm version
+        if (isMixed() || another.isMixed()) {
+            return true;
+        }
+
         final HashSet<String> copy = new HashSet<String>(types);
         copy.retainAll(another.types);
         return !copy.isEmpty();

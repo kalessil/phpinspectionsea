@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.PhpLangUtil;
@@ -113,7 +114,10 @@ public class TypeFromPsiResolvingUtil {
             return;
         }
         if (objSubjectExpression instanceof ArrayAccessExpression) {
-            PhpPsiElement var = ((ArrayAccessExpression) objSubjectExpression).getValue();
+            PsiElement var = ((ArrayAccessExpression) objSubjectExpression).getValue();
+            if (var instanceof PsiReference) {
+                var = ((PsiReference) var).resolve();
+            }
             if ((var instanceof PhpTypedElement) && ((PhpTypedElement) var).getType().equals(PhpType.STRING)) {
                 objTypesSet.add(Types.strString);
             }

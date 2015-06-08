@@ -34,7 +34,7 @@ public class PhpExpressionTypes {
         }
     }
 
-    public PhpExpressionTypes(final String strTypes, @NotNull final ProblemsHolder holder) {
+    public PhpExpressionTypes(@NotNull final String strTypes, @NotNull final ProblemsHolder holder) {
         objIndex = PhpIndex.getInstance(holder.getProject());
 
         if ((strTypes.indexOf('?') >= 0) || (strTypes.indexOf('#') >= 0)) {

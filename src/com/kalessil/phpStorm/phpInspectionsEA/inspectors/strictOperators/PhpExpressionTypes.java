@@ -20,8 +20,10 @@ public class PhpExpressionTypes {
     public PhpExpressionTypes(final PsiElement expr, @NotNull final ProblemsHolder holder) {
         objIndex = PhpIndex.getInstance(holder.getProject());
 
-        final Function objScope = ExpressionSemanticUtil.getScope(expr);
-        TypeFromPsiResolvingUtil.resolveExpressionType(expr, objScope, objIndex, types);
+        if (expr != null) {
+            final Function objScope = ExpressionSemanticUtil.getScope(expr);
+            TypeFromPsiResolvingUtil.resolveExpressionType(expr, objScope, objIndex, types);
+        }
 
         types.remove(Types.strResolvingAbortedOnPsiLevel);
         types.remove(Types.strClassNotResolved);

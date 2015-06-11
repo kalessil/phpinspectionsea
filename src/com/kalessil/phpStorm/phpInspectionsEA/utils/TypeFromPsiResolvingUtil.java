@@ -2,14 +2,17 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionImpl;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashSet;
 
 public class TypeFromPsiResolvingUtil {
@@ -41,8 +44,35 @@ public class TypeFromPsiResolvingUtil {
 
         if (objSubjectExpression instanceof ArrayCreationExpression) {
             objTypesSet.add(Types.strArray);
+
+            final PsiElement[] children = objSubjectExpression.getChildren();
+            if ((children.length == 2) && (children[0] instanceof PhpPsiElement) && (children[1] instanceof PhpPsiElement)) {
+                HashSet<String> itemMethodType = new HashSet<String>();
+                resolveExpressionType(((PhpPsiElement) children[1]).getFirstPsiChild(), objScope, objIndex, itemMethodType);
+                if (!itemMethodType.contains(Types.strString)) {
+                    return;
+                }
+
+                HashSet<String> itemClassType = new HashSet<String>();
+                resolveExpressionType(((PhpPsiElement) children[0]).getFirstPsiChild(), objScope, objIndex, itemClassType);
+                if (!itemClassType.contains(Types.strString)) {
+                    boolean isObject = false;
+                    for (final String type : itemClassType) {
+                        if (type.charAt(0) == '\\') {
+                            isObject = true;
+                            break;
+                        }
+                    }
+                    if (!isObject) {
+                        return;
+                    }
+                }
+
+                objTypesSet.add(Types.strCallable);
+            }
             return;
         }
+
         if (objSubjectExpression instanceof StringLiteralExpression) {
             objTypesSet.add(Types.strString);
             return;
@@ -84,6 +114,13 @@ public class TypeFromPsiResolvingUtil {
             return;
         }
         if (objSubjectExpression instanceof ArrayAccessExpression) {
+            PsiElement var = ((ArrayAccessExpression) objSubjectExpression).getValue();
+            if (var instanceof PsiReference) {
+                var = ((PsiReference) var).resolve();
+            }
+            if ((var instanceof PhpTypedElement) && ((PhpTypedElement) var).getType().equals(PhpType.STRING)) {
+                objTypesSet.add(Types.strString);
+            }
             storeAsTypeWithSignaturesImport(((ArrayAccessExpression) objSubjectExpression).getType().toString(), objScope, objIndex, objTypesSet);
             return;
         }
@@ -203,7 +240,15 @@ public class TypeFromPsiResolvingUtil {
             return;
         }
 
-        storeAsTypeWithSignaturesImport(objSubjectExpression.getType().toString(), objScope, objIndex, objTypesSet);
+        final String types;
+        final Collection<? extends PhpNamedElement> declaration = objSubjectExpression.resolveGlobal(false);
+        if (declaration.size() > 0) {
+            types = declaration.iterator().next().getType().toString();
+        } else {
+            types = objSubjectExpression.getType().toString();
+        }
+
+        storeAsTypeWithSignaturesImport(types, objScope, objIndex, objTypesSet);
     }
 
     /** Will resolve ternary operator */

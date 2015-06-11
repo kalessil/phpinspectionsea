@@ -17,6 +17,10 @@ public class NonGreedyTransformCheckStrategy {
         regexNonGreedyPattern = Pattern.compile("\\.(\\*|\\+)\\?([^\\(\\)\\$\\\\]|\\\\.)");
     }
 
+    /**
+     * TODO: $content = preg_replace('#<esi\:remove>.*?</esi\:remove>#s', '', $content);
+     * nested tags are broken, reflect in message as risky, breaks e.g. nested tags
+     */
     static public void apply(final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
         if (!StringUtil.isEmpty(pattern) && pattern.indexOf('?') >= 0) {
             Matcher regexMatcher = regexNonGreedyPattern.matcher(pattern);

@@ -158,7 +158,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                             /**
                              * PhpClassHierarchyUtils.isSuperClass not handling interfaces, so scan complete inheritance tree
                              */
-                            HashSet<PhpClass> interfaces = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(objClass);
+                            HashSet<PhpClass> interfaces = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(objClass, false);
                             for (PhpClass oneInterface : interfaces) {
                                 String strFQN = oneInterface.getFQN();
                                 if (null != strFQN && strFQN.equals(strTraversableFQN)) {

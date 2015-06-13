@@ -222,10 +222,14 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="ImplicitMagicMethodCallInspection"             displayName="Probable bugs: implicit magic method calls"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.ImplicitMagicMethodCallInspector"/>
-      <localInspection language="PHP" groupPath="PHP"
+    <localInspection language="PHP" groupPath="PHP"
         shortName="NonSecureUniqidUsageInspection"                displayName="Probable bugs: non-secure uniqid usage"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.NonSecureUniqidUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="SwitchContinuationInLoopInspection"            displayName="Probable bugs: continue miss-behaviour in foreach"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.SwitchContinuationInLoopInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="SenselessTernaryOperatorInspection"            displayName="Confusing constructs: suspicious ternary operator"

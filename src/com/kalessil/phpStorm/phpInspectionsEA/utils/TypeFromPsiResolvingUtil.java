@@ -2,14 +2,17 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionImpl;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashSet;
 
 public class TypeFromPsiResolvingUtil {

@@ -197,6 +197,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
        shortName="ExceptionsAnnotatingAndHandlingInspection"       displayName="Control flow: exceptions handling and annotating"
        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptionsWorkflow.ExceptionsAnnotatingAndHandlingInspector"/>
+  <localInspection language="PHP" groupPath="PHP"
+       shortName="DegradedSwitchInspection"                        displayName="Control flow: switch-case simplification"
+       groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DegradedSwitchInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="ForgottenDebugOutputInspection"                displayName="Probable bugs: forgotten debug statements"

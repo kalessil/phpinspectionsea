@@ -1,4 +1,20 @@
 <?php
+
+class aClass {
+    const REGEX1 = '/regex1$/Z';
+    static public $regex2 = '/regex2$/Z';
+    protected $regex3 = '/regex3$/Z';
+
+    public function check($arg) {
+        $regex4 = '/regex4$/Z';
+
+        preg_match($regex4, $arg);
+        preg_match(self::REGEX1, $arg);
+        preg_match(self::$regex2, $arg);
+        preg_match($this->regex3, $arg);
+    }
+}
+
     preg_match('/^start-with/',  '');                 //report
     preg_match('/^starts-with/i', '');                //report
     preg_match('/^start-with$/',  '');                //ok

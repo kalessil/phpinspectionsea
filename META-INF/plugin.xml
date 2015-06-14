@@ -234,6 +234,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="SwitchContinuationInLoopInspection"            displayName="Probable bugs: continue miss-behaviour in foreach"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.SwitchContinuationInLoopInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="PrintfScanfArgumentsInspection"                displayName="Probable bugs: *printf/*scanf arguments count mismatches"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PrintfScanfArgumentsInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="SenselessTernaryOperatorInspection"            displayName="Confusing constructs: suspicious ternary operator"

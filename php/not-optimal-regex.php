@@ -1,9 +1,9 @@
 <?php
 
 class aClass {
-    const REGEX1 = '/regex1$/Z';
+    const REGEX1          = '/regex1$/Z';
     static public $regex2 = '/regex2$/Z';
-    protected $regex3 = '/regex3$/Z';
+    protected $regex3     = '/regex3$/Z';
 
     public function check($arg) {
         $regex4 = '/regex4$/Z';

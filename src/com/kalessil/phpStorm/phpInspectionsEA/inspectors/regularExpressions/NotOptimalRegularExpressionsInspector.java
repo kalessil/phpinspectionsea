@@ -2,10 +2,9 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions;
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.FunctionCallCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.PlainApiUseCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.classesStrategy.ShortClassDefinitionStrategy;
@@ -16,9 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,7 +64,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 /* resolve first parameter */
                 StringLiteralExpression pattern = null;
                 if (reference.getParameters().length > 0) {
-                    pattern = resolveAsStringLiteral(reference.getParameters()[0]);
+                    pattern = ExpressionSemanticUtil.resolveAsStringLiteral(reference.getParameters()[0]);
                 }
                 /* not available / PhpStorm limitations */
                 if (null == pattern || pattern.getContainingFile() != reference.getParameters()[0].getContainingFile()) {
@@ -94,54 +91,6 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                         return;
                     }
                 }
-            }
-
-            /**
-             * resolves strings from implicit string, field ot constant reference
-             */
-            private @Nullable StringLiteralExpression resolveAsStringLiteral(PsiElement obj) {
-                if (obj instanceof StringLiteralExpression) {
-                    return (StringLiteralExpression) obj;
-                }
-
-                if (obj instanceof FieldReference || obj instanceof ClassConstantReference) {
-                    Field fieldOrConstant = (Field) ((MemberReference) obj).resolve();
-                    if (null != fieldOrConstant && fieldOrConstant.getDefaultValue() instanceof StringLiteralExpression) {
-                        return (StringLiteralExpression) fieldOrConstant.getDefaultValue();
-                    }
-                }
-
-                if (obj instanceof Variable) {
-                    String variable = ((Variable) obj).getName();
-                    if (!StringUtil.isEmpty(variable)) {
-                        Function scope = ExpressionSemanticUtil.getScope(obj);
-                        if (null != scope) {
-                            HashSet<AssignmentExpression> matched = new HashSet<AssignmentExpression>();
-
-                            Collection<AssignmentExpression> assignments = PsiTreeUtil.findChildrenOfType(scope, AssignmentExpression.class);
-                            /* collect self-assignments as well */
-                            for (AssignmentExpression assignment : assignments) {
-                                if (assignment.getVariable() instanceof Variable && assignment.getValue() instanceof StringLiteralExpression) {
-                                    String name = assignment.getVariable().getName();
-                                    if (!StringUtil.isEmpty(name) && name.equals(variable)) {
-                                        matched.add(assignment);
-                                    }
-                                }
-                            }
-                            assignments.clear();
-
-                            if (matched.size() == 1) {
-                                StringLiteralExpression result = (StringLiteralExpression) matched.iterator().next().getValue();
-
-                                matched.clear();
-                                return result;
-                            }
-                            matched.clear();
-                        }
-                    }
-                }
-
-                return null;
             }
 
             private void checkCall (String strFunctionName, FunctionReference reference, StringLiteralExpression target, String regex, String modifiers) {

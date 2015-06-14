@@ -360,6 +360,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="DeprecatedIniOptionsInspection"                  displayName="Compatibility: deprecated configuration options"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DeprecatedIniOptionsInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="RandomApiMigrationInspection"                    displayName="Compatibility: random API migration"
+        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RandomApiMigrationInspector"/>
   </extensions>
 
   <application-components>

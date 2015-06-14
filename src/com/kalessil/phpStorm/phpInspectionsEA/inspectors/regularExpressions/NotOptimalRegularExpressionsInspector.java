@@ -69,7 +69,8 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 if (reference.getParameters().length > 0) {
                     pattern = resolveAsStringLiteral(reference.getParameters()[0]);
                 }
-                if (null == pattern) {
+                /* not available / PhpStorm limitations */
+                if (null == pattern || pattern.getContainingFile() != reference.getParameters()[0].getContainingFile()) {
                     return;
                 }
 

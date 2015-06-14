@@ -27,16 +27,11 @@ public class StrictComparisonInspector extends BasePhpInspection {
 
                 final String operation = expr.getOperation().getText();
 
-                switch (operation) {
-                    case "<":
-                    case "<=":
-                    case ">":
-                    case ">=":
-                    case "<=>":
-                        final PhpExpressionTypes leftT = new PhpExpressionTypes(expr.getLeftOperand(), holder);
-                        final PhpExpressionTypes rightT = new PhpExpressionTypes(expr.getRightOperand(), holder);
-                        inspectBinaryComparison(expr, leftT, rightT);
-                        break;
+                /* TODO: .getOperation().getNode().getElementType() + PhpTokenTypes.op* */
+                if (operation.equals("<") || operation.equals("<=") || operation.equals(">") || operation.equals(">=") || operation.equals("<=>")) {
+                    final PhpExpressionTypes leftT = new PhpExpressionTypes(expr.getLeftOperand(), holder);
+                    final PhpExpressionTypes rightT = new PhpExpressionTypes(expr.getRightOperand(), holder);
+                    inspectBinaryComparison(expr, leftT, rightT);
                 }
             }
 

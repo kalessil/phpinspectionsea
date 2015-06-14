@@ -32,10 +32,8 @@ public class StrictBitwiseInspector extends BasePhpInspection {
                 final PhpExpressionTypes type = new PhpExpressionTypes(expr, holder);
 
                 final String operation = expr.getOperation().getText();
-                switch (operation) {
-                    case "~":
-                        inspectUnaryBitwiseNot(expr, type);
-                        break;
+                if (operation.equals("~")) {
+                    inspectUnaryBitwiseNot(expr, type);
                 }
             }
 
@@ -49,16 +47,11 @@ public class StrictBitwiseInspector extends BasePhpInspection {
                 final PhpExpressionTypes leftT = new PhpExpressionTypes(expr.getLeftOperand(), holder);
                 final PhpExpressionTypes rightT = new PhpExpressionTypes(expr.getRightOperand(), holder);
 
-                switch (operation) {
-                    case "&":
-                    case "|":
-                    case "^":
-                        inspectBinaryBitwise(expr, leftT, rightT);
-                        break;
-                    case "<<":
-                    case ">>":
-                        inspectBinaryShift(expr, leftT, rightT);
-                        break;
+                /* TODO: .getOperation().getNode().getElementType() + PhpTokenTypes.op* */
+                if (operation.equals("&") || operation.equals("|") || operation.equals("^")) {
+                    inspectBinaryBitwise(expr, leftT, rightT);
+                } else if (operation.equals("<<") || operation.equals(">>")) {
+                    inspectBinaryShift(expr, leftT, rightT);
                 }
             }
 
@@ -72,16 +65,11 @@ public class StrictBitwiseInspector extends BasePhpInspection {
                 final PhpExpressionTypes leftT = new PhpExpressionTypes(expr.getFirstPsiChild(), holder);
                 final PhpExpressionTypes rightT = new PhpExpressionTypes(expr.getValue(), holder);
 
-                switch (operation) {
-                    case "&=":
-                    case "|=":
-                    case "^=":
-                        inspectBinaryBitwise(expr, leftT, rightT);
-                        break;
-                    case "<<=":
-                    case ">>=":
-                        inspectBinaryShift(expr, leftT, rightT);
-                        break;
+                /* TODO: .getOperation().getNode().getElementType() + PhpTokenTypes.op* */
+                if (operation.equals("&=") || operation.equals("|=") || operation.equals("^=")) {
+                    inspectBinaryBitwise(expr, leftT, rightT);
+                } else if (operation.equals("<<=") || operation.equals(">>=")) {
+                    inspectBinaryShift(expr, leftT, rightT);
                 }
             }
 

@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.PhpExpression;
 import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
@@ -28,16 +29,11 @@ public class StrictLogicalInspector extends BasePhpInspection {
 
                 final String operation = expr.getOperation().getText();
 
-                switch (operation) {
-                    case "&&":
-                    case "and":
-                    case "||":
-                    case "or":
-                    case "xor":
-                        final PhpExpressionTypes leftT = new PhpExpressionTypes(expr.getLeftOperand(), holder);
-                        final PhpExpressionTypes rightT = new PhpExpressionTypes(expr.getRightOperand(), holder);
-                        inspectBinaryLogical(expr, leftT, rightT);
-                        break;
+                /* TODO: .getOperation().getNode().getElementType() + PhpTokenTypes.op* */
+                if (operation.equals("&&") || operation.equals("and") || operation.equals("||") || operation.equals("or") || operation.equals("xor")) {
+                    final PhpExpressionTypes leftT = new PhpExpressionTypes(expr.getLeftOperand(), holder);
+                    final PhpExpressionTypes rightT = new PhpExpressionTypes(expr.getRightOperand(), holder);
+                    inspectBinaryLogical(expr, leftT, rightT);
                 }
             }
 
@@ -48,13 +44,11 @@ public class StrictLogicalInspector extends BasePhpInspection {
 
                 final String operation = expr.getOperation().getText();
 
-                switch (operation) {
-                    case "&&=":
-                    case "||=":
-                        final PhpExpressionTypes leftT = new PhpExpressionTypes(expr.getFirstPsiChild(), holder);
-                        final PhpExpressionTypes rightT = new PhpExpressionTypes(expr.getValue(), holder);
-                        inspectBinaryLogical(expr, leftT, rightT);
-                        break;
+                /* TODO: .getOperation().getNode().getElementType() + PhpTokenTypes.op* */
+                if (operation.equals("&&=") || operation.equals("||=")) {
+                    final PhpExpressionTypes leftT = new PhpExpressionTypes(expr.getFirstPsiChild(), holder);
+                    final PhpExpressionTypes rightT = new PhpExpressionTypes(expr.getValue(), holder);
+                    inspectBinaryLogical(expr, leftT, rightT);
                 }
             }
 

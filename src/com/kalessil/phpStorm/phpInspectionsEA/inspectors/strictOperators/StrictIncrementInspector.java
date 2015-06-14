@@ -25,12 +25,11 @@ public class StrictIncrementInspector extends BasePhpInspection {
                 }
 
                 final String operation = expr.getOperation().getText();
-                switch (operation) {
-                    case "++":
-                    case "--":
-                        final PhpExpressionTypes type = new PhpExpressionTypes(expr, holder);
-                        inspectUnaryIncrement(expr, type);
-                        break;
+
+                /* TODO: .getOperation().getNode().getElementType() + PhpTokenTypes.op* */
+                if (operation.equals("++") || operation.equals("--")) {
+                    final PhpExpressionTypes type = new PhpExpressionTypes(expr, holder);
+                    inspectUnaryIncrement(expr, type);
                 }
             }
 

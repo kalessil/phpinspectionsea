@@ -68,7 +68,8 @@ public class StrictArgumentsInspector extends BasePhpInspection {
 
                     if (!paramType.isMixed()
                             && !argType.equals(paramType)
-                            && !argType.instanceOf(paramType)) {
+                            && !argType.instanceOf(paramType)
+                            && !(paramType.isFloat() && argType.isInt())) {
                         final String strWarning = strProblemDescriptionArgumentTypeMismatch
                                 .replace("%t1%", argType.toString())
                                 .replace("%t2%", paramType.toString());

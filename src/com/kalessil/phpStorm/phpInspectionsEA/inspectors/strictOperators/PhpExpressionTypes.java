@@ -15,6 +15,7 @@ import java.util.HashSet;
 
 public class PhpExpressionTypes {
     private final HashSet<String> types = new HashSet<String>();
+    private boolean isMixed;
     private final PhpIndex objIndex;
 
     public PhpExpressionTypes(final PsiElement expr, @NotNull final ProblemsHolder holder) {
@@ -27,11 +28,8 @@ public class PhpExpressionTypes {
 
         types.remove(Types.strResolvingAbortedOnPsiLevel);
         types.remove(Types.strClassNotResolved);
-        if (types.contains(Types.strCallable)) {
-            types.add(Types.strString);
-        } else if (types.isEmpty()) {
-            types.add(Types.strMixed);
-        }
+
+        checkTypes();
     }
 
     public PhpExpressionTypes(@NotNull final String strTypes, @NotNull final ProblemsHolder holder) {
@@ -47,18 +45,24 @@ public class PhpExpressionTypes {
             }
         }
 
+        checkTypes();
+    }
+
+    private void checkTypes() {
         if (types.contains(Types.strCallable)) {
             types.add(Types.strString);
         } else if (types.isEmpty()) {
             types.add(Types.strMixed);
         }
+
+        isMixed = types.contains(Types.strMixed);
     }
 
     public boolean equals(@NotNull final PhpExpressionTypes another) {
         // skip if one of expressions has "mixed" type
         // (otherwise many false-positives are generated)
         // @todo remove if type deduction will be improved in next PhpStorm version
-        if (isMixed() || another.isMixed()) {
+        if (isMixed || another.isMixed) {
             return true;
         }
 
@@ -123,35 +127,35 @@ public class PhpExpressionTypes {
     }
 
     public boolean isInt() {
-        return types.contains(Types.strInteger);
+        return isMixed || types.contains(Types.strInteger);
     }
 
     public boolean isFloat() {
-        return types.contains(Types.strFloat);
+        return isMixed || types.contains(Types.strFloat);
     }
 
     public boolean isNumeric() {
-        return types.contains(Types.strInteger) || types.contains(Types.strFloat);
+        return isMixed || types.contains(Types.strInteger) || types.contains(Types.strFloat);
     }
 
     public boolean isString() {
-        return types.contains(Types.strString);
+        return isMixed || types.contains(Types.strString);
     }
 
     public boolean isBoolean() {
-        return types.contains(Types.strBoolean);
+        return isMixed || types.contains(Types.strBoolean);
     }
 
     public boolean isArray() {
-        return types.contains(Types.strArray);
+        return isMixed || types.contains(Types.strArray);
     }
 
     public boolean isNull() {
-        return types.contains(Types.strNull);
+        return isMixed || types.contains(Types.strNull);
     }
 
     public boolean isMixed() {
-        return types.contains(Types.strMixed);
+        return isMixed;
     }
 
     public boolean isObject() {

@@ -197,6 +197,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
        shortName="ExceptionsAnnotatingAndHandlingInspection"       displayName="Control flow: exceptions handling and annotating"
        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptionsWorkflow.ExceptionsAnnotatingAndHandlingInspector"/>
+  <localInspection language="PHP" groupPath="PHP"
+       shortName="DegradedSwitchInspection"                        displayName="Control flow: switch-case simplification"
+       groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DegradedSwitchInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="ForgottenDebugOutputInspection"                displayName="Probable bugs: forgotten debug statements"
@@ -222,10 +226,14 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="ImplicitMagicMethodCallInspection"             displayName="Probable bugs: implicit magic method calls"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.ImplicitMagicMethodCallInspector"/>
-      <localInspection language="PHP" groupPath="PHP"
+    <localInspection language="PHP" groupPath="PHP"
         shortName="NonSecureUniqidUsageInspection"                displayName="Probable bugs: non-secure uniqid usage"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.NonSecureUniqidUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="SwitchContinuationInLoopInspection"            displayName="Probable bugs: continue miss-behaviour in foreach"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.SwitchContinuationInLoopInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="SenselessTernaryOperatorInspection"            displayName="Confusing constructs: suspicious ternary operator"
@@ -352,6 +360,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="DeprecatedIniOptionsInspection"                  displayName="Compatibility: deprecated configuration options"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DeprecatedIniOptionsInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="RandomApiMigrationInspection"                    displayName="Compatibility: random API migration"
+        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RandomApiMigrationInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="StrictArgumentsInspection"                       displayName="Type compatibility: check types of call arguments"

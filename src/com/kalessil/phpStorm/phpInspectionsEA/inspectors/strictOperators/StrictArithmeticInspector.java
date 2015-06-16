@@ -33,19 +33,13 @@ public class StrictArithmeticInspector extends BasePhpInspection {
                 final PhpExpressionTypes leftT = new PhpExpressionTypes(expr.getLeftOperand(), holder);
                 final PhpExpressionTypes rightT = new PhpExpressionTypes(expr.getRightOperand(), holder);
 
-                switch (operation) {
-                    case "+":
-                        inspectBinaryPlus(expr, leftT, rightT);
-                        break;
-                    case "-":
-                    case "*":
-                    case "/":
-                    case "**":
-                        inspectBinaryArithmetic(expr, leftT, rightT);
-                        break;
-                    case "%":
-                        inspectBinaryMod(expr, leftT, rightT);
-                        break;
+                /* TODO: .getOperation().getNode().getElementType() + PhpTokenTypes.op* */
+                if (operation.equals("+")) {
+                    inspectBinaryPlus(expr, leftT, rightT);
+                } else if (operation.equals("-") || operation.equals("*") || operation.equals("/") || operation.equals("**")) {
+                    inspectBinaryArithmetic(expr, leftT, rightT);
+                } else if(operation.equals("%")) {
+                    inspectBinaryMod(expr, leftT, rightT);
                 }
             }
 
@@ -59,19 +53,13 @@ public class StrictArithmeticInspector extends BasePhpInspection {
                 final PhpExpressionTypes leftT = new PhpExpressionTypes(expr.getFirstPsiChild(), holder);
                 final PhpExpressionTypes rightT = new PhpExpressionTypes(expr.getValue(), holder);
 
-                switch (operation) {
-                    case "+=":
-                        inspectBinaryPlus(expr, leftT, rightT);
-                        break;
-                    case "-=":
-                    case "*=":
-                    case "/=":
-                    case "**=":
-                        inspectBinaryArithmetic(expr, leftT, rightT);
-                        break;
-                    case "%=":
-                        inspectBinaryMod(expr, leftT, rightT);
-                        break;
+                /* TODO: .getOperation().getNode().getElementType() + PhpTokenTypes.op* */
+                if (operation.equals("+=")) {
+                    inspectBinaryPlus(expr, leftT, rightT);
+                } else if (operation.equals("-=") || operation.equals("*=") || operation.equals("/=") || operation.equals("**=")) {
+                    inspectBinaryArithmetic(expr, leftT, rightT);
+                } else if (operation.equals("%=")) {
+                    inspectBinaryMod(expr, leftT, rightT);
                 }
             }
 

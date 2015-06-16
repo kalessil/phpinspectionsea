@@ -22,6 +22,9 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
     );
     private static final Map<String, String> INI_OPTIONS = new HashMap<String, String>();
     static {
+        INI_OPTIONS.put("asp_tags", "'asp_tags' is a discontinued option since PHP 7.0.0.");
+        INI_OPTIONS.put("always_populate_raw_post_data", "'always_populate_raw_post_data' is a discontinued option since PHP 7.0.0.");
+
         INI_OPTIONS.put("iconv.input_encoding", "'iconv.input_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
         INI_OPTIONS.put("iconv.output_encoding", "'iconv.output_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
         INI_OPTIONS.put("iconv.internal_encoding", "'iconv.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
@@ -29,7 +32,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         INI_OPTIONS.put("mbstring.http_output", "'mbstring.http_output' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
         INI_OPTIONS.put("mbstring.internal_encoding", "'mbstring.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
 
-        INI_OPTIONS.put("xsl.security_prefs", "'xsl.security_prefs' is a deprecated option since PHP 5.4.0. Use XsltProcessor->setSecurityPrefs() instead.");
+        INI_OPTIONS.put("xsl.security_prefs", "'xsl.security_prefs' is a deprecated option since PHP 5.4.0 (removed in PHP 7.0.0). Use XsltProcessor->setSecurityPrefs() instead.");
 
         INI_OPTIONS.put("allow_call_time_pass_reference", "'allow_call_time_pass_reference' is a discontinued option since PHP 5.4.0.");
         INI_OPTIONS.put("highlight.bg", "'highlight.bg' is a discontinued option since PHP 5.4.0.");

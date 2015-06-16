@@ -24,7 +24,7 @@ public class StrictArrayAccessInspector extends BasePhpInspection {
                 final PhpExpressionTypes type = new PhpExpressionTypes(expr.getValue(), holder);
                 final String strWarning;
 
-                if (expr.textContains('[')) {
+                if (expr.getLastChild().textMatches("]")) {
                     if (type.isArray() || type.isString() || type.isArrayAccess()) {
                         return;
                     }

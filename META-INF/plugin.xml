@@ -37,6 +37,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
 <br/>
     - Deprecated configuration options: extended PHP 7.0;<br/>
     - Not optimal regular expressions: improved resolving pattern;<br/>
+    - Suspicious loop: added more cases;<br/>
 <br/>
     - *printf/*scanf arguments count mismatches: implemented;<br/>
     - Random API migration: implemented;<br/>

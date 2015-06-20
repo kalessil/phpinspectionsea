@@ -1,12 +1,5 @@
 <?php
 
-/**
- * inspect loop:
- *  - collect all parent once until callable/file is reached
- *  - check variables conflict
- *      - if conflict hit then warn and terminate inspection
- */
-
 $num_names = 5;
 $names = array('', '', '', '', '');
 for ($i = 0; $i < $num_names; ++$i) {
@@ -39,4 +32,8 @@ foreach ($names as $i => $vv) {
         }
 
     }
+}
+
+for ($i = 0; $i > 0, $i < 255; ++$i) {
+    echo $i;
 }

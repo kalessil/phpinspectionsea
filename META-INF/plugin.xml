@@ -280,7 +280,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.IfConditionalsWithoutGroupStatementInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="SenselessCommaInArrayDefinitionInspection"     displayName="Code style: unnecessary last comma in array definition"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.SenselessCommaInArrayDefinitionInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="ElvisOperatorCanBeUsedInspection"              displayName="Code style: elvis operator can be used"

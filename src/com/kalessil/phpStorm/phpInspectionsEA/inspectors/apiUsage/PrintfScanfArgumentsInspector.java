@@ -12,8 +12,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class PrintfScanfArgumentsInspector extends BasePhpInspection {
+    private static final String strProblemInvalid = "Pattern seems to be not valid";
     private static final String strProblemDescription = "Amount of expected parameters is %c%";
 
     @NotNull
@@ -36,6 +39,12 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
         }
 
         return functions;
+    }
+
+    static private Pattern regexPlaceHolders = null;
+    static {
+        // raw regex: %((\d+)\$)?[+-]?(?:[ 0]|'.)?-?\d*(?:\.\d+)?[sducoxXbgGeEfF]
+        regexPlaceHolders = Pattern.compile("%((\\d+)\\$)?[+-]?(?:[ 0]|'.)?-?\\d*(?:\\.\\d+)?[sducoxXbgGeEfF]");
     }
 
     @Override
@@ -62,10 +71,33 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
 
                 String content = pattern.getContents();
                 if (!StringUtil.isEmpty(content)) {
+                    /* find valid placeholders and extract positions specifiers as well */
+                    int countWithoutPositionSpecifier = 0;
+                    int maxPositionSpecifier = 0;
+                    int countParsedAll = 0;
+                    Matcher regexMatcher = regexPlaceHolders.matcher(content.replace("%%", ""));
+                    while (regexMatcher.find()) {
+                        ++countParsedAll;
+
+                        if (null != regexMatcher.group(2)) {
+                            maxPositionSpecifier = Math.max(maxPositionSpecifier, Integer.valueOf(regexMatcher.group(2)));
+                            continue;
+                        }
+
+                        ++countWithoutPositionSpecifier;
+                    }
+                    final int countParsingExpectedParameters = minimumArgumentsForAnalysis + Math.max(countWithoutPositionSpecifier, maxPositionSpecifier);
+
+                    /* check for pattern validity */
                     final int parametersInPattern = StringUtil.getOccurrenceCount(content.replace("%%", ""), '%');
-                    final int parametersExpected = minimumArgumentsForAnalysis + parametersInPattern;
-                    if (parametersExpected != reference.getParameters().length) {
-                        String strError = strProblemDescription.replace("%c%", String.valueOf(parametersExpected));
+                    if (countParsedAll != parametersInPattern) {
+                        holder.registerProblem(reference.getParameters()[0], strProblemInvalid, ProblemHighlightType.GENERIC_ERROR);
+                        return;
+                    }
+
+                    /* check for arguments matching */
+                    if (countParsingExpectedParameters != reference.getParameters().length) {
+                        String strError = strProblemDescription.replace("%c%", String.valueOf(countParsingExpectedParameters));
                         holder.registerProblem(reference, strError, ProblemHighlightType.GENERIC_ERROR);
                     }
                 }

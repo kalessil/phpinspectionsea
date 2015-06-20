@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.3.0.1</version>
+  <version>1.3.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -35,16 +35,13 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
   <change-notes><![CDATA[
 07 Jun 2015: improvements and new pro-inspections<br/>
 <br/>
-    - array_unique() low performing usage: documentation updated;<br/>
-    - 'array_search(...)' used as 'in_array(...)': documentation updated;<br/>
-    - Missing or empty conditionals group statement: now not reporting 'else if';<br/>
-    - Nested positive ifs: relocated into code style group;<br/>
-    - Magic methods validity: re-implemented exceptions detection;<br/>
+    - : add ini settings changes in PHP 7.0;<br/>
+    - NotOptimalRegularExpressionsInspector: improved resolving pattern;<br/>
 <br/>
-    - Deprecated configuration options: implemented by Denis Ryabov;<br/>
-    - Referencing objects: implemented;<br/>
-    - Exceptions handling and annotating: implemented [1.3.0.1, fixes reporting];<br/>
-    - Not optimal regular expressions: implemented (thanks to Denis Ryabov for working out specs);<br/>
+    - PrintfScanfArgumentsInspector: implemented;<br/>
+    - RandomApiMigrationInspector: implemented;<br/>
+    - DegradedSwitchInspector: implemented;<br/>
+    - SwitchContinuationInLoopInspector: implemented;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

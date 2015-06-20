@@ -33,9 +33,9 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
     ]]></description>
 
   <change-notes><![CDATA[
-07 Jun 2015: improvements and new pro-inspections<br/>
+20 Jun 2015: improvements and new pro-inspections<br/>
 <br/>
-    - Deprecated configuration options: extended PHP 7.0;<br/>
+    - Deprecated configuration options: extended support for PHP 7.0;<br/>
     - Not optimal regular expressions: improved resolving pattern;<br/>
     - Suspicious loop: added more cases;<br/>
 <br/>

@@ -366,7 +366,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RandomApiMigrationInspector"/>
 
-    <localInspection language="PHP" groupPath="PHP"
+    <!--localInspection language="PHP" groupPath="PHP"
         shortName="StrictArgumentsInspection"                       displayName="Type compatibility: check types of call arguments"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictArgumentsInspector"/>
@@ -430,7 +430,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="StrictUnaryPlusInspection"                       displayName="Type compatibility: unary plus operator"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictUnaryPlusInspector"/>
-  </extensions>
+  </extensions-->
 
   <application-components>
     <!-- Add your application components here -->

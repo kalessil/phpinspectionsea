@@ -35,13 +35,13 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
   <change-notes><![CDATA[
 07 Jun 2015: improvements and new pro-inspections<br/>
 <br/>
-    - : add ini settings changes in PHP 7.0;<br/>
-    - NotOptimalRegularExpressionsInspector: improved resolving pattern;<br/>
+    - Deprecated configuration options: extended PHP 7.0;<br/>
+    - Not optimal regular expressions: improved resolving pattern;<br/>
 <br/>
-    - PrintfScanfArgumentsInspector: implemented;<br/>
-    - RandomApiMigrationInspector: implemented;<br/>
-    - DegradedSwitchInspector: implemented;<br/>
-    - SwitchContinuationInLoopInspector: implemented;<br/>
+    - *printf/*scanf arguments count mismatches: implemented;<br/>
+    - Random API migration: implemented;<br/>
+    - Switch-case simplification: implemented;<br/>
+    - Continue miss-behaviour in foreach: implemented;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

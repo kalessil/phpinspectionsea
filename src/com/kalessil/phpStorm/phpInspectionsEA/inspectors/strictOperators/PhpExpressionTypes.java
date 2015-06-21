@@ -164,6 +164,10 @@ public class PhpExpressionTypes {
         return isMixed;
     }
 
+    public boolean isUnknown() {
+        return isMixed && (types.size() == 1);
+    }
+
     public boolean isObject() {
         for (final String type : types) {
             if (type.charAt(0) == '\\') {
@@ -180,6 +184,19 @@ public class PhpExpressionTypes {
                 getParentsList(type1, extendslist);
                 if (extendslist.contains(strTypeArrayAccess)) {
                     return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isTrait() {
+        for (final String type : types) {
+            if (type.charAt(0) == '\\') {
+                for (PhpClass typeclass : objIndex.getAnyByFQN(type)) {
+                    if (typeclass.isTrait()) {
+                        return true;
+                    }
                 }
             }
         }

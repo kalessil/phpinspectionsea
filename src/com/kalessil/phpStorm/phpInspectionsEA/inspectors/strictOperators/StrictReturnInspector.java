@@ -5,10 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpFile;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.PhpReturn;
-import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +33,14 @@ public class StrictReturnInspector extends BasePhpInspection {
                     return;
                 }
 
-                final PhpExpressionTypes funcType = new PhpExpressionTypes(((PhpTypedElement) func).getType().toString(), holder);
+                String funcTypeString = ((PhpTypedElement) func).getType().toString();
+                if (func instanceof Method && funcTypeString.equals("$this")) {
+                    PhpClass container = ((Method) func).getContainingClass();
+                    if (container != null) {
+                        funcTypeString = container.getFQN();
+                    }
+                }
+                final PhpExpressionTypes funcType = new PhpExpressionTypes(funcTypeString, holder);
                 final PhpExpressionTypes returnType = new PhpExpressionTypes(value, holder);
                 if (funcType.isMixed() || funcType.equals(returnType)) {
                     return;

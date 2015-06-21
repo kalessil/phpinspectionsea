@@ -157,12 +157,12 @@ public class PhpExpressionTypes {
     }
 
     public boolean isArrayAccess() {
-        for (final String strType : types) {
-            for (final PhpClass phpClass : objIndex.getClassesByFQN(strType)) {
-                for (final String strInterface : phpClass.getInterfaceNames()) {
-                    if (strInterface.equals("\\ArrayAccess")) {
-                        return true;
-                    }
+        for (final String type1 : types) {
+            if (type1.charAt(0) == '\\') {
+                final HashSet<String> extendslist = new HashSet<String>();
+                getParentsList(type1, extendslist);
+                if (extendslist.contains("\\ArrayAccess")) {
+                    return true;
                 }
             }
         }

@@ -17,6 +17,9 @@ public class PhpExpressionTypes {
     private final HashSet<String> types = new HashSet<String>();
     private boolean isMixed;
     private final PhpIndex objIndex;
+    final static private String strTypeObject = "object";
+    final static private String strTypeStatic = "static";
+    final static private String strTypeArrayAccess = "\\ArrayAccess";
 
     public PhpExpressionTypes(final PsiElement expr, @NotNull final ProblemsHolder holder) {
         objIndex = PhpIndex.getInstance(holder.getProject());
@@ -51,7 +54,11 @@ public class PhpExpressionTypes {
     private void checkTypes() {
         if (types.contains(Types.strCallable)) {
             types.add(Types.strString);
-        } else if (types.isEmpty()) {
+        }
+        if (types.contains(strTypeStatic)) {
+            types.add(strTypeObject);
+        }
+        if (types.isEmpty()) {
             types.add(Types.strMixed);
         }
 
@@ -93,7 +100,7 @@ public class PhpExpressionTypes {
     }
 
     public boolean instanceOf(final PhpExpressionTypes base) {
-        final boolean instanceOfObject = base.types.contains("object");
+        final boolean instanceOfObject = base.types.contains(strTypeObject);
         for (final String type1 : types) {
             if (type1.charAt(0) == '\\') {
                 if (instanceOfObject) {
@@ -161,7 +168,7 @@ public class PhpExpressionTypes {
             if (type1.charAt(0) == '\\') {
                 final HashSet<String> extendslist = new HashSet<String>();
                 getParentsList(type1, extendslist);
-                if (extendslist.contains("\\ArrayAccess")) {
+                if (extendslist.contains(strTypeArrayAccess)) {
                     return true;
                 }
             }

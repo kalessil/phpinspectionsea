@@ -24,5 +24,6 @@ class aClass {
         echo sprintf('%d', $arg);
         echo sprintf('%1$d %1$d', $arg);
         echo sprintf("%% %1$'.-9d %1$'.-9d %s", $arg);
+        echo sprintf('%% %1$\'.-9d %1$\'.-9d %s', $arg);
     }
 }

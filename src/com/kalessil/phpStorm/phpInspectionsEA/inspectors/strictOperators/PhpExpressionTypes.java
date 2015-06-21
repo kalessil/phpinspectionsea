@@ -19,6 +19,9 @@ public class PhpExpressionTypes {
     private final PhpIndex objIndex;
     final static private String strTypeObject = "object";
     final static private String strTypeStatic = "static";
+    final static private String strTypeTrue = "true";
+    final static private String strTypeFalse = "false";
+    final static private String strTypeNumber = "number";
     final static private String strTypeArrayAccess = "\\ArrayAccess";
 
     public PhpExpressionTypes(final PsiElement expr, @NotNull final ProblemsHolder holder) {
@@ -57,6 +60,13 @@ public class PhpExpressionTypes {
         }
         if (types.contains(strTypeStatic)) {
             types.add(strTypeObject);
+        }
+        if (types.contains(strTypeTrue) || types.contains(strTypeFalse)) {
+            types.add(Types.strBoolean);
+        }
+        if (types.contains(strTypeNumber)) {
+            types.add(Types.strInteger);
+            types.add(Types.strFloat);
         }
         if (types.isEmpty()) {
             types.add(Types.strMixed);

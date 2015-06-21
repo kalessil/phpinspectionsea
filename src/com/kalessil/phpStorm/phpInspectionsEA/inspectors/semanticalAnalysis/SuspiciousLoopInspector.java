@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 
 public class SuspiciousLoopInspector extends BasePhpInspection {
+    private static final String strProblemMultipleConditions = "Please use && or || for multiple conditions. Currently no checks performed after first positive one.";
     private static final String strProblemDescription = "Variable $%v% is introduced in a outer loop and overridden here";
 
     @NotNull
@@ -28,6 +29,13 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
             }
             public void visitPhpFor(For forStatement) {
                 this.inspectVariables(forStatement);
+                this.inspectConditions(forStatement);
+            }
+
+            private void inspectConditions(For forStatement) {
+                if (forStatement.getConditionalExpressions().length > 1) {
+                    holder.registerProblem(forStatement.getFirstChild(), strProblemMultipleConditions, ProblemHighlightType.GENERIC_ERROR);
+                }
             }
 
             private void inspectVariables(PhpPsiElement objLoop) {

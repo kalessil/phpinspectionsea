@@ -32,7 +32,7 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
                 }
 
                 if (objExpressionToTest.getNode().getElementType() == PhpTokenTypes.opCOMMA) {
-                    holder.registerProblem(objExpressionToTest, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(objExpressionToTest, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
                 }
             }
         };

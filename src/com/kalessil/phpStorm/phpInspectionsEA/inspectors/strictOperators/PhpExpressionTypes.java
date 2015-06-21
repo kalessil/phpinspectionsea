@@ -181,10 +181,10 @@ public class PhpExpressionTypes {
     }
 
     public boolean isArrayAccess() {
-        for (final String type1 : types) {
-            if (type1.charAt(0) == '\\') {
+        for (final String type : types) {
+            if (type.charAt(0) == '\\') {
                 final HashSet<String> extendslist = new HashSet<String>();
-                getParentsList(type1, extendslist);
+                getParentsList(type, extendslist);
                 if (extendslist.contains(strTypeArrayAccess)) {
                     return true;
                 }

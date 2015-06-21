@@ -177,13 +177,21 @@ public class PhpExpressionTypes {
     }
 
     private void getParentsList(final String className, final HashSet<String> extendslist) {
-        extendslist.clear();
         for (PhpClass typeclass : objIndex.getAnyByFQN(className)) {
             while (typeclass != null) {
                 extendslist.add(typeclass.getFQN());
-                extendslist.addAll(Arrays.asList(typeclass.getInterfaceNames()));
+
+                String[] interfaceNames = typeclass.getInterfaceNames();
+                for (final String interfaceName : interfaceNames) {
+                    if (!extendslist.contains(interfaceName)) {
+                        extendslist.add(interfaceName);
+                        getParentsList(interfaceName, extendslist);
+                    }
+                }
+
                 extendslist.addAll(Arrays.asList(typeclass.getTraitNames()));
                 extendslist.addAll(Arrays.asList(typeclass.getMixinNames()));
+
                 typeclass = typeclass.getSuperClass();
             }
         }

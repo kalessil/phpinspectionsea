@@ -169,6 +169,9 @@ public class PhpExpressionTypes {
     }
 
     public boolean isObject() {
+        if (types.contains(strTypeObject)) {
+            return true;
+        }
         for (final String type : types) {
             if (type.charAt(0) == '\\') {
                 return true;

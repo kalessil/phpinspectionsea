@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.3.0.1</version>
+  <version>1.3.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -33,18 +33,17 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
     ]]></description>
 
   <change-notes><![CDATA[
-07 Jun 2015: improvements and new pro-inspections<br/>
+20 Jun 2015: improvements and new pro-inspections<br/>
 <br/>
-    - array_unique() low performing usage: documentation updated;<br/>
-    - 'array_search(...)' used as 'in_array(...)': documentation updated;<br/>
-    - Missing or empty conditionals group statement: now not reporting 'else if';<br/>
-    - Nested positive ifs: relocated into code style group;<br/>
-    - Magic methods validity: re-implemented exceptions detection;<br/>
+    - Deprecated configuration options: extended support for PHP 7.0;<br/>
+    - Not optimal regular expressions: improved resolving pattern;<br/>
+    - Suspicious loop: added more cases;<br/>
+    - Unnecessary last comma in array definition: now deactivated by default;<br/>
 <br/>
-    - Deprecated configuration options: implemented by Denis Ryabov;<br/>
-    - Referencing objects: implemented;<br/>
-    - Exceptions handling and annotating: implemented [1.3.0.1, fixes reporting];<br/>
-    - Not optimal regular expressions: implemented (thanks to Denis Ryabov for working out specs);<br/>
+    - *printf/*scanf arguments count mismatches: implemented;<br/>
+    - Random API migration: implemented;<br/>
+    - Switch-case simplification: implemented;<br/>
+    - Continue miss-behaviour in switch: implemented;<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -231,9 +230,13 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.NonSecureUniqidUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="SwitchContinuationInLoopInspection"            displayName="Probable bugs: continue miss-behaviour in foreach"
+        shortName="SwitchContinuationInLoopInspection"            displayName="Probable bugs: continue miss-behaviour in switch"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.SwitchContinuationInLoopInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="PrintfScanfArgumentsInspection"                displayName="Probable bugs: *printf/*scanf arguments count mismatches"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PrintfScanfArgumentsInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="SenselessTernaryOperatorInspection"            displayName="Confusing constructs: suspicious ternary operator"
@@ -279,7 +282,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.IfConditionalsWithoutGroupStatementInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="SenselessCommaInArrayDefinitionInspection"     displayName="Code style: unnecessary last comma in array definition"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.SenselessCommaInArrayDefinitionInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="ElvisOperatorCanBeUsedInspection"              displayName="Code style: elvis operator can be used"
@@ -365,7 +368,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RandomApiMigrationInspector"/>
 
-    <localInspection language="PHP" groupPath="PHP"
+    <!--localInspection language="PHP" groupPath="PHP"
         shortName="StrictArgumentsInspection"                       displayName="Type compatibility: check types of call arguments"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictArgumentsInspector"/>
@@ -428,7 +431,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
     <localInspection language="PHP" groupPath="PHP"
         shortName="StrictUnaryPlusInspection"                       displayName="Type compatibility: unary plus operator"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictUnaryPlusInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictUnaryPlusInspector"/-->
   </extensions>
 
   <application-components>

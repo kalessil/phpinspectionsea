@@ -1,0 +1,18 @@
+<html>
+<body>
+Analyses continue usage in switch-case context. Due to PHP specific people who came from
+another programming languages might be confused by behaviour of continue inside loop-switch construct.
+<!-- tooltip end -->
+Covers following case:
+
+<pre>
+    for (...) {
+        switch(...) {
+            case ...:
+                continue; /* shall be 'continue 2' for loop continuation */
+            ...
+        }
+    }
+</pre>
+</body>
+</html>

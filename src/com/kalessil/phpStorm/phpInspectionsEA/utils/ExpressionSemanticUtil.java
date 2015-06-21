@@ -1,7 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
@@ -10,6 +12,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class ExpressionSemanticUtil {
@@ -278,6 +282,53 @@ public class ExpressionSemanticUtil {
 
         return false;
     }
+
+    @Nullable
+    public static StringLiteralExpression resolveAsStringLiteral(PsiElement obj) {
+        if (obj instanceof StringLiteralExpression) {
+            return (StringLiteralExpression) obj;
+        }
+
+        if (obj instanceof FieldReference || obj instanceof ClassConstantReference) {
+            Field fieldOrConstant = (Field) ((MemberReference) obj).resolve();
+            if (null != fieldOrConstant && fieldOrConstant.getDefaultValue() instanceof StringLiteralExpression) {
+                return (StringLiteralExpression) fieldOrConstant.getDefaultValue();
+            }
+        }
+
+        if (obj instanceof Variable) {
+            String variable = ((Variable) obj).getName();
+            if (!StringUtil.isEmpty(variable)) {
+                Function scope = ExpressionSemanticUtil.getScope(obj);
+                if (null != scope) {
+                    HashSet<AssignmentExpression> matched = new HashSet<AssignmentExpression>();
+
+                    Collection<AssignmentExpression> assignments = PsiTreeUtil.findChildrenOfType(scope, AssignmentExpression.class);
+                            /* collect self-assignments as well */
+                    for (AssignmentExpression assignment : assignments) {
+                        if (assignment.getVariable() instanceof Variable && assignment.getValue() instanceof StringLiteralExpression) {
+                            String name = assignment.getVariable().getName();
+                            if (!StringUtil.isEmpty(name) && name.equals(variable)) {
+                                matched.add(assignment);
+                            }
+                        }
+                    }
+                    assignments.clear();
+
+                    if (matched.size() == 1) {
+                        StringLiteralExpression result = (StringLiteralExpression) matched.iterator().next().getValue();
+
+                        matched.clear();
+                        return result;
+                    }
+                    matched.clear();
+                }
+            }
+        }
+
+        return null;
+    }
+
 
     /** TODO: get BO type */
 }

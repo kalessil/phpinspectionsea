@@ -101,18 +101,7 @@ public class PhpExpressionTypes {
                 }
 
                 final HashSet<String> extendslist = new HashSet<String>();
-                extendslist.add(type1);
-                for (final PhpClass typeclass : objIndex.getAnyByFQN(type1)) {
-                    extendslist.addAll(Arrays.asList(typeclass.getInterfaceNames()));
-                    extendslist.addAll(Arrays.asList(typeclass.getTraitNames()));
-                    extendslist.addAll(Arrays.asList(typeclass.getMixinNames()));
-                    for (final PhpClass parentclass : typeclass.getSupers()) {
-                        extendslist.add(parentclass.getFQN());
-                        extendslist.addAll(Arrays.asList(parentclass.getInterfaceNames()));
-                        extendslist.addAll(Arrays.asList(parentclass.getTraitNames()));
-                        extendslist.addAll(Arrays.asList(parentclass.getMixinNames()));
-                    }
-                }
+                getParentsList(type1, extendslist);
 
                 for (final String type2 : base.types) {
                     if (type2.charAt(0) == '\\') {
@@ -178,5 +167,18 @@ public class PhpExpressionTypes {
             }
         }
         return false;
+    }
+
+    private void getParentsList(final String className, final HashSet<String> extendslist) {
+        extendslist.clear();
+        for (PhpClass typeclass : objIndex.getAnyByFQN(className)) {
+            while (typeclass != null) {
+                extendslist.add(typeclass.getFQN());
+                extendslist.addAll(Arrays.asList(typeclass.getInterfaceNames()));
+                extendslist.addAll(Arrays.asList(typeclass.getTraitNames()));
+                extendslist.addAll(Arrays.asList(typeclass.getMixinNames()));
+                typeclass = typeclass.getSuperClass();
+            }
+        }
     }
 }

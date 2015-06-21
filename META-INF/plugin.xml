@@ -43,7 +43,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
     - *printf/*scanf arguments count mismatches: implemented;<br/>
     - Random API migration: implemented;<br/>
     - Switch-case simplification: implemented;<br/>
-    - Continue miss-behaviour in foreach: implemented;<br/>
+    - Continue miss-behaviour in switch: implemented;<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -230,7 +230,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.NonSecureUniqidUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="SwitchContinuationInLoopInspection"            displayName="Probable bugs: continue miss-behaviour in foreach"
+        shortName="SwitchContinuationInLoopInspection"            displayName="Probable bugs: continue miss-behaviour in switch"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.SwitchContinuationInLoopInspector"/>
     <localInspection language="PHP" groupPath="PHP"

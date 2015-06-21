@@ -38,6 +38,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
     - Deprecated configuration options: extended support for PHP 7.0;<br/>
     - Not optimal regular expressions: improved resolving pattern;<br/>
     - Suspicious loop: added more cases;<br/>
+    - Unnecessary last comma in array definition: now deactivated by default;<br/>
 <br/>
     - *printf/*scanf arguments count mismatches: implemented;<br/>
     - Random API migration: implemented;<br/>

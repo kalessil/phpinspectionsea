@@ -113,6 +113,8 @@ public class TypeFromPsiResolvingUtil {
             storeAsTypeWithSignaturesImport(((Variable) objSubjectExpression).getSignature(), objScope, objIndex, objTypesSet);
             return;
         }
+
+
         if (objSubjectExpression instanceof ArrayAccessExpression) {
             PsiElement var = ((ArrayAccessExpression) objSubjectExpression).getValue();
             if (var instanceof PsiReference) {
@@ -130,6 +132,17 @@ public class TypeFromPsiResolvingUtil {
             resolveNewExpression((NewExpression) objSubjectExpression, objTypesSet);
             return;
         }
+
+        // resolve reference
+        if (objSubjectExpression instanceof PsiReference) {
+            PsiElement target = ((PsiReference) objSubjectExpression).resolve();
+            if (target instanceof PhpTypedElement) {
+                storeAsTypeWithSignaturesImport(((PhpTypedElement) target).getType().toString(), objScope, objIndex, objTypesSet);
+                return;
+            }
+        }
+
+        // fallback if not resolved
         if (objSubjectExpression instanceof ClassConstantReference) {
             storeAsTypeWithSignaturesImport(((ClassConstantReference) objSubjectExpression).getSignature(), objScope, objIndex, objTypesSet);
             return;

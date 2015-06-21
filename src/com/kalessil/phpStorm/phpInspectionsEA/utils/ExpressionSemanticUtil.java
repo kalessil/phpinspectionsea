@@ -104,7 +104,7 @@ public class ExpressionSemanticUtil {
 
         PsiElement objInnerExpression = ((ParenthesizedExpression) objExpression).getArgument();
         while (objInnerExpression instanceof ParenthesizedExpression) {
-            objInnerExpression = ((ParenthesizedExpression) objExpression).getArgument();
+            objInnerExpression = ((ParenthesizedExpression) objInnerExpression).getArgument();
         }
 
         return objInnerExpression;

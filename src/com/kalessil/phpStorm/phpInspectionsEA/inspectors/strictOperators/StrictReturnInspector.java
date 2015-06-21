@@ -42,7 +42,7 @@ public class StrictReturnInspector extends BasePhpInspection {
                 }
                 final PhpExpressionTypes funcType = new PhpExpressionTypes(funcTypeString, holder);
                 final PhpExpressionTypes returnType = new PhpExpressionTypes(value, holder);
-                if (funcType.isMixed() || funcType.equals(returnType)) {
+                if (funcType.isMixed() || funcType.equals(returnType) || returnType.isTrait() || returnType.instanceOf(funcType)) {
                     return;
                 }
 

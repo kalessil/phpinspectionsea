@@ -45,31 +45,7 @@ public class TypeFromPsiResolvingUtil {
         if (objSubjectExpression instanceof ArrayCreationExpression) {
             objTypesSet.add(Types.strArray);
 
-            final PsiElement[] children = objSubjectExpression.getChildren();
-            if ((children.length == 2) && (children[0] instanceof PhpPsiElement) && (children[1] instanceof PhpPsiElement)) {
-                HashSet<String> itemMethodType = new HashSet<String>();
-                resolveExpressionType(((PhpPsiElement) children[1]).getFirstPsiChild(), objScope, objIndex, itemMethodType);
-                if (!itemMethodType.contains(Types.strString)) {
-                    return;
-                }
-
-                HashSet<String> itemClassType = new HashSet<String>();
-                resolveExpressionType(((PhpPsiElement) children[0]).getFirstPsiChild(), objScope, objIndex, itemClassType);
-                if (!itemClassType.contains(Types.strString)) {
-                    boolean isObject = false;
-                    for (final String type : itemClassType) {
-                        if (type.charAt(0) == '\\') {
-                            isObject = true;
-                            break;
-                        }
-                    }
-                    if (!isObject) {
-                        return;
-                    }
-                }
-
-                objTypesSet.add(Types.strCallable);
-            }
+            checkCallables((ArrayCreationExpression) objSubjectExpression, objScope, objIndex, objTypesSet);
             return;
         }
 
@@ -107,7 +83,14 @@ public class TypeFromPsiResolvingUtil {
                     storeAsTypeWithSignaturesImport(Types.strArray, objScope, objIndex, objTypesSet);
                     return;
                 }
+            }
 
+            PsiElement var = ((Variable) objSubjectExpression).resolve();
+            if (var instanceof Variable && var.getParent() instanceof AssignmentExpression) {
+                AssignmentExpression decl = (AssignmentExpression) var.getParent();
+                if (decl.getValue() instanceof  ArrayCreationExpression) {
+                    checkCallables((ArrayCreationExpression) decl.getValue(), objScope, objIndex, objTypesSet);
+                }
             }
 
             storeAsTypeWithSignaturesImport(((Variable) objSubjectExpression).getSignature(), objScope, objIndex, objTypesSet);
@@ -171,6 +154,34 @@ public class TypeFromPsiResolvingUtil {
         }
 
         /** TODO: check which case is not worked out */
+    }
+
+    private static void checkCallables(ArrayCreationExpression objSubjectExpression, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
+        final PsiElement[] children = objSubjectExpression.getChildren();
+        if ((children.length == 2) && (children[0] instanceof PhpPsiElement) && (children[1] instanceof PhpPsiElement)) {
+            HashSet<String> itemMethodType = new HashSet<String>();
+            resolveExpressionType(((PhpPsiElement) children[1]).getFirstPsiChild(), objScope, objIndex, itemMethodType);
+            if (!itemMethodType.contains(Types.strString)) {
+                return;
+            }
+
+            HashSet<String> itemClassType = new HashSet<String>();
+            resolveExpressionType(((PhpPsiElement) children[0]).getFirstPsiChild(), objScope, objIndex, itemClassType);
+            if (!itemClassType.contains(Types.strString)) {
+                boolean isObject = false;
+                for (final String type : itemClassType) {
+                    if (type.charAt(0) == '\\') {
+                        isObject = true;
+                        break;
+                    }
+                }
+                if (!isObject) {
+                    return;
+                }
+            }
+
+            objTypesSet.add(Types.strCallable);
+        }
     }
 
     /** resolve numbers and exotic structures, eg list() = .... */

@@ -61,7 +61,7 @@ public class StrictArgumentsInspector extends BasePhpInspection {
                 final int length = Math.min(args.length, params.length);
                 for (int i = 0; i < length; ++i) {
                     PhpExpressionTypes argType = new PhpExpressionTypes(args[i], holder);
-                    if (argType.isMixed() && (args[i] instanceof Variable)) {
+                    if (argType.isUnknown() && (args[i] instanceof Variable)) {
                         argType = new PhpExpressionTypes(((Variable) args[i]).getType().toString(), holder);
                     }
                     final PhpExpressionTypes paramType = new PhpExpressionTypes(params[i].getType().toString(), holder);

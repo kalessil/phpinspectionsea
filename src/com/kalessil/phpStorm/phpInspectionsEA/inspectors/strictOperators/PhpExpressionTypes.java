@@ -19,6 +19,9 @@ public class PhpExpressionTypes {
     private final PhpIndex objIndex;
     final static private String strTypeObject = "object";
     final static private String strTypeStatic = "static";
+    final static private String strTypeTrue = "true";
+    final static private String strTypeFalse = "false";
+    final static private String strTypeNumber = "number";
     final static private String strTypeArrayAccess = "\\ArrayAccess";
 
     public PhpExpressionTypes(final PsiElement expr, @NotNull final ProblemsHolder holder) {
@@ -57,6 +60,13 @@ public class PhpExpressionTypes {
         }
         if (types.contains(strTypeStatic)) {
             types.add(strTypeObject);
+        }
+        if (types.contains(strTypeTrue) || types.contains(strTypeFalse)) {
+            types.add(Types.strBoolean);
+        }
+        if (types.contains(strTypeNumber)) {
+            types.add(Types.strInteger);
+            types.add(Types.strFloat);
         }
         if (types.isEmpty()) {
             types.add(Types.strMixed);
@@ -154,7 +164,14 @@ public class PhpExpressionTypes {
         return isMixed;
     }
 
+    public boolean isUnknown() {
+        return isMixed && (types.size() == 1);
+    }
+
     public boolean isObject() {
+        if (types.contains(strTypeObject)) {
+            return true;
+        }
         for (final String type : types) {
             if (type.charAt(0) == '\\') {
                 return true;
@@ -164,10 +181,10 @@ public class PhpExpressionTypes {
     }
 
     public boolean isArrayAccess() {
-        for (final String type1 : types) {
-            if (type1.charAt(0) == '\\') {
+        for (final String type : types) {
+            if (type.charAt(0) == '\\') {
                 final HashSet<String> extendslist = new HashSet<String>();
-                getParentsList(type1, extendslist);
+                getParentsList(type, extendslist);
                 if (extendslist.contains(strTypeArrayAccess)) {
                     return true;
                 }
@@ -176,14 +193,35 @@ public class PhpExpressionTypes {
         return false;
     }
 
+    public boolean isTrait() {
+        for (final String type : types) {
+            if (type.charAt(0) == '\\') {
+                for (PhpClass typeclass : objIndex.getAnyByFQN(type)) {
+                    if (typeclass.isTrait()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     private void getParentsList(final String className, final HashSet<String> extendslist) {
-        extendslist.clear();
         for (PhpClass typeclass : objIndex.getAnyByFQN(className)) {
             while (typeclass != null) {
                 extendslist.add(typeclass.getFQN());
-                extendslist.addAll(Arrays.asList(typeclass.getInterfaceNames()));
+
+                String[] interfaceNames = typeclass.getInterfaceNames();
+                for (final String interfaceName : interfaceNames) {
+                    if (!extendslist.contains(interfaceName)) {
+                        extendslist.add(interfaceName);
+                        getParentsList(interfaceName, extendslist);
+                    }
+                }
+
                 extendslist.addAll(Arrays.asList(typeclass.getTraitNames()));
                 extendslist.addAll(Arrays.asList(typeclass.getMixinNames()));
+
                 typeclass = typeclass.getSuperClass();
             }
         }

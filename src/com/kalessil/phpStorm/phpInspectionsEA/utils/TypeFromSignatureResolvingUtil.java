@@ -79,7 +79,14 @@ public class TypeFromSignatureResolvingUtil {
 
         /** classes and core types */
         if (charTypeOfSignature == 'C') {
-            extractedTypesSet.add(Types.getType(strSignatureToResolve.replace("#C", "")));
+            String typeName = strSignatureToResolve.replace("#C", "");
+            if (objScope instanceof Method && typeName.equals("static")) {
+                final PhpClass container = ((Method) objScope).getContainingClass();
+                if (container != null) {
+                    typeName = container.getFQN();
+                }
+            }
+            extractedTypesSet.add(Types.getType(typeName));
             return;
         }
 

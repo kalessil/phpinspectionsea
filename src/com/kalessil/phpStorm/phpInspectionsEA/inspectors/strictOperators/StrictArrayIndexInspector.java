@@ -33,7 +33,7 @@ public class StrictArrayIndexInspector extends BasePhpInspection {
                     if (type.isArrayAccess()) {
                         return;
                     }
-                    if (type.isString()) {
+                    if (type.isString() && !type.isArray()) {
                         inspectStringIndex((PhpExpression) key);
                         return;
                     }

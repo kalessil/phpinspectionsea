@@ -16,6 +16,14 @@ NotOptimalIfConditionsInspection (increment to 1.2.0):
 
 ===POOL===
 
+call_user_func($singleArgument) -> $singleArgument()
+call_user_func_array($singleArgument, array()) -> $singleArgument()
+call_user_func(array($process, $method)) -> $process->{$method}();
+    code style:
+
+use Symfony\Component\Templating\TemplateReferenceInterface as TemplateReferenceInterface;
+    as ... is not needed
+
 $cookies[count($cookies) - 1]
     - replacement is 'end(...)', but it changes internal pointer in array, so can introduce side-effects in loops
     - legal in unset context (1 ... n parameters)

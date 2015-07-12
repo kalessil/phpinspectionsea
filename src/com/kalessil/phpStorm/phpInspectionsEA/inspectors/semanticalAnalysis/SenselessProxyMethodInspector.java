@@ -1,14 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
+import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.GroupStatement;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.intellij.psi.PsiReference;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -52,8 +51,38 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                             referenceVariable.equals("parent") &&
                             !StringUtil.isEmpty(referenceName) &&  referenceName.equals(methodName)
                         ) {
-                            String strWarning = strProblemDescription.replace("%s%", objMethod.getName());
-                            holder.registerProblem(objMethod.getNameIdentifier(), strWarning, ProblemHighlightType.WEAK_WARNING);
+                            /* ensure no transformations happens */
+                            boolean isDispatchingWithoutModifications = (reference.getParameters().length == objMethod.getParameters().length);
+                            for (PsiElement argument: reference.getParameters()) {
+                                if (!(argument instanceof Variable)) {
+                                    isDispatchingWithoutModifications = false;
+                                    break;
+                                }
+                            }
+
+                            /* ensure no signature changes took place */
+                            boolean isChangingSignature = false;
+                            PsiReference referenceToMethod = reference.getReference();
+                            if (null != referenceToMethod){
+                                PsiElement referenceResolved = referenceToMethod.resolve();
+                                if (referenceResolved instanceof Method) {
+                                    Parameter[] parentParameters = ((Method) referenceResolved).getParameters();
+                                    Parameter[] methodParameters = objMethod.getParameters();
+
+                                    for (int index = parentParameters.length - 1; index >= 0; --index) {
+                                        if (!PsiEquivalenceUtil.areElementsEquivalent(parentParameters[index], methodParameters[index])) {
+                                            isChangingSignature = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+                            /* decide if need to report any issues */
+                            if (isDispatchingWithoutModifications && !isChangingSignature) {
+                                String strWarning = strProblemDescription.replace("%s%", objMethod.getName());
+                                holder.registerProblem(objMethod.getNameIdentifier(), strWarning, ProblemHighlightType.WEAK_WARNING);
+                            }
                         }
                     }
                 }

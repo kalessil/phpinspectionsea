@@ -247,6 +247,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ClassMethodNameMatchesFieldNameInspector"/>
     <localInspection language="PHP" groupPath="PHP"
+        shortName="SenselessProxyMethodInspection"                displayName="Confusing constructs: senseless proxy function"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SenselessProxyMethodInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
         shortName="NestedTernaryOperatorInspection"               displayName="Confusing constructs: nested ternary operator"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.NestedTernaryOperatorInspector"/>

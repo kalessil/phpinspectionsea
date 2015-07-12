@@ -51,8 +51,10 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                             referenceVariable.equals("parent") &&
                             !StringUtil.isEmpty(referenceName) &&  referenceName.equals(methodName)
                         ) {
+                            Parameter[] methodParameters = objMethod.getParameters();
+
                             /* ensure no transformations happens */
-                            boolean isDispatchingWithoutModifications = (reference.getParameters().length == objMethod.getParameters().length);
+                            boolean isDispatchingWithoutModifications = (reference.getParameters().length == methodParameters.length);
                             for (PsiElement argument: reference.getParameters()) {
                                 if (!(argument instanceof Variable)) {
                                     isDispatchingWithoutModifications = false;
@@ -63,13 +65,12 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                             /* ensure no signature changes took place */
                             boolean isChangingSignature = false;
                             PsiReference referenceToMethod = reference.getReference();
-                            if (null != referenceToMethod){
+                            if (null != referenceToMethod && isDispatchingWithoutModifications && methodParameters.length > 0){
                                 PsiElement referenceResolved = referenceToMethod.resolve();
                                 if (referenceResolved instanceof Method) {
                                     Parameter[] parentParameters = ((Method) referenceResolved).getParameters();
-                                    Parameter[] methodParameters = objMethod.getParameters();
 
-                                    for (int index = parentParameters.length - 1; index >= 0; --index) {
+                                    for (int index = 0; index < parentParameters.length; ++index) {
                                         if (!PsiEquivalenceUtil.areElementsEquivalent(parentParameters[index], methodParameters[index])) {
                                             isChangingSignature = true;
                                             break;

@@ -13,3 +13,5 @@
 
     debug_zval_dump($a);
     debug_zval_dump($a, $b);
+
+    debug_print_backtrace();

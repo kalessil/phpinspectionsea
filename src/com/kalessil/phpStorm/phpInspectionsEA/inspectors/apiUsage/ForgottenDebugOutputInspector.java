@@ -25,10 +25,11 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             functionsRequirements = new HashMap<String, Integer>();
 
             /* function name => amount of arguments considered legal */
-            functionsRequirements.put("print_r",          2);
-            functionsRequirements.put("var_export",       2);
-            functionsRequirements.put("var_dump",        -1);
-            functionsRequirements.put("debug_zval_dump", -1);
+            functionsRequirements.put("print_r",               2);
+            functionsRequirements.put("var_export",            2);
+            functionsRequirements.put("var_dump",              -1);
+            functionsRequirements.put("debug_zval_dump",       -1);
+            functionsRequirements.put("debug_print_backtrace", -1);
         }
 
         return functionsRequirements;

@@ -27,6 +27,8 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
             mapping.put("intval",    "int");
             mapping.put("floatval",  "float");
             mapping.put("strval",    "string");
+            mapping.put("boolval",   "bool");
+            mapping.put("settype",   "bool|float|int|string");
         }
 
         return mapping;

@@ -241,6 +241,14 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="RealpathOnRelativePathsInspection"             displayName="Probable bugs: phar-incompatible realpath applied to a relative path"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RealpathOnRelativePathsInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="StrictArrayAccessInspection"                   displayName="Probable bugs: array access operation validity"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictArrayAccessInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="StrictArrayIndexInspection"                    displayName="Probable bugs: array indices types validity"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictArrayIndexInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="SenselessTernaryOperatorInspection"            displayName="Confusing constructs: suspicious ternary operator"
@@ -384,14 +392,6 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="StrictArithmeticInspection"                      displayName="Type compatibility: numeric operands in arithmetic operations"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictArithmeticInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="StrictArrayAccessInspection"                     displayName="Type compatibility: [] for array and ArrayAccess"
-        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictArrayAccessInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="StrictArrayIndexInspection"                      displayName="Type compatibility: integer/string array indices"
-        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictArrayIndexInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="StrictAssignmentInspection"                      displayName="Type compatibility: match types in assignments"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"

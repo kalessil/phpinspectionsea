@@ -9,8 +9,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class StrictArrayAccessInspector extends BasePhpInspection {
-    private static final String strProblemDescriptionArrayAccess = "Index-based access to not array (type is %t%).";
-    private static final String strProblemDescriptionStringAccess = "Character offset access to not string (type is %t%).";
+    private static final String strProblemDescriptionArrayAccess = "This variable type does not support array access (resolved as %t%).";
+    private static final String strProblemDescriptionStringAccess = "This access type shall be applied to strings only (resolved as %t%).";
 
     @NotNull
     public String getShortName() {
@@ -36,7 +36,7 @@ public class StrictArrayAccessInspector extends BasePhpInspection {
                     strWarning = strProblemDescriptionStringAccess.replace("%t%", type.toString());
                 }
 
-                holder.registerProblem(expr, strWarning, ProblemHighlightType.WEAK_WARNING);
+                holder.registerProblem(expr, strWarning, ProblemHighlightType.GENERIC_ERROR);
             }
         };
     }

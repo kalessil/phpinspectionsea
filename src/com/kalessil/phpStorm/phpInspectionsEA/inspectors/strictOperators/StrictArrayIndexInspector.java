@@ -10,8 +10,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class StrictArrayIndexInspector extends BasePhpInspection {
-    private static final String strProblemDescriptionArrayIndex = "Array key should be either integer or string (not %t%).";
-    private static final String strProblemDescriptionStringIndex = "String offset should be integer (not %t%).";
+    private static final String strProblemDescriptionArrayIndex = "Array key should be either integer or string (%t% is given).";
+    private static final String strProblemDescriptionStringIndex = "String offset should be an integer (%t% is given).";
 
     @NotNull
     public String getShortName() {
@@ -59,7 +59,7 @@ public class StrictArrayIndexInspector extends BasePhpInspection {
 
                 final String strWarning = strProblemDescriptionArrayIndex
                         .replace("%t%", type.toString());
-                holder.registerProblem(key, strWarning, ProblemHighlightType.WEAK_WARNING);
+                holder.registerProblem(key, strWarning, ProblemHighlightType.GENERIC_ERROR);
             }
 
             private void inspectStringIndex(final PhpExpression key) {
@@ -70,7 +70,7 @@ public class StrictArrayIndexInspector extends BasePhpInspection {
 
                 final String strWarning = strProblemDescriptionStringIndex
                         .replace("%t%", type.toString());
-                holder.registerProblem(key, strWarning, ProblemHighlightType.WEAK_WARNING);
+                holder.registerProblem(key, strWarning, ProblemHighlightType.GENERIC_ERROR);
             }
         };
     }

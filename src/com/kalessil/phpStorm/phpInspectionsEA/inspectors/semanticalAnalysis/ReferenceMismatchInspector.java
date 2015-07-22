@@ -18,8 +18,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ReferenceMismatchInspector extends BasePhpInspection {
 
@@ -43,6 +47,18 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
         legalizedMismatchingFunctions.add("method_exists");
     }
 
+    protected static ConcurrentHashMap<Function, HashSet<PsiElement>> reportedIssues = new ConcurrentHashMap<Function, HashSet<PsiElement>>();
+
+    protected static HashSet<PsiElement> getFunctionReportingRegistry(Function key) {
+        boolean hasContainer = ReferenceMismatchInspector.reportedIssues.containsKey(key);
+        // create an empty container
+        if (!hasContainer) {
+            ReferenceMismatchInspector.reportedIssues.put(key, new HashSet<PsiElement>());
+        }
+
+        return ReferenceMismatchInspector.reportedIssues.get(key);
+    }
+
     @NotNull
     public String getShortName() {
         return "ReferenceMismatchInspection";
@@ -62,8 +78,11 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
             public void visitPhpFunction(Function function) {
                 this.checkParameters(function.getParameters(), function);
             }
-            private void checkParameters(Parameter[] arrParameters, PhpScopeHolder objScopeHolder) {
+            private void checkParameters(Parameter[] arrParameters, Function objScopeHolder) {
                 PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
+
+                HashSet<PsiElement> emptyReportedItemsRegistry =
+                        ReferenceMismatchInspector.getFunctionReportingRegistry(objScopeHolder);
 
                 for (Parameter parameter : arrParameters) {
                     /* skip un-discoverable and non-reference parameters */
@@ -72,8 +91,10 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    inspectScopeForReferenceMissUsages(objEntryPoint, strParameterName);
+                    inspectScopeForReferenceMissUsages(objEntryPoint, strParameterName, emptyReportedItemsRegistry);
                 }
+
+                emptyReportedItemsRegistry.clear();
             }
 
             /* = & variable/property patterns */
@@ -95,7 +116,9 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                         /* the case, scan for miss-usages assuming variable is unique */
                         Function scope = ExpressionSemanticUtil.getScope(assignmentExpression);
                         if (null != scope) {
-                            inspectScopeForReferenceMissUsages(scope.getControlFlow().getEntryPoint(), strVariable);
+                            // report items, but ensure no duplicated messages
+                            HashSet<PsiElement> reportedItemsRegistry = ReferenceMismatchInspector.getFunctionReportingRegistry(scope);
+                            inspectScopeForReferenceMissUsages(scope.getControlFlow().getEntryPoint(), strVariable, reportedItemsRegistry);
                         }
                     }
                 }
@@ -124,14 +147,20 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                         /* the case, scan for miss-usages assuming value is unique */
                         Function scope = ExpressionSemanticUtil.getScope(foreach);
                         if (null != scope) {
-                            inspectScopeForReferenceMissUsages(scope.getControlFlow().getEntryPoint(), strVariable);
+                            // report items, but ensure no duplicated messages
+                            HashSet<PsiElement> reportedItemsRegistry = ReferenceMismatchInspector.getFunctionReportingRegistry(scope);
+                            inspectScopeForReferenceMissUsages(scope.getControlFlow().getEntryPoint(), strVariable, reportedItemsRegistry);
                         }
                     }
                 }
             }
 
 
-            private void inspectScopeForReferenceMissUsages(PhpEntryPointInstruction objEntryPoint, String strParameterName) {
+            private void inspectScopeForReferenceMissUsages(
+                    PhpEntryPointInstruction objEntryPoint,
+                    String strParameterName,
+                    HashSet<PsiElement> reportedItemsRegistry
+            ) {
                 /* find usage inside scope */
                 PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, strParameterName, false);
                 for (PhpAccessVariableInstruction objInstruction : arrUsages) {
@@ -178,7 +207,12 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                                 /* additionally try filtering types for reducing false-positives on scalars */
                                 PhpType argumentType = PhpRefactoringUtil.getCompletedType(parameterForAnalysis, holder.getProject());
                                 if (!PhpType.isSubType(argumentType, legalizedTypesForMismatchingSet)) {
-                                    holder.registerProblem(reference.getParameters()[indexInArguments], "Reference mismatch, copy will be dispatched into function", ProblemHighlightType.WEAK_WARNING);
+                                    PsiElement itemToBeReported = reference.getParameters()[indexInArguments];
+                                    if (!reportedItemsRegistry.contains(itemToBeReported)) {
+                                        holder.registerProblem(itemToBeReported, "Reference mismatch, copy will be dispatched into function", ProblemHighlightType.WEAK_WARNING);
+                                        reportedItemsRegistry.add(itemToBeReported);
+                                    }
+
                                     continue;
                                 }
                             }
@@ -202,7 +236,10 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
 
                                 /* report if not */
                                 if (null != operation && !operation.getText().replaceAll("\\s+","").equals("=&")) {
-                                    holder.registerProblem(objExpression, "Reference mismatch, copy will be stored (for non-objects)", ProblemHighlightType.WEAK_WARNING);
+                                    if (!reportedItemsRegistry.contains(objExpression)) {
+                                        holder.registerProblem(objExpression, "Reference mismatch, copy will be stored (for non-objects)", ProblemHighlightType.WEAK_WARNING);
+                                        reportedItemsRegistry.add(objExpression);
+                                    }
                                 }
                             }
                         }

@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Vladimir Reznichenko
  */
 public class OffsetOperationsInspector extends BasePhpInspection {
-    private static final String strProblemUseSquareBrackets = "Please use square brackets instead of curvy for deep analysis.";
+    private static final String strProblemUseSquareBrackets = "Please use square brackets instead of curvy for deeper analysis.";
 
 
     @NotNull
@@ -42,6 +42,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 // => general error otherwise
 
                 // ensure index is one of (string, float, bool, null)
+                // => same applied to hash-elements e.g. array initialization
                 // => general error otherwise
             }
         };

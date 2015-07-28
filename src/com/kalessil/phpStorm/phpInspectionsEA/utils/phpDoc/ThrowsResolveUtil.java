@@ -28,17 +28,7 @@ final public class ThrowsResolveUtil {
             return ResolveType.NOT_RESOLVED;
         }
 
-        // resolve inherit doc tags
-        Collection<PhpDocTagImpl> tags = PsiTreeUtil.findChildrenOfType(previous, PhpDocTagImpl.class);
-        for (PhpDocTagImpl tag : tags) {
-            if (tag.getName().equals("@inheritdoc")) {
-                resolveInheritDoc(method, declaredExceptions);
-                return ResolveType.RESOLVED_INHERIT_DOC;
-            }
-        }
-        tags.clear();
-
-        // find all @throws and remember FQNs
+        // find all @throws and remember FQNs, @throws can be combined with @throws
         Collection<PhpDocReturnTag> returns = PsiTreeUtil.findChildrenOfType(previous, PhpDocReturnTag.class);
         for (PhpDocReturnTag returnOrThrow : returns) {
             if (returnOrThrow.getName().equals("@throws") && returnOrThrow.getFirstPsiChild() instanceof PhpDocType) {
@@ -50,6 +40,16 @@ final public class ThrowsResolveUtil {
             }
         }
         returns.clear();
+
+        // resolve inherit doc tags
+        Collection<PhpDocTagImpl> tags = PsiTreeUtil.findChildrenOfType(previous, PhpDocTagImpl.class);
+        for (PhpDocTagImpl tag : tags) {
+            if (tag.getName().equals("@inheritdoc")) {
+                resolveInheritDoc(method, declaredExceptions);
+                return ResolveType.RESOLVED_INHERIT_DOC;
+            }
+        }
+        tags.clear();
 
         return ResolveType.RESOLVED;
     }

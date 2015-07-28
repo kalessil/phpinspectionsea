@@ -56,7 +56,8 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 }
 
                 HashSet<PsiElement> processedRegistry = new HashSet<PsiElement>();
-                HashMap<PhpClass, HashSet<PsiElement>> throwsExceptions = CollectPossibleThrowsUtil.collectNestedAndWorkflowExceptions(method, processedRegistry, holder);
+                HashMap<PhpClass, HashSet<PsiElement>> throwsExceptions =
+                        CollectPossibleThrowsUtil.collectNestedAndWorkflowExceptions(method, processedRegistry, holder);
 //holder.registerProblem(objMethodName, "Processed: " + processedRegistry.size(), ProblemHighlightType.WEAK_WARNING);
                 processedRegistry.clear();
 

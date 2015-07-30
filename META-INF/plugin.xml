@@ -107,6 +107,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrStrUsedAsStrPosInspector"/>
     <localInspection language="PHP" groupPath="PHP"
+        shortName="StrTrUsageAsStrReplaceInspect"                 displayName="Performance: 'strtr(...)' used as 'str_replace(...)'"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrTrUsageAsStrReplaceInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
         shortName="OpAssignShortSyntaxInspection"                 displayName="Performance: short syntax for applied operation"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.OpAssignShortSyntaxInspector"/>

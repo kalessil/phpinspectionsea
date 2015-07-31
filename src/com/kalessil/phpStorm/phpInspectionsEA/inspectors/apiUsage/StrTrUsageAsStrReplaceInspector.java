@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class StrTrUsageAsStrReplaceInspector extends BasePhpInspection {
-    private static final String strProblemDescription  = "this construct behaves as str_replace(%p%, ...), consider refactoring";
+    private static final String strProblemDescription  = "This construct behaves as str_replace(%p%, ...), consider refactoring";
 
     @NotNull
     public String getShortName() {

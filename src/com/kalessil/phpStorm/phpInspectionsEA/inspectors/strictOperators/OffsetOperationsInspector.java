@@ -25,7 +25,7 @@ import java.util.HashSet;
  */
 public class OffsetOperationsInspector extends BasePhpInspection {
     private static final String strProblemUseSquareBrackets = "Please use square brackets instead of curvy for deeper analysis";
-    private static final String strProblemNoOffsetSupport = "This container does not support offsets operations";
+    private static final String strProblemNoOffsetSupport = "This container might not support offsets operations";
     private static final String strProblemInvalidIndex = "Wrong index type (%p% is incompatible with %a%)";
 
     @NotNull
@@ -38,20 +38,20 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpArrayAccessExpression(ArrayAccessExpression expression) {
                 PsiElement bracketNode = expression.getLastChild();
-                if (null == bracketNode || null == expression.getValue() || null == expression.getIndex()) {
+                if (null == bracketNode || null == expression.getValue()) {
                     return;
                 }
 
                 // promote using []
                 if (bracketNode.getText().equals("}")) {
-//                    holder.registerProblem(expression, strProblemUseSquareBrackets, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(expression, strProblemUseSquareBrackets, ProblemHighlightType.WEAK_WARNING);
                     return;
                 }
 
                 // ensure offsets operations are supported
                 HashSet<String> allowedIndexTypes = new HashSet<String>();
                 if (!isContainerSupportsArrayAccess(expression.getValue(), allowedIndexTypes)) {
-                    holder.registerProblem(expression.getValue(), strProblemNoOffsetSupport, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(expression, strProblemNoOffsetSupport, ProblemHighlightType.GENERIC_ERROR);
 
                     allowedIndexTypes.clear();
                     return;
@@ -61,27 +61,29 @@ public class OffsetOperationsInspector extends BasePhpInspection {
 
                 // ensure index is one of (string, float, bool, null) when we acquired possible types information
                 // TODO: hash-elements e.g. array initialization
-                PhpPsiElement indexValue = expression.getIndex().getValue();
-                if (null != indexValue && allowedIndexTypes.size() > 0) {
-                    // resolve types with custom resolver, native gives type sets which not comparable properly
-                    HashSet<String> possibleIndexTypes = new HashSet<String>();
-                    TypeFromPlatformResolverUtil.resolveExpressionType(indexValue, possibleIndexTypes);
+                if (null != expression.getIndex()) {
+                    PhpPsiElement indexValue = expression.getIndex().getValue();
+                    if (null != indexValue && allowedIndexTypes.size() > 0) {
+                        // resolve types with custom resolver, native gives type sets which not comparable properly
+                        HashSet<String> possibleIndexTypes = new HashSet<String>();
+                        TypeFromPlatformResolverUtil.resolveExpressionType(indexValue, possibleIndexTypes);
 
-                    // now check if any type provided and check sets validity
-                    if (possibleIndexTypes.size() > 0) {
-                        // take possible and clean them respectively allowed to keep only conflicted
-                        if (allowedIndexTypes.size() > 0) {
-                            filterPossibleTypesWhichAreNotAllowed(possibleIndexTypes, allowedIndexTypes);
-                        }
-
+                        // now check if any type provided and check sets validity
                         if (possibleIndexTypes.size() > 0) {
-                            String strError = strProblemInvalidIndex
-                                    .replace("%p%", possibleIndexTypes.toString())
-                                    .replace("%a%", allowedIndexTypes.toString());
-                            holder.registerProblem(indexValue, strError, ProblemHighlightType.GENERIC_ERROR);
+                            // take possible and clean them respectively allowed to keep only conflicted
+                            if (allowedIndexTypes.size() > 0) {
+                                filterPossibleTypesWhichAreNotAllowed(possibleIndexTypes, allowedIndexTypes);
+                            }
+
+                            if (possibleIndexTypes.size() > 0) {
+                                String strError = strProblemInvalidIndex
+                                        .replace("%p%", possibleIndexTypes.toString())
+                                        .replace("%a%", allowedIndexTypes.toString());
+                                holder.registerProblem(indexValue, strError, ProblemHighlightType.GENERIC_ERROR);
+                            }
                         }
+                        possibleIndexTypes.clear();
                     }
-                    possibleIndexTypes.clear();
                 }
 
                 // clear valid types collection
@@ -103,6 +105,16 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         boolean supportsOffsets = false;
         boolean commonTypesAdded = false;
         for (String typeToCheck : containerTypes) {
+            // assume is just null-ble declaration or we shall just rust to mixed
+            if (typeToCheck.equals(Types.strNull)) {
+                continue;
+            }
+            if (typeToCheck.equals(Types.strMixed)) {
+                supportsOffsets = true;
+                continue;
+            }
+
+            // commonly used case: string and array
             if (typeToCheck.equals(Types.strArray) || typeToCheck.equals(Types.strString)) {
                 if (!commonTypesAdded) {
                     addCommonIndexTypes(indexTypesSupported);
@@ -113,17 +125,15 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 continue;
             }
 
-            // assume is just null-ble declaration
-            if (typeToCheck.equals(Types.strNull)) {
-                continue;
-            }
-            // some of possible types are wrong
+            // some of possible types are scalars, what's wrong
             if (!StringUtil.isEmpty(typeToCheck) && typeToCheck.charAt(0) != '\\') {
                 supportsOffsets = false;
                 break;
             }
 
             for (PhpClass classToCheck : PhpIndexUtil.getObjectInterfaces(typeToCheck, objIndex)) {
+                boolean isOffsetFunctionsPrecessed = false;
+
                 // custom offsets management, follow annotated types
                 Method offsetSetMethod = classToCheck.findMethodByName("offsetSet");
                 if (null != offsetSetMethod) {
@@ -132,6 +142,19 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                     }
 
                     supportsOffsets = true;
+                    isOffsetFunctionsPrecessed = true;
+                }
+                // custom offsets management, follow annotated types
+                Method offsetGetMethod = classToCheck.findMethodByName("offsetGet");
+                if (null != offsetGetMethod) {
+                    if (offsetGetMethod.getParameters().length > 0) {
+                        TypeFromPlatformResolverUtil.resolveExpressionType(offsetGetMethod.getParameters()[0], indexTypesSupported);
+                    }
+
+                    supportsOffsets = true;
+                    isOffsetFunctionsPrecessed = true;
+                }
+                if (isOffsetFunctionsPrecessed) {
                     continue;
                 }
 
@@ -196,7 +219,6 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         container.add(Types.strInteger);
         container.add(Types.strBoolean);
         container.add(Types.strNull);
-        container.add(Types.strMixed);
         container.add(Types.strStatic);
     }
 }

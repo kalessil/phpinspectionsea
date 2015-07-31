@@ -1,23 +1,54 @@
 <?php
 
-    class exportableAsString
-    {
-        public function __toString()
-        {
+    class OffsetSupport {
+        /**
+         * @param string $strIndex
+         * @return string
+         */
+        public function offsetGet($strIndex) {
+            return '';
+        }
+        /**
+         * @param string $strIndex
+         * @param string $strValue
+         * @return string
+         */
+        public function offsetSet($strIndex, $strValue) {
             return '';
         }
     }
 
-    $arr = array();
-    echo $arr['0']; //ok
-    echo $arr[0];   //ok
-    echo $arr[new exportableAsString()]; // needs to be fixed, this is legal
+    class MagicSupport {
+        public function __get($strIndex) {
+            return '';
+        }
+    }
 
-    echo $arr[array()];      //reported
-    echo $arr{'0'};          //reported
-    echo $arr{0};            //reported
+    class TestContainer
+    {
+        public function flow() {
+            $strContainer = '';
+            $strContainer[0] = 'a';
+            $strContainer[explode('', '')] = 'a';
 
-    $obj = new exportableAsString();
-    echo $obj[0];            // reported
-    echo $obj{0};            // reported
+            $arrContainer = array();
+            $arrContainer[0] = 'a';
+            $arrContainer[explode('', '')] = 'a';
 
+            $boolContainer = false;
+            $boolContainer[0] = 'a';
+            $boolContainer[explode('', '')] = 'a';
+
+            $objOffsetContainer = new OffsetSupport();
+            $objOffsetContainer[0] = 0;
+            $objOffsetContainer[new stdClass()] = 0;
+
+            $objMagicContainer = new MagicSupport();
+            $objMagicContainer[0] = 0;
+            $objMagicContainer[new stdClass()] = 0;
+
+            $objStdContainer = new stdClass();
+            $objStdContainer[0] = 0;
+            $objStdContainer[new stdClass()] = 0;
+        }
+    }

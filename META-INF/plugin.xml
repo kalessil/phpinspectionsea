@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.3.1</version>
+  <version>1.3.2</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -35,15 +35,16 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
   <change-notes><![CDATA[
 20 Jun 2015: improvements and new pro-inspections<br/>
 <br/>
-    - Deprecated configuration options: extended support for PHP 7.0;<br/>
-    - Not optimal regular expressions: improved resolving pattern;<br/>
-    - Suspicious loop: added more cases;<br/>
-    - Unnecessary last comma in array definition: now deactivated by default;<br/>
+    - exceptions handling and annotating: support combining @throws and @inheritoc annotations;<br/>
+    - reference mismatch: resolved duplicated reports;<br/>
+    - types casting via PHP4 functions: more cases added;<br/>
+    - forgotten debug statements: more cases added;<br/>
+    - Types resolving: improvements and bug-fixes by Denis Ryabov;<br/>
 <br/>
-    - *printf/*scanf arguments count mismatches: implemented;<br/>
-    - Random API migration: implemented;<br/>
-    - Switch-case simplification: implemented;<br/>
-    - Continue miss-behaviour in switch: implemented;<br/>
+    - Array and string offset validity: implemented (in cooperation with Denis Ryabov);<br/>
+    - Phar-incompatible realpath applied to a relative path: implemented;<br/>
+    - Senseless proxy function: implemented;<br/>
+    - 'strtr(...)' used as 'str_replace(...)': implemented;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

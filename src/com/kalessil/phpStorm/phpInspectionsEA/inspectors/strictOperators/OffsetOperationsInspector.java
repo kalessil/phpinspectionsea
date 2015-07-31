@@ -56,11 +56,13 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                     allowedIndexTypes.clear();
                     return;
                 }
+                // TODO: check why allowedIndexTypes can be empty
 
-                // ensure index is one of (string, float, bool, null)
+
+                // ensure index is one of (string, float, bool, null) when we acquired possible types information
                 // TODO: hash-elements e.g. array initialization
                 PhpPsiElement indexValue = expression.getIndex().getValue();
-                if (null != indexValue) {
+                if (null != indexValue && allowedIndexTypes.size() > 0) {
                     // resolve types with custom resolver, native gives type sets which not comparable properly
                     HashSet<String> possibleIndexTypes = new HashSet<String>();
                     TypeFromPlatformResolverUtil.resolveExpressionType(indexValue, possibleIndexTypes);
@@ -95,8 +97,13 @@ public class OffsetOperationsInspector extends BasePhpInspection {
 
         HashSet<String> containerTypes = new HashSet<String>();
         TypeFromPlatformResolverUtil.resolveExpressionType(container, containerTypes);
+        // failed to resolve, don't try to guess anything
+        if (0 == containerTypes.size()) {
+            return true;
+        }
+
         for (String typeToCheck : containerTypes) {
-            if (Types.strArray.equals(typeToCheck)) {
+            if (typeToCheck.equals(Types.strArray) || typeToCheck.equals(Types.strString)) {
                 indexTypesSupported.add(Types.strString);
                 indexTypesSupported.add(Types.strFloat);
                 indexTypesSupported.add(Types.strInteger);
@@ -109,6 +116,10 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 continue;
             }
 
+            // assume is just null-ble declaration
+            if (typeToCheck.equals(Types.strNull)) {
+                continue;
+            }
             // some of possible types are wrong
             if (!StringUtil.isEmpty(typeToCheck) && typeToCheck.charAt(0) != '\\') {
                 supportsOffsets = false;
@@ -119,7 +130,9 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 // custom offsets management, follow annotated types
                 Method offsetSetMethod = classToCheck.findMethodByName("offsetSet");
                 if (null != offsetSetMethod) {
-                    TypeFromPlatformResolverUtil.resolveExpressionType(offsetSetMethod, indexTypesSupported);
+                    if (offsetSetMethod.getParameters().length > 0) {
+                        TypeFromPlatformResolverUtil.resolveExpressionType(offsetSetMethod.getParameters()[0], indexTypesSupported);
+                    }
 
                     supportsOffsets = true;
                     continue;
@@ -156,8 +169,13 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         HashSet<String> secureIterator = new HashSet<String>();
 
         final boolean isAnyObjectAllowed = allowedIndexTypes.contains(Types.strObject);
+        final boolean isAnyScalarAllowed = allowedIndexTypes.contains(Types.strMixed);
         for (String possibleType : possibleIndexTypes) {
-            if (possibleType.equals(Types.strMixed) || allowedIndexTypes.contains(possibleType)) {
+            // allowed, or matches null, mixed (assuming it's null-ble or scalar)
+            if (
+                possibleType.equals(Types.strMixed) || possibleType.equals(Types.strNull) ||
+                allowedIndexTypes.contains(possibleType)
+            ) {
                 continue;
             }
 
@@ -167,7 +185,10 @@ public class OffsetOperationsInspector extends BasePhpInspection {
 
             // TODO: check classes relations
 
-            secureIterator.add(possibleType);
+            // scalar types, check if mixed allowed
+            if (!isAnyScalarAllowed) {
+                secureIterator.add(possibleType);
+            }
         }
 
         possibleIndexTypes.clear();

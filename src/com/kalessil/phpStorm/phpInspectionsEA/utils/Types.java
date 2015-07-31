@@ -15,6 +15,7 @@ public class Types {
     final static public String strMixed    = "mixed";
     final static public String strCallable = "callable";
     final static public String strResource = "resource";
+    final static public String strStatic   = "static";
 
     final static public String strResolvingAbortedOnPsiLevel = "\\aborted-on-psi-level";
     final static public String strClassNotResolved= "\\class-not-resolved";
@@ -58,6 +59,9 @@ public class Types {
 
             mapTypes.put(strResource,  strResource);
             mapTypes.put("\\resource", strResource);
+
+            mapTypes.put(strStatic,    strStatic);
+            mapTypes.put("\\static",   strStatic);
         }
 
         return mapTypes;

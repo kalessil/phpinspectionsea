@@ -91,10 +91,6 @@ public class OffsetOperationsInspector extends BasePhpInspection {
     }
 
     private boolean isContainerSupportsArrayAccess(@NotNull PsiElement container, @NotNull HashSet<String> indexTypesSupported) {
-        boolean supportsOffsets = false;
-
-        PhpIndex objIndex = PhpIndex.getInstance(container.getProject());
-
         HashSet<String> containerTypes = new HashSet<String>();
         TypeFromPlatformResolverUtil.resolveExpressionType(container, containerTypes);
         // failed to resolve, don't try to guess anything
@@ -102,15 +98,16 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             return true;
         }
 
+        PhpIndex objIndex = PhpIndex.getInstance(container.getProject());
+
+        boolean supportsOffsets = false;
+        boolean commonTypesAdded = false;
         for (String typeToCheck : containerTypes) {
             if (typeToCheck.equals(Types.strArray) || typeToCheck.equals(Types.strString)) {
-                indexTypesSupported.add(Types.strString);
-                indexTypesSupported.add(Types.strFloat);
-                indexTypesSupported.add(Types.strInteger);
-                indexTypesSupported.add(Types.strBoolean);
-                indexTypesSupported.add(Types.strNull);
-                indexTypesSupported.add(Types.strMixed);
-                indexTypesSupported.add(Types.strStatic);
+                if (!commonTypesAdded) {
+                    addCommonIndexTypes(indexTypesSupported);
+                    commonTypesAdded = true;
+                }
 
                 supportsOffsets = true;
                 continue;
@@ -144,13 +141,10 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                     magicMethod = classToCheck.findMethodByName("__set");
                 }
                 if (null != magicMethod) {
-                    indexTypesSupported.add(Types.strString);
-                    indexTypesSupported.add(Types.strFloat);
-                    indexTypesSupported.add(Types.strInteger);
-                    indexTypesSupported.add(Types.strBoolean);
-                    indexTypesSupported.add(Types.strNull);
-                    indexTypesSupported.add(Types.strMixed);
-                    indexTypesSupported.add(Types.strStatic);
+                    if (!commonTypesAdded) {
+                        addCommonIndexTypes(indexTypesSupported);
+                        commonTypesAdded = true;
+                    }
 
                     supportsOffsets = true;
                 }
@@ -194,5 +188,15 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         possibleIndexTypes.clear();
         possibleIndexTypes.addAll(secureIterator);
         secureIterator.clear();
+    }
+
+    private void addCommonIndexTypes(@NotNull HashSet<String> container) {
+        container.add(Types.strString);
+        container.add(Types.strFloat);
+        container.add(Types.strInteger);
+        container.add(Types.strBoolean);
+        container.add(Types.strNull);
+        container.add(Types.strMixed);
+        container.add(Types.strStatic);
     }
 }

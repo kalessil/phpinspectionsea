@@ -30,6 +30,7 @@
             $strContainer = '';
             $strContainer[0] = 'a';
             $strContainer[explode('', '')] = 'a';
+            $strContainer []= 'a';
 
             $arrContainer = array();
             $arrContainer[0] = 'a';
@@ -50,5 +51,9 @@
             $objStdContainer = new stdClass();
             $objStdContainer[0] = 0;
             $objStdContainer[new stdClass()] = 0;
+
+            $objTestObjectContainer = new PDO('','','');
+            $objTestObjectContainer[]
+                = "This is a message";
         }
     }

@@ -6,15 +6,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
-import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -50,14 +45,12 @@ public class OffsetOperationsInspector extends BasePhpInspection {
 
                 // ensure offsets operations are supported
                 HashSet<String> allowedIndexTypes = new HashSet<String>();
-                if (!isContainerSupportsArrayAccess(expression.getValue(), allowedIndexTypes)) {
+                if (!isContainerSupportsArrayAccess(expression, allowedIndexTypes)) {
                     holder.registerProblem(expression, strProblemNoOffsetSupport, ProblemHighlightType.GENERIC_ERROR);
 
                     allowedIndexTypes.clear();
                     return;
                 }
-                // TODO: check why allowedIndexTypes can be empty
-
 
                 // ensure index is one of (string, float, bool, null) when we acquired possible types information
                 // TODO: hash-elements e.g. array initialization
@@ -92,9 +85,34 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         };
     }
 
-    private boolean isContainerSupportsArrayAccess(@NotNull PsiElement container, @NotNull HashSet<String> indexTypesSupported) {
+    private boolean isContainerSupportsArrayAccess(@NotNull ArrayAccessExpression expression, @NotNull HashSet<String> indexTypesSupported) {
+
+        // ok JB parses `$var[]= ...` always as array, lets make it working properly and report them later
+        PsiElement container = expression.getValue();
+        if (null == container) {
+            return false;
+        }
+
+        boolean isWrongResolvedArrayPush = false;
+        if (expression.getParent() instanceof AssignmentExpression) {
+            if (((AssignmentExpression) expression.getParent()).getVariable() == expression) {
+                isWrongResolvedArrayPush = (null == expression.getIndex() || null == expression.getIndex().getValue());
+            }
+        }
+
+        // TODO: report to JB and get rid of this workarounds
         HashSet<String> containerTypes = new HashSet<String>();
-        TypeFromPlatformResolverUtil.resolveExpressionType(container, containerTypes);
+        if (isWrongResolvedArrayPush) {
+            TypeFromPsiResolvingUtil.resolveExpressionType(
+                    container,
+                    ExpressionSemanticUtil.getScope(container),
+                    PhpIndex.getInstance(expression.getProject()),
+                    containerTypes
+            );
+        } else {
+            TypeFromPlatformResolverUtil.resolveExpressionType(container, containerTypes);
+        }
+
         // failed to resolve, don't try to guess anything
         if (0 == containerTypes.size()) {
             return true;

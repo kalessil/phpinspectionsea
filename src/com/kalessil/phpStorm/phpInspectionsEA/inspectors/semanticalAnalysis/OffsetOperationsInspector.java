@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -86,6 +86,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         };
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isContainerSupportsArrayAccess(@NotNull ArrayAccessExpression expression, @NotNull HashSet<String> indexTypesSupported) {
 
         // ok JB parses `$var[]= ...` always as array, lets make it working properly and report them later

@@ -2,13 +2,17 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
-import com.jetbrains.php.lang.psi.elements.ArrayIndex;
+import com.jetbrains.php.lang.psi.elements.Method;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
@@ -20,8 +24,9 @@ import java.util.HashSet;
  * @author Vladimir Reznichenko
  */
 public class OffsetOperationsInspector extends BasePhpInspection {
-    private static final String strProblemUseSquareBrackets = "Please use square brackets instead of curvy for deeper analysis.";
-    private static final String strProblemInvalidIndex = "Wrong index type (%t% is incompatible)";
+    private static final String strProblemUseSquareBrackets = "Please use square brackets instead of curvy for deeper analysis";
+    private static final String strProblemNoOffsetSupport = "This container does not support offsets operations";
+    private static final String strProblemInvalidIndex = "Wrong index type (%p% is incompatible with %a%)";
 
     @NotNull
     public String getShortName() {
@@ -33,56 +38,140 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpArrayAccessExpression(ArrayAccessExpression expression) {
                 PsiElement bracketNode = expression.getLastChild();
-                if (null == bracketNode) {
+                if (null == bracketNode || null == expression.getValue() || null == expression.getIndex()) {
                     return;
                 }
 
-                // recommend to use [] instead of {}
+                // promote using []
                 if (bracketNode.getText().equals("}")) {
-                    holder.registerProblem(expression, strProblemUseSquareBrackets, ProblemHighlightType.WEAK_WARNING);
+//                    holder.registerProblem(expression, strProblemUseSquareBrackets, ProblemHighlightType.WEAK_WARNING);
                     return;
                 }
 
-                // ensure value is one of (array, string, \ArrayAccess, \SimpleXMLElement)
-                // => general error otherwise
-                final boolean isArrayAccessSupported = true;
-                final boolean isIndexCanBeObject     = false;
-                // TODO: analyse container capabilities (\ArrayAccess::offsetSet (primary+types), __set, __get (secondary))
+                // ensure offsets operations are supported
+                HashSet<String> allowedIndexTypes = new HashSet<String>();
+                if (!isContainerSupportsArrayAccess(expression.getValue(), allowedIndexTypes)) {
+                    holder.registerProblem(expression.getValue(), strProblemNoOffsetSupport, ProblemHighlightType.WEAK_WARNING);
+
+                    allowedIndexTypes.clear();
+                    return;
+                }
 
                 // ensure index is one of (string, float, bool, null)
                 // TODO: hash-elements e.g. array initialization
-                ArrayIndex indexHolder = expression.getIndex();
-                if (null != indexHolder) {
-                    PhpPsiElement indexValue = indexHolder.getValue();
-                    if (null != indexValue) {
-                        // resolve types with custom resolver, native gives type sets which not comparable properly
-                        HashSet<String> types = new HashSet<String>();
-                        TypeFromPlatformResolverUtil.resolveExpressionType(indexValue, types);
+                PhpPsiElement indexValue = expression.getIndex().getValue();
+                if (null != indexValue) {
+                    // resolve types with custom resolver, native gives type sets which not comparable properly
+                    HashSet<String> possibleIndexTypes = new HashSet<String>();
+                    TypeFromPlatformResolverUtil.resolveExpressionType(indexValue, possibleIndexTypes);
 
-                        // now check if any type provided and check sets validity
-                        if (types.size() > 0) {
-                            // clean typ to keep only incompatible once
-                            cleanResolvedTypeToKeepIncompatible(types);
-                            if (types.size() > 0) {
-                                String strError = strProblemInvalidIndex.replace("%t%", types.iterator().next());
-                                holder.registerProblem(indexValue, strError, ProblemHighlightType.GENERIC_ERROR);
-                            }
+                    // now check if any type provided and check sets validity
+                    if (possibleIndexTypes.size() > 0) {
+                        // take possible and clean them respectively allowed to keep only conflicted
+                        if (allowedIndexTypes.size() > 0) {
+                            filterPossibleTypesWhichAreNotAllowed(possibleIndexTypes, allowedIndexTypes);
                         }
-                        types.clear();
+
+                        if (possibleIndexTypes.size() > 0) {
+                            String strError = strProblemInvalidIndex
+                                    .replace("%p%", possibleIndexTypes.toString())
+                                    .replace("%a%", allowedIndexTypes.toString());
+                            holder.registerProblem(indexValue, strError, ProblemHighlightType.GENERIC_ERROR);
+                        }
                     }
+                    possibleIndexTypes.clear();
                 }
+
+                // clear valid types collection
+                allowedIndexTypes.clear();
             }
         };
     }
 
-    private void cleanResolvedTypeToKeepIncompatible(@NotNull HashSet<String> types) {
-        types.remove(Types.strString);
-        types.remove(Types.strFloat);
-        types.remove(Types.strInteger);
-        types.remove(Types.strBoolean);
-        types.remove(Types.strNull);
-        types.remove(Types.strMixed);
-        types.remove(Types.strStatic);
+    private boolean isContainerSupportsArrayAccess(@NotNull PsiElement container, @NotNull HashSet<String> indexTypesSupported) {
+        boolean supportsOffsets = false;
+
+        PhpIndex objIndex = PhpIndex.getInstance(container.getProject());
+
+        HashSet<String> containerTypes = new HashSet<String>();
+        TypeFromPlatformResolverUtil.resolveExpressionType(container, containerTypes);
+        for (String typeToCheck : containerTypes) {
+            if (Types.strArray.equals(typeToCheck)) {
+                indexTypesSupported.add(Types.strString);
+                indexTypesSupported.add(Types.strFloat);
+                indexTypesSupported.add(Types.strInteger);
+                indexTypesSupported.add(Types.strBoolean);
+                indexTypesSupported.add(Types.strNull);
+                indexTypesSupported.add(Types.strMixed);
+                indexTypesSupported.add(Types.strStatic);
+
+                supportsOffsets = true;
+                continue;
+            }
+
+            // some of possible types are wrong
+            if (!StringUtil.isEmpty(typeToCheck) && typeToCheck.charAt(0) != '\\') {
+                supportsOffsets = false;
+                break;
+            }
+
+            for (PhpClass classToCheck : PhpIndexUtil.getObjectInterfaces(typeToCheck, objIndex)) {
+                // custom offsets management, follow annotated types
+                Method offsetSetMethod = classToCheck.findMethodByName("offsetSet");
+                if (null != offsetSetMethod) {
+                    TypeFromPlatformResolverUtil.resolveExpressionType(offsetSetMethod, indexTypesSupported);
+
+                    supportsOffsets = true;
+                    continue;
+                }
+
+                // magic methods, demand regular array offset types
+                Method magicMethod = classToCheck.findMethodByName("__get");
+                if (null == magicMethod) {
+                    magicMethod = classToCheck.findMethodByName("__set");
+                }
+                if (null != magicMethod) {
+                    indexTypesSupported.add(Types.strString);
+                    indexTypesSupported.add(Types.strFloat);
+                    indexTypesSupported.add(Types.strInteger);
+                    indexTypesSupported.add(Types.strBoolean);
+                    indexTypesSupported.add(Types.strNull);
+                    indexTypesSupported.add(Types.strMixed);
+                    indexTypesSupported.add(Types.strStatic);
+
+                    supportsOffsets = true;
+                }
+            }
+
+        }
+        containerTypes.clear();
+
+        return supportsOffsets;
     }
 
+    private void filterPossibleTypesWhichAreNotAllowed(
+            @NotNull HashSet<String> possibleIndexTypes,
+            @NotNull HashSet<String> allowedIndexTypes
+    ) {
+        HashSet<String> secureIterator = new HashSet<String>();
+
+        final boolean isAnyObjectAllowed = allowedIndexTypes.contains(Types.strObject);
+        for (String possibleType : possibleIndexTypes) {
+            if (possibleType.equals(Types.strMixed) || allowedIndexTypes.contains(possibleType)) {
+                continue;
+            }
+
+            if (isAnyObjectAllowed && !StringUtil.isEmpty(possibleType) && possibleType.charAt(0) == '\\') {
+                continue;
+            }
+
+            // TODO: check classes relations
+
+            secureIterator.add(possibleType);
+        }
+
+        possibleIndexTypes.clear();
+        possibleIndexTypes.addAll(secureIterator);
+        secureIterator.clear();
+    }
 }

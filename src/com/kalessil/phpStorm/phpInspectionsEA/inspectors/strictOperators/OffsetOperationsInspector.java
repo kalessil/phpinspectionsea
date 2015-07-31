@@ -47,7 +47,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 // => general error otherwise
                 final boolean isArrayAccessSupported = true;
                 final boolean isIndexCanBeObject     = false;
-                // TODO: next step - analyse container capabilities (offsetSet)
+                // TODO: analyse container capabilities (\ArrayAccess::offsetSet (primary+types), __set, __get (secondary))
 
                 // ensure index is one of (string, float, bool, null)
                 // TODO: hash-elements e.g. array initialization

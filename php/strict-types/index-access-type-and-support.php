@@ -35,6 +35,7 @@
             $arrContainer = array();
             $arrContainer[0] = 'a';
             $arrContainer[explode('', '')] = 'a';
+            $arrContainer []= 'a';
 
             $boolContainer = false;
             $boolContainer[0] = 'a';

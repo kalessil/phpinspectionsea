@@ -84,14 +84,14 @@ public class TypeFromPsiResolvingUtil {
                     return;
                 }
             }
-
-            PsiElement var = ((Variable) objSubjectExpression).resolve();
-            if (var instanceof Variable && var.getParent() instanceof AssignmentExpression) {
-                AssignmentExpression decl = (AssignmentExpression) var.getParent();
-                if (decl.getValue() instanceof  ArrayCreationExpression) {
-                    checkCallables((ArrayCreationExpression) decl.getValue(), objScope, objIndex, objTypesSet);
-                }
-            }
+//
+//            PsiElement var = ((Variable) objSubjectExpression).resolve();
+//            if (var instanceof Variable && var.getParent() instanceof AssignmentExpression) {
+//                AssignmentExpression decl = (AssignmentExpression) var.getParent();
+//                if (decl.getValue() instanceof  ArrayCreationExpression) {
+//                    checkCallables((ArrayCreationExpression) decl.getValue(), objScope, objIndex, objTypesSet);
+//                }
+//            }
 
             storeAsTypeWithSignaturesImport(((Variable) objSubjectExpression).getSignature(), objScope, objIndex, objTypesSet);
             return;

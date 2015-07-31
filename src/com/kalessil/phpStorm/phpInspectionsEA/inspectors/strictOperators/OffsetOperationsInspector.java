@@ -19,8 +19,8 @@ import java.util.HashSet;
  * @author Vladimir Reznichenko
  */
 public class OffsetOperationsInspector extends BasePhpInspection {
-    private static final String strProblemUseSquareBrackets = "Please use square brackets instead of curvy for deeper analysis";
-    private static final String strProblemNoOffsetSupport = "This container might not support offsets operations";
+    private static final String strProblemUseSquareBrackets = "Please use [ ] instead of { } for deeper analysis";
+    private static final String strProblemNoOffsetSupport = "This container might not support offsets operations (%c%)";
     private static final String strProblemInvalidIndex = "Wrong index type (%p% is incompatible with %a%)";
 
     @NotNull
@@ -46,7 +46,8 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 // ensure offsets operations are supported
                 HashSet<String> allowedIndexTypes = new HashSet<String>();
                 if (!isContainerSupportsArrayAccess(expression, allowedIndexTypes)) {
-                    holder.registerProblem(expression, strProblemNoOffsetSupport, ProblemHighlightType.GENERIC_ERROR);
+                    String strError = strProblemNoOffsetSupport.replace("%c%", allowedIndexTypes.toString());
+                    holder.registerProblem(expression, strError, ProblemHighlightType.GENERIC_ERROR);
 
                     allowedIndexTypes.clear();
                     return;
@@ -100,12 +101,12 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             }
         }
 
-        // TODO: report to JB and get rid of this workarounds
+        // TODO: report to JB and get rid of this workarounds, move workaround into TypeFromPlatformResolverUtil.resolveExpressionType
         HashSet<String> containerTypes = new HashSet<String>();
         if (isWrongResolvedArrayPush) {
             TypeFromPsiResolvingUtil.resolveExpressionType(
                     container,
-                    ExpressionSemanticUtil.getScope(container),
+                    ExpressionSemanticUtil.getScope(expression),
                     PhpIndex.getInstance(expression.getProject()),
                     containerTypes
             );
@@ -192,7 +193,14 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             }
 
         }
+
+        // when might not support offset access, reuse types container to report back why
+        if (!supportsOffsets) {
+            indexTypesSupported.clear();
+            indexTypesSupported.addAll(containerTypes);
+        }
         containerTypes.clear();
+
 
         return supportsOffsets;
     }
@@ -237,6 +245,5 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         container.add(Types.strInteger);
         container.add(Types.strBoolean);
         container.add(Types.strNull);
-        container.add(Types.strStatic);
     }
 }

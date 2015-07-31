@@ -14,7 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class SenselessProxyMethodInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "%s% can be dropped, as it just calls parent method";
+    private static final String strProblemDescription = "%s% can be dropped, as it only calls parent method";
 
     @NotNull
     public String getShortName() {

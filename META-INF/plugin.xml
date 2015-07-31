@@ -33,12 +33,12 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
     ]]></description>
 
   <change-notes><![CDATA[
-20 Jun 2015: improvements and new pro-inspections<br/>
+31 Jul 2015: improvements and new inspections<br/>
 <br/>
-    - exceptions handling and annotating: support combining @throws and @inheritoc annotations;<br/>
-    - reference mismatch: resolved duplicated reports;<br/>
-    - types casting via PHP4 functions: more cases added;<br/>
-    - forgotten debug statements: more cases added;<br/>
+    - Exceptions handling and annotating: support combining @throws and @inheritoc annotations;<br/>
+    - Reference mismatch: resolved duplicated reports;<br/>
+    - Types casting via PHP4 functions: more cases added;<br/>
+    - Forgotten debug statements: more cases added;<br/>
     - Types resolving: improvements and bug-fixes by Denis Ryabov;<br/>
 <br/>
     - Array and string offset validity: implemented (in cooperation with Denis Ryabov);<br/>

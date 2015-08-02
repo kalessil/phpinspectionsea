@@ -3,10 +3,13 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
@@ -14,6 +17,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import net.miginfocom.swing.MigLayout;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,14 +30,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class ForgottenDebugOutputInspector extends BasePhpInspection {
-    // comma separated list of items
-    public static String configuration = "";
+    // custom configuration, automatically saved between restarts so keep out of changing modifiers
+    public String configuration = "";
+    public HashSet<String> customFunctions = new HashSet<String>();
+    public HashMap<String, Pair<String, String>> customMethods = new HashMap<String, Pair<String, String>>();
 
     // prepared content for smooth runtime
-    public static HashSet<String> customFunctions = new HashSet<String>();
-    public static HashMap<String, Pair<String, String>> customMethods = new HashMap<String, Pair<String, String>>();
-
-    private static final String strProblemDescription = "Please ensure this is not forgotten debug statement";
+    static private final String strProblemDescription = "Please ensure this is not forgotten debug statement";
 
     public ForgottenDebugOutputInspector() {
     }

@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -19,16 +20,18 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import java.util.HashMap;
 import java.util.HashSet;
 
 public class ForgottenDebugOutputInspector extends BasePhpInspection {
     // comma separated list of items
-    public String configuration = "";
+    public static String configuration = "";
 
     // prepared content for smooth runtime
-    HashSet<String> customFunctions = new HashSet<String>();
-    HashMap<String, Pair<String, String>> customMethods = new HashMap<String, Pair<String, String>>();
+    public static HashSet<String> customFunctions = new HashSet<String>();
+    public static HashMap<String, Pair<String, String>> customMethods = new HashMap<String, Pair<String, String>>();
 
     private static final String strProblemDescription = "Please ensure this is not forgotten debug statement";
 
@@ -130,6 +133,12 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                     stateChanged(e);
                 }
                 public void stateChanged(DocumentEvent e) {
+                    setDebugDescriptors(myCustomDebugFunctionsInput.getText());
+                }
+            });
+            myCustomDebugFunctionsInput.getDocument().addUndoableEditListener(new UndoableEditListener() {
+                @Override
+                public void undoableEditHappened(UndoableEditEvent e) {
                     setDebugDescriptors(myCustomDebugFunctionsInput.getText());
                 }
             });

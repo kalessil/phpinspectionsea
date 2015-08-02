@@ -2,36 +2,28 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.kalessil.phpStorm.phpInspectionsEA.gui.PrettyListControl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import net.miginfocom.swing.MigLayout;
-import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 public class ForgottenDebugOutputInspector extends BasePhpInspection {
     // custom configuration, automatically saved between restarts so keep out of changing modifiers
-    public String configuration = "";
+    public LinkedList<String> configuration = new LinkedList<String>();
     public HashSet<String> customFunctions = new HashSet<String>();
     public HashMap<String, Pair<String, String>> customMethods = new HashMap<String, Pair<String, String>>();
 
@@ -118,70 +110,19 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     }
 
     public class OptionsPanel {
-        private JPanel myMainPanel;
-        private JTextField myCustomDebugFunctionsInput;
+        private JPanel optionsPanel;
 
         public OptionsPanel() {
-            myMainPanel = new JPanel();
-
-            myCustomDebugFunctionsInput = new JTextField(configuration, 34);
-            myCustomDebugFunctionsInput.getDocument().addDocumentListener(new DocumentListener() {
-                public void changedUpdate(DocumentEvent e) {
-                    stateChanged(e);
-                }
-                public void removeUpdate(DocumentEvent e) {
-                    stateChanged(e);
-                }
-                public void insertUpdate(DocumentEvent e) {
-                    stateChanged(e);
-                }
-                public void stateChanged(DocumentEvent e) {
-                    setDebugDescriptors(myCustomDebugFunctionsInput.getText());
-                }
-            });
-            myCustomDebugFunctionsInput.getDocument().addUndoableEditListener(new UndoableEditListener() {
-                @Override
-                public void undoableEditHappened(UndoableEditEvent e) {
-                    setDebugDescriptors(myCustomDebugFunctionsInput.getText());
-                }
-            });
-
-            // alignment strategy
-            myMainPanel.setLayout(new MigLayout());
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
 
             // inject controls
-            myMainPanel.add(new JLabel("Custom debug methods:"), "span, grow");
-            myMainPanel.add(myCustomDebugFunctionsInput, "span, grow");
-        }
-
-        private void setDebugDescriptors(@Nullable String newOnce) {
-            configuration = newOnce;
-            customFunctions.clear();
-            customMethods.clear();
-
-            // empty once
-            if (StringUtil.isEmpty(configuration)) {
-                return;
-            }
-
-            // parse what was provided
-            for (String stringDescriptor : configuration.split(",")) {
-                stringDescriptor = stringDescriptor.trim();
-                if (!stringDescriptor.contains("::")) {
-                    customFunctions.add(stringDescriptor);
-                    continue;
-                }
-
-                String[] disassembledDescriptor = stringDescriptor.split("::", 2);
-                customMethods.put(
-                    stringDescriptor.toLowerCase(),
-                    Pair.create(disassembledDescriptor[0], disassembledDescriptor[1])
-                );
-            }
+            optionsPanel.add(new JLabel("Custom debug methods:"), "wrap");
+            optionsPanel.add(new PrettyListControl(configuration).getComponent(), "pushx, growx");
         }
 
         public JPanel getComponent() {
-            return myMainPanel;
+            return optionsPanel;
         }
     }
 }

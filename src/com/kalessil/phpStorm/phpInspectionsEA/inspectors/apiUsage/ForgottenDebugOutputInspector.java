@@ -2,10 +2,12 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
@@ -14,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.gui.PrettyListControl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import net.miginfocom.swing.MigLayout;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -24,13 +27,42 @@ import java.util.LinkedList;
 public class ForgottenDebugOutputInspector extends BasePhpInspection {
     // custom configuration, automatically saved between restarts so keep out of changing modifiers
     public LinkedList<String> configuration = new LinkedList<String>();
-    public HashSet<String> customFunctions = new HashSet<String>();
-    public HashMap<String, Pair<String, String>> customMethods = new HashMap<String, Pair<String, String>>();
+    private HashSet<String> customFunctions = new HashSet<String>();
+    private HashMap<String, Pair<String, String>> customMethods = new HashMap<String, Pair<String, String>>();
 
     // prepared content for smooth runtime
     static private final String strProblemDescription = "Please ensure this is not forgotten debug statement";
 
     public ForgottenDebugOutputInspector() {
+    }
+
+    public void readSettings(@NotNull Element node) throws InvalidDataException {
+        XmlSerializer.deserializeInto(this, node);
+        recompileConfiguration();
+    }
+
+    private void recompileConfiguration() {
+        customFunctions.clear();
+        customMethods.clear();
+
+        if (0 == configuration.size()) {
+            return;
+        }
+
+        // parse what was provided
+        for (String stringDescriptor : configuration) {
+            stringDescriptor = stringDescriptor.trim();
+            if (!stringDescriptor.contains("::")) {
+                customFunctions.add(stringDescriptor);
+                continue;
+            }
+
+            String[] disassembledDescriptor = stringDescriptor.split("::", 2);
+            customMethods.put(
+                    stringDescriptor.toLowerCase(),
+                    Pair.create(disassembledDescriptor[0], disassembledDescriptor[1])
+            );
+        }
     }
 
     @NotNull
@@ -118,7 +150,12 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
 
             // inject controls
             optionsPanel.add(new JLabel("Custom debug methods:"), "wrap");
-            optionsPanel.add(new PrettyListControl(configuration).getComponent(), "pushx, growx");
+            optionsPanel.add((new PrettyListControl(configuration) {
+                protected void fireContentsChanged() {
+                    recompileConfiguration();
+                    super.fireContentsChanged();
+                }
+            }).getComponent(), "pushx, growx");
         }
 
         public JPanel getComponent() {

@@ -33,6 +33,10 @@ public class PrettyListControl {
         });
     }
 
+    protected void fireContentsChanged() {
+        /* injection point for implementation classes */
+    }
+
     public JPanel getComponent() {
         final JPanel listComponent = new JPanel(new BorderLayout());
         listComponent.add(new JLabel(""));
@@ -172,8 +176,8 @@ public class PrettyListControl {
         }
 
         public void fireContentsChanged() {
+            PrettyListControl.this.fireContentsChanged();
             this.fireContentsChanged(list, -1, -1);
         }
     }
 }
-

@@ -384,6 +384,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="RandomApiMigrationInspection"                    displayName="Compatibility: random API migration"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RandomApiMigrationInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="MktimeUsageInspection"                           displayName="Compatibility: mktime() usage"
+        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.MktimeUsageInspection"/>
 
     <!--localInspection language="PHP" groupPath="PHP"
         shortName="StrictArgumentsInspection"                       displayName="Type compatibility: check types of call arguments"

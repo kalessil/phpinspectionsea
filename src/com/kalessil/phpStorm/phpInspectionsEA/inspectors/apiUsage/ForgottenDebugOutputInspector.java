@@ -29,6 +29,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     public LinkedList<String> configuration = new LinkedList<String>();
     private HashSet<String> customFunctions = new HashSet<String>();
     private HashMap<String, Pair<String, String>> customMethods = new HashMap<String, Pair<String, String>>();
+    private HashSet<String> customMethodsNames = new HashSet<String>();
 
     // prepared content for smooth runtime
     static private final String strProblemDescription = "Please ensure this is not forgotten debug statement";
@@ -44,6 +45,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     private void recompileConfiguration() {
         customFunctions.clear();
         customMethods.clear();
+        customMethodsNames.clear();
 
         if (0 == configuration.size()) {
             return;
@@ -62,6 +64,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                     stringDescriptor.toLowerCase(),
                     Pair.create(disassembledDescriptor[0], disassembledDescriptor[1])
             );
+            customMethodsNames.add(disassembledDescriptor[1]);
         }
     }
 
@@ -91,7 +94,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpMethodReference(MethodReference reference) {
                 final String name = reference.getName();
-                if (0 == customMethods.size() || StringUtil.isEmpty(name)) {
+                if (0 == customMethods.size() || StringUtil.isEmpty(name) || !customMethodsNames.contains(name)) {
                     return;
                 }
 

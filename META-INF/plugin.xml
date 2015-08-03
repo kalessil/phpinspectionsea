@@ -108,7 +108,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrStrUsedAsStrPosInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="StrTrUsageAsStrReplaceInspect"                 displayName="Performance: 'strtr(...)' used as 'str_replace(...)'"
+        shortName="StrTrUsageAsStrReplaceInspection"              displayName="Performance: 'strtr(...)' used as 'str_replace(...)'"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrTrUsageAsStrReplaceInspector"/>
     <localInspection language="PHP" groupPath="PHP"
@@ -247,7 +247,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RealpathOnRelativePathsInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="SOffsetOperationsInspection"                    displayName="Probable bugs: array and string offset validity"
+        shortName="OffsetOperationsInspection"                    displayName="Probable bugs: array and string offset validity"
         groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OffsetOperationsInspector"/>
 

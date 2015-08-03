@@ -10,7 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class MktimeUsageInspection extends BasePhpInspection {
-    private static final String strProblemUseTime  = "Please use the time() function instead (produces runtime warning)";
+    private static final String strProblemUseTime  = "You should be using the time() function instead (runtime warning)";
     private static final String strProblemParameterDeprecated = "Parameter 'is_dst' is deprecated and removed in v7";
 
     @NotNull

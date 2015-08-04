@@ -62,16 +62,19 @@ public class AlterInForeachInspector extends BasePhpInspection {
                                 isRequirementFullFilled = true;
                             }
                             /* check unset is applied to value-variable */
-                            if (nextExpression instanceof PhpUnset) {
-                                PhpPsiElement[] unsetArguments = ((PhpUnset) nextExpression).getArguments();
-                                if (1 == unsetArguments.length && unsetArguments[0] instanceof Variable) {
-                                    String unsetArgumentName =  unsetArguments[0].getName();
-                                    String foreachValueName  =  objForeachValue.getName();
-                                    if (
-                                        !StringUtil.isEmpty(unsetArgumentName) && !StringUtil.isEmpty(foreachValueName) &&
-                                        unsetArgumentName.equals(foreachValueName)
-                                    ) {
+                            String foreachValueName = objForeachValue.getName();
+                            if (nextExpression instanceof PhpUnset && !StringUtil.isEmpty(foreachValueName)) {
+                                for (PhpPsiElement unsetArgument : ((PhpUnset) nextExpression).getArguments()) {
+                                    // skip non-variable expressions
+                                    if (!(unsetArgument instanceof Variable)) {
+                                        continue;
+                                    }
+
+                                    // check argument matched foreach value name
+                                    String unsetArgumentName = unsetArgument.getName();
+                                    if (!StringUtil.isEmpty(unsetArgumentName) && unsetArgumentName.equals(foreachValueName)) {
                                         isRequirementFullFilled = true;
+                                        break;
                                     }
                                 }
                             }

@@ -164,6 +164,10 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         shortName="ForeachSourceInspection"                       displayName="Type compatibility: foreach source to iterate over"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ForeachSourceInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="GenericObjectTypeUsageInspection"              displayName="Type compatibility: usage of object type in PhpDocs"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc.GenericObjectTypeUsageInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="UnSafeIsSetOverArrayInspection"                displayName="Control flow: 'isset(...)' usage"

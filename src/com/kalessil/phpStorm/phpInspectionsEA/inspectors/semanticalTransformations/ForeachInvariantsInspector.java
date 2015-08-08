@@ -3,9 +3,11 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformati
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpPsiUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.AssignmentExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
@@ -88,6 +90,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 }
 
                 // find usages as index
+                boolean isUsedAsIndex = false;
                 Collection<ArrayAccessExpression> indexStatements = PsiTreeUtil.findChildrenOfType(body, ArrayAccessExpression.class);
                 for (ArrayAccessExpression offset : indexStatements) {
                     if (
@@ -95,12 +98,47 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         offset.getIndex().getValue() instanceof Variable &&
                         PsiEquivalenceUtil.areElementsEquivalent(variable, offset.getIndex().getValue())
                     ) {
-                        return true;
+                        isUsedAsIndex = true;
+                        break;
                     }
                 }
                 indexStatements.clear();
+                if (!isUsedAsIndex) {
+                    return false;
+                }
 
-                return false;
+                // ensure not compared with fixed number
+                boolean isComparedWithMagicInteger = false;
+                for (PhpPsiElement condition : expression.getConditionalExpressions()) {
+                    if (!(condition instanceof BinaryExpression)) {
+                        continue;
+                    }
+
+                    BinaryExpression conditionCasted = (BinaryExpression) condition;
+
+                    // get compared value
+                    PsiElement comparedElement = null;
+                    if (
+                        conditionCasted.getLeftOperand() instanceof Variable &&
+                        PsiEquivalenceUtil.areElementsEquivalent(variable, conditionCasted.getLeftOperand())
+                    ) {
+                        comparedElement = conditionCasted.getRightOperand();
+                    }
+                    if (
+                        conditionCasted.getRightOperand() instanceof Variable &&
+                        PsiEquivalenceUtil.areElementsEquivalent(variable, conditionCasted.getRightOperand())
+                    ) {
+                        comparedElement = conditionCasted.getLeftOperand();
+                    }
+
+                    // stop analysis if number is used for comparison
+                    if (null != comparedElement && PhpPsiUtil.isOfType(comparedElement.getFirstChild(), PhpTokenTypes.DECIMAL_INTEGER)) {
+                        isComparedWithMagicInteger = true;
+                        break;
+                    }
+                }
+
+                return !isComparedWithMagicInteger;
             }
         };
     }

@@ -3,6 +3,20 @@
 class clazz {
 
     /**
+     * @throws \RuntimeException
+     */
+    public function __construct() {
+        throw new \RuntimeException();
+    }
+
+    /**
+     * @return clazz
+     */
+    static public function create() {
+        return new self();
+    }
+
+    /**
      * @return string
      * @throws \RuntimeException
      */

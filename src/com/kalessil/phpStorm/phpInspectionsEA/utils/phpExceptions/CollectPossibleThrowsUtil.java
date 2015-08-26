@@ -61,14 +61,25 @@ final public class CollectPossibleThrowsUtil {
             if (processed.contains(newExpression)) {
                 continue;
             }
+//holder.registerProblem(newExpression, "New expression wil be analyzed", ProblemHighlightType.WEAK_WARNING);
 
             /* skip what can not be resolved */
             ClassReference newClassRef= newExpression.getClassReference();
-            if (null == newClassRef || !(newClassRef.resolve() instanceof PhpClass)) {
+            if (null == newClassRef) {
                 processed.add(newExpression);
                 continue;
             }
-            PhpClass newClass = (PhpClass) newClassRef.resolve();
+
+            PhpClass newClass = null;
+            if (newClassRef.resolve() instanceof PhpClass) {
+                newClass = (PhpClass) newClassRef.resolve();
+            } else if (newClassRef.resolve() instanceof Method) {
+                newClass = ((Method) newClassRef.resolve()).getContainingClass();
+            } else {
+                processed.add(newExpression);
+                continue;
+            }
+//holder.registerProblem(newExpression, "Instantiated class resolved", ProblemHighlightType.WEAK_WARNING);
 
             /* throws processed */
             if (newExpression.getParent() instanceof PhpThrow) {
@@ -85,6 +96,7 @@ final public class CollectPossibleThrowsUtil {
             /* process constructors invocation */
             Method constructor = newClass.getConstructor();
             if (null != constructor) {
+//holder.registerProblem(newExpression, "Constructor found", ProblemHighlightType.WEAK_WARNING);
                 /* lookup for annotated exceptions */
                 HashSet<PhpClass> constructorExceptions = new HashSet<PhpClass>();
                 ThrowsResolveUtil.resolveThrownExceptions(constructor, constructorExceptions);

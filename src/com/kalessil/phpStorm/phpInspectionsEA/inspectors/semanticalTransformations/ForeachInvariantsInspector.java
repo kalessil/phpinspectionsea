@@ -44,7 +44,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                     return false;
                 }
 
-                // find first variable initialized with null
+                // find first variable initialized with 0
                 Variable variable = null;
                 for (PhpPsiElement init : expression.getInitialExpressions()) {
                     if (!(init instanceof AssignmentExpressionImpl)) {

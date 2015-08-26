@@ -12,7 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class ForeachOnArrayComponentsInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Classic foreach construction can be uses (can trigger unused variable warning)";
+    private static final String strProblemDescription = "Classic foreach construction can be used (can trigger unused variable warning)";
 
     @NotNull
     public String getShortName() {

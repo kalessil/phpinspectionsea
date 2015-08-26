@@ -75,7 +75,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                     UnaryExpressionImpl repeatCasted = (UnaryExpressionImpl) repeat;
                     // operation applied to a variable
                     if (null != repeatCasted.getOperation() && repeatCasted.getFirstPsiChild() instanceof Variable) {
-                        // increment on aour variable
+                        // increment on our variable
                         if (
                             repeatCasted.getOperation().getNode().getElementType() == PhpTokenTypes.opINCREMENT &&
                             PsiEquivalenceUtil.areElementsEquivalent(variable, repeatCasted.getFirstPsiChild())
@@ -92,6 +92,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 // find usages as index
                 boolean isUsedAsIndex = false;
                 Collection<ArrayAccessExpression> indexStatements = PsiTreeUtil.findChildrenOfType(body, ArrayAccessExpression.class);
+                // TODO: strings, ++variable
                 for (ArrayAccessExpression offset : indexStatements) {
                     if (
                         null != offset.getIndex() &&
@@ -132,6 +133,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                     }
 
                     // stop analysis if number is used for comparison
+                    // TODO: constants as well
                     if (null != comparedElement && PhpPsiUtil.isOfType(comparedElement.getFirstChild(), PhpTokenTypes.DECIMAL_INTEGER)) {
                         isComparedWithMagicInteger = true;
                         break;

@@ -27,7 +27,10 @@ public class MktimeUsageInspection extends BasePhpInspection {
                 final int parametersCount    = reference.getParameters().length;
                 if (
                     StringUtil.isEmpty(strFunctionName) ||
-                    !((0 == parametersCount ||  7 == parametersCount) && strFunctionName.equals("mktime"))
+                    !(
+                        (0 == parametersCount ||  7 == parametersCount) &&
+                        (strFunctionName.equals("mktime") || strFunctionName.equals("gmmktime"))
+                    )
                 ) {
                     return;
                 }

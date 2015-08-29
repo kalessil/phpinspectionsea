@@ -25,9 +25,9 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
                 String strValueWithQuotes = expression.getText();
                 if (
                     strValueWithQuotes.charAt(0) != '"' ||
-                    strValueWithQuotes.indexOf('$') >= 0 ||
-                    strValueWithQuotes.indexOf('\\') >= 0 ||
-                    (strValueWithQuotes.length() == 3 && strValueWithQuotes.equals("\"'\""))
+                    strValueWithQuotes.indexOf('$') > 0 ||
+                    strValueWithQuotes.indexOf('\\') > 0 ||
+                    strValueWithQuotes.indexOf('\'') > 0
                 ) {
                     return;
                 }

@@ -33,18 +33,17 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
     ]]></description>
 
   <change-notes><![CDATA[
-31 Jul 2015: improvements and new inspections<br/>
+30 Aug 2015: improvements and new inspections<br/>
 <br/>
-    - Exceptions handling and annotating: support combining @throws and @inheritoc annotations;<br/>
-    - Reference mismatch: resolved duplicated reports;<br/>
-    - Types casting via PHP4 functions: more cases added;<br/>
-    - Forgotten debug statements: more cases added;<br/>
-    - Types resolving: improvements and bug-fixes by Denis Ryabov;<br/>
+    - Unnecessary double quotes: do not warn when single quotes presented;<br/>
+    - Exceptions handling and annotating: fix analyzing new-expressions;<br/>
+    - Slow alter in foreach: handle properly following unsets with multiple arguments;<br/>
 <br/>
-    - Array and string offset validity: implemented (in cooperation with Denis Ryabov);<br/>
-    - Phar-incompatible realpath applied to a relative path: implemented;<br/>
-    - Senseless proxy function: implemented;<br/>
-    - 'strtr(...)' used as 'str_replace(...)': implemented;<br/>
+    - Forgotten debug statements: custom debug functions support added;<br/>
+    - Foreach usage possible inspection: implemented;<br/>
+    - mktime() usage: implemented;<br/>
+    - Badly organized exceptions processing: implemented;<br/>
+    - Usage of object type in PhpDocs: implemented;<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -202,16 +201,16 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.DisconnectedForeachInstructionInspector"/>
   <localInspection language="PHP" groupPath="PHP"
-       shortName="ExceptionsAnnotatingAndHandlingInspection"       displayName="Control flow: exceptions handling and annotating"
-       groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+       shortName="ExceptionsAnnotatingAndHandlingInspection"      displayName="Control flow: exceptions handling and annotating"
+       groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptionsWorkflow.ExceptionsAnnotatingAndHandlingInspector"/>
   <localInspection language="PHP" groupPath="PHP"
-       shortName="DegradedSwitchInspection"                        displayName="Control flow: switch-case simplification"
-       groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+       shortName="DegradedSwitchInspection"                       displayName="Control flow: switch-case simplification"
+       groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DegradedSwitchInspector"/>
   <localInspection language="PHP" groupPath="PHP"
-       shortName="ForeachInvariantsInspection"                     displayName="Control flow: foreach usage possible"
-       groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+       shortName="ForeachInvariantsInspection"                    displayName="Control flow: foreach usage possible"
+       groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.ForeachInvariantsInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"

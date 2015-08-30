@@ -42,8 +42,8 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
     - Forgotten debug statements: custom debug functions support added;<br/>
     - Foreach usage possible inspection: implemented;<br/>
     - gmmktime()/mktime() usage: implemented;<br/>
-    - Badly organized exceptions processing: implemented;<br/>
-    - Usage of object type in PhpDocs: implemented;<br/>
+    - Badly organized exceptions processing: implemented, needs activation;<br/>
+    - Usage of object type in PhpDocs: implemented, needs activation;<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -339,7 +339,7 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
 
 
     <localInspection language="PHP" groupPath="PHP"
-        shortName="TooMuchLoginInTryInspection"                     displayName="Architecture: badly organized exceptions processing"
+        shortName="BadExceptionsProcessingInspection"               displayName="Architecture: badly organized exceptions processing"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.BadExceptionsProcessingInspector"/>
     <localInspection language="PHP" groupPath="PHP"

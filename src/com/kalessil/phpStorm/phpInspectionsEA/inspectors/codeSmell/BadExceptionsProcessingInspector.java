@@ -11,11 +11,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class BadExceptionsProcessingInspector extends BasePhpInspection {
-    private static final String strProblemDedicateLogic = "Consider moving non-related statements outside or dedicating body into a separate function.";
+    private static final String strProblemDedicateLogic = "Consider moving non-related statements outside the try-block or dedicating try-body into a function/method.";
 
     @NotNull
     public String getShortName() {
-        return "TooMuchLoginInTryInspection";
+        return "BadExceptionsProcessingInspection";
     }
 
     @Override

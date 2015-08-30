@@ -32,7 +32,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     private HashSet<String> customMethodsNames = new HashSet<String>();
 
     // prepared content for smooth runtime
-    static private final String strProblemDescription = "Please ensure this is not forgotten debug statement";
+    static private final String strProblemDescription = "Please ensure this is not a forgotten debug statement";
 
     public ForgottenDebugOutputInspector() {
     }

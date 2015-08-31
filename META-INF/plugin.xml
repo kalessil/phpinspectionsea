@@ -1,14 +1,14 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.3.2</version>
+  <version>1.3.3</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
   <depends>com.intellij.modules.platform</depends>
 
   <description><![CDATA[
-For support and donations please visit <a href="https://bitbucket.org/kalessil/phpinspectionsea">Bitbucket</a> | <a href="https://bitbucket.org/kalessil/phpinspectionsea/issues">Issues</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RK7DPPHTSZXTA">PayPal</a> | <a href="https://blockchain.info/address/1CTFHRRFUTpNrbEekwNVFiMzeWXiY9GgQR">Bitcoin</a>.<br />
+For support and donations please visit <a href="https://bitbucket.org/kalessil/phpinspectionsea">Bitbucket</a> | <a href="https://bitbucket.org/kalessil/phpinspectionsea/issues">Issues</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RK7DPPHTSZXTA">PayPal</a>.<br />
 <br />
 This plugin is a Static Code Analysis tool for PHP (aka inspections in JetBrains products).<br />
 <br />
@@ -29,11 +29,13 @@ then additional inspections are applied to source code.<br />
 <br />
 For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation/PhpStorm_ReferenceCard.pdf">this reference card</a>. Windows/Linux ones are:<br />
 <b>Alt + Shift + I</b> to <b>inspect current file</b> with current profile<br />
-<b>Ctrl + Shift + F4</b> to <b>close results</b> of inspection<br />
+<b>Ctrl + Shift + F4</b> to <b>close results</b> of inspection.<br />
+<br />
+On some of projects CPU/battery usage can be intensive, so this shall be taken in consideration when you are on the road with your laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-30 Aug 2015: improvements and new inspections<br/>
+31 Aug 2015: improvements and new inspections<br/>
 <br/>
     - Unnecessary double quotes: do not warn when single quotes presented;<br/>
     - Exceptions handling and annotating: fix analyzing new-expressions;<br/>
@@ -42,8 +44,8 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation
     - Forgotten debug statements: custom debug functions support added;<br/>
     - Foreach usage possible inspection: implemented;<br/>
     - gmmktime()/mktime() usage: implemented;<br/>
-    - Badly organized exceptions processing: implemented, needs activation;<br/>
-    - Usage of object type in PhpDocs: implemented, needs activation;<br/>
+    - Usage of object type in PhpDocs: implemented;<br/>
+    - Badly organized exceptions processing: implemented, !needs activation;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class ForeachInvariantsInspector extends BasePhpInspection {
-    private static final String strForBehavesAsForeach  = "Probably foreach can be used instead (easier to read and support)";
+    private static final String strForBehavesAsForeach  = "Probably foreach can be used instead (easier to read and support; ensure not a string is iterated)";
 
     @NotNull
     public String getShortName() {
@@ -109,9 +109,11 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 }
 
                 // ensure not compared with fixed number
-                boolean isComparedWithMagicInteger = false;
+                boolean isComparedNotProperExpression = false;
+                boolean isBinaryExpression = false;
                 for (PhpPsiElement condition : expression.getConditionalExpressions()) {
-                    if (!(condition instanceof BinaryExpression)) {
+                    isBinaryExpression = condition instanceof BinaryExpression;
+                    if (!isBinaryExpression) {
                         continue;
                     }
 
@@ -131,16 +133,19 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                     ) {
                         comparedElement = conditionCasted.getLeftOperand();
                     }
+                    if (comparedElement instanceof AssignmentExpression) {
+                        isComparedNotProperExpression = true;
+                        continue;
+                    }
 
                     // stop analysis if number is used for comparison
-                    // TODO: constants as well
                     if (null != comparedElement && PhpPsiUtil.isOfType(comparedElement.getFirstChild(), PhpTokenTypes.DECIMAL_INTEGER)) {
-                        isComparedWithMagicInteger = true;
+                        isComparedNotProperExpression = true;
                         break;
                     }
                 }
 
-                return !isComparedWithMagicInteger;
+                return isBinaryExpression && !isComparedNotProperExpression;
             }
         };
     }

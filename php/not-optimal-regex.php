@@ -80,5 +80,7 @@ class aClass {
     preg_match('/[^\w]/',     '');              //reported
     preg_match('/[^\s]/',     '');              //reported
 
+    preg_match('/\R/',     '');                 //reported
+
     preg_match('/deprecated/e', '');            //reported
     preg_match('/non-existing/Zy', '');         //reported

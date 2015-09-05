@@ -14,14 +14,17 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behave properly with instanceof in this conditions set";
+    private static final String strProblemDescriptionInstanceOfAmbiguous = "This condition is ambiguous and can be safely removed";
     private static final String strProblemDescriptionOrdering  = "This condition execution costs less than previous one";
     private static final String strProblemDescriptionDuplicateConditions = "This condition duplicated in other if/elseif branch";
     private static final String strProblemDescriptionBooleans  = "This boolean in condition makes no sense or enforces condition result";
@@ -72,6 +75,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
                     this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
                     this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
+                    this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
 
                     objConditionsFromStatement.clear();
                 }
@@ -86,6 +90,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
                         this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
                         this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
+                        this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
 
                         objConditionsFromStatement.clear();
                     }
@@ -116,6 +121,117 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         holder.registerProblem(objCondition, strProblemDescriptionConditionShallBeWrapped, ProblemHighlightType.ERROR);
                     }
                 }
+            }
+
+            // reports $value instanceof \DateTime OP $value instanceof \DateTimeInterface
+            private void inspectConditionsForAmbiguousInstanceOf(@NotNull LinkedList<PsiElement> objBranchConditions) {
+                if (objBranchConditions.size() < 2) {
+                    return;
+                }
+
+                // find all instanceof expressions
+                LinkedList<BinaryExpression> instanceOfExpressions = new LinkedList<BinaryExpression>();
+                for (PsiElement objExpression : objBranchConditions) {
+                    if (objExpression instanceof BinaryExpression) {
+                        PsiElement objOperation = ((BinaryExpression) objExpression).getOperation();
+                        if (
+                            null != objOperation && null != objOperation.getNode() &&
+                            PhpTokenTypes.kwINSTANCEOF == objOperation.getNode().getElementType()
+                        ) {
+                            instanceOfExpressions.add((BinaryExpression) objExpression);
+                        }
+                    }
+                }
+                // terminate processing if not enough entries for analysis
+                if (instanceOfExpressions.size() < 2) {
+                    instanceOfExpressions.clear();
+                    return;
+                }
+
+                // now we need to build up following structure:
+                /*
+                    'subject' => [
+                                    condition => class,
+                                    condition => class,
+                                    condition => class
+                                ]
+                 */
+                HashMap<PsiElement, HashMap<PsiElement, PhpClass>> mappedChecks = new HashMap<PsiElement, HashMap<PsiElement, PhpClass>>();
+                for (BinaryExpression instanceOfExpression : instanceOfExpressions) {
+                    // ensure expression is well-formed
+                    PsiElement subject = instanceOfExpression.getLeftOperand();
+                    if (null == subject || !(instanceOfExpression.getRightOperand() instanceof ClassReference)) {
+                        continue;
+                    }
+
+                    // ensure resolvable
+                    ClassReference reference = (ClassReference) instanceOfExpression.getRightOperand();
+                    if (!(reference.resolve() instanceof PhpClass)) {
+                        continue;
+                    }
+                    PhpClass clazz = (PhpClass) reference.resolve();
+
+                    // push subject properly, as expressions can be different objects with the same semantics
+                    PsiElement registeredSubject = null;
+                    for (PsiElement testSubject : mappedChecks.keySet()) {
+                        if (PsiEquivalenceUtil.areElementsEquivalent(subject, testSubject)) {
+                            registeredSubject = testSubject;
+                            break;
+                        }
+                    }
+                    // put empty container if it's not known
+                    if (null == registeredSubject) {
+                        mappedChecks.put(subject, new HashMap<PsiElement, PhpClass>());
+                        registeredSubject = subject;
+                    }
+
+                    // register condition for further analysis
+                    mappedChecks.get(registeredSubject).put(instanceOfExpression, clazz);
+                }
+                // release references in the raw list
+                instanceOfExpressions.clear();
+
+
+                // process entries, perform subject container clean up on each iteration
+                HashMap<PhpClass, HashSet<PhpClass>> resolvedInheritanceChains = new HashMap<PhpClass, HashSet<PhpClass>>();
+                for (HashMap<PsiElement, PhpClass> subjectContainer : mappedChecks.values()) {
+                    // investigate one subject when it has multiple instanceof-expressions
+                    if (subjectContainer.size() > 1) {
+                        // walk through conditions
+                        for (PsiElement instanceOfExpression : subjectContainer.keySet()) {
+                            // extract current condition details
+                            PhpClass clazz = subjectContainer.get(instanceOfExpression);
+                            HashSet<PhpClass> clazzParents = resolvedInheritanceChains.get(clazz);
+                            if (null == clazzParents) {
+                                clazzParents = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true);
+                                resolvedInheritanceChains.put(clazz, clazzParents);
+                            }
+
+                            // inner loop for verification
+                            for (PsiElement alternativeInstanceOf : subjectContainer.keySet()) {
+                                // skip itself
+                                if (alternativeInstanceOf == instanceOfExpression) {
+                                    continue;
+                                }
+
+                                // if alternative references to base class current check is ambiguous
+                                if (clazzParents.contains(subjectContainer.get(alternativeInstanceOf))) {
+                                    holder.registerProblem(instanceOfExpression, strProblemDescriptionInstanceOfAmbiguous, ProblemHighlightType.WEAK_WARNING);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    subjectContainer.clear();
+                }
+                // release inheritance cache as well
+                for (HashSet<PhpClass> resolvedInheritance: resolvedInheritanceChains.values()) {
+                    resolvedInheritance.clear();
+                }
+                resolvedInheritanceChains.clear();
+                // release mapping as well
+                mappedChecks.clear();
             }
 
             /** TODO: is_* functions */

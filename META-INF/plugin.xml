@@ -22,6 +22,7 @@ And it covers:<br />
 - regular expressions<br />
 - exceptions handling workflow validity<br />
 - compatibility issues<br />
+- variety of time-consuming bugs<br />
 <br />
 Some of inspections are expecting conditional statements (e.g. if) to use
 group statement for wrapping body expressions. When this requirement is met

@@ -1,9 +1,10 @@
 <html>
 <body>
-Analyses foreach expression data source. It's expected to be an array, traversable object or string.
-When analysis can not be performed (eg some methods are not annotated properly), additional
-warning generated to resolve annotations issues.<br />
+Analyses foreach expression's data sources, which are expected to be arrays, traversable objects, or strings.
+When analysis can not be performed (e.g. some methods are not annotated properly), additional
+warnings are generated to resolve annotation issues.<br />
 <br />
-Risks free refactoring which mostly is properly annotating methods, but benefit is locating new bugs/dead code.
+Risk-free refactoring involves proper annotation, but if it is truly a datasource issue, this inspection 
+may reveal new bugs or dead code.
 </body>
 </html>

@@ -12,7 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Duplicated in indexes and shall be moved to local variable";
+    private static final String strProblemDescription = "Duplicated method calls should be moved to local variable";
 
     @NotNull
     public String getShortName() {

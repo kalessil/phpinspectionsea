@@ -1,7 +1,8 @@
 <html>
 <body>
-Analyses continue usage in switch-case context. Due to PHP specific people who came from
-another programming languages might be confused by behaviour of continue inside loop-switch construct.
+Analyses continue usage in switch-case context. Due to PHP's 
+<a href="http://php.net/manual/en/control-structures.continue.php">unusual continue syntax</a>, 
+new users who are used to other languages might be confused by its behaviour.
 <!-- tooltip end -->
 Covers following case:
 
@@ -9,7 +10,7 @@ Covers following case:
     for (...) {
         switch(...) {
             case ...:
-                continue; /* shall be 'continue 2' for loop continuation */
+                continue; /* should read 'continue 2' to continue with the next iteration of the outer loop */
             ...
         }
     }

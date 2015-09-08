@@ -1,13 +1,18 @@
 <html>
 <body>
-Analyses if constructions and looking for following pattern:
+Analyses if() constructions that return boolean values based on 
+conditions, which can be simplified to return the condition instead. 
 
 <pre>
     if (conditions) {
-        return boolean;
+        return true;
     }
 
-    return boolean;
+    return false;
+	
+	// can be replaced with
+	
+	return conditions;
 </pre>
 </body>
 </html>

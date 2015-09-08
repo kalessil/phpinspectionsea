@@ -1,11 +1,9 @@
 <html>
 <body>
-Analyses inheritance chain and report for 3+ inheritances.<br />
+Analyses inheritance chains and reports when three or more inheritances are found.<br />
 <br />
-Analysis is not performed on test classes, which can introduce mocks violating the rule.
-Exceptions are also no inspected, because it's domain specific how exceptions structured.<br />
+Analysis is not performed on test classes, which often introduce mocks that would violate this rule, or exceptions, which often contain domain-specific structures.<br />
 <br />
-Background for this inspection is prevent growing monstrous super-classes included shared code,
-but rather force people looking into appropriate design patterns.
+This inspection is intended to curb usage of monstrous super-classes often found in shared code and encourage people to learn appropriate design patterns.
 </body>
 </html>

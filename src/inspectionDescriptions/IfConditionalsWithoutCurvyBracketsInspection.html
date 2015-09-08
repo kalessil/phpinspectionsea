@@ -1,9 +1,9 @@
 <html>
 <body>
-Analyses if conditionals (if/elseif/else) has no or has empty group statements.<br />
+Analyses if conditionals (if/elseif/else) have no or empty bodies.<br />
 <br />
-It shall be extended with group statements so other inspections are applied.<br />
-Empty group statements are normally never finished errors handling, so it's up to domain/solution
-architects to make decision: to remove or refactor this code.
+Conditionals should usually have a body; a conditional that as no body is often 
+caused by incomplete error handling code or indicative of bad design. <br />
+Architects should decide whether this code should be refactored or removed. 
 </body>
 </html>

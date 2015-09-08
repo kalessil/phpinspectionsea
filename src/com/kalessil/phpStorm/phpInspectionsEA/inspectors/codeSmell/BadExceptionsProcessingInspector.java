@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class BadExceptionsProcessingInspector extends BasePhpInspection {
+    private static final String strProblemDedicateLogic = "Consider moving non-related statements outside the try-block or turning the try body into a function/method.";
     private static final String strProblemDedicateLogic = "Consider moving non-related statements outside the try-block or refactoring try-body into a function/method.";
 
     @NotNull

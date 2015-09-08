@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class MoreThanThreeArgumentsInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Clean code: Too many arguments. No more than 3 arguments are recommended";
+    private static final String strProblemDescription = "No more than three arguments recommended";
 
     @NotNull
     public String getShortName() {

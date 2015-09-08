@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Throws a not annotated/handled exception: '%c%'";
+    private static final String strProblemDescription = "Throws a non-annotated/unhandled exception: '%c%'";
 
     @NotNull
     public String getShortName() {

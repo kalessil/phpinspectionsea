@@ -16,7 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Name provided in this call shall be %n% (case mismatch)";
+    private static final String strProblemDescription = "Name provided in this call should be %n% (case mismatch)";
     private final LocalQuickFix quickFix = new CallableReferenceNameMismatchQuickFix();
 
     @NotNull

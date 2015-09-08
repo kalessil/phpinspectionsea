@@ -12,8 +12,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class ReferencingObjectsInspector extends BasePhpInspection {
-    private static final String strProblemParameter = "Objects are always passed by reference, please correct '& $%p%'";
-    private static final String strProblemAssignment = "Objects are always passed by reference, please correct '= & new '";
+    private static final String strProblemParameter = "Objects are always passed by reference; please correct '& $%p%'";
+    private static final String strProblemAssignment = "Objects are always passed by reference; please correct '= & new '";
 
     @NotNull
     public String getShortName() {

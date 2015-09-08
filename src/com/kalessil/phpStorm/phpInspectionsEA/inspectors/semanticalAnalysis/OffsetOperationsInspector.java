@@ -20,7 +20,7 @@ import java.util.HashSet;
  */
 public class OffsetOperationsInspector extends BasePhpInspection {
     private static final String strProblemUseSquareBrackets = "Please use [ ] instead of { } for deeper analysis";
-    private static final String strProblemNoOffsetSupport = "This container might not support offsets operations (%c%)";
+    private static final String strProblemNoOffsetSupport = "This container may not support offset operations (%c%)";
     private static final String strProblemInvalidIndex = "Wrong index type (%p% is incompatible with %a%)";
 
     @NotNull

@@ -12,7 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Safely can be dropped: the comma will be ignored by PHP";
+    private static final String strProblemDescription = "Can be safely dropped. The comma will be ignored by PHP";
 
     @NotNull
     public String getShortName() {

@@ -10,8 +10,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class StrictComparisonInspector extends BasePhpInspection {
-    private static final String strProblemDescriptionComparisonString = "Use binary-safe strcmp function instead of direct strings comparison.";
-    private static final String strProblemDescriptionComparison = "Not numeric types in comparison (%t1% and %t2%).";
+    private static final String strProblemDescriptionComparisonString = "Use binary-safe strcmp function instead of direct string comparison.";
+    private static final String strProblemDescriptionComparison = "Non numeric types in comparison (%t1% and %t2%).";
 
     @NotNull
     public String getShortName() {

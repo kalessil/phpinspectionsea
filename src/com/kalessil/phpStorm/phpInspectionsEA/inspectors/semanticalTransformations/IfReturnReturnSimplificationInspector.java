@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Can be simplified by replacing this with following " +
+    private static final String strProblemDescription = "Can be simplified by replacing with the following " +
             "return with one return statement";
 
     @NotNull

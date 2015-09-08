@@ -10,7 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class StrictStringConcatInspector extends BasePhpInspection {
-    private static final String strProblemDescriptionConcat = "Not string types in string concatenation operation (%t1% . %t2%). Use explicit (string) conversion to convert values to strings.";
+    private static final String strProblemDescriptionConcat = "Non string types in string concatenation operation (%t1% . %t2%). Use explicit (string) conversion to convert values to strings.";
 
     @NotNull
     public String getShortName() {

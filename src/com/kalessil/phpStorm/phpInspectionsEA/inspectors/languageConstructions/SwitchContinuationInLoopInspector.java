@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SwitchContinuationInLoopInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "This behaves differently in PHP: use 'continue 2;' for continuation of an externals loop";
+    private static final String strProblemDescription = "This behaves differently in PHP: use 'continue 2;' for continuation of an external loop";
 
     @NotNull
     public String getShortName() {

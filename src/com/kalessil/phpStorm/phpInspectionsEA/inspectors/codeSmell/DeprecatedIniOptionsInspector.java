@@ -22,8 +22,8 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
     );
     private static final Map<String, String> INI_OPTIONS = new HashMap<String, String>();
     static {
-        INI_OPTIONS.put("asp_tags", "'asp_tags' is a discontinued option since PHP 7.0.0.");
-        INI_OPTIONS.put("always_populate_raw_post_data", "'always_populate_raw_post_data' is a discontinued option since PHP 7.0.0.");
+        INI_OPTIONS.put("asp_tags", "'asp_tags' is a deprecated option since PHP 7.0.0.");
+        INI_OPTIONS.put("always_populate_raw_post_data", "'always_populate_raw_post_data' is a deprecated option since PHP 7.0.0.");
 
         INI_OPTIONS.put("iconv.input_encoding", "'iconv.input_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
         INI_OPTIONS.put("iconv.output_encoding", "'iconv.output_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
@@ -34,12 +34,12 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
 
         INI_OPTIONS.put("xsl.security_prefs", "'xsl.security_prefs' is a deprecated option since PHP 5.4.0 (removed in PHP 7.0.0). Use XsltProcessor->setSecurityPrefs() instead.");
 
-        INI_OPTIONS.put("allow_call_time_pass_reference", "'allow_call_time_pass_reference' is a discontinued option since PHP 5.4.0.");
-        INI_OPTIONS.put("highlight.bg", "'highlight.bg' is a discontinued option since PHP 5.4.0.");
-        INI_OPTIONS.put("zend.ze1_compatibility_mode", "'zend.ze1_compatibility_mode' is a discontinued option since PHP 5.4.0.");
-        INI_OPTIONS.put("session.bug_compat_42", "'session.bug_compat_42' is a discontinued option since PHP 5.4.0.");
-        INI_OPTIONS.put("session.bug_compat_warn", "'session.bug_compat_warn' is a discontinued option since PHP 5.4.0.");
-        INI_OPTIONS.put("y2k_compliance", "'y2k_compliance' is a discontinued option since PHP 5.4.0.");
+        INI_OPTIONS.put("allow_call_time_pass_reference", "'allow_call_time_pass_reference' is a deprecated option since PHP 5.4.0.");
+        INI_OPTIONS.put("highlight.bg", "'highlight.bg' is a deprecated option since PHP 5.4.0.");
+        INI_OPTIONS.put("zend.ze1_compatibility_mode", "'zend.ze1_compatibility_mode' is a deprecated option since PHP 5.4.0.");
+        INI_OPTIONS.put("session.bug_compat_42", "'session.bug_compat_42' is a deprecated option since PHP 5.4.0.");
+        INI_OPTIONS.put("session.bug_compat_warn", "'session.bug_compat_warn' is a deprecated option since PHP 5.4.0.");
+        INI_OPTIONS.put("y2k_compliance", "'y2k_compliance' is a deprecated option since PHP 5.4.0.");
 
         INI_OPTIONS.put("define_syslog_variables", "'define_syslog_variables' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
         INI_OPTIONS.put("magic_quotes_gpc", "'magic_quotes_gpc' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");

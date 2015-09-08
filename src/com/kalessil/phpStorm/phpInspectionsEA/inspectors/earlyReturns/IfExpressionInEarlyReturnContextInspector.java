@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class IfExpressionInEarlyReturnContextInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Consider refactoring the statement, " +
-            "so it follows early return approach.";
+            "so it follows the early return approach.";
 
     @NotNull
     public String getShortName() {

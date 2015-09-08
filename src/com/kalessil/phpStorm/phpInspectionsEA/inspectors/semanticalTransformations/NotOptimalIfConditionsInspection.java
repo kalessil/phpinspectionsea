@@ -23,10 +23,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
-    private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behave properly with instanceof in this conditions set";
+    private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behaves properly with instanceof in this scenario";
     private static final String strProblemDescriptionInstanceOfAmbiguous = "This condition is ambiguous and can be safely removed";
     private static final String strProblemDescriptionOrdering  = "This condition execution costs less than previous one";
-    private static final String strProblemDescriptionDuplicateConditions = "This condition duplicated in other if/elseif branch";
+    private static final String strProblemDescriptionDuplicateConditions = "This condition is duplicated in other if/elseif branch";
     private static final String strProblemDescriptionBooleans  = "This boolean in condition makes no sense or enforces condition result";
     private static final String strProblemDescriptionDuplicateConditionPart = "This call is duplicated in conditions set";
     private static final String strProblemDescriptionIssetCanBeMergedAndCase = "This can be merged into previous 'isset(..., ...[, ...])'";

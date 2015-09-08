@@ -10,7 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class EmptyClassInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Class does not contain any fields or methods";
+    private static final String strProblemDescription = "Class does not contain any properties or methods";
 
     @NotNull
     public String getShortName() {

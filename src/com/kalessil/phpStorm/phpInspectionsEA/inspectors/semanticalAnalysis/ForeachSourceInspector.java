@@ -25,13 +25,13 @@ public class ForeachSourceInspector extends BasePhpInspection {
     private static final String strAlreadyHandled = "\\already-handled";
     private static final String strClassNotResolved= "\\class-not-resolved";
 
-    private static final String strProblemResolvingDeclaration = "Could not resolve this source type, inspire of " +
-            "declaration. Following is not resolved: ";
-    private static final String strProblemResolvingIsEmpty = "Could not resolve this source type, ensure it's type annotated at all";
+    private static final String strProblemResolvingDeclaration = "Could not resolve this source type, instance of " +
+            "declaration. The following is not resolved: ";
+    private static final String strProblemResolvingIsEmpty = "Could not resolve this source type, ensure it's type is annotated at all";
     private static final String strProblemResolvingMixed = "Could not resolve this source type, specify possible types instead of mixed";
     private static final String strProblemResolvingArrayItemType = "Could not resolve this source type, array item type annotation needed";
     private static final String strProblemResolvingParameterType = "Could not resolve this source type, parameter type annotation needed";
-    private static final String strProblemResolvingClassSlot = "Could not resolve this source type, expression  type annotation needed";
+    private static final String strProblemResolvingClassSlot = "Could not resolve this source type, expression type annotation needed";
     private static final String strProblemDescription = "This source type can not be iterated: given ";
 
     @NotNull

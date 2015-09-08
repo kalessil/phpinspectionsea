@@ -13,7 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "If statement can be merged into parent one.";
+    private static final String strProblemDescription = "If statement can be merged into parent.";
 
     @NotNull
     public String getShortName() {

@@ -2,14 +2,15 @@
 <body>
 Analyses 'isset(...)' function usages.<br />
 <br />
-As analysis performed, inspection suggests to use 'null !== ...', 'array_key_exists(..., ...)' instead.
-In cases when isset applied to array access expression, inspection checks if concatenation is used for
-an index.<br />
+This inspection suggests using 'null !== ...', 'array_key_exists(..., ...)' instead.
+In cases when isset is applied to array-accessing expressions, this inspection checks if concatenation is 
+used to generate an index.<br />
 <br />
-Couple words regarding array_key_exists: it will return true even if array item is null, so it's more about
-verifying data structures.<br />
+It should be noted that array_key_exists returns true even if array item is null; this inspection
+is focused on verifying data structures' sanity and may be safely ignored in some cases.<br />
 <br />
-Working out array_key_exists refactoring recommendation will cost additional development and legacy code
-reverse engineering, so it shall be planned accordingly.
+Refactoring this might present a significant cost in terms of 
+additional development and legacy code reverse engineering, so 
+the cost-benefit should be weighed carefully.
 </body>
 </html>

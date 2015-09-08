@@ -1,7 +1,7 @@
 <html>
 <body>
-Analyses callables parameters and detects when parameters (passed by value) used only for writing.<br />
+Analyses callables' parameters and detects when parameters (passed by value) are only written to, never read.<br />
 <br />
-This has no sense, because these changes never appears outside of callable.
+This usage is pointless because the assignments are local to the callable.
 </body>
 </html>

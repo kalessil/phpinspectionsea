@@ -1,9 +1,10 @@
 <html>
 <body>
-Analyses usages of 'array_search(..)', 'in_array(...)'. If 3rd parameter is missing,
-so call is type unsafe, refactoring will be proposed.<br />
+Analyses usages of 'array_search(..)' and 'in_array(...)'. If the 'strict' (third) parameter is missing, 
+refactoring will be proposed for security's sake.<br />
 <br />
-Working out proposed refactoring recommendation will cost additional development and legacy code
-reverse engineering, so it shall be planned accordingly.
+Refactoring this might present a significant cost in terms of 
+additional development and legacy code reverse engineering, so 
+the cost-benefit should be weighed carefully.
 </body>
 </html>

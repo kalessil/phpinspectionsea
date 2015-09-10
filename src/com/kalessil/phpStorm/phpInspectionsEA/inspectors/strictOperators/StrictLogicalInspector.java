@@ -12,7 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class StrictLogicalInspector extends BasePhpInspection {
-    private static final String strProblemDescriptionBinaryLogical = "Not boolean types in logical operation (%t1%, %t2%).";
+    private static final String strProblemDescriptionBinaryLogical = "Non boolean types in logical operation (%t1%, %t2%).";
 
     @NotNull
     public String getShortName() {

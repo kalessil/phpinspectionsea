@@ -16,8 +16,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class NestedTernaryOperatorInspector extends BasePhpInspection {
-    private static final String strProblemNested            = "Nested ternary operator shall not be used";
-    private static final String strProblemPriorities        = "Inspect this operation, perhaps it works not as expected";
+    private static final String strProblemNested            = "Nested ternary operator should not be used";
+    private static final String strProblemPriorities        = "Inspect this operation, it may not work as expected";
     private static final String strProblemVariantsIdentical = "True and false variants are identical";
 
     @NotNull

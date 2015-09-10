@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "This statement seems to be not connected with parent foreach";
-    private static final String strProblemUseClone    = "Master object creation outside of loop and cloning it shall be used";
+    private static final String strProblemDescription = "This statement seems to be disconnected from parent foreach";
+    private static final String strProblemUseClone    = "Objects should be created outside of a loop and cloned instead";
 
     @NotNull
     public String getShortName() {

@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MissingDotAllCheckStrategy {
-    private static final String strProblemDescription = "Probably /s modifier is missing (nested tags are not recognized)";
+    private static final String strProblemDescription = "/s modifier is probably missing (nested tags are not recognized)";
 
     static private Pattern regexTagContentPattern = null;
     static {

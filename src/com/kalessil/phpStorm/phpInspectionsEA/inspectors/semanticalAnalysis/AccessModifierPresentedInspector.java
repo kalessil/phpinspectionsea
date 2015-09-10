@@ -13,7 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class AccessModifierPresentedInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "%s% shall be declared with access modifier.";
+    private static final String strProblemDescription = "%s% should be declared with access modifier.";
 
     @NotNull
     public String getShortName() {

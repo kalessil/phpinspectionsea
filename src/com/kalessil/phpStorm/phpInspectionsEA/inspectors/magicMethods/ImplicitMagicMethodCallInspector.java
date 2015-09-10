@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 
 public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
-    private static final String strProblemDescription      = "Implicit magic method calls shall be avoided as these methods used by PHP internals.";
+    private static final String strProblemDescription      = "Implicit magic method calls shall be avoided as these methods are used by PHP internals.";
     private static final String strProblemUseStringCasting = "Please use (string) %o% instead";
 
     private HashSet<String> methods = null;

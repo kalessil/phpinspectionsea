@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection {
     private static final String strProblemDescription      = "Field %p% is already defined in %c%.";
-    private static final String strProblemParentOnePrivate = " Probably it needs to be protected one.";
+    private static final String strProblemParentOnePrivate = "Likely needs to be protected.";
 
     @NotNull
     public String getShortName() {

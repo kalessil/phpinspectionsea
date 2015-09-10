@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 
 public class SuspiciousLoopInspector extends BasePhpInspection {
-    private static final String strProblemMultipleConditions = "Please use && or || for multiple conditions. Currently no checks performed after first positive one.";
+    private static final String strProblemMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
     private static final String strProblemDescription = "Variable $%v% is introduced in a outer loop and overridden here";
 
     @NotNull

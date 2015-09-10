@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class StrictBitwiseInspector extends BasePhpInspection {
     private static final String strProblemDescriptionUnaryBitwiseNot = "Unary bitwise-not detected before %t% type operand.";
-    private static final String strProblemDescriptionBinaryBitwise = "Not integer types in bitwise operation (%t1% and %t2%).";
-    private static final String strProblemDescriptionBinaryShift = "Not integer types in bit-shift operation (%t1% and %t2%).";
+    private static final String strProblemDescriptionBinaryBitwise = "Non integer types in bitwise operation (%t1% and %t2%).";
+    private static final String strProblemDescriptionBinaryShift = "Non integer types in bit-shift operation (%t1% and %t2%).";
 
     @NotNull
     public String getShortName() {

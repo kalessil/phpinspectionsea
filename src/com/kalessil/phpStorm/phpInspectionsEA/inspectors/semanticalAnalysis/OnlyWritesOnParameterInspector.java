@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 
 public class OnlyWritesOnParameterInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Parameter/variable is overridden, but never used or appears " +
+    private static final String strProblemDescription = "Parameter/variable is overridden, but is never used or appears " +
             "outside of the scope";
 
     @NotNull

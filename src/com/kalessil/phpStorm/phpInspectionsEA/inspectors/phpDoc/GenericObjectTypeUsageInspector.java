@@ -10,7 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class GenericObjectTypeUsageInspector extends BasePhpInspection {
-    private static final String strProblemUseInterface  = "Please use contract interface definition instead";
+    private static final String strProblemUseInterface  = "Please use a contract interface definition instead";
 
     @NotNull
     public String getShortName() {

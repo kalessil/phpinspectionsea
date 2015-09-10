@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class StrictArithmeticInspector extends BasePhpInspection {
     private static final String strProblemDescriptionBinaryPlus = "Wrong types in '+' operation (%t1% + %t2%).";
-    private static final String strProblemDescriptionBinaryArithmetic = "Not numeric types in arithmetic operation (%t1% and %t2%).";
-    private static final String strProblemDescriptionBinaryMod = "Not integer types in '%' operation (%t1% % %t2%).";
+    private static final String strProblemDescriptionBinaryArithmetic = "Non numeric types in arithmetic operation (%t1% and %t2%).";
+    private static final String strProblemDescriptionBinaryMod = "Non integer types in '%' operation (%t1% % %t2%).";
 
     @NotNull
     public String getShortName() {

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SingletonFactoryPatternViolationInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Ensure appropriate method is defined and public: getInstance, create, create*";
-    private static final String strProblemConstructorNotProtected = "Singleton constructor shall be protected";
+    private static final String strProblemConstructorNotProtected = "Singleton constructor should be protected";
 
     @NotNull
     public String getShortName() {

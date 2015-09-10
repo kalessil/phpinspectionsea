@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class PropertyCanBeStaticInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Probably this property can be static";
+    private static final String strProblemDescription = "This property can probably be static";
 
     @NotNull
     public String getShortName() {

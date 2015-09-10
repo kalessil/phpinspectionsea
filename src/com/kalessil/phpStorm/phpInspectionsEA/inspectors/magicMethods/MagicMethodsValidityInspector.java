@@ -12,7 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class MagicMethodsValidityInspector extends BasePhpInspection {
-    private static final String strProblemUseSplAutoloading = "Common recommendation is to use spl_autoload_register(...) instead";
+    private static final String strProblemUseSplAutoloading = "A common recommendation is to use spl_autoload_register(...) instead";
 
     private static final PhpType stringType      = new PhpType();
     private static final PhpType arrayOrNullType = new PhpType();

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DegradedSwitchInspector extends BasePhpInspection {
     private static final String strProblemDegraded = "Switch construct behaves as if-else, consider refactoring";
-    private static final String strProblemOnlyDefault= "Switch construct has default case only, consider leaving only default's body";
+    private static final String strProblemOnlyDefault= "Switch construct has default case only, consider leaving only the default case's body";
 
     @NotNull
     public String getShortName() {

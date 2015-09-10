@@ -10,7 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class StrictAssignmentInspector extends BasePhpInspection {
-    private static final String strProblemDescriptionAssignment = "Type of variable (%t1%) doesn't match type of assigning value (%t2%).";
+    private static final String strProblemDescriptionAssignment = "Variable type of (%t1%) doesn't match assigning value type (%t2%).";
 
     @NotNull
     public String getShortName() {

@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class RareEscapeRUsageStrategy {
-    private static final String strProblemDescription = "\\R is not widely known, using e.g. non-unicode alternative (?\\r\\n|\\n|\\r) would be more speaking";
+    private static final String strProblemDescription = "\\R is not widely known, using a non-unicode alternative, e.g. (?\\r\\n|\\n|\\r) would be more popular";
 
     static public void apply(final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
         if (pattern.length() > 0 && pattern.indexOf('R') != -1) {

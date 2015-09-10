@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class StrictArgumentsInspector extends BasePhpInspection {
-    private static final String strProblemDescriptionArgumentTypeMismatch = "Type of argument (%t1%) doesn't match type of parameter (%t2%).";
+    private static final String strProblemDescriptionArgumentTypeMismatch = "Argument type of (%t1%) doesn't match parameter type of (%t2%).";
 
     @NotNull
     public String getShortName() {

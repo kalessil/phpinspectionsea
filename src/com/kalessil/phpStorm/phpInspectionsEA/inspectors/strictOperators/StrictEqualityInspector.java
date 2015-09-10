@@ -10,7 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class StrictEqualityInspector extends BasePhpInspection {
-    private static final String strProblemDescriptionEqualityFloat = "Possible machine precision roundoff in float comparison. It's better to compare absolute difference with a small number.";
+    private static final String strProblemDescriptionEqualityFloat = "Possible machine precision rounding in float comparison. It's better to compare absolute difference with a small number.";
     private static final String strProblemDescriptionEquality = "Different types in comparison (%t1% and %t2%).";
 
     @NotNull

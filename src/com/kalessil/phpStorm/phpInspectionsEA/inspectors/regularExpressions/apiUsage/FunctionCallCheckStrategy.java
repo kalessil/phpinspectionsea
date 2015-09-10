@@ -9,7 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class FunctionCallCheckStrategy {
-    private static final String strProblemQuote = "Second parameter shall be provided (implicit delimiter definition)";
+    private static final String strProblemQuote = "Second parameter should be provided (implicit delimiter definition)";
     private static final String strProblemMatchAll = "'preg_match()' can be used instead";
 
     static public void apply(final String functionName, @NotNull final FunctionReference reference, @NotNull final ProblemsHolder holder) {

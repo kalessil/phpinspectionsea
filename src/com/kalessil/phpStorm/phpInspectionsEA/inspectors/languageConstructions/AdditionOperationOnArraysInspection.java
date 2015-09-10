@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 
 public class AdditionOperationOnArraysInspection extends BasePhpInspection {
-    private static final String strProblemDescription = "Probably it shall be 'array_merge(...)' instead, which behaves slightly different";
+    private static final String strProblemDescription = "Did you mean 'array_merge(...)' instead? It behaves differently.";
 
     @NotNull
     public String getShortName() {

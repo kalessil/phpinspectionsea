@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class ParameterByRefWithDefaultInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Usually default value is not needed in this case";
+    private static final String strProblemDescription = "Usually a default value is not needed in this scenario.";
 
     @NotNull
     public String getShortName() {

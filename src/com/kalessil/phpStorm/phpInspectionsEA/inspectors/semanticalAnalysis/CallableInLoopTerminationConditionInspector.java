@@ -10,7 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class CallableInLoopTerminationConditionInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Callable result shall be stored outside of the loop for better performance";
+    private static final String strProblemDescription = "Callable result should be stored outside of the loop for better performance";
 
     @NotNull
     public String getShortName() {

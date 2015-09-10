@@ -9,9 +9,19 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
+    // configuration flags automatically saved by IDE
+    public boolean SUGGEST_TO_USE_ARRAY_KEY_EXISTS = true;
+    public boolean SUGGEST_TO_USE_NULL_COMPARISON = true;
+
+    // static messages for triggered messages
     private static final String strProblemDescription                     = "Probably 'array_key_exists(...)' construction should be used for better data *structure* control";
     private static final String strProblemDescriptionUseNullComparison    = "Probably it can be 'null === %s%' construction used instead";
     private static final String strProblemDescriptionUseNotNullComparison = "Probably it can be 'null !== %s%' construction used instead";
@@ -47,18 +57,20 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                             }
                         }
 
-                        /* decide which message to use */
-                        String strError = strProblemDescriptionUseNotNullComparison;
-                        if (issetExpression.getParent() instanceof UnaryExpression) {
-                            PsiElement objOperation = ((UnaryExpression) issetExpression.getParent()).getOperation();
-                            if (null != objOperation && PhpTokenTypes.opNOT == objOperation.getNode().getElementType()) {
-                                strError = strProblemDescriptionUseNullComparison;
+                        if (SUGGEST_TO_USE_NULL_COMPARISON) {
+                            /* decide which message to use */
+                            String strError = strProblemDescriptionUseNotNullComparison;
+                            if (issetExpression.getParent() instanceof UnaryExpression) {
+                                PsiElement objOperation = ((UnaryExpression) issetExpression.getParent()).getOperation();
+                                if (null != objOperation && PhpTokenTypes.opNOT == objOperation.getNode().getElementType()) {
+                                    strError = strProblemDescriptionUseNullComparison;
+                                }
                             }
-                        }
-                        /* personalize message for each parameter */
-                        strError = strError.replace("%s%", parameter.getText());
+                            /* personalize message for each parameter */
+                            strError = strError.replace("%s%", parameter.getText());
 
-                        holder.registerProblem(parameter, strError, ProblemHighlightType.WEAK_WARNING);
+                            holder.registerProblem(parameter, strError, ProblemHighlightType.WEAK_WARNING);
+                        }
                         continue;
                     }
 
@@ -68,7 +80,9 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    holder.registerProblem(parameter, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                    if (SUGGEST_TO_USE_ARRAY_KEY_EXISTS) {
+                        holder.registerProblem(parameter, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                    }
                 }
             }
 
@@ -91,5 +105,41 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                 return false;
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return (new UnSafeIsSetOverArrayInspector.OptionsPanel()).getComponent();
+    }
+
+    public class OptionsPanel {
+        private JPanel optionsPanel;
+
+        private JCheckBox suggestToUseArrayKeyExists;
+        private JCheckBox suggestToUseNullComparison;
+
+        public OptionsPanel() {
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
+
+            suggestToUseArrayKeyExists = new JCheckBox("Suggest to use array_key_exists()", SUGGEST_TO_USE_ARRAY_KEY_EXISTS);
+            suggestToUseArrayKeyExists.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    SUGGEST_TO_USE_ARRAY_KEY_EXISTS = suggestToUseArrayKeyExists.isSelected();
+                }
+            });
+            optionsPanel.add(suggestToUseArrayKeyExists, "wrap");
+
+            suggestToUseNullComparison = new JCheckBox("Suggest to use null-comparison", SUGGEST_TO_USE_NULL_COMPARISON);
+            suggestToUseNullComparison.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    SUGGEST_TO_USE_NULL_COMPARISON = suggestToUseNullComparison.isSelected();
+                }
+            });
+            optionsPanel.add(suggestToUseNullComparison, "wrap");
+        }
+
+        public JPanel getComponent() {
+            return optionsPanel;
+        }
     }
 }

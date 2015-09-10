@@ -9,4 +9,6 @@ I want to say thank you and mention people who also contributed to this plugin.
 
 [Jack Kingsman](https://bitbucket.org/jkingsman)
 
-[Alexander Makarov](https://bitbucket.org/samdark/)
+[Alexander Makarov](https://bitbucket.org/samdark)
+
+[Ryan Shay](https://bitbucket.org/ryanshay)

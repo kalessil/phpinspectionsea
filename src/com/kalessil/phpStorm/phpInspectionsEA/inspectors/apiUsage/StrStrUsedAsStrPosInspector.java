@@ -15,23 +15,38 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+
 public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String strProblemDescription  = "'false <op> strpos(...)' shall be used instead";
+    private static final String strProblemDescription  = "'false <op> %f%(...)' shall be used instead";
 
     @NotNull
     public String getShortName() {
         return "StrStrUsedAsStrPosInspection";
     }
 
+    private static HashMap<String, String> mapping = null;
+    private static HashMap<String, String> getMapping() {
+        if (null == mapping) {
+            mapping = new HashMap<String, String>();
+
+            mapping.put("strstr", "strpos");
+            mapping.put("stristr", "stripos");
+        }
+
+        return mapping;
+    }
+
+
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                // stristr -> stripos
+                HashMap<String, String> mapping = getMapping();
 
                 /* check if it's the target function */
                 final String strFunctionName = reference.getName();
-                if (StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("strstr")) {
+                if (StringUtil.isEmpty(strFunctionName) || !mapping.containsKey(strFunctionName)) {
                     return;
                 }
 
@@ -41,7 +56,10 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                     PsiElement objOperation    = objParent.getOperation();
                     if (null != objOperation && null != objOperation.getNode()) {
                         IElementType operationType = objOperation.getNode().getElementType();
-                        if (operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opNOT_IDENTICAL) {
+                        if (
+                            operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opNOT_IDENTICAL ||
+                            operationType == PhpTokenTypes.opEQUAL || operationType == PhpTokenTypes.opNOT_EQUAL
+                        ) {
                             /* get second operand */
                             PsiElement objSecondOperand = objParent.getLeftOperand();
                             if (objSecondOperand == reference) {
@@ -50,7 +68,9 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
 
                             /* verify if operand is a boolean and report an issue */
                             if (objSecondOperand instanceof ConstantReference && ExpressionSemanticUtil.isBoolean((ConstantReference) objSecondOperand)) {
-                                holder.registerProblem(objParent, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                String strError = strProblemDescription.replace("%f%", mapping.get(strFunctionName));
+                                holder.registerProblem(objParent, strError, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+
                                 return;
                             }
                         }
@@ -59,7 +79,9 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
 
                 /* checks NON-implicit boolean comparison patternS */
                 if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
-                    holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    String strError = strProblemDescription.replace("%f%", mapping.get(strFunctionName));
+                    holder.registerProblem(reference, strError, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+
                     return;
                 }
             }

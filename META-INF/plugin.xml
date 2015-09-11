@@ -107,7 +107,7 @@ with a laptop.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ArraySearchUsedAsInArrayInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="StrStrUsedAsStrPosInspection"                  displayName="Performance: 'strstr(...)/strstr(...)' could be replaced with 'strpos(...)/strpos(...)'"
+        shortName="StrStrUsedAsStrPosInspection"                  displayName="Performance: 'strstr(...)/stristr(...)' could be replaced with 'strpos(...)/stripos(...)'"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrStrUsedAsStrPosInspector"/>
     <localInspection language="PHP" groupPath="PHP"

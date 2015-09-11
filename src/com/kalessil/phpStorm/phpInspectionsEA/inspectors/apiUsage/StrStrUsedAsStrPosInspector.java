@@ -28,8 +28,6 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 // stristr -> stripos
-                // stristr (..., <string && has any a-z?>)
-                // stripos (..., <string && has any a-z?>)
 
                 /* check if it's the target function */
                 final String strFunctionName = reference.getName();

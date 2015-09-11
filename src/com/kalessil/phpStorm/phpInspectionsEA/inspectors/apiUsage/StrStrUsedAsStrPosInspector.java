@@ -27,6 +27,10 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
+                // stristr -> stripos
+                // stristr (..., <string && has any a-z?>)
+                // stripos (..., <string && has any a-z?>)
+
                 /* check if it's the target function */
                 final String strFunctionName = reference.getName();
                 if (StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("strstr")) {

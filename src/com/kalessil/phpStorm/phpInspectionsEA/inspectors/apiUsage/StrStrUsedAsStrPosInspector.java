@@ -57,8 +57,10 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                     if (null != objOperation && null != objOperation.getNode()) {
                         IElementType operationType = objOperation.getNode().getElementType();
                         if (
-                            operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opNOT_IDENTICAL ||
-                            operationType == PhpTokenTypes.opEQUAL || operationType == PhpTokenTypes.opNOT_EQUAL
+                            operationType == PhpTokenTypes.opIDENTICAL ||
+                            operationType == PhpTokenTypes.opNOT_IDENTICAL ||
+                            operationType == PhpTokenTypes.opEQUAL ||
+                            operationType == PhpTokenTypes.opNOT_EQUAL
                         ) {
                             /* get second operand */
                             PsiElement objSecondOperand = objParent.getLeftOperand();

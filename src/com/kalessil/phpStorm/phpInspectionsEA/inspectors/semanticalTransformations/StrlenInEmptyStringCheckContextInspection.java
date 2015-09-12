@@ -64,8 +64,10 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
 
                             /* check cases when comparing with 0 */
                             if (!isMatchedPattern && (
-                                operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opNOT_IDENTICAL ||
-                                operationType == PhpTokenTypes.opEQUAL || operationType == PhpTokenTypes.opNOT_EQUAL
+                                operationType == PhpTokenTypes.opIDENTICAL ||
+                                operationType == PhpTokenTypes.opNOT_IDENTICAL ||
+                                operationType == PhpTokenTypes.opEQUAL ||
+                                operationType == PhpTokenTypes.opNOT_EQUAL
                             )) {
                                 isMatchedPattern = strNumber.equals("0");
                                 warningTarget    = objParent;

@@ -269,7 +269,12 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                         ) {
                             IElementType objConditionOperation = objBinaryExpression.getOperation().getNode().getElementType();
-                            if (objConditionOperation == PhpTokenTypes.opIDENTICAL || objConditionOperation == PhpTokenTypes.opNOT_IDENTICAL) {
+                            if (
+                                objConditionOperation == PhpTokenTypes.opIDENTICAL ||
+                                objConditionOperation == PhpTokenTypes.opNOT_IDENTICAL ||
+                                objConditionOperation == PhpTokenTypes.opEQUAL ||
+                                objConditionOperation == PhpTokenTypes.opNOT_EQUAL
+                            ) {
                                 if (
                                     PsiEquivalenceUtil.areElementsEquivalent(objTestSubject, objBinaryExpression.getLeftOperand()) ||
                                     PsiEquivalenceUtil.areElementsEquivalent(objTestSubject, objBinaryExpression.getRightOperand())

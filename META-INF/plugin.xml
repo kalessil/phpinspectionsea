@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.3.3</version>
+  <version>1.3.4</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -39,7 +39,7 @@ with a laptop.
   <change-notes><![CDATA[
 21 Sep 2015: improvements and new inspections<br/>
 <br/>
-    - English language corrected (huge thanks to contributors!)
+    - English language corrected (huge thanks to contributors!)<br/>
     - 'strstr(...)' could be replaced with 'strpos(...)': case-insensitive invariants supported;<br/>
     - Non-optimal if conditions: ambiguous instanceof checks added;<br/>
     - Foreach usage possible: temporary not available due to exception introduced in PS 9.5 EAP version;<br/>

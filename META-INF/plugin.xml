@@ -37,17 +37,17 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-31 Aug 2015: improvements and new inspections<br/>
+21 Sep 2015: improvements and new inspections<br/>
 <br/>
-    - Unnecessary double quotes: do not warn when single quotes presented;<br/>
-    - Exceptions handling and annotating: fix analyzing new-expressions;<br/>
-    - Slow alter in "foreach": handle properly following unsets with multiple arguments;<br/>
+    - English language corrected (huge thanks to contributors!)
+    - 'strstr(...)' could be replaced with 'strpos(...)': case-insensitive invariants supported;<br/>
+    - Non-optimal if conditions: ambiguous instanceof checks added;<br/>
+    - Foreach usage possible: temporary not available due to exception introduced in PS 9.5 EAP version;<br/>
 <br/>
-    - Forgotten debug statements: custom debug functions support added;<br/>
-    - "foreach" usage possible inspection: implemented;<br/>
-    - "gmmktime()"/"mktime()" usage: implemented;<br/>
-    - Usage of object type in PhpDocs: implemented;<br/>
-    - Badly organized exceptions processing: implemented, !needs activation;<br/>
+    - 'isset(...)' usage: added reporting settings;<br/>
+    - 'empty(...)' usage: added reporting settings;<br/>
+    - 'stristr(...)/stripos()' could be replaced with 'strstr(...)/strpos()': implemented;<br/>
+    - Summer-time unsafe date manipulations: implemented;<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -216,10 +216,10 @@ with a laptop.
        shortName="DegradedSwitchInspection"                       displayName="Control flow: switch-case could be simplified"
        groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DegradedSwitchInspector"/>
-  <localInspection language="PHP" groupPath="PHP"
+  <!--localInspection language="PHP" groupPath="PHP"
        shortName="ForeachInvariantsInspection"                    displayName="Control flow: foreach usage possible"
        groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
-       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.ForeachInvariantsInspector"/>
+       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.ForeachInvariantsInspector"/-->
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="ForgottenDebugOutputInspection"                displayName="Probable bug: forgotten debug statements"

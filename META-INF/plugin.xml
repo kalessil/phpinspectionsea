@@ -266,9 +266,15 @@ with a laptop.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OffsetOperationsInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="SummerTimeUnsafeTimeManipulationInspection"    displayName="Probable bugs: summer-time unsafe date manipulations"
+        shortName="SummerTimeUnsafeTimeManipulationInspection"    displayName="Probable bugs: incorrect PhpUnit @depends annotations"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SummerTimeUnsafeTimeManipulationInspector"/>
+
+
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="PhpUnitTestsInspection"                        displayName="Probable bugs: summer-time unsafe date manipulations"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitTestsInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="SenselessTernaryOperatorInspection"            displayName="Confusing constructs: suspicious ternary operator"

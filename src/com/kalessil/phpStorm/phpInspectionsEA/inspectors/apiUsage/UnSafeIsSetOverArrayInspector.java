@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
@@ -9,12 +10,15 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.util.HashSet;
 
 public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
@@ -80,7 +84,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    if (SUGGEST_TO_USE_ARRAY_KEY_EXISTS) {
+                    if (SUGGEST_TO_USE_ARRAY_KEY_EXISTS && !isArrayAccess((ArrayAccessExpression) parameter)) {
                         holder.registerProblem(parameter, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
                     }
                 }
@@ -103,6 +107,47 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                 }
 
                 return false;
+            }
+
+            // partially duplicates semanticalAnalysis.OffsetOperationsInspector.isContainerSupportsArrayAccess()
+            private  boolean isArrayAccess(@NotNull ArrayAccessExpression expression) {
+                // ok JB parses `$var[]= ...` always as array, lets make it working properly and report them later
+                PsiElement container = expression.getValue();
+                if (null == container) {
+                    return false;
+                }
+
+                HashSet<String> containerTypes = new HashSet<String>();
+                TypeFromPlatformResolverUtil.resolveExpressionType(container, containerTypes);
+
+                // failed to resolve, don't try to guess anything
+                if (0 == containerTypes.size()) {
+                    return false;
+                }
+
+                boolean supportsOffsets = false;
+                for (String typeToCheck : containerTypes) {
+                    // assume is just null-ble declaration or we shall just rust to mixed
+                    if (typeToCheck.equals(Types.strNull)) {
+                        continue;
+                    }
+                    if (typeToCheck.equals(Types.strMixed)) {
+                        supportsOffsets = true;
+                        continue;
+                    }
+
+                    // some of possible types are scalars, what's wrong
+                    if (!StringUtil.isEmpty(typeToCheck) && typeToCheck.charAt(0) != '\\') {
+                        supportsOffsets = false;
+                        break;
+                    }
+
+                    // assume class has what's needed, OffsetOperationsInspector shall report if not
+                    supportsOffsets = true;
+                }
+                containerTypes.clear();
+
+                return supportsOffsets;
             }
         };
     }

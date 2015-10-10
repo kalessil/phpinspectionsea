@@ -1,7 +1,13 @@
 <?php
 
+interface ArrayAccessChild extends \ArrayAccess {}
+
 class AClass {
     public $property;
+
+    public function api(ArrayAccessChild $obj) {
+        return isset($obj['index']);
+    }
 
     public function __get($name) {
         $stdObject = new stdClass();

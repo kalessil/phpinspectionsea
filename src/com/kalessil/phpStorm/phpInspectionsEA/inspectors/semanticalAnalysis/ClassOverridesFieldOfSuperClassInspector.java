@@ -14,8 +14,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection {
-    private static final String strProblemDescription      = "Field %p% is already defined in %c%.";
-    private static final String strProblemParentOnePrivate = "Likely needs to be protected.";
+    private static final String strProblemDescription      = "Field '%p%' should be defined as static or re-initialized in constructor as it already defined in %c%.";
+    private static final String strProblemParentOnePrivate = "Likely needs to be protected (also in the parent class).";
 
     @NotNull
     public String getShortName() {
@@ -25,74 +25,76 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpClass(PhpClass clazz) {
+            public void visitPhpField(Field ownField) {
+                /* skip un-explorable and test classes */
+                PhpClass clazz = ownField.getContainingClass();
+                if (null == clazz || null == clazz.getNameIdentifier()) {
+                    return;
+                }
                 String strClassFQN = clazz.getFQN();
-                /** skip un-explorable and test classes */
                 if (
                     StringUtil.isEmpty(strClassFQN) ||
-                    strClassFQN.contains("\\Tests\\") || strClassFQN.contains("\\Test\\") ||
-                    strClassFQN.endsWith("Test")
+                    strClassFQN.contains("\\Tests\\") || strClassFQN.contains("\\Test\\") || strClassFQN.endsWith("Test")
                 ) {
                     return;
                 }
 
+
+                /* skip static and un-processable */
+                if (ownField.isConstant() || null == ownField.getNameIdentifier()) {
+                    return;
+                }
+                /* due to lack of api get raw text with all modifiers */
+                String strModifiers = null;
+                for (PsiElement objChild : ownField.getParent().getChildren()) {
+                    if (objChild instanceof PhpModifierList) {
+                        strModifiers = objChild.getText();
+                        break;
+                    }
+                }
+                /* skip static variables - they shall not be changed via constructor */
+                if (!StringUtil.isEmpty(strModifiers) && strModifiers.contains("static")) {
+                    return;
+                }
+
+
                 for (PhpClass objParentClass : clazz.getSupers()) {
-                    /** ensure class and super are explorable */
+                    /* ensure class and super are explorable */
                     String strSuperFQN = objParentClass.getFQN();
-                    if (objParentClass.isInterface() || null == clazz.getNameIdentifier() || StringUtil.isEmpty(strSuperFQN)) {
+                    if (objParentClass.isInterface() || StringUtil.isEmpty(strSuperFQN)) {
                         continue;
                     }
 
-                    for (Field ownField : clazz.getOwnFields()) {
-                        /** skip static and un-processable */
-                        if (ownField.isConstant() || null == ownField.getNameIdentifier()) {
-                            continue;
-                        }
-
-                        /** due to lack of api get raw text with all modifiers */
-                        String strModifiers = null;
-                        for (PsiElement objChild : ownField.getParent().getChildren()) {
-                            if (objChild instanceof PhpModifierList) {
-                                strModifiers = objChild.getText();
-                                break;
-                            }
-                        }
-                        /** skip static variables - they shall not be changed via constructor */
-                        if (!StringUtil.isEmpty(strModifiers) && strModifiers.contains("static")) {
-                            continue;
-                        }
-
-
-                        String strOwnField = ownField.getName();
-                        for (Field superclassField : objParentClass.getOwnFields()) {
-                            /** not possible to check access level */
-                            if (
-                                superclassField.getName().equals(strOwnField) &&
-                                ExpressionSemanticUtil.getBlockScope(ownField.getNameIdentifier()) instanceof PhpClass
-                            /** php doc can re-define property type */
-                            ) {
-                                /** find modifiers list and check if super declares private field */
-                                String strSuperModifiers = null;
-                                for (PsiElement objChild : superclassField.getParent().getChildren()) {
-                                    if (objChild instanceof PhpModifierList) {
-                                        strSuperModifiers = objChild.getText();
-                                        break;
-                                    }
+                    String strOwnField = ownField.getName();
+                    for (Field superclassField : objParentClass.getOwnFields()) {
+                        /* not possible to check access level */
+                        if (
+                            superclassField.getName().equals(strOwnField) &&
+                            ExpressionSemanticUtil.getBlockScope(ownField.getNameIdentifier()) instanceof PhpClass
+                            /* php doc can re-define property type */
+                        ) {
+                            /* find modifiers list and check if super declares private field */
+                            String strSuperModifiers = null;
+                            for (PsiElement objChild : superclassField.getParent().getChildren()) {
+                                if (objChild instanceof PhpModifierList) {
+                                    strSuperModifiers = objChild.getText();
+                                    break;
                                 }
-                                final boolean isPrivate = (!StringUtil.isEmpty(strSuperModifiers) && strSuperModifiers.contains("private"));
-
-                                /** prepare message, make it helpful */
-                                String strWarning = strProblemDescription
-                                        .replace("%p%", strOwnField)
-                                        .replace("%c%", strSuperFQN);
-                                if (isPrivate) {
-                                    strWarning += strProblemParentOnePrivate;
-                                }
-
-                                /** fire warning */
-                                holder.registerProblem(ownField.getParent(), strWarning, ProblemHighlightType.WEAK_WARNING);
-                                break;
                             }
+                            final boolean isPrivate = (!StringUtil.isEmpty(strSuperModifiers) && strSuperModifiers.contains("private"));
+
+                            /* prepare message, make it helpful */
+                            String strWarning = strProblemDescription
+                                    .replace("%p%", strOwnField)
+                                    .replace("%c%", strSuperFQN);
+                            /* private -> protected for constructor-approach */
+                            if (isPrivate) {
+                                holder.registerProblem(ownField.getParent(), strProblemParentOnePrivate, ProblemHighlightType.WEAK_WARNING);
+                            }
+
+                            /* fire warning */
+                            holder.registerProblem(ownField.getParent(), strWarning, ProblemHighlightType.WEAK_WARNING);
+                            return;
                         }
                     }
                 }

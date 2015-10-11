@@ -270,9 +270,8 @@ with a laptop.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SummerTimeUnsafeTimeManipulationInspector"/>
 
-
     <localInspection language="PHP" groupPath="PHP"
-        shortName="PhpUnitTestsInspection"                        displayName="Probable bugs: incorrect PhpUnit @depends annotations"
+        shortName="PhpUnitTestsInspection"                        displayName="PhpUnit: bugs and best practices"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitTestsInspector"/>
 

@@ -353,6 +353,10 @@ with a laptop.
         shortName="StaticInvocationViaThisInspection"             displayName="Code style: static method invocation via '$this->'"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.StaticInvocationViaThisInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="NestedNotOperatorsInspection"                  displayName="Code style: nested not operators usage"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.NestedNotOperatorsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP"

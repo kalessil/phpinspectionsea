@@ -4,9 +4,11 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -51,6 +53,7 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
             public void visitPhpMethodReference(MethodReference reference) {
                 String strMethodName = reference.getName();
                 if (!StringUtil.isEmpty(strMethodName) && getMethods().contains(strMethodName)) {
+                    /* direct calls ob objects */
                     String strReferenceObject = reference.getFirstChild().getText().trim();
                     if (!strReferenceObject.equals("$this") && !strReferenceObject.equals("parent")) {
                         String strMessage = strProblemDescription;
@@ -59,6 +62,13 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
                         }
 
                         holder.registerProblem(reference, strMessage, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        return;
+                    }
+
+                    /* internal calls inside class methods */
+                    Function method = ExpressionSemanticUtil.getScope(reference);
+                    if (null != method && !method.getName().equals(strMethodName)) {
+                        holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                 }
             }

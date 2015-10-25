@@ -84,7 +84,7 @@ with a laptop.
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.StrlenInEmptyStringCheckContextInspection"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="TypesCastingWithFunctionsInspection"           displayName="Performance: type casting via PHP4 functions"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.TypesCastingWithFunctionsInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="ArrayCastingEquivalentInspection"              displayName="Performance: could be replaced with '(array) ...'"
@@ -277,7 +277,7 @@ with a laptop.
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="SenselessTernaryOperatorInspection"            displayName="Confusing constructs: suspicious ternary operator"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.SenselessTernaryOperatorInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="ClassMethodNameMatchesFieldNameInspection"     displayName="Confusing constructs: method name matches existing field name"
@@ -327,7 +327,7 @@ with a laptop.
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.SenselessCommaInArrayDefinitionInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="ElvisOperatorCanBeUsedInspection"              displayName="Code style: elvis operator can be used"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ElvisOperatorCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="AccessModifierPresentedInspection"             displayName="Code style: access modifiers shall be defined"
@@ -347,7 +347,7 @@ with a laptop.
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="ReferencingObjectsInspection"                  displayName="Code style: referencing objects"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ReferencingObjectsInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="StaticInvocationViaThisInspection"             displayName="Code style: static method invocation via '$this->'"

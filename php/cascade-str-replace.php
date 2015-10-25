@@ -9,4 +9,7 @@
     $str = str_replace(' ', '-', $str);
     $str = str_replace(' ', '-', $str);
 
+    /* nested calls */
+    $str = str_replace(' ', '-', str_replace(' ', '-', $str));
+
     $str2 = str_replace(array('1', '1'), array('1', '1'), $str1);

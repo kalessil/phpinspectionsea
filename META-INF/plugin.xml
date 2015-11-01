@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.3.4</version>
+  <version>1.3.5</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -37,17 +37,18 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-21 Sep 2015: improvements and new inspections<br/>
+01 Nov 2015: improvements and new inspections<br/>
 <br/>
-    - English language corrected (huge thanks to contributors!)<br/>
-    - 'strstr(...)' could be replaced with 'strpos(...)': case-insensitive invariants supported;<br/>
-    - Non-optimal if conditions: ambiguous instanceof checks added;<br/>
-    - Foreach usage possible: temporary not available due to exception introduced in PS 9.5 EAP version;<br/>
+    - Default inspections severity adjusted (to make use of group by severity in results)<br/>
+    - Cascading str_replace(...) calls: added support for nested calls check;<br/>
+    - Implicit magic method calls: detects miss-usage inside classes as well;<br/>
+    - Prefixed increment/decrement equivalent: resolved false-positives reporting strings/objects;<br/>
+    - Property could be static: re-worked reporting;<br/>
+    - Class overrides a field of a parent class: fixed suppression and re-worked reporting;<br/>
+    - 'isset(...)' usage: fixed handling of \ArrayAccess containers;<br/>
 <br/>
-    - 'isset(...)' usage: added reporting settings;<br/>
-    - 'empty(...)' usage: added reporting settings;<br/>
-    - 'stristr(...)/stripos()' could be replaced with 'strstr(...)/strpos()': implemented;<br/>
-    - Summer-time unsafe date manipulations: implemented;<br/>
+    - Nested not operators usage: implemented;<br/>
+    - PhpUnit bugs and best practices: implemented;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

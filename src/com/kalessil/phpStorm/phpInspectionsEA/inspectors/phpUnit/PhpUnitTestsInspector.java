@@ -49,7 +49,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     if (tag.getName().equals("@depends") && tag.getFirstPsiChild() instanceof PhpDocRef) {
                         PhpDocRef methodNeeded = (PhpDocRef) tag.getFirstPsiChild();
                         if (null == clazz.findMethodByName(methodNeeded.getText())) {
-                            holder.registerProblem(objMethodName, "@depends referencing non-existing method", ProblemHighlightType.GENERIC_ERROR);
+                            holder.registerProblem(objMethodName, "@depends referencing a non-existing method", ProblemHighlightType.GENERIC_ERROR);
                         }
                     }
                 }

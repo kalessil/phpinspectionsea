@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessInstruction;
@@ -116,6 +117,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
                 LinkedList<PsiElement> objTargetExpressions = new LinkedList<PsiElement>();
 
+                boolean isReference       = false;
                 int intCountReadAccesses  = 0;
                 int intCountWriteAccesses = 0;
                 PhpAccessInstruction.Access objAccess;
@@ -137,9 +139,15 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                             objTopSemanticExpression instanceof AssignmentExpression &&
                             ((AssignmentExpression) objTopSemanticExpression).getVariable() == objLastSemanticExpression
                         ) {
-                            objTargetExpressions.add(objLastSemanticExpression);
-
                             intCountWriteAccesses++;
+                            if (isReference) {
+                                /* when modifying the reference it's link READ and linked WRITE semantics */
+                                intCountReadAccesses++;
+                            } else {
+                                /* when modifying non non-reference, register as write only access for reporting */
+                                objTargetExpressions.add(objLastSemanticExpression);
+                            }
+
                             continue;
                         }
 
@@ -155,6 +163,30 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
                         intCountReadAccesses++;
                         continue;
+                    }
+
+                    /* if variable assigned with reference, we need to preserve this information for correct checks */
+                    if (objParent instanceof AssignmentExpression) {
+                        /* ensure variable with the same name being written */
+                        AssignmentExpression referenceAssignmentCandidate = (AssignmentExpression) objParent;
+                        if (referenceAssignmentCandidate.getVariable() instanceof Variable) {
+                            Variable sameVariableCandidate = (Variable) referenceAssignmentCandidate.getVariable();
+                            String candidateVariableName   = sameVariableCandidate.getName();
+                            if (!StringUtil.isEmpty(candidateVariableName) && candidateVariableName.equals(parameterName)) {
+                                /* now ensure operation is assignment of reference */
+                                PsiElement operation = sameVariableCandidate.getNextSibling();
+                                if (operation instanceof PsiWhiteSpace) {
+                                    operation = operation.getNextSibling();
+                                }
+
+                                if (null != operation && operation.getText().replaceAll("\\s+","").equals("=&")) {
+                                    intCountWriteAccesses++;
+                                    isReference = true;
+
+                                    continue;
+                                }
+                            }
+                        }
                     }
 
                     /* local variables access wrongly reported write in some cases, so rely on custom checks */

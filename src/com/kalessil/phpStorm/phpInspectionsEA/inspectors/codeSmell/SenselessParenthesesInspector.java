@@ -48,6 +48,10 @@ public class SenselessParenthesesInspector extends BasePhpInspection {
                     parent instanceof ArrayIndex
                 */
 
+                /*
+                    this matrix mostly contains reasonable variants,
+                    couple of them might be ambiguous, but let's keep logic simple
+                */
                 boolean knowsLegalCases = (
                     (
                         argument instanceof BinaryExpression   ||

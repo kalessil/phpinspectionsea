@@ -358,6 +358,10 @@ with a laptop.
         shortName="NestedNotOperatorsInspection"                  displayName="Code style: nested not operators usage"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.NestedNotOperatorsInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="SenselessParenthesesInspection"                displayName="Code style: ambiguous parentheses"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.SenselessParenthesesInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP"

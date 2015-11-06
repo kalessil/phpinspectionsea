@@ -13,8 +13,6 @@ import java.util.HashMap;
 
 public class AliasFunctionsUsageInspector extends BasePhpInspection {
     private static final String strProblemDescription  = "'%a%(...)' is an alias function. Use '%f%(...)' instead";
-    private static final String strProblemOctdec       = "'octdec(...)' can be replaced with 'intval(..., 8)'";
-    private static final String strProblemHexdec       = "'hexdec(...)' can be replaced with 'intval(..., 16)'";
 
     @NotNull
     public String getShortName() {
@@ -52,27 +50,15 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final String strFunctionName = reference.getName();
-                if (StringUtil.isEmpty(strFunctionName)) {
-                    return;
-                }
-
+                final String strFunctionName         = reference.getName();
                 HashMap<String, String> mapFunctions = getMapping();
-                if (!mapFunctions.containsKey(strFunctionName)) {
-                    /** some special cases, my personal preferences */
-                    if (strFunctionName.equals("octdec")) {
-                        holder.registerProblem(reference, strProblemOctdec, ProblemHighlightType.LIKE_DEPRECATED);
-                    } else if (strFunctionName.equals("hexdec")) {
-                        holder.registerProblem(reference, strProblemHexdec, ProblemHighlightType.LIKE_DEPRECATED);
-                    }
-
-                    return;
+                if (!StringUtil.isEmpty(strFunctionName) && mapFunctions.containsKey(strFunctionName)) {
+                    String strMessage = strProblemDescription
+                            .replace("%a%", strFunctionName)
+                            .replace("%f%", mapFunctions.get(strFunctionName));
+                    holder.registerProblem(reference, strMessage, ProblemHighlightType.LIKE_DEPRECATED);
                 }
 
-                String strMessage = strProblemDescription
-                        .replace("%a%", strFunctionName)
-                        .replace("%f%", mapFunctions.get(strFunctionName));
-                holder.registerProblem(reference, strMessage, ProblemHighlightType.LIKE_DEPRECATED);
             }
         };
     }

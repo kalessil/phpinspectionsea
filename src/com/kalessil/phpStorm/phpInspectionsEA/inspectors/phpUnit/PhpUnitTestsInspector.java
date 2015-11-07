@@ -46,10 +46,26 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
                 Collection<PhpDocTag> tags = PsiTreeUtil.findChildrenOfType(previous, PhpDocTag.class);
                 for (PhpDocTag tag : tags) {
-                    if (tag.getName().equals("@depends") && tag.getFirstPsiChild() instanceof PhpDocRef) {
+                    String tagName = tag.getName();
+
+                    if (tagName.equals("@depends") && tag.getFirstPsiChild() instanceof PhpDocRef) {
                         PhpDocRef methodNeeded = (PhpDocRef) tag.getFirstPsiChild();
-                        if (null == clazz.findMethodByName(methodNeeded.getText())) {
+                        if (!(methodNeeded.resolve() instanceof Method)) {
                             holder.registerProblem(objMethodName, "@depends referencing a non-existing method", ProblemHighlightType.GENERIC_ERROR);
+                            continue;
+                        }
+                    }
+
+                    if (tagName.equals("@covers") && tag.getFirstPsiChild() instanceof PhpDocRef) {
+                        PhpDocRef referenceNeeded = (PhpDocRef) tag.getFirstPsiChild();
+                        String referenceText      = referenceNeeded.getText();
+
+                        PsiElement resolvedReference = referenceNeeded.resolve();
+                        if (
+                            null == resolvedReference ||
+                            (resolvedReference instanceof PhpClass && referenceText.contains("::") && !referenceText.contains("<"))
+                        ) {
+                            holder.registerProblem(objMethodName, "@covers referencing a non-existing class/method/function", ProblemHighlightType.GENERIC_ERROR);;
                         }
                     }
                 }

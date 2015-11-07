@@ -19,6 +19,12 @@ public class SenselessParenthesesInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpParenthesizedExpression(ParenthesizedExpression expression) {
+                String fileName = holder.getFile().getName();
+                if (fileName.endsWith(".blade.php")) {
+                    /* syntax injection there is not done properly for elseif, causing false-positives */
+                    return;
+                }
+
                 PhpPsiElement argument = expression.getArgument();
                 PsiElement parent      = expression.getParent();
                 if (null == argument || null == parent) {

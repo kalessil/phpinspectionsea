@@ -63,7 +63,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         PsiElement resolvedReference = referenceNeeded.resolve();
                         if (
                             null == resolvedReference ||
-                            (resolvedReference instanceof PhpClass && referenceText.contains("::") && !referenceText.contains("<"))
+                            (resolvedReference instanceof PhpClass && referenceText.contains("::") && !referenceText.endsWith("::"))
                         ) {
                             holder.registerProblem(objMethodName, "@covers referencing a non-existing class/method/function", ProblemHighlightType.GENERIC_ERROR);;
                         }

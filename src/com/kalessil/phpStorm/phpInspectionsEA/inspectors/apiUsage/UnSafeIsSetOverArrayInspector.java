@@ -40,11 +40,18 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpIsset(PhpIsset issetExpression) {
+                /*
+                 * if no parameters, we shall not check;
+                 * if multiple parameters, perhaps if-inspection fulfilled and issets were merged
+                 */
+                if (issetExpression.getVariables().length != 1) {
+                    return;
+                }
+
                 final boolean isResultStored = (
                     issetExpression.getParent() instanceof AssignmentExpression ||
                     issetExpression.getParent() instanceof PhpReturn
                 );
-
 
                 for (PsiElement parameter : issetExpression.getVariables()) {
                     parameter = ExpressionSemanticUtil.getExpressionTroughParenthesis(parameter);

@@ -6,6 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
@@ -83,7 +84,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* analyze parameters */
+                /* analyze parameters which makes the call equal to assertCount */
                 boolean isFirstCount = false;
                 if (params[0] instanceof FunctionReference && !(params[0] instanceof MethodReference)) {
                     String referenceName = ((FunctionReference) params[0]).getName();
@@ -94,10 +95,23 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     String referenceName = ((FunctionReference) params[1]).getName();
                     isSecondCount = !StringUtil.isEmpty(referenceName) && referenceName.equals("count");
                 }
-
-                /* fire warning when needed */
+                /* fire assertCount warning when needed */
                 if ((isFirstCount && !isSecondCount) || (!isFirstCount && isSecondCount)) {
                     holder.registerProblem(reference, "assertCount should be used instead", ProblemHighlightType.WEAK_WARNING);
+                }
+
+                /* analyze parameters which makes the call equal to assertNull */
+                boolean isFirstNull = false;
+                if (params[0] instanceof ConstantReference) {
+                    isFirstNull = PhpLangUtil.isNull((ConstantReference) params[0]);
+                }
+                boolean isSecondNull = false;
+                if (params[1] instanceof ConstantReference) {
+                    isSecondNull = PhpLangUtil.isNull((ConstantReference) params[1]);
+                }
+                /* fire assertNull warning when needed */
+                if (isFirstNull || isSecondNull) {
+                    holder.registerProblem(reference, "assertNull should be used instead", ProblemHighlightType.WEAK_WARNING);
                 }
             }
         };

@@ -7,6 +7,9 @@
   <depends>com.jetbrains.php</depends>
   <depends>com.intellij.modules.platform</depends>
 
+  <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="143.790" until-build="143.1212"/>
+
   <description><![CDATA[
 For support and donations please visit <a href="https://bitbucket.org/kalessil/phpinspectionsea">Bitbucket</a> | <a href="https://bitbucket.org/kalessil/phpinspectionsea/issues">Issues</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RK7DPPHTSZXTA">PayPal</a>.<br />
 <br />
@@ -52,9 +55,6 @@ with a laptop.
 <br/>
 <hr/>
   ]]></change-notes>
-
-  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-  <idea-version since-build="131"/>
 
   <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->

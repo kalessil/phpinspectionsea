@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.3.5</version>
+  <version>1.3.5.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -40,18 +40,7 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-01 Nov 2015: improvements and new inspections<br/>
-<br/>
-    - Default inspections severity adjusted (to make use of group by severity in results)<br/>
-    - Cascading str_replace(...) calls: added support for nested calls check;<br/>
-    - Implicit magic method calls: detects miss-usage inside classes as well;<br/>
-    - Prefixed increment/decrement equivalent: resolved false-positives reporting strings/objects;<br/>
-    - Property could be static: re-worked reporting;<br/>
-    - Class overrides a field of a parent class: fixed suppression and re-worked reporting;<br/>
-    - 'isset(...)' usage: fixed handling of \ArrayAccess containers;<br/>
-<br/>
-    - Nested not operators usage: implemented;<br/>
-    - PhpUnit bugs and best practices: implemented;<br/>
+03 Dec 2015: Special version for EAP version, who was affected with NoSuchMethodError exception.
 <br/>
 <hr/>
   ]]></change-notes>

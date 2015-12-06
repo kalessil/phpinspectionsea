@@ -8,7 +8,7 @@
   <depends>com.intellij.modules.platform</depends>
 
   <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="143" until-build="143.382" />
+  <idea-version since-build="143" />
 
   <description><![CDATA[
 For support and donations please visit <a href="https://bitbucket.org/kalessil/phpinspectionsea">Bitbucket</a> | <a href="https://bitbucket.org/kalessil/phpinspectionsea/issues">Issues</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RK7DPPHTSZXTA">PayPal</a>.<br />
@@ -42,16 +42,15 @@ with a laptop.
   <change-notes><![CDATA[
 01 Nov 2015: improvements and new inspections<br/>
 <br/>
-    - Default inspections severity adjusted (to make use of group by severity in results)<br/>
-    - Cascading str_replace(...) calls: added support for nested calls check;<br/>
-    - Implicit magic method calls: detects miss-usage inside classes as well;<br/>
-    - Prefixed increment/decrement equivalent: resolved false-positives reporting strings/objects;<br/>
-    - Property could be static: re-worked reporting;<br/>
-    - Class overrides a field of a parent class: fixed suppression and re-worked reporting;<br/>
-    - 'isset(...)' usage: fixed handling of \ArrayAccess containers;<br/>
+    - Alias functions usage: do not check hexdec, octdec;<br/>
+    - Reference mismatch: analyse buggy foreach interference with already existing references;<br/>
+    - Parameter/variable is not used: handle =& assignments properly;<br/>
+    - 'isset(...)' usage: tolerate constructs with no and multiple parameters;<br/>
 <br/>
-    - Nested not operators usage: implemented;<br/>
-    - PhpUnit bugs and best practices: implemented;<br/>
+    - Unnecessary parentheses: implemented;<br/>
+    - Unnecessary semicolon: implemented;<br/>
+    - Foreach usage possible: reactivated;<br/>
+    - PhpUnit: assertNull, @covers analysis added;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

@@ -167,24 +167,21 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                     /* collided with foreach index/value => bug */
                     if (objExpression instanceof ForeachStatement) {
                         ForeachStatement foreach = (ForeachStatement) objExpression;
-                        if (
-                            null != foreach.getValue() && !StringUtil.isEmpty(foreach.getValue().getName()) &&
-                            foreach.getValue().getName().equals(strParameterName)
-                        ) {
-                            if (!reportedItemsRegistry.contains(foreach.getValue())) {
-                                reportedItemsRegistry.add(foreach.getValue());
-                                holder.registerProblem(foreach.getValue(), strErrorForeachIntoReference, ProblemHighlightType.ERROR);
+
+                        Variable foreachValue = foreach.getValue();
+                        if (null != foreachValue && !StringUtil.isEmpty(foreachValue.getName()) && foreachValue.getName().equals(strParameterName)) {
+                            if (!reportedItemsRegistry.contains(foreachValue)) {
+                                reportedItemsRegistry.add(foreachValue);
+                                holder.registerProblem(foreachValue, strErrorForeachIntoReference, ProblemHighlightType.ERROR);
                             }
                             continue;
                         }
 
-                        if (
-                            null != foreach.getKey() && !StringUtil.isEmpty(foreach.getKey().getName()) &&
-                            foreach.getKey().getName().equals(strParameterName)
-                        ) {
-                            if (!reportedItemsRegistry.contains(foreach.getKey())) {
-                                reportedItemsRegistry.add(foreach.getKey());
-                                holder.registerProblem(foreach.getKey(), strErrorForeachIntoReference, ProblemHighlightType.ERROR);
+                        Variable foreachKey = foreach.getKey();
+                        if (null != foreachKey && !StringUtil.isEmpty(foreachKey.getName()) && foreachKey.getName().equals(strParameterName)) {
+                            if (!reportedItemsRegistry.contains(foreachKey)) {
+                                reportedItemsRegistry.add(foreachKey);
+                                holder.registerProblem(foreachKey, strErrorForeachIntoReference, ProblemHighlightType.ERROR);
                             }
                             continue;
                         }

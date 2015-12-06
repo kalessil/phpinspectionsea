@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ReferenceMismatchInspector extends BasePhpInspection {
+    static private String strErrorForeachIntoReference = "Probable bug: variable should be renamed to prevent writing into already existing reference";
 
     private static final PhpType legalizedTypesForMismatchingSet = new PhpType();
     private static final HashSet<String> legalizedMismatchingFunctions = new HashSet<String>();
@@ -161,6 +162,26 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                 PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, strParameterName, false);
                 for (PhpAccessVariableInstruction objInstruction : arrUsages) {
                     PsiElement objExpression = objInstruction.getAnchor().getParent();
+
+                    /* collided with foreach index/value => bug */
+                    if (objExpression instanceof ForeachStatement) {
+                        ForeachStatement foreach = (ForeachStatement) objExpression;
+                        if (
+                            null != foreach.getValue() && !StringUtil.isEmpty(foreach.getValue().getName()) &&
+                            foreach.getValue().getName().equals(strParameterName)
+                        ) {
+                            holder.registerProblem(foreach.getValue(), strErrorForeachIntoReference, ProblemHighlightType.ERROR);
+                            continue;
+                        }
+
+                        if (
+                            null != foreach.getKey() && !StringUtil.isEmpty(foreach.getKey().getName()) &&
+                            foreach.getKey().getName().equals(strParameterName)
+                        ) {
+                            holder.registerProblem(foreach.getKey(), strErrorForeachIntoReference, ProblemHighlightType.ERROR);
+                            continue;
+                        }
+                    }
 
                     /* test if provided as non-reference argument (copy dispatched) */
                     if (objExpression instanceof ParameterList && objExpression.getParent() instanceof FunctionReference) {

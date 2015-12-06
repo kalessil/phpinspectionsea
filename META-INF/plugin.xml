@@ -217,10 +217,10 @@ with a laptop.
        shortName="DegradedSwitchInspection"                       displayName="Control flow: switch-case could be simplified"
        groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WEAK WARNING"
        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DegradedSwitchInspector"/>
-  <!--localInspection language="PHP" groupPath="PHP"
+  <localInspection language="PHP" groupPath="PHP"
        shortName="ForeachInvariantsInspection"                    displayName="Control flow: foreach usage possible"
        groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
-       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.ForeachInvariantsInspector"/-->
+       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.ForeachInvariantsInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="ForgottenDebugOutputInspection"                displayName="Probable bug: forgotten debug statements"

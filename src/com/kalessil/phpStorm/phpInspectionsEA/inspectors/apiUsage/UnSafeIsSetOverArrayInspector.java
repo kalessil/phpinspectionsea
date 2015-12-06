@@ -164,10 +164,10 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     }
 
     public class OptionsPanel {
-        private JPanel optionsPanel;
+        final private JPanel optionsPanel;
 
-        private JCheckBox suggestToUseArrayKeyExists;
-        private JCheckBox suggestToUseNullComparison;
+        final private JCheckBox suggestToUseArrayKeyExists;
+        final private JCheckBox suggestToUseNullComparison;
 
         public OptionsPanel() {
             optionsPanel = new JPanel();

@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.3.5.1</version>
+  <version>1.3.56.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -40,7 +40,17 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-03 Dec 2015: Special version for EAP version, who was affected with NoSuchMethodError exception.
+01 Nov 2015: improvements and new inspections<br/>
+<br/>
+    - Alias functions usage: do not check hexdec, octdec;<br/>
+    - Reference mismatch: analyse buggy foreach interference with already existing references;<br/>
+    - Parameter/variable is not used: handle =& assignments properly;<br/>
+    - 'isset(...)' usage: tolerate constructs with no and multiple parameters;<br/>
+<br/>
+    - Unnecessary parentheses: implemented;<br/>
+    - Unnecessary semicolon: implemented;<br/>
+    - Foreach usage possible: reactivated;<br/>
+    - PhpUnit: assertNull, @covers analysis added;<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -206,10 +216,10 @@ with a laptop.
        shortName="DegradedSwitchInspection"                       displayName="Control flow: switch-case could be simplified"
        groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WEAK WARNING"
        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DegradedSwitchInspector"/>
-  <!--localInspection language="PHP" groupPath="PHP"
+  <localInspection language="PHP" groupPath="PHP"
        shortName="ForeachInvariantsInspection"                    displayName="Control flow: foreach usage possible"
        groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
-       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.ForeachInvariantsInspector"/-->
+       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.ForeachInvariantsInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="ForgottenDebugOutputInspection"                displayName="Probable bug: forgotten debug statements"
@@ -348,9 +358,13 @@ with a laptop.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.NestedNotOperatorsInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="SenselessParenthesesInspection"                displayName="Code style: ambiguous parentheses"
+        shortName="UnnecessaryParenthesesInspection"              displayName="Code style: unnecessary parentheses"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.SenselessParenthesesInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessaryParenthesesInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="UnnecessarySemicolonInspection"                displayName="Code style: unnecessary semicolon"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessarySemicolonInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP"

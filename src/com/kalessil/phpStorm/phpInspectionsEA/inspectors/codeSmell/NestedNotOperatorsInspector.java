@@ -60,7 +60,7 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
 
                 /* fire warning */
                 String strError = strProblemBoolCasting;
-                if (nestingLevel % 2 == 1) {
+                if (nestingLevel % 2 != 0) {
                     strError = strProblemSingleNot;
                 }
                 strError = strError.replace("%e%", value.getText());

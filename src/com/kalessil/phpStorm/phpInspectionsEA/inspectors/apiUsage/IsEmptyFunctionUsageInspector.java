@@ -113,11 +113,11 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     }
 
     public class OptionsPanel {
-        private JPanel optionsPanel;
+        final private JPanel optionsPanel;
 
-        private JCheckBox reportEmptyUsage;
-        private JCheckBox suggestToUseCountComparison;
-        private JCheckBox suggestToUseNullComparison;
+        final private JCheckBox reportEmptyUsage;
+        final private JCheckBox suggestToUseCountComparison;
+        final private JCheckBox suggestToUseNullComparison;
 
         public OptionsPanel() {
             optionsPanel = new JPanel();

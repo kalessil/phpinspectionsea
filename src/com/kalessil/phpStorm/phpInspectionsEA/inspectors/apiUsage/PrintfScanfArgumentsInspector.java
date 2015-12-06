@@ -41,6 +41,7 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
         return functions;
     }
 
+    @SuppressWarnings("CanBeFinal")
     static private Pattern regexPlaceHolders = null;
     static {
         // raw regex: %((\d+)\$)?[+-]?(?:[ 0]|\\?'.)?-?\d*(?:\.\d+)?[sducoxXbgGeEfF]
@@ -80,7 +81,7 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
                         ++countParsedAll;
 
                         if (null != regexMatcher.group(2)) {
-                            maxPositionSpecifier = Math.max(maxPositionSpecifier, Integer.valueOf(regexMatcher.group(2)));
+                            maxPositionSpecifier = Math.max(maxPositionSpecifier, Integer.parseInt(regexMatcher.group(2)));
                             continue;
                         }
 

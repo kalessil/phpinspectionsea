@@ -59,7 +59,7 @@ public class InArrayMissUseInspector extends BasePhpInspection {
 
                     if (itemsCount <= 1) {
                         holder.registerProblem(reference, strProblemComparison, ProblemHighlightType.WEAK_WARNING);
-                        return;
+                        // return;
                     }
                 }
             }

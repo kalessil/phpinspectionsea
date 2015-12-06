@@ -26,10 +26,10 @@ import java.util.LinkedList;
 
 public class ForgottenDebugOutputInspector extends BasePhpInspection {
     // custom configuration, automatically saved between restarts so keep out of changing modifiers
-    public LinkedList<String> configuration = new LinkedList<String>();
-    private HashSet<String> customFunctions = new HashSet<String>();
-    private HashMap<String, Pair<String, String>> customMethods = new HashMap<String, Pair<String, String>>();
-    private HashSet<String> customMethodsNames = new HashSet<String>();
+    final public LinkedList<String> configuration = new LinkedList<String>();
+    final private HashSet<String> customFunctions = new HashSet<String>();
+    final private HashMap<String, Pair<String, String>> customMethods = new HashMap<String, Pair<String, String>>();
+    final private HashSet<String> customMethodsNames = new HashSet<String>();
 
     // prepared content for smooth runtime
     static private final String strProblemDescription = "Please ensure this is not a forgotten debug statement";
@@ -145,7 +145,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     }
 
     public class OptionsPanel {
-        private JPanel optionsPanel;
+        final private JPanel optionsPanel;
 
         public OptionsPanel() {
             optionsPanel = new JPanel();

@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ReferenceMismatchInspector extends BasePhpInspection {
+    final static private String strErrorForeachIntoReference = "Probable bug: variable should be renamed to prevent writing into already existing reference";
 
     private static final PhpType legalizedTypesForMismatchingSet = new PhpType();
     private static final HashSet<String> legalizedMismatchingFunctions = new HashSet<String>();
@@ -43,7 +44,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
         legalizedMismatchingFunctions.add("method_exists");
     }
 
-    protected static ConcurrentHashMap<Function, HashSet<PsiElement>> reportedIssues = new ConcurrentHashMap<Function, HashSet<PsiElement>>();
+    final protected static ConcurrentHashMap<Function, HashSet<PsiElement>> reportedIssues = new ConcurrentHashMap<Function, HashSet<PsiElement>>();
 
     protected static HashSet<PsiElement> getFunctionReportingRegistry(Function key) {
         boolean hasContainer = ReferenceMismatchInspector.reportedIssues.containsKey(key);
@@ -145,6 +146,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                         if (null != scope) {
                             // report items, but ensure no duplicated messages
                             HashSet<PsiElement> reportedItemsRegistry = ReferenceMismatchInspector.getFunctionReportingRegistry(scope);
+                            reportedItemsRegistry.add(objForeachValue);
                             inspectScopeForReferenceMissUsages(scope.getControlFlow().getEntryPoint(), strVariable, reportedItemsRegistry);
                         }
                     }
@@ -161,6 +163,29 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                 PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, strParameterName, false);
                 for (PhpAccessVariableInstruction objInstruction : arrUsages) {
                     PsiElement objExpression = objInstruction.getAnchor().getParent();
+
+                    /* collided with foreach index/value => bug */
+                    if (objExpression instanceof ForeachStatement) {
+                        ForeachStatement foreach = (ForeachStatement) objExpression;
+
+                        Variable foreachValue = foreach.getValue();
+                        if (null != foreachValue && !StringUtil.isEmpty(foreachValue.getName()) && foreachValue.getName().equals(strParameterName)) {
+                            if (!reportedItemsRegistry.contains(foreachValue)) {
+                                reportedItemsRegistry.add(foreachValue);
+                                holder.registerProblem(foreachValue, strErrorForeachIntoReference, ProblemHighlightType.ERROR);
+                            }
+                            continue;
+                        }
+
+                        Variable foreachKey = foreach.getKey();
+                        if (null != foreachKey && !StringUtil.isEmpty(foreachKey.getName()) && foreachKey.getName().equals(strParameterName)) {
+                            if (!reportedItemsRegistry.contains(foreachKey)) {
+                                reportedItemsRegistry.add(foreachKey);
+                                holder.registerProblem(foreachKey, strErrorForeachIntoReference, ProblemHighlightType.ERROR);
+                            }
+                            continue;
+                        }
+                    }
 
                     /* test if provided as non-reference argument (copy dispatched) */
                     if (objExpression instanceof ParameterList && objExpression.getParent() instanceof FunctionReference) {

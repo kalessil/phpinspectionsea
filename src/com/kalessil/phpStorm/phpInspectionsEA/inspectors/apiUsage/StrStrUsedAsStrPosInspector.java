@@ -84,7 +84,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                     String strError = strProblemDescription.replace("%f%", mapping.get(strFunctionName));
                     holder.registerProblem(reference, strError, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
 
-                    return;
+                    //return;
                 }
             }
         };

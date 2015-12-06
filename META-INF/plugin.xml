@@ -40,7 +40,7 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-01 Nov 2015: improvements and new inspections<br/>
+06 Dec 2015: improvements and new inspections<br/>
 <br/>
     - Alias functions usage: do not check hexdec, octdec;<br/>
     - Reference mismatch: analyse buggy foreach interference with already existing references;<br/>

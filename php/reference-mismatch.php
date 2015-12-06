@@ -37,6 +37,16 @@
         return $collection;
     }
 
+    function buggyForeach() {
+        $source = array();
+        $x = &$source;
+        $y = &$source;
+
+        foreach ($source as $x => $y) {
+            echo $x+$y;
+        }
+    }
+
     /* illegal, in spite of reference returned, copy will be obtained */
     $collection = collector();  $collection[] = '1';
     /* legal, reference preserved */

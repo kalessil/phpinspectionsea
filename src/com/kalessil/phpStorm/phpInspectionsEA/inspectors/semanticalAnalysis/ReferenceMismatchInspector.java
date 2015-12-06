@@ -146,6 +146,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                         if (null != scope) {
                             // report items, but ensure no duplicated messages
                             HashSet<PsiElement> reportedItemsRegistry = ReferenceMismatchInspector.getFunctionReportingRegistry(scope);
+                            reportedItemsRegistry.add(objForeachValue);
                             inspectScopeForReferenceMissUsages(scope.getControlFlow().getEntryPoint(), strVariable, reportedItemsRegistry);
                         }
                     }
@@ -170,7 +171,10 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                             null != foreach.getValue() && !StringUtil.isEmpty(foreach.getValue().getName()) &&
                             foreach.getValue().getName().equals(strParameterName)
                         ) {
-                            holder.registerProblem(foreach.getValue(), strErrorForeachIntoReference, ProblemHighlightType.ERROR);
+                            if (!reportedItemsRegistry.contains(foreach.getValue())) {
+                                reportedItemsRegistry.add(foreach.getValue());
+                                holder.registerProblem(foreach.getValue(), strErrorForeachIntoReference, ProblemHighlightType.ERROR);
+                            }
                             continue;
                         }
 
@@ -178,7 +182,10 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                             null != foreach.getKey() && !StringUtil.isEmpty(foreach.getKey().getName()) &&
                             foreach.getKey().getName().equals(strParameterName)
                         ) {
-                            holder.registerProblem(foreach.getKey(), strErrorForeachIntoReference, ProblemHighlightType.ERROR);
+                            if (!reportedItemsRegistry.contains(foreach.getKey())) {
+                                reportedItemsRegistry.add(foreach.getKey());
+                                holder.registerProblem(foreach.getKey(), strErrorForeachIntoReference, ProblemHighlightType.ERROR);
+                            }
                             continue;
                         }
                     }

@@ -62,7 +62,7 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     return;
                 }
 
-                holder.registerProblem(expression, "This parentheses can be removed to keep code more clear", ProblemHighlightType.WEAK_WARNING);
+                holder.registerProblem(expression, "Unnecessary  parentheses", ProblemHighlightType.WEAK_WARNING);
             }
         };
     }

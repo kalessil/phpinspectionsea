@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.3.56.1</version>
+  <version>1.3.6.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -40,7 +40,7 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-01 Nov 2015: improvements and new inspections<br/>
+06 Dec 2015: improvements and new inspections<br/>
 <br/>
     - Alias functions usage: do not check hexdec, octdec;<br/>
     - Reference mismatch: analyse buggy foreach interference with already existing references;<br/>

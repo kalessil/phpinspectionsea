@@ -54,7 +54,7 @@ public class LowPerformanceArrayUniqueUsageInspector extends BasePhpInspection {
                             /** === test count(array_unique(<expression>)) case === */
                             if (strParentFunction.equals("count")) {
                                 holder.registerProblem(parentCall, strProblemUseCountWithCountValues, ProblemHighlightType.WEAK_WARNING);
-                                return;
+                                // return;
                             }
                         }
                     }

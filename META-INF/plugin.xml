@@ -8,7 +8,7 @@
   <depends>com.intellij.modules.platform</depends>
 
   <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="143" />
+  <idea-version since-build="143" until-build="143.382" />
 
   <description><![CDATA[
 For support and donations please visit <a href="https://bitbucket.org/kalessil/phpinspectionsea">Bitbucket</a> | <a href="https://bitbucket.org/kalessil/phpinspectionsea/issues">Issues</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RK7DPPHTSZXTA">PayPal</a>.<br />
@@ -359,9 +359,13 @@ with a laptop.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.NestedNotOperatorsInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="SenselessParenthesesInspection"                displayName="Code style: ambiguous parentheses"
+        shortName="UnnecessaryParenthesesInspection"              displayName="Code style: unnecessary parentheses"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.SenselessParenthesesInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessaryParenthesesInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="UnnecessarySemicolonInspection"                displayName="Code style: unnecessary semicolon"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessarySemicolonInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP"

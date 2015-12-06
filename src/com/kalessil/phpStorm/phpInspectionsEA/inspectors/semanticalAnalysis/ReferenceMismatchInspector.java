@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ReferenceMismatchInspector extends BasePhpInspection {
-    static private String strErrorForeachIntoReference = "Probable bug: variable should be renamed to prevent writing into already existing reference";
+    final static private String strErrorForeachIntoReference = "Probable bug: variable should be renamed to prevent writing into already existing reference";
 
     private static final PhpType legalizedTypesForMismatchingSet = new PhpType();
     private static final HashSet<String> legalizedMismatchingFunctions = new HashSet<String>();

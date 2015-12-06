@@ -9,10 +9,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
-public class SenselessParenthesesInspector extends BasePhpInspection {
+public class UnnecessaryParenthesesInspector extends BasePhpInspection {
     @NotNull
     public String getShortName() {
-        return "SenselessParenthesesInspection";
+        return "UnnecessaryParenthesesInspection";
     }
 
     @Override
@@ -30,29 +30,6 @@ public class SenselessParenthesesInspector extends BasePhpInspection {
                 if (null == argument || null == parent) {
                     return;
                 }
-
-                /* Following will be reported:
-                    argument instanceof StringLiteralExpression ||
-                    argument instanceof Variable ||
-                    argument instanceof PhpIsset ||
-                    argument instanceof PhpUnset ||
-                    argument instanceof PhpEmpty ||
-                    argument instanceof MethodReference ||
-                    argument instanceof ArrayAccessExpression ||
-                    argument instanceof FieldReference ||
-                    argument instanceof FunctionReference ||
-                    argument instanceof ParenthesizedExpression || parent instanceof ParenthesizedExpression ||
-                    parent instanceof If ||
-                    parent instanceof ElseIf ||
-                    parent instanceof ParameterList ||
-                    parent instanceof PhpReturn ||
-                    parent instanceof ForeachStatement ||
-                    parent instanceof While ||
-                    parent instanceof Constant ||
-                    parent.getParent() instanceof ArrayHashElement ||
-                    parent.getParent() instanceof ArrayCreationExpression ||
-                    parent instanceof ArrayIndex
-                */
 
                 /*
                     this matrix mostly contains reasonable variants,

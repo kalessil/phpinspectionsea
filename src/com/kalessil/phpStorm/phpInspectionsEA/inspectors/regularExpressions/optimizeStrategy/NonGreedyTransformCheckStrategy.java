@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 public class NonGreedyTransformCheckStrategy {
     private static final String strProblemDescription = "'%p%' can be replaced with '[^%c%]%m%%c%'";
 
+    @SuppressWarnings("CanBeFinal")
     static private Pattern regexNonGreedyPattern = null;
     static {
         regexNonGreedyPattern = Pattern.compile("\\.(\\*|\\+)\\?([^\\(\\)\\$\\\\]|\\\\.)");

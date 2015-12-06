@@ -79,7 +79,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                 /** === use-case single NON implicit boolean test === */
                 if (reference.getParent() instanceof If && strFunctionName.equals("array_search")) {
                     holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                    return;
+                    // return;
                 }
                 /* TODO: ExpressionSemanticUtil.isUsedAsLogicalOperand */
             }

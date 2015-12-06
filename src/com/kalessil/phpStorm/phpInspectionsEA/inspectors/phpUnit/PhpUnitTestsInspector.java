@@ -66,7 +66,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                             null == resolvedReference ||
                             (resolvedReference instanceof PhpClass && referenceText.contains("::") && !referenceText.endsWith("::"))
                         ) {
-                            holder.registerProblem(objMethodName, "@covers referencing a non-existing class/method/function", ProblemHighlightType.GENERIC_ERROR);;
+                            holder.registerProblem(objMethodName, "@covers referencing a non-existing class/method/function", ProblemHighlightType.GENERIC_ERROR);
                         }
                     }
                 }

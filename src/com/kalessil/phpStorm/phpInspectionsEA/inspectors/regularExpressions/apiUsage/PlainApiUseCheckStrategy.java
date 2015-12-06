@@ -17,6 +17,7 @@ public class PlainApiUseCheckStrategy {
     private static final String strProblemReplaceTreatCase = "'str_replace(\"%t%\", ...)' can be used instead";
     private static final String strProblemReplaceIgnoreCase = "'str_ireplace(\"%t%\", ...)' can be used instead";
 
+    @SuppressWarnings("CanBeFinal")
     static private Pattern regexTextSearch = null;
     static {
         regexTextSearch = Pattern.compile("^(\\^?)([\\w-]+)$");

@@ -44,6 +44,8 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                 /*
                  * if no parameters, we shall not check;
                  * if multiple parameters, perhaps if-inspection fulfilled and issets were merged
+                 *
+                 * TODO: still needs analysis regarding concatenations in indexes
                  */
                 if (issetExpression.getVariables().length != 1) {
                     return;
@@ -57,13 +59,13 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                     PsiElement objOperation = ((UnaryExpression) issetParent).getOperation();
                     if (null != objOperation && PhpTokenTypes.opNOT == objOperation.getNode().getElementType()) {
                         issetInverted = true;
+                        issetParent = issetParent.getParent();
                     }
-
-                    issetParent = issetParent.getParent();
                 }
 
                 /* do not report ternaries using isset-or-null semantics, there Array_key_exist can introduce bugs  */
-                boolean isTernaryCondition = issetParent instanceof TernaryExpression && issetExpression == ((TernaryExpression) issetParent).getCondition();
+                PsiElement conditionCandidate = issetInverted ? issetExpression.getParent() : issetExpression;
+                boolean isTernaryCondition = issetParent instanceof TernaryExpression && conditionCandidate == ((TernaryExpression) issetParent).getCondition();
                 if (isTernaryCondition) {
                     TernaryExpression ternary = (TernaryExpression) issetParent;
                     PsiElement nullCandidate  = issetInverted ? ternary.getTrueVariant() : ternary.getFalseVariant();
@@ -73,6 +75,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                 }
 
 
+                /* do analyze  */
                 for (PsiElement parameter : issetExpression.getVariables()) {
                     parameter = ExpressionSemanticUtil.getExpressionTroughParenthesis(parameter);
                     if (null == parameter) {

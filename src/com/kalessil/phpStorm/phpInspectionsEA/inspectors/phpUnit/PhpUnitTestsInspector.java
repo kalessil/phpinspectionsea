@@ -13,12 +13,18 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.util.Collection;
 
 
 public class PhpUnitTestsInspector extends BasePhpInspection {
+    // configuration flags automatically saved by IDE
+    public boolean SUGGEST_TO_USE_ASSERTSAME = false;
 
     @NotNull
     public String getShortName() {
@@ -34,9 +40,9 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     return;
                 }
 
-                String strMethodName = method.getName();
+                String strMethodName     = method.getName();
                 PsiElement objMethodName = method.getNameIdentifier();
-                if (StringUtil.isEmpty(strMethodName) || null == objMethodName) {
+                if ( null == objMethodName || StringUtil.isEmpty(strMethodName)) {
                     return;
                 }
 
@@ -74,14 +80,19 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
             }
 
             public void visitPhpMethodReference(MethodReference reference) {
-                String methodName = reference.getName();
-                PsiElement[] params = reference.getParameters();
-                if (
-                    StringUtil.isEmpty(methodName) ||
-                    !(methodName.equals("assertEquals") || methodName.equals("assertSame")) ||
-                    params.length < 2
-                ) {
+                final String methodName   = reference.getName();
+                final PsiElement[] params = reference.getParameters();
+                if (params.length < 2 || StringUtil.isEmpty(methodName)) {
                     return;
+                }
+
+                final boolean isAssertEquals = methodName.equals("assertEquals");
+                if (!isAssertEquals && !methodName.equals("assertSame")) {
+                    return;
+                }
+
+                if (SUGGEST_TO_USE_ASSERTSAME && isAssertEquals) {
+                    holder.registerProblem(reference, "This check is type-unsafe, consider using assertSame instead", ProblemHighlightType.WEAK_WARNING);
                 }
 
                 /* analyze parameters which makes the call equal to assertCount */
@@ -98,6 +109,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 /* fire assertCount warning when needed */
                 if ((isFirstCount && !isSecondCount) || (!isFirstCount && isSecondCount)) {
                     holder.registerProblem(reference, "assertCount should be used instead", ProblemHighlightType.WEAK_WARNING);
+                    return;
                 }
 
                 /* analyze parameters which makes the call equal to assertNull */
@@ -112,8 +124,37 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 /* fire assertNull warning when needed */
                 if (isFirstNull || isSecondNull) {
                     holder.registerProblem(reference, "assertNull should be used instead", ProblemHighlightType.WEAK_WARNING);
+                    // return;
                 }
             }
         };
     }
+
+    public JComponent createOptionsPanel() {
+        return (new PhpUnitTestsInspector.OptionsPanel()).getComponent();
+    }
+
+    public class OptionsPanel {
+        final private JPanel optionsPanel;
+
+        final private JCheckBox suggestToUseassertSame;
+
+        public OptionsPanel() {
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
+
+            suggestToUseassertSame = new JCheckBox("Suggest to use assertSame", SUGGEST_TO_USE_ASSERTSAME);
+            suggestToUseassertSame.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    SUGGEST_TO_USE_ASSERTSAME = suggestToUseassertSame.isSelected();
+                }
+            });
+            optionsPanel.add(suggestToUseassertSame, "wrap");
+        }
+
+        public JPanel getComponent() {
+            return optionsPanel;
+        }
+    }
+
 }

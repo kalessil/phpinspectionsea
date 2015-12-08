@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -48,10 +49,29 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                     return;
                 }
 
-                final boolean isResultStored = (
-                    issetExpression.getParent() instanceof AssignmentExpression ||
-                    issetExpression.getParent() instanceof PhpReturn
-                );
+                /* gather context information */
+                PsiElement issetParent       = issetExpression.getParent();
+                final boolean isResultStored = (issetParent instanceof AssignmentExpression || issetParent instanceof PhpReturn);
+                boolean issetInverted        = false;
+                if (issetParent instanceof UnaryExpression) {
+                    PsiElement objOperation = ((UnaryExpression) issetParent).getOperation();
+                    if (null != objOperation && PhpTokenTypes.opNOT == objOperation.getNode().getElementType()) {
+                        issetInverted = true;
+                    }
+
+                    issetParent = issetParent.getParent();
+                }
+
+                /* do not report ternaries using isset-or-null semantics, there Array_key_exist can introduce bugs  */
+                boolean isTernaryCondition = issetParent instanceof TernaryExpression && issetExpression == ((TernaryExpression) issetParent).getCondition();
+                if (isTernaryCondition) {
+                    TernaryExpression ternary = (TernaryExpression) issetParent;
+                    PsiElement nullCandidate  = issetInverted ? ternary.getTrueVariant() : ternary.getFalseVariant();
+                    if (nullCandidate instanceof ConstantReference && PhpLangUtil.isNull((ConstantReference) nullCandidate)) {
+                        return;
+                    }
+                }
+
 
                 for (PsiElement parameter : issetExpression.getVariables()) {
                     parameter = ExpressionSemanticUtil.getExpressionTroughParenthesis(parameter);
@@ -71,11 +91,8 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                         if (SUGGEST_TO_USE_NULL_COMPARISON) {
                             /* decide which message to use */
                             String strError = strProblemDescriptionUseNotNullComparison;
-                            if (issetExpression.getParent() instanceof UnaryExpression) {
-                                PsiElement objOperation = ((UnaryExpression) issetExpression.getParent()).getOperation();
-                                if (null != objOperation && PhpTokenTypes.opNOT == objOperation.getNode().getElementType()) {
-                                    strError = strProblemDescriptionUseNullComparison;
-                                }
+                            if (issetInverted) {
+                                strError = strProblemDescriptionUseNullComparison;
                             }
                             /* personalize message for each parameter */
                             strError = strError.replace("%s%", parameter.getText());

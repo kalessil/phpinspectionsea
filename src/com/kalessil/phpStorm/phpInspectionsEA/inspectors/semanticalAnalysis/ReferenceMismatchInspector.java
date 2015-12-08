@@ -102,6 +102,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                     variable instanceof Variable && (
                         value instanceof Variable ||
                         value instanceof FieldReference ||
+                        value instanceof ArrayAccessExpression ||
                         value instanceof FunctionReference
                 )) {
                     String strVariable   = ((Variable) variable).getName();

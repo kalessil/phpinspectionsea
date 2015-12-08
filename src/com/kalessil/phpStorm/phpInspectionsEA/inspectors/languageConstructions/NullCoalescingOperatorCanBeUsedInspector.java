@@ -9,10 +9,8 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.PhpIsset;
-import com.jetbrains.php.lang.psi.elements.TernaryExpression;
+import com.jetbrains.php.lang.PhpLangUtil;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -63,6 +61,12 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 if (issetCandidate instanceof FunctionReference && !(issetCandidate instanceof MethodReference)) {
                     String functionName = ((FunctionReference) issetCandidate).getName();
                     if (!StringUtil.isEmpty(functionName) && functionName.equals("array_key_exists")) {
+                        /* when array_key_exists alternative value is not null, it intended to be so */
+                        final PsiElement objFalseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
+                        if (!(objFalseVariant instanceof ConstantReference) || !PhpLangUtil.isNull((ConstantReference) objFalseVariant)) {
+                            return;
+                        }
+
                         holder.registerProblem(issetCandidate, strProblemCandidate, ProblemHighlightType.WEAK_WARNING);
                     }
                 }

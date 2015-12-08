@@ -334,6 +334,10 @@ with a laptop.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ElvisOperatorCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP"
+        shortName="NullCoalescingOperatorCanBeUsedInspection"     displayName="Code style: null coalescing operator can be used"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.NullCoalescingOperatorCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
         shortName="AccessModifierPresentedInspection"             displayName="Code style: access modifiers shall be defined"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.AccessModifierPresentedInspector"/>

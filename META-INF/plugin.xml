@@ -373,6 +373,10 @@ with a laptop.
         shortName="UnnecessarySemicolonInspection"                displayName="Code style: unnecessary semicolon"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessarySemicolonInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="UnnecessaryUseAliasInspection"                 displayName="Code style: unnecessary aliases"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessaryUseAliasInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP"

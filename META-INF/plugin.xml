@@ -40,17 +40,16 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-06 Dec 2015: improvements and new inspections<br/>
+14 Dec 2015: improvements and new inspections<br/>
 <br/>
-    - Alias functions usage: do not check hexdec, octdec;<br/>
-    - Reference mismatch: analyse buggy foreach interference with already existing references;<br/>
-    - Parameter/variable is not used: handle =& assignments properly;<br/>
-    - 'isset(...)' usage: tolerate constructs with no and multiple parameters;<br/>
+    - PhpUnit: suggest using assertSame (needs activation);<br/>
+    - Reference mismatch: handle =& for array access constructions as well;<br/>
+    - 'isset(...)' usage: do not report legal isset-or-null context;<br/>
 <br/>
-    - Unnecessary parentheses: implemented;<br/>
-    - Unnecessary semicolon: implemented;<br/>
-    - Foreach usage possible: reactivated;<br/>
-    - PhpUnit: assertNull, @covers analysis added;<br/>
+    - PDO api usage: implemented;<br/>
+    - Null coalescing operator can be used: implemented;<br/>
+    - One-time use variables: implemented;<br/>
+    - Unnecessary aliases: implemented;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

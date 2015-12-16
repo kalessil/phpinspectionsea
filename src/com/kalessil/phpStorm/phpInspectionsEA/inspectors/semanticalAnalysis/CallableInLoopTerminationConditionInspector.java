@@ -18,6 +18,7 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
     }
 
     @Override
+    @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFor(For expression) {

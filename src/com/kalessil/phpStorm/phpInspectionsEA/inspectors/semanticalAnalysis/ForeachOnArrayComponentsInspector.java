@@ -20,6 +20,7 @@ public class ForeachOnArrayComponentsInspector extends BasePhpInspection {
     }
 
     @Override
+    @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpForeach(ForeachStatement foreach) {

@@ -32,6 +32,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
     private static enum ExpressionType { IF, INCREMENT, DECREMENT, CLONE, NEW, REASSIGN, DOM_ELEMENT_CREATE, ACCUMULATE_IN_ARRAY, OTHER }
 
     @Override
+    @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpForeach(ForeachStatement foreach) {

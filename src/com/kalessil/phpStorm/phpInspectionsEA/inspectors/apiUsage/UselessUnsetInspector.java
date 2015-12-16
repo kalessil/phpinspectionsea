@@ -23,6 +23,7 @@ public class UselessUnsetInspector extends BasePhpInspection {
     }
 
     @Override
+    @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
 
         /**

@@ -37,8 +37,8 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
         return mapping;
     }
 
-
     @Override
+    @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {

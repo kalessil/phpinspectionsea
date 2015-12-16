@@ -36,6 +36,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
     }
 
     @Override
+    @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {

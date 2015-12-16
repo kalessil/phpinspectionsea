@@ -26,6 +26,7 @@ public class PrefixedIncDecrementEquivalentInspector extends BasePhpInspection {
     }
 
     @Override
+    @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             /* ensures we are not touching arrays only, not strings and not objects */

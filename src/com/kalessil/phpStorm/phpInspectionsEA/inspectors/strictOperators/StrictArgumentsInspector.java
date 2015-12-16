@@ -48,12 +48,12 @@ public class StrictArgumentsInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
 
-                Collection<Function> funcs = objIndex.getFunctionsByName(reference.getName());
-                if (funcs.size() != 1) {
+                Collection<Function> functions = objIndex.getFunctionsByName(reference.getName());
+                if (functions.size() != 1) {
                     return;
                 }
 
-                Parameter[] params = funcs.iterator().next().getParameters();
+                Parameter[] params = functions.iterator().next().getParameters();
                 PsiElement[] args = reference.getParameters();
 
                 inspectArguments(args, params);

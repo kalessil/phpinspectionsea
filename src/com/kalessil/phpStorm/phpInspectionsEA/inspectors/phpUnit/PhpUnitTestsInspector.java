@@ -138,19 +138,19 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
     public class OptionsPanel {
         final private JPanel optionsPanel;
 
-        final private JCheckBox suggestToUseassertSame;
+        final private JCheckBox suggestToUseAssertSame;
 
         public OptionsPanel() {
             optionsPanel = new JPanel();
             optionsPanel.setLayout(new MigLayout());
 
-            suggestToUseassertSame = new JCheckBox("Suggest to use assertSame", SUGGEST_TO_USE_ASSERTSAME);
-            suggestToUseassertSame.addChangeListener(new ChangeListener() {
+            suggestToUseAssertSame = new JCheckBox("Suggest to use assertSame", SUGGEST_TO_USE_ASSERTSAME);
+            suggestToUseAssertSame.addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent e) {
-                    SUGGEST_TO_USE_ASSERTSAME = suggestToUseassertSame.isSelected();
+                    SUGGEST_TO_USE_ASSERTSAME = suggestToUseAssertSame.isSelected();
                 }
             });
-            optionsPanel.add(suggestToUseassertSame, "wrap");
+            optionsPanel.add(suggestToUseAssertSame, "wrap");
         }
 
         public JPanel getComponent() {

@@ -14,10 +14,13 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class PrettyListControl {
-    static private String dialogHint = "Adding custom debug function";
-    static private String dialogTitle = "Example formats: function_name, \\Full\\Namespace\\Class::method     ";
+    static private final String dialogHint = "Adding custom debug function";
+    static private final String dialogTitle = "Example formats: function_name, \\Full\\Namespace\\Class::method     ";
 
+    @SuppressWarnings("CanBeFinal")
     private PrettyListModel model;
+
+    @SuppressWarnings("CanBeFinal")
     private JBList list;
 
     public PrettyListControl(List<String> list) {
@@ -142,6 +145,7 @@ public class PrettyListControl {
 
     // list prototype
     private class PrettyListModel extends AbstractListModel {
+        @SuppressWarnings("CanBeFinal")
         private List<String> entries;
 
         private PrettyListModel(List<String> entries) {

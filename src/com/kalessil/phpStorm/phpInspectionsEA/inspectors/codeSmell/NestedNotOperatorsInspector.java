@@ -21,6 +21,7 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
     }
 
     @Override
+    @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpUnaryExpression(UnaryExpression expr) {
@@ -32,6 +33,10 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
 
                 /* process only deepest not-operator */
                 PhpPsiElement value = expr.getValue();
+                if (null == value) {
+                    return;
+                }
+
                 if (value instanceof UnaryExpression) {
                     operator = ((UnaryExpression) value).getOperation();
                     if (null != operator && operator.getNode().getElementType() == PhpTokenTypes.opNOT) {

@@ -70,7 +70,7 @@ final public class CollectPossibleThrowsUtil {
                 continue;
             }
 
-            PhpClass newClass = null;
+            PhpClass newClass;
             if (newClassRef.resolve() instanceof PhpClass) {
                 newClass = (PhpClass) newClassRef.resolve();
             } else if (newClassRef.resolve() instanceof Method) {

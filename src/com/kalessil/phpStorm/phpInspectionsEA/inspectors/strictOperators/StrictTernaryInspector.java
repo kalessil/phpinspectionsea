@@ -18,6 +18,7 @@ public class StrictTernaryInspector extends BasePhpInspection {
     }
 
     @Override
+    @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpTernaryExpression(final TernaryExpression expr) {

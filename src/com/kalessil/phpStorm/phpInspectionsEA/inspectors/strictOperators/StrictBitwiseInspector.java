@@ -23,6 +23,7 @@ public class StrictBitwiseInspector extends BasePhpInspection {
     }
 
     @Override
+    @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpUnaryExpression(final UnaryExpression expr) {

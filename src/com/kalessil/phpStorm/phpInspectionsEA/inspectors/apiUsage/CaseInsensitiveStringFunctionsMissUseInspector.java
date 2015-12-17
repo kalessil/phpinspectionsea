@@ -28,8 +28,9 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
         if (null == mapping) {
             mapping = new HashMap<String, String>();
 
-            mapping.put("stristr", "strstr");
-            mapping.put("stripos", "strpos");
+            mapping.put("stristr",  "strstr");
+            mapping.put("stripos",  "strpos");
+            mapping.put("strripos", "strrpos");
         }
 
         return mapping;

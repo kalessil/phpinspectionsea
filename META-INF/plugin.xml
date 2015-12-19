@@ -8,7 +8,7 @@
   <depends>com.intellij.modules.platform</depends>
 
   <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="143.1184" until-build="143.1184" />
+  <idea-version since-build="143.382" until-build="143.382" />
 
   <description><![CDATA[
 For support and donations please visit <a href="https://bitbucket.org/kalessil/phpinspectionsea">Bitbucket</a> | <a href="https://bitbucket.org/kalessil/phpinspectionsea/issues">Issues</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RK7DPPHTSZXTA">PayPal</a>.<br />
@@ -114,7 +114,7 @@ with a laptop.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrTrUsageAsStrReplaceInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="CaseInsensitiveStringFunctionsMissUseInspection" displayName="Performance: 'stristr(...)/stripos()' could be replaced with 'strstr(...)/strpos()'"
+        shortName="CaseInsensitiveStringFunctionsMissUseInspection" displayName="Performance: 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()'"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.CaseInsensitiveStringFunctionsMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP"

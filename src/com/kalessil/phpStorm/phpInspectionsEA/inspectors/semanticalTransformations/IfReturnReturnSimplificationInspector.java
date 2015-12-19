@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -88,9 +89,11 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                     return;
                 }
 
-
                 /** point the problem out */
-                String message = strProblemDescription.replace("%c%", ifStatement.getCondition().getText());
+                final boolean isInverted = PhpLangUtil.isFalse((ConstantReference) objFirstReturn.getArgument());
+                String message = isInverted ? strProblemDescription.replace("%c%", "!(%c%)") : strProblemDescription;
+
+                message = message.replace("%c%", ifStatement.getCondition().getText());
                 holder.registerProblem(ifStatement.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };

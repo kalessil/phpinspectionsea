@@ -11,8 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Can be simplified by replacing with the following " +
-            "return with one return statement";
+    private static final String strProblemDescription = "If and following return can be replaced with 'return %c%'";
 
     @NotNull
     public String getShortName() {
@@ -91,7 +90,8 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
 
 
                 /** point the problem out */
-                holder.registerProblem(ifStatement, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                String message = strProblemDescription.replace("%c%", ifStatement.getCondition().getText());
+                holder.registerProblem(ifStatement.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

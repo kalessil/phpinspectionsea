@@ -15,7 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class AlterInForeachInspector extends BasePhpInspection {
-    private static final String strProblemDescription     = "Can be refactored as '$%c% = ...' if $%v% is defined as reference (ensure that array supplied)";
+    private static final String strProblemDescription     = "Can be refactored as '$%c% = ...' if $%v% is defined as reference (ensure that array supplied). Suppress if causes memory mismatches.";
     private static final String strProblemUnsafeReference = "This variable must be unset just after foreach to prevent possible side-effects";
     private static final String strProblemKeyReference    = "Provokes PHP Fatal error (Key element cannot be a reference)";
     private static final String strProblemAmbiguousUnset  = "This unset is not needed because the value is not a reference";

@@ -37,7 +37,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* step over silence operators */
+                /* find out expression where the call is contained - quite big set of variations */
                 PsiElement parent = getCompleteExpression(reference);
 
                 // case 1: mkdir(...);

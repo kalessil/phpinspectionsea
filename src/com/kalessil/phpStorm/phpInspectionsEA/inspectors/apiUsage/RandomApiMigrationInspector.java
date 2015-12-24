@@ -4,6 +4,8 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -20,13 +22,21 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
     }
 
     private static HashMap<String, String> mapping = null;
-    private static HashMap<String, String> getMapping() {
-        if (null == mapping) {
-            mapping = new HashMap<String, String>();
+    private static PhpLanguageLevel languageLevel = null;
+    private static HashMap<String, String> getMapping(PhpLanguageLevel preferableLanguageLevel) {
+        if (null == mapping || languageLevel != preferableLanguageLevel) {
+            languageLevel = preferableLanguageLevel;
 
-            mapping.put("rand",       "mt_rand");
+            mapping = new HashMap<String, String>();
             mapping.put("srand",      "mt_srand");
             mapping.put("getrandmax", "mt_getrandmax");
+
+            if (languageLevel == PhpLanguageLevel.PHP700) {
+                mapping.put("rand",    "random_int");
+                mapping.put("mt_rand", "random_int");
+            } else {
+                mapping.put("rand",    "mt_rand");
+            }
         }
 
         return mapping;
@@ -42,7 +52,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
                     return;
                 }
 
-                HashMap<String, String> mapFunctions = getMapping();
+                HashMap<String, String> mapFunctions = getMapping(PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel());
                 if (mapFunctions.containsKey(strFunctionName)) {
                     String strMessage = strProblemDescription
                             .replace("%o%", strFunctionName)

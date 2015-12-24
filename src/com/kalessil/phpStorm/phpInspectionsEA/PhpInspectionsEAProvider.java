@@ -17,7 +17,7 @@ NotOptimalIfConditionsInspection (increment to 1.2.0):
 ===POOL===
 
 if ... {
-} if (...) { -> might be else if
+} if (...) { -> probably "else if" intended to be here
 } else {
 }
 
@@ -31,21 +31,11 @@ StaticInvocationViaThisInspector:
 
 ---
 
-$cookies[count($cookies) - 1]
-    - replacement is 'end(...)', but it changes internal pointer in array, so can introduce side-effects in loops
-    - legal in unset context (1 ... n parameters)
-
-ctype_alnum|ctype_alpha vs regular expressions test
-    - challenge is polymorphic pattern recognition
-
 Empty functions/methods:
     - stubs, design issues
 
 Empty try/catch
     - bad code, like no scream
-
-Magic numbers:
-    needs additional research here
 
 PHP 5 migration: reflection API usage (ReflectionClass):
         constant, is_a, method_exists, property_exists, is_subclass_of are from PHP 4 world

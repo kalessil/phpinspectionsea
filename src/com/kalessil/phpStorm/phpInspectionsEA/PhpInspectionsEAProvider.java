@@ -3,17 +3,6 @@ package com.kalessil.phpStorm.phpInspectionsEA;
 import com.intellij.codeInspection.InspectionToolProvider;
 
 /*
-===Release notes===
-
-===TODO===:
-
-NotOptimalIfConditionsInspection:
-    null/string/number comparison with variable/property - additional check in costs analysis + own messages
-
-NotOptimalIfConditionsInspection (increment to 1.2.0):
-    dedicate all comparisons to separate inspection, specialized in logical bugs.
-    e.g. null/instanceof combination.
-
 ===POOL===
 
 if ... {
@@ -28,6 +17,7 @@ call_user_func(array($process, $method)) -> $process->{$method}();
 
 StaticInvocationViaThisInspector:
     - static calls on any objects, not only this (may be quite heavy due to index lookup)
+    - configurable, ensure that PS not yet doing this
 
 ---
 

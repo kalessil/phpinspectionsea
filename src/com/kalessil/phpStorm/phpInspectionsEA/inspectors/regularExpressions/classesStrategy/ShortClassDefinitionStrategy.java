@@ -24,11 +24,9 @@ public class ShortClassDefinitionStrategy {
 
             mapping.put("[:word:]",      "\\w");
             mapping.put("[A-Za-z0-9_]",  "\\w");
-            mapping.put("[a-zA-Z0-9_]",  "\\w");
 
             mapping.put("[^\\w]",        "\\W");
             mapping.put("[^A-Za-z0-9_]", "\\W");
-            mapping.put("[^a-zA-Z0-9_]", "\\W");
 
             mapping.put("[^\\s]",        "\\S");
         }
@@ -41,9 +39,13 @@ public class ShortClassDefinitionStrategy {
             final boolean isUnicodeMode = !StringUtil.isEmpty(modifiers) && modifiers.indexOf('u') != -1;
             String strHint = isUnicodeMode ? "risky, will match extended sets due to /u" : "safe in non-unicode mode";
 
+            String patternAdapted = pattern
+                    .replace("a-zA-Z",    "A-Za-z")
+                    .replace("0-9A-Za-z", "A-Za-z0-9");
+
             HashMap<String, String> mapping = getMapping();
             for (String wildcard : mapping.keySet()) {
-                if (pattern.contains(wildcard)) {
+                if (patternAdapted.contains(wildcard)) {
                     String strError = strProblemDescription
                             .replace("%p%", wildcard)
                             .replace("%r%", mapping.get(wildcard))

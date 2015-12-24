@@ -46,7 +46,9 @@ public class PlainApiUseCheckStrategy {
     ) {
         final int parametersCount = reference.getParameters().length;
         if (parametersCount >= 2 && !StringUtil.isEmpty(pattern)) {
-            String patternAdapted = pattern.replace("a-zA-Z", "A-Za-z");
+            String patternAdapted = pattern
+                    .replace("a-zA-Z",    "A-Za-z")
+                    .replace("0-9A-Za-z", "A-Za-z0-9");
 
             Matcher regexMatcher = regexTextSearch.matcher(patternAdapted);
             if (regexMatcher.find()) {

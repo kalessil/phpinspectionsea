@@ -64,8 +64,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                             }
 
                             if (operator.getText().replaceAll("\\s+","").equals("->")) {
-                                String message = strProblemExpressionUsed
-                                        .replace("%m%", reference.getName());
+                                String message = strProblemExpressionUsed.replace("%m%", reference.getName());
                                 holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         }

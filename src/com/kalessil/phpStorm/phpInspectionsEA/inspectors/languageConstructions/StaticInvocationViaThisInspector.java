@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class StaticInvocationViaThisInspector extends BasePhpInspection {
     private static final String strProblemThisUsed = "'static::%m%(...)' or 'self::%m%(...)' should be used instead";
-    private static final String strProblemExpressionUsed = "'%c%::%m%(...)' should be used instead";
+    private static final String strProblemExpressionUsed = "'...::%m%(...)' should be used instead";
 
     @NotNull
     public String getShortName() {
@@ -63,8 +63,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
 
                             if (operator.getText().replaceAll("\\s+","").equals("->")) {
                                 String message = strProblemExpressionUsed
-                                        .replace("%m%", reference.getName())
-                                        .replace("%c%", clazz.getName());
+                                        .replace("%m%", reference.getName());
                                 holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         }

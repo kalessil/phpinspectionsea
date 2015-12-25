@@ -35,8 +35,13 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                 if (null != objReference && !StringUtil.isEmpty(methodName)) {
                     PsiElement objResolvedRef = objReference.resolve();
                     /* resolved method is static but called with $ this*/
-                    if (objResolvedRef instanceof Method && ((Method) objResolvedRef).isStatic()) {
-
+                    if (objResolvedRef instanceof Method) {
+                        Method method = (Method) objResolvedRef;
+                        PhpClass clazz = method.getContainingClass();
+                        /* non-static methods and contract interfaces must not be reported */
+                        if (null == clazz || clazz.isInterface() || !method.isStatic() || method.isAbstract()) {
+                            return;
+                        }
 
                         /* check first pattern $this->static */
                         if (reference.getFirstChild().getText().equals("$this")) {
@@ -49,9 +54,8 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                         }
 
                         /* check second pattern <expression>->static */
-                        PhpClass clazz = ((Method) objResolvedRef).getContainingClass();
                         PsiElement objectExpression = reference.getFirstPsiChild();
-                        if (null != objectExpression && null != clazz) {
+                        if (null != objectExpression) {
                             /* check operator */
                             PsiElement operator = objectExpression.getNextSibling();
                             if (operator instanceof PsiWhiteSpaceImpl) {

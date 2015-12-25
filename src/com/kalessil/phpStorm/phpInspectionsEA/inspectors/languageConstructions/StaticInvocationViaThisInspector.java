@@ -15,7 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class StaticInvocationViaThisInspector extends BasePhpInspection {
-    private static final String strProblemThisUsed = "'static::%m%(...)' or 'self::%m%(...)' should be used instead";
+    private static final String strProblemThisUsed = "'static::%m%(...)' should be used instead";
     private static final String strProblemExpressionUsed = "'...::%m%(...)' should be used instead";
 
     @NotNull
@@ -45,9 +45,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
 
                         /* check first pattern $this->static */
                         if (reference.getFirstChild().getText().equals("$this")) {
-                            String message = strProblemThisUsed
-                                    .replace("%m%", methodName)
-                                    .replace("%m%", methodName);
+                            String message = strProblemThisUsed.replace("%m%", methodName);
                             holder.registerProblem(reference.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
 
                             return;

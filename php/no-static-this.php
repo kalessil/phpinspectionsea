@@ -2,9 +2,9 @@
 
 class x {
     static protected $property;
-    static function callMethod() {}
+    public static function callMethod() {}
 
-    static function y() {
+    public static function y() {
         $this->callMethod();
         return $this->property;
     }
@@ -19,3 +19,6 @@ class x {
         return static::$property;
     }
 }
+
+$o = new x();
+$o->y();

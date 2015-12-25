@@ -15,10 +15,6 @@ call_user_func_array($singleArgument, array()) -> $singleArgument()
 call_user_func(array($process, $method)) -> $process->{$method}();
     code style:
 
-StaticInvocationViaThisInspector:
-    - static calls on any objects, not only this (may be quite heavy due to index lookup)
-    - configurable, ensure that PS not yet doing this
-
 ---
 
 Empty functions/methods:

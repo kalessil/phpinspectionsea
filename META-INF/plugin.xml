@@ -365,7 +365,7 @@ with a laptop.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ReferencingObjectsInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="StaticInvocationViaThisInspection"             displayName="Code style: static method invocation via '$this->'"
+        shortName="StaticInvocationViaThisInspection"             displayName="Code style: static methods invocation via '->'"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.StaticInvocationViaThisInspector"/>
     <localInspection language="PHP" groupPath="PHP"

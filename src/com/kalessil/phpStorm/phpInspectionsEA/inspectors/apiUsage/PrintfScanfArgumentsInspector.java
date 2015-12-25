@@ -77,7 +77,10 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
                     int countWithoutPositionSpecifier = 0;
                     int maxPositionSpecifier = 0;
                     int countParsedAll = 0;
-                    Matcher regexMatcher = regexPlaceHolders.matcher(content.replace("%%", ""));
+                    // do normalization: %%, inline variables
+                    String contentAdapted = content.replace("%%", "").replaceAll("\\$\\{[a-zA-Z0-9]+\\}", "");
+
+                    Matcher regexMatcher = regexPlaceHolders.matcher(contentAdapted);
                     while (regexMatcher.find()) {
                         ++countParsedAll;
 

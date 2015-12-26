@@ -6,6 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
+import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -13,7 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class InArrayMissUseInspector extends BasePhpInspection {
-    private static final String strProblemComparison  = "This is comparison/identity operation equivalent";
+    private static final String strProblemComparison  = "'%v% === %e%' should be used instead";
     private static final String strProblemKeyExists   = "This is array_key_exists(...) call equivalent";
 
     @NotNull
@@ -52,14 +53,20 @@ public class InArrayMissUseInspector extends BasePhpInspection {
                 /** === test comparison equivalence === */
                 if (parameters[1] instanceof ArrayCreationExpression) {
                     int itemsCount = 0;
+                    PsiElement lastItem = null;
                     for (PsiElement oneItem : parameters[1].getChildren()) {
                         if (oneItem instanceof PhpPsiElement) {
                             ++itemsCount;
+                            lastItem = oneItem;
                         }
                     }
 
-                    if (itemsCount <= 1) {
-                        holder.registerProblem(reference, strProblemComparison, ProblemHighlightType.WEAK_WARNING);
+                    lastItem = lastItem instanceof ArrayHashElement ? ((ArrayHashElement) lastItem).getValue() : lastItem;
+                    if (itemsCount <= 1 && null != lastItem) {
+                        String message = strProblemComparison
+                                .replace("%v%", lastItem.getText())
+                                .replace("%e%", parameters[0].getText());
+                        holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
                         // return;
                     }
                 }

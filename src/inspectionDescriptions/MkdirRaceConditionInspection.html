@@ -1,0 +1,8 @@
+<html>
+<body>
+This issue is difficult to reproduce, as any of concurrency-related issues.
+Appears when several processes attempting to create a directory which is not
+yet existing, but between is_dir() and mkdir() calls another process already
+managed to create a directory.
+</body>
+</html>

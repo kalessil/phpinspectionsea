@@ -3,6 +3,11 @@ package com.kalessil.phpStorm.phpInspectionsEA;
 import com.intellij.codeInspection.InspectionToolProvider;
 
 /*
+Console reports some errors here:
+at com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromSignatureResolvingUtil.
+resolveSignature(TypeFromSignatureResolvingUtil.java:177)
+
+
 ===POOL===
 
 if ... {

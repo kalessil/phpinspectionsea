@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.3.7</version>
+  <version>1.3.8</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -40,16 +40,18 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-14 Dec 2015: improvements and new inspections<br/>
+26 Dec 2015: improvements and new inspections<br/>
 <br/>
-    - PhpUnit: suggest using assertSame (needs activation);<br/>
-    - Reference mismatch: handle =& for array access constructions as well;<br/>
-    - 'isset(...)' usage: do not report legal isset-or-null context;<br/>
+    - Static methods invocation via '->': more patterns supported now;<br/>
+    - If-return-return could be simplified: re-worked reporting;<br/>
+    - Nested not operators usage: fixed an NPE;<br/>
+    - Random API migration: PHP7 support added;<br/>
+    - in_array(...) misused: re-worked reporting;<br/>
+    - *printf/*scanf arguments count mismatches: fixed inline variables recognition;<br/>
+    - 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()': added strripos support;<br/>
 <br/>
-    - PDO api usage: implemented;<br/>
-    - Null coalescing operator can be used: implemented;<br/>
-    - One-time use variables: implemented;<br/>
-    - Unnecessary aliases: implemented;<br/>
+    - Non-optimal regular expression: implemented recognizing possible ctype_* functions usage;<br/>
+    - mkdir(...) race condition: implemented;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

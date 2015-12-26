@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspection {
-    private static final String strProblemDescription  = "'%f%(...)' can be used instead.";
+    private static final String strProblemDescription  = "'%f%(...)' can be used instead";
 
     @NotNull
     public String getShortName() {

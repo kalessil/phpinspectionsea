@@ -17,7 +17,7 @@ public class PlainApiUseCheckStrategy {
     private static final String strProblemContainsIgnoreCase = "'false !== stripos(\"...\", \"%t%\")' can be used instead";
     private static final String strProblemReplaceTreatCase = "'str_replace(\"%t%\", ...)' can be used instead";
     private static final String strProblemReplaceIgnoreCase = "'str_ireplace(\"%t%\", ...)' can be used instead";
-    private static final String strProblemCtypeCanBeUsed = "'%r%((string) ...)' can be used instead.";
+    private static final String strProblemCtypeCanBeUsed = "'%r%((string) %p%)' can be used instead";
 
     @SuppressWarnings("CanBeFinal")
     static private Pattern regexTextSearch = null;
@@ -75,7 +75,9 @@ public class PlainApiUseCheckStrategy {
 
             /* investigate using ctype_* functions instead */
             if (2 == parametersCount && functionName.equals("preg_match") && ctypePatterns.containsKey(patternAdapted)) {
-                String strError = strProblemCtypeCanBeUsed.replace("%r%", ctypePatterns.get(patternAdapted));
+                String strError = strProblemCtypeCanBeUsed
+                        .replace("%r%", ctypePatterns.get(patternAdapted))
+                        .replace("%p%", reference.getParameters()[1].getText());
                 holder.registerProblem(reference, strError, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         }

@@ -24,7 +24,7 @@ public class BadExceptionsProcessingInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpTry(Try tryStatement) {
                 GroupStatement body = ExpressionSemanticUtil.getGroupStatement(tryStatement);
-                if (null != body && ExpressionSemanticUtil.countExpressionsInGroup(body) > 2) {
+                if (null != body && ExpressionSemanticUtil.countExpressionsInGroup(body) > 3) {
                     //noinspection ConstantConditions
                     holder.registerProblem(tryStatement.getFirstChild(), strProblemDedicateLogic, ProblemHighlightType.WEAK_WARNING);
                 }

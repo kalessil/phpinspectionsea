@@ -15,11 +15,6 @@ if ... {
 } else {
 }
 
-call_user_func($singleArgument) -> $singleArgument()
-call_user_func_array($singleArgument, array()) -> $singleArgument()
-call_user_func(array($process, $method)) -> $process->{$method}();
-    code style:
-
 ---
 
 Empty functions/methods:

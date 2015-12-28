@@ -290,6 +290,10 @@ with a laptop.
         shortName="MkdirRaceConditionInspection"                  displayName="Probable bugs: mkdir(...) race condition"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.MkdirRaceConditionInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="ThrowInFinallyInspection"                      displayName="Probable bugs: infinite chains of exceptions possible"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ThrowInFinallyInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="PhpUnitTestsInspection"                        displayName="PhpUnit: bugs and best practices"

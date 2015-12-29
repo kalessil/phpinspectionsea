@@ -25,6 +25,7 @@ public class PlainApiUseCheckStrategy {
         regexTextSearch = Pattern.compile("^(\\^?)([\\w-]+)$");
     }
 
+    @SuppressWarnings("CanBeFinal")
     static private HashMap<String, String> ctypePatterns = null;
     static {
         ctypePatterns = new HashMap<String, String>();

@@ -29,7 +29,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
         return "DisconnectedForeachInstructionInspection";
     }
 
-    private static enum ExpressionType { IF, INCREMENT, DECREMENT, CLONE, NEW, REASSIGN, DOM_ELEMENT_CREATE, ACCUMULATE_IN_ARRAY, OTHER }
+    private enum ExpressionType { IF, INCREMENT, DECREMENT, CLONE, NEW, REASSIGN, DOM_ELEMENT_CREATE, ACCUMULATE_IN_ARRAY, OTHER }
 
     @Override
     @NotNull

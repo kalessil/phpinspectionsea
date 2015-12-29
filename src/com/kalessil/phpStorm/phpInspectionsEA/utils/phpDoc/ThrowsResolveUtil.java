@@ -17,7 +17,7 @@ import java.util.HashSet;
 
 final public class ThrowsResolveUtil {
 
-    public static enum ResolveType { RESOLVED, RESOLVED_INHERIT_DOC, NOT_RESOLVED }
+    public enum ResolveType { RESOLVED, RESOLVED_INHERIT_DOC, NOT_RESOLVED }
 
     /**
      * Return false if doc-block is not defined

@@ -291,7 +291,7 @@ with a laptop.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.MkdirRaceConditionInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="ThrowInFinallyInspection"                      displayName="Probable bugs: infinite chains of exceptions possible"
+        shortName="ThrowInFinallyInspection"                      displayName="Probable bugs: exceptions handling in finally block"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ThrowInFinallyInspector"/>
 

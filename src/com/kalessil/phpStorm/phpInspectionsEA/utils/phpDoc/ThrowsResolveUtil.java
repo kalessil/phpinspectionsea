@@ -3,8 +3,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils.phpDoc;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.tags.PhpDocTagImpl;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocReturnTag;
 import com.jetbrains.php.lang.psi.elements.Method;
@@ -31,12 +33,19 @@ final public class ThrowsResolveUtil {
         // find all @throws and remember FQNs, @throws can be combined with @throws
         Collection<PhpDocReturnTag> returns = PsiTreeUtil.findChildrenOfType(previous, PhpDocReturnTag.class);
         for (PhpDocReturnTag returnOrThrow : returns) {
-            if (returnOrThrow.getName().equals("@throws") && returnOrThrow.getFirstPsiChild() instanceof PhpDocType) {
-                PhpDocType type = (PhpDocType) returnOrThrow.getFirstPsiChild();
-                PsiElement typeResolved = type.resolve();
-                if (typeResolved instanceof PhpClass) {
-                    declaredExceptions.add((PhpClass) typeResolved);
+            if (returnOrThrow.getName().equals("@throws")) {
+                /* definition styles can differ: single tags, pipe concatenated or combined  */
+                Collection<PhpDocTypeImpl> exceptions = PsiTreeUtil.findChildrenOfType(returnOrThrow, PhpDocTypeImpl.class);
+
+                if (exceptions.size() > 0) {
+                    for (PhpDocTypeImpl type: exceptions) {
+                        PsiElement typeResolved = type.resolve();
+                        if (typeResolved instanceof PhpClass) {
+                            declaredExceptions.add((PhpClass) typeResolved);
+                        }
+                    }
                 }
+                exceptions.clear();
             }
         }
         returns.clear();

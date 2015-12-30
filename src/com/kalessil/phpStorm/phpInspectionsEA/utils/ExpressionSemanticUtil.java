@@ -117,7 +117,7 @@ public class ExpressionSemanticUtil {
      */
     @Nullable
     public static LinkedList<PsiElement> getConditions(@Nullable PsiElement objCondition, @Nullable IElementType[] arrOperationHolder) {
-        /** get through unary and parenthesis wrappers */
+        /* get through unary and parenthesis wrappers */
         if (null != objCondition) {
             objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(objCondition);
         }
@@ -130,24 +130,26 @@ public class ExpressionSemanticUtil {
             return null;
         }
 
-        /** init container */
+        /* init container */
         LinkedList<PsiElement> objPartsCollection = new LinkedList<PsiElement>();
 
-        /** return non-binary expressions, eg. callable execution */
+        /* return non-binary expressions, eg. callable execution */
         if (!(objCondition instanceof BinaryExpression)) {
             objPartsCollection.add(objCondition);
             return objPartsCollection;
         }
 
 
-        /** check operation type and extract conditions */
+        /* check operation type and extract conditions */
         PsiElement objOperation = ((BinaryExpression) objCondition).getOperation();
         if (null == objOperation) {
             return null;
         }
         IElementType operationType = objOperation.getNode().getElementType();
         if (operationType != PhpTokenTypes.opOR && operationType != PhpTokenTypes.opAND) {
-            return null;
+            /* binary expression, but not needed type => return it */
+            objPartsCollection.add(objCondition);
+            return objPartsCollection;
         }
 
         if (null != arrOperationHolder) {

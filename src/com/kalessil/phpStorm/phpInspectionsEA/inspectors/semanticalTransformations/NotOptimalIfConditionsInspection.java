@@ -24,6 +24,8 @@ import java.util.LinkedList;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behaves properly with instanceof in this scenario";
+    private static final String strProblemDescriptionConditionPartsIdentical = "Probable bug: left and right operands are identical";
+
     private static final String strProblemDescriptionInstanceOfAmbiguous = "This condition is ambiguous and can be safely removed";
     private static final String strProblemDescriptionOrdering  = "This condition execution costs less than previous one";
     private static final String strProblemDescriptionDuplicateConditions = "This condition is duplicated in other if/elseif branch";
@@ -76,7 +78,9 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
                     this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
                     this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
+
                     this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
+                    this.inspectConditionsForIdenticalOperands(objConditionsFromStatement);
 
                     objConditionsFromStatement.clear();
                 }
@@ -91,7 +95,9 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
                         this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
                         this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
+
                         this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
+                        this.inspectConditionsForIdenticalOperands(objConditionsFromStatement);
 
                         objConditionsFromStatement.clear();
                     }
@@ -101,6 +107,24 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 /* TODO: If not binary/ternary/assignment/array access expression,  */
                 /* TODO: perform types lookup - nullable core types/classes shall be compared with null.  */
                 /* TODO: Inversion should be un-boxed to get expression. */
+            }
+
+            private void inspectConditionsForIdenticalOperands(@NotNull LinkedList<PsiElement> objBranchConditions) {
+                for (PsiElement objCondition : objBranchConditions) {
+                    if (!(objCondition instanceof BinaryExpression)) {
+                        continue;
+                    }
+
+                    BinaryExpression expression = (BinaryExpression) objCondition;
+                    PsiElement left = expression.getLeftOperand();
+                    PsiElement right = expression.getRightOperand();
+                    if (
+                        null != left && null != right &&
+                        PsiEquivalenceUtil.areElementsEquivalent(left, right)
+                    ) {
+                        holder.registerProblem(objCondition, strProblemDescriptionConditionPartsIdentical, ProblemHighlightType.GENERIC_ERROR);
+                    }
+                }
             }
 
             private void inspectConditionsForMissingParenthesis(@NotNull LinkedList<PsiElement> objBranchConditions) {

@@ -159,6 +159,10 @@ with a laptop.
         shortName="NotOptimalRegularExpressionsInspection"        displayName="Performance: non-optimal regular expression"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.NotOptimalRegularExpressionsInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="VariableFunctionsUsageInspection"              displayName="Performance: variable functions usage"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.VariableFunctionsUsageInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="IsEmptyFunctionUsageInspection"                displayName="Type compatibility: 'empty(...)' usage"

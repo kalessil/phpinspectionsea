@@ -10,6 +10,7 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -64,13 +65,15 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                     if (parameters[0] instanceof ArrayCreationExpression) {
                         ArrayCreationExpression callable = (ArrayCreationExpression) parameters[0];
 
+                        /* get array values */
                         LinkedList<PhpPsiElement> values = new LinkedList<PhpPsiElement>();
                         PhpPsiElement value = callable.getFirstPsiChild();
                         while (null != value) {
-                            values.add(value);
+                            values.add(value.getFirstPsiChild());
                             value = value.getNextPsiSibling();
                         }
 
+                        /* ensure we have 2 values array and first is not a callable reference */
                         if (
                             2 == values.size()
                             && null != values.get(0) && null != values.get(1)
@@ -81,10 +84,22 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                                 parametersToSuggest.add(parameter.getText());
                             }
 
+                            /* as usually personalization of messages is overcomplicated */
                             String message = "'%o%->{%m%}(%p%)' should be used instead"
-                                    .replace("%o%", values.get(0).getText())
-                                    .replace("%m%", values.get(1).getText())
-                                    .replace("%p%", StringUtil.join(parametersToSuggest, ", "));
+                                .replace("%p%", StringUtil.join(parametersToSuggest, ", "));
+
+                            final boolean isFirstString = values.get(0) instanceof StringLiteralExpression;
+                            final boolean isSecondString = values.get(1) instanceof StringLiteralExpression;
+                            message = message
+                                .replace(
+                                    isFirstString  ? "%o%->" : "%o%",
+                                    isFirstString  ? ((StringLiteralExpression) values.get(0)).getContents() + "::" : values.get(0).getText()
+                                )
+                                .replace(
+                                    isSecondString ? "{%m%}" : "%m%",
+                                    isSecondString ? ((StringLiteralExpression) values.get(1)).getContents()        : values.get(1).getText()
+                                );
+                            ;
                             parametersToSuggest.clear();
 
                             holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);

@@ -98,9 +98,9 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
                 this.inspectDuplicatedConditions(objAllConditions, ifStatement);
-                /** TODO: If not binary/ternary/assignment/array access expression,  */
-                /** TODO: perform types lookup - nullable core types/classes shall be compared with null.  */
-                /** TODO: Inversion should be un-boxed to get expression. */
+                /* TODO: If not binary/ternary/assignment/array access expression,  */
+                /* TODO: perform types lookup - nullable core types/classes shall be compared with null.  */
+                /* TODO: Inversion should be un-boxed to get expression. */
             }
 
             private void inspectConditionsForMissingParenthesis(@NotNull LinkedList<PsiElement> objBranchConditions) {
@@ -235,7 +235,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 mappedChecks.clear();
             }
 
-            /** TODO: is_* functions */
+            /* TODO: is_* functions */
             private void inspectConditionsForInstanceOfAndIdentityOperations(@NotNull LinkedList<PsiElement> objBranchConditions, @Nullable IElementType operationType) {
                 if (operationType != PhpTokenTypes.opAND || objBranchConditions.size() < 2) {
                     return;
@@ -289,7 +289,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             }
 
             private void inspectConditionsForMultipleIsSet(@NotNull LinkedList<PsiElement> objBranchConditions, @Nullable IElementType operationType) {
-                /** handle isset && isset ... */
+                /* handle isset && isset ... */
                 if (operationType == PhpTokenTypes.opAND) {
                     int intIssetCallsCount = 0;
                     for (PsiElement objExpression : objBranchConditions) {
@@ -306,7 +306,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     return;
                 }
 
-                /** handle !isset || !isset ... */
+                /* handle !isset || !isset ... */
                 if (operationType == PhpTokenTypes.opOR) {
                     int intIssetCallsCount = 0;
                     for (PsiElement objExpression : objBranchConditions) {
@@ -331,7 +331,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     return;
                 }
 
-                /** extract calls */
+                /* extract calls */
                 LinkedList<PsiElement> objCallsExtracted = new LinkedList<PsiElement>();
                 for (PsiElement objCondition : objBranchConditions) {
                     if (!(objCondition instanceof BinaryExpression)) {
@@ -349,17 +349,17 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     }
                 }
 
-                /** scan for duplicates */
+                /* scan for duplicates */
                 for (PsiElement objExpression : objCallsExtracted) {
                     if (null == objExpression) {
                         continue;
                     }
 
-                    /** put a stub */
+                    /* put a stub */
                     int intOuterIndex = objCallsExtracted.indexOf(objExpression);
                     objCallsExtracted.set(intOuterIndex, null);
 
-                    /** search duplicates in current scope */
+                    /* search duplicates in current scope */
                     for (PsiElement objInnerLoopExpression : objCallsExtracted) {
                         if (null == objInnerLoopExpression) {
                             continue;
@@ -377,7 +377,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
             }
 
-            /***
+            /**
              * Checks if any of conditions is boolean
              * @param objBranchConditions to check
              */
@@ -401,7 +401,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             private void inspectDuplicatedConditions(LinkedList<PsiElement> objAllConditions, If ifStatement) {
                 LinkedList<PsiElement> objParentConditions = new LinkedList<PsiElement>();
 
-                /** collect parent scopes conditions */
+                /* collect parent scopes conditions */
                 PsiElement objParent = ifStatement.getParent();
                 while (null != objParent && !(objParent instanceof PhpFile)) {
                     if (objParent instanceof If) {
@@ -424,17 +424,17 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
 
-                /** scan for duplicates */
+                /* scan for duplicates */
                 for (PsiElement objExpression : objAllConditions) {
                     if (null == objExpression) {
                         continue;
                     }
 
-                    /** put a stub */
+                    /* put a stub */
                     int intOuterIndex = objAllConditions.indexOf(objExpression);
                     objAllConditions.set(intOuterIndex, null);
 
-                    /** ignore variables */
+                    /* ignore variables */
                     if (
                         objExpression instanceof Variable ||
                         objExpression instanceof ConstantReference ||
@@ -443,7 +443,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         continue;
                     }
 
-                    /** search duplicates in current scope */
+                    /* search duplicates in current scope */
                     for (PsiElement objInnerLoopExpression : objAllConditions) {
                         if (null == objInnerLoopExpression) {
                             continue;
@@ -458,7 +458,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         }
                     }
 
-                    /** search duplicates in outer scopes */
+                    /* search duplicates in outer scopes */
                     for (PsiElement objOuterScopeExpression : objParentConditions) {
                         if (null == objOuterScopeExpression) {
                             continue;
@@ -487,12 +487,12 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     return null;
                 }
 
-                /** one item only, skip costs estimation */
+                /* one item only, skip costs estimation */
                 if (objPartsCollection.size() < 2) {
                     return objPartsCollection;
                 }
 
-                /** verify if costs estimated are optimal */
+                /* verify if costs estimated are optimal */
                 int intPreviousCost = 0;
                 PsiElement objPreviousCond = null;
                 HashSet<String> functionsSetToAllow = getFunctionsSet();
@@ -502,7 +502,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 for (PsiElement objCond : objPartsCollection) {
                     intLoopCurrentCost = this.getExpressionCost(objCond, functionsSetToAllow);
 
-                    /** special case when costs estimation is overridden with general practices */
+                    /* special case when costs estimation is overridden with general practices */
                     isPreviousCondCostCanBeBigger = (
                         //(objPreviousCond instanceof FunctionReference && functionsSetToAllow.contains(((FunctionReference) objPreviousCond).getName())) ||
                         objPreviousCond instanceof AssignmentExpression

@@ -113,19 +113,22 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* analyze parameters which makes the call equal to assertNull */
-                boolean isFirstNull = false;
-                if (params[0] instanceof ConstantReference) {
-                    isFirstNull = PhpLangUtil.isNull((ConstantReference) params[0]);
-                }
-                boolean isSecondNull = false;
-                if (params[1] instanceof ConstantReference) {
-                    isSecondNull = PhpLangUtil.isNull((ConstantReference) params[1]);
-                }
-                /* fire assertNull warning when needed */
-                if (isFirstNull || isSecondNull) {
-                    holder.registerProblem(reference, "assertNull should be used instead", ProblemHighlightType.WEAK_WARNING);
-                    // return;
+                /* assertEquals -> assertNull become type-strict, ensure we want it */
+                if (!isAssertEquals || SUGGEST_TO_USE_ASSERTSAME) {
+                    /* analyze parameters which makes the call equal to assertNull */
+                    boolean isFirstNull = false;
+                    if (params[0] instanceof ConstantReference) {
+                        isFirstNull = PhpLangUtil.isNull((ConstantReference) params[0]);
+                    }
+                    boolean isSecondNull = false;
+                    if (params[1] instanceof ConstantReference) {
+                        isSecondNull = PhpLangUtil.isNull((ConstantReference) params[1]);
+                    }
+                    /* fire assertNull warning when needed */
+                    if (isFirstNull || isSecondNull) {
+                        holder.registerProblem(reference, "assertNull should be used instead", ProblemHighlightType.WEAK_WARNING);
+                        // return;
+                    }
                 }
             }
         };

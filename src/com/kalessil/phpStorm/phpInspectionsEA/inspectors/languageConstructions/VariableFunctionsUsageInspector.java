@@ -84,13 +84,16 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                                 parametersToSuggest.add(parameter.getText());
                             }
 
-                            /* as usually personalization of messages is overcomplicated */
-                            String message = "'%o%->{%m%}(%p%)' should be used instead"
-                                .replace("%p%", StringUtil.join(parametersToSuggest, ", "));
-
                             final boolean isFirstString = values.get(0) instanceof StringLiteralExpression;
                             final boolean isSecondString = values.get(1) instanceof StringLiteralExpression;
-                            message = message
+                            /* some non-trivial magic eg `parent::call()` is not available via var functions */
+                            if (isSecondString && ((StringLiteralExpression) values.get(1)).getContents().contains("::")) {
+                                return;
+                            }
+
+                            /* as usually personalization of messages is overcomplicated */
+                            String message = "'%o%->{%m%}(%p%)' should be used instead"
+                                .replace("%p%", StringUtil.join(parametersToSuggest, ", "))
                                 .replace(
                                     isFirstString  ? "%o%->" : "%o%",
                                     isFirstString  ? ((StringLiteralExpression) values.get(0)).getContents() + "::" : values.get(0).getText()

@@ -4,9 +4,11 @@ Analyses continue usage in switch-case context. Due to PHP's
 <a href="http://php.net/manual/en/control-structures.continue.php">unusual continue syntax</a>, 
 new users who are used to other languages might be confused by its behaviour.
 <!-- tooltip end -->
+<p>
 Covers following case:
+</p>
 
-<pre>
+<code lang="php">
     for (...) {
         switch(...) {
             case ...:
@@ -14,6 +16,16 @@ Covers following case:
             ...
         }
     }
-</pre>
+</code>
+
+<p>
+This is PHP-specific and mentioned in <a href="http://php.net/manual/en/control-structures.continue.php">documentation</a>:
+</p>
+
+<blockquote>
+    Note: In PHP the switch statement is considered a looping structure for the purposes of continue. continue behaves
+    like break (when no arguments are passed). If a switch is inside a loop, continue 2 will continue with the next
+    iteration of the outer loop.
+</blockquote>
 </body>
 </html>

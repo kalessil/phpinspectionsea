@@ -7,5 +7,11 @@ try {
 } catch (\Exception $ex) {
     /* do nothing */
 } finally {
+    try {
+
+    } catch (\Exception $ex) {
+
+    }
+
     throw $e;
 }

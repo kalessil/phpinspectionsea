@@ -118,6 +118,18 @@ final public class CollectPossibleThrowsUtil {
         }
         newExpressions.clear();
 
+        /* process throws - some of them might not use new-expression */
+        Collection<PhpThrow> throwExpressions = PsiTreeUtil.findChildrenOfType(scope, PhpThrow.class);
+        for (PhpThrow throwExpression : throwExpressions) {
+            /* skip processed */
+            if (processed.contains(throwExpression)) {
+                continue;
+            }
+
+            /* TODO: resolve expression there */
+
+            processed.add(throwExpression);
+        }
 
         /* process nested calls */
         Collection<MethodReference> calls = PsiTreeUtil.findChildrenOfType(scope, MethodReference.class);

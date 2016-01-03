@@ -9,7 +9,10 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.Finally;
+import com.jetbrains.php.lang.psi.elements.Method;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.Try;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
@@ -58,6 +61,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     }
                     exceptions.clear();
                 }
+                reportedExpressions.clear();
 
                 /* report try-blocks */
                 if (processedRegistry.size() > 0) {
@@ -65,14 +69,9 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                         if (statement instanceof Try) {
                             holder.registerProblem(statement.getFirstChild(), strProblemFinallyExceptions, ProblemHighlightType.GENERIC_ERROR);
                         }
-
-                        if (statement instanceof PhpThrow && !reportedExpressions.contains(statement)) {
-                            holder.registerProblem(statement, strProblemFinallyExceptions, ProblemHighlightType.GENERIC_ERROR);
-                        }
                     }
                     processedRegistry.clear();
                 }
-                reportedExpressions.clear();
             }
 
             public void visitPhpMethod(Method method) {

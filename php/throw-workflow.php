@@ -45,4 +45,13 @@ class clazz {
     public function __toString() {
         return $this->throwsRuntime();
     }
+
+
+    /**
+     * @return void
+     */
+    public function throwVariable() {
+        $e = new \RuntimeException();
+        throw $e;
+    }
 }

@@ -3,7 +3,9 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils.phpExceptions;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpDoc.ThrowsResolveUtil;
 import org.jetbrains.annotations.NotNull;
@@ -119,6 +121,7 @@ final public class CollectPossibleThrowsUtil {
         newExpressions.clear();
 
         /* process throws - some of them might not use new-expression */
+        PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
         Collection<PhpThrow> throwExpressions = PsiTreeUtil.findChildrenOfType(scope, PhpThrow.class);
         for (PhpThrow throwExpression : throwExpressions) {
             /* skip processed */
@@ -126,7 +129,30 @@ final public class CollectPossibleThrowsUtil {
                 continue;
             }
 
-            /* TODO: resolve expression there */
+            /* resolve argument */
+            PsiElement argument = throwExpression.getArgument();
+            if (null != argument) {
+                /* resolve argument types */
+                HashSet<String> types = new HashSet<String>();
+                TypeFromPlatformResolverUtil.resolveExpressionType(argument, types);
+                if (types.size() > 0) {
+                    for (String type : types) {
+                        if (type.startsWith("\\")) {
+                            /* process classes references */
+                            Collection<PhpClass> classes = objIndex.getClassesByFQN(type);
+                            if (classes.size() > 0) {
+                                /* put an expression, create container if necessary */
+                                PhpClass exception = classes.iterator().next();
+                                if (!exceptions.containsKey(exception)) {
+                                    exceptions.put(exception, new HashSet<PsiElement>());
+                                }
+                                exceptions.get(exception).add(throwExpression);
+                            }
+                        }
+                    }
+                    types.clear();
+                }
+            }
 
             processed.add(throwExpression);
         }

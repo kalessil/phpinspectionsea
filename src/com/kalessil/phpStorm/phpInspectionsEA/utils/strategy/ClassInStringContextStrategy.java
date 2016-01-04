@@ -34,7 +34,7 @@ public class ClassInStringContextStrategy {
             return false;
         }
 
-        /** collect classes to check if __toString() is there */
+        /* collect classes to check if __toString() is there */
         LinkedList<PhpClass> listClasses = new LinkedList<PhpClass>();
         for (String strClass : objResolvedTypes) {
             if (strClass.charAt(0) == '\\') {
@@ -42,7 +42,7 @@ public class ClassInStringContextStrategy {
             }
         }
 
-        /** check methods, error on first one violated requirements */
+        /* check methods, error on first one violated requirements */
         for (PhpClass objClass : listClasses) {
             if (null == objClass.findMethodByName("__toString")) {
                 String strError = strClassHasNoToStringMessage.replace("%class%", objClass.getFQN());
@@ -54,7 +54,7 @@ public class ClassInStringContextStrategy {
 
         }
 
-        /** terminate inspection, php will call __toString() */
+        /* terminate inspection, php will call __toString() */
         listClasses.clear();
         return true;
     }

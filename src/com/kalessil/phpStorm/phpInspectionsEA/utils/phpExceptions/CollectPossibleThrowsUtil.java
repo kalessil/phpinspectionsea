@@ -58,136 +58,142 @@ final public class CollectPossibleThrowsUtil {
 
         /* process new statements: throws, constructors */
         Collection<NewExpression> newExpressions = PsiTreeUtil.findChildrenOfType(scope, NewExpression.class);
-        for (NewExpression newExpression : newExpressions) {
-            /* skip processed */
-            if (processed.contains(newExpression)) {
-                continue;
-            }
+        if (newExpressions.size() > 0) {
+            for (NewExpression newExpression : newExpressions) {
+                /* skip processed */
+                if (processed.contains(newExpression)) {
+                    continue;
+                }
 //holder.registerProblem(newExpression, "New expression wil be analyzed", ProblemHighlightType.WEAK_WARNING);
 
-            /* skip what can not be resolved */
-            ClassReference newClassRef= newExpression.getClassReference();
-            if (null == newClassRef) {
-                processed.add(newExpression);
-                continue;
-            }
+                /* skip what can not be resolved */
+                ClassReference newClassRef = newExpression.getClassReference();
+                if (null == newClassRef) {
+                    processed.add(newExpression);
+                    continue;
+                }
 
-            PhpClass newClass;
-            if (newClassRef.resolve() instanceof PhpClass) {
-                newClass = (PhpClass) newClassRef.resolve();
-            } else if (newClassRef.resolve() instanceof Method) {
-                newClass = ((Method) newClassRef.resolve()).getContainingClass();
-            } else {
-                processed.add(newExpression);
-                continue;
-            }
+                PhpClass newClass;
+                if (newClassRef.resolve() instanceof PhpClass) {
+                    newClass = (PhpClass) newClassRef.resolve();
+                } else if (newClassRef.resolve() instanceof Method) {
+                    newClass = ((Method) newClassRef.resolve()).getContainingClass();
+                } else {
+                    processed.add(newExpression);
+                    continue;
+                }
 //holder.registerProblem(newExpression, "Instantiated class resolved", ProblemHighlightType.WEAK_WARNING);
 
-            /* throws processed */
-            if (newExpression.getParent() instanceof PhpThrow) {
-                /* put an expression, create container if necessary */
-                if (!exceptions.containsKey(newClass)) {
-                    exceptions.put(newClass, new HashSet<PsiElement>());
-                }
-                exceptions.get(newClass).add(newExpression.getParent());
-
-                processed.add(newExpression);
-                continue;
-            }
-
-            /* process constructors invocation */
-            Method constructor = newClass.getConstructor();
-            if (null != constructor) {
-//holder.registerProblem(newExpression, "Constructor found", ProblemHighlightType.WEAK_WARNING);
-                /* lookup for annotated exceptions */
-                HashSet<PhpClass> constructorExceptions = new HashSet<PhpClass>();
-                ThrowsResolveUtil.resolveThrownExceptions(constructor, constructorExceptions);
-
-                /* link expression with each possible exception */
-                if (constructorExceptions.size() > 0) {
-                    for (PhpClass constructorException : constructorExceptions) {
-                        /* put an expression, create container if necessary */
-                        if (!exceptions.containsKey(constructorException)) {
-                            exceptions.put(constructorException, new HashSet<PsiElement>());
-                        }
-                        exceptions.get(constructorException).add(newExpression.getParent());
+                /* throws processed */
+                if (newExpression.getParent() instanceof PhpThrow) {
+                    /* put an expression, create container if necessary */
+                    if (!exceptions.containsKey(newClass)) {
+                        exceptions.put(newClass, new HashSet<PsiElement>());
                     }
+                    exceptions.get(newClass).add(newExpression.getParent());
 
-                    constructorExceptions.clear();
+                    processed.add(newExpression);
+                    continue;
                 }
+
+                /* process constructors invocation */
+                Method constructor = newClass.getConstructor();
+                if (null != constructor) {
+//holder.registerProblem(newExpression, "Constructor found", ProblemHighlightType.WEAK_WARNING);
+                    /* lookup for annotated exceptions */
+                    HashSet<PhpClass> constructorExceptions = new HashSet<PhpClass>();
+                    ThrowsResolveUtil.resolveThrownExceptions(constructor, constructorExceptions);
+
+                    /* link expression with each possible exception */
+                    if (constructorExceptions.size() > 0) {
+                        for (PhpClass constructorException : constructorExceptions) {
+                            /* put an expression, create container if necessary */
+                            if (!exceptions.containsKey(constructorException)) {
+                                exceptions.put(constructorException, new HashSet<PsiElement>());
+                            }
+                            exceptions.get(constructorException).add(newExpression.getParent());
+                        }
+
+                        constructorExceptions.clear();
+                    }
+                }
+                processed.add(newExpression);
             }
-            processed.add(newExpression);
+            newExpressions.clear();
         }
-        newExpressions.clear();
 
         /* process throws - some of them might not use new-expression */
         PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
         Collection<PhpThrow> throwExpressions = PsiTreeUtil.findChildrenOfType(scope, PhpThrow.class);
-        for (PhpThrow throwExpression : throwExpressions) {
-            /* skip processed */
-            if (processed.contains(throwExpression)) {
-                continue;
-            }
+        if (throwExpressions.size() > 0) {
+            for (PhpThrow throwExpression : throwExpressions) {
+                /* skip processed */
+                if (processed.contains(throwExpression)) {
+                    continue;
+                }
 
-            /* resolve argument */
-            PsiElement argument = throwExpression.getArgument();
-            if (null != argument) {
-                /* resolve argument types */
-                HashSet<String> types = new HashSet<String>();
-                TypeFromPlatformResolverUtil.resolveExpressionType(argument, types);
-                if (types.size() > 0) {
-                    for (String type : types) {
-                        if (type.startsWith("\\")) {
-                            /* process classes references */
-                            Collection<PhpClass> classes = objIndex.getClassesByFQN(type);
-                            if (classes.size() > 0) {
-                                /* put an expression, create container if necessary */
-                                PhpClass exception = classes.iterator().next();
-                                if (!exceptions.containsKey(exception)) {
-                                    exceptions.put(exception, new HashSet<PsiElement>());
+                /* resolve argument */
+                PsiElement argument = throwExpression.getArgument();
+                if (null != argument) {
+                    /* resolve argument types */
+                    HashSet<String> types = new HashSet<String>();
+                    TypeFromPlatformResolverUtil.resolveExpressionType(argument, types);
+                    if (types.size() > 0) {
+                        for (String type : types) {
+                            if (type.startsWith("\\")) {
+                                /* process classes references */
+                                Collection<PhpClass> classes = objIndex.getClassesByFQN(type);
+                                if (classes.size() > 0) {
+                                    /* put an expression, create container if necessary */
+                                    PhpClass exception = classes.iterator().next();
+                                    if (!exceptions.containsKey(exception)) {
+                                        exceptions.put(exception, new HashSet<PsiElement>());
+                                    }
+                                    exceptions.get(exception).add(throwExpression);
                                 }
-                                exceptions.get(exception).add(throwExpression);
                             }
                         }
+                        types.clear();
                     }
-                    types.clear();
                 }
-            }
 
-            processed.add(throwExpression);
+                processed.add(throwExpression);
+            }
+            throwExpressions.clear();
         }
 
         /* process nested calls */
         Collection<MethodReference> calls = PsiTreeUtil.findChildrenOfType(scope, MethodReference.class);
-        for (MethodReference call : calls) {
-            /* skip processed */
-            if (processed.contains(call)) {
-                continue;
-            }
-
-            PsiElement methodResolved = call.resolve();
-            if (methodResolved instanceof Method) {
-                /* lookup for annotated exceptions */
-                HashSet<PhpClass> methodExceptions = new HashSet<PhpClass>();
-                ThrowsResolveUtil.resolveThrownExceptions((Method) methodResolved, methodExceptions);
-
-                /* link expression with each possible exception */
-                if (methodExceptions.size() > 0) {
-                    for (PhpClass methodException : methodExceptions) {
-                        /* put an expression, create container if necessary */
-                        if (!exceptions.containsKey(methodException)) {
-                            exceptions.put(methodException, new HashSet<PsiElement>());
-                        }
-                        exceptions.get(methodException).add(call);
-                    }
-
-                    methodExceptions.clear();
+        if (calls.size() > 0) {
+            for (MethodReference call : calls) {
+                /* skip processed */
+                if (processed.contains(call)) {
+                    continue;
                 }
-            }
-            processed.add(call);
-        }
-        calls.clear();
 
+                PsiElement methodResolved = call.resolve();
+                if (methodResolved instanceof Method) {
+                    /* lookup for annotated exceptions */
+                    HashSet<PhpClass> methodExceptions = new HashSet<PhpClass>();
+                    ThrowsResolveUtil.resolveThrownExceptions((Method) methodResolved, methodExceptions);
+
+                    /* link expression with each possible exception */
+                    if (methodExceptions.size() > 0) {
+                        for (PhpClass methodException : methodExceptions) {
+                            /* put an expression, create container if necessary */
+                            if (!exceptions.containsKey(methodException)) {
+                                exceptions.put(methodException, new HashSet<PsiElement>());
+                            }
+                            exceptions.get(methodException).add(call);
+                        }
+
+                        methodExceptions.clear();
+                    }
+                }
+                processed.add(call);
+            }
+            calls.clear();
+        }
 
         return exceptions;
     }

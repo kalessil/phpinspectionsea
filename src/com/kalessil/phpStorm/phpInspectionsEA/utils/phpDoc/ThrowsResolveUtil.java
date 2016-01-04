@@ -30,33 +30,37 @@ final public class ThrowsResolveUtil {
 
         // find all @throws and remember FQNs, @throws can be combined with @throws
         Collection<PhpDocReturnTag> returns = PsiTreeUtil.findChildrenOfType(previous, PhpDocReturnTag.class);
-        for (PhpDocReturnTag returnOrThrow : returns) {
-            if (returnOrThrow.getName().equals("@throws")) {
-                /* definition styles can differ: single tags, pipe concatenated or combined  */
-                Collection<PhpDocTypeImpl> exceptions = PsiTreeUtil.findChildrenOfType(returnOrThrow, PhpDocTypeImpl.class);
+        if (returns.size() > 0) {
+            for (PhpDocReturnTag returnOrThrow : returns) {
+                if (returnOrThrow.getName().equals("@throws")) {
+                    /* definition styles can differ: single tags, pipe concatenated or combined  */
+                    Collection<PhpDocTypeImpl> exceptions = PsiTreeUtil.findChildrenOfType(returnOrThrow, PhpDocTypeImpl.class);
 
-                if (exceptions.size() > 0) {
-                    for (PhpDocTypeImpl type: exceptions) {
-                        PsiElement typeResolved = type.resolve();
-                        if (typeResolved instanceof PhpClass) {
-                            declaredExceptions.add((PhpClass) typeResolved);
+                    if (exceptions.size() > 0) {
+                        for (PhpDocTypeImpl type : exceptions) {
+                            PsiElement typeResolved = type.resolve();
+                            if (typeResolved instanceof PhpClass) {
+                                declaredExceptions.add((PhpClass) typeResolved);
+                            }
                         }
+                        exceptions.clear();
                     }
                 }
-                exceptions.clear();
             }
+            returns.clear();
         }
-        returns.clear();
 
         // resolve inherit doc tags
         Collection<PhpDocTagImpl> tags = PsiTreeUtil.findChildrenOfType(previous, PhpDocTagImpl.class);
-        for (PhpDocTagImpl tag : tags) {
-            if (tag.getName().equals("@inheritdoc")) {
-                resolveInheritDoc(method, declaredExceptions);
-                return ResolveType.RESOLVED_INHERIT_DOC;
+        if (tags.size() > 0) {
+            for (PhpDocTagImpl tag : tags) {
+                if (tag.getName().equals("@inheritdoc")) {
+                    resolveInheritDoc(method, declaredExceptions);
+                    return ResolveType.RESOLVED_INHERIT_DOC;
+                }
             }
+            tags.clear();
         }
-        tags.clear();
 
         return ResolveType.RESOLVED;
     }

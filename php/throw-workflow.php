@@ -13,7 +13,7 @@ class clazz {
      * @return clazz
      */
     static public function create() {
-        return new self();
+        return new self();  // <- weak warning
     }
 
     /**
@@ -29,13 +29,14 @@ class clazz {
      */
     public function func(){
         try {
+            $this->throwsRuntime(); // <- weak warning
             try {
-                $this->throwsRuntime();
+                $this->throwsRuntime(); // <- this needs to be reported
             } catch (\BadMethodCallException $le) {
                 throw new \LogicException();
             }
         } catch (\LogicException $e) {
-            throw new \InvalidArgumentException();
+            throw new \InvalidArgumentException(); // <- weak warning
         }
     }
 
@@ -43,7 +44,7 @@ class clazz {
      * @return string
      */
     public function __toString() {
-        return $this->throwsRuntime();
+        return $this->throwsRuntime(); // <- error
     }
 
 
@@ -52,6 +53,6 @@ class clazz {
      */
     public function throwVariable() {
         $e = new \RuntimeException();
-        throw $e;
+        throw $e; // <- weak warning
     }
 }

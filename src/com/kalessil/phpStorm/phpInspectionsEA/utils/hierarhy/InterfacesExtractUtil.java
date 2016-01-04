@@ -27,12 +27,12 @@ public class InterfacesExtractUtil {
             processedItems.add(objClass);
         }
 
-        /** re-delegate interface handling */
+        /* re-delegate interface handling */
         for (PhpClass objInterface : objClass.getImplementedInterfaces()) {
             processInterface(objInterface, processedItems, withClasses);
         }
 
-        /** handle parent class */
+        /* handle parent class */
         if (null != objClass.getSuperClass()) {
             processClass(objClass.getSuperClass(), processedItems, withClasses);
         }

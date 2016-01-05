@@ -18,7 +18,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
     private static final String strProblemDescription     = "Can be refactored as '$%c% = ...' if $%v% is defined as reference (ensure that array supplied). Suppress if causes memory mismatches.";
     private static final String strProblemUnsafeReference = "This variable must be unset just after foreach to prevent possible side-effects";
     private static final String strProblemKeyReference    = "Provokes PHP Fatal error (key element cannot be a reference)";
-    private static final String strProblemAmbiguousUnset  = "This unset is not needed because the value is not a reference";
+    private static final String strProblemAmbiguousUnset  = "Unsetting $%v% is not needed because it's not a reference";
 
     @NotNull
     public String getShortName() {
@@ -85,6 +85,17 @@ public class AlterInForeachInspector extends BasePhpInspection {
                                 holder.registerProblem(objForeachValue, strProblemUnsafeReference, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         } else {
+                            /* check for unset in parent foreach-statements: foreach-{foreach}-unset */
+                            ForeachStatement currentForeach = foreach;
+                            while (
+                                !(nextExpression instanceof PhpUnset)
+                                && currentForeach.getParent() instanceof GroupStatement
+                                && currentForeach.getParent().getParent() instanceof ForeachStatement
+                            ) {
+                                currentForeach = (ForeachStatement) currentForeach.getParent().getParent();
+                                nextExpression = currentForeach.getNextPsiSibling();
+                            }
+
                             /* check if un-sets non-reference value - not needed at all, probably forgotten to cleanup */
                             if (nextExpression instanceof PhpUnset) {
                                 PhpPsiElement[] unsetArguments = ((PhpUnset) nextExpression).getArguments();
@@ -102,7 +113,8 @@ public class AlterInForeachInspector extends BasePhpInspection {
                                             !StringUtil.isEmpty(foreachValueName) &&
                                             unsetArgumentName.equals(foreachValueName)
                                         ) {
-                                            holder.registerProblem(unsetExpression, strProblemAmbiguousUnset, ProblemHighlightType.WEAK_WARNING);
+                                            String message = strProblemAmbiguousUnset.replace("%v%", foreachValueName);
+                                            holder.registerProblem(unsetExpression, message, ProblemHighlightType.WEAK_WARNING);
                                         }
                                     }
                                 }

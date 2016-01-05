@@ -39,12 +39,12 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 Variable value             = foreach.getValue();
                 GroupStatement foreachBody = ExpressionSemanticUtil.getGroupStatement(foreach);
                 /* ensure foreach structure is ready for inspection */
-                if (null != foreachBody && null != value && null != value.getName()) {
+                if (null != foreachBody && null != value && !StringUtil.isEmpty(value.getName())) {
                     /* pre-collect introduced and internally used variables */
                     HashSet<String> allModifiedVariables = new HashSet<String>();
                     allModifiedVariables.add(value.getName());
                     Variable key = foreach.getKey();
-                    if (null != key && null != key.getName()) {
+                    if (null != key && !StringUtil.isEmpty(key.getName())) {
                         allModifiedVariables.add(key.getName());
                     }
 
@@ -86,7 +86,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                  * TODO: hint using clone instead of '$var = new ...';
                                  */
                                 if (
-                                    ExpressionType.IF                  != target &&
+                                    //ExpressionType.IF                  != target &&
                                     ExpressionType.REASSIGN            != target &&
                                     ExpressionType.CLONE               != target &&
                                     ExpressionType.INCREMENT           != target &&
@@ -94,7 +94,16 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                     ExpressionType.DOM_ELEMENT_CREATE  != target &&
                                     ExpressionType.ACCUMULATE_IN_ARRAY != target
                                 ) {
-                                    holder.registerProblem(oneInstruction, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                                    /* loops, ifs, switches, try's needs to be reported on keyword, others - complete */
+                                    PsiElement reportingTarget =
+                                            (
+                                            oneInstruction instanceof ControlStatement ||
+                                            oneInstruction instanceof Try ||
+                                            oneInstruction instanceof PhpSwitch
+                                            )
+                                                    ? oneInstruction.getFirstChild()
+                                                    : oneInstruction;
+                                    holder.registerProblem(reportingTarget, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
                                 }
 
                                 if (ExpressionType.DOM_ELEMENT_CREATE == target) {
@@ -119,9 +128,8 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 HashSet<String> allModifiedVariables
             ) {
                 for (PsiElement variable : PsiTreeUtil.findChildrenOfType(oneInstruction, Variable.class)) {
-                    Variable castedVariable = (Variable) variable;
-                    String variableName = castedVariable.getName();
-                    if (null != variableName) {
+                    String variableName = ((Variable) variable).getName();
+                    if (!StringUtil.isEmpty(variableName)) {
                         if (variable.getParent() instanceof AssignmentExpression) {
                             AssignmentExpression assignment = (AssignmentExpression) variable.getParent();
                             if (assignment.getVariable() == variable) {

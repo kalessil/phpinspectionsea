@@ -3,12 +3,13 @@
     function () {
         $source = array();
 
-        foreach ($source as & $id => $element) {
-            $source[$id] = $element + 1;
+        foreach ($source as & $id => $element) { // <- reported &
+            $source[$id] = $element + 1; // <- reported $source[$id]
         }
+        unset($element, $id); // <- reported $element
 
-        foreach ($source as & $element) {
-            ++$element;
+        foreach ($source as & $el) {
+            ++$el;
         }
     }
 

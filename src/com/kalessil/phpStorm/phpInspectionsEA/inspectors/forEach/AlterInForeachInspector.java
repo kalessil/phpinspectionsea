@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public class AlterInForeachInspector extends BasePhpInspection {
     private static final String strProblemDescription     = "Can be refactored as '$%c% = ...' if $%v% is defined as reference (ensure that array supplied). Suppress if causes memory mismatches.";
     private static final String strProblemUnsafeReference = "This variable must be unset just after foreach to prevent possible side-effects";
-    private static final String strProblemKeyReference    = "Provokes PHP Fatal error (Key element cannot be a reference)";
+    private static final String strProblemKeyReference    = "Provokes PHP Fatal error (key element cannot be a reference)";
     private static final String strProblemAmbiguousUnset  = "This unset is not needed because the value is not a reference";
 
     @NotNull
@@ -88,14 +88,22 @@ public class AlterInForeachInspector extends BasePhpInspection {
                             /* check if un-sets non-reference value - not needed at all, probably forgotten to cleanup */
                             if (nextExpression instanceof PhpUnset) {
                                 PhpPsiElement[] unsetArguments = ((PhpUnset) nextExpression).getArguments();
-                                if (1 == unsetArguments.length && unsetArguments[0] instanceof Variable) {
-                                    String unsetArgumentName =  unsetArguments[0].getName();
-                                    String foreachValueName  =  objForeachValue.getName();
-                                    if (
-                                        !StringUtil.isEmpty(unsetArgumentName) && !StringUtil.isEmpty(foreachValueName) &&
-                                        unsetArgumentName.equals(foreachValueName)
-                                    ) {
-                                        holder.registerProblem(nextExpression, strProblemAmbiguousUnset, ProblemHighlightType.WEAK_WARNING);
+                                if (unsetArguments.length > 0) {
+                                    String foreachValueName = objForeachValue.getName();
+
+                                    for (PhpPsiElement unsetExpression : unsetArguments) {
+                                        if (!(unsetArguments[0] instanceof Variable)) {
+                                            continue;
+                                        }
+
+                                        String unsetArgumentName = unsetExpression.getName();
+                                        if (
+                                            !StringUtil.isEmpty(unsetArgumentName) &&
+                                            !StringUtil.isEmpty(foreachValueName) &&
+                                            unsetArgumentName.equals(foreachValueName)
+                                        ) {
+                                            holder.registerProblem(unsetExpression, strProblemAmbiguousUnset, ProblemHighlightType.WEAK_WARNING);
+                                        }
                                     }
                                 }
                             }
@@ -103,7 +111,11 @@ public class AlterInForeachInspector extends BasePhpInspection {
                     }
                 }
 
-                /* lookup for reference preceding key */
+                this.strategyKeyCanNotBeReference(foreach);
+            }
+
+            private void strategyKeyCanNotBeReference(ForeachStatement foreach) {
+                /* lookup for incorrect reference preceding key: foreach (... as &$key => ...) */
                 Variable objForeachKey = foreach.getKey();
                 if (null != objForeachKey) {
                     PsiElement prevElement = objForeachKey.getPrevSibling();
@@ -114,6 +126,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                         holder.registerProblem(prevElement, strProblemKeyReference, ProblemHighlightType.ERROR);
                     }
                 }
+
             }
 
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
@@ -122,6 +135,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                     return;
                 }
 
+                /* ensure assignment structure is complete */
                 ArrayAccessExpression objContainer = (ArrayAccessExpression) objOperand;
                 if (
                     null == objContainer.getIndex() ||
@@ -132,6 +146,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                 }
 
 
+                /* get parts of assignment */
                 PhpPsiElement objForeachSourceCandidate = objContainer.getValue();
                 PhpPsiElement objForeachKeyCandidate = objContainer.getIndex().getValue();
 
@@ -144,14 +159,17 @@ public class AlterInForeachInspector extends BasePhpInspection {
                     }
 
                     if (objParent instanceof ForeachStatement) {
+                        /* get parts of foreach: array, key, value */
                         ForeachStatement objForeach = (ForeachStatement) objParent;
-                        Variable objForeachValue = objForeach.getValue();
+                        Variable objForeachValue    = objForeach.getValue();
+                        Variable objForeachKey      = objForeach.getKey();
+                        PsiElement objForeachArray  = objForeach.getArray();
+
+                        /* report if aggressive optimization possible: foreach(... as &$value) */
                         if (
-                            null != objForeachValue &&
-                            null != objForeach.getKey() &&
-                            null != objForeach.getArray() &&
-                            PsiEquivalenceUtil.areElementsEquivalent(objForeach.getKey(), objForeachKeyCandidate) &&
-                            PsiEquivalenceUtil.areElementsEquivalent(objForeach.getArray(), objForeachSourceCandidate)
+                            null != objForeachArray && null != objForeachKey && null != objForeachValue &&
+                            PsiEquivalenceUtil.areElementsEquivalent(objForeachKey, objForeachKeyCandidate) &&
+                            PsiEquivalenceUtil.areElementsEquivalent(objForeachArray, objForeachSourceCandidate)
                         ) {
                             String strName = objForeachValue.getName();
                             if (!StringUtil.isEmpty(strName)) {

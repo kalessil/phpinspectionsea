@@ -62,7 +62,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
                     /* iteration 2 - analyse dependencies */
                     for (PsiElement oneInstruction : foreachBody.getStatements()) {
-                        if (oneInstruction instanceof PhpPsiElement) {
+                        if (oneInstruction instanceof PhpPsiElement && !(oneInstruction instanceof PsiComment)) {
                             boolean isDependOnModifiedVariables = false;
                             boolean hasDependencies             = false;
 
@@ -97,9 +97,9 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                     /* loops, ifs, switches, try's needs to be reported on keyword, others - complete */
                                     PsiElement reportingTarget =
                                             (
-                                            oneInstruction instanceof ControlStatement ||
-                                            oneInstruction instanceof Try ||
-                                            oneInstruction instanceof PhpSwitch
+                                                oneInstruction instanceof ControlStatement ||
+                                                oneInstruction instanceof Try ||
+                                                oneInstruction instanceof PhpSwitch
                                             )
                                                     ? oneInstruction.getFirstChild()
                                                     : oneInstruction;
@@ -130,16 +130,34 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 for (PsiElement variable : PsiTreeUtil.findChildrenOfType(oneInstruction, Variable.class)) {
                     String variableName = ((Variable) variable).getName();
                     if (!StringUtil.isEmpty(variableName)) {
-                        if (variable.getParent() instanceof AssignmentExpression) {
-                            AssignmentExpression assignment = (AssignmentExpression) variable.getParent();
+                        PsiElement parent = variable.getParent();
+
+                        /* writing into variable */
+                        if (parent instanceof AssignmentExpression) {
+                            AssignmentExpression assignment = (AssignmentExpression) parent;
                             if (assignment.getVariable() == variable) {
                                 allModifiedVariables.add(variableName);
                                 continue;
                             }
                         }
 
+                        /* php-specific variables introduction: preg_match[_all] exporting results into 3rd argument */
+                        if (parent instanceof ParameterList && parent.getParent() instanceof FunctionReference) {
+                            FunctionReference call = (FunctionReference) parent.getParent();
+                            String functionName = call.getName();
+                            PsiElement[] parameters = call.getParameters();
+
+                            if (
+                                3 == parameters.length && parameters[2] == variable &&
+                                !StringUtil.isEmpty(functionName) && functionName.startsWith("preg_match")
+                            ) {
+                                allModifiedVariables.add(variableName);
+                                continue;
+                            }
+                        }
+
                         /* increment/decrement are also write operations */
-                        ExpressionType type = getExpressionType(variable.getParent());
+                        ExpressionType type = getExpressionType(parent);
                         if (ExpressionType.INCREMENT == type || ExpressionType.DECREMENT == type) {
                             allModifiedVariables.add(variableName);
                             continue;

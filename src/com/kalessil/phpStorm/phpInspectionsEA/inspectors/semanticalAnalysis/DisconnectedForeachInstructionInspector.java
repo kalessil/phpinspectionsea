@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
     private static final String strProblemDescription = "This statement seems to be disconnected from parent foreach";
@@ -141,7 +142,14 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             }
                         }
 
-                        /* php-specific list(...) = ... assignments */
+                        /* php-specific list(...) = ... construction */
+                        if (parent instanceof MultiassignmentExpression) {
+                            List<PhpPsiElement> variables = ((MultiassignmentExpression) parent).getVariables();
+                            if (null != variables && variables.contains(variable)) {
+                                allModifiedVariables.add(variableName);
+                                continue;
+                            }
+                        }
 
                         /* php-specific variables introduction: preg_match[_all] exporting results into 3rd argument */
                         if (parent instanceof ParameterList && parent.getParent() instanceof FunctionReference) {
@@ -149,7 +157,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             String functionName = call.getName();
                             PsiElement[] parameters = call.getParameters();
 
-                            // array_pop, array_shift ...
+                            // TODO: array_pop, array_shift, next, current, ...
                             if (
                                 3 == parameters.length && parameters[2] == variable &&
                                 !StringUtil.isEmpty(functionName) && functionName.startsWith("preg_match")

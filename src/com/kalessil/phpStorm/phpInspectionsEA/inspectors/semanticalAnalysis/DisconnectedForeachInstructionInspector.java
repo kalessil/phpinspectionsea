@@ -86,7 +86,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                  * TODO: hint using clone instead of '$var = new ...';
                                  */
                                 if (
-                                    //ExpressionType.IF                  != target &&
+                                    ExpressionType.NEW                 != target &&
                                     ExpressionType.REASSIGN            != target &&
                                     ExpressionType.CLONE               != target &&
                                     ExpressionType.INCREMENT           != target &&
@@ -106,7 +106,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                     holder.registerProblem(reportingTarget, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
                                 }
 
-                                if (ExpressionType.DOM_ELEMENT_CREATE == target) {
+                                if (ExpressionType.DOM_ELEMENT_CREATE == target || ExpressionType.NEW == target) {
                                     holder.registerProblem(oneInstruction, strProblemUseClone, ProblemHighlightType.WEAK_WARNING);
                                 }
                             }
@@ -141,12 +141,15 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             }
                         }
 
+                        /* php-specific list(...) = ... assignments */
+
                         /* php-specific variables introduction: preg_match[_all] exporting results into 3rd argument */
                         if (parent instanceof ParameterList && parent.getParent() instanceof FunctionReference) {
                             FunctionReference call = (FunctionReference) parent.getParent();
                             String functionName = call.getName();
                             PsiElement[] parameters = call.getParameters();
 
+                            // array_pop, array_shift ...
                             if (
                                 3 == parameters.length && parameters[2] == variable &&
                                 !StringUtil.isEmpty(functionName) && functionName.startsWith("preg_match")

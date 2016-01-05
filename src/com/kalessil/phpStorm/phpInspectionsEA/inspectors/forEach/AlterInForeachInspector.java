@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -154,7 +154,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                             PsiEquivalenceUtil.areElementsEquivalent(objForeach.getArray(), objForeachSourceCandidate)
                         ) {
                             String strName = objForeachValue.getName();
-                            if (null != strName) {
+                            if (!StringUtil.isEmpty(strName)) {
                                 String strMessage = strProblemDescription
                                         .replace("%c%", strName)
                                         .replace("%v%", strName);

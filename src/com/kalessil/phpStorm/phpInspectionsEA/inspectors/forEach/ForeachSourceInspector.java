@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -162,7 +162,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                             HashSet<PhpClass> interfaces = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(objClass, false);
                             for (PhpClass oneInterface : interfaces) {
                                 String strFQN = oneInterface.getFQN();
-                                if (null != strFQN && strFQN.equals(strTraversableFQN)) {
+                                if (!StringUtil.isEmpty(strFQN) && strFQN.equals(strTraversableFQN)) {
                                     interfaces.clear();
                                     objClasses.clear();
                                     return;

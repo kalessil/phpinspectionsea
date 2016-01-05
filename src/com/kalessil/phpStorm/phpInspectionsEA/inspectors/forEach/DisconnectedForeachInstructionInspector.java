@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -30,7 +30,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
         return "DisconnectedForeachInstructionInspection";
     }
 
-    private enum ExpressionType { IF, INCREMENT, DECREMENT, CLONE, NEW, REASSIGN, DOM_ELEMENT_CREATE, ACCUMULATE_IN_ARRAY, OTHER }
+    private enum ExpressionType { INCREMENT, DECREMENT, CLONE, NEW, REASSIGN, DOM_ELEMENT_CREATE, ACCUMULATE_IN_ARRAY, OTHER }
 
     @Override
     @NotNull
@@ -157,7 +157,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             String functionName = call.getName();
                             PsiElement[] parameters = call.getParameters();
 
-                            // TODO: array_pop, array_shift, next, current, ...
+                            // TODO: array_pop, array_shift, next, current, ... -> use mapping function => argument modified
                             if (
                                 3 == parameters.length && parameters[2] == variable &&
                                 !StringUtil.isEmpty(functionName) && functionName.startsWith("preg_match")
@@ -181,14 +181,12 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
             }
 
             private ExpressionType getExpressionType(PsiElement expression) {
-                if (expression instanceof If) {
-                    return ExpressionType.IF;
-                }
-
+                /* regular '...;' statements */
                 if (expression instanceof StatementImpl) {
                     return getExpressionType(((StatementImpl) expression).getFirstPsiChild());
                 }
 
+                /* unary operations */
                 if (expression instanceof UnaryExpressionImpl) {
                     PsiElement operation       = ((UnaryExpressionImpl) expression).getOperation();
                     IElementType operationType = null;
@@ -205,6 +203,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     }
                 }
 
+                /* different types of assignments */
                 if (expression instanceof AssignmentExpression) {
                     AssignmentExpression assignment = (AssignmentExpression) expression;
                     PsiElement variable = assignment.getVariable();
@@ -239,6 +238,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                         }
                     }
 
+                    /* accumulating something in external container */
                     if (variable instanceof ArrayAccessExpression) {
                         ArrayAccessExpression storage = (ArrayAccessExpression) variable;
                         if (null == storage.getIndex() || null == storage.getIndex().getValue()) {

@@ -134,11 +134,11 @@ with a laptop.
     <localInspection language="PHP" groupPath="PHP"
         shortName="AlterInForeachInspection"                      displayName="Performance: slow alter in foreach"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.AlterInForeachInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.AlterInForeachInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="ForeachOnArrayComponentsInspection"            displayName="Performance: array_keys(...), array_values(...) used as foreach array"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ForeachOnArrayComponentsInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachOnArrayComponentsInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="CascadeStringReplacementInspection"            displayName="Performance: cascading str_replace(...) calls"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
@@ -183,7 +183,7 @@ with a laptop.
     <localInspection language="PHP" groupPath="PHP"
         shortName="ForeachSourceInspection"                       displayName="Type compatibility: foreach source to iterate over"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="false" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ForeachSourceInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachSourceInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="GenericObjectTypeUsageInspection"              displayName="Type compatibility: usage of object type in PhpDoc"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
@@ -220,7 +220,7 @@ with a laptop.
     <localInspection language="PHP" groupPath="PHP"
         shortName="DisconnectedForeachInstructionInspection"      displayName="Control flow: statement could be decoupled from foreach"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.DisconnectedForeachInstructionInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.DisconnectedForeachInstructionInspector"/>
   <localInspection language="PHP" groupPath="PHP"
        shortName="ExceptionsAnnotatingAndHandlingInspection"      displayName="Control flow: exceptions handling and annotating"
        groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
@@ -232,7 +232,7 @@ with a laptop.
   <localInspection language="PHP" groupPath="PHP"
        shortName="ForeachInvariantsInspection"                    displayName="Control flow: foreach usage possible"
        groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
-       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.ForeachInvariantsInspector"/>
+       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachInvariantsInspector"/>
   <localInspection language="PHP" groupPath="PHP"
        shortName="OneTimeUseVariablesInspection"                  displayName="Control flow: one-time use variables"
        groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"

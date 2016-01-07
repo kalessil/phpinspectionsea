@@ -14,7 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class PdoApiUsageInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "'->query()' should be used instead of 'prepare-execute' calls chain";
+    private static final String strProblemDescription = "'->query(...)' or '>exec(...)'  should be used instead of 'prepare-execute' calls chain";
 
     @NotNull
     public String getShortName() {

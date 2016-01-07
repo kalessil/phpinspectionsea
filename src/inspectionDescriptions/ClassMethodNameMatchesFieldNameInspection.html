@@ -1,5 +1,8 @@
 <html>
 <body>
-Analyses class methods and reports when method names overlap with fields names.
+Analyses class methods and reports when method names overlap with fields names.<br />
+<br />
+The case is not depending on overlapped field visibility and might really confuse when a field
+stores value of callable type: $this->fieldOrMethod() might have intention of ($this->fieldOrMethod)().
 </body>
 </html>

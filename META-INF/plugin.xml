@@ -21,6 +21,8 @@
   <description><![CDATA[
 For support and donations please visit <a href="https://bitbucket.org/kalessil/phpinspectionsea">Bitbucket</a> | <a href="https://bitbucket.org/kalessil/phpinspectionsea/issues">Issues</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RK7DPPHTSZXTA">PayPal</a>.<br />
 <br />
+Please follow me at <a href="https://twitter.com/kalessil">twitter</a> for status updates.<br />
+<br />
 This plugin is a Static Code Analysis tool for PHP (aka inspections in JetBrains products).<br />
 <br />
 It covers:<br />
@@ -39,7 +41,7 @@ Some of inspections are expecting conditional statements (e.g. "if") to use
 group statement for wrapping body expressions. If this requirement is met
 then additional inspections are applied to the source code.<br />
 <br />
-For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/documentation/PhpStorm_ReferenceCard.pdf">this reference card</a>. Windows/Linux ones are:<br />
+For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/help/keyboard-shortcuts-and-mouse-reference.html">this reference card</a>. Windows/Linux ones are:<br />
 <b>Alt + Shift + I</b> to <b>inspect current file</b> with current profile<br />
 <b>Ctrl + Shift + F4</b> to <b>close results</b> of inspection.<br />
 <br />

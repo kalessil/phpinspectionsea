@@ -51,6 +51,7 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
                                     continue;
                                 }
 
+                                /* pattern match: ksort and http_build_query operating on the same expression */
                                 if (PsiEquivalenceUtil.areElementsEquivalent(oneCall.getParameters()[0], parameters[0])) {
                                     String message = strProblemDescription.replace("%a%", parameters[0].getText());
                                     holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);

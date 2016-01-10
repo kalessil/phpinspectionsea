@@ -299,7 +299,7 @@ with a laptop.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.MkdirRaceConditionInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="InconsistentQueryBuildInspect"                 displayName="Probable bugs: inconsistent 'http_build_query(...)' result"
+        shortName="InconsistentQueryBuildInspection"              displayName="Probable bugs: inconsistent 'http_build_query(...)' result"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.InconsistentQueryBuildInspector"/>
 

@@ -51,7 +51,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
     @SuppressWarnings("CanBeFinal")
     static private Pattern regexWithModifiersCurvy = null;
     static {
-        regexWithModifiers = Pattern.compile("^([\\/#~])(.*)\\1([a-zA-Z]+)?$");
+        regexWithModifiers = Pattern.compile("^([\\/#~@])(.*)\\1([a-zA-Z]+)?$");
         regexWithModifiersCurvy = Pattern.compile("^\\{(.*)\\}([a-zA-Z]+)?$");
     }
 

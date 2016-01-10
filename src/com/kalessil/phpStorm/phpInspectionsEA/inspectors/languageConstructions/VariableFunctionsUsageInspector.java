@@ -102,7 +102,6 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                                     isSecondString ? "{%m%}" : "%m%",
                                     isSecondString ? ((StringLiteralExpression) values.get(1)).getContents()        : values.get(1).getText()
                                 );
-                            ;
                             parametersToSuggest.clear();
 
                             holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);

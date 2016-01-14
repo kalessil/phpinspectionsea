@@ -54,7 +54,7 @@ final public class ThrowsResolveUtil {
         Collection<PhpDocTagImpl> tags = PsiTreeUtil.findChildrenOfType(previous, PhpDocTagImpl.class);
         if (tags.size() > 0) {
             for (PhpDocTagImpl tag : tags) {
-                if (tag.getName().equals("@inheritdoc")) {
+                if (tag.getName().toLowerCase().equals("@inheritdoc")) {
                     resolveInheritDoc(method, declaredExceptions);
                     return ResolveType.RESOLVED_INHERIT_DOC;
                 }

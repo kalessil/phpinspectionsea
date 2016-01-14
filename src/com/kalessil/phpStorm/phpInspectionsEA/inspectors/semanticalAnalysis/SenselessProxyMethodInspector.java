@@ -69,9 +69,10 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                             if (null != referenceToMethod && isDispatchingWithoutModifications && methodParameters.length > 0){
                                 PsiElement referenceResolved = referenceToMethod.resolve();
                                 if (referenceResolved instanceof Method) {
-                                    Parameter[] parentParameters = ((Method) referenceResolved).getParameters();
+                                    Method nestedCall = (Method) referenceResolved;
+                                    Parameter[] parentParameters = nestedCall.getParameters();
 
-                                    if (parentParameters.length == methodParameters.length) {
+                                    if (parentParameters.length == methodParameters.length && nestedCall.getAccess() == objMethod.getAccess()) {
                                         for (int index = 0; index < parentParameters.length; ++index) {
                                             if (!PsiEquivalenceUtil.areElementsEquivalent(parentParameters[index], methodParameters[index])) {
                                                 isChangingSignature = true;

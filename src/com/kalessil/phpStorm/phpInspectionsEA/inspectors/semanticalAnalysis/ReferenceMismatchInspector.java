@@ -9,6 +9,8 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
@@ -71,9 +73,23 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
 
             /* parameters by reference */
             public void visitPhpMethod(Method method) {
+                /* PHP7 seems to be ref mismatch free */
+                PhpLanguageLevel preferableLanguageLevel = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (PhpLanguageLevel.PHP700 == preferableLanguageLevel) {
+                    return;
+                }
+
+                /* older versions are still affected */
                 this.checkParameters(method.getParameters(), method);
             }
             public void visitPhpFunction(Function function) {
+                /* PHP7 seems to be ref mismatch free */
+                PhpLanguageLevel preferableLanguageLevel = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (PhpLanguageLevel.PHP700 == preferableLanguageLevel) {
+                    return;
+                }
+
+                /* older versions are still affected */
                 this.checkParameters(function.getParameters(), function);
             }
             private void checkParameters(Parameter[] arrParameters, Function objScopeHolder) {
@@ -97,6 +113,13 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
 
             /* = & variable/property patterns */
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
+                /* PHP7 seems to be ref mismatch free */
+                PhpLanguageLevel preferableLanguageLevel = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (PhpLanguageLevel.PHP700 == preferableLanguageLevel) {
+                    return;
+                }
+
+                /* older versions are still affected */
                 PsiElement value    = assignmentExpression.getValue();
                 PsiElement variable = assignmentExpression.getVariable();
                 if (
@@ -125,15 +148,36 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
 
             /* assign reference from function */
             public void visitPhpMethodReference(MethodReference reference) {
+                /* PHP7 seems to be ref mismatch free */
+                PhpLanguageLevel preferableLanguageLevel = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (PhpLanguageLevel.PHP700 == preferableLanguageLevel) {
+                    return;
+                }
+
+                /* older versions are still affected */
                 this.checkReferenceReturnedByCallable(reference);
             }
             public void visitPhpFunctionCall(FunctionReference reference) {
+                /* PHP7 seems to be ref mismatch free */
+                PhpLanguageLevel preferableLanguageLevel = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (PhpLanguageLevel.PHP700 == preferableLanguageLevel) {
+                    return;
+                }
+
+                /* older versions are still affected */
                 this.checkReferenceReturnedByCallable(reference);
             }
 
 
             /* aggressive foreach optimization when value is reference */
             public void visitPhpForeach(ForeachStatement foreach) {
+                /* PHP7 seems to be ref mismatch free */
+                PhpLanguageLevel preferableLanguageLevel = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (PhpLanguageLevel.PHP700 == preferableLanguageLevel) {
+                    return;
+                }
+
+                /* older versions are still affected */
                 /* lookup for reference preceding value */
                 Variable objForeachValue = foreach.getValue();
                 if (null != objForeachValue) {

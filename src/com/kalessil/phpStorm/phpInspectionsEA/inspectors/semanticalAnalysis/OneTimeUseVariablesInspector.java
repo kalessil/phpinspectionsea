@@ -5,10 +5,12 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -76,6 +78,20 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             }
 
             public void visitPhpReturn(PhpReturn returnStatement) {
+                /* if function returning reference, do not inspect returns */
+                Function callable = ExpressionSemanticUtil.getScope(returnStatement);
+                if (null != callable && null != callable.getNameIdentifier()) {
+                    /* is defined like returning reference */
+                    PsiElement referenceCandidate = callable.getNameIdentifier().getPrevSibling();
+                    if (referenceCandidate instanceof PsiWhiteSpace) {
+                        referenceCandidate = referenceCandidate.getPrevSibling();
+                    }
+                    if (null != referenceCandidate && PhpTokenTypes.opBIT_AND == referenceCandidate.getNode().getElementType()) {
+                        return;
+                    }
+                }
+
+                /* regular function, check one-time use variables */
                 PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(returnStatement.getArgument());
                 if (argument instanceof Variable) {
                     checkOneTimeUse(returnStatement, (Variable) argument);

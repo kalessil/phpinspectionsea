@@ -50,20 +50,14 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-10 Jan 2015: improvements and new inspections<br/>
+26 Jan 2015: bug-fixes<br/>
 <br/>
-    - Updated several inspections description;<br/>
-    - Method name matches existing field name: resolved false-positives;<br/>
-    - Slow alter in foreach: improved unset analysis in nested loops;<br/>
-    - PhpUnit: resolved false-positives with assertNull;<br/>
-    - Badly organized exception handling: resolved false-positives caused by comments;<br/>
-    - Statement could be decoupled from foreach: resolved false-positives;<br/>
-    - Callable calls in loops termination condition: reporting re-worked;<br/>
-    - Non-optimal if conditions: recognize conditions with identical operands;<br/>
-<br/>
-    - Variable functions usage: implemented;<br/>
-    - Inconsistent 'http_build_query(...)' result: implemented;<br/>
-    - Exceptions handling and annotating: improved analysis, report possible issues in finally;<br/>
+    - Reference mismatch: run only when language level is below PHP7;<br/>
+    - One-time use variables: fix false-positives with return by reference;<br/>
+    - Senseless proxy function: fix false-positives with visibility change;<br/>
+    - Exceptions handling and annotating: case insensitive Inheritdoc analysis applied;<br/>
+    - Inconsistent 'http_build_query(...)' result: resolved project startup exception;<br/>
+    - 'strtr(...)' could be replaced with 'str_replace(...)': fix false-positives with multy-character patterns;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

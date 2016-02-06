@@ -16,7 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SubStrUsedAsStrPosInspector  extends BasePhpInspection {
-    private static final String strProblemDescription = "'0 %o% strpos(%s%, %p%)' shall be used instead";
+    private static final String strProblemDescription = "'%i% %o% strpos(%s%, %p%)' shall be used instead";
 
     @NotNull
     public String getShortName() {
@@ -38,23 +38,12 @@ public class SubStrUsedAsStrPosInspector  extends BasePhpInspection {
                     return;
                 }
 
-                /* check more details regarding the pattern:
-                 *  - 2nd parameter is "0"
-                 *  - 3rd parameter is function call
+                /* checking 2nd and 3rd arguments is not needed:
+                 *   - 2nd re-used as it is
+                 *   - 3rd is not important, as we'll rely on parent comparison operand instead
                  */
-                if (!(params[2] instanceof FunctionReference) || params[2] instanceof MethodReference || !params[1].getText().equals("0")) {
-                    return;
-                }
 
-                /* check 3rd argument */
-                final FunctionReference strlenCandidate = (FunctionReference) params[2];
-                final PsiElement[] candidateParams = strlenCandidate.getParameters();
-                final String candidateName = strlenCandidate.getName();
-                if (candidateParams.length != 1 || StringUtil.isEmpty(candidateName) || !candidateName.equals("strlen")) {
-                    return;
-                }
-
-                /* now check parent expression */
+                /* check parent expression */
                 if (reference.getParent() instanceof BinaryExpression) {
                     final BinaryExpression parent = (BinaryExpression) reference.getParent();
                     final PsiElement operation = parent.getOperation();
@@ -70,9 +59,10 @@ public class SubStrUsedAsStrPosInspector  extends BasePhpInspection {
                                 secondOperand = parent.getRightOperand();
                             }
 
-                            if (null != secondOperand && PsiEquivalenceUtil.areElementsEquivalent(secondOperand, candidateParams[0])) {
+                            if (null != secondOperand) {
                                 final String operator = operation.getText();
                                 String message = strProblemDescription
+                                        .replace("%i%", params[1].getText())
                                         .replace("%o%", operator.length() == 2 ? operator + "=" : operator)
                                         .replace("%s%", params[0].getText())
                                         .replace("%p%", secondOperand.getText());

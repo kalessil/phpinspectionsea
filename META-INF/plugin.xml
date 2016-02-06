@@ -50,7 +50,7 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-26 Jan 2015: bug-fixes<br/>
+26 Jan 2016: bug-fixes<br/>
 <br/>
     - Reference mismatch: run only when language level is below PHP7;<br/>
     - One-time use variables: fix false-positives with return by reference;<br/>
@@ -116,7 +116,11 @@ with a laptop.
     <localInspection language="PHP" groupPath="PHP"
         shortName="StrStrUsedAsStrPosInspection"                  displayName="Performance: 'strstr(...)/stristr(...)' could be replaced with 'strpos(...)/stripos(...)'"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrStrUsedAsStrPosInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.StrStrUsedAsStrPosInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="SubStrUsedAsStrPosInspection"                  displayName="Performance: 'substr(...)' could be replaced with 'strpos(...)'"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.SubStrUsedAsStrPosInspector"/>
     <localInspection language="PHP" groupPath="PHP"
         shortName="StrTrUsageAsStrReplaceInspection"              displayName="Performance: 'strtr(...)' could be replaced with 'str_replace(...)'"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"

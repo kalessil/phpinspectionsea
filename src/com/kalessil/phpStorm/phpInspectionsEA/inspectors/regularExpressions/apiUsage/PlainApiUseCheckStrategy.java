@@ -18,11 +18,26 @@ public class PlainApiUseCheckStrategy {
     private static final String strProblemReplaceTreatCase = "'str_replace(\"%t%\", ...)' can be used instead";
     private static final String strProblemReplaceIgnoreCase = "'str_ireplace(\"%t%\", ...)' can be used instead";
     private static final String strProblemCtypeCanBeUsed = "'%r%((string) %p%)' can be used instead";
+    private static final String strProblemExplodeCanBeUsed = "'explode(...)' can be used instead";
 
     @SuppressWarnings("CanBeFinal")
     static private Pattern regexTextSearch = null;
     static {
         regexTextSearch = Pattern.compile("^(\\^?)([\\w-]+)$");
+    }
+
+    @SuppressWarnings("CanBeFinal")
+    static private Pattern regexHasRegexAttributes = null;
+    static {
+        // 	([^\\][\^\$\.\*\+\?\\\[\]\(\)\{\}\!\|\-])|([^\\]?\\[dDhHsSvVwW])
+        regexHasRegexAttributes = Pattern.compile("([^\\\\][\\^\\$\\.\\*\\+\\?\\\\\\[\\]\\(\\)\\{\\}\\!\\|\\-])|([^\\\\]?\\\\[dDhHsSvVwW])");
+    }
+
+    @SuppressWarnings("CanBeFinal")
+    static private Pattern regexSingleCharSet = null;
+    static {
+        // 	^(\[[^\.]{1}\]|[^\.]{1})$
+        regexSingleCharSet = Pattern.compile("^(\\[[^\\.]{1}\\]|[^\\.]{1})$");
     }
 
     @SuppressWarnings("CanBeFinal")
@@ -80,6 +95,16 @@ public class PlainApiUseCheckStrategy {
                         .replace("%r%", ctypePatterns.get(patternAdapted))
                         .replace("%p%", reference.getParameters()[1].getText());
                 holder.registerProblem(reference, strError, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+            }
+
+            /* investigate using explode instead */
+            if (parametersCount >= 2 && functionName.equals("preg_split") && StringUtil.isEmpty(modifiers)) {
+                if (
+                    regexSingleCharSet.matcher(patternAdapted).find() ||
+                    !regexHasRegexAttributes.matcher(patternAdapted).find()
+                ) {
+                    holder.registerProblem(reference, strProblemExplodeCanBeUsed, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                }
             }
         }
     }

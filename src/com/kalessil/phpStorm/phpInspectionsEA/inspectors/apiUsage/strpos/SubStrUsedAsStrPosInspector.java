@@ -47,7 +47,7 @@ public class SubStrUsedAsStrPosInspector  extends BasePhpInspection {
                  *   - 3rd is not important, as we'll rely on parent comparison operand instead
                  */
                 final String index = params[1].getText();
-                if (!(params[1] instanceof PhpExpressionImpl) || index.trim().startsWith("-")) {
+                if (!(params[1] instanceof PhpExpressionImpl) || !index.trim().equals("0")) {
                     return;
                 }
 

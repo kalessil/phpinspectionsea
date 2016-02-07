@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.api
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +19,7 @@ public class PlainApiUseCheckStrategy {
     private static final String strProblemReplaceTreatCase = "'str_replace(\"%t%\", ...)' can be used instead";
     private static final String strProblemReplaceIgnoreCase = "'str_ireplace(\"%t%\", ...)' can be used instead";
     private static final String strProblemCtypeCanBeUsed = "'%r%((string) %p%)' can be used instead";
-    private static final String strProblemExplodeCanBeUsed = "'explode(...)' can be used instead";
+    private static final String strProblemExplodeCanBeUsed = "'explode(\"...\", %s%%l%)' can be used instead";
 
     @SuppressWarnings("CanBeFinal")
     static private Pattern regexTextSearch = null;
@@ -91,10 +92,10 @@ public class PlainApiUseCheckStrategy {
 
             /* investigate using ctype_* functions instead */
             if (2 == parametersCount && functionName.equals("preg_match") && ctypePatterns.containsKey(patternAdapted)) {
-                String strError = strProblemCtypeCanBeUsed
+                String message = strProblemCtypeCanBeUsed
                         .replace("%r%", ctypePatterns.get(patternAdapted))
                         .replace("%p%", reference.getParameters()[1].getText());
-                holder.registerProblem(reference, strError, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
 
             /* investigate using explode instead */
@@ -103,7 +104,11 @@ public class PlainApiUseCheckStrategy {
                     regexSingleCharSet.matcher(patternAdapted).find() ||
                     !regexHasRegexAttributes.matcher(patternAdapted).find()
                 ) {
-                    holder.registerProblem(reference, strProblemExplodeCanBeUsed, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    final PsiElement[] params = reference.getParameters();
+                    final String message = strProblemExplodeCanBeUsed
+                            .replace("%s%", params[1].getText())
+                            .replace("%l%", params.length > 2 ? ", " + params[2].getText() : "");
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }
         }

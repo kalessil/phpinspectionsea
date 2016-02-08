@@ -8,9 +8,9 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -18,12 +18,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
-public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String strProblemDescription  = "'false %o% %f%(%s%, %p%)' should be used instead";
+public class StrNcmpUsedAsStrPosInspector extends BasePhpInspection {
+    private static final String strProblemDescription  = "'0 %o% %f%(%s%, %p%)' should be used instead";
 
     @NotNull
     public String getShortName() {
-        return "StrStrUsedAsStrPosInspection";
+        return "StrNcmpUsedAsStrPosInspection";
     }
 
     private static HashMap<String, String> mapping = null;
@@ -31,8 +31,8 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
         if (null == mapping) {
             mapping = new HashMap<String, String>();
 
-            mapping.put("strstr", "strpos");
-            mapping.put("stristr", "stripos");
+            mapping.put("strncmp", "strpos");
+            mapping.put("strncasecmp", "stripos");
         }
 
         return mapping;
@@ -43,7 +43,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                HashMap<String, String> mapping = getMapping();
+                final HashMap<String, String> mapping = getMapping();
 
                 /* check if it's the target function */
                 final String strFunctionName = reference.getName();
@@ -57,7 +57,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                     final BinaryExpression parent = (BinaryExpression) reference.getParent();
                     final PsiElement operation    = parent.getOperation();
                     if (null != operation && null != operation.getNode()) {
-                        IElementType operationType = operation.getNode().getElementType();
+                        final IElementType operationType = operation.getNode().getElementType();
                         if (
                             operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opNOT_IDENTICAL ||
                             operationType == PhpTokenTypes.opEQUAL     || operationType == PhpTokenTypes.opNOT_EQUAL
@@ -69,7 +69,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                             }
 
                             /* verify if operand is a boolean and report an issue */
-                            if (secondOperand instanceof ConstantReference && ExpressionSemanticUtil.isBoolean((ConstantReference) secondOperand)) {
+                            if (secondOperand instanceof PhpExpressionImpl && secondOperand.getText().equals("0")) {
                                 final String operator = operation.getText();
                                 final String message = strProblemDescription
                                         .replace("%o%", operator.length() == 2 ? operator + "=": operator)
@@ -85,7 +85,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                     }
                 }
 
-                /* checks NON-implicit boolean comparison patternS */
+                /* checks NON-implicit boolean comparison patterns */
                 if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
                     final String message = strProblemDescription
                             .replace("%o%", reference.getParent() instanceof UnaryExpression ? "===": "!==")

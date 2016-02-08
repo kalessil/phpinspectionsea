@@ -118,6 +118,10 @@ with a laptop.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.StrStrUsedAsStrPosInspector"/>
     <localInspection language="PHP" groupPath="PHP"
+        shortName="StrNcmpUsedAsStrPosInspection"                 displayName="Performance: 'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)'"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.StrNcmpUsedAsStrPosInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
         shortName="SubStrUsedAsStrPosInspection"                  displayName="Performance: 'substr(...)' could be replaced with 'strpos(...)'"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.SubStrUsedAsStrPosInspector"/>

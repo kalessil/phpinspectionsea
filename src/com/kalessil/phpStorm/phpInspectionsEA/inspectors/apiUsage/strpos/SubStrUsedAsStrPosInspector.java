@@ -54,7 +54,7 @@ public class SubStrUsedAsStrPosInspector  extends BasePhpInspection {
                 /* check parent expression, to ensure pattern matched */
                 if (reference.getParent() instanceof BinaryExpression) {
                     final BinaryExpression parent = (BinaryExpression) reference.getParent();
-                    final PsiElement operation = parent.getOperation();
+                    final PsiElement operation    = parent.getOperation();
                     if (null != operation && null != operation.getNode()) {
                         final IElementType operationType = operation.getNode().getElementType();
                         if (

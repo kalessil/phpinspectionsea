@@ -99,17 +99,16 @@ public class PlainApiUseCheckStrategy {
             }
 
             /* investigate using explode instead */
-            if (parametersCount >= 2 && functionName.equals("preg_split") && StringUtil.isEmpty(modifiers)) {
-                if (
-                    regexSingleCharSet.matcher(patternAdapted).find() ||
-                    !regexHasRegexAttributes.matcher(patternAdapted).find()
-                ) {
-                    final PsiElement[] params = reference.getParameters();
-                    final String message = strProblemExplodeCanBeUsed
-                            .replace("%s%", params[1].getText())
-                            .replace("%l%", params.length > 2 ? ", " + params[2].getText() : "");
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                }
+            if (
+                (parametersCount == 2 || parametersCount == 3) &&
+                functionName.equals("preg_split") && StringUtil.isEmpty(modifiers) &&
+                (regexSingleCharSet.matcher(patternAdapted).find() || !regexHasRegexAttributes.matcher(patternAdapted).find())
+            ) {
+                final PsiElement[] params = reference.getParameters();
+                final String message = strProblemExplodeCanBeUsed
+                        .replace("%s%", params[1].getText())
+                        .replace("%l%", params.length > 2 ? ", " + params[2].getText() : "");
+                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         }
     }

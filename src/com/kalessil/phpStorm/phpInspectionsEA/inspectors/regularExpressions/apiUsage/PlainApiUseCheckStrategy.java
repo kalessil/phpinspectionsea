@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -20,6 +21,7 @@ public class PlainApiUseCheckStrategy {
     private static final String strProblemReplaceIgnoreCase = "'str_ireplace(\"%t%\", ...)' can be used instead";
     private static final String strProblemCtypeCanBeUsed = "'%r%((string) %p%)' can be used instead";
     private static final String strProblemExplodeCanBeUsed = "'explode(\"...\", %s%%l%)' can be used instead";
+    private static final String strProblemTrimsCanBeUsed = "'%f%(%s%, \"...\")' can be used instead";
 
     @SuppressWarnings("CanBeFinal")
     static private Pattern regexTextSearch = null;
@@ -42,6 +44,13 @@ public class PlainApiUseCheckStrategy {
     }
 
     @SuppressWarnings("CanBeFinal")
+    static private Pattern trimPatterns = null;
+    static {
+        // 	^((\^[^\.][\+\*])|([^\.][\+\*]\$)|(\^[^\.][\+\*]\|[^\.][\+\*]\$))$
+        trimPatterns = Pattern.compile("^((\\^[^\\.][\\+\\*])|([^\\.][\\+\\*]\\$)|(\\^[^\\.][\\+\\*]\\|[^\\.][\\+\\*]\\$))$");
+    }
+
+    @SuppressWarnings("CanBeFinal")
     static private HashMap<String, String> ctypePatterns = null;
     static {
         ctypePatterns = new HashMap<String, String>();
@@ -61,16 +70,17 @@ public class PlainApiUseCheckStrategy {
             final String modifiers, final String pattern,
             @NotNull final ProblemsHolder holder
     ) {
-        final int parametersCount = reference.getParameters().length;
+        final PsiElement[] params = reference.getParameters();
+        final int parametersCount = params.length;
         if (parametersCount >= 2 && !StringUtil.isEmpty(pattern)) {
-            String patternAdapted = pattern
+            final String patternAdapted = pattern
                     .replace("a-zA-Z",    "A-Za-z")
                     .replace("0-9A-Za-z", "A-Za-z0-9");
 
             Matcher regexMatcher = regexTextSearch.matcher(patternAdapted);
             if (regexMatcher.find()) {
                 final boolean ignoreCase = !StringUtil.isEmpty(modifiers) && modifiers.indexOf('i') >= 0;
-                final boolean startWith = !StringUtil.isEmpty(regexMatcher.group(1));
+                final boolean startWith  = !StringUtil.isEmpty(regexMatcher.group(1));
 
                 /* analyse if pattern is the one strategy targeting */
                 String strProblemDescription = null;
@@ -90,21 +100,38 @@ public class PlainApiUseCheckStrategy {
                 }
             }
 
-            /* investigate using ctype_* functions instead */
+            /* investigate using ctype_*(...) instead */
             if (2 == parametersCount && functionName.equals("preg_match") && ctypePatterns.containsKey(patternAdapted)) {
-                String message = strProblemCtypeCanBeUsed
+                final String message = strProblemCtypeCanBeUsed
                         .replace("%r%", ctypePatterns.get(patternAdapted))
-                        .replace("%p%", reference.getParameters()[1].getText());
+                        .replace("%p%", params[1].getText());
                 holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
 
-            /* investigate using explode instead */
+            /* investigate using *trim(...) instead */
             if (
-                (parametersCount == 2 || parametersCount == 3) &&
-                functionName.equals("preg_split") && StringUtil.isEmpty(modifiers) &&
+                3 == parametersCount && functionName.equals("preg_replace") && params[1] instanceof StringLiteralExpression &&
+                ((StringLiteralExpression) params[1]).getContents().length() == 0 && trimPatterns.matcher(patternAdapted).find()
+            ) {
+                String function = "trim";
+                if (!pattern.startsWith("^")) {
+                    function = "rtrim";
+                }
+                if (!pattern.endsWith("$")) {
+                    function = "ltrim";
+                }
+
+                final String message = strProblemTrimsCanBeUsed
+                        .replace("%f%", function)
+                        .replace("%s%", params[2].getText());
+                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+            }
+
+            /* investigate using explode(...) instead */
+            if (
+                (parametersCount == 2 || parametersCount == 3) && functionName.equals("preg_split") && StringUtil.isEmpty(modifiers) &&
                 (regexSingleCharSet.matcher(patternAdapted).find() || !regexHasRegexAttributes.matcher(patternAdapted).find())
             ) {
-                final PsiElement[] params = reference.getParameters();
                 final String message = strProblemExplodeCanBeUsed
                         .replace("%s%", params[1].getText())
                         .replace("%l%", params.length > 2 ? ", " + params[2].getText() : "");

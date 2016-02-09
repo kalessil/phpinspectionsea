@@ -163,8 +163,9 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                     if (
                         null != comparedElement &&
                         (
-                            comparedElement instanceof BinaryExpression  || // e.g. mathematical operations
-                            comparedElement instanceof FunctionReference || // first the function needs to be relocated
+                            comparedElement instanceof BinaryExpression      || // e.g. mathematical operations
+                            comparedElement instanceof FunctionReference     || // first the function needs to be relocated
+                            comparedElement instanceof ArrayAccessExpression || // we can not analyze this anyway
                             PhpPsiUtil.isOfType(comparedElement.getFirstChild(), PhpTokenTypes.DECIMAL_INTEGER)
                         )
                     ) {

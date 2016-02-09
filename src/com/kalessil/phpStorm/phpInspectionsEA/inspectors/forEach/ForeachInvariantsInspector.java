@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -20,7 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class ForeachInvariantsInspector extends BasePhpInspection {
-    private static final String strForBehavesAsForeach  = "Foreach can probably be used instead (easier to read and support; ensure a string is not iterated)";
+    private static final String strForBehavesAsForeach   = "Foreach can probably be used instead (easier to read and support; ensure a string is not iterated)";
+    private static final String strEachBehavesAsForeach  = "Foreach should be used instead (performance improvements)";
 
     @NotNull
     public String getShortName() {
@@ -31,6 +33,24 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
+            public void visitPhpMultiassignmentExpression(MultiassignmentExpression multiassignmentExpression) {
+                PhpPsiElement values = multiassignmentExpression.getValue();
+                if (values instanceof PhpExpressionImpl) {
+                    values = ((PhpExpressionImpl) values).getValue();
+                }
+
+                if (values instanceof FunctionReference && !(values instanceof MethodReference)) {
+                    final FunctionReference eachCandidate = (FunctionReference) values;
+                    final String function                 = eachCandidate.getName();
+                    if (!StringUtil.isEmpty(function) && function.equals("each")) {
+                        final PsiElement parent = multiassignmentExpression.getParent();
+                        if (parent instanceof While || parent instanceof For) {
+                            holder.registerProblem(parent.getFirstChild(), strEachBehavesAsForeach, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        }
+                    }
+                }
+            }
+
             public void visitPhpFor(For forStatement) {
                 if (isForeachAnalog(forStatement)) {
                     /* report the issue */

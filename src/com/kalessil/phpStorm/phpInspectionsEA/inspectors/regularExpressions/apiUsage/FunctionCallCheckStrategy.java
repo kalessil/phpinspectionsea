@@ -14,18 +14,19 @@ public class FunctionCallCheckStrategy {
 
     static public void apply(final String functionName, @NotNull final FunctionReference reference, @NotNull final ProblemsHolder holder) {
         if (!StringUtil.isEmpty(functionName)) {
-            PsiElement[] params = reference.getParameters();
+            final PsiElement[] params = reference.getParameters();
 
-            if (functionName.equals("preg_quote") && 1 == params.length) {
+            if (1 == params.length && functionName.equals("preg_quote")) {
                 holder.registerProblem(reference, strProblemQuote, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 return;
             }
 
             if (
-                functionName.equals("preg_match_all") && 2 == params.length &&
+                2 == params.length && functionName.equals("preg_match_all") &&
                 ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)
             ) {
                 holder.registerProblem(reference, strProblemMatchAll, ProblemHighlightType.WEAK_WARNING);
+                // return
             }
         }
     }

@@ -11,13 +11,14 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
-public class SubStrUsedAsStrPosInspector  extends BasePhpInspection {
-    private static final String strProblemUseStrpos = "'%i% %o% strpos(%s%, %p%)' should be used instead";
+public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
+    private static final String strProblemUseStrpos = "'%i% %o% %f%(%s%, %p%)' should be used instead";
     private static final String strProblemSimplify = "'%l%' can be safely dropped, so '-%r%' is only left";
 
     @NotNull
@@ -50,10 +51,29 @@ public class SubStrUsedAsStrPosInspector  extends BasePhpInspection {
                 if (!(params[1] instanceof PhpExpressionImpl) || !index.trim().equals("0")) {
                     return;
                 }
+                PsiElement highLevelCall    = reference;
+                PsiElement parentExpression = reference.getParent();
+                if (parentExpression instanceof ParameterList) {
+                    parentExpression = parentExpression.getParent();
+                }
+
+                /* if the call wrapped with case manipulation, propose to use stripos */
+                boolean caseManipulated = false;
+                if (
+                    parentExpression instanceof FunctionReference && !(parentExpression instanceof MethodReference) &&
+                    1 == ((FunctionReference) parentExpression).getParameters().length
+                ) {
+                    final String parentName = ((FunctionReference) parentExpression).getName();
+                    if (!StringUtil.isEmpty(parentName) && (parentName.equals("strtoupper") || parentName.equals("strtolower"))) {
+                        caseManipulated  = true;
+                        highLevelCall    = parentExpression;
+                        parentExpression = parentExpression.getParent();
+                    }
+                }
 
                 /* check parent expression, to ensure pattern matched */
-                if (reference.getParent() instanceof BinaryExpression) {
-                    final BinaryExpression parent = (BinaryExpression) reference.getParent();
+                if (parentExpression instanceof BinaryExpression) {
+                    final BinaryExpression parent = (BinaryExpression) parentExpression;
                     final PsiElement operation    = parent.getOperation();
                     if (null != operation && null != operation.getNode()) {
                         final IElementType operationType = operation.getNode().getElementType();
@@ -63,18 +83,19 @@ public class SubStrUsedAsStrPosInspector  extends BasePhpInspection {
                         ) {
                             /* get second operand */
                             PsiElement secondOperand = parent.getLeftOperand();
-                            if (secondOperand == reference) {
+                            if (secondOperand == highLevelCall) {
                                 secondOperand = parent.getRightOperand();
                             }
 
                             if (null != secondOperand) {
                                 final String operator = operation.getText();
                                 final String message = strProblemUseStrpos
+                                        .replace("%f%", caseManipulated ? "stripos" : "strpos")
                                         .replace("%i%", index)
                                         .replace("%o%", operator.length() == 2 ? operator + "=" : operator)
                                         .replace("%s%", params[0].getText())
                                         .replace("%p%", secondOperand.getText());
-                                holder.registerProblem(parent, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                holder.registerProblem(parentExpression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
 
                                 // return;
                             }

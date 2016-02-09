@@ -37,20 +37,20 @@ public class ShortClassDefinitionStrategy {
     static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
         if (!StringUtil.isEmpty(pattern)) {
             final boolean isUnicodeMode = !StringUtil.isEmpty(modifiers) && modifiers.indexOf('u') != -1;
-            String strHint = isUnicodeMode ? "risky, will match extended sets due to /u" : "safe in non-unicode mode";
+            final String strHint = isUnicodeMode ? "risky, will match extended sets due to /u" : "safe in non-unicode mode";
 
-            String patternAdapted = pattern
+            final String patternAdapted = pattern
                     .replace("a-zA-Z",    "A-Za-z")
                     .replace("0-9A-Za-z", "A-Za-z0-9");
 
-            HashMap<String, String> mapping = getMapping();
+            final HashMap<String, String> mapping = getMapping();
             for (String wildcard : mapping.keySet()) {
                 if (patternAdapted.contains(wildcard)) {
-                    String strError = strProblemDescription
+                    final String message = strProblemDescription
                             .replace("%p%", wildcard)
                             .replace("%r%", mapping.get(wildcard))
                             .replace("%h%", strHint);
-                    holder.registerProblem(target, strError, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING);
                 }
             }
 

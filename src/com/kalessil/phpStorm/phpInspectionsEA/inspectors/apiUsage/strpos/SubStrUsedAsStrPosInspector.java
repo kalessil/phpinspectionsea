@@ -18,8 +18,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String strProblemUseStrpos = "'%i% %o% %f%(%s%, %p%)' should be used instead";
-    private static final String strProblemSimplify = "'%l%' can be safely dropped, so '-%r%' is only left";
+    private static final String strProblemUseStrpos      = "'%i% %o% %f%(%s%, %p%)' should be used instead";
+    private static final String strProblemDropLength     = "'%l%' can be safely dropped";
+    private static final String strProblemSimplifyLength = "'%l%' can be safely dropped, so '-%r%' is only left";
 
     @NotNull
     public String getShortName() {
@@ -51,6 +52,8 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                 if (!(params[1] instanceof PhpExpressionImpl) || !index.trim().equals("0")) {
                     return;
                 }
+
+                /* prepare variables, so we could properly process polymorphic pattern */
                 PsiElement highLevelCall    = reference;
                 PsiElement parentExpression = reference.getParent();
                 if (parentExpression instanceof ParameterList) {
@@ -129,10 +132,17 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                                 1 == leftCallParams.length && !StringUtil.isEmpty(leftCallName) && leftCallName.equals("strlen") &&
                                 PsiEquivalenceUtil.areElementsEquivalent(leftCallParams[0], params[0])
                             ) {
-                                final String message = strProblemSimplify
-                                        .replace("%l%", leftCall.getText())
-                                        .replace("%r%", candidate.getRightOperand().getText());
-                                holder.registerProblem(leftCall, message, ProblemHighlightType.LIKE_DEPRECATED);
+                                if (PsiEquivalenceUtil.areElementsEquivalent(candidate.getRightOperand(), params[1])) {
+                                    /* 3rd parameter not needed at all */
+                                    final String message = strProblemDropLength.replace("%l%", params[2].getText());
+                                    holder.registerProblem(params[2], message, ProblemHighlightType.LIKE_DEPRECATED);
+                                } else {
+                                    /* 3rd parameter can be simplified */
+                                    final String message = strProblemSimplifyLength
+                                            .replace("%l%", leftCall.getText())
+                                            .replace("%r%", candidate.getRightOperand().getText());
+                                    holder.registerProblem(leftCall, message, ProblemHighlightType.LIKE_DEPRECATED);
+                                }
 
                                 // return;
                             }

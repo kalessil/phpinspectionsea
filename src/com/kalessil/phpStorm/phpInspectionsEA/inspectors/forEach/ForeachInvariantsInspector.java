@@ -159,8 +159,15 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    // stop analysis if number is used for comparison
-                    if (null != comparedElement && PhpPsiUtil.isOfType(comparedElement.getFirstChild(), PhpTokenTypes.DECIMAL_INTEGER)) {
+                    // stop analysis if unexpected expression used for comparison
+                    if (
+                        null != comparedElement &&
+                        (
+                            comparedElement instanceof BinaryExpression  || // e.g. mathematical operations
+                            comparedElement instanceof FunctionReference || // first the function needs to be relocated
+                            PhpPsiUtil.isOfType(comparedElement.getFirstChild(), PhpTokenTypes.DECIMAL_INTEGER)
+                        )
+                    ) {
                         isComparedNotProperExpression = true;
                         break;
                     }

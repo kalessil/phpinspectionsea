@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions;
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
@@ -66,12 +67,13 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 }
 
                 /* resolve first parameter */
+                final PsiElement[] params = reference.getParameters();
                 StringLiteralExpression pattern = null;
-                if (reference.getParameters().length > 0) {
-                    pattern = ExpressionSemanticUtil.resolveAsStringLiteral(reference.getParameters()[0]);
+                if (params.length > 0) {
+                    pattern = ExpressionSemanticUtil.resolveAsStringLiteral(params[0]);
                 }
                 /* not available / PhpStorm limitations */
-                if (null == pattern || pattern.getContainingFile() != reference.getParameters()[0].getContainingFile()) {
+                if (null == pattern || pattern.getContainingFile() != params[0].getContainingFile()) {
                     return;
                 }
 

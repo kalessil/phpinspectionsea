@@ -38,8 +38,8 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                 }
 
                 /* general requirements for calls */
-                String function = reference.getName();
-                PsiElement[] parameters = reference.getParameters();
+                final String function         = reference.getName();
+                final PsiElement[] parameters = reference.getParameters();
                 if (
                     0 == parameters.length || StringUtil.isEmpty(function) ||
                     !(function.equals("call_user_func") || function.equals("call_user_func_array"))

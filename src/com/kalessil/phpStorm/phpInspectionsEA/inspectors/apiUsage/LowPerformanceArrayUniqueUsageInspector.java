@@ -26,14 +26,9 @@ public class LowPerformanceArrayUniqueUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /** try filtering by args count first */
-                PsiElement[] parameters = reference.getParameters();
-                final int intParamsCount = parameters.length;
-                if (intParamsCount != 1) {
-                    return;
-                }
-                /** now naming filter */
-                final String strFunctionName = reference.getName();
-                if (StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("array_unique")) {
+                final PsiElement[] parameters = reference.getParameters();
+                final String strFunctionName  = reference.getName();
+                if (parameters.length != 1 || StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("array_unique")) {
                     return;
                 }
 

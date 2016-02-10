@@ -30,8 +30,8 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                PsiElement[] parameters = reference.getParameters();
-                String function = reference.getName();
+                final PsiElement[] parameters = reference.getParameters();
+                final String function         = reference.getName();
                 if (1 == parameters.length && !StringUtil.isEmpty(function) && function.equals("ksort")) {
                     // pre-condition satisfied, now check if http_build_query used in the scope
 

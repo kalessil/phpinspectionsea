@@ -52,7 +52,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                             referenceVariable.equals("parent") &&
                             !StringUtil.isEmpty(referenceName) &&  referenceName.equals(methodName)
                         ) {
-                            Parameter[] methodParameters = objMethod.getParameters();
+                            final Parameter[] methodParameters = objMethod.getParameters();
 
                             /* ensure no transformations happens */
                             boolean isDispatchingWithoutModifications = (reference.getParameters().length == methodParameters.length);
@@ -69,8 +69,8 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                             if (null != referenceToMethod && isDispatchingWithoutModifications && methodParameters.length > 0){
                                 PsiElement referenceResolved = referenceToMethod.resolve();
                                 if (referenceResolved instanceof Method) {
-                                    Method nestedMethod = (Method) referenceResolved;
-                                    Parameter[] parentParameters = nestedMethod.getParameters();
+                                    final Method nestedMethod          = (Method) referenceResolved;
+                                    final Parameter[] parentParameters = nestedMethod.getParameters();
 
                                     if (parentParameters.length == methodParameters.length && nestedMethod.getAccess().equals(objMethod.getAccess())) {
                                         for (int index = 0; index < parentParameters.length; ++index) {

@@ -158,8 +158,9 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 // custom offsets management, follow annotated types
                 Method offsetSetMethod = classToCheck.findMethodByName("offsetSet");
                 if (null != offsetSetMethod) {
-                    if (offsetSetMethod.getParameters().length > 0) {
-                        TypeFromPlatformResolverUtil.resolveExpressionType(offsetSetMethod.getParameters()[0], indexTypesSupported);
+                    final PsiElement[] offsetSetParams = offsetSetMethod.getParameters();
+                    if (offsetSetParams.length > 0) {
+                        TypeFromPlatformResolverUtil.resolveExpressionType(offsetSetParams[0], indexTypesSupported);
                     }
 
                     supportsOffsets = true;
@@ -168,8 +169,9 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 // custom offsets management, follow annotated types
                 Method offsetGetMethod = classToCheck.findMethodByName("offsetGet");
                 if (null != offsetGetMethod) {
-                    if (offsetGetMethod.getParameters().length > 0) {
-                        TypeFromPlatformResolverUtil.resolveExpressionType(offsetGetMethod.getParameters()[0], indexTypesSupported);
+                    final PsiElement[] offsetGetParams = offsetGetMethod.getParameters();
+                    if (offsetGetParams.length > 0) {
+                        TypeFromPlatformResolverUtil.resolveExpressionType(offsetGetParams[0], indexTypesSupported);
                     }
 
                     supportsOffsets = true;

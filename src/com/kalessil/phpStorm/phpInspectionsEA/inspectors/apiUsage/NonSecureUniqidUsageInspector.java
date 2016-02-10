@@ -22,10 +22,10 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final String strFunction              = reference.getName();
+                final String strFunction = reference.getName();
                 if (
-                    !StringUtil.isEmpty(strFunction) && strFunction.equals("uniqid") &&
-                    reference.getParameters().length != 2
+                    reference.getParameters().length != 2 &&
+                    !StringUtil.isEmpty(strFunction) && strFunction.equals("uniqid")
                 ) {
                     holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR);
                 }

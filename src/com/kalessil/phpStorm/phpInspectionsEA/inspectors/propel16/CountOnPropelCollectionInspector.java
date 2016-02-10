@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.propel16;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
@@ -61,9 +62,9 @@ public class CountOnPropelCollectionInspector extends BasePhpInspection {
                 }
 
                 /** only count calls with one parameter to check */
-                String strName = reference.getName();
-                PsiElement[] arrParameters = reference.getParameters();
-                if (null == strName || arrParameters.length != 1 || !strName.equals("count")) {
+                final String strName             = reference.getName();
+                final PsiElement[] arrParameters = reference.getParameters();
+                if (arrParameters.length != 1 || StringUtil.isEmpty(strName) || !strName.equals("count")) {
                     return;
                 }
 

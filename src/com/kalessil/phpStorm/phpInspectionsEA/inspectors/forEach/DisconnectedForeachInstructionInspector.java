@@ -153,9 +153,9 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
                         /* php-specific variables introduction: preg_match[_all] exporting results into 3rd argument */
                         if (parent instanceof ParameterList && parent.getParent() instanceof FunctionReference) {
-                            FunctionReference call = (FunctionReference) parent.getParent();
-                            String functionName = call.getName();
-                            PsiElement[] parameters = call.getParameters();
+                            final FunctionReference call  = (FunctionReference) parent.getParent();
+                            final String functionName     = call.getName();
+                            final PsiElement[] parameters = call.getParameters();
 
                             // TODO: array_pop, array_shift, next, current, ... -> use mapping function => argument modified
                             if (

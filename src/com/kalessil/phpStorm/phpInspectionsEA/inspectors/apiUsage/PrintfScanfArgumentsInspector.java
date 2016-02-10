@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
@@ -60,11 +61,12 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
                 }
 
                 /* resolve needed parameter */
-                final int neededPosition = mapping.get(strFunctionName);
+                final int neededPosition              = mapping.get(strFunctionName);
                 final int minimumArgumentsForAnalysis = neededPosition + 1;
-                StringLiteralExpression pattern = null;
-                if (reference.getParameters().length >= minimumArgumentsForAnalysis) {
-                    pattern = ExpressionSemanticUtil.resolveAsStringLiteral(reference.getParameters()[neededPosition]);
+                StringLiteralExpression pattern       = null;
+                final PsiElement[] referenceParams    = reference.getParameters();
+                if (referenceParams.length >= minimumArgumentsForAnalysis) {
+                    pattern = ExpressionSemanticUtil.resolveAsStringLiteral(referenceParams[neededPosition]);
                 }
                 /* not available */
                 if (null == pattern) {
@@ -99,12 +101,12 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
                     /* check for pattern validity */
                     final int parametersInPattern = StringUtil.getOccurrenceCount(content.replace("%%", ""), '%');
                     if (countParsedAll != parametersInPattern) {
-                        holder.registerProblem(reference.getParameters()[0], strProblemInvalid, ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(referenceParams[0], strProblemInvalid, ProblemHighlightType.GENERIC_ERROR);
                         return;
                     }
 
                     /* check for arguments matching */
-                    if (countParsingExpectedParameters != reference.getParameters().length) {
+                    if (countParsingExpectedParameters != referenceParams.length) {
                         String strError = strProblemDescription.replace("%c%", String.valueOf(countParsingExpectedParameters));
                         holder.registerProblem(reference, strError, ProblemHighlightType.GENERIC_ERROR);
                     }

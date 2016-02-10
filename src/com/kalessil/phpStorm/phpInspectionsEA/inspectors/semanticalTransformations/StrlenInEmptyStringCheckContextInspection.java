@@ -85,12 +85,11 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
 
                 /* investigate possible issues */
                 if (isMatchedPattern) {
-                    final int argumentsCount       = reference.getParameters().length;
-
+                    final PsiElement[] params = reference.getParameters();
                     /* first evaluate if any object casting issues presented */
                     if (
-                        argumentsCount > 0 &&
-                        ClassInStringContextStrategy.apply(reference.getParameters()[0], holder, warningTarget, strProblemDescriptionMissingToStringMethod)
+                        params.length > 0 &&
+                        ClassInStringContextStrategy.apply(params[0], holder, warningTarget, strProblemDescriptionMissingToStringMethod)
                     ) {
                         holder.registerProblem(reference.getParent(), strProblemDescriptionObjectUsed, ProblemHighlightType.WEAK_WARNING);
                         return;

@@ -65,13 +65,12 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(final FunctionReference reference) {
-                String strFunctionName = reference.getName();
-                if (StringUtil.isEmpty(strFunctionName) || !INI_FUNCTIONS.contains(strFunctionName)) {
-                    return;
-                }
-
-                PsiElement[] parameters = reference.getParameters();
-                if (parameters.length == 0 || !(parameters[0] instanceof StringLiteralExpression)) {
+                final String strFunctionName  = reference.getName();
+                final PsiElement[] parameters = reference.getParameters();
+                if (
+                    parameters.length == 0 || StringUtil.isEmpty(strFunctionName) ||
+                    !INI_FUNCTIONS.contains(strFunctionName) || !(parameters[0] instanceof StringLiteralExpression)
+                ) {
                     return;
                 }
 
@@ -80,8 +79,8 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                     return;
                 }
 
-                String strError = INI_OPTIONS.get(optionName);
-                holder.registerProblem(parameters[0], strError, ProblemHighlightType.LIKE_DEPRECATED);
+                String message = INI_OPTIONS.get(optionName);
+                holder.registerProblem(parameters[0], message, ProblemHighlightType.LIKE_DEPRECATED);
             }
         };
     }

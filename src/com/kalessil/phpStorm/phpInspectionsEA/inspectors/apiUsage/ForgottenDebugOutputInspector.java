@@ -127,7 +127,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                 HashMap<String, Integer> requirements = getFunctionsRequirements();
                 if (
                     !StringUtil.isEmpty(strFunction) && requirements.containsKey(strFunction) &&
-                    reference.getParameters().length != requirements.get(strFunction)
+                    reference.getParameters().length != requirements.get(strFunction) // keep it here when function hit
                 ) {
                     holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;

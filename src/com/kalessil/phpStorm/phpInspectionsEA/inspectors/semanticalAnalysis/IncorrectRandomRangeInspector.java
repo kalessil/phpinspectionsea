@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
+import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -46,13 +47,15 @@ public class IncorrectRandomRangeInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (params[1] instanceof PhpExpressionImpl && params[0] instanceof PhpExpressionImpl) {
+                if (
+                    params[1] instanceof PhpExpressionImpl && !(params[1] instanceof UnaryExpressionImpl) &&
+                    params[0] instanceof PhpExpressionImpl && !(params[0] instanceof UnaryExpressionImpl)
+                ) {
                     try {
                         if (Integer.valueOf(params[1].getText()) < Integer.valueOf(params[0].getText())) {
                             holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR);
                         }
                     } catch (NumberFormatException wrongFormat) {
-                        holder.registerProblem(reference, "not parsed", ProblemHighlightType.LIKE_DEPRECATED);
                         return;
                     }
                 }

@@ -32,7 +32,7 @@ public class StrTrUsageAsStrReplaceInspector extends BasePhpInspection {
                 }
 
                 /* function usage with 3 parameters is the target pattern */
-                PsiElement[] referenceParameters = reference.getParameters();
+                final PsiElement[] referenceParameters = reference.getParameters();
                 if (3 == referenceParameters.length) {
                     /* ensure multiple search-replace are not packed into strings */
                     StringLiteralExpression search = ExpressionSemanticUtil.resolveAsStringLiteral(referenceParameters[1]);

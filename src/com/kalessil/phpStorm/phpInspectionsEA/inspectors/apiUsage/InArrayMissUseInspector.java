@@ -28,8 +28,8 @@ public class InArrayMissUseInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /** try filtering by args count first */
-                PsiElement[] parameters = reference.getParameters();
-                final int intParamsCount = parameters.length;
+                final PsiElement[] parameters = reference.getParameters();
+                final int intParamsCount      = parameters.length;
                 if (intParamsCount < 2 || intParamsCount > 3) {
                     return;
                 }

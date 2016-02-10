@@ -41,8 +41,8 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                PsiElement[] parameters = reference.getParameters();
-                final String strFunctionName = reference.getName();
+                final PsiElement[] parameters = reference.getParameters();
+                final String strFunctionName  = reference.getName();
                 if (parameters.length < 2 || StringUtil.isEmpty(strFunctionName)) {
                     return;
                 }

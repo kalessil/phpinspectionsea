@@ -39,19 +39,19 @@ public class UselessReturnInspector extends BasePhpInspection {
             }
 
             private void inspectForSenselessReturn(Function callable) {
-                GroupStatement objBody = ExpressionSemanticUtil.getGroupStatement(callable);
-                if (null == objBody) {
+                GroupStatement body = ExpressionSemanticUtil.getGroupStatement(callable);
+                if (null == body) {
                     return;
                 }
 
-                PsiElement objLastExpression = ExpressionSemanticUtil.getLastStatement(objBody);
-                if (!(objLastExpression instanceof PhpReturn)) {
+                PsiElement lastExpression = ExpressionSemanticUtil.getLastStatement(body);
+                if (!(lastExpression instanceof PhpReturn)) {
                     return;
                 }
 
-                PhpExpression objReturnValue = ExpressionSemanticUtil.getReturnValue((PhpReturn) objLastExpression);
-                if (null == objReturnValue) {
-                    holder.registerProblem(objLastExpression, strProblemUseless, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue((PhpReturn) lastExpression);
+                if (null == returnValue) {
+                    holder.registerProblem(lastExpression, strProblemUseless, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                 }
             }
         };

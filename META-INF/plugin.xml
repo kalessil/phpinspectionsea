@@ -308,6 +308,10 @@ with a laptop.
         shortName="IncorrectRandomRangeInspection"                displayName="Probable bugs: incorrect random generation range"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.IncorrectRandomRangeInspector"/>
+    <localInspection language="PHP" groupPath="PHP"
+        shortName="UntrustedInclusionInspection"                  displayName="Probable bugs: untrusted files inclusion"
+        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UntrustedInclusionInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="PhpUnitTestsInspection"                        displayName="PhpUnit: bugs and best practices"

@@ -44,7 +44,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
             public void visitPhpIsset(PhpIsset issetExpression) {
                 /*
                  * if no parameters, we shall not check;
-                 * if multiple parameters, perhaps if-inspection fulfilled and issets were merged
+                 * if multiple parameters, perhaps if-inspection fulfilled and isset's were merged
                  *
                  * TODO: still needs analysis regarding concatenations in indexes
                  */

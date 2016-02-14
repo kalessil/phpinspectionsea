@@ -56,6 +56,7 @@ public class IncorrectRandomRangeInspector extends BasePhpInspection {
                             holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR);
                         }
                     } catch (NumberFormatException wrongFormat) {
+                        //noinspection UnnecessaryReturnStatement
                         return;
                     }
                 }

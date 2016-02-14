@@ -53,7 +53,7 @@ public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Replace with __DIR__";
+            return "Replace by __DIR__";
         }
 
         @NotNull

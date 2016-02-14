@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.3.10</version>
+  <version>1.3.11</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -14,7 +14,7 @@
     143.382  — 143.382   PS 10.0.1     -> 1.3.9.1 [ok]
     143.1184 — 143.1184  PS 10.0.2     -> 1.3.9.2 [ok]
 
-    143.1480 — *         PS 10.0.3/EAP -> 1.3.9.3 [ok]
+    143.1480 — *         PS 10.0.3/EAP -> 1.3.10  [ok]
     138.2001 — 138.2001  PS 8.0.3      -> not supported anymore (PHP 7 related classes)
   -->
 
@@ -50,14 +50,18 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-26 Jan 2016: bug-fixes<br/>
+14 Feb 2016: improvements and new inspections<br/>
 <br/>
-    - Reference mismatch: run only when language level is below PHP7;<br/>
-    - One-time use variables: fix false-positives with return by reference;<br/>
-    - Senseless proxy function: fix false-positives with visibility change;<br/>
-    - Exceptions handling and annotating: case insensitive Inheritdoc analysis applied;<br/>
-    - Inconsistent 'http_build_query(...)' result: resolved project startup exception;<br/>
-    - 'strtr(...)' could be replaced with 'str_replace(...)': fix false-positives with multy-character patterns;<br/>
+    - Foreach usage possible: recognize list/each pattern, reduce amount of false-positives;<br/>
+    - Non-optimal regular expression: *trim, explode patterns recognition implemented;<br/>
+    - 'dirname(...)' could be replaced by '__DIR__': added quick fix;<br/>
+    - 'mkdir(...)' race condition: fixed marking complete file in red;<br/>
+    - 'strpos(...)' inspections: reporting improved;<br/>
+<br/>
+    - Untrusted files inclusion: implemented;<br/>
+    - Incorrect random generation range: implemented;<br/>
+    - 'substr(...)' could be replaced with 'strpos(...)': implemented;<br/>
+    - 'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)': implemented;<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -297,7 +301,7 @@ with a laptop.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SummerTimeUnsafeTimeManipulationInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="MkdirRaceConditionInspection"                  displayName="Probable bugs: mkdir(...) race condition"
+        shortName="MkdirRaceConditionInspection"                  displayName="Probable bugs: 'mkdir(...)' race condition"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.MkdirRaceConditionInspector"/>
     <localInspection language="PHP" groupPath="PHP"

@@ -8,10 +8,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.BinaryExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
@@ -36,16 +33,18 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 String functionName = reference.getName();
-                if (StringUtil.isEmpty(functionName) || !functionName.equals("mkdir")) {
+                if (!reference.getContainingFile().isValid() || StringUtil.isEmpty(functionName) || !functionName.equals("mkdir")) {
                     return;
                 }
 
-                /* find out expression where the call is contained - quite big set of variations */
-                PsiElement parent = getCompleteExpression(reference);
+                /* ind out expression where the call is contained - quite big set of variations */
+                final PsiElement parent = getCompleteExpression(reference);
 
-                // case 1: mkdir(...);
-                if (parent instanceof StatementImpl || parent instanceof AssignmentExpression) {
-                    holder.registerProblem(parent, strProblemMkdirDirectCall, ProblemHighlightType.GENERIC_ERROR);
+                // case 1: [$var =] mkdir(...); / if ([!]mkdir(...))
+                if (parent instanceof StatementImpl || parent instanceof AssignmentExpression || parent instanceof If) {
+                    final PsiElement target = parent instanceof If ? parent.getFirstChild() : parent;
+                    holder.registerProblem(target, strProblemMkdirDirectCall, ProblemHighlightType.GENERIC_ERROR);
+
                     return;
                 }
 
@@ -77,26 +76,28 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     /* report when needed */
                     if (!isSecondExistenceCheckExists) {
                         holder.registerProblem(parent, strProblemMkdirInCondition, ProblemHighlightType.GENERIC_ERROR);
+                        // return;
                     }
                 }
             }
 
             @NotNull
             private PsiElement getCompleteExpression(@NotNull PsiElement expression) {
-                PsiElement parent = expression.getParent();
+                final PsiElement parent = expression.getParent();
+
                 if (parent instanceof StatementImpl || parent instanceof AssignmentExpression) {
                     return parent;
                 }
                 if (parent instanceof ParenthesizedExpression) {
-                    return getCompleteExpression(parent.getParent());
+                    return getCompleteExpression(parent);
                 }
 
                 if (parent instanceof UnaryExpressionImpl) {
                     UnaryExpressionImpl unary = (UnaryExpressionImpl) parent;
                     if (null != unary.getOperation()) {
-                        IElementType operation = unary.getOperation().getNode().getElementType();
+                        final IElementType operation = unary.getOperation().getNode().getElementType();
                         if (PhpTokenTypes.opSILENCE == operation || PhpTokenTypes.opNOT == operation) {
-                            return getCompleteExpression(unary.getParent());
+                            return getCompleteExpression(unary);
                         }
                     }
                 }
@@ -104,12 +105,12 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 if (parent instanceof BinaryExpressionImpl) {
                     BinaryExpressionImpl binary = (BinaryExpressionImpl) parent;
                     if (null != binary.getOperation()) {
-                        IElementType operation = binary.getOperationType();
+                        final IElementType operation = binary.getOperationType();
                         if (PhpTokenTypes.opAND == operation || PhpTokenTypes.opOR == operation) {
                             return expression;
                         }
 
-                        return getCompleteExpression(binary.getParent());
+                        return getCompleteExpression(binary);
                     }
                 }
 

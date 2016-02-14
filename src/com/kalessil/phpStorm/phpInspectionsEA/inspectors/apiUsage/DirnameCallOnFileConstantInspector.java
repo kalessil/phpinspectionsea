@@ -1,10 +1,14 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -12,9 +16,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "__DIR__ shall be used instead";
-    private static final String strFile    = "__FILE__";
-    private static final String strDirName = "dirname";
+    private final LocalQuickFix fixQuick              = new TheLocalFix();
+    private static final String strProblemDescription = "__DIR__ should be used instead";
 
     @NotNull
     public String getShortName() {
@@ -27,22 +30,44 @@ public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /** check requirements */
-                final PsiElement[] arrParams = reference.getParameters();
-                final String strFunction     = reference.getName();
-                if (1 != arrParams.length || StringUtil.isEmpty(strFunction)) {
+                final PsiElement[] params = reference.getParameters();
+                final String name         = reference.getName();
+                if (1 != params.length || StringUtil.isEmpty(name) || !name.equals("dirname")) {
                     return;
                 }
-                PsiElement objFirstParameter = arrParams[0];
-                if (!(objFirstParameter instanceof ConstantReference)) {
+                final PsiElement firstParameter = params[0];
+                if (!(firstParameter instanceof ConstantReference)) {
                     return;
                 }
 
-                /** inspect given construct */
-                String strConstant = ((ConstantReference) objFirstParameter).getName();
-                if (!StringUtil.isEmpty(strConstant) && strConstant.equals(strFile) && strFunction.equals(strDirName)) {
-                    holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.LIKE_DEPRECATED);
+                /* inspect given construct */
+                final String constant = ((ConstantReference) firstParameter).getName();
+                if (!StringUtil.isEmpty(constant) && constant.equals("__FILE__")) {
+                    holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.LIKE_DEPRECATED, fixQuick);
                 }
             }
         };
+    }
+
+    private class TheLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Replace with __DIR__";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            PsiElement target = descriptor.getPsiElement();
+            if (target instanceof FunctionReference) {
+                target.replace(PhpPsiElementFactory.createConstantReference(project, "__DIR__"));
+            }
+        }
     }
 }

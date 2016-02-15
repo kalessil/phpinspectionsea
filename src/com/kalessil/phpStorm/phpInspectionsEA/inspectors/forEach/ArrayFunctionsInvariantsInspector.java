@@ -43,6 +43,7 @@ public class ArrayFunctionsInvariantsInspector extends BasePhpInspection {
                     if (!(expression instanceof AssignmentExpression)) {
                         return;
                     }
+                    // TODO: operator needs to be "=", no assignments by reference
                     AssignmentExpression assign = (AssignmentExpression) expression;
                     if (!(assign.getVariable() instanceof ArrayAccessExpression)) {
                         return;
@@ -50,6 +51,8 @@ public class ArrayFunctionsInvariantsInspector extends BasePhpInspection {
 
                     /* at this point we need to investigate the assignment */
                     if (isArrayReplaceInvariant(assign, key, value)) {
+                        // TODO: same, but array_flip
+                        // TODO: resolve source type, report only arrays
                         holder.registerProblem(foreach.getFirstChild(), strUseArrayReplace, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     } else if (isArrayFillInvariant(assign, key, value)) {
                         holder.registerProblem(foreach.getFirstChild(), strUseArrayFill, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);

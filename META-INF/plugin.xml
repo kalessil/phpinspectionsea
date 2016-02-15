@@ -251,6 +251,10 @@ with a laptop.
        shortName="PdoApiUsageInspection"                          displayName="Control flow: PDO api usage"
        groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PdoApiUsageInspector"/>
+  <localInspection language="PHP" groupPath="PHP"
+       shortName="ArrayFunctionsInvariantsInspection"             displayName="Control flow: foreach behaves as an array function"
+       groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
+       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ArrayFunctionsInvariantsInspector"/>
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="ForgottenDebugOutputInspection"                displayName="Probable bug: forgotten debug statements"

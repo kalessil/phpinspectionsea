@@ -11,7 +11,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiU
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.classesStrategy.ShortClassDefinitionStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.modifiersStrategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.AmbiguousAnythingTrimCheckStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.RareEscapeRUsageStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.SequentialClassesCollapseCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -155,9 +154,6 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  * Probably bugs: nested tags check without /s
                  */
                 MissingDotAllCheckStrategy.apply(modifiers, regex, target, holder);
-
-                // rarely used characters: \R matching all platforms line endings
-                RareEscapeRUsageStrategy.apply(regex, target, holder);
             }
         };
     }

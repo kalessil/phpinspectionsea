@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class StrNcmpUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String strProblemDescription  = "'0 %o% %f%(%s%, %p%)' should be used instead";
+    private static final String strProblemDescription  = "For short strings '0 %o% %f%(%s%, %p%)' should be used instead.";
 
     @NotNull
     public String getShortName() {

@@ -1,15 +1,21 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.PhpLangUtil;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -53,9 +59,8 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     }
 
                     if (PsiEquivalenceUtil.areElementsEquivalent(objCondition, objTrueVariant)) {
-                        holder.registerProblem(objTrueVariant, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(expression.getTrueVariant(), strProblemDescription, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                     }
-
                 }
 
                 /* older version might influence isset->array_key_exists in ternary conditions */
@@ -74,4 +79,46 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
             }
         };
     }
+
+    private class TheLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use ?? instead";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            PsiElement target  = descriptor.getPsiElement();
+            PsiElement ternary = target.getParent();
+            if (ternary instanceof TernaryExpression) {
+                /* swap parts */
+                ((TernaryExpression) ternary).getCondition().replace(target.copy());
+
+                /* cleanup spaces around */
+                PsiElement before = target.getPrevSibling();
+                if (before instanceof PsiWhiteSpace) {
+                    before = before.getPrevSibling();
+                    target.getPrevSibling().delete();
+                }
+                PsiElement after = target.getNextSibling();
+                if (after instanceof PsiWhiteSpace) {
+                    after = after.getNextSibling();
+                    target.getNextSibling().delete();
+                }
+
+                /* modify the operator and drop the true expression */
+                before.replace(PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "??"));
+                target.delete();
+                after.delete();
+            }
+        }
+    }
+
 }

@@ -2,6 +2,9 @@
 
 class AnEmptyClass {}
 
+/** @deprecated */
+class AnEmptyDeprecatedClass {}
+
 class ClassWithProperty
 {
     private $privateProperty;

@@ -1,15 +1,19 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.ClassReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -30,30 +34,37 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
             /* Static fields will be simply not resolved properly, so we can not do checking for them */
 
             public void visitPhpMethodReference(MethodReference reference) {
-                PsiReference objReference = reference.getReference();
-                String methodName = reference.getName();
+                final PsiReference objReference = reference.getReference();
+                final String methodName         = reference.getName();
                 if (null != objReference && !StringUtil.isEmpty(methodName)) {
-                    PsiElement objResolvedRef = objReference.resolve();
+                    final PsiElement objResolvedRef = objReference.resolve();
                     /* resolved method is static but called with $ this*/
                     if (objResolvedRef instanceof Method) {
-                        Method method = (Method) objResolvedRef;
-                        PhpClass clazz = method.getContainingClass();
+                        final Method method  = (Method) objResolvedRef;
+                        final PhpClass clazz = method.getContainingClass();
                         /* non-static methods and contract interfaces must not be reported */
                         if (null == clazz || clazz.isInterface() || !method.isStatic() || method.isAbstract()) {
                             return;
                         }
 
                         /* check first pattern $this->static */
-                        if (reference.getFirstChild().getText().equals("$this")) {
-                            String message = strProblemThisUsed.replace("%m%", methodName);
-                            holder.registerProblem(reference.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        final PsiElement thisCandidate = reference.getFirstChild();
+                        if (thisCandidate.getText().equals("$this")) {
+                            /* find operator for quick-fix */
+                            PsiElement operator = thisCandidate.getNextSibling();
+                            if (operator instanceof PsiWhiteSpaceImpl) {
+                                operator = operator.getNextSibling();
+                            }
+
+                            final String message = strProblemThisUsed.replace("%m%", methodName);
+                            holder.registerProblem(thisCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(thisCandidate, operator));
 
                             return;
                         }
 
                         /* check second pattern <expression>->static */
-                        PsiElement objectExpression = reference.getFirstPsiChild();
-                        if (null != objectExpression) {
+                        final PsiElement objectExpression = reference.getFirstPsiChild();
+                        if (null != objectExpression && !(objectExpression instanceof FunctionReference)) {
                             /* check operator */
                             PsiElement operator = objectExpression.getNextSibling();
                             if (operator instanceof PsiWhiteSpaceImpl) {
@@ -64,7 +75,8 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                             }
 
                             if (operator.getText().replaceAll("\\s+","").equals("->")) {
-                                String message = strProblemExpressionUsed.replace("%m%", reference.getName());
+                                /* info: no local fix, people shall check this code */
+                                final String message = strProblemExpressionUsed.replace("%m%", reference.getName());
                                 holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         }
@@ -72,5 +84,40 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        private PsiElement variable;
+        private PsiElement operator;
+
+        TheLocalFix(@NotNull PsiElement variable, @NotNull PsiElement operator) {
+            super();
+            this.variable = variable;
+            this.operator = operator;
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use static::";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement().getParent();
+            if (expression instanceof FunctionReference) {
+                this.operator.replace(PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "::"));
+                this.operator = null;
+
+                this.variable.replace(PhpPsiElementFactory.createClassReference(project, "static"));
+                this.variable = null;
+            }
+        }
     }
 }

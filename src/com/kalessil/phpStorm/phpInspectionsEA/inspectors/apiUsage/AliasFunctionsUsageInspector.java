@@ -1,9 +1,14 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -51,16 +56,46 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final String strFunctionName         = reference.getName();
-                HashMap<String, String> mapFunctions = getMapping();
+                final String strFunctionName               = reference.getName();
+                final HashMap<String, String> mapFunctions = getMapping();
                 if (!StringUtil.isEmpty(strFunctionName) && mapFunctions.containsKey(strFunctionName)) {
+                    final String suggestedName = mapFunctions.get(strFunctionName);
+
                     String strMessage = strProblemDescription
                             .replace("%a%", strFunctionName)
-                            .replace("%f%", mapFunctions.get(strFunctionName));
-                    holder.registerProblem(reference, strMessage, ProblemHighlightType.LIKE_DEPRECATED);
+                            .replace("%f%", suggestedName);
+                    holder.registerProblem(reference, strMessage, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedName));
                 }
-
             }
         };
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        private String suggestedName;
+
+        TheLocalFix(@NotNull String suggestedName) {
+            super();
+            this.suggestedName = suggestedName;
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use origin function";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            PsiElement expression = descriptor.getPsiElement();
+            if (expression instanceof FunctionReference) {
+                ((FunctionReference) expression).handleElementRename(this.suggestedName);
+            }
+        }
     }
 }

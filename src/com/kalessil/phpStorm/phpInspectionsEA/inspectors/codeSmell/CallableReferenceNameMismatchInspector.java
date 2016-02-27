@@ -58,7 +58,7 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Rename reference";
+            return "Fix case mismatch";
         }
 
         @NotNull

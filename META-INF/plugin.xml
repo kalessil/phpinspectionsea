@@ -74,7 +74,7 @@ with a laptop.
 
   <extensions defaultExtensionNs="com.intellij">
     <localInspection language="PHP" groupPath="PHP"
-        shortName="IsNullFunctionUsageInspection"                 displayName="Performance: 'is_null(...)' could be replaced by '... === null'"
+        shortName="IsNullFunctionUsageInspection"                 displayName="Performance: 'is_null(...)' could be replaced by 'null === ...'"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP"

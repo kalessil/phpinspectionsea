@@ -1,7 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -63,8 +66,30 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     return;
                 }
 
-                holder.registerProblem(expression, "Unnecessary  parentheses", ProblemHighlightType.WEAK_WARNING);
+                holder.registerProblem(expression, "Unnecessary parentheses", ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
             }
         };
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Remove the brackets";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            PsiElement expression = descriptor.getPsiElement();
+            if (expression instanceof ParenthesizedExpression) {
+                expression.replace(((ParenthesizedExpression) expression).getArgument());
+            }
+        }
     }
 }

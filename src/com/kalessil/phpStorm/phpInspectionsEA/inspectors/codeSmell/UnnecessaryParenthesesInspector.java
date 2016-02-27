@@ -86,7 +86,7 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            PsiElement expression = descriptor.getPsiElement();
+            final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof ParenthesizedExpression) {
                 expression.replace(((ParenthesizedExpression) expression).getArgument());
             }

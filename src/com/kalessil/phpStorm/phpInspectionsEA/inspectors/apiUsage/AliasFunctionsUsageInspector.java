@@ -61,7 +61,7 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
                 if (!StringUtil.isEmpty(strFunctionName) && mapFunctions.containsKey(strFunctionName)) {
                     final String suggestedName = mapFunctions.get(strFunctionName);
 
-                    String strMessage = strProblemDescription
+                    final String strMessage = strProblemDescription
                             .replace("%a%", strFunctionName)
                             .replace("%f%", suggestedName);
                     holder.registerProblem(reference, strMessage, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedName));
@@ -92,7 +92,7 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            PsiElement expression = descriptor.getPsiElement();
+            final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
                 ((FunctionReference) expression).handleElementRename(this.suggestedName);
             }

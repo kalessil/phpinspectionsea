@@ -58,13 +58,17 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
 
                 HashMap<String, String> mapFunctions = getMapping(PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel());
                 if (mapFunctions.containsKey(strFunctionName)) {
-                    final String suggestedName = mapFunctions.get(strFunctionName);
-                    /* random_int needs 2 parameters always */
-                    if (suggestedName.equals("random_int") && 2 != reference.getParameters().length) {
-                        return;
+                    String suggestedName = mapFunctions.get(strFunctionName);
+                    /* random_int needs 2 parameters always, so check if mt_rand can be suggested */
+                    if (2 != reference.getParameters().length && suggestedName.equals("random_int")) {
+                        if (strFunctionName.equals("rand")) {
+                            suggestedName = "mt_rand";
+                        } else {
+                            return;
+                        }
                     }
 
-                    final String strMessage    = strProblemDescription
+                    final String strMessage = strProblemDescription
                             .replace("%o%", strFunctionName)
                             .replace("%n%", suggestedName);
                     holder.registerProblem(reference, strMessage, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedName));

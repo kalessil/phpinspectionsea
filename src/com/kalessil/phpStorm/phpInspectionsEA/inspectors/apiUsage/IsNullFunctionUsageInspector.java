@@ -1,11 +1,16 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -37,15 +42,41 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                 /* decide which message to use */
                 String strError = strProblemDescriptionIsNull;
                 if (reference.getParent() instanceof UnaryExpression) {
-                    PsiElement objOperation = ((UnaryExpression) reference.getParent()).getOperation();
+                    final PsiElement objOperation = ((UnaryExpression) reference.getParent()).getOperation();
                     if (null != objOperation && PhpTokenTypes.opNOT == objOperation.getNode().getElementType()) {
                         strError = strProblemDescriptionNotNull;
                     }
                 }
 
                 /* report the issue */
-                holder.registerProblem(reference, strError, ProblemHighlightType.WEAK_WARNING);
+                holder.registerProblem(reference, strError, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
             }
         };
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use null comparison";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression instanceof FunctionReference) {
+                PsiElement replacement = PhpPsiElementFactory.createFromText(project, BinaryExpression.class, "null === null");
+                //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here
+                ((BinaryExpression) replacement).getRightOperand().replace(((FunctionReference) expression).getParameters()[0]);
+
+                expression.replace(replacement);
+            }
+        }
     }
 }

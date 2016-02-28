@@ -307,7 +307,7 @@ public class ExpressionSemanticUtil {
                     HashSet<AssignmentExpression> matched = new HashSet<AssignmentExpression>();
 
                     Collection<AssignmentExpression> assignments = PsiTreeUtil.findChildrenOfType(scope, AssignmentExpression.class);
-                            /* collect self-assignments as well */
+                    /* collect self-assignments as well */
                     for (AssignmentExpression assignment : assignments) {
                         if (assignment.getVariable() instanceof Variable && assignment.getValue() instanceof StringLiteralExpression) {
                             String name = assignment.getVariable().getName();

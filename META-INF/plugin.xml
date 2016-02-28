@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.3.11</version>
+  <version>1.4.0</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -50,18 +50,24 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-14 Feb 2016: improvements and new inspections<br/>
+28 Feb 2016: long awaited improvements<br/>
 <br/>
-    - Foreach usage possible: recognize list/each pattern, reduce amount of false-positives;<br/>
-    - Non-optimal regular expression: *trim, explode patterns recognition implemented;<br/>
-    - 'dirname(...)' could be replaced by '__DIR__': added quick fix;<br/>
-    - 'mkdir(...)' race condition: fixed marking complete file in red;<br/>
-    - 'strpos(...)' inspections: reporting improved;<br/>
-<br/>
-    - Untrusted files inclusion: implemented;<br/>
-    - Incorrect random generation range: implemented;<br/>
-    - 'substr(...)' could be replaced with 'strpos(...)': implemented;<br/>
-    - 'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)': implemented;<br/>
+    - Inspections grouping: 7 new sub-groups introduced;<br/><br/>
+
+    - Alias functions usage: quick-fix implemented;<br/>
+    - Elvis operator can be used: quick-fix implemented;<br/>
+    - Null coalescing operator can be used: quick-fix implemented;<br/>
+    - Random API migration: quick-fix implemented;<br/>
+    - Static methods invocation via '->': quick-fix implemented;<br/>
+    - Type casting via PHP4 functions: quick-fix implemented;<br/>
+    - Unnecessary double quotes: quick-fix implemented;<br/>
+    - Unnecessary parentheses: quick-fix implemented;<br/>
+    - 'array_push(...)' misused: quick-fix implemented;<br/>
+    - 'is_null(...)' could be replaced by 'null === ...': quick-fix implemented;<br/><br/>
+
+    - Empty class: do not report deprecated classes;<br/>
+    - Non-optimal regular expression: removed reporting for \R;<br/>
+    - 'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)': corrected reporting message;<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -162,7 +168,7 @@ with a laptop.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.LowPerformanceArrayUniqueUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP"
-        shortName="ArrayPushMissUseInspection"                    displayName="Performance: array_push(...) misused"
+        shortName="ArrayPushMissUseInspection"                    displayName="Performance: 'array_push(...)' misused"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ArrayPushMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP"

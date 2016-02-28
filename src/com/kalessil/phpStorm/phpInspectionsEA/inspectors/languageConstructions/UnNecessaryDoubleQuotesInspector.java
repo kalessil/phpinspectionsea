@@ -41,7 +41,7 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
                 }
 
                 if (!(ExpressionSemanticUtil.getBlockScope(expression) instanceof PhpDocComment)) {
-                    holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
+                    holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                 }
             }
         };

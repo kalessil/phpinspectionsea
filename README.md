@@ -109,6 +109,8 @@ Inspections Lists (Probable bugs)
 ---
 | Group                | Short Name                                      | Full Name                                           | Quick fix |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
+| Probable bugs        | => To be listed                                 | ---                                                 | --- |
+
 
 Inspections Lists (Performance)
 ---

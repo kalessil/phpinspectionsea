@@ -66,3 +66,6 @@ Inspections Lists
 | Architecture         | LongInheritanceChainInspection                  | Long inheritance chain                              | no |
 | Architecture         | PropertyCanBeStaticInspection                   | Property could be static                            | no |
 | Architecture         | EmptyClassInspection                            | Empty class                                         | no |
+| ---                  | ---                                             | ---                                                 | --- |
+| Probable bugs        | => To be listed                                 | ---                                                 | --- |
+| Performance          | => To be listed                                 | ---                                                 | --- |

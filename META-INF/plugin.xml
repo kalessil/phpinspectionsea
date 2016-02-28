@@ -174,87 +174,90 @@ with a laptop.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.VariableFunctionsUsageInspector"/>
 
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="IsEmptyFunctionUsageInspection"                displayName="Type compatibility: 'empty(...)' usage"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="IsEmptyFunctionUsageInspection"                displayName="'empty(...)' usage"
+        groupName="Type compatibility"                            enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsEmptyFunctionUsageInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="TypeUnsafeComparisonInspection"                displayName="Type compatibility: type unsafe comparison"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="TypeUnsafeComparisonInspection"                displayName="Type unsafe comparison"
+        groupName="Type compatibility"                            enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TypeUnsafeComparisonInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="TypeUnsafeArraySearchInspection"               displayName="Type compatibility: 'in_array(...)', 'array_search()' type unsafe usage"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="TypeUnsafeArraySearchInspection"               displayName="'in_array(...)', 'array_search()' type unsafe usage"
+        groupName="Type compatibility"                            enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.TypeUnsafeArraySearchInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="ArrayTypeOfParameterByDefaultValueInspection"  displayName="Type compatibility: parameter could be declared as array"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ArrayTypeOfParameterByDefaultValueInspection"  displayName="Parameter could be declared as array"
+        groupName="Type compatibility"                            enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayTypeOfParameterByDefaultValueInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="ForeachSourceInspection"                       displayName="Type compatibility: foreach source to iterate over"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="false" level="ERROR"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ForeachSourceInspection"                       displayName="Foreach source to iterate over"
+        groupName="Type compatibility"                            enabledByDefault="false" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachSourceInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="GenericObjectTypeUsageInspection"              displayName="Type compatibility: usage of object type in PhpDoc"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="GenericObjectTypeUsageInspection"              displayName="Usage of object type in PhpDoc"
+        groupName="Type compatibility"                            enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc.GenericObjectTypeUsageInspector"/>
 
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="UnSafeIsSetOverArrayInspection"                displayName="Control flow: 'isset(...)' usage"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="UnSafeIsSetOverArrayInspection"                displayName="'isset(...)' usage"
+        groupName="Control flow"                                  enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnSafeIsSetOverArrayInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="TernaryOperatorSimplifyInspection"             displayName="Control flow: ternary operator could be simplified"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="TernaryOperatorSimplifyInspection"             displayName="Ternary operator could be simplified"
+        groupName="Control flow"                                  enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TernaryOperatorSimplifyInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="IfReturnReturnSimplificationInspection"        displayName="Control flow: if-return-return could be simplified"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="IfReturnReturnSimplificationInspection"        displayName="If-return-return could be simplified"
+        groupName="Control flow"                                  enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.IfReturnReturnSimplificationInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="DefaultValueInElseBranchInspection"            displayName="Control flow: default value is hidden in else branch"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="DefaultValueInElseBranchInspection"            displayName="Default value is hidden in else branch"
+        groupName="Control flow"                                  enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DefaultValueInElseBranchInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="NotOptimalIfConditionsInspection"              displayName="Control flow: non-optimal if conditions"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="NotOptimalIfConditionsInspection"              displayName="Non-optimal if conditions"
+        groupName="Control flow"                                  enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.NotOptimalIfConditionsInspection"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="LoopWhichDoesNotLoopInspection"                displayName="Control flow: loop which does not loop"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="LoopWhichDoesNotLoopInspection"                displayName="Loop which does not loop"
+        groupName="Control flow"                                  enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.LoopWhichDoesNotLoopInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="ThrowRawExceptionInspection"                   displayName="Control flow: general '\Exception' is thrown"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ThrowRawExceptionInspection"                   displayName="General '\Exception' is thrown"
+        groupName="Control flow"                                  enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ThrowRawExceptionInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="DisconnectedForeachInstructionInspection"      displayName="Control flow: statement could be decoupled from foreach"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="DisconnectedForeachInstructionInspection"      displayName="Statement could be decoupled from foreach"
+        groupName="Control flow"                                  enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.DisconnectedForeachInstructionInspector"/>
-  <localInspection language="PHP" groupPath="PHP"
-       shortName="ExceptionsAnnotatingAndHandlingInspection"      displayName="Control flow: exceptions handling and annotating"
-       groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
+  <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+       shortName="ExceptionsAnnotatingAndHandlingInspection"      displayName="Exceptions handling and annotating"
+       groupName="Control flow"                                   enabledByDefault="true" level="WARNING"
        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptionsWorkflow.ExceptionsAnnotatingAndHandlingInspector"/>
-  <localInspection language="PHP" groupPath="PHP"
-       shortName="DegradedSwitchInspection"                       displayName="Control flow: switch-case could be simplified"
-       groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WEAK WARNING"
+  <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+       shortName="DegradedSwitchInspection"                       displayName="Switch-case could be simplified"
+       groupName="Control flow"                                   enabledByDefault="true" level="WEAK WARNING"
        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DegradedSwitchInspector"/>
-  <localInspection language="PHP" groupPath="PHP"
-       shortName="ForeachInvariantsInspection"                    displayName="Control flow: foreach usage possible"
-       groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
+  <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+       shortName="ForeachInvariantsInspection"                    displayName="Foreach usage possible"
+       groupName="Control flow"                                   enabledByDefault="true" level="WARNING"
        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachInvariantsInspector"/>
-  <localInspection language="PHP" groupPath="PHP"
-       shortName="OneTimeUseVariablesInspection"                  displayName="Control flow: one-time use variables"
-       groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
+  <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+       shortName="OneTimeUseVariablesInspection"                  displayName="One-time use variables"
+       groupName="Control flow"                                   enabledByDefault="true" level="WARNING"
        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OneTimeUseVariablesInspector"/>
-  <localInspection language="PHP" groupPath="PHP"
-       shortName="PdoApiUsageInspection"                          displayName="Control flow: PDO api usage"
-       groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
+  <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+       shortName="PdoApiUsageInspection"                          displayName="PDO api usage"
+       groupName="Control flow"                                   enabledByDefault="true" level="WARNING"
        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PdoApiUsageInspector"/>
-  <localInspection language="PHP" groupPath="PHP"
-       shortName="ArrayFunctionsInvariantsInspection"             displayName="Control flow: foreach behaves as an array function"
-       groupName="Php Inspections (EA Extended)"                  enabledByDefault="true" level="WARNING"
-       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ArrayFunctionsInvariantsInspector"/>
+  <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+       shortName="ArrayFunctionsInvariantsInspection"             displayName="Foreach behaves as an array function"
+       groupName="Control flow"                                   enabledByDefault="true" level="WARNING"
+       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ArrayFunctionsInvariantsInspector"/-->
+
 
     <localInspection language="PHP" groupPath="PHP"
         shortName="ForgottenDebugOutputInspection"                displayName="Probable bug: forgotten debug statements"
@@ -321,10 +324,12 @@ with a laptop.
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UntrustedInclusionInspector"/>
 
+
     <localInspection language="PHP" groupPath="PHP"
         shortName="PhpUnitTestsInspection"                        displayName="PhpUnit: bugs and best practices"
         groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitTestsInspector"/>
+
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SenselessTernaryOperatorInspection"            displayName="Suspicious ternary operator"
@@ -351,6 +356,7 @@ with a laptop.
         groupName="Confusing constructs"                          enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ParameterByRefWithDefaultInspector"/>
 
+
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="OnlyWritesOnParameterInspection"               displayName="Parameter/variable is not used"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
@@ -363,6 +369,7 @@ with a laptop.
         shortName="UselessUnsetInspection"                        displayName="Useless unset"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UselessUnsetInspector"/>
+
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnNecessaryDoubleQuotesInspection"             displayName="Unnecessary double quotes"
@@ -466,6 +473,7 @@ with a laptop.
         shortName="EmptyClassInspection"                            displayName="Empty class"
         groupName="Architecture"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.EmptyClassInspector"/>
+
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="AliasFunctionsUsageInspection"                   displayName="Alias functions usage"

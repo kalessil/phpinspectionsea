@@ -71,7 +71,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
-                PsiElement replacement = PhpPsiElementFactory.createFromText(project, BinaryExpression.class, "null === null");
+                final PsiElement replacement = PhpPsiElementFactory.createFromText(project, BinaryExpression.class, "null === null");
                 //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here
                 ((BinaryExpression) replacement).getRightOperand().replace(((FunctionReference) expression).getParameters()[0]);
 

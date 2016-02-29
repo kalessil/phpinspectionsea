@@ -17,6 +17,7 @@ Inspections Lists (Quick-fixes for next release)
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | Prio1 |
 | Architecture         | ClassReImplementsParentInterfaceInspection      | Class re-implements interface of a parent class     | Prio1 |
 | Probable bugs        | NonSecureUniqidUsageInspection                  | Insecure 'uniqid()' usage                           | Prio1 |
+| Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result         | Prio1 |
 
 Inspections Lists (Type compatibility)
 ---
@@ -122,7 +123,6 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | n/a |
 | Probable bugs        | SummerTimeUnsafeTimeManipulationInspection      | Summer-time unsafe date manipulations                     | n/a |
 | Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | n/a |
-| Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result               | no |
 | Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a |
 | Probable bugs        | UntrustedInclusionInspection                    | Untrusted files inclusion                                 | n/a |
 

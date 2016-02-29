@@ -129,6 +129,30 @@ Inspections Lists (Probable bugs)
 
 Inspections Lists (Performance)
 ---
-| Group                | Short Name                                      | Full Name                                           | Quick fix |
-| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
-| Performance          | => To be listed                                 | ---                                                 | --- |
+| Group                | Short Name                                      | Full Name                                                                                   | Quick fix |
+| :------------------- | :---------------------------------------------- | :------------------------------------------------------------------------------------------ | --------: |
+| Performance          | IsNullFunctionUsageInspection                   | 'is_null(...)' could be replaced by 'null === ...'                                          | --- |
+| Performance          | dirnameCallOnFileConstantInspection             | 'dirname(...)' could be replaced by '__DIR__'                                               | --- |
+| Performance          | AmbiguousMethodsCallsInArrayMappingInspection   | Non-optimized arrays mapping                                                                | --- |
+| Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                          | --- |
+| Performance          | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' should not be used to check if string is empty                                | --- |
+| Performance          | TypesCastingWithFunctionsInspection             | Type casting via PHP4 functions                                                             | --- |
+| Performance          | ArrayCastingEquivalentInspection                | Could be replaced with '(array) ...'                                                        | --- |
+| Performance          | CountOnPropelCollectionInspection               | 'count(...)' calls on Propel collection                                                     | --- |
+| Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                               | --- |
+| Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                            | --- |
+| Performance          | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)'                                    | --- |
+| Performance          | StrStrUsedAsStrPosInspection                    | 'strstr(...)/stristr(...)' could be replaced with 'strpos(...)/stripos(...)'                | --- |
+| Performance          | StrNcmpUsedAsStrPosInspection                   | 'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)'           | --- |
+| Performance          | SubStrUsedAsStrPosInspection                    | 'substr(...)' could be replaced with 'strpos(...)'                                          | --- |
+| Performance          | StrTrUsageAsStrReplaceInspection                | 'strtr(...)' could be replaced with 'str_replace(...)'                                      | --- |
+| Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | --- |
+| Performance          | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                                                          | --- |
+| Performance          | AlterInForeachInspection                        | Slow alter in foreach                                                                       | --- |
+| Performance          | ForeachOnArrayComponentsInspection              | 'array_keys(...)/array_values(...)' used as foreach array                                   | --- |
+| Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | --- |
+| Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | --- |
+| Performance          | LowPerformanceArrayUniqueUsageInspection        | 'array_unique()' low performing usage                                                       | --- |
+| Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused"                                                                  | --- |
+| Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                              | --- |
+| Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                    | --- |

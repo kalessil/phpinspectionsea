@@ -79,105 +79,105 @@ with a laptop.
   -->
 
   <extensions defaultExtensionNs="com.intellij">
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="IsNullFunctionUsageInspection"                 displayName="Performance: 'is_null(...)' could be replaced by 'null === ...'"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="IsNullFunctionUsageInspection"                 displayName="'is_null(...)' could be replaced by 'null === ...'"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="dirnameCallOnFileConstantInspection"           displayName="Performance: 'dirname(...)' could be replaced by '__DIR__'"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="dirnameCallOnFileConstantInspection"           displayName="'dirname(...)' could be replaced by '__DIR__'"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.DirnameCallOnFileConstantInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="AmbiguousMethodsCallsInArrayMappingInspection" displayName="Performance: non-optimized arrays mapping"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="AmbiguousMethodsCallsInArrayMappingInspection" displayName="Non-optimized arrays mapping"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.AmbiguousMethodsCallsInArrayMappingInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="SequentialUnSetCallsInspection"                displayName="Performance: 'unset(...)' calls could be merged"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="SequentialUnSetCallsInspection"                displayName="'unset(...)' calls could be merged"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SequentialUnSetCallsInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="StrlenInEmptyStringCheckContextInspection"     displayName="Performance: 'strlen(...)' should not be used to check if string is empty"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="StrlenInEmptyStringCheckContextInspection"     displayName="'strlen(...)' should not be used to check if string is empty"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.StrlenInEmptyStringCheckContextInspection"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="TypesCastingWithFunctionsInspection"           displayName="Performance: type casting via PHP4 functions"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="TypesCastingWithFunctionsInspection"           displayName="Type casting via PHP4 functions"
+        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.TypesCastingWithFunctionsInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="ArrayCastingEquivalentInspection"              displayName="Performance: could be replaced with '(array) ...'"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WEAK WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ArrayCastingEquivalentInspection"              displayName="Could be replaced with '(array) ...'"
+        groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.ArrayCastingEquivalentInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="CountOnPropelCollectionInspection"             displayName="Performance: 'count(...)' calls on Propel collection"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="CountOnPropelCollectionInspection"             displayName="'count(...)' calls on Propel collection"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.propel16.CountOnPropelCollectionInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="CallableInLoopTerminationConditionInspection"  displayName="Performance: callable calls in loops termination condition"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="CallableInLoopTerminationConditionInspection"  displayName="Callable calls in loops termination condition"
+        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.CallableInLoopTerminationConditionInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="SlowArrayOperationsInLoopInspection"           displayName="Performance: slow array function used in loop"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="SlowArrayOperationsInLoopInspection"           displayName="Slow array function used in loop"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SlowArrayOperationsInLoopInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="ArraySearchUsedAsInArrayInspection"            displayName="Performance: 'array_search(...)' could be replaced by 'in_array(...)'"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ArraySearchUsedAsInArrayInspection"            displayName="'array_search(...)' could be replaced by 'in_array(...)'"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ArraySearchUsedAsInArrayInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="StrStrUsedAsStrPosInspection"                  displayName="Performance: 'strstr(...)/stristr(...)' could be replaced with 'strpos(...)/stripos(...)'"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="StrStrUsedAsStrPosInspection"                  displayName="'strstr(...)/stristr(...)' could be replaced with 'strpos(...)/stripos(...)'"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.StrStrUsedAsStrPosInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="StrNcmpUsedAsStrPosInspection"                 displayName="Performance: 'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)'"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="StrNcmpUsedAsStrPosInspection"                 displayName="'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)'"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.StrNcmpUsedAsStrPosInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="SubStrUsedAsStrPosInspection"                  displayName="Performance: 'substr(...)' could be replaced with 'strpos(...)'"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="SubStrUsedAsStrPosInspection"                  displayName="'substr(...)' could be replaced with 'strpos(...)'"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.SubStrUsedAsStrPosInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="StrTrUsageAsStrReplaceInspection"              displayName="Performance: 'strtr(...)' could be replaced with 'str_replace(...)'"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="StrTrUsageAsStrReplaceInspection"              displayName="'strtr(...)' could be replaced with 'str_replace(...)'"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrTrUsageAsStrReplaceInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="CaseInsensitiveStringFunctionsMissUseInspection" displayName="Performance: 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()'"
-        groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="CaseInsensitiveStringFunctionsMissUseInspection" displayName="'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()'"
+        groupName="Performance"                                     enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.CaseInsensitiveStringFunctionsMissUseInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="OpAssignShortSyntaxInspection"                 displayName="Performance: short syntax for applied operation"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="OpAssignShortSyntaxInspection"                 displayName="Short syntax for applied operation"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.OpAssignShortSyntaxInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="AlterInForeachInspection"                      displayName="Performance: slow alter in foreach"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="AlterInForeachInspection"                      displayName="Slow alter in foreach"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.AlterInForeachInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="ForeachOnArrayComponentsInspection"            displayName="Performance: array_keys(...), array_values(...) used as foreach array"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ForeachOnArrayComponentsInspection"            displayName="'array_keys(...)/array_values(...)' used as foreach array"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachOnArrayComponentsInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="CascadeStringReplacementInspection"            displayName="Performance: cascading str_replace(...) calls"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="CascadeStringReplacementInspection"            displayName="Cascading 'str_replace(...)' calls"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.CascadeStringReplacementInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="InArrayMissUseInspection"                      displayName="Performance: in_array(...) misused"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="InArrayMissUseInspection"                      displayName="'in_array(...)' misused"
+        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.InArrayMissUseInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="LowPerformanceArrayUniqueUsageInspection"      displayName="Performance: array_unique() low performing usage"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="LowPerformanceArrayUniqueUsageInspection"      displayName="'array_unique()' low performing usage"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.LowPerformanceArrayUniqueUsageInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="ArrayPushMissUseInspection"                    displayName="Performance: 'array_push(...)' misused"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="ERROR"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ArrayPushMissUseInspection"                    displayName="'array_push(...)' misused"
+        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ArrayPushMissUseInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="NotOptimalRegularExpressionsInspection"        displayName="Performance: non-optimal regular expression"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="NotOptimalRegularExpressionsInspection"        displayName="Non-optimal regular expression"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.NotOptimalRegularExpressionsInspector"/>
-    <localInspection language="PHP" groupPath="PHP"
-        shortName="VariableFunctionsUsageInspection"              displayName="Performance: variable functions usage"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="VariableFunctionsUsageInspection"              displayName="Variable functions usage"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.VariableFunctionsUsageInspector"/>
 
 
@@ -240,25 +240,25 @@ with a laptop.
         groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.DisconnectedForeachInstructionInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-       shortName="ExceptionsAnnotatingAndHandlingInspection"      displayName="Exceptions handling and annotating"
-       groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
-       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptionsWorkflow.ExceptionsAnnotatingAndHandlingInspector"/>
+        shortName="ExceptionsAnnotatingAndHandlingInspection"      displayName="Exceptions handling and annotating"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptionsWorkflow.ExceptionsAnnotatingAndHandlingInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-       shortName="DegradedSwitchInspection"                       displayName="Switch-case could be simplified"
-       groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
-       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DegradedSwitchInspector"/>
+        shortName="DegradedSwitchInspection"                       displayName="Switch-case could be simplified"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DegradedSwitchInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-       shortName="ForeachInvariantsInspection"                    displayName="Foreach usage possible"
-       groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
-       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachInvariantsInspector"/>
+        shortName="ForeachInvariantsInspection"                    displayName="Foreach usage possible"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachInvariantsInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-       shortName="OneTimeUseVariablesInspection"                  displayName="One-time use variables"
-       groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
-       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OneTimeUseVariablesInspector"/>
+        shortName="OneTimeUseVariablesInspection"                  displayName="One-time use variables"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OneTimeUseVariablesInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-       shortName="PdoApiUsageInspection"                          displayName="PDO api usage"
-       groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
-       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PdoApiUsageInspector"/>
+        shortName="PdoApiUsageInspection"                          displayName="PDO api usage"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PdoApiUsageInspector"/>
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
        shortName="ArrayFunctionsInvariantsInspection"             displayName="Foreach behaves as an array function"
        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
@@ -331,9 +331,9 @@ with a laptop.
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UntrustedInclusionInspector"/>
 
 
-    <localInspection language="PHP" groupPath="PHP"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="PhpUnitTestsInspection"                        displayName="PhpUnit: bugs and best practices"
-        groupName="Php Inspections (EA Extended)"                 enabledByDefault="true" level="WARNING"
+        groupName="PhpUnit"                                       enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitTestsInspector"/>
 
 

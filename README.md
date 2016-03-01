@@ -7,7 +7,6 @@ Inspections Lists (Quick-fixes for next release)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
 | Control flow         | OneTimeUseVariablesInspection                   | One-time use variables                              | Prio1 |
 | Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | Prio1 |
-| Unused               | UselessUnsetInspection                          | Useless unset                                       | Prio1 |
 | Confusing constructs | SenselessProxyMethodInspection                  | Senseless proxy function                            | Prio1 |
 | Code style           | ReferencingObjectsInspection                    | Referencing objects                                 | Prio1 |
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | Prio1 |
@@ -55,7 +54,8 @@ Inspections Lists (Unused)
 ---
 | Group                | Short Name                                      | Full Name                                           | Quick fix |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
-| Unused               | OnlyWritesOnParameterInspection                 | Parameter/variable is not used                      | no |
+| Unused               | OnlyWritesOnParameterInspection                 | Parameter/variable is not used                      | --- |
+| Unused               | UselessUnsetInspection                          | Useless unset                                       | --- |
 
 Inspections Lists (Compatibility)
 ---

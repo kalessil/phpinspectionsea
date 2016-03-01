@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.AssertCountStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.AssertInstanceOfStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -84,12 +85,13 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
             public void visitPhpMethodReference(MethodReference reference) {
                 final String methodName   = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if (StringUtil.isEmpty(methodName)) {
+                if (StringUtil.isEmpty(methodName) || !methodName.startsWith("assert")) {
                     return;
                 }
 
                 /* strategies injection */
                 AssertInstanceOfStrategy.apply(methodName, reference, holder);
+                AssertCountStrategy.apply(methodName, reference, holder);
 
                 /* artifact, refactoring needed for strategies allocation */
                 if (params.length < 2) {
@@ -103,23 +105,6 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
                 if (SUGGEST_TO_USE_ASSERTSAME && isAssertEquals) {
                     holder.registerProblem(reference, "This check is type-unsafe, consider using assertSame instead", ProblemHighlightType.WEAK_WARNING);
-                }
-
-                /* analyze parameters which makes the call equal to assertCount */
-                boolean isFirstCount = false;
-                if (params[0] instanceof FunctionReference && !(params[0] instanceof MethodReference)) {
-                    String referenceName = ((FunctionReference) params[0]).getName();
-                    isFirstCount = !StringUtil.isEmpty(referenceName) && referenceName.equals("count");
-                }
-                boolean isSecondCount = false;
-                if (params[1] instanceof FunctionReference && !(params[1] instanceof MethodReference)) {
-                    String referenceName = ((FunctionReference) params[1]).getName();
-                    isSecondCount = !StringUtil.isEmpty(referenceName) && referenceName.equals("count");
-                }
-                /* fire assertCount warning when needed */
-                if ((isFirstCount && !isSecondCount) || (!isFirstCount && isSecondCount)) {
-                    holder.registerProblem(reference, "assertCount should be used instead", ProblemHighlightType.WEAK_WARNING);
-                    return;
                 }
 
                 /* assertEquals -> assertNull become type-strict, ensure we want it */

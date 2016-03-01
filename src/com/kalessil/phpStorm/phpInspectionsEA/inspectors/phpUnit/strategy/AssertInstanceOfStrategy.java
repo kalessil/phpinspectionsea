@@ -5,12 +5,16 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.impl.BinaryExpressionImpl;
+import com.jetbrains.php.lang.psi.elements.impl.ClassReferenceImpl;
+import com.jetbrains.php.lang.psi.elements.impl.StringLiteralExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,13 +66,20 @@ public class AssertInstanceOfStrategy {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
-                final FunctionReference call = (FunctionReference) expression;
+                if (this.classIdentity instanceof ClassReferenceImpl) {
+                    final String fqn = ((ClassReferenceImpl) this.classIdentity).getFQN();
+                    if (!StringUtil.isEmpty(fqn)) {
+                        final String pattern = "'" + fqn.replaceAll("\\\\", "\\\\\\\\") + "'"; // <- I hate Java escaping
+                        this.classIdentity = PhpPsiElementFactory.createFromText(project, StringLiteralExpressionImpl.class, pattern);
+                    }
+                }
 
                 final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, "pattern(null, null)");
                 replacement.getParameters()[0].replace(this.classIdentity);
                 replacement.getParameters()[1].replace(this.subject);
 
-                //noinspection ConstantConditions I'm reall sure NPE will not happen
+                final FunctionReference call = (FunctionReference) expression;
+                //noinspection ConstantConditions I'm really sure NPE will not happen
                 call.getParameterList().replace(replacement.getParameterList());
                 call.handleElementRename("assertInstanceOf");
             }

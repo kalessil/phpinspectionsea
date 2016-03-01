@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.security;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -9,12 +9,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
-public class NonSecureUniqidUsageInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Please provide both prefix and more entropy parameters";
+public class NonSecureParseStrUsageInspector  extends BasePhpInspection {
+    private static final String strProblemDescription = "Please provide second parameter to not influence globals";
 
     @NotNull
     public String getShortName() {
-        return "NonSecureUniqidUsageInspection";
+        return "NonSecureParseStrUsageInspection";
     }
 
     @Override
@@ -24,8 +24,9 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final String strFunction = reference.getName();
                 if (
-                    reference.getParameters().length != 2 &&
-                    !StringUtil.isEmpty(strFunction) && strFunction.equals("uniqid")
+                    1 == reference.getParameters().length &&
+                    !StringUtil.isEmpty(strFunction) &&
+                    (strFunction.equals("parse_str") || strFunction.equals("mb_parse_str"))
                 ) {
                     holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR);
                 }

@@ -268,7 +268,7 @@ with a laptop.
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ForgottenDebugOutputInspection"                displayName="Forgotten debug statements"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ForgottenDebugOutputInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.debug.ForgottenDebugOutputInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="AdditionOperationOnArraysInspection"           displayName="Addition operator used on arrays"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
@@ -290,9 +290,13 @@ with a laptop.
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.ImplicitMagicMethodCallInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="NonSecureUniqidUsageInspection"                displayName="Insecure 'uniqid()' usage"
+        shortName="NonSecureUniqidUsageInspection"                displayName="Insecure 'uniqid(...)' usage"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.NonSecureUniqidUsageInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.security.NonSecureUniqidUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="NonSecureParseStrUsageInspection"              displayName="Insecure 'parse_str(...)' usage"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.security.NonSecureParseStrUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SwitchContinuationInLoopInspection"            displayName="Continue misbehaviour in switch"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"

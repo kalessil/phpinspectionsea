@@ -8,7 +8,6 @@ Inspections Lists (Quick-fixes for next release)
 | Control flow         | OneTimeUseVariablesInspection                   | One-time use variables                              | Prio1 |
 | Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | Prio1 |
 | Unused               | UselessUnsetInspection                          | Useless unset                                       | Prio1 |
-| Compatibility        | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | Prio1 |
 | Confusing constructs | SenselessProxyMethodInspection                  | Senseless proxy function                            | Prio1 |
 | Code style           | ReferencingObjectsInspection                    | Referencing objects                                 | Prio1 |
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | Prio1 |
@@ -63,9 +62,10 @@ Inspections Lists (Compatibility)
 | Group                | Short Name                                      | Full Name                                           | Quick fix |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
 | Compatibility        | AliasFunctionsUsageInspection                   | Alias functions usage                               | yes |
-| Compatibility        | DeprecatedIniOptionsInspection                  | Deprecated configuration options                    | n/a |
+| Compatibility        | DeprecatedIniOptionsInspection                  | Deprecated configuration options                    | --- |
 | Compatibility        | RandomApiMigrationInspection                    | Random API migration                                | yes |
-| Compatibility        | MktimeUsageInspection                           | 'gmmktime()'/'mktime()' usage                       | no |
+| Compatibility        | MktimeUsageInspection                           | 'gmmktime()'/'mktime()' usage                       | no  |
+| Compatibility        | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | yes |
 
 Inspections Lists (Confusing constructs)
 ---

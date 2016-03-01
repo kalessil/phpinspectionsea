@@ -1,9 +1,15 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -11,7 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class DeprecatedConstructorStyleInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "%s% has a deprecated constructor";
+    private static final String messagePattern = "%s% has a deprecated constructor";
 
     @NotNull
     public String getShortName() {
@@ -23,20 +29,55 @@ public class DeprecatedConstructorStyleInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
-                PhpClass objClass = method.getContainingClass();
-                String strMethodName = method.getName();
+                final PhpClass objClass    = method.getContainingClass();
+                final String strMethodName = method.getName();
                 if (
                     null == objClass || objClass.isTrait() || objClass.isInterface() ||
-                    StringUtil.isEmpty(strMethodName) || null == method.getNameIdentifier()) {
+                    StringUtil.isEmpty(strMethodName) || null == method.getNameIdentifier()
+                ) {
                     return;
                 }
 
-                String strClassName = objClass.getName();
-                if (strMethodName.equals(strClassName)) {
-                    String strMessage = strProblemDescription.replace("%s%", strClassName);
-                    holder.registerProblem(method.getNameIdentifier(), strMessage, ProblemHighlightType.LIKE_DEPRECATED);
+                final String className = objClass.getName();
+                if (strMethodName.equals(className)) {
+                    final String message    = messagePattern.replace("%s%", className);
+                    final TheLocalFix fixer = new TheLocalFix(className);
+
+                    holder.registerProblem(method.getNameIdentifier(), message, ProblemHighlightType.LIKE_DEPRECATED, fixer);
                 }
             }
         };
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        private String className;
+
+        TheLocalFix (@NotNull String className) {
+            super();
+            this.className = className;
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Rename to __construct";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement reportingTarget = descriptor.getPsiElement();
+            final PsiElement expression      = reportingTarget.getParent();
+            if (expression instanceof Method) {
+                PsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "__construct");
+                //noinspection ConstantConditions I'm sure NPE will not happen here
+                reportingTarget.replace(replacement);
+            }
+        }
     }
 }

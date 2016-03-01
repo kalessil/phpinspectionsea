@@ -16,7 +16,6 @@ Inspections Lists (Quick-fixes for next release)
 | Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | Prio1 |
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | Prio1 |
 | Architecture         | ClassReImplementsParentInterfaceInspection      | Class re-implements interface of a parent class     | Prio1 |
-| Probable bugs        | NonSecureUniqidUsageInspection                  | Insecure 'uniqid()' usage                           | Prio1 |
 | Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result         | Prio1 |
 
 Inspections Lists (Type compatibility)
@@ -111,20 +110,21 @@ Inspections Lists (Probable bugs)
 ---
 | Group                | Short Name                                      | Full Name                                                 | Quick fix |
 | :------------------- | :-------------------------------------------    | :--------------------------------------------------       | --------: |
-| Probable bugs        | ForgottenDebugOutputInspection                  | Forgotten debug statements                                | n/a |
-| Probable bugs        | AdditionOperationOnArraysInspection             | Addition operator used on arrays                          | n/a |
-| Probable bugs        | MagicMethodsValidityInspection                  | Magic methods validity                                    | n/a |
-| Probable bugs        | SuspiciousLoopInspection                        | Suspicious loop                                           | n/a |
-| Probable bugs        | ReferenceMismatchInspection                     | Reference mismatch                                        | n/a |
-| Probable bugs        | ImplicitMagicMethodCallInspection               | Implicit magic method calls                               | no |
-| Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | no |
-| Probable bugs        | PrintfScanfArgumentsInspection                  | -printf/-scanf arguments count mismatches                 | n/a |
-| Probable bugs        | RealpathOnRelativePathsInspection               | Phar-incompatible 'realpath()' applied to a relative path | no |
-| Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | n/a |
-| Probable bugs        | SummerTimeUnsafeTimeManipulationInspection      | Summer-time unsafe date manipulations                     | n/a |
-| Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | n/a |
-| Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a |
-| Probable bugs        | UntrustedInclusionInspection                    | Untrusted files inclusion                                 | n/a |
+| Probable bugs        | ForgottenDebugOutputInspection                  | Forgotten debug statements                                | --- |
+| Probable bugs        | AdditionOperationOnArraysInspection             | Addition operator used on arrays                          | --- |
+| Probable bugs        | MagicMethodsValidityInspection                  | Magic methods validity                                    | --- |
+| Probable bugs        | SuspiciousLoopInspection                        | Suspicious loop                                           | --- |
+| Probable bugs        | ReferenceMismatchInspection                     | Reference mismatch                                        | --- |
+| Probable bugs        | ImplicitMagicMethodCallInspection               | Implicit magic method calls                               | no  |
+| Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | no  |
+| Probable bugs        | PrintfScanfArgumentsInspection                  | -printf/-scanf arguments count mismatches                 | --- |
+| Probable bugs        | RealpathOnRelativePathsInspection               | Phar-incompatible 'realpath()' applied to a relative path | no  |
+| Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | --- |
+| Probable bugs        | SummerTimeUnsafeTimeManipulationInspection      | Summer-time unsafe date manipulations                     | --- |
+| Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | --- |
+| Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | --- |
+| Probable bugs        | UntrustedInclusionInspection                    | Untrusted files inclusion                                 | --- |
+| Probable bugs        | NonSecureUniqidUsageInspection                  | Insecure 'uniqid()' usage                                 | yes |
 
 
 Inspections Lists (Performance)

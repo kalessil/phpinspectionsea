@@ -11,7 +11,6 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.impl.BinaryExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.ClassReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StringLiteralExpressionImpl;
@@ -85,5 +84,4 @@ public class AssertInstanceOfStrategy {
             }
         }
     }
-
 }

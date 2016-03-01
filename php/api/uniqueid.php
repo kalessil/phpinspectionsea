@@ -1,5 +1,5 @@
 <?php
 
     uniqid();         // <- reported
-    uniqid('');       // <- reported
+    uniqid('q');      // <- reported
     uniqid('', true);

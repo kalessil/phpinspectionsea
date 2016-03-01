@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.debug;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -123,8 +123,8 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             }
 
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final String strFunction              = reference.getName();
-                HashMap<String, Integer> requirements = getFunctionsRequirements();
+                final String strFunction                    = reference.getName();
+                final HashMap<String, Integer> requirements = getFunctionsRequirements();
                 if (
                     !StringUtil.isEmpty(strFunction) && requirements.containsKey(strFunction) &&
                     reference.getParameters().length != requirements.get(strFunction) // keep it here when function hit
@@ -137,6 +137,13 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                 if (customFunctions.contains(strFunction)) {
                     holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
+
+                /*
+                TODO:
+                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, * != 2);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                    -> but wen is not configured CURLOPT_CAINFO, CURLOPT_CAPATH
+                 */
             }
         };
     }

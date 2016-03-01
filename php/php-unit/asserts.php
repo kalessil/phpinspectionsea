@@ -7,5 +7,7 @@ class TestCase {
 
         $this->assertEquals(null, 1);
         $this->assertSame(1, null);
+
+        $this->assertTrue($x instanceof \stdClass); // <- reported
     }
 }

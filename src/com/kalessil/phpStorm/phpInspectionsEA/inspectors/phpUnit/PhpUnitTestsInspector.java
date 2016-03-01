@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.AssertInstanceOfStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import net.miginfocom.swing.MigLayout;
@@ -83,7 +84,15 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
             public void visitPhpMethodReference(MethodReference reference) {
                 final String methodName   = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if (params.length < 2 || StringUtil.isEmpty(methodName)) {
+                if (StringUtil.isEmpty(methodName)) {
+                    return;
+                }
+
+                /* strategies injection */
+                AssertInstanceOfStrategy.apply(methodName, reference, holder);
+
+                /* artifact, refactoring needed for strategies allocation */
+                if (params.length < 2) {
                     return;
                 }
 

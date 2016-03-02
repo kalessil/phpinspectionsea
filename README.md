@@ -14,6 +14,8 @@ Inspections Lists (Quick-fixes for next release)
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | Prio1 |
 | Architecture         | ClassReImplementsParentInterfaceInspection      | Class re-implements interface of a parent class     | Prio1 |
 | Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result         | Prio1 |
+| Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                  | Prio1 |
+| Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                             | Prio1 |
 
 Inspections Lists (Type compatibility)
 ---
@@ -131,12 +133,12 @@ Inspections Lists (Performance)
 ---
 | Group                | Short Name                                      | Full Name                                                                                   | Quick fix |
 | :------------------- | :---------------------------------------------- | :------------------------------------------------------------------------------------------ | --------: |
-| Performance          | IsNullFunctionUsageInspection                   | 'is_null(...)' could be replaced by 'null === ...'                                          | --- |
-| Performance          | dirnameCallOnFileConstantInspection             | 'dirname(...)' could be replaced by '__DIR__'                                               | --- |
+| Performance          | IsNullFunctionUsageInspection                   | 'is_null(...)' could be replaced by 'null === ...'                                          | yes |
+| Performance          | dirnameCallOnFileConstantInspection             | 'dirname(...)' could be replaced by '__DIR__'                                               | yes |
 | Performance          | AmbiguousMethodsCallsInArrayMappingInspection   | Non-optimized arrays mapping                                                                | --- |
 | Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                          | --- |
 | Performance          | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' should not be used to check if string is empty                                | --- |
-| Performance          | TypesCastingWithFunctionsInspection             | Type casting via PHP4 functions                                                             | --- |
+| Performance          | TypesCastingWithFunctionsInspection             | Type casting via PHP4 functions                                                             | yes |
 | Performance          | ArrayCastingEquivalentInspection                | Could be replaced with '(array) ...'                                                        | --- |
 | Performance          | CountOnPropelCollectionInspection               | 'count(...)' calls on Propel collection                                                     | --- |
 | Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                               | --- |
@@ -151,8 +153,7 @@ Inspections Lists (Performance)
 | Performance          | AlterInForeachInspection                        | Slow alter in foreach                                                                       | --- |
 | Performance          | ForeachOnArrayComponentsInspection              | 'array_keys(...)/array_values(...)' used as foreach array                                   | --- |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | --- |
-| Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | --- |
 | Performance          | LowPerformanceArrayUniqueUsageInspection        | 'array_unique()' low performing usage                                                       | --- |
-| Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused"                                                                  | --- |
+| Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused"                                                                  | yes |
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                              | --- |
 | Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                    | --- |

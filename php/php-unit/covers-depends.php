@@ -7,39 +7,49 @@ class theOneToCover
     }
 }
 
-class testClass {
-    public function init() {
+class testClass
+{
+    public function init()
+    {
     }
 
     /**
      * @depends init
      */
-    public function correctDepends() {
+    public function correctDepends()
+    {
 
     }
+
     /**
      * @depends something
      */
-    public function incorrectDepends() {
+    public function incorrectDepends() // <-reported
+    {
 
     }
 
     /**
      * @covers \theOneToCover::doSomething
      */
-    public function correctCovers() {
+    public function correctCovers()
+    {
 
     }
+
     /**
      * @covers \theOneToCover::doSomethingElse
      */
-    public function incorrectCovers1() {
+    public function incorrectCovers1() // <-reported
+    {
 
     }
+
     /**
      * @covers \Something::doSomething
      */
-    public function incorrectCovers2() {
+    public function incorrectCovers2() // <-reported
+    {
 
     }
 }

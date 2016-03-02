@@ -1,6 +1,6 @@
 <?php
 
-class a {
+class aaa {
     public function __construct()   { return 1; }
     public function __destruct()    { return 1; }
     public function __set()         { return 1; }

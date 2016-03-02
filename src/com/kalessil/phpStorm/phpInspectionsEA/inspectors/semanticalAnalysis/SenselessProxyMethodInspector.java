@@ -27,12 +27,12 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
                 for (Method objMethod : clazz.getOwnMethods()) {
-                    String methodName = objMethod.getName();
+                    final String methodName = objMethod.getName();
                     if (StringUtil.isEmpty(methodName) || null == objMethod.getNameIdentifier()) {
                         continue;
                     }
 
-                    GroupStatement body = ExpressionSemanticUtil.getGroupStatement(objMethod);
+                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(objMethod);
                     /*
                         skip processing methods without body (interfaces, abstract and etc.) or
                         contains not expected amount of expressions
@@ -41,12 +41,12 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    PsiElement lastStatement = ExpressionSemanticUtil.getLastStatement(body);
+                    final PsiElement lastStatement = ExpressionSemanticUtil.getLastStatement(body);
                     if (null != lastStatement && lastStatement.getFirstChild() instanceof MethodReference) {
-                        MethodReference reference = (MethodReference) lastStatement.getFirstChild();
+                        final MethodReference reference = (MethodReference) lastStatement.getFirstChild();
 
-                        String referenceVariable = reference.getFirstChild().getText().trim();
-                        String referenceName = reference.getName();
+                        final String referenceVariable = reference.getFirstChild().getText().trim();
+                        final String referenceName = reference.getName();
 
                         if (
                             referenceVariable.equals("parent") &&
@@ -54,34 +54,55 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                         ) {
                             final Parameter[] methodParameters = objMethod.getParameters();
 
-                            /* ensure no transformations happens */
-                            boolean isDispatchingWithoutModifications = (reference.getParameters().length == methodParameters.length);
-                            for (PsiElement argument: reference.getParameters()) {
-                                if (!(argument instanceof Variable)) {
-                                    isDispatchingWithoutModifications = false;
-                                    break;
+                            /* ensure no transformations/reordering happens when dispatching parameters */
+                            final PsiElement[] givenParams            = reference.getParameters();
+                            boolean isDispatchingWithoutModifications = (givenParams.length == methodParameters.length);
+                            if (isDispatchingWithoutModifications) {
+                                /* ensure parameters re-dispatched in the same order and state */
+                                for (int index = 0; index < givenParams.length; ++index) {
+                                    if (
+                                        !(givenParams[index] instanceof Variable) ||
+                                        !((Variable) givenParams[index]).getName().equals(methodParameters[index].getName())
+                                    ) {
+                                        isDispatchingWithoutModifications = false;
+                                        break;
+                                    }
                                 }
                             }
 
                             /* ensure no signature changes took place */
-                            boolean isChangingSignature = false;
-                            PsiReference referenceToMethod = reference.getReference();
-                            if (null != referenceToMethod && isDispatchingWithoutModifications && methodParameters.length > 0){
-                                PsiElement referenceResolved = referenceToMethod.resolve();
+                            boolean isChangingSignature          = false;
+                            final PsiReference referenceToMethod = reference.getReference();
+                            if (null != referenceToMethod && isDispatchingWithoutModifications) {
+                                final PsiElement referenceResolved = referenceToMethod.resolve();
                                 if (referenceResolved instanceof Method) {
                                     final Method nestedMethod          = (Method) referenceResolved;
                                     final Parameter[] parentParameters = nestedMethod.getParameters();
 
-                                    if (parentParameters.length == methodParameters.length && nestedMethod.getAccess().equals(objMethod.getAccess())) {
-                                        for (int index = 0; index < parentParameters.length; ++index) {
-                                            if (!PsiEquivalenceUtil.areElementsEquivalent(parentParameters[index], methodParameters[index])) {
-                                                isChangingSignature = true;
-                                                break;
+                                    /* verify amount of parameters, visibility, static, abstract, final */
+                                    if (
+                                        parentParameters.length   == methodParameters.length &&
+                                        nestedMethod.isAbstract() == objMethod.isAbstract() &&
+                                        nestedMethod.isStatic()   == objMethod.isStatic() &&
+                                        nestedMethod.isFinal()    == objMethod.isFinal() &&
+                                        nestedMethod.getAccess().equals(objMethod.getAccess())
+                                    ) {
+                                        /* when has parameters, ensure the defined order is not changed as well */
+                                        if (methodParameters.length > 0) {
+                                            for (int index = 0; index < parentParameters.length; ++index) {
+                                                if (!PsiEquivalenceUtil.areElementsEquivalent(parentParameters[index], methodParameters[index])) {
+                                                    isChangingSignature = true;
+                                                    break;
+                                                }
                                             }
                                         }
                                     } else {
+                                        /* okay obviously changed */
                                         isChangingSignature = true;
                                     }
+                                } else {
+                                    /* we couldn't resolve parent, so we have no right to report anything */
+                                    isChangingSignature = true;
                                 }
                             }
 

@@ -7,7 +7,6 @@ Inspections Lists (Quick-fixes for next release)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
 | Control flow         | OneTimeUseVariablesInspection                   | One-time use variables                              | Prio1 |
 | Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | Prio1 |
-| Confusing constructs | SenselessProxyMethodInspection                  | Senseless proxy function                            | Prio1 |
 | Code style           | ReferencingObjectsInspection                    | Referencing objects                                 | Prio1 |
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | Prio1 |
 | Code style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | Prio1 |
@@ -71,11 +70,12 @@ Inspections Lists (Confusing constructs)
 ---
 | Group                | Short Name                                      | Full Name                                           | Quick fix |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
-| Confusing constructs | SenselessTernaryOperatorInspection              | Suspicious ternary operator                         | n/a |
-| Confusing constructs | ClassMethodNameMatchesFieldNameInspection       | Method name matches existing field name             | no |
-| Confusing constructs | NestedTernaryOperatorInspection                 | Nested ternary operator                             | n/a |
-| Confusing constructs | UselessReturnInspection                         | Useless return                                      | no |
-| Confusing constructs | ParameterByRefWithDefaultInspection             | Parameter passed by reference has default value     | no |
+| Confusing constructs | SenselessTernaryOperatorInspection              | Suspicious ternary operator                         | --- |
+| Confusing constructs | ClassMethodNameMatchesFieldNameInspection       | Method name matches existing field name             | --- |
+| Confusing constructs | NestedTernaryOperatorInspection                 | Nested ternary operator                             | --- |
+| Confusing constructs | UselessReturnInspection                         | Useless return                                      | --- |
+| Confusing constructs | ParameterByRefWithDefaultInspection             | Parameter passed by reference has default value     | --- |
+| Confusing constructs | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes |
 
 Inspections Lists (Code style)
 ---

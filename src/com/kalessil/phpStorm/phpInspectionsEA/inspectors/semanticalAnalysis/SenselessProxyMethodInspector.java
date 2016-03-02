@@ -1,12 +1,17 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiWhiteSpace;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -108,13 +113,40 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
 
                             /* decide if need to report any issues */
                             if (isDispatchingWithoutModifications && !isChangingSignature) {
-                                String message = messagePattern.replace("%s%", objMethod.getName());
-                                holder.registerProblem(objMethod.getNameIdentifier(), message, ProblemHighlightType.WEAK_WARNING);
+                                final String message = messagePattern.replace("%s%", objMethod.getName());
+                                holder.registerProblem(objMethod.getNameIdentifier(), message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                             }
                         }
                     }
                 }
             }
         };
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Drop it";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement().getParent();
+            if (expression instanceof Method) {
+                PsiElement nextExpression = expression.getNextSibling();
+                if (nextExpression instanceof PsiWhiteSpace) {
+                    nextExpression.delete();
+                }
+
+                expression.delete();
+            }
+        }
     }
 }

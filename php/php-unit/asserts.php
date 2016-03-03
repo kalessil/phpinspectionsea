@@ -16,5 +16,6 @@ class TestCase
         $this->assertTrue($x instanceof \stdClass); // <- reported
 
         $this->assertTrue(file_exists($x)); // <- reported
+        $this->assertFalse(file_exists($x)); // <- reported
     }
 }

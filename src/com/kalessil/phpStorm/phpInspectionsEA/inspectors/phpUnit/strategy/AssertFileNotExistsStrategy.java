@@ -13,12 +13,12 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class AssertFileExistsStrategy {
-    final static String message = "assertFileExists should be used instead";
+public class AssertFileNotExistsStrategy {
+    final static String message = "assertFileNotExists should be used instead";
 
     static public void apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
-        if (1 == params.length && function.equals("assertTrue")) {
+        if (1 == params.length && function.equals("assertFalse")) {
             final PsiElement param = ExpressionSemanticUtil.getExpressionTroughParenthesis(params[0]);
             if (param instanceof FunctionReference) {
                 final FunctionReference call  = (FunctionReference) param;
@@ -46,7 +46,7 @@ public class AssertFileExistsStrategy {
         @NotNull
         @Override
         public String getName() {
-            return "Use ::assertFileExists";
+            return "Use ::assertFileNotExists";
         }
 
         @NotNull
@@ -65,7 +65,7 @@ public class AssertFileExistsStrategy {
                 final FunctionReference call = (FunctionReference) expression;
                 //noinspection ConstantConditions I'm really sure NPE will not happen
                 call.getParameterList().replace(replacement.getParameterList());
-                call.handleElementRename("assertFileExists");
+                call.handleElementRename("assertFileNotExists");
             }
         }
     }

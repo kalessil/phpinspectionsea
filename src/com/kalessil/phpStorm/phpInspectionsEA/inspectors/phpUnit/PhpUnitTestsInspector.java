@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.AssertCountStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.AssertFileExistsStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.AssertInstanceOfStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -89,9 +90,10 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* strategies injection */
+                /* strategies injection; TODO: cases with custom messages needs to be handled */
                 AssertInstanceOfStrategy.apply(methodName, reference, holder);
                 AssertCountStrategy.apply(methodName, reference, holder);
+                AssertFileExistsStrategy.apply(methodName, reference, holder);
 
                 /* artifact, refactoring needed for strategies allocation */
                 if (params.length < 2) {

@@ -18,7 +18,11 @@ class TestCase
         $this->assertSame(1, null);        // <- reported assertNull
         $this->assertNotSame(1, null);     // <- reported assertNotNull
 
-        $this->assertTrue($x instanceof \stdClass); // <- reported assert Instance of
+        $this->assertTrue($x instanceof \stdClass);     // <- reported assertInstanceOf
+        $this->assertNotFalse($x instanceof \stdClass); // <- reported assertInstanceOf
+
+        $this->assertFalse($x instanceof \stdClass);    // <- reported assertNotInstanceOf
+        $this->assertNotTrue($x instanceof \stdClass);  // <- reported assertNotInstanceOf
 
         $this->assertTrue(file_exists($x));  // <- reported assertFileExists
         $this->assertFalse(file_exists($x)); // <- reported assertFileNotExists

@@ -134,6 +134,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
                     AssertFileExistsStrategy.apply(methodName, reference, holder)    ||
                     AssertFileNotExistsStrategy.apply(methodName, reference, holder)
+
+                    // TODO: assertInternalType, assertNotInternalType
                 ) {
                     //noinspection UnnecessaryReturnStatement - compact performace tweak
                     return;

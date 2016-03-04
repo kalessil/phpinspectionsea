@@ -21,6 +21,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.util.Collection;
+import java.util.HashSet;
 
 
 public class PhpUnitTestsInspector extends BasePhpInspection {
@@ -54,9 +55,11 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     return;
                 }
 
-                final Collection<PhpDocTag> tags = PsiTreeUtil.findChildrenOfType(previous, PhpDocTag.class);
+                final HashSet<String> annotations = new HashSet<String>();
+                final Collection<PhpDocTag> tags  = PsiTreeUtil.findChildrenOfType(previous, PhpDocTag.class);
                 for (PhpDocTag tag : tags) {
                     final String tagName = tag.getName();
+                    annotations.add(tagName);
 
                     if (tagName.equals("@depends") && tag.getFirstPsiChild() instanceof PhpDocRef) {
                         final PhpDocRef methodNeeded = (PhpDocRef) tag.getFirstPsiChild();
@@ -86,7 +89,16 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 }
                 tags.clear();
 
-                // TODO: if not @test, @dataProvider, not named test* => report it if not @internal
+
+                /* report non-internal methods which are not executed by PhpUnit - dead code/incorrect tests */
+                if (
+                    clazz.getName().endsWith("Test") &&
+                    !annotations.contains("@internal") && !annotations.contains("@dataProvider") &&
+                    !(isMethodNamedAsTest || annotations.contains("@test"))
+                ) {
+                    holder.registerProblem(objMethodName, "This method is not a Unit Test. Annotate it as @internal to suppress this warning.", ProblemHighlightType.GENERIC_ERROR);
+                }
+                annotations.clear();
             }
 
             public void visitPhpMethodReference(MethodReference reference) {

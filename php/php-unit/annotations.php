@@ -14,16 +14,17 @@ class theOneToCover
     }
 }
 
-class testClass
+class theOneToCoverTest
 {
-    public function init()
+    /**  */
+    public function init() // <- reported as not a UT
     {
     }
 
     /**
      * @depends init
      */
-    public function correctDepends()
+    public function testCorrectDepends()
     {
 
     }
@@ -31,7 +32,7 @@ class testClass
     /**
      * @depends something
      */
-    public function incorrectDepends() // <-reported
+    public function testIncorrectDepends() // <-reported
     {
 
     }
@@ -39,7 +40,7 @@ class testClass
     /**
      * @covers \theOneToCover::doSomething
      */
-    public function correctCovers()
+    public function testCorrectCovers()
     {
 
     }
@@ -47,7 +48,7 @@ class testClass
     /**
      * @covers \theOneToCover::doSomethingElse
      */
-    public function incorrectCovers1() // <-reported
+    public function testIncorrectCovers1() // <-reported
     {
 
     }
@@ -55,7 +56,7 @@ class testClass
     /**
      * @covers \Something::doSomething
      */
-    public function incorrectCovers2() // <-reported
+    public function testIncorrectCovers2() // <-reported
     {
 
     }

@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class AssertFileNotExistsStrategy {
     final static String message = "assertFileNotExists should be used instead";
 
-    static public void apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
+    static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
         if (1 == params.length && (function.equals("assertFalse") || function.equals("assertNotTrue"))) {
             final PsiElement param = ExpressionSemanticUtil.getExpressionTroughParenthesis(params[0]);
@@ -26,13 +26,17 @@ public class AssertFileNotExistsStrategy {
                 final PsiElement[] callParams = call.getParameters();
                 final String callName         = call.getName();
                 if (1 != callParams.length || StringUtil.isEmpty(callName) || !callName.equals("file_exists")) {
-                    return;
+                    return false;
                 }
 
                 final TheLocalFix fixer = new TheLocalFix(callParams[0]);
                 holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, fixer);
+
+                return true;
             }
         }
+
+        return false;
     }
 
     private static class TheLocalFix implements LocalQuickFix {

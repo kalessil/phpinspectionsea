@@ -16,20 +16,24 @@ import org.jetbrains.annotations.NotNull;
 public class AssertNotEmptyStrategy {
     final static String message = "assertNotEmpty should be used instead";
 
-    static public void apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
+    static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
         if (1 == params.length && (function.equals("assertFalse") || function.equals("assertNotTrue"))) {
             final PsiElement param = ExpressionSemanticUtil.getExpressionTroughParenthesis(params[0]);
             if (param instanceof PhpEmptyImpl) {
                 final PsiElement[] variables = ((PhpEmptyImpl) param).getVariables();
                 if (1 != variables.length) {
-                    return;
+                    return false;
                 }
 
                 final TheLocalFix fixer = new TheLocalFix(variables[0]);
                 holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, fixer);
+
+                return true;
             }
         }
+
+        return false;
     }
 
     private static class TheLocalFix implements LocalQuickFix {

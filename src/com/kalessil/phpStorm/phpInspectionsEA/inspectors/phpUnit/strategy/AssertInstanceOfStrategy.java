@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 public class AssertInstanceOfStrategy {
     final static String message = "assertInstanceOf should be used instead";
 
-    static public void apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
+    static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
         if (1 == params.length && (function.equals("assertTrue") || function.equals("assertNotFalse"))) {
             final PsiElement param = ExpressionSemanticUtil.getExpressionTroughParenthesis(params[0]);
@@ -30,15 +30,17 @@ public class AssertInstanceOfStrategy {
                     null == instance.getOperation() || null == instance.getRightOperand() || null == instance.getLeftOperand() ||
                     PhpTokenTypes.kwINSTANCEOF != instance.getOperation().getNode().getElementType()
                 ) {
-                    return;
+                    return false;
                 }
 
                 final TheLocalFix fixer = new TheLocalFix(instance.getRightOperand(), instance.getLeftOperand());
                 holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, fixer);
+
+                return true;
             }
-
-
         }
+
+        return false;
     }
 
     private static class TheLocalFix implements LocalQuickFix {

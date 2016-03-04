@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class AssertCountStrategy {
     final static String message = "assertCount should be used instead";
 
-    static public void apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
+    static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
         if (2 == params.length && (function.equals("assertSame") || function.equals("assertEquals"))) {
             /* analyze parameters which makes the call equal to assertCount */
@@ -36,8 +36,12 @@ public class AssertCountStrategy {
                         ((FunctionReference) (isSecondCount ? params[1] : params[0])).getParameters()[0]
                 );
                 holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, fixer);
+
+                return true;
             }
         }
+
+        return false;
     }
 
     private static class TheLocalFix implements LocalQuickFix {

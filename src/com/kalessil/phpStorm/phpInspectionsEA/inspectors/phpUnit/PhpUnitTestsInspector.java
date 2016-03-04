@@ -89,28 +89,36 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
                 /* strategies injection; TODO: cases with custom messages needs to be handled in each one */
 
-                /* normalize first */
+                /* normalize first, no performance tweaks */
                 AssertBoolInvertedStrategy .apply(methodName, reference, holder);
                 if (SUGGEST_TO_USE_ASSERTSAME) {
-                    AssertSameStrategy     .apply(methodName, reference, holder);
-                    AssertNotSameStrategy  .apply(methodName, reference, holder);
+                    @SuppressWarnings("unused")
+                    boolean strictAsserts =
+                        AssertSameStrategy.apply(methodName, reference, holder) ||
+                        AssertNotSameStrategy.apply(methodName, reference, holder)
+                    ;
                 }
 
-                /* now enhance API usage where possible */
-                AssertInstanceOfStrategy   .apply(methodName, reference, holder);
-                // TODO: assertNotInstanceOf
+                /* now enhance API usage where possible, tweak performance */
+                if (
+                    AssertCountStrategy.apply(methodName, reference, holder)         ||
+                    /* TODO: AssertNotCountStrategy */
 
-                AssertCountStrategy        .apply(methodName, reference, holder);
-                // TODO: AssertNotCountStrategy
+                    AssertNullStrategy.apply(methodName, reference, holder)          ||
+                    AssertNotNullStrategy.apply(methodName, reference, holder)       ||
 
-                AssertFileExistsStrategy   .apply(methodName, reference, holder);
-                AssertFileNotExistsStrategy.apply(methodName, reference, holder);
+                    AssertEmptyStrategy.apply(methodName, reference, holder)         ||
+                    AssertNotEmptyStrategy.apply(methodName, reference, holder)      ||
 
-                AssertEmptyStrategy        .apply(methodName, reference, holder);
-                AssertNotEmptyStrategy     .apply(methodName, reference, holder);
+                    AssertInstanceOfStrategy.apply(methodName, reference, holder)    ||
+                    /* TODO: assertNotInstanceOfStrategy */
 
-                AssertNullStrategy         .apply(methodName, reference, holder);
-                AssertNotNullStrategy      .apply(methodName, reference, holder);
+                    AssertFileExistsStrategy.apply(methodName, reference, holder)    ||
+                    AssertFileNotExistsStrategy.apply(methodName, reference, holder)
+                ) {
+                    //noinspection UnnecessaryReturnStatement - compact performace tweak
+                    return;
+                }
             }
         };
     }

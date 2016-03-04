@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class AssertNullStrategy {
     final static String message = "assertNull should be used instead";
 
-    static public void apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
+    static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
         if (2 == params.length && function.equals("assertSame")) {
             /* analyze parameters which makes the call equal to assertCount */
@@ -35,8 +35,12 @@ public class AssertNullStrategy {
             if ((isFirstNull && !isSecondNull) || (!isFirstNull && isSecondNull)) {
                 final TheLocalFix fixer = new TheLocalFix(isFirstNull ? params[1] : params[0]);
                 holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, fixer);
+
+                return true;
             }
         }
+
+        return false;
     }
 
     private static class TheLocalFix implements LocalQuickFix {

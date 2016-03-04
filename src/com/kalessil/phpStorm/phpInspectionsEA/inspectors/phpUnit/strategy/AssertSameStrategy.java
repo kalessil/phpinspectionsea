@@ -14,12 +14,16 @@ import org.jetbrains.annotations.NotNull;
 public class AssertSameStrategy {
     final static String message = "This check is type-unsafe, consider using assertSame instead";
 
-    static public void apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
+    static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
         if (2 == params.length && function.equals("assertEquals")) {
             final TheLocalFix fixer = new TheLocalFix(params[0], params[1]);
             holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, fixer);
+
+            return true;
         }
+
+        return false;
     }
 
     private static class TheLocalFix implements LocalQuickFix {

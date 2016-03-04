@@ -2,6 +2,13 @@
 
 class theOneToCover
 {
+    /**
+     * @test
+     */
+    public function testAmbigousTag()
+    {
+    }
+
     public function doSomething()
     {
     }

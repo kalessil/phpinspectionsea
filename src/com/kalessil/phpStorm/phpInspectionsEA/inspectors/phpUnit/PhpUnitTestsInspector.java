@@ -37,28 +37,29 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
-                PhpClass clazz = method.getContainingClass();
+                final PhpClass clazz = method.getContainingClass();
                 if (null == clazz) {
                     return;
                 }
 
-                String strMethodName     = method.getName();
-                PsiElement objMethodName = method.getNameIdentifier();
+                final String strMethodName     = method.getName();
+                final PsiElement objMethodName = method.getNameIdentifier();
                 if ( null == objMethodName || StringUtil.isEmpty(strMethodName)) {
                     return;
                 }
+                final boolean isMethodNamedAsTest = strMethodName.startsWith("test");
 
-                PhpPsiElement previous = method.getPrevPsiSibling();
+                final PhpPsiElement previous = method.getPrevPsiSibling();
                 if (!(previous instanceof PhpDocCommentImpl)) {
                     return;
                 }
 
-                Collection<PhpDocTag> tags = PsiTreeUtil.findChildrenOfType(previous, PhpDocTag.class);
+                final Collection<PhpDocTag> tags = PsiTreeUtil.findChildrenOfType(previous, PhpDocTag.class);
                 for (PhpDocTag tag : tags) {
-                    String tagName = tag.getName();
+                    final String tagName = tag.getName();
 
                     if (tagName.equals("@depends") && tag.getFirstPsiChild() instanceof PhpDocRef) {
-                        PhpDocRef methodNeeded = (PhpDocRef) tag.getFirstPsiChild();
+                        final PhpDocRef methodNeeded = (PhpDocRef) tag.getFirstPsiChild();
                         if (!(methodNeeded.resolve() instanceof Method)) {
                             holder.registerProblem(objMethodName, "@depends referencing a non-existing method", ProblemHighlightType.GENERIC_ERROR);
                             continue;
@@ -66,19 +67,26 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     }
 
                     if (tagName.equals("@covers") && tag.getFirstPsiChild() instanceof PhpDocRef) {
-                        PhpDocRef referenceNeeded = (PhpDocRef) tag.getFirstPsiChild();
-                        String referenceText      = referenceNeeded.getText();
+                        final PhpDocRef referenceNeeded = (PhpDocRef) tag.getFirstPsiChild();
+                        final String referenceText      = referenceNeeded.getText();
 
-                        PsiElement resolvedReference = referenceNeeded.resolve();
+                        final PsiElement resolvedReference = referenceNeeded.resolve();
                         if (
                             null == resolvedReference ||
                             (resolvedReference instanceof PhpClass && referenceText.contains("::") && !referenceText.endsWith("::"))
                         ) {
                             holder.registerProblem(objMethodName, "@covers referencing a non-existing class/method/function", ProblemHighlightType.GENERIC_ERROR);
+                            continue;
                         }
+                    }
+
+                    if (isMethodNamedAsTest && tagName.equals("@test")) {
+                        holder.registerProblem(tag.getFirstChild(), "@test is ambiguous because method name starts with 'test'", ProblemHighlightType.LIKE_DEPRECATED);
                     }
                 }
                 tags.clear();
+
+                // TODO: if not @test, @dataProvider, not named test* => report it if not @internal
             }
 
             public void visitPhpMethodReference(MethodReference reference) {

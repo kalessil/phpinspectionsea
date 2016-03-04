@@ -11,10 +11,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.AssertCountStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.AssertFileExistsStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.AssertFileNotExistsStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.AssertInstanceOfStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import net.miginfocom.swing.MigLayout;
@@ -87,7 +84,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
             public void visitPhpMethodReference(MethodReference reference) {
                 final String methodName   = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if (StringUtil.isEmpty(methodName) || !methodName.startsWith("assert")) {
+                if (StringUtil.isEmpty(methodName) || !methodName.startsWith("assert") || methodName.equals("assert")) {
                     return;
                 }
 
@@ -96,6 +93,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 AssertCountStrategy.apply(methodName, reference, holder);
                 AssertFileExistsStrategy.apply(methodName, reference, holder);
                 AssertFileNotExistsStrategy.apply(methodName, reference, holder);
+                AssertBoolInvertedStrategy.apply(methodName, reference, holder);
 
                 /* artifact, refactoring needed for strategies allocation */
                 if (params.length < 2) {

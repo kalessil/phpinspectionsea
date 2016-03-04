@@ -19,7 +19,7 @@ public class AssertNullStrategy {
     static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
         if (2 == params.length && function.equals("assertSame")) {
-            /* analyze parameters which makes the call equal to assertCount */
+            /* analyze parameters which makes the call equal to assertNull */
             boolean isFirstNull = false;
             if (params[0] instanceof ConstantReference) {
                 final String constantName = ((ConstantReference) params[0]).getName();
@@ -31,7 +31,7 @@ public class AssertNullStrategy {
                 isSecondNull = !StringUtil.isEmpty(referenceName) && referenceName.equals("null");
             }
 
-            /* fire assertCount warning when needed */
+            /* fire assertNull warning when needed */
             if ((isFirstNull && !isSecondNull) || (!isFirstNull && isSecondNull)) {
                 final TheLocalFix fixer = new TheLocalFix(isFirstNull ? params[1] : params[0]);
                 holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, fixer);

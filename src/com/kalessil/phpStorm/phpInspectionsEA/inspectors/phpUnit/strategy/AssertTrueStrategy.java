@@ -13,27 +13,27 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import org.jetbrains.annotations.NotNull;
 
-public class AssertNotNullStrategy {
-    final static String message = "assertNotNull should be used instead";
+public class AssertTrueStrategy {
+    final static String message = "assertTrue should be used instead";
 
     static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
-        if (2 == params.length && function.equals("assertNotSame")) {
-            /* analyze parameters which makes the call equal to assertNotNull */
-            boolean isFirstNull = false;
+        if (2 == params.length && function.equals("assertSame")) {
+            /* analyze parameters which makes the call equal to assertTrue */
+            boolean isFirstTrue = false;
             if (params[0] instanceof ConstantReference) {
                 final String constantName = ((ConstantReference) params[0]).getName();
-                isFirstNull = !StringUtil.isEmpty(constantName) && constantName.equals("null");
+                isFirstTrue = !StringUtil.isEmpty(constantName) && constantName.equals("true");
             }
-            boolean isSecondNull = false;
+            boolean isSecondTrue = false;
             if (params[1] instanceof ConstantReference) {
                 final String referenceName = ((ConstantReference) params[1]).getName();
-                isSecondNull = !StringUtil.isEmpty(referenceName) && referenceName.equals("null");
+                isSecondTrue = !StringUtil.isEmpty(referenceName) && referenceName.equals("true");
             }
 
-            /* fire assertNotNull warning when needed */
-            if ((isFirstNull && !isSecondNull) || (!isFirstNull && isSecondNull)) {
-                final TheLocalFix fixer = new TheLocalFix(isFirstNull ? params[1] : params[0]);
+            /* fire assertTrue warning when needed */
+            if ((isFirstTrue && !isSecondTrue) || (!isFirstTrue && isSecondTrue)) {
+                final TheLocalFix fixer = new TheLocalFix(isFirstTrue ? params[1] : params[0]);
                 holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, fixer);
 
                 return true;
@@ -54,7 +54,7 @@ public class AssertNotNullStrategy {
         @NotNull
         @Override
         public String getName() {
-            return "Use ::assertNotNull";
+            return "Use ::assertTrue";
         }
 
         @NotNull
@@ -73,7 +73,7 @@ public class AssertNotNullStrategy {
                 final FunctionReference call = (FunctionReference) expression;
                 //noinspection ConstantConditions I'm really sure NPE will not happen
                 call.getParameterList().replace(replacement.getParameterList());
-                call.handleElementRename("assertNotNull");
+                call.handleElementRename("assertTrue");
             }
         }
     }

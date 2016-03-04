@@ -18,7 +18,7 @@ public class AssertNotCountStrategy {
     static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
         if (2 == params.length && (function.equals("assertNotSame") || function.equals("assertNotEquals"))) {
-            /* analyze parameters which makes the call equal to assertCount */
+            /* analyze parameters which makes the call equal to assertNotCount */
             boolean isFirstCount = false;
             if (params[0] instanceof FunctionReference && !(params[0] instanceof MethodReference)) {
                 final String referenceName = ((FunctionReference) params[0]).getName();
@@ -29,7 +29,7 @@ public class AssertNotCountStrategy {
                 final String referenceName = ((FunctionReference) params[1]).getName();
                 isSecondCount = !StringUtil.isEmpty(referenceName) && referenceName.equals("count");
             }
-                /* fire assertCount warning when needed */
+            /* fire assertNotCount warning when needed */
             if ((isFirstCount && !isSecondCount) || (!isFirstCount && isSecondCount)) {
                 final TheLocalFix fixer = new TheLocalFix(
                         isSecondCount ? params[0] : params[1],

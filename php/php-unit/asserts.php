@@ -47,5 +47,8 @@ class TestCase
         $this->assertFalse(empty($x));     // <- reported assertNotEmpty
         $this->assertTrue(empty($x));      // <- reported assertEmpty
         $this->assertNotFalse(empty($x));  // <- reported assertEmpty
+
+        $this->assertSame(true, 0);        // <- reported assertTrue
+        $this->assertNotSame(true, 0);     // <- reported assertNotTrue
     }
 }

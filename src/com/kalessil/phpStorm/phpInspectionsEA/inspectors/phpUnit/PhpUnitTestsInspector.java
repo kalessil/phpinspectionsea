@@ -112,6 +112,11 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     AssertNullStrategy.apply(methodName, reference, holder)          ||
                     AssertNotNullStrategy.apply(methodName, reference, holder)       ||
 
+                    AssertTrueStrategy.apply(methodName, reference, holder)          ||
+                    AssertNotTrueStrategy.apply(methodName, reference, holder)       ||
+
+                    // TODO: AssertFalseStrategy, AssertNotFalseStrategy
+
                     AssertEmptyStrategy.apply(methodName, reference, holder)         ||
                     AssertNotEmptyStrategy.apply(methodName, reference, holder)      ||
 

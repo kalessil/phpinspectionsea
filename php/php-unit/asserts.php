@@ -31,9 +31,6 @@ class TestCase
         $this->assertEquals(null, 1);      // <- reported, assertSame    IF strict options set
         $this->assertNotEquals(null, 1);   // <- reported, assertnotSame IF strict options set
 
-        $this->assertSame(1, null);        // <- reported assertNull
-        $this->assertNotSame(1, null);     // <- reported assertNotNull
-
         $this->assertTrue($x instanceof \stdClass);     // <- reported assertInstanceOf
         $this->assertNotFalse($x instanceof \stdClass); // <- reported assertInstanceOf
 
@@ -48,7 +45,14 @@ class TestCase
         $this->assertTrue(empty($x));      // <- reported assertEmpty
         $this->assertNotFalse(empty($x));  // <- reported assertEmpty
 
+        $this->assertSame(1, null);        // <- reported assertNull
+        $this->assertNotSame(1, null);     // <- reported assertNotNull
+
         $this->assertSame(true, 0);        // <- reported assertTrue
         $this->assertNotSame(true, 0);     // <- reported assertNotTrue
+
+        $this->assertSame(false, 0);        // <- reported assertFalse
+        $this->assertNotSame(false, 0);     // <- reported assertNotFalse
+
     }
 }

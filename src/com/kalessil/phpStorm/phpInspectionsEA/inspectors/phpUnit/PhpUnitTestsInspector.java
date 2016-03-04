@@ -89,6 +89,9 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 }
 
                 /* strategies injection; TODO: cases with custom messages needs to be handled */
+                if (SUGGEST_TO_USE_ASSERTSAME) {
+                    AssertSameStrategy     .apply(methodName, reference, holder);
+                }
                 AssertBoolInvertedStrategy .apply(methodName, reference, holder);
                 AssertInstanceOfStrategy   .apply(methodName, reference, holder);
                 AssertCountStrategy        .apply(methodName, reference, holder);
@@ -104,10 +107,6 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 final boolean isAssertEquals = methodName.equals("assertEquals");
                 if (!isAssertEquals && !methodName.equals("assertSame")) {
                     return;
-                }
-
-                if (SUGGEST_TO_USE_ASSERTSAME && isAssertEquals) {
-                    holder.registerProblem(reference, "This check is type-unsafe, consider using assertSame instead", ProblemHighlightType.WEAK_WARNING);
                 }
 
                 /* assertEquals -> assertNull become type-strict, ensure we want it */

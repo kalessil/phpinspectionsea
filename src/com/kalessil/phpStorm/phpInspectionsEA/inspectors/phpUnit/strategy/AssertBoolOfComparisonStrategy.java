@@ -38,12 +38,12 @@ public class AssertBoolOfComparisonStrategy {
                     operation == PhpTokenTypes.opEQUAL     || operation == PhpTokenTypes.opIDENTICAL ||
                     operation == PhpTokenTypes.opNOT_EQUAL || operation == PhpTokenTypes.opNOT_IDENTICAL
                 ) {
-                    final boolean isMethodInverting    = function.equals("assertFalse") || function.equals("assertNonTrue");
+                    final boolean isMethodInverting    = function.equals("assertFalse") || function.equals("assertNotTrue");
                     final boolean isOperationInverting = operation == PhpTokenTypes.opNOT_EQUAL || operation == PhpTokenTypes.opNOT_IDENTICAL;
                     final boolean isTypeStrict         = operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL;
 
                     final String replacementMethod = "assert" +
-                        (isMethodInverting && isOperationInverting ? "" : "Not") + (isTypeStrict ? "Same" : "Equals");
+                        (isMethodInverting == isOperationInverting ? "" : "Not") + (isTypeStrict ? "Same" : "Equals");
                     final String message = messagePattern.replace("%m%", replacementMethod);
 
                     final TheLocalFix fixer = new TheLocalFix(replacementMethod, argument.getLeftOperand(), argument.getRightOperand());

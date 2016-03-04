@@ -32,7 +32,7 @@ public class AssertBoolInvertedStrategy {
                     return;
                 }
 
-                final String replacementMethod = function.equals("assertTrue") ? "assertFalse" : "assertTrue";
+                final String replacementMethod = function.equals("assertTrue") ? "assertNotTrue" : "assertNotFalse";
                 final String message = messagePattern.replace("%m%", replacementMethod);
 
                 final TheLocalFix fixer = new TheLocalFix(replacementMethod, invertedParam);

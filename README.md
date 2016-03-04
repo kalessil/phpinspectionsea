@@ -45,11 +45,11 @@ Inspections Lists (Control flow)
 | Control flow         | ForeachInvariantsInspection                     | Foreach usage possible                              | no |
 | Control flow         | PdoApiUsageInspection                           | PDO api usage                                       | no |
 
-Inspections Lists (Without group)
+Inspections Lists (PhpUnit)
 ---
 | Group                | Short Name                                      | Full Name                                           | Quick fix |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
-| ---                  | PhpUnitTestsInspection                          | PhpUnit: bugs and best practices                    | no |
+| PhpUnit              | PhpUnitTestsInspection                          | PhpUnit: bugs and best practices                    | yes |
 
 Inspections Lists (Unused)
 ---

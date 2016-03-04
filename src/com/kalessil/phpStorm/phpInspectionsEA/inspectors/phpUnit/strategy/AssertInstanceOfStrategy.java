@@ -22,7 +22,7 @@ public class AssertInstanceOfStrategy {
 
     static public void apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
-        if (1 == params.length && function.equals("assertTrue")) {
+        if (1 == params.length && (function.equals("assertTrue") || function.equals("assertNotFalse"))) {
             final PsiElement param = ExpressionSemanticUtil.getExpressionTroughParenthesis(params[0]);
             if (param instanceof BinaryExpressionImpl) {
                 final BinaryExpressionImpl instance = (BinaryExpressionImpl) param;
@@ -36,6 +36,8 @@ public class AssertInstanceOfStrategy {
                 final TheLocalFix fixer = new TheLocalFix(instance.getRightOperand(), instance.getLeftOperand());
                 holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, fixer);
             }
+
+
         }
     }
 

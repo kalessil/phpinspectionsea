@@ -18,7 +18,7 @@ public class AssertFileExistsStrategy {
 
     static public void apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
-        if (1 == params.length && function.equals("assertTrue")) {
+        if (1 == params.length && (function.equals("assertTrue") || function.equals("assertNotFalse"))) {
             final PsiElement param = ExpressionSemanticUtil.getExpressionTroughParenthesis(params[0]);
             if (param instanceof FunctionReference) {
                 final FunctionReference call  = (FunctionReference) param;

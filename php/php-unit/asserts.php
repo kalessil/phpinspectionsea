@@ -26,5 +26,6 @@ class TestCase
         $this->assertNotTrue(empty($x));   // <- reported assertNotEmpty
         $this->assertFalse(empty($x));     // <- reported assertNotEmpty
         $this->assertTrue(empty($x));      // <- reported assertEmpty
+        $this->assertNotFalse(empty($x));  // <- reported assertEmpty
     }
 }

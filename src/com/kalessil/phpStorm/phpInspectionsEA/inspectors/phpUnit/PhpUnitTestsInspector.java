@@ -82,26 +82,31 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
             }
 
             public void visitPhpMethodReference(MethodReference reference) {
-                final String methodName   = reference.getName();
-                final PsiElement[] params = reference.getParameters();
+                final String methodName = reference.getName();
                 if (StringUtil.isEmpty(methodName) || !methodName.startsWith("assert") || methodName.equals("assert")) {
                     return;
                 }
 
-                /* strategies injection; TODO: cases with custom messages needs to be handled */
+                /* strategies injection; TODO: cases with custom messages needs to be handled in each one */
+
+                /* normalize first */
+                AssertBoolInvertedStrategy .apply(methodName, reference, holder);
                 if (SUGGEST_TO_USE_ASSERTSAME) {
                     AssertSameStrategy     .apply(methodName, reference, holder);
                     AssertNotSameStrategy  .apply(methodName, reference, holder);
                 }
-                AssertBoolInvertedStrategy .apply(methodName, reference, holder);
 
+                /* now enhance API usage where possible */
                 AssertInstanceOfStrategy   .apply(methodName, reference, holder);
+                // TODO: assertNotInstanceOf
+
                 AssertCountStrategy        .apply(methodName, reference, holder);
+                // TODO: AssertNotCountStrategy
 
                 AssertFileExistsStrategy   .apply(methodName, reference, holder);
                 AssertFileNotExistsStrategy.apply(methodName, reference, holder);
 
-                //AssertEmptyStrategy        .apply(methodName, reference, holder);
+                AssertEmptyStrategy        .apply(methodName, reference, holder);
                 AssertNotEmptyStrategy     .apply(methodName, reference, holder);
 
                 AssertNullStrategy         .apply(methodName, reference, holder);

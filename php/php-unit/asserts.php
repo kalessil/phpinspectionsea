@@ -2,6 +2,22 @@
 
 class TestCase
 {
+    public function testNormalization()
+    {
+        $this->assertTrue(!$s);            // <- reported assertNotTrue
+        $this->assertFalse(!$y);           // <- reported assertNotFalse
+
+        $this->assertTrue(false == $x);     // <- reported assertEquals
+        $this->assertNotFalse(false === $x);// <- reported assertSame
+        $this->assertTrue(false != $x);     // <- reported assertNotEquals
+        $this->assertNotFalse(false !== $x);// <- reported assertNotSame
+
+        $this->assertFalse(false == $x);    // <- reported assertNotEquals
+        $this->assertNotTrue(false === $x); // <- reported assertNotSame
+        $this->assertFalse(false != $x);    // <- reported assertEquals
+        $this->assertNotTrue(false !== $x); // <- reported assertSame
+    }
+
     public function test()
     {
         $this->assertEquals(0, count([])); // <- reported assertCount
@@ -26,9 +42,6 @@ class TestCase
 
         $this->assertTrue(file_exists($x));  // <- reported assertFileExists
         $this->assertFalse(file_exists($x)); // <- reported assertFileNotExists
-
-        $this->assertTrue(!$s);            // <- reported assertNotTrue
-        $this->assertFalse(!$y);           // <- reported assertNotFalse
 
         $this->assertNotTrue(empty($x));   // <- reported assertNotEmpty
         $this->assertFalse(empty($x));     // <- reported assertNotEmpty

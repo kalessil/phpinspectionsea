@@ -91,41 +91,21 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 /* strategies injection; TODO: cases with custom messages needs to be handled */
                 if (SUGGEST_TO_USE_ASSERTSAME) {
                     AssertSameStrategy     .apply(methodName, reference, holder);
+                    AssertNotSameStrategy  .apply(methodName, reference, holder);
                 }
                 AssertBoolInvertedStrategy .apply(methodName, reference, holder);
+
                 AssertInstanceOfStrategy   .apply(methodName, reference, holder);
                 AssertCountStrategy        .apply(methodName, reference, holder);
+
                 AssertFileExistsStrategy   .apply(methodName, reference, holder);
                 AssertFileNotExistsStrategy.apply(methodName, reference, holder);
+
+                //AssertEmptyStrategy        .apply(methodName, reference, holder);
                 AssertNotEmptyStrategy     .apply(methodName, reference, holder);
 
-                /* artifact, refactoring needed for strategies allocation */
-                if (params.length < 2) {
-                    return;
-                }
-
-                final boolean isAssertEquals = methodName.equals("assertEquals");
-                if (!isAssertEquals && !methodName.equals("assertSame")) {
-                    return;
-                }
-
-                /* assertEquals -> assertNull become type-strict, ensure we want it */
-                if (!isAssertEquals || SUGGEST_TO_USE_ASSERTSAME) {
-                    /* analyze parameters which makes the call equal to assertNull */
-                    boolean isFirstNull = false;
-                    if (params[0] instanceof ConstantReference) {
-                        isFirstNull = PhpLangUtil.isNull((ConstantReference) params[0]);
-                    }
-                    boolean isSecondNull = false;
-                    if (params[1] instanceof ConstantReference) {
-                        isSecondNull = PhpLangUtil.isNull((ConstantReference) params[1]);
-                    }
-                    /* fire assertNull warning when needed */
-                    if (isFirstNull || isSecondNull) {
-                        holder.registerProblem(reference, "assertNull should be used instead", ProblemHighlightType.WEAK_WARNING);
-                        // return;
-                    }
-                }
+                AssertNullStrategy         .apply(methodName, reference, holder);
+                AssertNotNullStrategy      .apply(methodName, reference, holder);
             }
         };
     }

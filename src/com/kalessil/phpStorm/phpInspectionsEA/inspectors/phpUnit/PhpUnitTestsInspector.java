@@ -97,7 +97,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     !(isMethodNamedAsTest || annotations.contains("@test")) &&
                     !strMethodName.equals("setUp") && !strMethodName.equals("tearDown") && !strMethodName.endsWith("Provider")
                 ) {
-                    holder.registerProblem(objMethodName, "This method is not a Unit Test. Annotate it as @internal to suppress this warning.", ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(objMethodName, "This method is not a Unit Test. Annotate it as @internal or name it *Provider to suppress this warning.", ProblemHighlightType.GENERIC_ERROR);
                 }
                 annotations.clear();
             }

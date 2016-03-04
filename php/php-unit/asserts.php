@@ -9,6 +9,9 @@ class TestCase
         $this->assertSame(0, count([]));   // <- reported assertCount
         $this->assertSame(count([]), 0);   // <- reported assertCount
 
+        $this->assertNotEquals(count([]), 0); // <- reported assertNotCount
+        $this->assertNotSame(count([]), 0);   // <- reported assertNotCount
+
         $this->assertEquals(null, 1);      // <- reported, assertSame    IF strict options set
         $this->assertNotEquals(null, 1);   // <- reported, assertnotSame IF strict options set
 

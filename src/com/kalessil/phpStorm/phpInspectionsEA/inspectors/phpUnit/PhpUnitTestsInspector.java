@@ -102,7 +102,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 /* now enhance API usage where possible, tweak performance */
                 if (
                     AssertCountStrategy.apply(methodName, reference, holder)         ||
-                    /* TODO: AssertNotCountStrategy */
+                    AssertNotCountStrategy.apply(methodName, reference, holder)      ||
 
                     AssertNullStrategy.apply(methodName, reference, holder)          ||
                     AssertNotNullStrategy.apply(methodName, reference, holder)       ||

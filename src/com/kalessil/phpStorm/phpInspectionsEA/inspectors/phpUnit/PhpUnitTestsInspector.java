@@ -90,7 +90,12 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 /* strategies injection; TODO: cases with custom messages needs to be handled in each one */
 
                 /* normalize first, no performance tweaks */
-                AssertBoolInvertedStrategy .apply(methodName, reference, holder);
+                if (
+                    AssertBoolInvertedStrategy.apply(methodName, reference, holder)     ||
+                    AssertBoolOfComparisonStrategy.apply(methodName, reference, holder)
+                ) {
+                    return;
+                }
                 if (SUGGEST_TO_USE_ASSERTSAME) {
                     @SuppressWarnings("unused")
                     boolean strictAsserts =

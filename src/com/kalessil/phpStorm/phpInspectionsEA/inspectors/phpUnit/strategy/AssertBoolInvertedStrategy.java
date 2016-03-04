@@ -17,19 +17,19 @@ import org.jetbrains.annotations.NotNull;
 public class AssertBoolInvertedStrategy {
     final static String messagePattern = "%m% should be used instead";
 
-    static public void apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
+    static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
         if (1 == params.length && (function.equals("assertTrue") || function.equals("assertFalse"))) {
             final PsiElement param = ExpressionSemanticUtil.getExpressionTroughParenthesis(params[0]);
             if (param instanceof UnaryExpressionImpl) {
                 final UnaryExpressionImpl not = (UnaryExpressionImpl) param;
                 if (null == not.getOperation() || PhpTokenTypes.opNOT != not.getOperation().getNode().getElementType()) {
-                    return;
+                    return false;
                 }
 
                 final PsiElement invertedParam = ExpressionSemanticUtil.getExpressionTroughParenthesis(not.getValue());
                 if (null == invertedParam) {
-                    return;
+                    return false;
                 }
 
                 final String replacementMethod = function.equals("assertTrue") ? "assertNotTrue" : "assertNotFalse";
@@ -37,8 +37,12 @@ public class AssertBoolInvertedStrategy {
 
                 final TheLocalFix fixer = new TheLocalFix(replacementMethod, invertedParam);
                 holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, fixer);
+
+                return true;
             }
         }
+
+        return false;
     }
 
     private static class TheLocalFix implements LocalQuickFix {

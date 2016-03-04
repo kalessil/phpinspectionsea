@@ -18,7 +18,10 @@ class TestCase
         $this->assertTrue(file_exists($x));  // <- reported
         $this->assertFalse(file_exists($x)); // <- reported
 
-        $this->assertTrue(!$s);  // <- reported
-        $this->assertFalse(!$y); // <- reported
+        $this->assertTrue(!$s);            // <- reported
+        $this->assertFalse(!$y);           // <- reported
+
+        $this->assertNotTrue(empty($x));   // <- reported
+        $this->assertFalse(empty($x));     // <- reported
     }
 }

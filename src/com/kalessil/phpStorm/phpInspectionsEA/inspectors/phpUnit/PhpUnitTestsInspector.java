@@ -89,11 +89,12 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 }
 
                 /* strategies injection; TODO: cases with custom messages needs to be handled */
-                AssertInstanceOfStrategy.apply(methodName, reference, holder);
-                AssertCountStrategy.apply(methodName, reference, holder);
-                AssertFileExistsStrategy.apply(methodName, reference, holder);
+                AssertBoolInvertedStrategy .apply(methodName, reference, holder);
+                AssertInstanceOfStrategy   .apply(methodName, reference, holder);
+                AssertCountStrategy        .apply(methodName, reference, holder);
+                AssertFileExistsStrategy   .apply(methodName, reference, holder);
                 AssertFileNotExistsStrategy.apply(methodName, reference, holder);
-                AssertBoolInvertedStrategy.apply(methodName, reference, holder);
+                AssertNotEmptyStrategy     .apply(methodName, reference, holder);
 
                 /* artifact, refactoring needed for strategies allocation */
                 if (params.length < 2) {

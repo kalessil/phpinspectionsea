@@ -1,10 +1,14 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef;
@@ -82,7 +86,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     }
 
                     if (isMethodNamedAsTest && tagName.equals("@test")) {
-                        holder.registerProblem(tag.getFirstChild(), "@test is ambiguous because method name starts with 'test'", ProblemHighlightType.LIKE_DEPRECATED);
+                        final String message = "@test is ambiguous because method name starts with 'test'";
+                        holder.registerProblem(tag.getFirstChild(), message, ProblemHighlightType.LIKE_DEPRECATED, new AmbiguousTestanotationLocalFix());
                     }
                 }
                 tags.clear();
@@ -170,4 +175,25 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
         }
     }
 
+    private static class AmbiguousTestanotationLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Drop ambiguous @test";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement().getParent();
+            if (expression instanceof PhpDocTag) {
+                expression.delete();
+            }
+        }
+    }
 }

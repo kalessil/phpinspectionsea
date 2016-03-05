@@ -11,7 +11,6 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
@@ -26,7 +25,6 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.util.Collection;
-import java.util.HashSet;
 
 
 public class PhpUnitTestsInspector extends BasePhpInspection {
@@ -88,7 +86,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
                     if (isMethodNamedAsTest && tagName.equals("@test")) {
                         final String message = "@test is ambiguous because method name starts with 'test'";
-                        holder.registerProblem(tag.getFirstChild(), message, ProblemHighlightType.LIKE_DEPRECATED, new AmbiguousTestanotationLocalFix());
+                        holder.registerProblem(tag.getFirstChild(), message, ProblemHighlightType.LIKE_DEPRECATED, new AmbiguousTestAnnotationLocalFix());
                     }
                 }
                 tags.clear();
@@ -176,7 +174,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
         }
     }
 
-    private static class AmbiguousTestanotationLocalFix implements LocalQuickFix {
+    private static class AmbiguousTestAnnotationLocalFix implements LocalQuickFix {
         @NotNull
         @Override
         public String getName() {

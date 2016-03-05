@@ -7,11 +7,14 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.impl.BinaryExpressionImpl;
+import com.jetbrains.php.lang.psi.elements.impl.ClassConstantReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.ClassReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StringLiteralExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -70,10 +73,19 @@ public class AssertNotInstanceOfStrategy {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
                 if (this.classIdentity instanceof ClassReferenceImpl) {
-                    final String fqn = ((ClassReferenceImpl) this.classIdentity).getFQN();
-                    if (!StringUtil.isEmpty(fqn)) {
-                        final String pattern = "'" + fqn.replaceAll("\\\\", "\\\\\\\\") + "'"; // <- I hate Java escaping
-                        this.classIdentity = PhpPsiElementFactory.createFromText(project, StringLiteralExpressionImpl.class, pattern);
+                    final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
+                    final boolean useClassConstant    = (PhpLanguageLevel.PHP530 != phpVersion && PhpLanguageLevel.PHP540 != phpVersion);
+
+                    if (useClassConstant) {
+                        /* since PHP 5.5 we can use ::class constant */
+                        final String pattern = this.classIdentity.getText() + "::class";
+                        this.classIdentity = PhpPsiElementFactory.createFromText(project, ClassConstantReferenceImpl.class, pattern);
+                    } else {
+                        final String fqn = ((ClassReferenceImpl) this.classIdentity).getFQN();
+                        if (!StringUtil.isEmpty(fqn)) {
+                            final String pattern = "'" + fqn.replaceAll("\\\\", "\\\\\\\\") + "'"; // <- I hate Java escaping
+                            this.classIdentity = PhpPsiElementFactory.createFromText(project, StringLiteralExpressionImpl.class, pattern);
+                        }
                     }
                 }
 

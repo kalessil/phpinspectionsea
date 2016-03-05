@@ -191,10 +191,12 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement().getParent();
             if (expression instanceof PhpDocTag) {
+                /* drop preceding space */
                 if (expression.getPrevSibling() instanceof PsiWhiteSpace) {
                     expression.getPrevSibling().delete();
                 }
 
+                /* drop preceding star */
                 if (expression.getPrevSibling() instanceof LeafPsiElement) {
                     LeafPsiElement previous = (LeafPsiElement) expression.getPrevSibling();
                     if (previous.getText().equals("*")) {

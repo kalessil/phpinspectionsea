@@ -9,6 +9,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef;
@@ -192,6 +193,17 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement().getParent();
             if (expression instanceof PhpDocTag) {
+                if (expression.getPrevSibling() instanceof PsiWhiteSpace) {
+                    expression.getPrevSibling().delete();
+                }
+
+                if (expression.getPrevSibling() instanceof LeafPsiElement) {
+                    LeafPsiElement previous = (LeafPsiElement) expression.getPrevSibling();
+                    if (previous.getText().equals("*")) {
+                        expression.getPrevSibling().delete();
+                    }
+                }
+
                 expression.delete();
             }
         }

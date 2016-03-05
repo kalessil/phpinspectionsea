@@ -30,6 +30,9 @@ class B extends A
         parent::__construct();
     }
 
+    /**
+     * Some PhpDoc here
+     */
     public function doSomething1() // -> reported
     {
         parent::doSomething1();

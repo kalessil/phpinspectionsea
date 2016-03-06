@@ -6,7 +6,6 @@ Inspections Lists (Quick-fixes for next release)
 | Group                | Short Name                                      | Full Name                                           | Quick fix |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
 | Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | Prio1 |
-| Code style           | ReferencingObjectsInspection                    | Referencing objects                                 | Prio1 |
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | Prio1 |
 | Code style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | Prio1 |
 | Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | Prio1 |
@@ -78,6 +77,7 @@ Inspections Lists (Confusing constructs)
 | Confusing constructs | UselessReturnInspection                         | Useless return                                      | --- |
 | Confusing constructs | ParameterByRefWithDefaultInspection             | Parameter passed by reference has default value     | --- |
 | Confusing constructs | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes |
+| Confusing constructs | ReferencingObjectsInspection                    | Referencing objects                                 | yes |
 
 Inspections Lists (Code style)
 ---

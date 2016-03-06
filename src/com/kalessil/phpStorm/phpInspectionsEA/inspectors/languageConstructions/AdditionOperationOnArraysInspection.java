@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 
 public class AdditionOperationOnArraysInspection extends BasePhpInspection {
-    private static final String strProblemDescription = "Did you mean 'array_merge(...)' instead? It behaves differently.";
+    private static final String strProblemDescription = "Consider using 'array_merge(...)/array_replace(...)' instead. If you know how array_merge/array_replace/+ behaviors differs feel free to disable the inspection.";
 
     @NotNull
     public String getShortName() {
@@ -31,24 +31,24 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpBinaryExpression(BinaryExpression expression) {
-                PsiElement objOperation = expression.getOperation();
+                final PsiElement objOperation = expression.getOperation();
                 if (null != objOperation && PhpTokenTypes.opPLUS == objOperation.getNode().getElementType()) {
                     this.inspectExpression(objOperation, expression);
                 }
             }
             public void visitPhpSelfAssignmentExpression(SelfAssignmentExpression expression) {
-                PsiElement objOperation = expression.getOperation();
+                final PsiElement objOperation = expression.getOperation();
                 if (null != objOperation && PhpTokenTypes.opPLUS_ASGN == objOperation.getNode().getElementType()) {
                     this.inspectExpression(objOperation, expression);
                 }
             }
 
-            /** inspection itself */
+            /* inspection itself */
             private void inspectExpression(PsiElement objOperation, PsiElement expression) {
-                PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
-                Function objScope = ExpressionSemanticUtil.getScope(expression);
+                final PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
+                final Function objScope = ExpressionSemanticUtil.getScope(expression);
 
-                HashSet<String> typesResolved = new HashSet<String>();
+                final HashSet<String> typesResolved = new HashSet<String>();
                 TypeFromPsiResolvingUtil.resolveExpressionType(expression, objScope, objIndex, typesResolved);
                 if (typesResolved.size() == 1 && typesResolved.iterator().next().equals(Types.strArray)) {
                     holder.registerProblem(objOperation, strProblemDescription, ProblemHighlightType.ERROR);

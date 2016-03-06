@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.4.0</version>
+  <version>1.5.0</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -36,6 +36,7 @@ It covers:<br />
 - validation of exception handling workflow<br />
 - compatibility issues<br />
 - variety of time-consuming bugs<br />
+- PhpUnit API usage<br />
 <br />
 Some of inspections are expecting conditional statements (e.g. "if") to use
 group statement for wrapping body expressions. If this requirement is met
@@ -50,24 +51,22 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-28 Feb 2016: long awaited improvements<br/>
+6 Mar 2016: new intentions, inspections, improvements and bug-fixes<br/>
 <br/>
-    - Inspections grouping: 7 new sub-groups introduced;<br/><br/>
+    - Inspections grouping: finalized;<br/>
+    - Insecure 'parse_str(...)' usage: implemented;<br/>
+    - PhpUnit bugs and best practices: re-worked, quick-fixes implemented;<br/><br/>
 
-    - Alias functions usage: quick-fix implemented;<br/>
-    - Elvis operator can be used: quick-fix implemented;<br/>
-    - Null coalescing operator can be used: quick-fix implemented;<br/>
-    - Random API migration: quick-fix implemented;<br/>
-    - Static methods invocation via '->': quick-fix implemented;<br/>
-    - Type casting via PHP4 functions: quick-fix implemented;<br/>
-    - Unnecessary double quotes: quick-fix implemented;<br/>
-    - Unnecessary parentheses: quick-fix implemented;<br/>
-    - 'array_push(...)' misused: quick-fix implemented;<br/>
-    - 'is_null(...)' could be replaced by 'null === ...': quick-fix implemented;<br/><br/>
+    - Referencing objects: resolved false-positives, quick-fixes implemented;<br/>
+    - One-time use variables: resolved false-positives, quick-fix implemented;<br/>
+    - Senseless proxy function: resolved false-positives, quick-fix implemented;<br/>
+    - Deprecated constructor style: quick-fix implemented;<br/>
+    - Insecure 'uniqid(...)' usage: quick-fix implemented;<br/><br/>
 
-    - Empty class: do not report deprecated classes;<br/>
-    - Non-optimal regular expression: removed reporting for \R;<br/>
-    - 'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)': corrected reporting message;<br/>
+    - Type casting via PHP4 functions: bug-fix intention;<br/>
+    - Addition operator used on arrays: message text re-worked;<br/>
+    - Long inheritance chain: do not report deprecated classes;<br/>
+    - *printf/*scanf arguments count mismatches: bug-fix highlighted expressions;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

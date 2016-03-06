@@ -96,7 +96,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Remove unnecessary &";
+            return "Replace with regular assignment";
         }
 
         @NotNull
@@ -124,7 +124,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Remove unnecessary &";
+            return "Cleanup parameter definition";
         }
 
         @NotNull

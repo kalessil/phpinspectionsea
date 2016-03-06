@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.jetbrains.php.lang.psi.elements.impl.ParenthesizedExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -96,7 +97,7 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
                 PsiElement parameter = ((FunctionReference) expression).getParameters()[0];
-                if (parameter instanceof BinaryExpression || parameter instanceof UnaryExpression) {
+                if (parameter instanceof BinaryExpression || parameter instanceof UnaryExpression || parameter instanceof TernaryExpression) {
                     final String castingParameter  = "(" + parameter.getText() + ")";
                     parameter = PhpPsiElementFactory.createFromText(project, ParenthesizedExpressionImpl.class, castingParameter);
                 }

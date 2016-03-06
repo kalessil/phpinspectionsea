@@ -47,7 +47,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                     /* ensure variables are the same */
                     final AssignmentExpression assign = (AssignmentExpression) returnOrThrow.getPrevPsiSibling().getFirstChild();
                     /* skip self assignments */
-                    if (assign instanceof SelfAssignmentExpression) {
+                    if (assign instanceof SelfAssignmentExpression || assign instanceof MultiassignmentExpression) {
                         return;
                     }
 

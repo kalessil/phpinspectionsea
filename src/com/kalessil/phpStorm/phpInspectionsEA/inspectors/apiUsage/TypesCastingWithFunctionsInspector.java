@@ -9,8 +9,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.jetbrains.php.lang.psi.elements.impl.ParenthesizedExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -93,10 +95,16 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
+                PsiElement parameter = ((FunctionReference) expression).getParameters()[0];
+                if (parameter instanceof BinaryExpression || parameter instanceof UnaryExpression) {
+                    final String castingParameter  = "(" + parameter.getText() + ")";
+                    parameter = PhpPsiElementFactory.createFromText(project, ParenthesizedExpressionImpl.class, castingParameter);
+                }
+
                 final String castingPattern  = "(" + this.suggestedType + ") null";
                 final PsiElement replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, castingPattern);
                 //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here
-                ((UnaryExpression) replacement).getValue().replace(((FunctionReference) expression).getParameters()[0]);
+                ((UnaryExpression) replacement).getValue().replace(parameter);
 
                 expression.replace(replacement);
             }

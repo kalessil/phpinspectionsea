@@ -22,6 +22,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.LinkedList;
+
 
 public class OneTimeUseVariablesInspector extends BasePhpInspection {
     private static final String messagePattern = "Variable $%v% is redundant";
@@ -55,6 +57,26 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                         final String assignVariableName = assignVariable.getName();
                         if (StringUtil.isEmpty(assignVariableName) || !assignVariableName.equals(variableName)) {
                             return;
+                        }
+
+                        /* check if variable as a function/use(...) parameter by reference */
+                        final Function function = ExpressionSemanticUtil.getScope(returnOrThrow);
+                        if (null != function) {
+                            for (Parameter param: function.getParameters()) {
+                                if (param.isPassByRef() && param.getName().equals(variableName)) {
+                                    return;
+                                }
+                            }
+
+                            LinkedList<Variable> useList = ExpressionSemanticUtil.getUseListVariables(function);
+                            if (null != useList) {
+                                for (Variable param: useList) {
+                                    if (param.getName().equals(variableName) && param.getText().contains("&")) {
+                                        return;
+                                    }
+                                }
+                                useList.clear();
+                            }
                         }
 
                         /* too long return/throw statements can be decoupled as a variable */

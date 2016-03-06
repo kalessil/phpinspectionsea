@@ -236,11 +236,11 @@ public class ExpressionSemanticUtil {
     @Nullable
     public static LinkedList<Variable> getUseListVariables(@NotNull Function objFunction) {
         for (PsiElement objChild : objFunction.getChildren()) {
-            /** iterated child is use list */
+            /* iterated child is use list */
             if (objChild instanceof PhpUseList) {
                 LinkedList<Variable> list = new LinkedList<Variable>();
                 for (PsiElement objUseChild : objChild.getChildren()) {
-                    /** collect variables */
+                    /* collect variables */
                     if (objUseChild instanceof Variable) {
                         list.add((Variable) objUseChild);
                     }

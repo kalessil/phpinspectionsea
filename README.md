@@ -5,7 +5,6 @@ Inspections Lists (Quick-fixes for next release)
 ---
 | Group                | Short Name                                      | Full Name                                           | Quick fix |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
-| Control flow         | OneTimeUseVariablesInspection                   | One-time use variables                              | Prio1 |
 | Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | Prio1 |
 | Code style           | ReferencingObjectsInspection                    | Referencing objects                                 | Prio1 |
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | Prio1 |
@@ -36,14 +35,15 @@ Inspections Lists (Control flow)
 | Control flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                | no |
 | Control flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                | no |
 | Control flow         | DefaultValueInElseBranchInspection              | Default value is hidden in else branch              | no |
-| Control flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                           | no |
-| Control flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                            | no |
+| Control flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                           | --- |
+| Control flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                            | -- |
 | Control flow         | ThrowRawExceptionInspection                     | General '\Exception' is thrown                      | no |
 | Control flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach           | no |
 | Control flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                  | no |
 | Control flow         | DegradedSwitchInspection                        | Switch-case could be simplified                     | no |
 | Control flow         | ForeachInvariantsInspection                     | Foreach usage possible                              | no |
 | Control flow         | PdoApiUsageInspection                           | PDO api usage                                       | no |
+| Control flow         | OneTimeUseVariablesInspection                   | One-time use variables                              | yes |
 
 Inspections Lists (PhpUnit)
 ---

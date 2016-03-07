@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.5.0</version>
+  <version>1.5.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -51,22 +51,10 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-6 Mar 2016: new intentions, inspections, improvements and bug-fixes<br/>
+7 Mar 2016: bug-fix release<br/>
 <br/>
-    - Inspections grouping: finalized;<br/>
-    - Insecure 'parse_str(...)' usage: implemented;<br/>
-    - PhpUnit bugs and best practices: re-worked, quick-fixes implemented;<br/><br/>
-
-    - Referencing objects: resolved false-positives, quick-fixes implemented;<br/>
-    - One-time use variables: resolved false-positives, quick-fix implemented;<br/>
-    - Senseless proxy function: resolved false-positives, quick-fix implemented;<br/>
-    - Deprecated constructor style: quick-fix implemented;<br/>
-    - Insecure 'uniqid(...)' usage: quick-fix implemented;<br/><br/>
-
-    - Type casting via PHP4 functions: bug-fix intention;<br/>
-    - Addition operator used on arrays: message text re-worked;<br/>
-    - Long inheritance chain: do not report deprecated classes;<br/>
-    - *printf/*scanf arguments count mismatches: bug-fix highlighted expressions;<br/>
+    - One-time use variables: resolved reported false-positive with list() construction;<br/>
+    - Resolved Java StackOverflowError triggering massive false-positives;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

@@ -273,7 +273,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                             continue;
                         }
 
-                        HashSet<String> listResolvedTypes = TypeFromSignatureResolvingUtil.resolveSlot(strResolvedType, strSlot, objIndex);
+                        HashSet<String> listResolvedTypes = TypeFromSignatureResolvingUtil.resolveSlot(strResolvedType, strSlot, objIndex, charTypeOfSignature);
                         strResolvedType = listResolvedTypes.iterator().next();
 
                         /** break on poly-variants and missing classes */

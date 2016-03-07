@@ -127,7 +127,7 @@ public class TypeFromSignatureResolvingUtil {
                 }
 
                 /** resolve pair */
-                typesOfSlotSet = resolveSlot(strClassResolved, strSlot, objIndex);
+                typesOfSlotSet = resolveSlot(strClassResolved, strSlot, objIndex, charTypeOfSignature);
 
 
                 /**
@@ -171,8 +171,8 @@ public class TypeFromSignatureResolvingUtil {
             }
 
 
-            if (null != typesOfSlotSet) {
-                /** store resolved types by re-running resolving */
+            if (null != typesOfSlotSet && typesOfSlotSet.size() > 0) {
+                /* store resolved types by re-running resolving */
                 for (String strType : typesOfSlotSet) {
                     resolveSignature(strType, objScope, objIndex, extractedTypesSet);
                 }
@@ -181,7 +181,7 @@ public class TypeFromSignatureResolvingUtil {
         }
     }
 
-    static public HashSet<String> resolveSlot(String strClass, String strSlot, PhpIndex objIndex) {
+    static public HashSet<String> resolveSlot(String strClass, String strSlot, PhpIndex objIndex, char type) {
         HashSet<String> resolvedTypesSet = new HashSet<String>();
 
         /** try resolving an object interface */
@@ -199,31 +199,42 @@ public class TypeFromSignatureResolvingUtil {
         for (PhpClass objClass : objClasses) {
             isSlotFound = false;
 
-            for (Method objMethod : objClass.getMethods()) {
-                String strMethodName = objMethod.getName();
+            if (type == 'M') {
+                for (Method objMethod : objClass.getMethods()) {
+                    String strMethodName = objMethod.getName();
 
-                /** match first chars and then complete names */
-                if (!StringUtil.isEmpty(strMethodName) && strMethodName.charAt(0) == charSlotFirst && strMethodName.equals(strSlot)) {
-                    strTypeExtracted = objMethod.getType().toString();
-                    Collections.addAll(resolvedTypesSet, strTypeExtracted.split("\\|"));
+                    /* match first chars and then complete names */
+                    if (!StringUtil.isEmpty(strMethodName) && strMethodName.charAt(0) == charSlotFirst && strMethodName.equals(strSlot)) {
+                         /* exclude recursive definition in own signature */
+                        strTypeExtracted = objMethod
+                                .getType().toString()
+                                .replace("#" + type + "#C" + strClass + "." + strSlot, "");
 
-                    isSlotFound = true;
-                    break;
+                        Collections.addAll(resolvedTypesSet, strTypeExtracted.split("\\|"));
+
+                        isSlotFound = true;
+                        break;
+                    }
+                }
+                if (isSlotFound) {
+                    continue;
                 }
             }
-            if (isSlotFound) {
-                continue;
-            }
 
-            for (Field objField : objClass.getFields()) {
-                String strFieldName = objField.getName();
+            if (type == 'P' || type == 'K') {
+                for (Field objField : objClass.getFields()) {
+                    String strFieldName = objField.getName();
 
-                /** match first chars and then complete names */
-                if (!StringUtil.isEmpty(strFieldName) && strFieldName.charAt(0) == charSlotFirst && strFieldName.equals(strSlot)) {
-                    strTypeExtracted = objField.getType().toString();
-                    Collections.addAll(resolvedTypesSet, strTypeExtracted.split("\\|"));
+                    /* match first chars and then complete names */
+                    if (!StringUtil.isEmpty(strFieldName) && strFieldName.charAt(0) == charSlotFirst && strFieldName.equals(strSlot)) {
+                        /* exclude recursive definition in own signature */
+                        strTypeExtracted = objField
+                                .getType().toString()
+                                .replace("#" + type + "#C" + strClass + "." + strSlot, "");
 
-                    break;
+                        Collections.addAll(resolvedTypesSet, strTypeExtracted.split("\\|"));
+                        break;
+                    }
                 }
             }
         }

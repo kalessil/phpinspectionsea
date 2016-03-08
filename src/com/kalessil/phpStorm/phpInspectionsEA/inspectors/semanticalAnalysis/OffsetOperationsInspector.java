@@ -20,7 +20,7 @@ import java.util.HashSet;
  */
 public class OffsetOperationsInspector extends BasePhpInspection {
     private static final String strProblemUseSquareBrackets = "Please use [ ] instead of { } for deeper analysis";
-    private static final String strProblemNoOffsetSupport = "'%c%' may not support offset operations (possible indexes types are %t%)";
+    private static final String strProblemNoOffsetSupport = "'%c%' may not support offset operations (or it's type not annotated properly: %t%)";
     private static final String strProblemInvalidIndex = "Wrong index type (%p% is incompatible with %a%)";
 
     @NotNull
@@ -44,12 +44,12 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                     return;
                 }
 
-                // ensure offsets operations are supported
+                // ensure offsets operations are supported, do nothing if no types were resolved
                 HashSet<String> allowedIndexTypes = new HashSet<String>();
-                if (!isContainerSupportsArrayAccess(expression, allowedIndexTypes)) {
+                if (!isContainerSupportsArrayAccess(expression, allowedIndexTypes) && allowedIndexTypes.size() > 0) {
                     final String message = strProblemNoOffsetSupport
-                            .replace("%c%", allowedIndexTypes.toString())
-                            .replace("%t%", expression.getValue().toString());
+                            .replace("%t%", allowedIndexTypes.toString())
+                            .replace("%c%", expression.getValue().getText());
                     holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR);
 
                     allowedIndexTypes.clear();
@@ -118,32 +118,37 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             TypeFromPlatformResolverUtil.resolveExpressionType(container, containerTypes);
         }
 
-        // failed to resolve, don't try to guess anything
+
+        /* === cleanup resolved types === */
+        if (containerTypes.contains(Types.strMixed)) {      // mixed are not analyzable
+            containerTypes.clear();
+            return true;
+        }
+        if (2 == containerTypes.size() &&
+            containerTypes.contains(Types.strInteger) && containerTypes.contains(Types.strString)
+        ) {                                                 // foreach loops keys are recognized this way
+            containerTypes.clear();
+            return true;
+        }
+        if (containerTypes.contains(Types.strCallable)) {   // treat callable as array
+            containerTypes.remove(Types.strCallable);
+            containerTypes.add(Types.strArray);
+            containerTypes.add(Types.strString);
+        }
+        containerTypes.remove(Types.strNull);   // don't process nulls
+        containerTypes.remove(Types.strObject); // don't process generalized objects
+
+        /* === if we could not resolve container, do nothing === */
         if (0 == containerTypes.size()) {
             return true;
         }
 
-        PhpIndex objIndex = PhpIndex.getInstance(container.getProject());
 
+        final PhpIndex objIndex = PhpIndex.getInstance(container.getProject());
         boolean supportsOffsets = false;
-        boolean commonTypesAdded = false;
         for (String typeToCheck : containerTypes) {
-            // assume is just null-ble declaration or we shall just rust to mixed
-            if (typeToCheck.equals(Types.strNull)) {
-                continue;
-            }
-            if (typeToCheck.equals(Types.strMixed)) {
-                supportsOffsets = true;
-                continue;
-            }
-
             // commonly used case: string and array
             if (typeToCheck.equals(Types.strArray) || typeToCheck.equals(Types.strString)) {
-                if (!commonTypesAdded) {
-                    addCommonIndexTypes(indexTypesSupported);
-                    commonTypesAdded = true;
-                }
-
                 supportsOffsets = true;
                 continue;
             }
@@ -154,6 +159,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 break;
             }
 
+            // now we are at point when analyzing classes only
             for (PhpClass classToCheck : PhpIndexUtil.getObjectInterfaces(typeToCheck, objIndex)) {
                 boolean isOffsetFunctionsPrecessed = false;
 
@@ -189,11 +195,6 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                     magicMethod = classToCheck.findMethodByName("__set");
                 }
                 if (null != magicMethod) {
-                    if (!commonTypesAdded) {
-                        addCommonIndexTypes(indexTypesSupported);
-                        commonTypesAdded = true;
-                    }
-
                     supportsOffsets = true;
                 }
             }
@@ -243,13 +244,5 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         possibleIndexTypes.clear();
         possibleIndexTypes.addAll(secureIterator);
         secureIterator.clear();
-    }
-
-    private void addCommonIndexTypes(@NotNull HashSet<String> container) {
-        container.add(Types.strString);
-        container.add(Types.strFloat);
-        container.add(Types.strInteger);
-        container.add(Types.strBoolean);
-        container.add(Types.strNull);
     }
 }

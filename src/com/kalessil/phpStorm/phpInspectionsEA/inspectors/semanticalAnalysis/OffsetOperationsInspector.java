@@ -19,9 +19,9 @@ import java.util.HashSet;
  * @author Vladimir Reznichenko
  */
 public class OffsetOperationsInspector extends BasePhpInspection {
-    private static final String strProblemUseSquareBrackets = "Please use [ ] instead of { } for deeper analysis";
-    private static final String strProblemNoOffsetSupport = "'%c%' may not support offset operations (or it's type not annotated properly: %t%)";
-    private static final String strProblemInvalidIndex = "Wrong index type (%p% is incompatible with %a%)";
+    private static final String strProblemUseSquareBrackets = "Using [ ] instead of { } makes possible to analyze this expression";
+    private static final String strProblemNoOffsetSupport   = "'%c%' may not support offset operations (or it's type not annotated properly: %t%)";
+    private static final String strProblemInvalidIndex      = "Resolved index type (%p%) is incompatible with possible %a%. Probably just proper type hinting needed.";
 
     @NotNull
     public String getShortName() {

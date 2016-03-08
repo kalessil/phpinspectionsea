@@ -20,7 +20,7 @@ import java.util.HashSet;
  */
 public class OffsetOperationsInspector extends BasePhpInspection {
     private static final String strProblemUseSquareBrackets = "Please use [ ] instead of { } for deeper analysis";
-    private static final String strProblemNoOffsetSupport = "This container may not support offset operations (%c%)";
+    private static final String strProblemNoOffsetSupport = "'%c%' may not support offset operations (possible indexes types are %t%)";
     private static final String strProblemInvalidIndex = "Wrong index type (%p% is incompatible with %a%)";
 
     @NotNull
@@ -47,8 +47,10 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 // ensure offsets operations are supported
                 HashSet<String> allowedIndexTypes = new HashSet<String>();
                 if (!isContainerSupportsArrayAccess(expression, allowedIndexTypes)) {
-                    String strError = strProblemNoOffsetSupport.replace("%c%", allowedIndexTypes.toString());
-                    holder.registerProblem(expression, strError, ProblemHighlightType.GENERIC_ERROR);
+                    final String message = strProblemNoOffsetSupport
+                            .replace("%c%", allowedIndexTypes.toString())
+                            .replace("%t%", expression.getValue().toString());
+                    holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR);
 
                     allowedIndexTypes.clear();
                     return;

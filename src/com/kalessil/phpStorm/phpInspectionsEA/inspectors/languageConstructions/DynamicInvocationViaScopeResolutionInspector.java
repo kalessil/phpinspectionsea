@@ -12,21 +12,19 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class StaticInvocationViaThisInspector extends BasePhpInspection {
-    private static final String strProblemThisUsed = "'static::%m%(...)' should be used instead";
-    private static final String strProblemExpressionUsed = "'...::%m%(...)' should be used instead";
+public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspection {
+    private static final String strProblemScopeResolutionUsed = "'$this->%m%(...)' should be used instead";
+    private static final String strProblemExpressionUsed      = "'...->%m%(...)' should be used instead";
 
     @NotNull
     public String getShortName() {
-        return "StaticInvocationViaThisInspection";
+        return "DynamicInvocationViaScopeResolutionInspection";
     }
 
     @Override
@@ -45,28 +43,35 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                         final Method method  = (Method) objResolvedRef;
                         final PhpClass clazz = method.getContainingClass();
                         /* non-static methods and contract interfaces must not be reported */
-                        if (null == clazz || clazz.isInterface() || !method.isStatic() || method.isAbstract()) {
+                        if (null == clazz || clazz.isInterface() || method.isStatic() || method.isAbstract()) {
                             return;
                         }
 
-                        /* check first pattern $this->static */
-                        final PsiElement thisCandidate = reference.getFirstChild();
-                        if (thisCandidate.getText().equals("$this")) {
+                        /* check first pattern static::dynamic */
+                        final PsiElement staticCandidate = reference.getFirstChild();
+                        final String candidateContent    = staticCandidate.getText();
+                        if (candidateContent.equals("static")) {
+                            /* static/self are legal in dynamic context */
+                            final Function scope = ExpressionSemanticUtil.getScope(reference);
+                            if (!(scope instanceof Method) || !((Method) scope).isStatic()) {
+                                return;
+                            }
+
                             /* find operator for quick-fix */
-                            PsiElement operator = thisCandidate.getNextSibling();
+                            PsiElement operator = staticCandidate.getNextSibling();
                             if (operator instanceof PsiWhiteSpaceImpl) {
                                 operator = operator.getNextSibling();
                             }
 
-                            final String message = strProblemThisUsed.replace("%m%", methodName);
-                            holder.registerProblem(thisCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(thisCandidate, operator));
+                            final String message = strProblemScopeResolutionUsed.replace("%m%", methodName);
+                            holder.registerProblem(staticCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
 
                             return;
                         }
 
-                        /* check second pattern <expression>->static */
+                        /* check second pattern <expression>::dynamic */
                         final PsiElement objectExpression = reference.getFirstPsiChild();
-                        if (null != objectExpression && !(objectExpression instanceof FunctionReference)) {
+                        if (null != objectExpression && !(objectExpression instanceof FunctionReference) && !candidateContent.equals("self")) {
                             /* check operator */
                             PsiElement operator = objectExpression.getNextSibling();
                             if (operator instanceof PsiWhiteSpaceImpl) {
@@ -76,10 +81,10 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                                 return;
                             }
 
-                            if (operator.getText().replaceAll("\\s+","").equals("->")) {
+                            if (operator.getText().replaceAll("\\s+","").equals("::")) {
                                 /* info: no local fix, people shall check this code */
                                 final String message = strProblemExpressionUsed.replace("%m%", reference.getName());
-                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(operator));
                             }
                         }
                     }
@@ -89,19 +94,17 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private PsiElement variable;
         private PsiElement operator;
 
-        TheLocalFix(@NotNull PsiElement variable, @NotNull PsiElement operator) {
+        TheLocalFix(@NotNull PsiElement operator) {
             super();
-            this.variable = variable;
             this.operator = operator;
         }
 
         @NotNull
         @Override
         public String getName() {
-            return "Use static::";
+            return "Use $this->";
         }
 
         @NotNull
@@ -114,8 +117,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement().getParent();
             if (expression instanceof FunctionReference) {
-                this.operator.replace(PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "::"));
-                this.variable.replace(PhpPsiElementFactory.createClassReference(project, "static"));
+                this.operator.replace(PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "->"));
             }
         }
     }

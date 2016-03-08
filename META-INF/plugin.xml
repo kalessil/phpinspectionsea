@@ -413,6 +413,10 @@ with a laptop.
         groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.StaticInvocationViaThisInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="DynamicInvocationViaScopeResolutionInspection" displayName="Dynamic methods invocation via '::'"
+        groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.DynamicInvocationViaScopeResolutionInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="NestedNotOperatorsInspection"                  displayName="Nested not operators usage"
         groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.NestedNotOperatorsInspector"/>

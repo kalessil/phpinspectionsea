@@ -35,13 +35,14 @@
             $arrContainer = array();
             $arrContainer[0] = 'a';
             $arrContainer[explode('', '')] = 'a';            // <- reported
-            $arrContainer []= 'a';
+            $arrContainer[]= 'a';
 
             $boolContainer = false;
             $boolContainer[0] = 'a';                         // <- reported
             $boolContainer[explode('', '')] = 'a';           // <- reported
 
             $objOffsetContainer = new OffsetSupport();
+            $objOffsetContainer[''] = 0;
             $objOffsetContainer[0] = 0;                      // <- reported
             $objOffsetContainer[new stdClass()] = 0;         // <- reported
 

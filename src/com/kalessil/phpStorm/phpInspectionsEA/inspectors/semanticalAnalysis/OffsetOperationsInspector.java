@@ -150,6 +150,11 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             // commonly used case: string and array
             if (typeToCheck.equals(Types.strArray) || typeToCheck.equals(Types.strString)) {
                 supportsOffsets = true;
+
+                /* here we state which regular index types we want to promote */
+                indexTypesSupported.add(Types.strString);
+                indexTypesSupported.add(Types.strInteger);
+
                 continue;
             }
 
@@ -196,6 +201,10 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 }
                 if (null != magicMethod) {
                     supportsOffsets = true;
+
+                    /* here we state which regular index types we want to promote */
+                    indexTypesSupported.add(Types.strString);
+                    indexTypesSupported.add(Types.strInteger);
                 }
             }
 

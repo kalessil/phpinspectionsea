@@ -57,12 +57,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
                                 return;
                             }
 
-                            /* find operator for quick-fix */
-                            PsiElement operator = staticCandidate.getNextSibling();
-                            if (operator instanceof PsiWhiteSpaceImpl) {
-                                operator = operator.getNextSibling();
-                            }
-
+                            /* info: no local fix, people shall check this code */
                             final String message = strProblemScopeResolutionUsed.replace("%m%", methodName);
                             holder.registerProblem(staticCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
 
@@ -77,12 +72,8 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
                             if (operator instanceof PsiWhiteSpaceImpl) {
                                 operator = operator.getNextSibling();
                             }
-                            if (null == operator) {
-                                return;
-                            }
 
-                            if (operator.getText().replaceAll("\\s+","").equals("::")) {
-                                /* info: no local fix, people shall check this code */
+                            if (null != operator && operator.getText().replaceAll("\\s+","").equals("::")) {
                                 final String message = strProblemExpressionUsed.replace("%m%", reference.getName());
                                 holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(operator));
                             }
@@ -104,7 +95,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
         @NotNull
         @Override
         public String getName() {
-            return "Use $this->";
+            return "Use ->";
         }
 
         @NotNull
@@ -115,10 +106,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement expression = descriptor.getPsiElement().getParent();
-            if (expression instanceof FunctionReference) {
-                this.operator.replace(PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "->"));
-            }
+            this.operator.replace(PhpPsiElementFactory.createArrow(project));
         }
     }
 }

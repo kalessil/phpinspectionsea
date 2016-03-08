@@ -1,18 +1,24 @@
 <?php
 
-class dynamicObjectsKeeper {
-    public function callMethod() {}
+class dynamicObjectsKeeper
+{
+    public function callMethod()
+    {
+    }
 
-    public static function y() {
+    public static function y()
+    {
         static::callMethod(); // <- reported
     }
 
-    public function z() {
-        static::callMethod();
+    public function z()
+    {
+        static::callMethod(); // <- reported
     }
 
-    public function p() {
-        self::callMethod();
+    public function p()
+    {
+        self::callMethod(); // <- reported
     }
 }
 

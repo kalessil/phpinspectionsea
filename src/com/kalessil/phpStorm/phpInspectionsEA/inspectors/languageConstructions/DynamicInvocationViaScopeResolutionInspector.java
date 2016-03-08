@@ -13,6 +13,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.ClassReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -50,23 +51,32 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
                         /* check first pattern static::dynamic */
                         final PsiElement staticCandidate = reference.getFirstChild();
                         final String candidateContent    = staticCandidate.getText();
-                        if (candidateContent.equals("static")) {
-                            /* static/self are legal in dynamic context */
+                        if (candidateContent.equals("static") || candidateContent.equals("self")) {
                             final Function scope = ExpressionSemanticUtil.getScope(reference);
-                            if (!(scope instanceof Method) || !((Method) scope).isStatic()) {
+                            if (!(scope instanceof Method)) {
                                 return;
                             }
 
-                            /* info: no local fix, people shall check this code */
-                            final String message = strProblemScopeResolutionUsed.replace("%m%", methodName);
-                            holder.registerProblem(staticCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            if (((Method) scope).isStatic()) {
+                                final String message = strProblemExpressionUsed.replace("%m%", reference.getName());
+                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                            } else {
+                                /* find operator for quick-fix */
+                                PsiElement operator = staticCandidate.getNextSibling();
+                                if (operator instanceof PsiWhiteSpaceImpl) {
+                                    operator = operator.getNextSibling();
+                                }
+
+                                final String message = strProblemScopeResolutionUsed.replace("%m%", methodName);
+                                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(operator));
+                            }
 
                             return;
                         }
 
                         /* check second pattern <expression>::dynamic */
                         final PsiElement objectExpression = reference.getFirstPsiChild();
-                        if (null != objectExpression && !(objectExpression instanceof FunctionReference) && !candidateContent.equals("self")) {
+                        if (null != objectExpression && !(objectExpression instanceof FunctionReference) && !(staticCandidate instanceof ClassReferenceImpl)) {
                             /* check operator */
                             PsiElement operator = objectExpression.getNextSibling();
                             if (operator instanceof PsiWhiteSpaceImpl) {
@@ -75,7 +85,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
 
                             if (null != operator && operator.getText().replaceAll("\\s+","").equals("::")) {
                                 final String message = strProblemExpressionUsed.replace("%m%", reference.getName());
-                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(operator));
+                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new TheLocalFix(operator));
                             }
                         }
                     }

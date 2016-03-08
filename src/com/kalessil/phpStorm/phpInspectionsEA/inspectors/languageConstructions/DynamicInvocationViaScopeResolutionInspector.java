@@ -18,6 +18,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspection {
     private static final String strProblemScopeResolutionUsed = "'$this->%m%(...)' should be used instead";
@@ -68,7 +69,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
                                 }
 
                                 final String message = strProblemScopeResolutionUsed.replace("%m%", methodName);
-                                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(operator));
+                                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(operator, staticCandidate));
                             }
 
                             return;
@@ -85,7 +86,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
 
                             if (null != operator && operator.getText().replaceAll("\\s+","").equals("::")) {
                                 final String message = strProblemExpressionUsed.replace("%m%", reference.getName());
-                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new TheLocalFix(operator));
+                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new TheLocalFix(operator, null));
                             }
                         }
                     }
@@ -95,10 +96,12 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private PsiElement object;
         private PsiElement operator;
 
-        TheLocalFix(@NotNull PsiElement operator) {
+        TheLocalFix(@NotNull PsiElement operator, @Nullable PsiElement object) {
             super();
+            this.object   = object;
             this.operator = operator;
         }
 
@@ -117,6 +120,9 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             this.operator.replace(PhpPsiElementFactory.createArrow(project));
+            if (null != this.object) {
+                this.object.replace(PhpPsiElementFactory.createVariable(project, "this", true));
+            }
         }
     }
 }

@@ -43,6 +43,7 @@ Inspections Lists (Control flow)
 | Control flow         | ForeachInvariantsInspection                     | Foreach usage possible                              | no |
 | Control flow         | PdoApiUsageInspection                           | PDO api usage                                       | no |
 | Control flow         | OneTimeUseVariablesInspection                   | One-time use variables                              | yes |
+| Control flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                       | --- |
 
 Inspections Lists (PhpUnit)
 ---
@@ -93,6 +94,7 @@ Inspections Lists (Code style)
 | Code style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                 | no |
 | Code style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                  | yes |
 | Code style           | UnnecessaryParenthesesInspection                | Unnecessary parentheses                             | yes |
+| Code style           | DynamicInvocationViaScopeResolutionInspector    | Dynamic methods invocation via '::'                 | yes |
 
 Inspections Lists (Architecture)
 ---

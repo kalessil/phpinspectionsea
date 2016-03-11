@@ -246,6 +246,10 @@ with a laptop.
         shortName="PdoApiUsageInspection"                          displayName="PDO api usage"
         groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PdoApiUsageInspector"/>
+  <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="MultiAssignmentUsageInspection"                 displayName="'list(...) = ' usage possible"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.MultiAssignmentUsageInspector"/>
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
        shortName="ArrayFunctionsInvariantsInspection"             displayName="Foreach behaves as an array function"
        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"

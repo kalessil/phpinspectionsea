@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MultiAssignmentUsageInspector extends BasePhpInspection {
-    private static final String messagePattern = "'list(...) = %a%' can be used instead";
+    private static final String messagePattern = "Perhaps 'list(...) = %a%' can be used instead";
 
     @NotNull
     public String getShortName() {

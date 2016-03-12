@@ -10,8 +10,8 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.ParameterList;
+import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -63,7 +63,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                 /* if the call wrapped with case manipulation, propose to use stripos */
                 boolean caseManipulated = false;
                 if (
-                    parentExpression instanceof FunctionReference && !(parentExpression instanceof MethodReference) &&
+                    parentExpression instanceof FunctionReferenceImpl &&
                     1 == ((FunctionReference) parentExpression).getParameters().length
                 ) {
                     final String parentName = ((FunctionReference) parentExpression).getName();
@@ -122,7 +122,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
 
                         /* should be "strlen($search) - *" */
                         if (
-                            candidate.getLeftOperand() instanceof FunctionReference && !(candidate.getLeftOperand() instanceof MethodReference) &&
+                            candidate.getLeftOperand() instanceof FunctionReferenceImpl &&
                             null != candidate.getRightOperand()
                         ) {
                             final FunctionReference leftCall = (FunctionReference) candidate.getLeftOperand();

@@ -16,7 +16,11 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.ConstantReference;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.PhpIsset;
+import com.jetbrains.php.lang.psi.elements.TernaryExpression;
+import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -64,7 +68,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 }
 
                 /* older version might influence isset->array_key_exists in ternary conditions */
-                if (issetCandidate instanceof FunctionReference && !(issetCandidate instanceof MethodReference)) {
+                if (issetCandidate instanceof FunctionReferenceImpl) {
                     String functionName = ((FunctionReference) issetCandidate).getName();
                     if (!StringUtil.isEmpty(functionName) && functionName.equals("array_key_exists")) {
                         /* when array_key_exists alternative value is not null, it intended to be so */
@@ -95,11 +99,16 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            PsiElement target  = descriptor.getPsiElement();
-            PsiElement ternary = target.getParent();
-            if (ternary instanceof TernaryExpression) {
+            final PsiElement target           = descriptor.getPsiElement();
+            final PsiElement ternaryCandidate = target.getParent();
+            if (ternaryCandidate instanceof TernaryExpression) {
+                final TernaryExpression ternary = (TernaryExpression) ternaryCandidate;
+                if (null == ternary.getCondition()) {
+                    return;
+                }
+
                 /* swap parts */
-                ((TernaryExpression) ternary).getCondition().replace(target.copy());
+                ternary.getCondition().replace(target.copy());
 
                 /* cleanup spaces around */
                 PsiElement before = target.getPrevSibling();
@@ -114,6 +123,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 }
 
                 /* modify the operator and drop the true expression */
+                //noinspection ConstantConditions I'm pretty sure that hardcoded expression is not producing nulls
                 before.replace(PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "??"));
                 target.delete();
                 after.delete();

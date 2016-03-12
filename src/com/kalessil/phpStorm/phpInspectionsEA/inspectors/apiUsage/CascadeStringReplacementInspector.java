@@ -6,6 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -64,8 +65,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
 
                     /** === nested calls check === */
                     if (
-                        3 == params.length &&
-                        params[2] instanceof FunctionReference && !(params[2] instanceof MethodReference)
+                        3 == params.length && params[2] instanceof FunctionReferenceImpl
                     ) {
                         /* ensure 3rd argument is nested call of str_replace */
                         String strFunction = ((FunctionReference) params[2]).getName();
@@ -107,7 +107,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
     private FunctionReference getStrReplaceReference(AssignmentExpression assignment) {
         PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
         /** ensure function and not method reference */
-        if (value instanceof FunctionReference && !(value instanceof MethodReference)) {
+        if (value instanceof FunctionReferenceImpl) {
             String strFunction = ((FunctionReference) value).getName();
             /** is target function */
             if (!StringUtil.isEmpty(strFunction) && strFunction.equals("str_replace")) {

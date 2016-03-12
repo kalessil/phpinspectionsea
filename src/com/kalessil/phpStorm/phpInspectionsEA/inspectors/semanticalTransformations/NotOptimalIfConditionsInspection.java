@@ -363,12 +363,12 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     }
 
                     PsiElement tempExpression = ((BinaryExpression) objCondition).getLeftOperand();
-                    if (tempExpression instanceof MethodReference || tempExpression instanceof FunctionReference) {
+                    if (tempExpression instanceof FunctionReference) {
                         objCallsExtracted.add(tempExpression);
                     }
 
                     tempExpression = ((BinaryExpression) objCondition).getRightOperand();
-                    if (tempExpression instanceof MethodReference || tempExpression instanceof FunctionReference) {
+                    if (tempExpression instanceof FunctionReference) {
                         objCallsExtracted.add(tempExpression);
                     }
                 }
@@ -615,8 +615,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     return intArgumentsCost;
                 }
 
-                /* can be tested as FunctionReference, but keep it for further maintainability */
-                if (objExpression instanceof MethodReference || objExpression instanceof FunctionReference) {
+                if (objExpression instanceof FunctionReference) {
                     int intArgumentsCost = 0;
                     for (PsiElement objParameter : ((FunctionReference) objExpression).getParameters()) {
                         intArgumentsCost += this.getExpressionCost(objParameter, functionsSetToAllow);

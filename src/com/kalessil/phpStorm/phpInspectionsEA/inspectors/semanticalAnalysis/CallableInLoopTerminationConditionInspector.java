@@ -6,6 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -68,11 +69,11 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
 
                 BinaryExpression objCondition = (BinaryExpression) arrConditions[0];
 
-                PsiElement objRightOperand = objCondition.getRightOperand();
-                PsiElement objLeftOperand = objCondition.getLeftOperand();
+                final PsiElement objRightOperand = objCondition.getRightOperand();
+                final PsiElement objLeftOperand  = objCondition.getLeftOperand();
                 if (
-                    (objRightOperand instanceof FunctionReference && !(objRightOperand instanceof MethodReference)) ||
-                    (objLeftOperand instanceof FunctionReference  && !(objLeftOperand instanceof MethodReference))
+                    objRightOperand instanceof FunctionReferenceImpl ||
+                    objLeftOperand instanceof FunctionReferenceImpl
                 ) {
                     String message = generateMessage(expression, objCondition);
                     holder.registerProblem(objCondition, message, ProblemHighlightType.GENERIC_ERROR);

@@ -10,6 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.BinaryExpressionImpl;
+import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -59,10 +60,10 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     }
 
                     /* check if following expression contains is_dir */
-                    Collection<FunctionReference> calls = PsiTreeUtil.findChildrenOfType(binary.getRightOperand(), FunctionReference.class);
-                    for (FunctionReference call : calls) {
-                        String name = call.getName();
-                        if (call instanceof MethodReference || StringUtil.isEmpty(name)) {
+                    Collection<FunctionReferenceImpl> calls = PsiTreeUtil.findChildrenOfType(binary.getRightOperand(), FunctionReferenceImpl.class);
+                    for (FunctionReferenceImpl call : calls) {
+                        final String name = call.getName();
+                        if (StringUtil.isEmpty(name)) {
                             continue;
                         }
 

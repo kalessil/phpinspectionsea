@@ -73,7 +73,7 @@ public class CountOnPropelCollectionInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** handle different types of argument */
+                /* handle different types of argument */
                 if (objParameter instanceof MethodReference) {
                     this.inspectSignature(((MethodReference) objParameter).getSignature(), objParameter, ".count");
                 }

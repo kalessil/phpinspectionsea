@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.AssignmentExpressionImpl;
+import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -39,7 +40,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                     values = ((PhpExpressionImpl) values).getValue();
                 }
 
-                if (values instanceof FunctionReference && !(values instanceof MethodReference)) {
+                if (values instanceof FunctionReferenceImpl) {
                     final FunctionReference eachCandidate = (FunctionReference) values;
                     final String function                 = eachCandidate.getName();
                     if (!StringUtil.isEmpty(function) && function.equals("each")) {

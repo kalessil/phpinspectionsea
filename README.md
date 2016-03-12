@@ -133,7 +133,6 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | NonSecureParseStrUsageInspection                | Insecure 'parse_str(...)' usage                           | --- |
 | Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | --- |
 
-
 Inspections Lists (Performance)
 ---
 | Group                | Short Name                                      | Full Name                                                                                   | Quick fix |

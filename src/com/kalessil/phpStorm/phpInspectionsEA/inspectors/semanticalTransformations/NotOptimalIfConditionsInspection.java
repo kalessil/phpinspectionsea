@@ -458,14 +458,30 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     int intOuterIndex = objAllConditions.indexOf(objExpression);
                     objAllConditions.set(intOuterIndex, null);
 
-                    /* ignore variables */
+
+                    /* ignore variables (even if inverted) */
+                    PsiElement variableCandidate = objExpression;
+                    if (variableCandidate instanceof UnaryExpression) {
+                        final PsiElement notOperatorCandidate = ((UnaryExpression) variableCandidate).getOperation();
+                        if (null != notOperatorCandidate && notOperatorCandidate.getNode().getElementType() == PhpTokenTypes.opNOT) {
+                            PsiElement invertedValue = ((UnaryExpression) variableCandidate).getValue();
+                            invertedValue = ExpressionSemanticUtil.getExpressionTroughParenthesis(invertedValue);
+                            if (null == invertedValue) {
+                                continue;
+                            }
+
+                            variableCandidate = invertedValue;
+                        }
+                    }
                     if (
-                        objExpression instanceof Variable ||
-                        objExpression instanceof ConstantReference ||
-                        objExpression instanceof FieldReference
+                        variableCandidate instanceof Variable ||
+                        variableCandidate instanceof ConstantReference ||
+                        variableCandidate instanceof FieldReference
                     ) {
                         continue;
                     }
+                    /* continue with sensible expressions analysis */
+
 
                     /* search duplicates in current scope */
                     for (PsiElement objInnerLoopExpression : objAllConditions) {

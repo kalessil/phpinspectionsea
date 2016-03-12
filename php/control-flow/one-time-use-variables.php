@@ -3,6 +3,9 @@
 $x = 1; // <- reported
 return $x;
 
+$x = returnByReference(); // <- reported
+return $x->x;
+
 $y = new Exception(); // <- reported
 throw $y;
 

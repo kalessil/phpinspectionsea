@@ -130,6 +130,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | UntrustedInclusionInspection                    | Untrusted files inclusion                                 | --- |
 | Probable bugs        | NonSecureUniqidUsageInspection                  | Insecure 'uniqid()' usage                                 | yes |
 | Probable bugs        | NonSecureExtractUsageInspection                 | Insecure 'extract(...)' usage                             | --- |
+| Probable bugs        | NonSecureParseStrUsageInspection                | Insecure 'parse_str(...)' usage                           | --- |
 
 
 Inspections Lists (Performance)

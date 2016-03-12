@@ -289,6 +289,10 @@ with a laptop.
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.security.NonSecureParseStrUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="NonSecureExtractUsageInspection"               displayName="Insecure 'extract(...)' usage"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.security.NonSecureExtractUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SwitchContinuationInLoopInspection"            displayName="Continue misbehaviour in switch"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.SwitchContinuationInLoopInspector"/>

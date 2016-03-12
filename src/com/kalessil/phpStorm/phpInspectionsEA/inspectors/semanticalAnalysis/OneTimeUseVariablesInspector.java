@@ -152,9 +152,9 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 }
 
                 if (expression instanceof FieldReferenceImpl) {
-                    FieldReferenceImpl propertyAccess = (FieldReferenceImpl) expression;
-                    if (!propertyAccess.isStatic() && !propertyAccess.isConstant() && propertyAccess.getFirstPsiChild() instanceof Variable) {
-                        return (Variable) propertyAccess.getFirstPsiChild();
+                    final FieldReferenceImpl propertyAccess = (FieldReferenceImpl) expression;
+                    if (propertyAccess.getFirstChild() instanceof Variable) {
+                        return (Variable) propertyAccess.getFirstChild();
                     }
                 }
 

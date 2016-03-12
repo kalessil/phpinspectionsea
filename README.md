@@ -129,6 +129,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | --- |
 | Probable bugs        | UntrustedInclusionInspection                    | Untrusted files inclusion                                 | --- |
 | Probable bugs        | NonSecureUniqidUsageInspection                  | Insecure 'uniqid()' usage                                 | yes |
+| Probable bugs        | NonSecureExtractUsageInspection                 | Insecure 'extract(...)' usage                             | --- |
 
 
 Inspections Lists (Performance)

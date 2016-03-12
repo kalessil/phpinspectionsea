@@ -16,7 +16,10 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.ConstantReference;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.PhpIsset;
+import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -96,7 +99,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement target          = descriptor.getPsiElement();
+            final PsiElement target           = descriptor.getPsiElement();
             final PsiElement ternaryCandidate = target.getParent();
             if (ternaryCandidate instanceof TernaryExpression) {
                 final TernaryExpression ternary = (TernaryExpression) ternaryCandidate;

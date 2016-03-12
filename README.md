@@ -131,6 +131,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | NonSecureUniqidUsageInspection                  | Insecure 'uniqid()' usage                                 | yes |
 | Probable bugs        | NonSecureExtractUsageInspection                 | Insecure 'extract(...)' usage                             | --- |
 | Probable bugs        | NonSecureParseStrUsageInspection                | Insecure 'parse_str(...)' usage                           | --- |
+| Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | --- |
 
 
 Inspections Lists (Performance)

@@ -20,8 +20,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 public class VariableFunctionsUsageInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "'%r%(...);' should be used instead";
-
     @NotNull
     public String getShortName() {
         return "VariableFunctionsUsageInspection";
@@ -60,11 +58,11 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                     }
 
                     if (parameters[0] instanceof ArrayCreationExpression) {
-                        ArrayCreationExpression callable = (ArrayCreationExpression) parameters[0];
+                        final ArrayCreationExpression callable = (ArrayCreationExpression) parameters[0];
 
                         /* get array values */
-                        LinkedList<PhpPsiElement> values = new LinkedList<PhpPsiElement>();
-                        PhpPsiElement value = callable.getFirstPsiChild();
+                        final LinkedList<PhpPsiElement> values = new LinkedList<PhpPsiElement>();
+                        PhpPsiElement value                    = callable.getFirstPsiChild();
                         while (null != value) {
                             values.add(value.getFirstPsiChild());
                             value = value.getNextPsiSibling();
@@ -76,12 +74,12 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                             && null != values.get(0) && null != values.get(1)
                             && !(values.get(0) instanceof FunctionReference)
                         ) {
-                            LinkedList<String> parametersToSuggest = new LinkedList<String>();
+                            final LinkedList<String> parametersToSuggest = new LinkedList<String>();
                             for (PsiElement parameter : Arrays.copyOfRange(parameters, 1, parameters.length)) {
                                 parametersToSuggest.add(parameter.getText());
                             }
 
-                            final boolean isFirstString = values.get(0) instanceof StringLiteralExpression;
+                            final boolean isFirstString  = values.get(0) instanceof StringLiteralExpression;
                             final boolean isSecondString = values.get(1) instanceof StringLiteralExpression;
                             /* some non-trivial magic eg `parent::call()` is not available via var functions */
                             if (isSecondString && ((StringLiteralExpression) values.get(1)).getContents().contains("::")) {
@@ -89,7 +87,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                             }
 
                             /* as usually personalization of messages is overcomplicated */
-                            String message = "'%o%->{%m%}(%p%)' should be used instead"
+                            final String message = "'%o%->{%m%}(%p%)' should be used instead"
                                 .replace("%p%", StringUtil.join(parametersToSuggest, ", "))
                                 .replace(
                                     isFirstString  ? "%o%->" : "%o%",
@@ -104,15 +102,15 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                             holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
                         }
                     } else {
-                        PhpLanguageLevel preferableLanguageLevel = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                        final PhpLanguageLevel preferableLanguageLevel = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                         if (PhpLanguageLevel.PHP700 == preferableLanguageLevel) {
                             /* in PHP7+ it's absolutely safe to use variable functions */
-                            LinkedList<String> parametersToSuggest = new LinkedList<String>();
+                            final LinkedList<String> parametersToSuggest = new LinkedList<String>();
                             for (PsiElement parameter : Arrays.copyOfRange(parameters, 1, parameters.length)) {
                                 parametersToSuggest.add(parameter.getText());
                             }
 
-                            String message = "'%c%(%p%)' should be used instead"
+                            final String message = "'%c%(%p%)' should be used instead"
                                     .replace("%c%", parameters[0].getText())
                                     .replace("%p%", StringUtil.join(parametersToSuggest, ", "));
                             parametersToSuggest.clear();

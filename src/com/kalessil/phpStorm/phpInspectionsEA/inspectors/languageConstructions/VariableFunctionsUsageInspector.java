@@ -32,7 +32,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                /* process `call();` expressions only */
+                /* process `call()>;<` expressions only */
                 if (!(reference.getParent() instanceof StatementImpl)) {
                     return;
                 }
@@ -40,15 +40,12 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                 /* general requirements for calls */
                 final String function         = reference.getName();
                 final PsiElement[] parameters = reference.getParameters();
-                if (
-                    0 == parameters.length || StringUtil.isEmpty(function) ||
-                    !(function.equals("call_user_func") || function.equals("call_user_func_array"))
-                ) {
+                if (0 == parameters.length || StringUtil.isEmpty(function) || !function.startsWith("call_user_func")) {
                     return;
                 }
 
                 /* only `call_user_func_array(..., array(...))` needs to be checked */
-                if (function.equals("call_user_func_array")) {
+                if (2 == parameters.length && function.equals("call_user_func_array")) {
                     if (parameters[1] instanceof ArrayCreationExpression) {
                         holder.registerProblem(reference, "'call_user_func(...)' should be used instead", ProblemHighlightType.WEAK_WARNING);
                     }

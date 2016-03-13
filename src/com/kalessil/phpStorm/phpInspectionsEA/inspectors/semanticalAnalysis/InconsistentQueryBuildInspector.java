@@ -1,14 +1,19 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -35,26 +40,26 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
                 if (1 == parameters.length && !StringUtil.isEmpty(function) && function.equals("ksort")) {
                     // pre-condition satisfied, now check if http_build_query used in the scope
 
-                    Function scope = ExpressionSemanticUtil.getScope(reference);
+                    final Function scope = ExpressionSemanticUtil.getScope(reference);
                     if (null != scope) {
-                        Collection<FunctionReference> calls = PsiTreeUtil.findChildrenOfType(scope, FunctionReference.class);
+                        Collection<FunctionReferenceImpl> calls = PsiTreeUtil.findChildrenOfType(scope, FunctionReferenceImpl.class);
                         if (calls.size() > 0) {
-                            for (FunctionReference oneCall : calls) {
+                            for (FunctionReferenceImpl oneCall : calls) {
                                 /* skip inspected call and calls without arguments */
                                 if (oneCall == reference || 0 == oneCall.getParameters().length) {
                                     continue;
                                 }
 
                                 /* skip non-target function */
-                                String currentFunction = oneCall.getName();
+                                final String currentFunction = oneCall.getName();
                                 if (StringUtil.isEmpty(currentFunction) || !currentFunction.equals("http_build_query")) {
                                     continue;
                                 }
 
                                 /* pattern match: ksort and http_build_query operating on the same expression */
                                 if (PsiEquivalenceUtil.areElementsEquivalent(oneCall.getParameters()[0], parameters[0])) {
-                                    String message = strProblemDescription.replace("%a%", parameters[0].getText());
-                                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                    final String message = strProblemDescription.replace("%a%", parameters[0].getText());
+                                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
 
                                     break;
                                 }
@@ -67,5 +72,37 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
             }
         };
     }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Add SORT_STRING as a parameter";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression instanceof FunctionReference) {
+                final FunctionReference call = (FunctionReference) expression;
+                final PsiElement[] params    = call.getParameters();
+
+                /* override existing parameters */
+                final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, "ksort(null, SORT_STRING)");
+                replacement.getParameters()[0].replace(params[0]);
+
+                /* replace parameters list */
+                //noinspection ConstantConditions I'm really sure NPE will not happen
+                call.getParameterList().replace(replacement.getParameterList());
+            }
+        }
+    }
+
 }
 

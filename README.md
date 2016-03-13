@@ -11,7 +11,6 @@ Inspections Lists (Quick-fixes for next release)
 | Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | Prio1 |
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | Prio1 |
 | Architecture         | ClassReImplementsParentInterfaceInspection      | Class re-implements interface of a parent class     | Prio1 |
-| Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result         | Prio1 |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                  | Prio1 |
 | Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                             | Prio1 |
 
@@ -132,6 +131,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | NonSecureExtractUsageInspection                 | Insecure 'extract(...)' usage                             | --- |
 | Probable bugs        | NonSecureParseStrUsageInspection                | Insecure 'parse_str(...)' usage                           | --- |
 | Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | --- |
+| Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result               | yes |
 
 Inspections Lists (Performance)
 ---

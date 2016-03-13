@@ -205,7 +205,7 @@ with a laptop.
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="IfReturnReturnSimplificationInspection"        displayName="If-return-return could be simplified"
         groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.IfReturnReturnSimplificationInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.IfReturnReturnSimplificationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DefaultValueInElseBranchInspection"            displayName="Default value is hidden in else branch"
         groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
@@ -213,7 +213,7 @@ with a laptop.
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="NotOptimalIfConditionsInspection"              displayName="Non-optimal if conditions"
         groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.NotOptimalIfConditionsInspection"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.NotOptimalIfConditionsInspection"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="LoopWhichDoesNotLoopInspection"                displayName="Loop which does not loop"
         groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
@@ -419,7 +419,7 @@ with a laptop.
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="NestedPositiveIfStatementsInspection"          displayName="Nested positive ifs"
         groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.earlyReturns.NestedPositiveIfStatementsInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.NestedPositiveIfStatementsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="StaticInvocationViaThisInspection"             displayName="Static methods invocation via '->'"
         groupName="Code Style"                                    enabledByDefault="true" level="WARNING"

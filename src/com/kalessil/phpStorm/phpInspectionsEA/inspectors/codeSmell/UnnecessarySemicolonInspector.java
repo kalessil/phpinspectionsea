@@ -9,7 +9,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
-import com.jetbrains.php.lang.psi.elements.Statement;
+import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +30,23 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpStatement(Statement statement) {
                 if (0 == statement.getChildren().length) {
+                    final PsiElement parent = statement.getParent();
+                    if (null != parent) {
+                        final IElementType declareCandidate = statement.getParent().getFirstChild().getNode().getElementType();
+                        if (
+                            PhpTokenTypes.kwDECLARE == declareCandidate ||
+                            parent instanceof DoWhile ||
+                            parent instanceof While ||
+                            parent instanceof For ||
+                            parent instanceof ForeachStatement ||
+                            parent instanceof If ||
+                            parent instanceof ElseIf ||
+                            parent instanceof Else
+                        ) {
+                            return;
+                        }
+                    }
+
                     holder.registerProblem(statement, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                 }
             }

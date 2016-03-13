@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy.IssetAndNullComparisonStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -24,15 +25,15 @@ import java.util.LinkedList;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behaves properly with instanceof in this scenario";
-    private static final String strProblemDescriptionConditionPartsIdentical = "Probable bug: left and right operands are identical";
+    private static final String strProblemDescriptionConditionPartsIdentical   = "Probable bug: left and right operands are identical";
 
     private static final String strProblemDescriptionInstanceOfAmbiguous = "This condition is ambiguous and can be safely removed";
-    private static final String strProblemDescriptionOrdering  = "This condition execution costs less than previous one";
+    private static final String strProblemDescriptionOrdering            = "This condition execution costs less than previous one";
     private static final String strProblemDescriptionDuplicateConditions = "This condition is duplicated in other if/elseif branch";
-    private static final String strProblemDescriptionBooleans  = "This boolean in condition makes no sense or enforces condition result";
-    private static final String strProblemDescriptionDuplicateConditionPart = "This call is duplicated in conditions set";
+    private static final String strProblemDescriptionBooleans            = "This boolean in condition makes no sense or enforces condition result";
+    private static final String strProblemDescriptionDuplicateConditionPart  = "This call is duplicated in conditions set";
     private static final String strProblemDescriptionIssetCanBeMergedAndCase = "This can be merged into previous 'isset(..., ...[, ...])'";
-    private static final String strProblemDescriptionIssetCanBeMergedOrCase = "This can be merged into previous '!isset(..., ...[, ...])'";
+    private static final String strProblemDescriptionIssetCanBeMergedOrCase  = "This can be merged into previous '!isset(..., ...[, ...])'";
     private static final String strProblemDescriptionConditionShallBeWrapped = "Confusing conditions structure: please wrap with '(...)'";
 
     @NotNull
@@ -81,6 +82,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                     this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
                     this.inspectConditionsForIdenticalOperands(objConditionsFromStatement);
+                    IssetAndNullComparisonStrategy.apply(objConditionsFromStatement, holder);
 
                     objConditionsFromStatement.clear();
                 }

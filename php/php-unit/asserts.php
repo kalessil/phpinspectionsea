@@ -53,6 +53,14 @@ class TestCase
 
         $this->assertSame(false, 0);        // <- reported assertFalse
         $this->assertNotSame(false, 0);     // <- reported assertNotFalse
+    }
 
+    public function testWithMessages()
+    {
+        $this->assertSame(true, 0, '');        // <- reported assertTrue
+        $this->assertNotSame(true, 0, '');     // <- reported assertNotTrue
+
+        $this->assertSame(false, 0, '');        // <- reported assertFalse
+        $this->assertNotSame(false, 0, '');     // <- reported assertNotFalse
     }
 }

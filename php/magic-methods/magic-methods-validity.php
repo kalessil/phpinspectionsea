@@ -57,4 +57,7 @@
 
         /* name (1) is highlighted, but (2) inspected */
         static protected function __autoload(&$arg1, &$arg2, &$arg3) {}
+
+        static private function __sleep($arg)  { return 'a'; }
+        static private function __wakeup($arg) { return 'a'; }
     }

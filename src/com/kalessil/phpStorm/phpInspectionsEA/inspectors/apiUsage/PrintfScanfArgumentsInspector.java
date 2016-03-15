@@ -82,9 +82,7 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
 
                     /* do normalization: %%, inline variables */
                     final String contentAdapted = content.replace("%%", "");
-                    final String contentNoVars  = contentAdapted
-                            .replaceAll("\\{\\$[a-zA-Z0-9]+\\}", "")
-                            .replaceAll("\\$\\{[a-zA-Z0-9]+\\}", "");
+                    final String contentNoVars  = contentAdapted.replaceAll("\\$\\{?\\$?[a-zA-Z0-9]+\\}?", "");
                     if (contentAdapted.length() != contentNoVars.length()) {
                         return;
                     }

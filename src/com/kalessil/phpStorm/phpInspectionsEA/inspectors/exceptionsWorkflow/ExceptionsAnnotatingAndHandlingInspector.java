@@ -9,16 +9,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.tags.PhpDocReturnTagImpl;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Finally;
 import com.jetbrains.php.lang.psi.elements.Method;
@@ -32,7 +27,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.phpExceptions.CollectPossibl
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -230,16 +224,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     /* injecting after return tag: probe 1 */
                     if (!isInjected && line.contains("@return")) {
                         newCommentLines.add(line);
-                        newCommentLines.add(line.replaceAll("\\@return[^\\r\\n]*", patternPlace+" after return"));
-
-                        isInjected = true;
-                        continue;
-                    }
-
-                    /* injecting after before first throw tag: probe 2 */
-                    if (!isInjected && line.contains("@throws")) {
-                        newCommentLines.add(line.replaceAll("\\@return[^\\r\\n]*", patternPlace+" before throw"));
-                        newCommentLines.add(line);
+                        newCommentLines.add(line.replaceAll("\\@return[^\\r\\n]*", patternPlace));
 
                         isInjected = true;
                         continue;
@@ -248,7 +233,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     /* injecting at the end of PhpDoc: probe 3 */
                     if (!isInjected && line.contains("*/")) {
                         // no throw/return is declared
-                        newCommentLines.add(line.replaceAll("/", patternPlace+" at the end"));
+                        newCommentLines.add(line.replaceAll("\\/", patternPlace));
                         newCommentLines.add(line);
 
                         isInjected = true;

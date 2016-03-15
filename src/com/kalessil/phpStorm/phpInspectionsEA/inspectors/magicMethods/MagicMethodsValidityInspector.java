@@ -14,11 +14,11 @@ import org.jetbrains.annotations.NotNull;
 public class MagicMethodsValidityInspector extends BasePhpInspection {
     private static final String strProblemUseSplAutoloading = "A common recommendation is to use spl_autoload_register(...) instead";
 
-    private static final PhpType stringArray     = new PhpType();
+    private static final PhpType arrayType       = new PhpType();
     private static final PhpType stringType      = new PhpType();
     private static final PhpType arrayOrNullType = new PhpType();
     static {
-        stringArray.add(PhpType.ARRAY);
+        arrayType.add(PhpType.ARRAY);
 
         stringType.add(PhpType.STRING);
 
@@ -134,7 +134,7 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                     CanNotBeStaticStrategy.apply(method, holder);
                     MustBePublicStrategy.apply(method, holder);
                     CanNotTakeArgumentsStrategy.apply(method, holder);
-                    MustReturnSpecifiedTypeStrategy.apply(stringArray, method, holder);
+                    MustReturnSpecifiedTypeStrategy.apply(arrayType, method, holder);
 
                     return;
                 }

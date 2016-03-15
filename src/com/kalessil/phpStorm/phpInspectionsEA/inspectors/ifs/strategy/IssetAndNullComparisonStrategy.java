@@ -1,24 +1,16 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpIsset;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.jetbrains.php.lang.psi.elements.impl.BinaryExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.ConstantReferenceImpl;
-import com.jetbrains.php.refactoring.PhpRefactoringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class IssetAndNullComparisonStrategy {
-    final static String messagePattern = "Seems like '%e%' is already covered by isset";
+    final static String messagePattern = "It seems like '%e%' is already covered by isset";
 
     static public boolean apply(@NotNull LinkedList<PsiElement> conditions, @NotNull ProblemsHolder holder) {
         /* first ensure that we have null identity checks at all */

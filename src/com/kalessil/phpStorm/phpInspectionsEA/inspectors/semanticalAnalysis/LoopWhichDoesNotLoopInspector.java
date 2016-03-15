@@ -32,25 +32,36 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
                 this.inspectBody(whileStatement);
             }
 
-            private void inspectBody(PhpPsiElement objLoop) {
-                GroupStatement objGroupStatement = ExpressionSemanticUtil.getGroupStatement(objLoop);
-                if (null == objGroupStatement) {
+            private void inspectBody(PhpPsiElement loop) {
+                final GroupStatement groupStatement = ExpressionSemanticUtil.getGroupStatement(loop);
+                if (null == groupStatement) {
                     return;
                 }
 
-                PsiElement objLastExpression = ExpressionSemanticUtil.getLastStatement(objGroupStatement);
+                final PsiElement lastExpression = ExpressionSemanticUtil.getLastStatement(groupStatement);
                 boolean isLoopTerminatedWithLastExpression = (
-                    objLastExpression instanceof PhpBreak ||
-                    objLastExpression instanceof PhpReturn ||
-                    objLastExpression instanceof PhpThrow
+                    lastExpression instanceof PhpBreak ||
+                    lastExpression instanceof PhpReturn ||
+                    lastExpression instanceof PhpThrow
                 );
-
-                /** loop is empty or terminates on first iteration */
-                if (null != objLastExpression && !isLoopTerminatedWithLastExpression) {
+                /* loop is empty or terminates on first iteration */
+                if (null != lastExpression && !isLoopTerminatedWithLastExpression) {
                     return;
                 }
 
-                holder.registerProblem(objLoop.getFirstChild(), strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                /* prevent false-positives with preceding if { ...; continue; } */
+                final StatementWithArgument lastStatement = (StatementWithArgument) lastExpression;
+                if (null != lastStatement && lastStatement.getPrevPsiSibling() instanceof If) {
+                    final GroupStatement previous = ExpressionSemanticUtil.getGroupStatement(lastStatement.getPrevPsiSibling());
+                    if (null != previous) {
+                        final PsiElement terminationCandidate = ExpressionSemanticUtil.getLastStatement(previous);
+                        if (terminationCandidate instanceof PhpContinue || terminationCandidate instanceof PhpReturn) {
+                            return;
+                        }
+                    }
+                }
+
+                holder.registerProblem(loop.getFirstChild(), strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

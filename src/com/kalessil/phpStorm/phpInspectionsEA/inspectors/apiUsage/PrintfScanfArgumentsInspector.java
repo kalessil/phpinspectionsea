@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PrintfScanfArgumentsInspector extends BasePhpInspection {
-    private static final String strProblemInvalid = "Pattern seems to be not valid";
+    private static final String strProblemInvalid     = "Pattern seems to be not valid";
     private static final String strProblemDescription = "Amount of expected parameters is %c%";
 
     @NotNull
@@ -77,13 +77,17 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
                 if (!StringUtil.isEmpty(content)) {
                     /* find valid placeholders and extract positions specifiers as well */
                     int countWithoutPositionSpecifier = 0;
-                    int maxPositionSpecifier = 0;
-                    int countParsedAll = 0;
-                    // do normalization: %%, inline variables
-                    String contentAdapted = content
-                            .replace("%%", "")
+                    int maxPositionSpecifier          = 0;
+                    int countParsedAll                = 0;
+
+                    /* do normalization: %%, inline variables */
+                    final String contentAdapted = content.replace("%%", "");
+                    final String contentNoVars  = contentAdapted
                             .replaceAll("\\{\\$[a-zA-Z0-9]+\\}", "")
                             .replaceAll("\\$\\{[a-zA-Z0-9]+\\}", "");
+                    if (contentAdapted.length() != contentNoVars.length()) {
+                        return;
+                    }
 
                     Matcher regexMatcher = regexPlaceHolders.matcher(contentAdapted);
                     while (regexMatcher.find()) {

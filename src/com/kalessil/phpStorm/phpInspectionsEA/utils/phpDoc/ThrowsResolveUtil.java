@@ -23,6 +23,7 @@ final public class ThrowsResolveUtil {
      * Return false if doc-block is not defined
      */
     static public ResolveType resolveThrownExceptions(@NotNull final Method method, @NotNull HashSet<PhpClass> declaredExceptions) {
+        /* TODO: use method.getDocComment() */
         PhpPsiElement previous = method.getPrevPsiSibling();
         if (!(previous instanceof PhpDocCommentImpl)) {
             return ResolveType.NOT_RESOLVED;
@@ -54,6 +55,7 @@ final public class ThrowsResolveUtil {
         Collection<PhpDocTagImpl> tags = PsiTreeUtil.findChildrenOfType(previous, PhpDocTagImpl.class);
         if (tags.size() > 0) {
             for (PhpDocTagImpl tag : tags) {
+                /* TODO: check if we can use phpDoc.hasInheritDocTag() - string search based */
                 if (tag.getName().toLowerCase().equals("@inheritdoc")) {
                     resolveInheritDoc(method, declaredExceptions);
                     return ResolveType.RESOLVED_INHERIT_DOC;

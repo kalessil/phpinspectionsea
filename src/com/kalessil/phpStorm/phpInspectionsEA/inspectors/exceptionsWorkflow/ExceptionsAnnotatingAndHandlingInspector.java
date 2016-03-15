@@ -1,14 +1,25 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptionsWorkflow;
 
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.tags.PhpDocReturnTagImpl;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Finally;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
@@ -18,13 +29,16 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpDoc.ThrowsResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpExceptions.CollectPossibleThrowsUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Throws a non-annotated/unhandled exception: '%c%'";
+    private static final String strProblemDescription       = "Throws a non-annotated/unhandled exception: '%c%'";
     private static final String strProblemFinallyExceptions = "Exceptions management inside finally has variety of side-effects in certain PHP versions";
 
     @NotNull
@@ -86,12 +100,8 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     return;
                 }
                 String strClassFQN = clazz.getFQN();
-                /* skip un-explorable and test classes */
-                if (
-                    StringUtil.isEmpty(strClassFQN) ||
-                    strClassFQN.contains("\\Tests\\") || strClassFQN.contains("\\Test\\") ||
-                    strClassFQN.endsWith("Test")
-                ) {
+                /* skip un-explorable classes */
+                if (StringUtil.isEmpty(strClassFQN)) {
                     return;
                 }
 
@@ -152,12 +162,19 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     }
 
                     if (unhandledExceptions.size() > 0) {
+                        final boolean suggestQuickFix = null != method.getDocComment();
+
                         for (PhpClass classUnhandled : unhandledExceptions.keySet()) {
-                            String thrown = classUnhandled.getFQN();
-                            String strError = strProblemDescription.replace("%c%", thrown);
+                            final String thrown  = classUnhandled.getFQN();
+                            final String message = strProblemDescription.replace("%c%", thrown);
 
                             for (PsiElement blame : unhandledExceptions.get(classUnhandled)) {
-                                holder.registerProblem(blame, strError, ProblemHighlightType.WEAK_WARNING);
+                                if (suggestQuickFix) {
+                                    final MissingThrowAnnotationLocalFix fix = new MissingThrowAnnotationLocalFix(method, thrown);
+                                    holder.registerProblem(blame, message, ProblemHighlightType.WEAK_WARNING, fix);
+                                } else {
+                                    holder.registerProblem(blame, message, ProblemHighlightType.WEAK_WARNING);
+                                }
                             }
 
                             unhandledExceptions.get(classUnhandled).clear();
@@ -171,5 +188,81 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 annotatedExceptions.clear();
             }
         };
+    }
+
+    private static class MissingThrowAnnotationLocalFix implements LocalQuickFix {
+        private String exception;
+        private Method method;
+
+        MissingThrowAnnotationLocalFix(@NotNull Method method, @NotNull String exception){
+            super();
+
+            this.exception = exception;
+            this.method    = method;
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Declare exception via @throws";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PhpDocComment phpDoc = method.getDocComment();
+
+            final String  pattern      =  this.exception;
+            final String  patternPlace = "@throws " + pattern.replaceAll("\\\\", "\\\\\\\\");
+
+            /* fix if phpDoc exists and not fixed yet */
+            if (null != phpDoc && !phpDoc.getText().contains(pattern)) {
+                final String[] comment = phpDoc.getText().split("\\n");
+
+                boolean isInjected = false;
+                final LinkedList<String> newCommentLines = new LinkedList<String>();
+                for (String line : comment) {
+                    /* injecting after return tag: probe 1 */
+                    if (!isInjected && line.contains("@return")) {
+                        newCommentLines.add(line);
+                        newCommentLines.add(line.replaceAll("\\@return[^\\r\\n]*", patternPlace+" after return"));
+
+                        isInjected = true;
+                        continue;
+                    }
+
+                    /* injecting after before first throw tag: probe 2 */
+                    if (!isInjected && line.contains("@throws")) {
+                        newCommentLines.add(line.replaceAll("\\@return[^\\r\\n]*", patternPlace+" before throw"));
+                        newCommentLines.add(line);
+
+                        isInjected = true;
+                        continue;
+                    }
+
+                    /* injecting at the end of PhpDoc: probe 3 */
+                    if (!isInjected && line.contains("*/")) {
+                        // no throw/return is declared
+                        newCommentLines.add(line.replaceAll("/", patternPlace+" at the end"));
+                        newCommentLines.add(line);
+
+                        isInjected = true;
+                        continue;
+                    }
+
+                    newCommentLines.add(line);
+                }
+
+                final String newCommentText = StringUtils.join(newCommentLines, "\n");
+                newCommentLines.clear();
+
+                phpDoc.replace(PhpPsiElementFactory.createFromText(project, PhpDocCommentImpl.class, newCommentText));
+            }
+        }
     }
 }

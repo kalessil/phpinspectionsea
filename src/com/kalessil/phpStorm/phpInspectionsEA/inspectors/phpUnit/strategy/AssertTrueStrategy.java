@@ -70,7 +70,7 @@ public class AssertTrueStrategy {
                 final PsiElement[] params      = ((FunctionReference) expression).getParameters();
                 final boolean hasCustomMessage = 3 == params.length;
 
-                final String pattern = hasCustomMessage ? "pattern(null, null)" : "pattern(null)";
+                final String pattern                = hasCustomMessage ? "pattern(null, null)" : "pattern(null)";
                 final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, pattern);
                 replacement.getParameters()[0].replace(this.value);
                 if (hasCustomMessage) {

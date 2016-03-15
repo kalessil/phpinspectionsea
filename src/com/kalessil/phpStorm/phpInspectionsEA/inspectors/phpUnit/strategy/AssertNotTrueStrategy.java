@@ -18,7 +18,7 @@ public class AssertNotTrueStrategy {
 
     static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
-        if (2 == params.length && function.equals("assertNotSame")) {
+        if (params.length > 1 && function.equals("assertNotSame")) {
             /* analyze parameters which makes the call equal to assertNotTrue */
             boolean isFirstTrue = false;
             if (params[0] instanceof ConstantReference) {
@@ -67,8 +67,15 @@ public class AssertNotTrueStrategy {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
-                final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, "pattern(null)");
+                final PsiElement[] params      = ((FunctionReference) expression).getParameters();
+                final boolean hasCustomMessage = 3 == params.length;
+
+                final String pattern                = hasCustomMessage ? "pattern(null, null)" : "pattern(null)";
+                final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, pattern);
                 replacement.getParameters()[0].replace(this.value);
+                if (hasCustomMessage) {
+                    replacement.getParameters()[1].replace(params[2]);
+                }
 
                 final FunctionReference call = (FunctionReference) expression;
                 //noinspection ConstantConditions I'm really sure NPE will not happen

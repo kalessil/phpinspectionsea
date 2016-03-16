@@ -116,8 +116,9 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement[] params           = this.call.getParameters();
             final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, "pattern(null, null)");
-            replacement.getParameters()[0].replace(params[0]);
-            replacement.getParameters()[1].replace(params[1]);
+            final PsiElement[] replaceParams    = replacement.getParameters();
+            replaceParams[0].replace(params[0]);
+            replaceParams[1].replace(params[1]);
 
             //noinspection ConstantConditions I'm really sure NPE will not happen due to hardcoded expression
             call.getParameterList().replace(replacement.getParameterList());

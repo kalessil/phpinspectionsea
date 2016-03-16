@@ -5,9 +5,9 @@ Inspections Lists (Quick-fixes for next release)
 ---
 | Group                | Short Name                                      | Full Name                                           | Quick fix |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
+| Compatibility        | MktimeUsageInspection                           | 'gmmktime()'/'mktime()' usage                       | Prio1 |
 | Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | Prio1 |
 | Architecture         | ClassReImplementsParentInterfaceInspection      | Class re-implements interface of a parent class     | Prio1 |
-| Compatibility        | MktimeUsageInspection                           | 'gmmktime()'/'mktime()' usage                       | Prio1 |
 | Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                     | Prio1 |
 | Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | Prio1 |
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | Prio1 |

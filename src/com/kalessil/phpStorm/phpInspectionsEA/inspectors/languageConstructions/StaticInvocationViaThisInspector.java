@@ -117,6 +117,10 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                 this.operator.replace(PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "::"));
                 this.variable.replace(PhpPsiElementFactory.createClassReference(project, "static"));
             }
+
+            /* release a tree node reference */
+            this.variable = null;
+            this.operator = null;
         }
     }
 }

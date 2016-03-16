@@ -203,6 +203,11 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             /* delete assignment itself */
             this.returnOrThrowVariable.replace(this.value);
             this.assignment.delete();
+
+            /* release a tree node reference */
+            this.assignment            = null;
+            this.returnOrThrowVariable = null;
+            this.value                 = null;
         }
     }
 }

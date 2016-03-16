@@ -248,6 +248,9 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
                 phpDoc.replace(PhpPsiElementFactory.createFromText(project, PhpDocCommentImpl.class, newCommentText));
             }
+
+            /* release a tree node reference */
+            this.method = null;
         }
     }
 }

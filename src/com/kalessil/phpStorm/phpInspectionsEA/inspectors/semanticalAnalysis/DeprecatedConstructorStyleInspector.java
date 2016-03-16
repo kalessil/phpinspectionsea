@@ -41,22 +41,13 @@ public class DeprecatedConstructorStyleInspector extends BasePhpInspection {
                 final String className = objClass.getName();
                 if (strMethodName.equals(className)) {
                     final String message    = messagePattern.replace("%s%", className);
-                    final TheLocalFix fixer = new TheLocalFix(className);
-
-                    holder.registerProblem(method.getNameIdentifier(), message, ProblemHighlightType.LIKE_DEPRECATED, fixer);
+                    holder.registerProblem(method.getNameIdentifier(), message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
                 }
             }
         };
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private String className;
-
-        TheLocalFix (@NotNull String className) {
-            super();
-            this.className = className;
-        }
-
         @NotNull
         @Override
         public String getName() {

@@ -122,6 +122,10 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
             if (null != this.object) {
                 this.object.replace(PhpPsiElementFactory.createVariable(project, "this", true));
             }
+
+            /* release a tree node reference */
+            this.object   = null;
+            this.operator = null;
         }
     }
 }

@@ -109,7 +109,10 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             LeafPsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "=");
             //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here
-            assignOperator.replace(replacement);
+            this.assignOperator.replace(replacement);
+
+            /* release a tree node reference */
+            this.assignOperator = null;
         }
     }
 
@@ -145,6 +148,9 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
 
                 previous.delete();
             }
+
+            /* release a tree node reference */
+            this.parameter = null;
         }
     }
 }

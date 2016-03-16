@@ -16,7 +16,7 @@ public class AssertNotSameStrategy {
 
     static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
-        if (2 == params.length && function.equals("assertNotEquals")) {
+        if (params.length > 1 && function.equals("assertNotEquals")) {
             final TheLocalFix fixer = new TheLocalFix(params[0], params[1]);
             holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, fixer);
 
@@ -52,15 +52,27 @@ public class AssertNotSameStrategy {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
-                final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, "pattern(null, null)");
-                replacement.getParameters()[0].replace(this.first);
-                replacement.getParameters()[1].replace(this.second);
+                final PsiElement[] params      = ((FunctionReference) expression).getParameters();
+                final boolean hasCustomMessage = 3 == params.length;
+
+                final String pattern                = hasCustomMessage ? "pattern(null, null, null)" : "pattern(null, null)";
+                final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, pattern);
+                final PsiElement[] replaceParams    = replacement.getParameters();
+                replaceParams[0].replace(this.first);
+                replaceParams[1].replace(this.second);
+                if (hasCustomMessage) {
+                    replaceParams[2].replace(params[2]);
+                }
 
                 final FunctionReference call = (FunctionReference) expression;
                 //noinspection ConstantConditions I'm really sure NPE will not happen
                 call.getParameterList().replace(replacement.getParameterList());
                 call.handleElementRename("assertNotSame");
             }
+
+            /* release a tree node reference */
+            this.first  = null;
+            this.second = null;
         }
     }
 }

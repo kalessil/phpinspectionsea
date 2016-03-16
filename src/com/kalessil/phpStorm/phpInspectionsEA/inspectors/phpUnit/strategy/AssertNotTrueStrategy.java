@@ -72,9 +72,10 @@ public class AssertNotTrueStrategy {
 
                 final String pattern                = hasCustomMessage ? "pattern(null, null)" : "pattern(null)";
                 final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, pattern);
-                replacement.getParameters()[0].replace(this.value);
+                final PsiElement[] replaceParams    = replacement.getParameters();
+                replaceParams[0].replace(this.value);
                 if (hasCustomMessage) {
-                    replacement.getParameters()[1].replace(params[2]);
+                    replaceParams[1].replace(params[2]);
                 }
 
                 final FunctionReference call = (FunctionReference) expression;
@@ -82,6 +83,9 @@ public class AssertNotTrueStrategy {
                 call.getParameterList().replace(replacement.getParameterList());
                 call.handleElementRename("assertNotTrue");
             }
+
+            /* release a tree node reference */
+            this.value = null;
         }
     }
 }

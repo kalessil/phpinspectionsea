@@ -21,7 +21,7 @@ public class AssertBoolOfComparisonStrategy {
     static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
         if (
-            1 == params.length && (
+            params.length > 0 && (
                 function.equals("assertTrue")  || function.equals("assertNotTrue") ||
                 function.equals("assertFalse") || function.equals("assertNotFalse")
             )
@@ -85,15 +85,27 @@ public class AssertBoolOfComparisonStrategy {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
-                final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, "pattern(null, null)");
-                replacement.getParameters()[0].replace(this.first);
-                replacement.getParameters()[1].replace(this.second);
+                final PsiElement[] params      = ((FunctionReference) expression).getParameters();
+                final boolean hasCustomMessage = 2 == params.length;
+
+                final String pattern                = hasCustomMessage ? "pattern(null, null, null)" : "pattern(null, null)";
+                final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, pattern);
+                final PsiElement[] replaceParams    = replacement.getParameters();
+                replaceParams[0].replace(this.first);
+                replaceParams[1].replace(this.second);
+                if (hasCustomMessage) {
+                    replaceParams[2].replace(params[1]);
+                }
 
                 final FunctionReference call = (FunctionReference) expression;
                 //noinspection ConstantConditions I'm really sure NPE will not happen
                 call.getParameterList().replace(replacement.getParameterList());
                 call.handleElementRename(this.replacementFunction);
             }
+
+            /* release a tree node reference */
+            this.first  = null;
+            this.second = null;
         }
     }
 

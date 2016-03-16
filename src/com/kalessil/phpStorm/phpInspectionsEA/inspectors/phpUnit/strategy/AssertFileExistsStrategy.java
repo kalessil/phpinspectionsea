@@ -18,7 +18,7 @@ public class AssertFileExistsStrategy {
 
     static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
-        if (1 == params.length && (function.equals("assertTrue") || function.equals("assertNotFalse"))) {
+        if (params.length > 0 && (function.equals("assertTrue") || function.equals("assertNotFalse"))) {
             final PsiElement param = ExpressionSemanticUtil.getExpressionTroughParenthesis(params[0]);
             if (param instanceof FunctionReference) {
                 final FunctionReference call  = (FunctionReference) param;
@@ -63,14 +63,25 @@ public class AssertFileExistsStrategy {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
-                final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, "pattern(null)");
-                replacement.getParameters()[0].replace(this.fileName);
+                final PsiElement[] params      = ((FunctionReference) expression).getParameters();
+                final boolean hasCustomMessage = 2 == params.length;
+
+                final String pattern                = hasCustomMessage ? "pattern(null, null)" : "pattern(null)";
+                final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, pattern);
+                final PsiElement[] replaceParams    = replacement.getParameters();
+                replaceParams[0].replace(this.fileName);
+                if (hasCustomMessage) {
+                    replaceParams[1].replace(params[1]);
+                }
 
                 final FunctionReference call = (FunctionReference) expression;
                 //noinspection ConstantConditions I'm really sure NPE will not happen
                 call.getParameterList().replace(replacement.getParameterList());
                 call.handleElementRename("assertFileExists");
             }
+
+            /* release a tree node reference */
+            this.fileName = null;
         }
     }
 }

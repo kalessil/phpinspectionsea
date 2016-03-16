@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
@@ -18,9 +17,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String strProblemUseStrpos      = "'%i% %o% %f%(%s%, %p%)' should be used instead";
-    private static final String strProblemDropLength     = "'%l%' can be safely dropped";
-    private static final String strProblemSimplifyLength = "'%l%' can be safely dropped, so '-%r%' is only left";
+    private static final String strProblemUseStrpos = "'%i% %o% %f%(%s%, %p%)' should be used instead";
+
 
     @NotNull
     public String getShortName() {
@@ -38,11 +36,6 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                 if (3 != params.length || StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("substr")) {
                     return;
                 }
-
-                /* Additional check: 3rd argument is "strlen($search) - strlen(...)"
-                 *  - "strlen($search)" is not needed
-                 */
-                checkAmbiguousStrlenInThirdArgument(reference);
 
                 /* checking 2nd and 3rd arguments is not needed/simplified:
                  *   - 2nd re-used as it is (should be a positive number!)
@@ -99,50 +92,6 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                                         .replace("%s%", params[0].getText())
                                         .replace("%p%", secondOperand.getText());
                                 holder.registerProblem(parentExpression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-
-                                // return;
-                            }
-                        }
-                    }
-                }
-            }
-
-            private void checkAmbiguousStrlenInThirdArgument(FunctionReference reference) {
-                final PsiElement[] params = reference.getParameters();
-                if (params[2] instanceof BinaryExpression) {
-                    final BinaryExpression candidate = (BinaryExpression) params[2];
-
-                    final PsiElement operation = candidate.getOperation();
-                    if (null != operation && null != operation.getNode()) {
-                        /* should be "* - *" */
-                        final IElementType operationType = operation.getNode().getElementType();
-                        if (operationType != PhpTokenTypes.opMINUS) {
-                            return;
-                        }
-
-                        /* should be "strlen($search) - *" */
-                        if (
-                            candidate.getLeftOperand() instanceof FunctionReferenceImpl &&
-                            null != candidate.getRightOperand()
-                        ) {
-                            final FunctionReference leftCall = (FunctionReference) candidate.getLeftOperand();
-                            final String leftCallName = leftCall.getName();
-                            final PsiElement[] leftCallParams = leftCall.getParameters();
-                            if (
-                                1 == leftCallParams.length && !StringUtil.isEmpty(leftCallName) && leftCallName.equals("strlen") &&
-                                PsiEquivalenceUtil.areElementsEquivalent(leftCallParams[0], params[0])
-                            ) {
-                                if (PsiEquivalenceUtil.areElementsEquivalent(candidate.getRightOperand(), params[1])) {
-                                    /* 3rd parameter not needed at all */
-                                    final String message = strProblemDropLength.replace("%l%", params[2].getText());
-                                    holder.registerProblem(params[2], message, ProblemHighlightType.LIKE_DEPRECATED);
-                                } else {
-                                    /* 3rd parameter can be simplified */
-                                    final String message = strProblemSimplifyLength
-                                            .replace("%l%", leftCall.getText())
-                                            .replace("%r%", candidate.getRightOperand().getText());
-                                    holder.registerProblem(leftCall, message, ProblemHighlightType.LIKE_DEPRECATED);
-                                }
 
                                 // return;
                             }

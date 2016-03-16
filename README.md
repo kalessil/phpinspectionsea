@@ -161,3 +161,4 @@ Inspections Lists (Performance)
 | Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused"                                                                  | yes |
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                              | --- |
 | Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                    | --- |
+| Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                              | yes |

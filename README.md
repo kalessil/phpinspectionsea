@@ -5,11 +5,13 @@ Inspections Lists (Quick-fixes for next release)
 ---
 | Group                | Short Name                                      | Full Name                                           | Quick fix |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
+| Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | Prio1 |
+| Architecture         | ClassReImplementsParentInterfaceInspection      | Class re-implements interface of a parent class     | Prio1 |
+| Compatibility        | MktimeUsageInspection                           | 'gmmktime()'/'mktime()' usage                       | Prio1 |
+| Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                     | Prio1 |
 | Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | Prio1 |
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | Prio1 |
-| Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | Prio1 |
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | Prio1 |
-| Architecture         | ClassReImplementsParentInterfaceInspection      | Class re-implements interface of a parent class     | Prio1 |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                  | Prio1 |
 | Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                             | Prio1 |
 
@@ -33,7 +35,7 @@ Inspections Lists (Control flow)
 | Control flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                | no |
 | Control flow         | DefaultValueInElseBranchInspection              | Default value is hidden in else branch              | no |
 | Control flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                           | --- |
-| Control flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                            | -- |
+| Control flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                            | --- |
 | Control flow         | ThrowRawExceptionInspection                     | General '\Exception' is thrown                      | no |
 | Control flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach           | no |
 | Control flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                  | no |
@@ -63,7 +65,6 @@ Inspections Lists (Compatibility)
 | Compatibility        | AliasFunctionsUsageInspection                   | Alias functions usage                               | yes |
 | Compatibility        | DeprecatedIniOptionsInspection                  | Deprecated configuration options                    | --- |
 | Compatibility        | RandomApiMigrationInspection                    | Random API migration                                | yes |
-| Compatibility        | MktimeUsageInspection                           | 'gmmktime()'/'mktime()' usage                       | no  |
 | Compatibility        | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | yes |
 
 Inspections Lists (Confusing constructs)
@@ -119,7 +120,6 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | SuspiciousLoopInspection                        | Suspicious loop                                           | --- |
 | Probable bugs        | ReferenceMismatchInspection                     | Reference mismatch                                        | --- |
 | Probable bugs        | ImplicitMagicMethodCallInspection               | Implicit magic method calls                               | no  |
-| Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | no  |
 | Probable bugs        | PrintfScanfArgumentsInspection                  | -printf/-scanf arguments count mismatches                 | --- |
 | Probable bugs        | RealpathOnRelativePathsInspection               | Phar-incompatible 'realpath()' applied to a relative path | no  |
 | Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | --- |

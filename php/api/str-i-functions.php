@@ -1,3 +1,4 @@
 <?php
 
-    echo stripos('container', '|');
+    echo stripos('container',  '|'); // <- reported
+    echo strripos('container', '|'); // <- reported

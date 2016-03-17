@@ -10,7 +10,6 @@ Inspections Lists (Quick-fixes for next release)
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | Prio1 |
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | Prio1 |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                  | Prio1 |
-| Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                             | Prio1 |
 
 Inspections Lists (Type compatibility)
 ---
@@ -152,7 +151,6 @@ Inspections Lists (Performance)
 | Performance          | StrNcmpUsedAsStrPosInspection                   | 'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)'           | --- |
 | Performance          | SubStrUsedAsStrPosInspection                    | 'substr(...)' could be replaced with 'strpos(...)'                                          | --- |
 | Performance          | StrTrUsageAsStrReplaceInspection                | 'strtr(...)' could be replaced with 'str_replace(...)'                                      | --- |
-| Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | --- |
 | Performance          | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                                                          | --- |
 | Performance          | AlterInForeachInspection                        | Slow alter in foreach                                                                       | --- |
 | Performance          | ForeachOnArrayComponentsInspection              | 'array_keys(...)/array_values(...)' used as foreach array                                   | --- |
@@ -162,3 +160,5 @@ Inspections Lists (Performance)
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                              | --- |
 | Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                    | --- |
 | Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                              | yes |
+| Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | n/a |
+| Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes |

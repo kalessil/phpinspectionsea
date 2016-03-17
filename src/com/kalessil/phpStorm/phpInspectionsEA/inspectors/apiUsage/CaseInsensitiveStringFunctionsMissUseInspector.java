@@ -1,8 +1,11 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -16,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspection {
-    private static final String strProblemDescription  = "'%f%(...)' can be used instead";
+    private static final String messagePattern = "'%f%(...)' should be used instead";
 
     @NotNull
     public String getShortName() {
@@ -47,22 +50,53 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
                     return;
                 }
 
-                HashMap<String, String> mapFunctions = getMapping();
+                final HashMap<String, String> mapFunctions = getMapping();
                 if (mapFunctions.containsKey(strFunctionName)) {
                     // resolve second parameter
-                    StringLiteralExpression pattern = ExpressionSemanticUtil.resolveAsStringLiteral(parameters[1]);
+                    final StringLiteralExpression pattern = ExpressionSemanticUtil.resolveAsStringLiteral(parameters[1]);
                     // not available / PhpStorm limitations
                     if (null == pattern || pattern.getContainingFile() != parameters[1].getContainingFile()) {
                         return;
                     }
 
-                    String patternString = pattern.getContents();
+                    final String patternString = pattern.getContents();
                     if (!StringUtil.isEmpty(patternString) && !patternString.matches(".*\\p{L}.*")) {
-                        String strMessage = strProblemDescription.replace("%f%", mapFunctions.get(strFunctionName));
-                        holder.registerProblem(reference, strMessage, ProblemHighlightType.WEAK_WARNING);
+                        final String functionName = mapFunctions.get(strFunctionName);
+                        final String message      = messagePattern.replace("%f%", functionName);
+                        holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(functionName));
                     }
                 }
             }
         };
     }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        private String suggestedName;
+
+        TheLocalFix(@NotNull String suggestedName) {
+            super();
+            this.suggestedName = suggestedName;
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use '" + this.suggestedName + "(...)'";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression instanceof FunctionReference) {
+                ((FunctionReference) expression).handleElementRename(this.suggestedName);
+            }
+        }
+    }
+
 }

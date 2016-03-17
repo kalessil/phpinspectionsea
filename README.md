@@ -5,7 +5,6 @@ Inspections Lists (Quick-fixes for next release)
 ---
 | Group                | Short Name                                      | Full Name                                           | Quick fix |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
-| Type compatibility   | ArrayTypeOfParameterByDefaultValueInspection    | Parameter could be declared as array                | Prio1 |
 | Performance          | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                  | Prio1 |
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | Prio1 |
 | Architecture         | ClassReImplementsParentInterfaceInspection      | Class re-implements interface of a parent class     | Prio1 |
@@ -22,6 +21,7 @@ Inspections Lists (Type compatibility)
 | Type compatibility   | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search()' type unsafe usage | n/a |
 | Type compatibility   | ForeachSourceInspection                         | Foreach source to iterate over                      | n/a |
 | Type compatibility   | GenericObjectTypeUsageInspection                | Usage of object type in PhpDoc                      | n/a |
+| Type compatibility   | ArrayTypeOfParameterByDefaultValueInspection    | Parameter could be declared as array                | yes |
 
 Inspections Lists (Control flow)
 ---
@@ -154,7 +154,6 @@ Inspections Lists (Performance)
 | Performance          | StrTrUsageAsStrReplaceInspection                | 'strtr(...)' could be replaced with 'str_replace(...)'                                      | no  |
 | Performance          | AlterInForeachInspection                        | Slow alter in foreach                                                                       | n/a |
 | Performance          | ForeachOnArrayComponentsInspection              | 'array_keys(...)/array_values(...)' used as foreach array                                   | n/a |
-| Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | no  |
 | Performance          | LowPerformanceArrayUniqueUsageInspection        | 'array_unique()' low performing usage                                                       | n/a |
 | Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused"                                                                  | yes |
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                              | n/a |

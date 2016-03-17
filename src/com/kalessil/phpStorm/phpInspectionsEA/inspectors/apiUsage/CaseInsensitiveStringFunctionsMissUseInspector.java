@@ -98,5 +98,4 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
             }
         }
     }
-
 }

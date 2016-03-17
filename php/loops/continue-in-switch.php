@@ -6,7 +6,7 @@ foreach(array() as $item) {
             continue 2;
 
         case 1:
-            continue;
+            continue; // <- reported
 
 
         case 2:

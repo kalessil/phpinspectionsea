@@ -511,7 +511,7 @@ with a laptop.
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MktimeUsageInspection"                           displayName="'gmmktime()'/'mktime()' usage"
         groupName="Compatibility"                                   enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.MktimeUsageInspection"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.MktimeUsageInspector"/>
 
     <!--localInspection language="PHP" groupPath="PHP"
         shortName="StrictArgumentsInspection"                       displayName="Type compatibility: check types of call arguments"

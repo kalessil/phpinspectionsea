@@ -1,10 +1,10 @@
 <?php
 
 
-    mktime();
+    mktime();                       // <- reported
     mktime(0);
-    mktime(0, 0, 0, 0, 0, 0, -1);
+    mktime(0, 0, 0, 0, 0, 0, -1);   // <- reported
 
-    gmmktime();
+    gmmktime();                     // <- reported
     gmmktime(0);
-    gmmktime(0, 0, 0, 0, 0, 0, -1);
+    gmmktime(0, 0, 0, 0, 0, 0, -1); // <- reported

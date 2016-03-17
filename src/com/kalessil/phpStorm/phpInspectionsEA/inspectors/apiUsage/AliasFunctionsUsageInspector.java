@@ -70,7 +70,7 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private String suggestedName;
+        final private String suggestedName;
 
         TheLocalFix(@NotNull String suggestedName) {
             super();

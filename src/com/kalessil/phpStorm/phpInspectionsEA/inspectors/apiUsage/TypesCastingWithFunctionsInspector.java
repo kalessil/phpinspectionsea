@@ -73,7 +73,7 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private String suggestedType;
+        final private String suggestedType;
 
         TheLocalFix(@NotNull String suggestedType) {
             super();

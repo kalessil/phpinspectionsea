@@ -46,7 +46,7 @@ public class AssertBoolInvertedStrategy {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private String replacementFunction;
+        final private String replacementFunction;
         private PsiElement argument;
 
         TheLocalFix(@NotNull String replacementFunction, @NotNull PsiElement argument) {

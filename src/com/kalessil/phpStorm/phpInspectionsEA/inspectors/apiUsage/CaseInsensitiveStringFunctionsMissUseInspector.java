@@ -71,7 +71,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private String suggestedName;
+        final private String suggestedName;
 
         TheLocalFix(@NotNull String suggestedName) {
             super();

@@ -58,7 +58,7 @@ public class AssertBoolOfComparisonStrategy {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private String replacementFunction;
+        final private String replacementFunction;
         private PsiElement first;
         private PsiElement second;
 

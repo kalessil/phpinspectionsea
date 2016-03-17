@@ -30,7 +30,8 @@ public class MktimeUsageInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /* check parameters amount and name */
                 final String strFunctionName = reference.getName();
-                final int parametersCount    = reference.getParameters().length;
+                final PsiElement[] params    = reference.getParameters();
+                final int parametersCount    = params.length;
                 if (
                     StringUtil.isEmpty(strFunctionName) ||
                     !(
@@ -46,7 +47,7 @@ public class MktimeUsageInspector extends BasePhpInspection {
                     final UseTimeFunctionLocalFix fixer = new UseTimeFunctionLocalFix();
                     holder.registerProblem(reference, strProblemUseTime, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixer);
                 } else {
-                    holder.registerProblem(reference.getParameters()[6], strProblemParameterDeprecated, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(params[6], strProblemParameterDeprecated, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }
         };

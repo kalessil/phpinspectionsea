@@ -62,6 +62,7 @@ with a laptop.
     - Nested not operators usage:           quick-fixes implemented;<br/>
     - 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()': quick-fix implemented;<br/>
     - Inconsistent 'http_build_query(...)' result:                                                 quick-fix implemented;<br/>
+    - Class re-implements interface of a parent class:                                             quick-fix implemented;<br/>
 <br/>
     - PhpUnit: recognize cases with custom messages;<br/>
     - Magic methods validity: __sleep/__wakeup correctness check added;<br/>

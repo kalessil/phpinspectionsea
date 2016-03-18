@@ -104,8 +104,8 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                 final ImplementsList implementsList = (ImplementsList) expression.getParent();
                 if (1 == implementsList.getReferenceElements().size()) {
                     /* drop implements section completely; implementsList.delete() breaks further SCA */
-                    expression.delete();
-                    implementsList.getFirstChild().delete();
+                    expression.delete();                     // <- interface
+                    implementsList.getFirstChild().delete(); // <- implements keyword
                 } else {
                     final boolean cleanupLeftHand = implementsList.getReferenceElements().get(0) != expression;
                     PsiElement commaCandidate = cleanupLeftHand ? expression.getPrevSibling() : expression.getPrevSibling();

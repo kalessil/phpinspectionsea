@@ -46,22 +46,22 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** expecting !function(...) in condition */
+                /* expecting !function(...) in condition */
                 PsiElement objConditionExpression = null;
-                IElementType objOperation = null;
+                IElementType objOperation         = null;
                 if (expression.getCondition() instanceof UnaryExpression) {
                     UnaryExpression objCondition = (UnaryExpression) expression.getCondition();
-                    objOperation = objCondition.getOperation().getNode().getElementType();
-                    objConditionExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(objCondition.getValue());
+                    objOperation                 = objCondition.getOperation().getNode().getElementType();
+                    objConditionExpression       = ExpressionSemanticUtil.getExpressionTroughParenthesis(objCondition.getValue());
                 }
                 if (objOperation != PhpTokenTypes.opNOT || !(objConditionExpression instanceof FunctionReference)) {
                     return;
                 }
 
-                /** inspect expression */
+                /* inspect expression */
                 AssignmentExpression objAssignment = (AssignmentExpression) objAction;
-                PsiElement objTrueVariant = objAssignment.getVariable();
-                PsiElement objFalseVariant = objAssignment.getValue();
+                PsiElement objTrueVariant          = objAssignment.getVariable();
+                PsiElement objFalseVariant         = objAssignment.getValue();
                 if (
                     null != objTrueVariant && null != objFalseVariant &&
                     this.isArrayCasting((FunctionReference) objConditionExpression, objTrueVariant, objFalseVariant)

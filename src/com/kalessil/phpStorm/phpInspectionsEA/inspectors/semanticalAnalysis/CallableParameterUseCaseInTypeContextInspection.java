@@ -235,7 +235,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                  */
                                 for (PhpClass oneClassForInterfaceCheck : testSubjectInheritanceChain) {
                                     for (PhpClass objInterface : oneClassForInterfaceCheck.getImplementedInterfaces()) {
-                                        if (null != objInterface.getFQN() && objInterface.getFQN().equals(testAgainst.getFQN())) {
+                                        if (objInterface.getFQN().equals(testAgainst.getFQN())) {
                                             return true;
                                         }
                                     }

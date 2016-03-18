@@ -14,7 +14,7 @@ import java.util.HashSet;
 
 public class SuspiciousLoopInspector extends BasePhpInspection {
     private static final String strProblemMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
-    private static final String strProblemDescription = "Variable $%v% is introduced in a outer loop and overridden here";
+    private static final String strProblemDescription        = "Variable $%v% is introduced in a outer loop and overridden here";
 
     @NotNull
     public String getShortName() {
@@ -39,19 +39,19 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                 }
             }
 
-            private void inspectVariables(PhpPsiElement objLoop) {
-                HashSet<String> loopVariables = getLoopVariables(objLoop);
+            private void inspectVariables(PhpPsiElement loop) {
+                final HashSet<String> loopVariables = getLoopVariables(loop);
 
-                /** scan parents until reached file/callable */
-                PsiElement parent = objLoop.getParent();
+                /* scan parents until reached file/callable */
+                PsiElement parent = loop.getParent();
                 while (null != parent && ! (parent instanceof Function) && ! (parent instanceof PhpFile)) {
-                    /** inspect parent loops for conflicted variables */
+                    /* inspect parent loops for conflicted variables */
                     if (parent instanceof For || parent instanceof ForeachStatement) {
-                        HashSet<String> parentVariables = getLoopVariables((PhpPsiElement) parent);
+                        final HashSet<String> parentVariables = getLoopVariables((PhpPsiElement) parent);
                         for (String variable : loopVariables) {
                             if (parentVariables.contains(variable)) {
-                                String strWarning = strProblemDescription.replace("%v%", variable);
-                                holder.registerProblem(objLoop.getFirstChild(), strWarning, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                final String message = strProblemDescription.replace("%v%", variable);
+                                holder.registerProblem(loop.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         }
                         parentVariables.clear();
@@ -63,15 +63,15 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                 loopVariables.clear();
             }
 
-            private HashSet<String> getLoopVariables(PhpPsiElement objLoop) {
-                HashSet<String> loopVariables = new HashSet<String>();
+            private HashSet<String> getLoopVariables(PhpPsiElement loop) {
+                final HashSet<String> loopVariables = new HashSet<String>();
 
-                if (objLoop instanceof For) {
-                    /** find assignments in init expressions */
-                    for (PhpPsiElement init : ((For) objLoop).getInitialExpressions()) {
+                if (loop instanceof For) {
+                    /* find assignments in init expressions */
+                    for (PhpPsiElement init : ((For) loop).getInitialExpressions()) {
                         if (init instanceof AssignmentExpression) {
-                            /** variable used in assignment */
-                            PhpPsiElement variable = ((AssignmentExpression) init).getVariable();
+                            /* variable used in assignment */
+                            final PhpPsiElement variable = ((AssignmentExpression) init).getVariable();
                             if (variable instanceof Variable && null != variable.getName()) {
                                 loopVariables.add(variable.getName());
                             }
@@ -79,12 +79,10 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                     }
                 }
 
-                if (objLoop instanceof ForeachStatement) {
-                    /** just extract variables which created by foreach */
-                    for (Variable variable : ((ForeachStatement) objLoop).getVariables()) {
-                        if (null != variable.getName()) {
-                            loopVariables.add(variable.getName());
-                        }
+                if (loop instanceof ForeachStatement) {
+                    /* just extract variables which created by foreach */
+                    for (Variable variable : ((ForeachStatement) loop).getVariables()) {
+                        loopVariables.add(variable.getName());
                     }
                 }
 

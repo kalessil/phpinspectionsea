@@ -143,8 +143,7 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                     holder.registerProblem(method.getNameIdentifier(), strProblemUseSplAutoloading, ProblemHighlightType.LIKE_DEPRECATED);
                     TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
 
-                    //noinspection UnnecessaryReturnStatement
-                    return;
+                    // return;
                 }
             }
         };

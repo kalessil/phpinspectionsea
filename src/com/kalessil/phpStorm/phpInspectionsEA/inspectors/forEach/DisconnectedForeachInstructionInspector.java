@@ -144,10 +144,15 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
                         /* php-specific list(...) = ... construction */
                         if (parent instanceof MultiassignmentExpression) {
-                            List<PhpPsiElement> variables = ((MultiassignmentExpression) parent).getVariables();
-                            if (null != variables && variables.contains(variable)) {
-                                allModifiedVariables.add(variableName);
-                                continue;
+                            final List<PhpPsiElement> variables = ((MultiassignmentExpression) parent).getVariables();
+                            if (variables.size() > 0) {
+                                if (variables.contains(variable)) {
+                                    allModifiedVariables.add(variableName);
+
+                                    variables.clear();
+                                    continue;
+                                }
+                                variables.clear();
                             }
                         }
 

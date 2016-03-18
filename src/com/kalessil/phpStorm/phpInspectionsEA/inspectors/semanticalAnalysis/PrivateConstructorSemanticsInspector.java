@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.Method;
@@ -14,8 +15,8 @@ import java.util.List;
 
 public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
     private static final String strProblemSingletonConstructor = "Singleton constructor should be protected";
-    private static final String strProblemUtilNotFinal = "Utility class should be final (breaks backward compatibility)";
-    private static final String strProblemUtilNaming = "Utility class's name should end with 'Util'";
+    private static final String strProblemUtilNotFinal         = "Utility class should be final (breaks backward compatibility)";
+    private static final String strProblemUtilNaming           = "Utility class's name should end with 'Util'";
 
     @NotNull
     public String getShortName() {
@@ -27,28 +28,29 @@ public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
-                Method objConstructor = clazz.getOwnConstructor();
-                if (null == objConstructor || !objConstructor.getAccess().isPrivate() || null == clazz.getNameIdentifier()) {
+                final Method constructor  = clazz.getOwnConstructor();
+                final PsiElement nameNode = clazz.getNameIdentifier();
+                if (null == constructor || null == nameNode || !constructor.getAccess().isPrivate()) {
                     return;
                 }
 
                 if (null != clazz.findOwnMethodByName("getInstance")) {
-                    holder.registerProblem(clazz.getNameIdentifier(), strProblemSingletonConstructor, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(nameNode, strProblemSingletonConstructor, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
 
-                /** ensure class has no any inheritance */
-                List<ClassReference> listExtends = clazz.getExtendsList().getReferenceElements();
-                List<ClassReference> listImplements = clazz.getImplementsList().getReferenceElements();
-                if (
-                    (listExtends != null && listExtends.size() > 0) ||
-                    (listImplements != null && listImplements.size() > 0)
-                ) {
+                /* ensure class has no any inheritance */
+                final List<ClassReference> listExtends    = clazz.getExtendsList().getReferenceElements();
+                final List<ClassReference> listImplements = clazz.getImplementsList().getReferenceElements();
+                if (listExtends.size() > 0 || listImplements.size() > 0) {
+                    listExtends.clear();
+                    listImplements.clear();
+
                     return;
                 }
 
                 /** should have only static methods plus constructor */
-                Method[] arrMethods = clazz.getOwnMethods();
+                final Method[] arrMethods = clazz.getOwnMethods();
                 if (null == arrMethods || arrMethods.length == 1) {
                     return;
                 }
@@ -60,13 +62,13 @@ public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
                 }
                 /** TODO: constants only - enum equivalent */
 
-                /** ensure utility class is defined properly */
-                String strFqn = clazz.getFQN();
-                if (null != strFqn && !strFqn.endsWith("Util") && !strFqn.endsWith("Utils")) {
-                    holder.registerProblem(clazz.getNameIdentifier(), strProblemUtilNaming, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                /* ensure utility class is defined properly */
+                final String strFqn = clazz.getFQN();
+                if (!strFqn.endsWith("Util") && !strFqn.endsWith("Utils")) {
+                    holder.registerProblem(nameNode, strProblemUtilNaming, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
                 if (!clazz.isFinal()) {
-                    holder.registerProblem(clazz.getNameIdentifier(), strProblemUtilNotFinal, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(nameNode, strProblemUtilNotFinal, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }
         };

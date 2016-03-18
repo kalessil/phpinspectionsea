@@ -7,7 +7,6 @@ Inspections Lists (Quick-fixes for next release)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
 | Performance          | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                  | Prio1 |
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | Prio1 |
-| Architecture         | ClassReImplementsParentInterfaceInspection      | Class re-implements interface of a parent class     | Prio1 |
 | Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | Prio1 |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                  | Prio1 |
 
@@ -108,6 +107,7 @@ Inspections Lists (Architecture)
 | Architecture         | LongInheritanceChainInspection                  | Long inheritance chain                              | n/a |
 | Architecture         | PropertyCanBeStaticInspection                   | Property could be static                            | no  |
 | Architecture         | EmptyClassInspection                            | Empty class                                         | n/a |
+| Architecture         | ClassReImplementsParentInterfaceInspection      | Class re-implements interface of a parent class     | yes |
 
 Inspections Lists (Probable bugs)
 ---

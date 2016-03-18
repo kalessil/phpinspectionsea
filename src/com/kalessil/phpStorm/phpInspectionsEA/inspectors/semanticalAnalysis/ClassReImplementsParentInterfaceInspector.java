@@ -1,11 +1,16 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
+import com.jetbrains.php.lang.psi.elements.ImplementsList;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -63,7 +68,7 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                                                 .replace("%i%", parentInterfaceName)
                                                 .replace("%c%", parentClassFQN);
 
-                                        holder.registerProblem(classNameNode, message, ProblemHighlightType.WEAK_WARNING);
+                                        holder.registerProblem(ownInterface, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new TheLocalFix());
                                         break;
                                     }
                                 }
@@ -77,5 +82,42 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                 }
             }
         };
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Remove unnecessary implements entry";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression.getParent() instanceof ImplementsList) {
+                final ImplementsList implementsList = (ImplementsList) expression.getParent();
+                if (1 == implementsList.getReferenceElements().size()) {
+                    /* drop implements section completely; implementsList.delete() breaks further SCA */
+                    expression.delete();
+                    implementsList.getFirstChild().delete();
+                } else {
+                    final boolean cleanupLeftHand = implementsList.getReferenceElements().get(0) != expression;
+                    PsiElement commaCandidate = cleanupLeftHand ? expression.getPrevSibling() : expression.getPrevSibling();
+                    if (commaCandidate instanceof PsiWhiteSpace) {
+                        commaCandidate = cleanupLeftHand ? commaCandidate.getPrevSibling() : commaCandidate.getPrevSibling();
+                    }
+
+                    /* drop single implements entry from the list */
+                    expression.delete();
+                    commaCandidate.delete();
+                }
+            }
+        }
     }
 }

@@ -114,6 +114,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement().getParent();
             if (expression instanceof FunctionReference) {
+                //noinspection ConstantConditions I' sure NPE will not happen as pattern hardcoded
                 this.operator.replace(PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "::"));
                 this.variable.replace(PhpPsiElementFactory.createClassReference(project, "static"));
             }

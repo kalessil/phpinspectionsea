@@ -9,7 +9,6 @@ Inspections Lists (Quick-fixes for next release)
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | Prio1 |
 | Architecture         | ClassReImplementsParentInterfaceInspection      | Class re-implements interface of a parent class     | Prio1 |
 | Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | Prio1 |
-| Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | Prio1 |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                  | Prio1 |
 
 Inspections Lists (Type compatibility)
@@ -94,6 +93,7 @@ Inspections Lists (Code style)
 | Code style           | DynamicInvocationViaScopeResolutionInspector    | Dynamic methods invocation via '::'                 | yes |
 | Code style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes |
 | Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | yes |
+| Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes |
 
 Inspections Lists (Architecture)
 ---

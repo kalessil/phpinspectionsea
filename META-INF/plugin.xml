@@ -51,7 +51,7 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-17 Mar 2016: bug-fixes, improvements and new inspections<br/>
+20 Mar 2016: bug-fixes, improvements and new inspections<br/>
 <br/>
     - Parameter could be declared as array: quick-fix implemented;<br/>
     - Unnecessary use aliases:              quick-fix implemented;<br/>

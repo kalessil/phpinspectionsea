@@ -15,10 +15,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromSignatureResolvingUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -153,8 +150,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 objVariable instanceof Variable &&
                                 null != objVariable.getName() && objVariable.getName().equals(strParameterName)
                             ) {
-                                HashSet<String> objTypesResolved = new HashSet<String>();
-                                TypeFromPsiResolvingUtil.resolveExpressionType(objValue, (Function) objScopeHolder, objIndex, objTypesResolved);
+                                final HashSet<String> objTypesResolved = new HashSet<String>();
+                                TypeFromPlatformResolverUtil.resolveExpressionType(objValue, objTypesResolved);
 
                                 boolean isCallViolatesDefinition;
                                 for (String strType : objTypesResolved) {
@@ -168,12 +165,12 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                                     isCallViolatesDefinition = (!this.isTypeCompatibleWith(strType, objParameterTypesResolved, objIndex));
                                     if (isCallViolatesDefinition) {
-                                        String strMessage = strProblemAssignmentViolatesDefinition.replace("%s%", strType);
-                                        holder.registerProblem(objValue, strMessage, ProblemHighlightType.WEAK_WARNING);
+                                        final String message = strProblemAssignmentViolatesDefinition.replace("%s%", strType);
+                                        holder.registerProblem(objValue, message, ProblemHighlightType.WEAK_WARNING);
+
                                         break;
                                     }
                                 }
-
                                 objTypesResolved.clear();
                             }
                         }

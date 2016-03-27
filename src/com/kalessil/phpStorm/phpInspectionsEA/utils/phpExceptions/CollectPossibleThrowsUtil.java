@@ -140,6 +140,12 @@ final public class CollectPossibleThrowsUtil {
                     HashSet<String> types = new HashSet<String>();
                     TypeFromPlatformResolverUtil.resolveExpressionType(argument, types);
                     if (types.size() > 0) {
+                        /* remove extra definition of \Exception unexpectedly added by PhpStorm */
+                        final boolean dropExtraDefinitions = argument instanceof Variable && types.size() > 1 && types.contains("\\Exception");
+                        if (dropExtraDefinitions) {
+                            types.remove("\\Exception");
+                        }
+
                         for (String type : types) {
                             if (type.startsWith("\\")) {
                                 /* process classes references */
@@ -256,7 +262,7 @@ final public class CollectPossibleThrowsUtil {
                     /* put */
                     unhandledInCatches.put(exceptionInCatch, expressionsToDispatch);
                 }
-//holder.registerProblem(catchInTry.getFirstChild(), "Extend from catches: " + unhandledInTry.keySet().toString(), ProblemHighlightType.WEAK_WARNING);
+//holder.registerProblem(catchInTry.getFirstChild(), "Introduced by catches: " + unhandledInCatches.keySet().toString(), ProblemHighlightType.WEAK_WARNING);
             }
             catchBodyExceptions.clear();
         }

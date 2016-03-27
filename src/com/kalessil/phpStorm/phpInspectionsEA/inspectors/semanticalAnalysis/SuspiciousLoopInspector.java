@@ -59,7 +59,6 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                             holder.registerProblem(loop.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         }
                     }
-
                     parameters.clear();
                 }
 
@@ -80,7 +79,6 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
 
                     parent = parent.getParent();
                 }
-
                 loopVariables.clear();
             }
 

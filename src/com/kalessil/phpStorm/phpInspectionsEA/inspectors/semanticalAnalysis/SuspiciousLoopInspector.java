@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import java.util.HashSet;
 public class SuspiciousLoopInspector extends BasePhpInspection {
     private static final String strProblemMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
     private static final String strProblemDescription        = "Variable $%v% is introduced in a outer loop and overridden here";
+    private static final String strProblemParameterName      = "Variable $%v% is introduced as a %t% parameter and overridden here";
 
     @NotNull
     public String getShortName() {
@@ -42,6 +44,24 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
             private void inspectVariables(PhpPsiElement loop) {
                 final HashSet<String> loopVariables = getLoopVariables(loop);
 
+                final Function function = ExpressionSemanticUtil.getScope(loop);
+                if (null != function) {
+                    final HashSet<String> parameters = new HashSet<String>();
+                    for (Parameter param : function.getParameters()) {
+                        parameters.add(param.getName());
+                    }
+
+                    for (String variable : loopVariables) {
+                        if (parameters.contains(variable)) {
+                            final String message = strProblemParameterName
+                                    .replace("%v%", variable)
+                                    .replace("%t%", function instanceof Method ? "method" : "function");
+                            holder.registerProblem(loop.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        }
+                    }
+                    parameters.clear();
+                }
+
                 /* scan parents until reached file/callable */
                 PsiElement parent = loop.getParent();
                 while (null != parent && ! (parent instanceof Function) && ! (parent instanceof PhpFile)) {
@@ -59,7 +79,6 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
 
                     parent = parent.getParent();
                 }
-
                 loopVariables.clear();
             }
 

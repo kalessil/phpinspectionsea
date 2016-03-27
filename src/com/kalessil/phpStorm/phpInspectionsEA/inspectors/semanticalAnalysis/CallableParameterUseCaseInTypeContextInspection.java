@@ -158,7 +158,9 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     if (
                                         strType.equals(Types.strResolvingAbortedOnPsiLevel) ||
                                         strType.equals(Types.strClassNotResolved) ||
-                                        strType.equals(Types.strMixed)
+                                        strType.equals(Types.strMixed) ||
+                                        strType.equals(Types.strStatic) ||
+                                        strType.equals(Types.strSelf)
                                     ) {
                                         continue;
                                     }

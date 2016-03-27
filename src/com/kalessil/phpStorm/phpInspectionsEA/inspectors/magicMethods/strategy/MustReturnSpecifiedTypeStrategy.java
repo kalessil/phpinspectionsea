@@ -33,7 +33,10 @@ public class MustReturnSpecifiedTypeStrategy {
                     final HashSet<String> resolvedArgumentType = new HashSet<String>();
                     TypeFromPlatformResolverUtil.resolveExpressionType(returnValueExpression, resolvedArgumentType);
 
-                    /* create type out of strings, resolved by plugin component handling magic in IDE internals */
+                    /*
+                     * create type out of strings, resolved by plugin component handling magic in IDE internals,
+                     * @see https://youtrack.jetbrains.com/issue/WI-31249
+                     */
                     final PhpType argumentType = new PhpType();
                     if (resolvedArgumentType.size() > 0) {
                         for (String oneType : resolvedArgumentType) {

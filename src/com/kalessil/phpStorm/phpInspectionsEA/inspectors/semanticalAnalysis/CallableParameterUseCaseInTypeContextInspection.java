@@ -156,9 +156,12 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 boolean isCallViolatesDefinition;
                                 for (String strType : objTypesResolved) {
                                     if (
+                                        /* custom resolving artifacts */
                                         strType.equals(Types.strResolvingAbortedOnPsiLevel) ||
                                         strType.equals(Types.strClassNotResolved) ||
+                                        /* we should not report mixed, bad annotation => bad analysis */
                                         strType.equals(Types.strMixed) ||
+                                        /* sometimes types containing both keyword and resolved class */
                                         strType.equals(Types.strStatic) ||
                                         strType.equals(Types.strSelf)
                                     ) {

@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils.phpExceptions;
 
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -225,7 +226,6 @@ final public class CollectPossibleThrowsUtil {
                     if (unhandledVariants.contains(caughtClass)) {
                         handledInCurrentCatch.add(unhandled);
                     }
-
                     unhandledVariants.clear();
                 }
 
@@ -234,12 +234,12 @@ final public class CollectPossibleThrowsUtil {
 //holder.registerProblem(catchInTry.getFirstChild(), "Exclude thrown: " + handledInCurrentCatch.toString(), ProblemHighlightType.WEAK_WARNING);
                     /* cleanup info associated with covered exceptions */
                     for (PhpClass oneHandled : handledInCurrentCatch) {
+//holder.registerProblem(catchInTry.getFirstChild(), "Apply to try: " + unhandledInTry.keySet().toString(), ProblemHighlightType.WEAK_WARNING);
                         if (unhandledInTry.containsKey(oneHandled)) {
                             unhandledInTry.get(oneHandled).clear();
                             unhandledInTry.remove(oneHandled);
                         }
                     }
-
                     handledInCurrentCatch.clear();
                 }
             }
@@ -247,7 +247,7 @@ final public class CollectPossibleThrowsUtil {
             /* resolve catch-body and mark as processed */
             HashMap<PhpClass, HashSet<PsiElement>> catchBodyExceptions = collectNestedAndWorkflowExceptions(catchInTry, processed, holder);
             for (PhpClass exceptionInCatch : catchBodyExceptions.keySet()) {
-                HashSet<PsiElement> expressionsToDispatch = catchBodyExceptions.get(exceptionInCatch);
+                final HashSet<PsiElement> expressionsToDispatch = catchBodyExceptions.get(exceptionInCatch);
                 if (unhandledInCatches.containsKey(exceptionInCatch)) {
                     /* merge */
                     unhandledInCatches.get(exceptionInCatch).addAll(expressionsToDispatch);
@@ -256,13 +256,14 @@ final public class CollectPossibleThrowsUtil {
                     /* put */
                     unhandledInCatches.put(exceptionInCatch, expressionsToDispatch);
                 }
+//holder.registerProblem(catchInTry.getFirstChild(), "Extend from catches: " + unhandledInTry.keySet().toString(), ProblemHighlightType.WEAK_WARNING);
             }
             catchBodyExceptions.clear();
         }
 
         /* merge unhandled and catch-produced exceptions into result storage */
         for (PhpClass tryException : unhandledInTry.keySet()) {
-            HashSet<PsiElement> expressionsToDispatch = unhandledInTry.get(tryException);
+            final HashSet<PsiElement> expressionsToDispatch = unhandledInTry.get(tryException);
             if (exceptions.containsKey(tryException)) {
                 exceptions.get(tryException).addAll(expressionsToDispatch);
                 expressionsToDispatch.clear();
@@ -270,10 +271,11 @@ final public class CollectPossibleThrowsUtil {
                 exceptions.put(tryException, expressionsToDispatch);
             }
         }
+//holder.registerProblem(scope.getFirstChild(), "Try produces: " + unhandledInTry.keySet().toString(), ProblemHighlightType.WEAK_WARNING);
         unhandledInTry.clear();
 
         for (PhpClass catchException : unhandledInCatches.keySet()) {
-            HashSet<PsiElement> expressionsToDispatch = unhandledInCatches.get(catchException);
+            final HashSet<PsiElement> expressionsToDispatch = unhandledInCatches.get(catchException);
             if (exceptions.containsKey(catchException)) {
                 exceptions.get(catchException).addAll(expressionsToDispatch);
                 expressionsToDispatch.clear();
@@ -281,6 +283,7 @@ final public class CollectPossibleThrowsUtil {
                 exceptions.put(catchException, expressionsToDispatch);
             }
         }
+//holder.registerProblem(scope.getFirstChild(), "Catches produces: " + unhandledInCatches.keySet().toString(), ProblemHighlightType.WEAK_WARNING);
         unhandledInCatches.clear();
 
         return exceptions;

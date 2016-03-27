@@ -16,6 +16,7 @@ public class Types {
     final static public String strCallable = "callable";
     final static public String strResource = "resource";
     final static public String strStatic   = "static";
+    final static public String strSelf     = "self";
     final static public String strObject   = "object";
 
     final static public String strResolvingAbortedOnPsiLevel = "\\aborted-on-psi-level";
@@ -63,6 +64,10 @@ public class Types {
 
             mapTypes.put(strStatic,    strStatic);
             mapTypes.put("\\static",   strStatic);
+            mapTypes.put("$this",      strStatic);
+
+            mapTypes.put(strSelf,      strSelf);
+            mapTypes.put("\\self",     strSelf);
 
             mapTypes.put(strObject,    strObject);
             mapTypes.put("\\object",   strObject);
@@ -72,7 +77,7 @@ public class Types {
     }
 
     public static String getType (@NotNull String strGivenType) {
-        /** special case */
+        /* special case: array definition */
         if (strGivenType.contains("[]")) {
             return strArray;
         }

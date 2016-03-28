@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.5.2</version>
+  <version>1.5.3</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -51,33 +51,13 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-20 Mar 2016: bug-fixes, improvements and new inspections<br/>
+28 Mar 2016: bug-fixes<br/>
 <br/>
-    - Parameter could be declared as array: quick-fix implemented;<br/>
-    - Unnecessary use aliases:              quick-fix implemented;<br/>
-    - Continue misbehaviour in switch:      quick-fix implemented;<br/>
-    - 'gmmktime()'/'mktime()' usage:        quick-fix implemented;<br/>
-    - Exceptions handling and annotating:   quick-fix implemented;<br/>
-    - Unnecessary semicolon:                quick-fix implemented;<br/>
-    - Nested not operators usage:           quick-fixes implemented;<br/>
-    - 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()': quick-fix implemented;<br/>
-    - Inconsistent 'http_build_query(...)' result:                                                 quick-fix implemented;<br/>
-    - Class re-implements interface of a parent class:                                             quick-fix implemented;<br/>
-<br/>
-    - PhpUnit: recognize cases with custom messages;<br/>
-    - Magic methods validity: __sleep/__wakeup correctness check added;<br/>
-    - *printf/*scanf arguments count mismatches: resolved false-positives;<br/>
-    - Loop which does not loop: resolve false-positives;<br/>
-    - One-time use variables: recognize more patterns;<br/>
-    - Variable functions usage: out-of-bound exception resolved;<br/>
-    - Array and string offset validity: re-worked type interpretation;<br/>
-    - Non-optimal if conditions: resolved false-positives, recognize more patterns;<br/>
-<br/>
-    - 'substr(...)' short-hand usage:      implemented with quick-fix;<br/>
-    - Suspicious semicolon:                implemented;<br/>
-    - Insecure 'extract(...)' usage:       implemented;<br/>
-    - 'list(...) = ' usage possible:       implemented;<br/>
-    - Dynamic methods invocation via '::': implemented with quick-fix;<br/>
+    - Callable parameter usage violates definition: fixed static/self/$this interpretation;<br/>
+    - Magic methods validity: fixed regression in PS 2016.1;<br/>
+    - Exceptions handling and annotating: fixed incorrect edge-case types resolving in PS;<br/>
+    - Suspicious loop: a new pattern analysis added;<br/>
+    - array_push(...)' misused: resolve false-positives with variadic 2nd parameter;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

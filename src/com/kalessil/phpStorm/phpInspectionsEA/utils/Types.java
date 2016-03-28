@@ -58,6 +58,7 @@ public class Types {
 
             mapTypes.put(strCallable,  strCallable);
             mapTypes.put("\\callable", strCallable);
+            mapTypes.put("\\closure",  strCallable);
 
             mapTypes.put(strResource,  strResource);
             mapTypes.put("\\resource", strResource);

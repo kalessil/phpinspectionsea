@@ -8,6 +8,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
 import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
@@ -19,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class ArrayPushMissUseInspector extends BasePhpInspection {
     private static final String strProblemDescription = "'%t%[] = ...' construction shall be used instead";
-    private static final String strTargetFunctionName = "array_push";
 
     @NotNull
     public String getShortName() {
@@ -32,16 +34,28 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /* check requirements */
-                final PsiElement[] arrParams = reference.getParameters();
-                final String strFunction     = reference.getName();
-                if (2 != arrParams.length || StringUtil.isEmpty(strFunction) || !strFunction.equals(strTargetFunctionName)) {
+                final PsiElement[] params = reference.getParameters();
+                final String function     = reference.getName();
+                if (2 != params.length || StringUtil.isEmpty(function) || !function.equals("array_push")) {
                     return;
                 }
 
-                /* inspect given call */
+                /* inspect given call: single instruction, 2nd parameter is not variadic */
                 if (reference.getParent() instanceof StatementImpl) {
-                    final String strMessage = strProblemDescription.replace("%t%", arrParams[0].getText());
-                    holder.registerProblem(reference, strMessage, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                    PsiElement variadicCandidate = params[1].getPrevSibling();
+                    if (variadicCandidate instanceof PsiWhiteSpace) {
+                        variadicCandidate = variadicCandidate.getPrevSibling();
+                    }
+                    /* do not report cases with variadic 2nd parameter */
+                    if (
+                        variadicCandidate instanceof LeafPsiElement &&
+                        PhpTokenTypes.opVARIADIC == ((LeafPsiElement) variadicCandidate).getElementType()
+                    ) {
+                        return;
+                    }
+
+                    final String message = strProblemDescription.replace("%t%", params[0].getText());
+                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                 }
             }
         };

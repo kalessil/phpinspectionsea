@@ -51,7 +51,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                     }
 
                     final StringLiteralExpressionImpl expression = (StringLiteralExpressionImpl) compactParameter;
-                    final String name = expression.getContents();
+                    final String name                            = expression.getContents();
                     if (!StringUtil.isEmpty(name) && !PhpRefactoringUtil.containsLocalVariables(expression)) {
                         variablesCompacted.add(name);
                     }
@@ -73,7 +73,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                     for (String subject : variablesCompacted) {
                         if (!variablesDeclared.contains(subject)) {
                             final String message = messagePattern.replace("%v%", subject);
-                            holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED);
+                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
                         }
                     }
                     variablesDeclared.clear();

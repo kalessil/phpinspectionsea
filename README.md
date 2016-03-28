@@ -132,6 +132,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | n/a |
 | Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result               | yes |
 | Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes |
+| Probable bugs        | CompactArgumentsInspection                      | 'compact(...)' variables existence                        | n/a |
 
 Inspections Lists (Performance)
 ---

@@ -238,7 +238,7 @@ public class ExpressionSemanticUtil {
         for (PsiElement objChild : objFunction.getChildren()) {
             /* iterated child is use list */
             if (objChild instanceof PhpUseList) {
-                LinkedList<Variable> list = new LinkedList<Variable>();
+                final LinkedList<Variable> list = new LinkedList<Variable>();
                 for (PsiElement objUseChild : objChild.getChildren()) {
                     /* collect variables */
                     if (objUseChild instanceof Variable) {

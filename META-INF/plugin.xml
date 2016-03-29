@@ -173,6 +173,10 @@ with a laptop.
         shortName="SubStrShortHandUsageInspection"                displayName="'substr(...)' short-hand usage"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.SubStrShortHandUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="SubStrUsedAsArrayAccessInspection"             displayName="'substr(...)' used as index-based access"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.SubStrUsedAsArrayAccessInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

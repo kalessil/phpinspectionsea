@@ -31,15 +31,12 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (params[2] instanceof PhpExpressionImpl) {
-                    final String number = params[2].getText().replaceAll("\\s+","");
-                    if (number.equals("1") || number.equals("-1")) {
-                        final String message = messagePattern
-                                .replace("%c%", params[0].getText())
-                                .replace("%i%", params[1].getText())
-                        ;
-                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                    }
+                if (params[2] instanceof PhpExpressionImpl && params[2].getText().replaceAll("\\s+","").equals("1")) {
+                    final String message = messagePattern
+                        .replace("%c%", params[0].getText())
+                        .replace("%i%", params[1].getText())
+                    ;
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }
         };

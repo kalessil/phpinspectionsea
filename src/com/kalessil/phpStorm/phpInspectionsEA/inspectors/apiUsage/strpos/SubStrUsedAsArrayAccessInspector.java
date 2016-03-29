@@ -12,7 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%c%[%i%]' should be used instead";
+    private static final String messagePattern = "'%c%[%i%]' might be used instead (invalid index accesses will popup)";
 
     @NotNull
     public String getShortName() {
@@ -36,7 +36,7 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
                         .replace("%c%", params[0].getText())
                         .replace("%i%", params[1].getText())
                     ;
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
                 }
             }
         };

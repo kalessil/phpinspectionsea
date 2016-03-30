@@ -133,7 +133,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result               | yes |
 | Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes |
 | Probable bugs        | CompactArgumentsInspection                      | 'compact(...)' variables existence                        | n/a |
-| Probable bugs        | DispatchingThisIntoClosuresInspection           | Incorrect dispatching $this into closures                 | no  |
+| Probable bugs        | DispatchingThisIntoClosuresInspection           | Incorrect dispatching $this into closures                 | n/a |
 
 Inspections Lists (Performance)
 ---

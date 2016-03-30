@@ -25,21 +25,15 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
         return "PrintfScanfArgumentsInspection";
     }
 
-    private static HashMap<String, Integer> functions = null;
-    private static HashMap<String, Integer> getFunctions() { // TODO: static
-        if (null == functions) {
-            /* pairs function name -> pattern position */
-            functions = new HashMap<String, Integer>();
+    private static HashMap<String, Integer> functions = new HashMap<String, Integer>();
+    static {
+        /* pairs function name -> pattern position */
+        functions.put("printf",  0);
+        functions.put("sprintf", 0);
+        functions.put("fprintf", 0);
 
-            functions.put("printf",  0);
-            functions.put("sprintf", 0);
-            functions.put("fprintf", 0);
-
-            functions.put("sscanf",  1);
-            functions.put("fscanf",  1);
-        }
-
-        return functions;
+        functions.put("sscanf",  1);
+        functions.put("fscanf",  1);
     }
 
     @SuppressWarnings("CanBeFinal")
@@ -55,13 +49,12 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final String strFunctionName = reference.getName();
-                HashMap<String, Integer> mapping = getFunctions();
-                if (StringUtil.isEmpty(strFunctionName) || !mapping.containsKey(strFunctionName)) {
+                if (StringUtil.isEmpty(strFunctionName) || !functions.containsKey(strFunctionName)) {
                     return;
                 }
 
                 /* resolve needed parameter */
-                final int neededPosition              = mapping.get(strFunctionName);
+                final int neededPosition              = functions.get(strFunctionName);
                 final int minimumArgumentsForAnalysis = neededPosition + 1;
                 StringLiteralExpression pattern       = null;
                 final PsiElement[] referenceParams    = reference.getParameters();
@@ -109,8 +102,8 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
 
                     /* check for arguments matching */
                     if (countParsingExpectedParameters != referenceParams.length) {
-                        String strError = strProblemDescription.replace("%c%", String.valueOf(countParsingExpectedParameters));
-                        holder.registerProblem(reference, strError, ProblemHighlightType.GENERIC_ERROR);
+                        final String message = strProblemDescription.replace("%c%", String.valueOf(countParsingExpectedParameters));
+                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
                     }
                 }
             }

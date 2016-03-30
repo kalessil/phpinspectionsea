@@ -23,31 +23,25 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         return "AliasFunctionsUsageInspection";
     }
 
-    private static HashMap<String, String> mapping = null;
-    private static HashMap<String, String> getMapping() { // TODO: static
-        if (null == mapping) {
-            mapping = new HashMap<String, String>();
-
-            mapping.put("is_double",            "is_float");
-            mapping.put("is_integer",           "is_int");
-            mapping.put("is_long",              "is_int");
-            mapping.put("is_real",              "is_float");
-            mapping.put("sizeof",               "count");
-            mapping.put("doubleval",            "floatval");
-            mapping.put("fputs",                "fwrite");
-            mapping.put("join",                 "implode");
-            mapping.put("key_exists",           "array_key_exists");
-            mapping.put("chop",                 "rtrim");
-            mapping.put("close",                "closedir");
-            mapping.put("ini_alter",            "ini_set");
-            mapping.put("is_writeable",         "is_writable");
-            mapping.put("magic_quotes_runtime", "set_magic_quotes_runtime");
-            mapping.put("pos",                  "current");
-            mapping.put("show_source",          "highlight_file");
-            mapping.put("strchr",               "strstr");
-        }
-
-        return mapping;
+    private static HashMap<String, String> mapping = new HashMap<String, String>();
+    static {
+        mapping.put("is_double",            "is_float");
+        mapping.put("is_integer",           "is_int");
+        mapping.put("is_long",              "is_int");
+        mapping.put("is_real",              "is_float");
+        mapping.put("sizeof",               "count");
+        mapping.put("doubleval",            "floatval");
+        mapping.put("fputs",                "fwrite");
+        mapping.put("join",                 "implode");
+        mapping.put("key_exists",           "array_key_exists");
+        mapping.put("chop",                 "rtrim");
+        mapping.put("close",                "closedir");
+        mapping.put("ini_alter",            "ini_set");
+        mapping.put("is_writeable",         "is_writable");
+        mapping.put("magic_quotes_runtime", "set_magic_quotes_runtime");
+        mapping.put("pos",                  "current");
+        mapping.put("show_source",          "highlight_file");
+        mapping.put("strchr",               "strstr");
     }
 
     @Override
@@ -55,15 +49,14 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final String strFunctionName               = reference.getName();
-                final HashMap<String, String> mapFunctions = getMapping();
-                if (!StringUtil.isEmpty(strFunctionName) && mapFunctions.containsKey(strFunctionName)) {
-                    final String suggestedName = mapFunctions.get(strFunctionName);
+                final String strFunctionName = reference.getName();
+                if (!StringUtil.isEmpty(strFunctionName) && mapping.containsKey(strFunctionName)) {
+                    final String suggestedName = mapping.get(strFunctionName);
 
-                    final String strMessage = strProblemDescription
+                    final String message = strProblemDescription
                             .replace("%a%", strFunctionName)
                             .replace("%f%", suggestedName);
-                    holder.registerProblem(reference, strMessage, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedName));
+                    holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedName));
                 }
             }
         };

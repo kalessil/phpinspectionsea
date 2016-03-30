@@ -1,25 +1,25 @@
 <?php
 
 
-function checkUseCases($strToTest) {
-    if (strstr($strToTest, 'smth.'))  { return; }
-    if (!strstr($strToTest, 'smth.')) { return; }
+function checkStrstrUseCases($strToTest) {
+    if (strstr($strToTest, 'smth.'))  { return; }              // <- reported
+    if (!strstr($strToTest, 'smth.')) { return; }              // <- reported
 
-    if ($strToTest || strstr($strToTest, 'smth.')) { return; }
-    if ($strToTest && strstr($strToTest, 'smth.')) { return; }
+    if ($strToTest || strstr($strToTest, 'smth.')) { return; } // <- reported
+    if ($strToTest && strstr($strToTest, 'smth.')) { return; } // <- reported
 
-    if (strstr($strToTest, 'smth.') === false) { return; }
-    if (strstr($strToTest, 'smth.') !== false) { return; }
-    if (strstr($strToTest, 'smth.') == false)  { return; }
-    if (strstr($strToTest, 'smth.') != false)  { return; }
+    if (strstr($strToTest, 'smth.') === false) { return; }     // <- reported
+    if (strstr($strToTest, 'smth.') !== false) { return; }     // <- reported
+    if (strstr($strToTest, 'smth.') == false)  { return; }     // <- reported
+    if (strstr($strToTest, 'smth.') != false)  { return; }     // <- reported
 
-    if (false === strstr($strToTest, 'smth.')) { return; }
-    if (false !== strstr($strToTest, 'smth.')) { return; }
-    if (false ==  strstr($strToTest, 'smth.')) { return; }
-    if (false !=  strstr($strToTest, 'smth.')) { return; }
+    if (false === strstr($strToTest, 'smth.')) { return; }     // <- reported
+    if (false !== strstr($strToTest, 'smth.')) { return; }     // <- reported
+    if (false ==  strstr($strToTest, 'smth.')) { return; }     // <- reported
+    if (false !=  strstr($strToTest, 'smth.')) { return; }     // <- reported
 
-    if (false === stristr($strToTest, 'smth.')) { return; }
-    if (false !== stristr($strToTest, 'smth.')) { return; }
-    if (false ==  stristr($strToTest, 'smth.')) { return; }
-    if (false !=  stristr($strToTest, 'smth.')) { return; }
+    if (false === stristr($strToTest, 'smth.')) { return; }    // <- reported
+    if (false !== stristr($strToTest, 'smth.')) { return; }    // <- reported
+    if (false ==  stristr($strToTest, 'smth.')) { return; }    // <- reported
+    if (false !=  stristr($strToTest, 'smth.')) { return; }    // <- reported
 }

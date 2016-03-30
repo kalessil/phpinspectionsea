@@ -26,16 +26,10 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
         return "StrStrUsedAsStrPosInspection";
     }
 
-    private static HashMap<String, String> mapping = null;
-    private static HashMap<String, String> getMapping() { // TODO: static
-        if (null == mapping) {
-            mapping = new HashMap<String, String>();
-
-            mapping.put("strstr", "strpos");
-            mapping.put("stristr", "stripos");
-        }
-
-        return mapping;
+    private static HashMap<String, String> mapping = new HashMap<String, String>();
+    static {
+        mapping.put("strstr",  "strpos");
+        mapping.put("stristr", "stripos");
     }
 
     @Override
@@ -43,8 +37,6 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                HashMap<String, String> mapping = getMapping();
-
                 /* check if it's the target function */
                 final String strFunctionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();

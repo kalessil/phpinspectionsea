@@ -73,20 +73,14 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         return "ForgottenDebugOutputInspection";
     }
 
-    private HashMap<String, Integer> functionsRequirements = null;
-    private HashMap<String, Integer> getFunctionsRequirements() { // TODO: static
-        if (null == functionsRequirements) {
-            functionsRequirements = new HashMap<String, Integer>();
-
-            /* function name => amount of arguments considered legal */
-            functionsRequirements.put("print_r",               2);
-            functionsRequirements.put("var_export",            2);
-            functionsRequirements.put("var_dump",              -1);
-            functionsRequirements.put("debug_zval_dump",       -1);
-            functionsRequirements.put("debug_print_backtrace", -1);
-        }
-
-        return functionsRequirements;
+    private static HashMap<String, Integer> functionsRequirements = new HashMap<String, Integer>();
+    static {
+        /* function name => amount of arguments considered legal */
+        functionsRequirements.put("print_r",               2);
+        functionsRequirements.put("var_export",            2);
+        functionsRequirements.put("var_dump",              -1);
+        functionsRequirements.put("debug_zval_dump",       -1);
+        functionsRequirements.put("debug_print_backtrace", -1);
     }
 
     @Override
@@ -123,18 +117,17 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             }
 
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final String strFunction                    = reference.getName();
-                final HashMap<String, Integer> requirements = getFunctionsRequirements();
+                final String function = reference.getName();
                 if (
-                    !StringUtil.isEmpty(strFunction) && requirements.containsKey(strFunction) &&
-                    reference.getParameters().length != requirements.get(strFunction) // keep it here when function hit
+                    !StringUtil.isEmpty(function) && functionsRequirements.containsKey(function) &&
+                    reference.getParameters().length != functionsRequirements.get(function) // keep it here when function hit
                 ) {
                     holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
 
                 // user-defined functions
-                if (customFunctions.contains(strFunction)) {
+                if (customFunctions.contains(function)) {
                     holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
 
@@ -152,10 +145,10 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         return (new ForgottenDebugOutputInspector.OptionsPanel()).getComponent();
     }
 
-    public class OptionsPanel {
+    private class OptionsPanel {
         final private JPanel optionsPanel;
 
-        public OptionsPanel() {
+        private OptionsPanel() {
             optionsPanel = new JPanel();
             optionsPanel.setLayout(new MigLayout());
 
@@ -169,7 +162,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             }).getComponent(), "pushx, growx");
         }
 
-        public JPanel getComponent() {
+        private JPanel getComponent() {
             return optionsPanel;
         }
     }

@@ -2,16 +2,16 @@
 
     $a = $b = array();
 
-    print_r($a);
+    print_r($a);               // <- reported
     echo print_r($a, true);
 
-    var_export($a);
+    var_export($a);            // <- reported
     echo var_export($a, true);
 
-    var_dump($a);
-    var_dump($a, $b);
+    var_dump($a);              // <- reported
+    var_dump($a, $b);          // <- reported
 
-    debug_zval_dump($a);
-    debug_zval_dump($a, $b);
+    debug_zval_dump($a);       // <- reported
+    debug_zval_dump($a, $b);   // <- reported
 
-    debug_print_backtrace();
+    debug_print_backtrace();   // <- reported

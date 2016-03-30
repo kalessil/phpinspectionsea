@@ -24,25 +24,19 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
         return "OpAssignShortSyntaxInspection";
     }
 
-    private static HashMap<IElementType, IElementType> mapping = null;
-    private static HashMap<IElementType, IElementType> getMapping() { // TODO: static
-        if (null == mapping) {
-            mapping = new HashMap<IElementType, IElementType>();
-
-            // todo: check when JB added constants for %
-            mapping.put(PhpTokenTypes.opPLUS,        PhpTokenTypes.opPLUS_ASGN);
-            mapping.put(PhpTokenTypes.opMINUS,       PhpTokenTypes.opMINUS_ASGN);
-            mapping.put(PhpTokenTypes.opMUL,         PhpTokenTypes.opMUL_ASGN);
-            mapping.put(PhpTokenTypes.opDIV,         PhpTokenTypes.opDIV_ASGN);
-            mapping.put(PhpTokenTypes.opCONCAT,      PhpTokenTypes.opCONCAT_ASGN);
-            mapping.put(PhpTokenTypes.opBIT_AND,     PhpTokenTypes.opBIT_AND_ASGN);
-            mapping.put(PhpTokenTypes.opBIT_OR,      PhpTokenTypes.opBIT_OR_ASGN);
-            mapping.put(PhpTokenTypes.opBIT_XOR,     PhpTokenTypes.opBIT_XOR_ASGN);
-            mapping.put(PhpTokenTypes.opSHIFT_LEFT,  PhpTokenTypes.opSHIFT_LEFT_ASGN);
-            mapping.put(PhpTokenTypes.opSHIFT_RIGHT, PhpTokenTypes.opSHIFT_RIGHT_ASGN);
-        }
-
-        return mapping;
+    private static HashMap<IElementType, IElementType> mapping = new HashMap<IElementType, IElementType>();
+    static {
+        // todo: check when JB added constants for %
+        mapping.put(PhpTokenTypes.opPLUS,        PhpTokenTypes.opPLUS_ASGN);
+        mapping.put(PhpTokenTypes.opMINUS,       PhpTokenTypes.opMINUS_ASGN);
+        mapping.put(PhpTokenTypes.opMUL,         PhpTokenTypes.opMUL_ASGN);
+        mapping.put(PhpTokenTypes.opDIV,         PhpTokenTypes.opDIV_ASGN);
+        mapping.put(PhpTokenTypes.opCONCAT,      PhpTokenTypes.opCONCAT_ASGN);
+        mapping.put(PhpTokenTypes.opBIT_AND,     PhpTokenTypes.opBIT_AND_ASGN);
+        mapping.put(PhpTokenTypes.opBIT_OR,      PhpTokenTypes.opBIT_OR_ASGN);
+        mapping.put(PhpTokenTypes.opBIT_XOR,     PhpTokenTypes.opBIT_XOR_ASGN);
+        mapping.put(PhpTokenTypes.opSHIFT_LEFT,  PhpTokenTypes.opSHIFT_LEFT_ASGN);
+        mapping.put(PhpTokenTypes.opSHIFT_RIGHT, PhpTokenTypes.opSHIFT_RIGHT_ASGN);
     }
 
     @Override
@@ -54,14 +48,12 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
                 /** try reaching operator in binary expression, expected as value */
                 if (value instanceof BinaryExpression) {
                     BinaryExpression valueExpression = (BinaryExpression) value;
-                    PsiElement objOperation = valueExpression.getOperation();
+                    PsiElement objOperation          = valueExpression.getOperation();
                     if (null != objOperation) {
-                        HashMap<IElementType, IElementType> mapping = getMapping();
-
-                        IElementType operation = objOperation.getNode().getElementType();
-                        PsiElement leftOperand = valueExpression.getLeftOperand();
+                        IElementType operation  = objOperation.getNode().getElementType();
+                        PsiElement leftOperand  = valueExpression.getLeftOperand();
                         PsiElement rightOperand = valueExpression.getRightOperand();
-                        PsiElement variable = assignmentExpression.getVariable();
+                        PsiElement variable     = assignmentExpression.getVariable();
                         /** ensure that's an operation we are looking for and pattern recognized */
                         if (
                             null != variable && null != leftOperand && null != rightOperand &&

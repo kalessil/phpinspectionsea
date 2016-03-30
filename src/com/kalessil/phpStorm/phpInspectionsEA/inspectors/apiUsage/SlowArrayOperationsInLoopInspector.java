@@ -25,7 +25,9 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
     private static HashSet<String> functionsSet = new HashSet<String>();
     static {
         functionsSet.add("array_merge");
+        functionsSet.add("array_merge_recursive");
         functionsSet.add("array_replace");
+        functionsSet.add("array_replace_recursive");
     }
 
     @Override

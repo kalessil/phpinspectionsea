@@ -21,16 +21,10 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
         return "TypeUnsafeArraySearchInspection";
     }
 
-    private HashSet<String> functionsSet = null;
-    private HashSet<String> getFunctionsSet() { // TODO: static
-        if (null == functionsSet) {
-            functionsSet = new HashSet<String>();
-
-            functionsSet.add("array_search");
-            functionsSet.add("in_array");
-        }
-
-        return functionsSet;
+    private static HashSet<String> functionsSet = new HashSet<String>();
+    static {
+        functionsSet.add("array_search");
+        functionsSet.add("in_array");
     }
 
     @Override
@@ -39,12 +33,12 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final int intArgumentsCount = reference.getParameters().length;
-                final String strFunction = reference.getName();
+                final String strFunction    = reference.getName();
                 if (intArgumentsCount != 2 || StringUtil.isEmpty(strFunction)) {
                     return;
                 }
 
-                if (getFunctionsSet().contains(strFunction)) {
+                if (functionsSet.contains(strFunction)) {
                     String strMessage = strProblemDescription;
                     if (reference.getParameters()[0] instanceof StringLiteralExpression) {
                         strMessage = strProblemSafeToMakeStrict;

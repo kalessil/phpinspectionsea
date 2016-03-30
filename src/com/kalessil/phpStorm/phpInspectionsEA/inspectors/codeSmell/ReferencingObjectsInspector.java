@@ -20,9 +20,9 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
     private static final String strProblemParameter  = "Objects are always passed by reference; please correct '& $%p%'";
     private static final String strProblemAssignment = "Objects are always passed by reference; please correct '= & new '";
 
-    private static final PhpType php7Types;
+    private static final PhpType php7Types = new PhpType();
     static {
-        php7Types = (new PhpType()) // TODO: inline instantiation
+        php7Types
             .add(PhpType.STRING)
             .add(PhpType.INT)
             .add(PhpType.FLOAT)

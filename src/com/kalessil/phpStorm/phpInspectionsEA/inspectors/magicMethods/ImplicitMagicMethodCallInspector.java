@@ -24,25 +24,23 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
     private static final String strProblemDescription      = "Implicit magic method calls shall be avoided as these methods are used by PHP internals.";
     private static final String strProblemUseStringCasting = "Please use (string) %o% instead";
 
-    private static HashSet<String> methods;
+    private static HashSet<String> methods = new HashSet<String>();
     static {
-            methods = new HashSet<String>(); // TODO: inline instantiation
-
-            methods.add("__construct");
-            methods.add("__destruct");
-            methods.add("__call");
-            methods.add("__callStatic");
-            methods.add("__get");
-            methods.add("__set");
-            methods.add("__isset");
-            methods.add("__unset");
-            methods.add("__sleep");
-            methods.add("__wakeup");
-            methods.add("__toString");
-            methods.add("__invoke");
-            methods.add("__set_state");
-            methods.add("__clone");
-            methods.add("__debugInfo");
+        methods.add("__construct");
+        methods.add("__destruct");
+        methods.add("__call");
+        methods.add("__callStatic");
+        methods.add("__get");
+        methods.add("__set");
+        methods.add("__isset");
+        methods.add("__unset");
+        methods.add("__sleep");
+        methods.add("__wakeup");
+        methods.add("__toString");
+        methods.add("__invoke");
+        methods.add("__set_state");
+        methods.add("__clone");
+        methods.add("__debugInfo");
     }
 
     @NotNull

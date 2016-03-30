@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ReferenceMismatchInspector extends BasePhpInspection {
     final static private String strErrorForeachIntoReference = "Probable bug: variable should be renamed to prevent writing into already existing reference";
 
-    private static final PhpType legalizedTypesForMismatchingSet = new PhpType();
+    private static final PhpType legalizedTypesForMismatchingSet       = new PhpType();
     private static final HashSet<String> legalizedMismatchingFunctions = new HashSet<String>();
     static {
         legalizedTypesForMismatchingSet.add(PhpType.STRING);

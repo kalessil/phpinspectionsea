@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class IfConditionalsWithoutGroupStatementInspector extends BasePhpInspection {
     private static final String strProblemMissingBrackets = "Wrap the conditional body with group statement";
-    private static final String strProblemEmptyBody = "Empty group statement";
+    private static final String strProblemEmptyBody       = "Empty group statement";
 
     @NotNull
     public String getShortName() {

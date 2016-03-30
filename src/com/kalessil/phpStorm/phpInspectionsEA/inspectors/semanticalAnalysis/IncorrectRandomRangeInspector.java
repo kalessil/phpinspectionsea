@@ -18,7 +18,7 @@ public class IncorrectRandomRangeInspector extends BasePhpInspection {
     private static final String strProblemDescription = "The range is not defined properly";
 
     private static HashSet<String> functions = null;
-    private static HashSet<String> getFunctions() {
+    private static HashSet<String> getFunctions() { // TODO: static
         if (null == functions) {
             functions = new HashSet<String>();
 

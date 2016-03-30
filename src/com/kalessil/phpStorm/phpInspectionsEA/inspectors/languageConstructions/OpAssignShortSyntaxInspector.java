@@ -25,7 +25,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
     }
 
     private static HashMap<IElementType, IElementType> mapping = null;
-    private static HashMap<IElementType, IElementType> getMapping() {
+    private static HashMap<IElementType, IElementType> getMapping() { // TODO: static
         if (null == mapping) {
             mapping = new HashMap<IElementType, IElementType>();
 

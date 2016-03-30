@@ -74,7 +74,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     }
 
     private HashMap<String, Integer> functionsRequirements = null;
-    private HashMap<String, Integer> getFunctionsRequirements() {
+    private HashMap<String, Integer> getFunctionsRequirements() { // TODO: static
         if (null == functionsRequirements) {
             functionsRequirements = new HashMap<String, Integer>();
 

@@ -26,7 +26,7 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
 
     private static HashSet<String> methods;
     static {
-            methods = new HashSet<String>();
+            methods = new HashSet<String>(); // TODO: inline instantiation
 
             methods.add("__construct");
             methods.add("__destruct");

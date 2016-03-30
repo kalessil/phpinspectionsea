@@ -26,7 +26,7 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
     }
 
     private static HashMap<String, Integer> functions = null;
-    private static HashMap<String, Integer> getFunctions() {
+    private static HashMap<String, Integer> getFunctions() { // TODO: static
         if (null == functions) {
             /* pairs function name -> pattern position */
             functions = new HashMap<String, Integer>();

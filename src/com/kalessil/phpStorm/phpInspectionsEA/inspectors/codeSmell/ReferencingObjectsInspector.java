@@ -22,7 +22,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
 
     private static final PhpType php7Types;
     static {
-        php7Types = (new PhpType())
+        php7Types = (new PhpType()) // TODO: inline instantiation
             .add(PhpType.STRING)
             .add(PhpType.INT)
             .add(PhpType.FLOAT)

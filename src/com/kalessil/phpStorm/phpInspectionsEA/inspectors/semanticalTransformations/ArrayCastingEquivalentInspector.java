@@ -19,7 +19,7 @@ import java.util.LinkedList;
 
 public class ArrayCastingEquivalentInspector extends BasePhpInspection {
     private static final String strProblemDescription = "'(array) ...' construct can probably be used (risky, changes code behavior)";
-    private static final String strIsArray = "is_array";
+    private static final String strIsArray = "is_array"; // TODO: inline
 
     @NotNull
     public String getShortName() {

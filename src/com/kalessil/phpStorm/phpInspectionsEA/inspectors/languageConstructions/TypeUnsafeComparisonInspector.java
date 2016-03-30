@@ -15,8 +15,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ClassInStringContex
 import org.jetbrains.annotations.NotNull;
 
 public class TypeUnsafeComparisonInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Hardening to type safe '===', '!==' will cover/point to types casting issues";
-    private static final String strProblemDescriptionSafeToReplace = "Safely use '... === ...', '... !== ...' constructions instead";
+    private static final String strProblemDescription                      = "Hardening to type safe '===', '!==' will cover/point to types casting issues";
+    private static final String strProblemDescriptionSafeToReplace         = "Safely use '... === ...', '... !== ...' constructions instead";
     private static final String strProblemDescriptionMissingToStringMethod = "Class %class% must implement __toString()";
 
     @NotNull

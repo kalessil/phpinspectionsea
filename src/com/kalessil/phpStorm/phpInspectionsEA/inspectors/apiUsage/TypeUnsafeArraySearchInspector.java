@@ -22,7 +22,7 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
     }
 
     private HashSet<String> functionsSet = null;
-    private HashSet<String> getFunctionsSet() {
+    private HashSet<String> getFunctionsSet() { // TODO: static
         if (null == functionsSet) {
             functionsSet = new HashSet<String>();
 

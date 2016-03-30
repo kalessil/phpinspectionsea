@@ -21,9 +21,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ForeachSourceInspector extends BasePhpInspection {
-    private static PhpClass objTraversable = null;
-    private static final String strAlreadyHandled = "\\already-handled";
-    private static final String strClassNotResolved= "\\class-not-resolved";
+    private static PhpClass objTraversable          = null;
+    private static final String strAlreadyHandled   = "\\already-handled";
+    private static final String strClassNotResolved = "\\class-not-resolved";
 
     private static final String strProblemResolvingDeclaration = "Could not resolve this source type, instance of " +
             "declaration. The following is not resolved: ";

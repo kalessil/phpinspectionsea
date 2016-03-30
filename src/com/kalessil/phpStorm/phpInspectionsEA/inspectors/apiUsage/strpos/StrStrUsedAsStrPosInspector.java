@@ -27,7 +27,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
     }
 
     private static HashMap<String, String> mapping = null;
-    private static HashMap<String, String> getMapping() {
+    private static HashMap<String, String> getMapping() { // TODO: static
         if (null == mapping) {
             mapping = new HashMap<String, String>();
 

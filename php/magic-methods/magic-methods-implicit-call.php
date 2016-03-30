@@ -9,13 +9,13 @@
     }
 
     $obj = new Clonable();
-    $obj->__toString();
+    $obj->__toString();            // <- reported
 
     class Dirty {
         public function __construct() {
         }
 
         public function createFromWhatever() {
-            $this->__construct();
+            $this->__construct();  // <- reported
         }
     }

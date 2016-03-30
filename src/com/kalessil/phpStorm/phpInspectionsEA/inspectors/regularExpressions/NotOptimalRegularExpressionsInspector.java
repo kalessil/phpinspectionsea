@@ -28,22 +28,16 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
         return "NotOptimalRegularExpressionsInspection";
     }
 
-    private static HashSet<String> functions = null;
-    private static HashSet<String> getFunctions() { // TODO: static
-        if (null == functions) {
-            functions = new HashSet<String>();
-
-            functions.add("preg_filter");
-            functions.add("preg_grep");
-            functions.add("preg_match_all");
-            functions.add("preg_match");
-            functions.add("preg_replace_callback");
-            functions.add("preg_replace");
-            functions.add("preg_split");
-            functions.add("preg_quote");
-        }
-
-        return functions;
+    private static HashSet<String> functions = new HashSet<String>();
+    static {
+        functions.add("preg_filter");
+        functions.add("preg_grep");
+        functions.add("preg_match_all");
+        functions.add("preg_match");
+        functions.add("preg_replace_callback");
+        functions.add("preg_replace");
+        functions.add("preg_split");
+        functions.add("preg_quote");
     }
 
     @SuppressWarnings("CanBeFinal")
@@ -61,7 +55,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final String strFunctionName = reference.getName();
-                if (StringUtil.isEmpty(strFunctionName) || !getFunctions().contains(strFunctionName)) {
+                if (StringUtil.isEmpty(strFunctionName) || !functions.contains(strFunctionName)) {
                     return;
                 }
 

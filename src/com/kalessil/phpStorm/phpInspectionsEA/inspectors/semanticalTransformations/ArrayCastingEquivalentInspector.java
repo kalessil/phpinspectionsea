@@ -19,7 +19,6 @@ import java.util.LinkedList;
 
 public class ArrayCastingEquivalentInspector extends BasePhpInspection {
     private static final String strProblemDescription = "'(array) ...' construct can probably be used (risky, changes code behavior)";
-    private static final String strIsArray = "is_array"; // TODO: inline
 
     @NotNull
     public String getShortName() {
@@ -35,7 +34,7 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** body has only assignment, which to be extracted */
+                /* body has only assignment, which to be extracted */
                 GroupStatement objBody = ExpressionSemanticUtil.getGroupStatement(expression);
                 if (null == objBody || ExpressionSemanticUtil.countExpressionsInGroup(objBody) != 1) {
                     return;
@@ -70,7 +69,7 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
                 }
             }
 
-            /** expecting !function(...), true and false expressions */
+            /* expecting !function(...), true and false expressions */
             public void visitPhpTernaryExpression(TernaryExpression expression) {
                 PsiElement objTrueVariant = expression.getTrueVariant();
                 PsiElement objFalseVariant = expression.getFalseVariant();
@@ -88,21 +87,21 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
             }
 
             private boolean isArrayCasting(@NotNull FunctionReference objCondition, @NotNull PsiElement objTrue, @NotNull PsiElement objFalse) {
-                /** false variant should be array creation */
+                /* false variant should be array creation */
                 if (!(objFalse instanceof ArrayCreationExpression)) {
                     return false;
                 }
 
-                /** condition expected to be is_array(arg) */
+                /* condition expected to be is_array(arg) */
                 String strFunctionName = objCondition.getName();
                 if (
                     objCondition.getParameters().length != 1 ||
-                    StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals(strIsArray)
+                    StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("is_array")
                 ) {
                     return false;
                 }
 
-                /** extract array values, expected one value only */
+                /* extract array values, expected one value only */
                 LinkedList<PsiElement> valuesSet = new LinkedList<PsiElement>();
                 for (PsiElement objChild : objFalse.getChildren()) {
                     if (objChild instanceof PhpPsiElement) {

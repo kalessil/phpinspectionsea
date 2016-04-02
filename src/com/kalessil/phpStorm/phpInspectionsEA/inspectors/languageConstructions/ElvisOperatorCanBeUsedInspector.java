@@ -47,7 +47,7 @@ public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
         };
     }
 
-    private class TheLocalFix implements LocalQuickFix {
+    static private class TheLocalFix implements LocalQuickFix {
         @NotNull
         @Override
         public String getName() {

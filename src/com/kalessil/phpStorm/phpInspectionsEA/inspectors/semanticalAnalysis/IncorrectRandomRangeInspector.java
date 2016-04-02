@@ -52,7 +52,7 @@ public class IncorrectRandomRangeInspector extends BasePhpInspection {
                     params[0] instanceof PhpExpressionImpl && !(params[0] instanceof UnaryExpressionImpl)
                 ) {
                     try {
-                        if (Integer.valueOf(params[1].getText()) < Integer.valueOf(params[0].getText())) {
+                        if (Integer.parseInt(params[1].getText()) < Integer.parseInt(params[0].getText())) {
                             holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR);
                         }
                     } catch (NumberFormatException wrongFormat) {

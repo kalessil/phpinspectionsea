@@ -49,7 +49,7 @@ public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
         };
     }
 
-    private class TheLocalFix implements LocalQuickFix {
+    static private class TheLocalFix implements LocalQuickFix {
         @NotNull
         @Override
         public String getName() {

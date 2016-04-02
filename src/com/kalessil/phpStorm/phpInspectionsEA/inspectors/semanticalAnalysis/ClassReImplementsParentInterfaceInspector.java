@@ -108,9 +108,9 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                     implementsList.getFirstChild().delete(); // <- implements keyword
                 } else {
                     final boolean cleanupLeftHand = implementsList.getReferenceElements().get(0) != expression;
-                    PsiElement commaCandidate = cleanupLeftHand ? expression.getPrevSibling() : expression.getPrevSibling();
+                    PsiElement commaCandidate = cleanupLeftHand ? expression.getPrevSibling() : expression.getNextSibling();
                     if (commaCandidate instanceof PsiWhiteSpace) {
-                        commaCandidate = cleanupLeftHand ? commaCandidate.getPrevSibling() : commaCandidate.getPrevSibling();
+                        commaCandidate = cleanupLeftHand ? commaCandidate.getPrevSibling() : commaCandidate.getNextSibling();
                     }
 
                     /* drop single implements entry from the list */

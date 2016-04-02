@@ -17,17 +17,11 @@ import java.util.HashSet;
 public class IncorrectRandomRangeInspector extends BasePhpInspection {
     private static final String strProblemDescription = "The range is not defined properly";
 
-    private static HashSet<String> functions = null;
-    private static HashSet<String> getFunctions() {
-        if (null == functions) {
-            functions = new HashSet<String>();
-
-            functions.add("mt_rand");
-            functions.add("random_int");
-            functions.add("rand");
-        }
-
-        return functions;
+    private static HashSet<String> functions = new HashSet<String>();
+    static {
+        functions.add("mt_rand");
+        functions.add("random_int");
+        functions.add("rand");
     }
 
     @NotNull
@@ -43,7 +37,7 @@ public class IncorrectRandomRangeInspector extends BasePhpInspection {
                 /* check call structure */
                 final PsiElement[] params = reference.getParameters();
                 final String name         = reference.getName();
-                if (2 != params.length || StringUtil.isEmpty(name) || !getFunctions().contains(name)) {
+                if (2 != params.length || StringUtil.isEmpty(name) || !functions.contains(name)) {
                     return;
                 }
 

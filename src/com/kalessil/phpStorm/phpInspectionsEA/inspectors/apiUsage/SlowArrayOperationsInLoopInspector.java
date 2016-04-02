@@ -22,15 +22,12 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
         return "SlowArrayOperationsInLoopInspection";
     }
 
-    private HashSet<String> functionsSet = null;
-    private HashSet<String> getFunctionsSet() {
-        if (null == functionsSet) {
-            functionsSet = new HashSet<String>();
-
-            functionsSet.add("array_merge");
-        }
-
-        return functionsSet;
+    private static HashSet<String> functionsSet = new HashSet<String>();
+    static {
+        functionsSet.add("array_merge");
+        functionsSet.add("array_merge_recursive");
+        functionsSet.add("array_replace");
+        functionsSet.add("array_replace_recursive");
     }
 
     @Override
@@ -39,7 +36,7 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final String strFunctionName = reference.getName();
-                if (StringUtil.isEmpty(strFunctionName) || !getFunctionsSet().contains(strFunctionName)) {
+                if (StringUtil.isEmpty(strFunctionName) || !functionsSet.contains(strFunctionName)) {
                     return;
                 }
 
@@ -57,7 +54,7 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
 
                     if (objParent instanceof ForeachStatement || objParent instanceof For || objParent instanceof While) {
                         /** loop test is positive, check pattern */
-                        PhpPsiElement objContainer = ((AssignmentExpression) reference.getParent()).getVariable();
+                        final PhpPsiElement objContainer = ((AssignmentExpression) reference.getParent()).getVariable();
                         if (null == objContainer) {
                             return;
                         }
@@ -65,8 +62,8 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
                         /** pattern itself: container overridden */
                         for (PsiElement objParameter : reference.getParameters()) {
                             if (PsiEquivalenceUtil.areElementsEquivalent(objContainer, objParameter)) {
-                                String strError = strProblemDescription.replace("%s%", strFunctionName);
-                                holder.registerProblem(reference, strError, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                final String message = strProblemDescription.replace("%s%", strFunctionName);
+                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
 
                                 return;
                             }

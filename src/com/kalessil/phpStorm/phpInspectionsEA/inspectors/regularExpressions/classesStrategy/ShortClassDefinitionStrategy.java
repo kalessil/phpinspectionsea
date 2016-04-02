@@ -11,27 +11,21 @@ import java.util.HashMap;
 public class ShortClassDefinitionStrategy {
     private static final String strProblemDescription = "'%p%' can be replaced with '%r%' (%h%)";
 
-    private static HashMap<String, String> mapping = null;
-    private static HashMap<String, String> getMapping() {
-        if (null == mapping) {
-            mapping = new HashMap<String, String>();
+    private static HashMap<String, String> mapping = new HashMap<String, String>();
+    static {
+        mapping.put("[0-9]",         "\\d");
+        mapping.put("[:digit:]",     "\\d");
 
-            mapping.put("[0-9]",         "\\d");
-            mapping.put("[:digit:]",     "\\d");
+        mapping.put("[^0-9]",        "\\D");
+        mapping.put("[^\\d]",        "\\D");
 
-            mapping.put("[^0-9]",        "\\D");
-            mapping.put("[^\\d]",        "\\D");
+        mapping.put("[:word:]",      "\\w");
+        mapping.put("[A-Za-z0-9_]",  "\\w");
 
-            mapping.put("[:word:]",      "\\w");
-            mapping.put("[A-Za-z0-9_]",  "\\w");
+        mapping.put("[^\\w]",        "\\W");
+        mapping.put("[^A-Za-z0-9_]", "\\W");
 
-            mapping.put("[^\\w]",        "\\W");
-            mapping.put("[^A-Za-z0-9_]", "\\W");
-
-            mapping.put("[^\\s]",        "\\S");
-        }
-
-        return mapping;
+        mapping.put("[^\\s]",        "\\S");
     }
 
     static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
@@ -43,7 +37,6 @@ public class ShortClassDefinitionStrategy {
                     .replace("a-zA-Z",    "A-Za-z")
                     .replace("0-9A-Za-z", "A-Za-z0-9");
 
-            final HashMap<String, String> mapping = getMapping();
             for (String wildcard : mapping.keySet()) {
                 if (patternAdapted.contains(wildcard)) {
                     final String message = strProblemDescription

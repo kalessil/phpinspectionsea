@@ -28,19 +28,13 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
         return "TypesCastingWithFunctionsInspection";
     }
 
-    private static HashMap<String, String> mapping = null;
-    private static HashMap<String, String> getMapping() {
-        if (null == mapping) {
-            mapping = new HashMap<String, String>();
-
-            mapping.put("intval",    "int");
-            mapping.put("floatval",  "float");
-            mapping.put("strval",    "string");
-            mapping.put("boolval",   "bool");
-            mapping.put("settype",   "bool|float|int|string");
-        }
-
-        return mapping;
+    private static HashMap<String, String> mapping = new HashMap<String, String>();
+    static {
+        mapping.put("intval",   "int");
+        mapping.put("floatval", "float");
+        mapping.put("strval",   "string");
+        mapping.put("boolval",  "bool");
+        mapping.put("settype",  "bool|float|int|string");
     }
 
     @Override
@@ -48,21 +42,19 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                /** check construction requirements */
+                /* check construction requirements */
                 final int intArgumentsCount = reference.getParameters().length;
                 final String strFunction    = reference.getName();
                 if (intArgumentsCount != 1 || StringUtil.isEmpty(strFunction)) {
                     return;
                 }
 
-                /** check if inspection subject*/
-                final HashMap<String, String> typesMap = getMapping();
-                if (typesMap.containsKey(strFunction)) {
-                    final String suggestedType = typesMap.get(strFunction);
+                /* check if inspection subject*/
+                if (mapping.containsKey(strFunction)) {
+                    final String suggestedType = mapping.get(strFunction);
                     final String strWarning    = strProblemDescription.replace("%s", suggestedType);
 
                     if (strFunction.equals("settype")) {
-                        // TODO: read out the target type and allocate proper fixer for it
                         holder.registerProblem(reference, strWarning, ProblemHighlightType.LIKE_DEPRECATED);
                     } else {
                         holder.registerProblem(reference, strWarning, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedType));

@@ -1,5 +1,5 @@
 <?php
 
-    echo join('', []);
+    echo join('', []); // <- reported
 
     echo hexdec(123);

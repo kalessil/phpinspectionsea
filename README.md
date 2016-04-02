@@ -9,6 +9,7 @@ Inspections Lists (Quick-fixes for next release)
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | Prio1 |
 | Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | Prio1 |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                  | Prio1 |
+| Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                  | Prio1 |
 
 Inspections Lists (Type compatibility)
 ---
@@ -32,10 +33,10 @@ Inspections Lists (Control flow)
 | Control flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                           | n/a |
 | Control flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                            | n/a |
 | Control flow         | ThrowRawExceptionInspection                     | General '\Exception' is thrown                      | no  |
-| Control flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach           | no  |
+| Control flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach           | n/a |
 | Control flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                  | yes |
 | Control flow         | DegradedSwitchInspection                        | Switch-case could be simplified                     | n/a |
-| Control flow         | ForeachInvariantsInspection                     | Foreach usage possible                              | no  |
+| Control flow         | ForeachInvariantsInspection                     | Foreach usage possible                              | n/a |
 | Control flow         | PdoApiUsageInspection                           | PDO api usage                                       | n/a |
 | Control flow         | OneTimeUseVariablesInspection                   | One-time use variables                              | yes |
 | Control flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                       | no  |
@@ -100,10 +101,10 @@ Inspections Lists (Architecture)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
 | Architecture         | BadExceptionsProcessingInspection               | Badly organized exception handling                  | n/a |
 | Architecture         | MoreThanThreeArgumentsInspection                | More than 3 parameters in callable                  | n/a |
-| Architecture         | CallableParameterUseCaseInTypeContextInspection | Callable parameter usage violates definition        | no  |
+| Architecture         | CallableParameterUseCaseInTypeContextInspection | Callable parameter usage violates definition        | n/a |
 | Architecture         | ClassOverridesFieldOfSuperClassInspection       | Class overrides a field of a parent class           | no  |
-| Architecture         | SingletonFactoryPatternViolationInspection      | Class violates singleton/factory pattern definition | no  |
-| Architecture         | PrivateConstructorSemanticsInspection           | Private constructor semantics                       | no  |
+| Architecture         | SingletonFactoryPatternViolationInspection      | Class violates singleton/factory pattern definition | n/a |
+| Architecture         | PrivateConstructorSemanticsInspection           | Private constructor semantics                       | n/a |
 | Architecture         | LongInheritanceChainInspection                  | Long inheritance chain                              | n/a |
 | Architecture         | PropertyCanBeStaticInspection                   | Property could be static                            | no  |
 | Architecture         | EmptyClassInspection                            | Empty class                                         | n/a |
@@ -118,7 +119,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | MagicMethodsValidityInspection                  | Magic methods validity                                    | n/a |
 | Probable bugs        | SuspiciousLoopInspection                        | Suspicious loop                                           | n/a |
 | Probable bugs        | ReferenceMismatchInspection                     | Reference mismatch                                        | n/a |
-| Probable bugs        | ImplicitMagicMethodCallInspection               | Implicit magic method calls                               | no  |
+| Probable bugs        | ImplicitMagicMethodCallInspection               | Implicit magic method calls                               | yes |
 | Probable bugs        | PrintfScanfArgumentsInspection                  | -printf/-scanf arguments count mismatches                 | n/a |
 | Probable bugs        | RealpathOnRelativePathsInspection               | Phar-incompatible 'realpath()' applied to a relative path | no  |
 | Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | n/a |
@@ -133,7 +134,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result               | yes |
 | Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes |
 | Probable bugs        | CompactArgumentsInspection                      | 'compact(...)' variables existence                        | n/a |
-| Probable bugs        | DispatchingThisIntoClosuresInspection           | Incorrect dispatching $this into closures                 | no  |
+| Probable bugs        | DispatchingThisIntoClosuresInspection           | Incorrect dispatching $this into closures                 | n/a |
 
 Inspections Lists (Performance)
 ---
@@ -142,7 +143,6 @@ Inspections Lists (Performance)
 | Performance          | IsNullFunctionUsageInspection                   | 'is_null(...)' could be replaced by 'null === ...'                                          | yes |
 | Performance          | dirnameCallOnFileConstantInspection             | 'dirname(...)' could be replaced by '__DIR__'                                               | yes |
 | Performance          | AmbiguousMethodsCallsInArrayMappingInspection   | Non-optimized arrays mapping                                                                | n/a |
-| Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                          | no  |
 | Performance          | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' should not be used to check if string is empty                                | n/a |
 | Performance          | TypesCastingWithFunctionsInspection             | Type casting via PHP4 functions                                                             | yes |
 | Performance          | ArrayCastingEquivalentInspection                | Could be replaced with '(array) ...'                                                        | n/a |
@@ -163,4 +163,4 @@ Inspections Lists (Performance)
 | Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                              | yes |
 | Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | n/a |
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes |
-| Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | no  |
+| Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes |

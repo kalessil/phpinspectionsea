@@ -26,17 +26,11 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
         return "CaseInsensitiveStringFunctionsMissUseInspection";
     }
 
-    private static HashMap<String, String> mapping = null;
-    private static HashMap<String, String> getMapping() {
-        if (null == mapping) {
-            mapping = new HashMap<String, String>();
-
-            mapping.put("stristr",  "strstr");
-            mapping.put("stripos",  "strpos");
-            mapping.put("strripos", "strrpos");
-        }
-
-        return mapping;
+    private static HashMap<String, String> mapping = new HashMap<String, String>();
+    static {
+        mapping.put("stristr",  "strstr");
+        mapping.put("stripos",  "strpos");
+        mapping.put("strripos", "strrpos");
     }
 
     @Override
@@ -50,8 +44,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
                     return;
                 }
 
-                final HashMap<String, String> mapFunctions = getMapping();
-                if (mapFunctions.containsKey(strFunctionName)) {
+                if (mapping.containsKey(strFunctionName)) {
                     // resolve second parameter
                     final StringLiteralExpression pattern = ExpressionSemanticUtil.resolveAsStringLiteral(parameters[1]);
                     // not available / PhpStorm limitations
@@ -61,7 +54,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
 
                     final String patternString = pattern.getContents();
                     if (!StringUtil.isEmpty(patternString) && !patternString.matches(".*\\p{L}.*")) {
-                        final String functionName = mapFunctions.get(strFunctionName);
+                        final String functionName = mapping.get(strFunctionName);
                         final String message      = messagePattern.replace("%f%", functionName);
                         holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(functionName));
                     }

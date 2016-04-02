@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection {
     private static final String strProblemDescription       = "Throws a non-annotated/unhandled exception: '%c%'";
@@ -52,15 +53,14 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     return;
                 }
 
-                HashSet<PsiElement> processedRegistry = new HashSet<PsiElement>();
-                HashMap<PhpClass, HashSet<PsiElement>> exceptions =
+                final HashSet<PsiElement> processedRegistry             = new HashSet<PsiElement>();
+                final HashMap<PhpClass, HashSet<PsiElement>> exceptions =
                         CollectPossibleThrowsUtil.collectNestedAndWorkflowExceptions(element, processedRegistry, holder);
 
-                HashSet<PsiElement> reportedExpressions = new HashSet<PsiElement>();
                 /* report individual statements */
                 if (exceptions.size() > 0) {
-                    for (PhpClass exceptionClass : exceptions.keySet()) {
-                        HashSet<PsiElement> pool = exceptions.get(exceptionClass);
+                    final HashSet<PsiElement> reportedExpressions = new HashSet<PsiElement>();
+                    for (HashSet<PsiElement> pool : exceptions.values()) {
                         for (PsiElement expression : pool) {
                             if (!reportedExpressions.contains(expression)) {
                                 holder.registerProblem(expression, strProblemFinallyExceptions, ProblemHighlightType.GENERIC_ERROR);
@@ -69,9 +69,9 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                         }
                         pool.clear();
                     }
+                    reportedExpressions.clear();
                     exceptions.clear();
                 }
-                reportedExpressions.clear();
 
                 /* report try-blocks */
                 if (processedRegistry.size() > 0) {
@@ -129,16 +129,17 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     if (annotatedExceptions.size() > 0) {
                         /* filter what to report based on annotated exceptions  */
                         for (PhpClass annotated : annotatedExceptions) {
-                            for (PhpClass thrown : throwsExceptions.keySet()) {
+                            for (Map.Entry<PhpClass, HashSet<PsiElement>> throwsExceptionsPair: throwsExceptions.entrySet()) {
+                                final PhpClass thrown = throwsExceptionsPair.getKey();
                                 /* already reported */
                                 if (unhandledExceptions.containsKey(thrown)) {
                                     continue;
                                 }
 
                                 /* check thrown parents, as annotated not processed here */
-                                HashSet<PhpClass> thrownVariants = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(thrown, true);
+                                final HashSet<PhpClass> thrownVariants = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(thrown, true);
                                 if (!thrownVariants.contains(annotated)) {
-                                    unhandledExceptions.put(thrown, throwsExceptions.get(thrown));
+                                    unhandledExceptions.put(thrown, throwsExceptionsPair.getValue());
                                     throwsExceptions.put(thrown, null);
                                 }
                                 thrownVariants.clear();
@@ -146,13 +147,14 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                         }
                     } else {
                         /* report all, as nothing is annotated */
-                        for (PhpClass thrown : throwsExceptions.keySet()) {
+                        for (Map.Entry<PhpClass, HashSet<PsiElement>> throwsExceptionsPair: throwsExceptions.entrySet()) {
+                            final PhpClass thrown = throwsExceptionsPair.getKey();
                             /* already reported */
                             if (unhandledExceptions.containsKey(thrown)) {
                                 continue;
                             }
 
-                            unhandledExceptions.put(thrown, throwsExceptions.get(thrown));
+                            unhandledExceptions.put(thrown, throwsExceptionsPair.getValue());
                             throwsExceptions.put(thrown, null);
                         }
                     }
@@ -160,11 +162,12 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     if (unhandledExceptions.size() > 0) {
                         final boolean suggestQuickFix = null != method.getDocComment();
 
-                        for (PhpClass classUnhandled : unhandledExceptions.keySet()) {
-                            final String thrown  = classUnhandled.getFQN();
+                        for (Map.Entry<PhpClass, HashSet<PsiElement>> unhandledExceptionsPair : unhandledExceptions.entrySet()) {
+                            final String thrown  = unhandledExceptionsPair.getKey().getFQN();
                             final String message = strProblemDescription.replace("%c%", thrown);
 
-                            for (PsiElement blame : unhandledExceptions.get(classUnhandled)) {
+                            final HashSet<PsiElement> blamedExpressions = unhandledExceptionsPair.getValue();
+                            for (PsiElement blame : blamedExpressions) {
                                 if (suggestQuickFix) {
                                     final MissingThrowAnnotationLocalFix fix = new MissingThrowAnnotationLocalFix(method, thrown);
                                     holder.registerProblem(blame, message, ProblemHighlightType.WEAK_WARNING, fix);
@@ -172,8 +175,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                                     holder.registerProblem(blame, message, ProblemHighlightType.WEAK_WARNING);
                                 }
                             }
-
-                            unhandledExceptions.get(classUnhandled).clear();
+                            blamedExpressions.clear();
                         }
                         unhandledExceptions.clear();
                     }

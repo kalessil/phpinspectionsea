@@ -73,12 +73,13 @@ class aClass {
     preg_match('/[seq][seq]?/',                 '');  //reported
     preg_match('/[seq]+[seq]*[seq]?[seq]{1,}/', '');  //reported
 
-    preg_match('/[0-9]/',     '');              //reported
-    preg_match('/[^0-9]/',    '');              //reported
-    preg_match('/[:digit:]/', '');              //reported
-    preg_match('/[:word:]/',  '');              //reported
-    preg_match('/[^\w]/',     '');              //reported
-    preg_match('/[^\s]/',     '');              //reported
+    preg_match('/[0-9]/',       '');              //reported
+    preg_match('/[^0-9]/',      '');              //reported
+    preg_match('/[:digit:]/',   '');              //reported
+    preg_match('/[:word:]/',    '');              //reported
+    preg_match('/[^\w]/',       '');              //reported
+    preg_match('/[^\s]/',       '');              //reported
+    preg_match('/[0-9a-zA-Z_]/', '');             //reported
 
     preg_match('/\R/',     '');                 //reported
 

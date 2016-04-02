@@ -7,9 +7,10 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class ShortClassDefinitionStrategy {
-    private static final String strProblemDescription = "'%p%' can be replaced with '%r%' (%h%)";
+    private static final String messagePattern = "'%p%' can be replaced with '%r%' (%h%)";
 
     private static HashMap<String, String> mapping = new HashMap<String, String>();
     static {
@@ -31,18 +32,21 @@ public class ShortClassDefinitionStrategy {
     static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
         if (!StringUtil.isEmpty(pattern)) {
             final boolean isUnicodeMode = !StringUtil.isEmpty(modifiers) && modifiers.indexOf('u') != -1;
-            final String strHint = isUnicodeMode ? "risky, will match extended sets due to /u" : "safe in non-unicode mode";
+            final String safetyHint     = isUnicodeMode ? "risky, will match extended sets due to /u" : "safe in non-unicode mode";
 
+            /* normalize only first found cases - sufficient for reporting */
             final String patternAdapted = pattern
                     .replace("a-zA-Z",    "A-Za-z")
                     .replace("0-9A-Za-z", "A-Za-z0-9");
 
-            for (String wildcard : mapping.keySet()) {
+            for (Map.Entry<String, String> replacement : mapping.entrySet()) {
+                final String wildcard = replacement.getKey();
                 if (patternAdapted.contains(wildcard)) {
-                    final String message = strProblemDescription
+                    final String message = messagePattern
                             .replace("%p%", wildcard)
-                            .replace("%r%", mapping.get(wildcard))
-                            .replace("%h%", strHint);
+                            .replace("%r%", replacement.getValue())
+                            .replace("%h%", safetyHint);
+
                     holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING);
                 }
             }

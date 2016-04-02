@@ -9,6 +9,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
@@ -186,13 +188,13 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
     private static class MissingThrowAnnotationLocalFix implements LocalQuickFix {
         final private String exception;
-        private Method method;
+        private SmartPsiElementPointer<Method> method;
 
         MissingThrowAnnotationLocalFix(@NotNull Method method, @NotNull String exception){
             super();
 
             this.exception = exception;
-            this.method    = method;
+            this.method    = SmartPointerManager.getInstance(method.getProject()).createSmartPsiElementPointer(method);
         }
 
         @NotNull
@@ -209,8 +211,12 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PhpDocComment phpDoc = method.getDocComment();
+            final Method method = (null == this.method ? null : this.method.getElement());
+            if (null == method) {
+                return;
+            }
 
+            final PhpDocComment phpDoc = method.getDocComment();
             final String  pattern      =  this.exception;
             final String  patternPlace = "@throws " + pattern.replaceAll("\\\\", "\\\\\\\\");
 
@@ -224,7 +230,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     /* injecting after return tag: probe 1 */
                     if (!isInjected && line.contains("@return")) {
                         newCommentLines.add(line);
-                        newCommentLines.add(line.replaceAll("\\@return[^\\r\\n]*", patternPlace));
+                        newCommentLines.add(line.replaceAll("@return[^\\r\\n]*", patternPlace));
 
                         isInjected = true;
                         continue;
@@ -233,7 +239,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     /* injecting at the end of PhpDoc: probe 3 */
                     if (!isInjected && line.contains("*/")) {
                         // no throw/return is declared
-                        newCommentLines.add(line.replaceAll("\\/", patternPlace));
+                        newCommentLines.add(line.replaceAll("/", patternPlace));
                         newCommentLines.add(line);
 
                         isInjected = true;

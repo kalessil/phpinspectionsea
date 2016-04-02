@@ -13,31 +13,37 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 final public class CollectPossibleThrowsUtil {
     static public HashMap<PhpClass, HashSet<PsiElement>> collectNestedAndWorkflowExceptions(PsiElement scope, HashSet<PsiElement> processed, @NotNull final ProblemsHolder holder) {
-        HashMap<PhpClass, HashSet<PsiElement>> exceptions = new HashMap<PhpClass, HashSet<PsiElement>>();
+        final HashMap<PhpClass, HashSet<PsiElement>> exceptions = new HashMap<PhpClass, HashSet<PsiElement>>();
 
         /* recursively invoke and analyse nested try-catches checks */
-        Collection<Try> tryStatements = PsiTreeUtil.findChildrenOfType(scope, Try.class);
+        final Collection<Try> tryStatements = PsiTreeUtil.findChildrenOfType(scope, Try.class);
         if (tryStatements.size() > 0) {
             for (Try nestedTry : tryStatements) {
                 if (!processed.contains(nestedTry)) {
                     /* process nested workflow */
-                    HashMap<PhpClass, HashSet<PsiElement>> nestedTryExceptions = collectNestedAndWorkflowExceptions(nestedTry, processed, holder);
+                    final HashMap<PhpClass, HashSet<PsiElement>> nestedTryExceptions = collectNestedAndWorkflowExceptions(nestedTry, processed, holder);
 //holder.registerProblem(nestedTry.getFirstChild(), "Nested: " + nestedTryExceptions.toString(), ProblemHighlightType.WEAK_WARNING);
-                    /* merge into report */
-                    for (PhpClass key : nestedTryExceptions.keySet()) {
-                        HashSet<PsiElement> expressionsToDispatch = nestedTryExceptions.get(key);
-                        if (exceptions.containsKey(key)) {
-                            exceptions.get(key).addAll(expressionsToDispatch);
-                            expressionsToDispatch.clear();
-                        } else {
-                            exceptions.put(key, expressionsToDispatch);
-                        }
-                    }
+                    if (nestedTryExceptions.size() > 0) {
+                        for (Map.Entry<PhpClass, HashSet<PsiElement>> nestedTryExceptionsPair : nestedTryExceptions.entrySet()) {
+                            /* extract pairs Exception class => source expressions */
+                            final PhpClass key                              = nestedTryExceptionsPair.getKey();
+                            final HashSet<PsiElement> expressionsToDispatch = nestedTryExceptionsPair.getValue();
 
-                    nestedTryExceptions.clear();
+                            if (exceptions.containsKey(key)) {
+                                /* merge entries and release refs */
+                                exceptions.get(key).addAll(expressionsToDispatch);
+                                expressionsToDispatch.clear();
+                            } else {
+                                /* store as it is */
+                                exceptions.put(key, expressionsToDispatch);
+                            }
+                        }
+                        nestedTryExceptions.clear();
+                    }
                 }
             }
             tryStatements.clear();
@@ -101,7 +107,7 @@ final public class CollectPossibleThrowsUtil {
                 if (null != constructor) {
 //holder.registerProblem(newExpression, "Constructor found", ProblemHighlightType.WEAK_WARNING);
                     /* lookup for annotated exceptions */
-                    HashSet<PhpClass> constructorExceptions = new HashSet<PhpClass>();
+                    final HashSet<PhpClass> constructorExceptions = new HashSet<PhpClass>();
                     ThrowsResolveUtil.resolveThrownExceptions(constructor, constructorExceptions);
 
                     /* link expression with each possible exception */
@@ -136,8 +142,9 @@ final public class CollectPossibleThrowsUtil {
                 PsiElement argument = throwExpression.getArgument();
                 if (null != argument) {
                     /* resolve argument types */
-                    HashSet<String> types = new HashSet<String>();
+                    final HashSet<String> types = new HashSet<String>();
                     TypeFromPlatformResolverUtil.resolveExpressionType(argument, types);
+
                     if (types.size() > 0) {
                         /* remove extra definition of \Exception unexpectedly added by PhpStorm */
                         final boolean dropExtraDefinitions = argument instanceof Variable && types.size() > 1 && types.contains("\\Exception");
@@ -180,7 +187,7 @@ final public class CollectPossibleThrowsUtil {
                 PsiElement methodResolved = call.resolve();
                 if (methodResolved instanceof Method) {
                     /* lookup for annotated exceptions */
-                    HashSet<PhpClass> methodExceptions = new HashSet<PhpClass>();
+                    final HashSet<PhpClass> methodExceptions = new HashSet<PhpClass>();
                     ThrowsResolveUtil.resolveThrownExceptions((Method) methodResolved, methodExceptions);
 
                     /* link expression with each possible exception */
@@ -205,13 +212,13 @@ final public class CollectPossibleThrowsUtil {
     }
 
     static private HashMap<PhpClass, HashSet<PsiElement>> collectTryWorkflowExceptions(Try scope, HashSet<PsiElement> processed, @NotNull final ProblemsHolder holder) {
-        HashMap<PhpClass, HashSet<PsiElement>> exceptions = new HashMap<PhpClass, HashSet<PsiElement>>();
+        final HashMap<PhpClass, HashSet<PsiElement>> exceptions = new HashMap<PhpClass, HashSet<PsiElement>>();
 
         /* resolve try-body */
-        HashMap<PhpClass, HashSet<PsiElement>> unhandledInTry = collectNestedAndWorkflowExceptions(scope.getStatement(), processed, holder);
+        final HashMap<PhpClass, HashSet<PsiElement>> unhandledInTry = collectNestedAndWorkflowExceptions(scope.getStatement(), processed, holder);
 
         /* resolve all catches */
-        HashMap<PhpClass, HashSet<PsiElement>> unhandledInCatches = new HashMap<PhpClass, HashSet<PsiElement>>();
+        final HashMap<PhpClass, HashSet<PsiElement>> unhandledInCatches = new HashMap<PhpClass, HashSet<PsiElement>>();
         for (Catch catchInTry : scope.getCatchClauses()) {
             /* resolve catch-class */
             ClassReference catchClassReference = catchInTry.getExceptionType();
@@ -220,7 +227,7 @@ final public class CollectPossibleThrowsUtil {
 //holder.registerProblem(catchInTry.getFirstChild(), "Catches: " + caughtClass.toString(), ProblemHighlightType.WEAK_WARNING);
 
                 /* inspect what covered */
-                HashSet<PhpClass> handledInCurrentCatch = new HashSet<PhpClass>();
+                final HashSet<PhpClass> handledInCurrentCatch = new HashSet<PhpClass>();
                 handledInCurrentCatch.add(caughtClass);
 
                 for (PhpClass unhandled : unhandledInTry.keySet()) {
@@ -250,46 +257,65 @@ final public class CollectPossibleThrowsUtil {
             }
 
             /* resolve catch-body and mark as processed */
-            HashMap<PhpClass, HashSet<PsiElement>> catchBodyExceptions = collectNestedAndWorkflowExceptions(catchInTry, processed, holder);
-            for (PhpClass exceptionInCatch : catchBodyExceptions.keySet()) {
-                final HashSet<PsiElement> expressionsToDispatch = catchBodyExceptions.get(exceptionInCatch);
-                if (unhandledInCatches.containsKey(exceptionInCatch)) {
-                    /* merge */
-                    unhandledInCatches.get(exceptionInCatch).addAll(expressionsToDispatch);
-                    expressionsToDispatch.clear();
-                } else {
-                    /* put */
-                    unhandledInCatches.put(exceptionInCatch, expressionsToDispatch);
-                }
+            final HashMap<PhpClass, HashSet<PsiElement>> catchBodyExceptions = collectNestedAndWorkflowExceptions(catchInTry, processed, holder);
+            if (catchBodyExceptions.size() > 0) {
+                for (Map.Entry<PhpClass, HashSet<PsiElement>> catchBodyExceptionsPair : catchBodyExceptions.entrySet()) {
+                    /* extract pairs Exception class => source expressions */
+                    final PhpClass exceptionInCatch                 = catchBodyExceptionsPair.getKey();
+                    final HashSet<PsiElement> expressionsToDispatch = catchBodyExceptionsPair.getValue();
+
+                    if (unhandledInCatches.containsKey(exceptionInCatch)) {
+                        /* merge entries and release refs */
+                        unhandledInCatches.get(exceptionInCatch).addAll(expressionsToDispatch);
+                        expressionsToDispatch.clear();
+                    } else {
+                        /* store as it is */
+                        unhandledInCatches.put(exceptionInCatch, expressionsToDispatch);
+                    }
 //holder.registerProblem(catchInTry.getFirstChild(), "Introduced by catches: " + unhandledInCatches.keySet().toString(), ProblemHighlightType.WEAK_WARNING);
+                }
+                catchBodyExceptions.clear();
             }
-            catchBodyExceptions.clear();
         }
 
         /* merge unhandled and catch-produced exceptions into result storage */
-        for (PhpClass tryException : unhandledInTry.keySet()) {
-            final HashSet<PsiElement> expressionsToDispatch = unhandledInTry.get(tryException);
-            if (exceptions.containsKey(tryException)) {
-                exceptions.get(tryException).addAll(expressionsToDispatch);
-                expressionsToDispatch.clear();
-            } else {
-                exceptions.put(tryException, expressionsToDispatch);
-            }
-        }
-//holder.registerProblem(scope.getFirstChild(), "Try produces: " + unhandledInTry.keySet().toString(), ProblemHighlightType.WEAK_WARNING);
-        unhandledInTry.clear();
+        if (unhandledInTry.size() > 0) {
+            for (Map.Entry<PhpClass, HashSet<PsiElement>> unhandledInTryPair : unhandledInTry.entrySet()) {
+                /* extract pairs Exception class => source expressions */
+                final PhpClass tryException                     = unhandledInTryPair.getKey();
+                final HashSet<PsiElement> expressionsToDispatch = unhandledInTryPair.getValue();
 
-        for (PhpClass catchException : unhandledInCatches.keySet()) {
-            final HashSet<PsiElement> expressionsToDispatch = unhandledInCatches.get(catchException);
-            if (exceptions.containsKey(catchException)) {
-                exceptions.get(catchException).addAll(expressionsToDispatch);
-                expressionsToDispatch.clear();
-            } else {
-                exceptions.put(catchException, expressionsToDispatch);
+                if (exceptions.containsKey(tryException)) {
+                    /* merge entries and release refs */
+                    exceptions.get(tryException).addAll(expressionsToDispatch);
+                    expressionsToDispatch.clear();
+                } else {
+                    /* store as it is */
+                    exceptions.put(tryException, expressionsToDispatch);
+                }
             }
+//holder.registerProblem(scope.getFirstChild(), "Try produces: " + unhandledInTry.keySet().toString(), ProblemHighlightType.WEAK_WARNING);
+            unhandledInTry.clear();
         }
+
+        if (unhandledInCatches.size() > 0) {
+            for (Map.Entry<PhpClass, HashSet<PsiElement>> unhandledInCatchesPair : unhandledInCatches.entrySet()) {
+                /* extract pairs Exception class => source expressions */
+                final PhpClass catchException                   = unhandledInCatchesPair.getKey();
+                final HashSet<PsiElement> expressionsToDispatch = unhandledInCatchesPair.getValue();
+
+                if (exceptions.containsKey(catchException)) {
+                    /* merge entries and release refs */
+                    exceptions.get(catchException).addAll(expressionsToDispatch);
+                    expressionsToDispatch.clear();
+                } else {
+                    /* store as it is */
+                    exceptions.put(catchException, expressionsToDispatch);
+                }
+            }
 //holder.registerProblem(scope.getFirstChild(), "Catches produces: " + unhandledInCatches.keySet().toString(), ProblemHighlightType.WEAK_WARNING);
-        unhandledInCatches.clear();
+            unhandledInCatches.clear();
+        }
 
         return exceptions;
     }

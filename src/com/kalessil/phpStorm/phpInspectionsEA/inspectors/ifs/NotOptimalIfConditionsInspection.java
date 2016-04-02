@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behaves properly with instanceof in this scenario";
@@ -225,9 +226,12 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     // investigate one subject when it has multiple instanceof-expressions
                     if (subjectContainer.size() > 1) {
                         // walk through conditions
-                        for (PsiElement instanceOfExpression : subjectContainer.keySet()) {
+                        for (Map.Entry<PsiElement, PhpClass> instanceOf2class: subjectContainer.entrySet()) {
+                            /* unpack the pair */
+                            final PhpClass clazz                  = instanceOf2class.getValue();
+                            final PsiElement instanceOfExpression = instanceOf2class.getKey();
+
                             // extract current condition details
-                            PhpClass clazz = subjectContainer.get(instanceOfExpression);
                             HashSet<PhpClass> clazzParents = resolvedInheritanceChains.get(clazz);
                             if (null == clazzParents) {
                                 clazzParents = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true);

@@ -9,30 +9,33 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.phpExceptions.CollectPossibl
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public class MustNotThrowExceptionsStrategy {
-    private static final String strProblemDescription   = "%m%: exceptions must not be raised (%c% thrown)";
+    private static final String messagePattern = "%m%: exceptions must not be raised (%c% thrown)";
 
     static public void apply(final Method method, final ProblemsHolder holder) {
         if (null == method.getNameIdentifier()) {
             return;
         }
 
-        HashSet<PsiElement> processedRegistry = new HashSet<PsiElement>();
-        HashMap<PhpClass, HashSet<PsiElement>> throwsExceptions = CollectPossibleThrowsUtil.collectNestedAndWorkflowExceptions(method, processedRegistry, holder);
-        processedRegistry.clear();
+        final HashSet<PsiElement> processedRegistry                   = new HashSet<PsiElement>();
+        final HashMap<PhpClass, HashSet<PsiElement>> throwsExceptions = CollectPossibleThrowsUtil.collectNestedAndWorkflowExceptions(method, processedRegistry, holder);
 
+        processedRegistry.clear();
         if (throwsExceptions.size() > 0) {
-            for (PhpClass thrown : throwsExceptions.keySet()) {
-                String strMessage = strProblemDescription
+            for (Map.Entry<PhpClass, HashSet<PsiElement>> pair : throwsExceptions.entrySet()) {
+                /* extract pairs */
+                final PhpClass thrown                 = pair.getKey();
+                final HashSet<PsiElement> expressions = pair.getValue();
+
+                final String message = messagePattern
                         .replace("%c%", thrown.getFQN())
                         .replace("%m%", method.getName());
-
-                for (PsiElement blame : throwsExceptions.get(thrown)) {
-                    holder.registerProblem(blame, strMessage, ProblemHighlightType.GENERIC_ERROR);
+                for (PsiElement blame : expressions) {
+                    holder.registerProblem(blame, message, ProblemHighlightType.GENERIC_ERROR);
                 }
-
-                throwsExceptions.get(thrown).clear();
+                expressions.clear();
             }
 
             throwsExceptions.clear();

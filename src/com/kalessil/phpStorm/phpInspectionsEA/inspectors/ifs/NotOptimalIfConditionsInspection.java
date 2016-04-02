@@ -239,21 +239,20 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                             }
 
                             // inner loop for verification
-                            for (PsiElement alternativeInstanceOf : subjectContainer.keySet()) {
+                            for (Map.Entry<PsiElement, PhpClass> instanceOf2classInner : subjectContainer.entrySet()) {
                                 // skip itself
-                                if (alternativeInstanceOf == instanceOfExpression) {
+                                if (instanceOf2classInner.getKey() == instanceOfExpression) {
                                     continue;
                                 }
 
                                 // if alternative references to base class current check is ambiguous
-                                if (clazzParents.contains(subjectContainer.get(alternativeInstanceOf))) {
+                                if (clazzParents.contains(instanceOf2classInner.getValue())) {
                                     holder.registerProblem(instanceOfExpression, strProblemDescriptionInstanceOfAmbiguous, ProblemHighlightType.WEAK_WARNING);
                                     break;
                                 }
                             }
                         }
                     }
-
                     subjectContainer.clear();
                 }
                 // release inheritance cache as well

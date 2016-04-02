@@ -47,15 +47,9 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
     }
 
     final protected static ConcurrentHashMap<Function, HashSet<PsiElement>> reportedIssues = new ConcurrentHashMap<Function, HashSet<PsiElement>>();
-
     protected static HashSet<PsiElement> getFunctionReportingRegistry(Function key) {
-        boolean hasContainer = ReferenceMismatchInspector.reportedIssues.containsKey(key);
-        // create an empty container
-        if (!hasContainer) {
-            ReferenceMismatchInspector.reportedIssues.put(key, new HashSet<PsiElement>());
-        }
-
-        return ReferenceMismatchInspector.reportedIssues.get(key);
+        reportedIssues.putIfAbsent(key, new HashSet<PsiElement>());
+        return reportedIssues.get(key);
     }
 
     @NotNull

@@ -18,8 +18,10 @@ class ExceptionsFlows
             try {
                 $this->provokeException();
             } catch (\RuntimeException $e1) {
-                throw new \UnexpectedValueException(); // <- no reported for some reason
+                throw new \UnexpectedValueException(); // <- not analyzed so deeply yet
             }
+
+            throw new \UnexpectedValueException();     // <- reported
         } catch (\InvalidArgumentException $e2) {
             throw new \UnexpectedValueException();     // <- reported
         }

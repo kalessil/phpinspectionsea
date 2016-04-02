@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpIsset;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.jetbrains.php.lang.psi.elements.impl.BinaryExpressionImpl;
@@ -16,13 +17,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class IssetAndNullComparisonStrategy {
     final static String messagePattern = "It seems like '%e%' is already covered by isset";
 
     static public boolean apply(@NotNull LinkedList<PsiElement> conditions, @NotNull ProblemsHolder holder) {
         /* first ensure that we have null identity checks at all */
-        HashMap<PsiElement, PsiElement> nullTestSubjects = new HashMap<PsiElement, PsiElement>();
+        final HashMap<PsiElement, PsiElement> nullTestSubjects = new HashMap<PsiElement, PsiElement>();
         for (PsiElement oneCondition : conditions) {
             if (oneCondition instanceof BinaryExpressionImpl) {
                 final BinaryExpressionImpl expression = (BinaryExpressionImpl) oneCondition;
@@ -88,14 +90,16 @@ public class IssetAndNullComparisonStrategy {
             /* process isset constructions */
             for (PsiElement issetArgument : ((PhpIsset) issetCandidate).getVariables()) {
                 /* compare with know null identity checked subjects */
-                for (PsiElement nullTestExpression: nullTestSubjects.keySet()) {
-                    final PsiElement subject = nullTestSubjects.get(nullTestExpression);
-                    if (PsiEquivalenceUtil.areElementsEquivalent(subject, issetArgument)) {
-                        hasReportedExpressions = true;
-
-                        final String message = messagePattern.replace("%e%", nullTestExpression.getText());
-                        holder.registerProblem(nullTestExpression, message, ProblemHighlightType.WEAK_WARNING);
+                for (Map.Entry<PsiElement, PsiElement> nullTestPair : nullTestSubjects.entrySet()) {
+                    if (!PsiEquivalenceUtil.areElementsEquivalent(nullTestPair.getValue(), issetArgument)) {
+                        continue;
                     }
+
+                    hasReportedExpressions = true;
+
+                    final PsiElement nullTestExpression = nullTestPair.getKey();
+                    final String message                = messagePattern.replace("%e%", nullTestExpression.getText());
+                    holder.registerProblem(nullTestExpression, message, ProblemHighlightType.WEAK_WARNING);
                 }
             }
         }

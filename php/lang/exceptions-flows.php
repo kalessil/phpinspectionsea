@@ -10,9 +10,17 @@ class ExceptionsFlows
     }
 
     /**
+     * @throws \PHPUnit_Framework_AssertionFailedError
+     */
+    private function assertSomething()
+    {
+    }
+
+    /**
      */
     public function api()
     {
+        $this->assertSomething();
         $this->provokeException();                     // <- reported
         try {
             try {

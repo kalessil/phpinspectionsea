@@ -111,7 +111,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     return;
                 }
                 if (SUGGEST_TO_USE_ASSERTSAME) {
-                    @SuppressWarnings("unused")
+                    @SuppressWarnings({"unused", "UnusedAssignment"})
                     boolean strictAsserts =
                         AssertSameStrategy.apply(methodName, reference, holder) ||
                         AssertNotSameStrategy.apply(methodName, reference, holder)

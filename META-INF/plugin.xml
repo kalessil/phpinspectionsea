@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.5.3</version>
+  <version>1.5.4</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -51,13 +51,16 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-28 Mar 2016: bug-fixes<br/>
+09 Apr 2016: improvements, bug-fixes and new inspections<br/>
 <br/>
-    - Callable parameter usage violates definition: fixed static/self/$this interpretation;<br/>
-    - Magic methods validity: fixed regression in PS 2016.1;<br/>
-    - Exceptions handling and annotating: fixed incorrect edge-case types resolving in PS;<br/>
-    - Suspicious loop: a new pattern analysis added;<br/>
-    - array_push(...)' misused: resolve false-positives with variadic 2nd parameter;<br/>
+    - Code grooming (TODOs, FindBugs, deprecated JB APIs usage);<br/>
+    - Exceptions handling and annotating: do not report PhpUnit assertion exceptions;<br/>
+    - Slow array function used in loop: added a new patterns analysis;<br/>
+    - Implicit magic method calls: quick-fix implemented;<br/>
+<br/>
+    - Incorrect dispatching $this into closures: implemented;<br/>
+    - 'compact(...)' variables existence: implemented;<br/>
+    - 'substr(...)' used as index-based access: implemented;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

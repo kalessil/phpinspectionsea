@@ -30,7 +30,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     public boolean SUGGEST_TO_USE_NULL_COMPARISON = true;
 
     // static messages for triggered messages
-    private static final String strProblemDescriptionDoNotUse = "'empty(...)' counts too much values as empty, consider refactoring with type sensitive checks";
+    private static final String strProblemDescriptionDoNotUse = "'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks";
     private static final String strProblemDescriptionUseCount = "'0 === count($...)' construction shall be used instead";
     private static final String strProblemDescriptionUseNullComparison = "Probably it should be 'null === $...' construction used";
     

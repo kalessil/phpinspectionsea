@@ -113,7 +113,6 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                         getInstance(holder.getProject()).getClassesByFQN("\\PHPUnit_Framework_AssertionFailedError");
                 if (phpUnitAssertionErrorClasses.size() > 0) {
                     annotatedExceptions.addAll(phpUnitAssertionErrorClasses);
-                    phpUnitAssertionErrorClasses.clear();
                 }
                 /* collect announced cases with injected PhpUnit exceptions */
 

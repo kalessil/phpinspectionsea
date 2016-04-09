@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
@@ -29,10 +30,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.phpExceptions.CollectPossibl
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection {
     private static final String strProblemDescription       = "Throws a non-annotated/unhandled exception: '%c%'";
@@ -85,9 +83,12 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
             }
 
             public void visitPhpMethod(Method method) {
-                String strMethodName = method.getName();
+                String strMethodName     = method.getName();
                 PsiElement objMethodName = method.getNameIdentifier();
-                if (StringUtil.isEmpty(strMethodName) || null == objMethodName || strMethodName.equals("__toString")) {
+                if (
+                    StringUtil.isEmpty(strMethodName) || null == objMethodName ||
+                    strMethodName.equals("__toString") // __toString has magic methods validation, must not raise exceptions
+                ) {
                     return;
                 }
 
@@ -101,10 +102,21 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     return;
                 }
 
-                HashSet<PhpClass> annotatedExceptions = new HashSet<PhpClass>();
+
+                /* collect announced cases */
+                final HashSet<PhpClass> annotatedExceptions = new HashSet<PhpClass>();
                 if (ThrowsResolveUtil.ResolveType.NOT_RESOLVED == ThrowsResolveUtil.resolveThrownExceptions(method, annotatedExceptions)) {
                     return;
                 }
+                /* count PhpUnit assertion exceptions as always annotated, so we don't report them see #225 */
+                final Collection<PhpClass> phpUnitAssertionErrorClasses =  PhpIndex.
+                        getInstance(holder.getProject()).getClassesByFQN("\\PHPUnit_Framework_AssertionFailedError");
+                if (phpUnitAssertionErrorClasses.size() > 0) {
+                    annotatedExceptions.addAll(phpUnitAssertionErrorClasses);
+                    phpUnitAssertionErrorClasses.clear();
+                }
+                /* collect announced cases with injected PhpUnit exceptions */
+
 
                 HashSet<PsiElement> processedRegistry = new HashSet<PsiElement>();
                 HashMap<PhpClass, HashSet<PsiElement>> throwsExceptions =

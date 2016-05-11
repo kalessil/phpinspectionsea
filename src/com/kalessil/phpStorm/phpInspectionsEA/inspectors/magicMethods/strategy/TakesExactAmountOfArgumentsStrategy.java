@@ -9,7 +9,7 @@ public class TakesExactAmountOfArgumentsStrategy {
 
     static public void apply(final int argumentsAmount, final Method method, final ProblemsHolder holder) {
         if (argumentsAmount != method.getParameters().length && null != method.getNameIdentifier()) {
-            String strMessage = strProblemDescription
+            final String strMessage = strProblemDescription
                     .replace("%m%", method.getName())
                     .replace("%n%", String.valueOf(argumentsAmount));
             holder.registerProblem(method.getNameIdentifier(), strMessage, ProblemHighlightType.ERROR);

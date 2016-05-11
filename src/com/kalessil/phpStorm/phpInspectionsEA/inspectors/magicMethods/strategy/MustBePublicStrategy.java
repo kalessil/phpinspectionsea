@@ -9,7 +9,7 @@ public class MustBePublicStrategy {
 
     static public void apply(final Method method, final ProblemsHolder holder) {
         if (!method.getAccess().isPublic() && null != method.getNameIdentifier()) {
-            String strMessage = strProblemDescription.replace("%m%", method.getName());
+            final String strMessage = strProblemDescription.replace("%m%", method.getName());
             holder.registerProblem(method.getNameIdentifier(), strMessage, ProblemHighlightType.ERROR);
         }
     }

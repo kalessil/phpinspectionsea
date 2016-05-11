@@ -17,9 +17,9 @@ public class CanNotReturnTypeStrategy {
         Collection<PhpReturn> returnStatements = PsiTreeUtil.findChildrenOfType(method, PhpReturn.class);
 
         if (returnStatements.size() > 0 && null != method.getNameIdentifier()) {
-            String strMessage = strProblemDescription.replace("%m%", method.getName());
+            final String strMessage = strProblemDescription.replace("%m%", method.getName());
             for (PhpReturn returnExpression : returnStatements) {
-                PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue(returnExpression);
+                final PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue(returnExpression);
                 if (null != returnValue && method == ExpressionSemanticUtil.getScope(returnExpression)) {
                     holder.registerProblem(returnExpression, strMessage, ProblemHighlightType.ERROR);
                 }

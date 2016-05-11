@@ -22,7 +22,7 @@ public class MustReturnSpecifiedTypeStrategy {
         Collection<PhpReturnImpl> returnStatements = PsiTreeUtil.findChildrenOfType(method, PhpReturnImpl.class);
 
         if (returnStatements.size() > 0 && null != method.getNameIdentifier()) {
-            String strMessage = strProblemDescription
+            final String strMessage = strProblemDescription
                     .replace("%m%", method.getName())
                     .replace("%t%", allowedTypes.toString());
 

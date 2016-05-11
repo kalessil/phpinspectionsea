@@ -11,7 +11,7 @@ public class CanNotTakeArgumentsByReferenceStrategy {
     static public void apply(final Method method, final ProblemsHolder holder) {
         for (Parameter parameter : method.getParameters()) {
             if (parameter.isPassByRef() && null != method.getNameIdentifier()){
-                String strMessage = strProblemDescription.replace("%m%", method.getName());
+                final String strMessage = strProblemDescription.replace("%m%", method.getName());
                 holder.registerProblem(method.getNameIdentifier(), strMessage, ProblemHighlightType.ERROR);
 
                 return;

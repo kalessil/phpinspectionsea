@@ -14,8 +14,8 @@ public class NormallyCallsParentMethodStrategy {
     private static final String strProblemDescription = "%m% is probably missing %c%::%m% call";
 
     static public void apply(final Method method, final ProblemsHolder holder) {
-        String strMethodName = method.getName();
-        PhpClass ownerClass = method.getContainingClass();
+        final String strMethodName = method.getName();
+        final PhpClass ownerClass  = method.getContainingClass();
         if (StringUtil.isEmpty(strMethodName) || null == ownerClass || null == method.getNameIdentifier()) {
             return;
         }
@@ -51,7 +51,7 @@ public class NormallyCallsParentMethodStrategy {
         /* report the issue */
         if (!isParentCallFound) {
             String strMessage = strProblemDescription
-                .replace("%m%", method.getName())
+                .replace("%m%", strMethodName)
                 .replace("%c%", parentWithGivenMethod.getName());
             holder.registerProblem(method.getNameIdentifier(), strMessage, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
         }

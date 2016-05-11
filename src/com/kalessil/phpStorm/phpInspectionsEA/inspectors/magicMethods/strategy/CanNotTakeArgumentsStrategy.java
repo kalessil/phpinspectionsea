@@ -9,7 +9,7 @@ public class CanNotTakeArgumentsStrategy {
 
     static public void apply(final Method method, final ProblemsHolder holder) {
         if (method.getParameters().length > 0 && null != method.getNameIdentifier()) {
-            String strMessage = strProblemDescription.replace("%m%", method.getName());
+            final String strMessage = strProblemDescription.replace("%m%", method.getName());
             holder.registerProblem(method.getNameIdentifier(), strMessage, ProblemHighlightType.ERROR);
         }
     }

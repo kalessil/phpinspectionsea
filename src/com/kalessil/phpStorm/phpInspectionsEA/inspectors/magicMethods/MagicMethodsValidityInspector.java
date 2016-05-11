@@ -71,6 +71,11 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                     TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
                     CanNotTakeArgumentsByReferenceStrategy.apply(method, holder);
 
+                    if (strMethodName.equals("__get")) {
+                        // breaks code in PHP7
+                        HasAlsoMethodStrategy.apply(method, "__set", holder);
+                    }
+
                     return;
                 }
 
@@ -82,6 +87,11 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                     MustBePublicStrategy.apply(method, holder);
                     CanNotTakeArgumentsByReferenceStrategy.apply(method, holder);
                     TakesExactAmountOfArgumentsStrategy.apply(2, method, holder);
+
+                    if (strMethodName.equals("__set")) {
+                        // breaks code in PHP7
+                        HasAlsoMethodStrategy.apply(method, "__get", holder);
+                    }
 
                     return;
                 }

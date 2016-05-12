@@ -1,16 +1,16 @@
 <?php
 
-class noGet
+class noSet
 {
-    public function __set($name, $value)
+    public function __isset($name) // <- reported
     {
         return false;
     }
 }
 
-class noSet
+class noIsset
 {
-    public function __get($name)
+    public function __set($name, $value) // <- reported
     {
         return false;
     }

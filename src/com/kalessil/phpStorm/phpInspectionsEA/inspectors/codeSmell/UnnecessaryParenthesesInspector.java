@@ -56,7 +56,7 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                 knowsLegalCases =
                     knowsLegalCases ||
                     /* some of questionable constructs, but lets start first with them */
-                    parent instanceof Include ||
+                    parent instanceof Include || argument instanceof Include ||
                     parent instanceof PhpCase ||
                     parent instanceof PhpEchoStatement ||
                     parent instanceof PhpPrintExpression ||

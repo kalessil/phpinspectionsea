@@ -42,6 +42,7 @@
             elseif (2) throw new \Exception('E2');
             elseif (3) return null;
             elseif (4) return (string) null;
+            elseif (5) return sprintf('');
             else       return implode(array(), '');
         }
 

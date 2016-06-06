@@ -11,7 +11,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
-import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
@@ -30,7 +29,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.phpExceptions.CollectPossibl
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
 
 public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection {
     private static final String strProblemDescription       = "Throws a non-annotated/unhandled exception: '%c%'";
@@ -96,9 +98,12 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 if (null == clazz) {
                     return;
                 }
-                String strClassFQN = clazz.getFQN();
-                /* skip un-explorable classes */
-                if (StringUtil.isEmpty(strClassFQN)) {
+                final String strClassFQN = clazz.getFQN();
+                /* skip un-explorable and test classes */
+                if (
+                    StringUtil.isEmpty(strClassFQN)  || strClassFQN.endsWith("Test") ||
+                    strClassFQN.contains("\\Tests\\") || strClassFQN.contains("\\Test\\")
+                ) {
                     return;
                 }
 
@@ -108,14 +113,6 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 if (ThrowsResolveUtil.ResolveType.NOT_RESOLVED == ThrowsResolveUtil.resolveThrownExceptions(method, annotatedExceptions)) {
                     return;
                 }
-                /* count PhpUnit assertion exceptions as always annotated, so we don't report them see #225 */
-                final Collection<PhpClass> phpUnitAssertionErrorClasses =  PhpIndex.
-                        getInstance(holder.getProject()).getClassesByFQN("\\PHPUnit_Framework_AssertionFailedError");
-                if (phpUnitAssertionErrorClasses.size() > 0) {
-                    annotatedExceptions.addAll(phpUnitAssertionErrorClasses);
-                }
-                /* collect announced cases with injected PhpUnit exceptions */
-
 
                 HashSet<PsiElement> processedRegistry = new HashSet<PsiElement>();
                 HashMap<PhpClass, HashSet<PsiElement>> throwsExceptions =

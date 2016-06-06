@@ -32,6 +32,7 @@ class aClass {
 
     preg_match_all('/regex/', '');                    //ok
     if (preg_match_all('/regex/', '')) {}             //report
+    if (preg_match_all("/regex$x/", '')) {}           //ok, due to inline var
     preg_quote('/regex/');                            //report
 
     preg_match('/(.*?)/', '');                        //ok

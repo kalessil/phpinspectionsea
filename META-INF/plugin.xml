@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.5.4</version>
+  <version>1.5.4.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -51,16 +51,11 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-09 Apr 2016: improvements, bug-fixes and new inspections<br/>
+07 June 2016: improvements<br/>
 <br/>
-    - Code grooming (TODOs, FindBugs, deprecated JB APIs usage);<br/>
-    - Exceptions handling and annotating: do not report PhpUnit assertion exceptions;<br/>
-    - Slow array function used in loop: added a new patterns analysis;<br/>
-    - Implicit magic method calls: quick-fix implemented;<br/>
-<br/>
-    - Incorrect dispatching $this into closures: implemented;<br/>
-    - 'compact(...)' variables existence: implemented;<br/>
-    - 'substr(...)' used as index-based access: implemented;<br/>
+    - Exceptions handling and annotating: do not analyze test classes;<br/>
+    - Magic methods validity: check consistent __set/__get/__unset implementation;<br/>
+    - Unnecessary parentheses: fix false-positives and regressions in PS 2016.2;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

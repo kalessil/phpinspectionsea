@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy.AndOrWordsUsageStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy.IssetAndNullComparisonStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -86,6 +87,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     IssetAndNullComparisonStrategy.apply(objConditionsFromStatement, holder);
 
                     objConditionsFromStatement.clear();
+
+                    AndOrWordsUsageStrategy.apply(ifStatement.getCondition(), holder);
                 }
 
                 for (ElseIf objElseIf : ifStatement.getElseIfBranches()) {
@@ -103,6 +106,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         this.inspectConditionsForIdenticalOperands(objConditionsFromStatement);
 
                         objConditionsFromStatement.clear();
+
+                        AndOrWordsUsageStrategy.apply(objElseIf.getCondition(), holder);
                     }
                 }
 

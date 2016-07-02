@@ -40,8 +40,8 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpTernaryExpression(TernaryExpression expression) {
-                PhpLanguageLevel preferableLanguageLevel = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (!preferableLanguageLevel.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
+                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (!phpVersion.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
                     return;
                 }
 

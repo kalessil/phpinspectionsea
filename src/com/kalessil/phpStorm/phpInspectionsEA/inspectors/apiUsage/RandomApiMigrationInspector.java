@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
@@ -27,15 +28,15 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
 
     private static HashMap<String, String> mapping = null;
     private static PhpLanguageLevel languageLevel = null;
-    private static HashMap<String, String> getMapping(PhpLanguageLevel preferableLanguageLevel) {
-        if (null == mapping || languageLevel != preferableLanguageLevel) {
-            languageLevel = preferableLanguageLevel;
+    private static HashMap<String, String> getMapping(PhpLanguageLevel phpVersion) {
+        if (null == mapping || languageLevel != phpVersion) {
+            languageLevel = phpVersion;
 
             mapping = new HashMap<String, String>();
             mapping.put("srand",      "mt_srand");
             mapping.put("getrandmax", "mt_getrandmax");
 
-            if (languageLevel == PhpLanguageLevel.PHP700) {
+            if (languageLevel.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
                 mapping.put("rand",    "random_int");
                 mapping.put("mt_rand", "random_int");
             } else {

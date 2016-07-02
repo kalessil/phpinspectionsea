@@ -48,8 +48,8 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFinally(Finally element) {
-                PhpLanguageLevel preferableLanguageLevel = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (!preferableLanguageLevel.hasFeature(PhpLanguageFeature.FINALLY)) {
+                PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (!phpVersion.hasFeature(PhpLanguageFeature.FINALLY)) {
                     return;
                 }
 

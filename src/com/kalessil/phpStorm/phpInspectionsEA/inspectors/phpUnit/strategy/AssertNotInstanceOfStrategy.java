@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
@@ -74,7 +75,7 @@ public class AssertNotInstanceOfStrategy {
             if (expression instanceof FunctionReference) {
                 if (this.classIdentity instanceof ClassReferenceImpl) {
                     final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
-                    final boolean useClassConstant    = (PhpLanguageLevel.PHP530 != phpVersion && PhpLanguageLevel.PHP540 != phpVersion);
+                    final boolean useClassConstant    = phpVersion.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST);
 
                     if (useClassConstant) {
                         /* since PHP 5.5 we can use ::class constant */

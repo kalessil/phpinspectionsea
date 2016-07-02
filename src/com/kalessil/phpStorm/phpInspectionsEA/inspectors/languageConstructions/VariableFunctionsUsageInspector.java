@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
@@ -102,8 +103,8 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                             holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
                         }
                     } else {
-                        final PhpLanguageLevel preferableLanguageLevel = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                        if (PhpLanguageLevel.PHP700 == preferableLanguageLevel) {
+                        final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                        if (phpVersion.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
                             /* in PHP7+ it's absolutely safe to use variable functions */
                             final LinkedList<String> parametersToSuggest = new LinkedList<String>();
                             for (PsiElement parameter : Arrays.copyOfRange(parameters, 1, parameters.length)) {

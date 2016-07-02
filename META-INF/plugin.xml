@@ -195,7 +195,7 @@ with a laptop.
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayTypeOfParameterByDefaultValueInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ForeachSourceInspection"                       displayName="Foreach source to iterate over"
-        groupName="Type compatibility"                            enabledByDefault="false" level="ERROR"
+        groupName="Type compatibility"                            enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachSourceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="GenericObjectTypeUsageInspection"              displayName="Usage of object type in PhpDoc"

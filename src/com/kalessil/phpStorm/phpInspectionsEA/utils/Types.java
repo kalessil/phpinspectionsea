@@ -20,8 +20,7 @@ public class Types {
     final static public String strObject   = "object";
 
     final static public String strResolvingAbortedOnPsiLevel = "\\aborted-on-psi-level";
-    final static public String strClassNotResolved= "\\class-not-resolved";
-    //final static public String strNotProcessed = "\\not-processed";
+    final static public String strClassNotResolved           = "\\class-not-resolved";
 
     static private HashMap<String, String> mapTypes = null;
     static private HashMap<String, String> getTypesMap () {

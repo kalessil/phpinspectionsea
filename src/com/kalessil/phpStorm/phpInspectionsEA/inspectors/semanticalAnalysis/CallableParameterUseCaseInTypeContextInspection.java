@@ -201,7 +201,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                 /** classes/interfaces */
                 if (strType.length() > 0 && strType.charAt(0) == '\\') {
                     /** collect classes/interfaces for type we going to analyse for compatibility */
-                    Collection<PhpClass> classesToTest = PhpIndexUtil.getObjectInterfaces(strType, objIndex);
+                    Collection<PhpClass> classesToTest = PhpIndexUtil.getObjectInterfaces(strType, objIndex, false);
                     if (classesToTest.size() == 0) {
                         return false;
                     }
@@ -216,7 +216,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             continue;
                         }
 
-                        classesAllowed.addAll(PhpIndexUtil.getObjectInterfaces(strAllowedType, objIndex));
+                        classesAllowed.addAll(PhpIndexUtil.getObjectInterfaces(strAllowedType, objIndex, false));
                     }
 
                     /** run test through 2 sets */

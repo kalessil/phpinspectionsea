@@ -165,7 +165,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             }
 
             // now we are at point when analyzing classes only
-            for (PhpClass classToCheck : PhpIndexUtil.getObjectInterfaces(typeToCheck, objIndex)) {
+            for (PhpClass classToCheck : PhpIndexUtil.getObjectInterfaces(typeToCheck, objIndex, false)) {
                 boolean isOffsetFunctionsPrecessed = false;
 
                 // custom offsets management, follow annotated types

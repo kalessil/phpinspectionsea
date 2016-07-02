@@ -38,7 +38,7 @@ public class ClassInStringContextStrategy {
         LinkedList<PhpClass> listClasses = new LinkedList<PhpClass>();
         for (String strClass : objResolvedTypes) {
             if (strClass.charAt(0) == '\\') {
-                listClasses.addAll(PhpIndexUtil.getObjectInterfaces(strClass, objIndex));
+                listClasses.addAll(PhpIndexUtil.getObjectInterfaces(strClass, objIndex, false));
             }
         }
 

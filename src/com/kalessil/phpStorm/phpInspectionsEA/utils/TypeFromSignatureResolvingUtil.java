@@ -185,7 +185,7 @@ public class TypeFromSignatureResolvingUtil {
         HashSet<String> resolvedTypesSet = new HashSet<String>();
 
         /** try resolving an object interface */
-        Collection<PhpClass> objClasses = PhpIndexUtil.getObjectInterfaces(strClass, objIndex);
+        Collection<PhpClass> objClasses = PhpIndexUtil.getObjectInterfaces(strClass, objIndex, false);
         if (0 == objClasses.size() || StringUtil.isEmpty(strSlot)) {
             resolvedTypesSet.add(Types.strClassNotResolved);
             return resolvedTypesSet;

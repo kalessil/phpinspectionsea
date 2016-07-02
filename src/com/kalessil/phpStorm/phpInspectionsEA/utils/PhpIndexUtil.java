@@ -7,13 +7,13 @@ import java.util.LinkedList;
 
 public class PhpIndexUtil {
 
-    static public LinkedList<PhpClass> getObjectInterfaces(String strName, PhpIndex objIndex) {
+    static public LinkedList<PhpClass> getObjectInterfaces(String strName, PhpIndex objIndex, boolean strict) {
         LinkedList<PhpClass> collection = new LinkedList<PhpClass>();
 
         collection.addAll(objIndex.getClassesByFQN(strName));
         collection.addAll(objIndex.getInterfacesByFQN(strName));
 
-        if (collection.size() == 0) {
+        if (!strict && 0 == collection.size()) {
             collection.addAll(objIndex.getClassesByName(strName));
             collection.addAll(objIndex.getInterfacesByName(strName));
         }

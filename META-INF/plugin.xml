@@ -469,6 +469,10 @@ with a laptop.
         shortName="DeclareUseStrictTypesInspection"               displayName="'declare(strict_types=1)' is missing"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.DeclareUseStrictTypesInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="UsingInclusionReturnValueInspection"           displayName="Usage of inclusion return value"
+        groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UsingInclusionReturnValueInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

@@ -42,6 +42,8 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
         legalizedMismatchingFunctions.add("is_array");
         legalizedMismatchingFunctions.add("count");
         legalizedMismatchingFunctions.add("is_object");
+        legalizedMismatchingFunctions.add("call_user_func");
+        legalizedMismatchingFunctions.add("call_user_func_array");
         /* documentation issue */
         legalizedMismatchingFunctions.add("property_exists");
         legalizedMismatchingFunctions.add("method_exists");

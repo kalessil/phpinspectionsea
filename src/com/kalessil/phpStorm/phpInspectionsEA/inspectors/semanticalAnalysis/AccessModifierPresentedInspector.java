@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiErrorElement;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
@@ -37,7 +38,8 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                             }
                         }
 
-                        if (null != strModifiers && null != objMethod.getNameIdentifier()) {
+                        final PsiElement methodNameNode = objMethod.getNameIdentifier();
+                        if (null != strModifiers && null != methodNameNode && !(methodNameNode instanceof PsiErrorElement)) {
                             /** scan modifiers defined */
                             /** TODO: re-evaluate if JB completed modifiers list construction */
                             boolean hasAccessModifiers =
@@ -48,7 +50,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                             /** scan modifiers defined */
                             if (!hasAccessModifiers) {
                                 String strWarning = strProblemDescription.replace("%s%", objMethod.getName());
-                                holder.registerProblem(objMethod.getNameIdentifier(), strWarning, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                holder.registerProblem(methodNameNode, strWarning, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         }
                     }

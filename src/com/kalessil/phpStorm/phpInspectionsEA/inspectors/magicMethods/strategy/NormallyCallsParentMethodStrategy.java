@@ -23,7 +23,7 @@ public class NormallyCallsParentMethodStrategy {
         /* find parent with protected/public method, if not overrides anything, terminate inspection */
         PhpClass parentWithGivenMethod = null;
         for (PhpClass superClass : ownerClass.getSupers()) {
-            if (!superClass.isInterface()) {
+            if (!superClass.isInterface() && !superClass.isTrait()) {
                 Method objMethod = superClass.findOwnMethodByName(strMethodName);
                 if (null != objMethod && !objMethod.getAccess().isPrivate()) {
                     parentWithGivenMethod = superClass;

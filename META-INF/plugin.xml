@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.5.4.1</version>
+  <version>1.5.5</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -51,11 +51,19 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-07 June 2016: improvements<br/>
+22 July 2016: bug-fixes and improvements<br/>
 <br/>
-    - Exceptions handling and annotating: do not analyze test classes;<br/>
-    - Magic methods validity: check consistent __set/__get/__unset implementation;<br/>
-    - Unnecessary parentheses: fix false-positives and regressions in PS 2016.2;<br/>
+    - Usage of inclusion return value: implemented (needs manual activation);<br/>
+    - Suspicious usage of include_once/require_once return value: implemented;<br/>
+    - Foreach source to iterate over: brand new implementation; give it a try if it was deactivated;<br/>
+    - 'declare(strict_types=1)' is missing: implemented;<br/>
+<br/>
+    - Non-optimal if conditions: report literal and/or operators;<br/>
+    - Nested positive ifs: will not report if complexity increasing;<br/>
+    - Magic methods validity: handling traits properly now;<br/>
+    - Reference mismatch: will not report on call_user_func* calls;<br/>
+    - Unnecessary parentheses: will not report discovered false-positives;<br/>
+    - 'is_null(...)' could be replaced by 'null === ...': bug-fix in Quick-Fix;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

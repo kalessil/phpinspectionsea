@@ -51,19 +51,11 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-22 July 2016: bug-fixes and improvements<br/>
+22 July 2016: hot-fixes<br/>
 <br/>
-    - Usage of inclusion return value: implemented (needs manual activation);<br/>
-    - Suspicious usage of include_once/require_once return value: implemented;<br/>
-    - Foreach source to iterate over: brand new implementation; give it a try if it was deactivated;<br/>
-    - 'declare(strict_types=1)' is missing: implemented;<br/>
-<br/>
-    - Non-optimal if conditions: report literal and/or operators;<br/>
-    - Nested positive ifs: will not report if complexity increasing;<br/>
-    - Magic methods validity: handling traits properly now;<br/>
-    - Reference mismatch: will not report on call_user_func* calls;<br/>
-    - Unnecessary parentheses: will not report discovered false-positives;<br/>
-    - 'is_null(...)' could be replaced by 'null === ...': bug-fix in Quick-Fix;<br/>
+    - 'substr(...)' short-hand usage: update a warning message;<br/>
+    - Usage of inclusion return value: fix internal plugin referencing causing IDE error reports;<br/>;<br/>
+    - Non-optimal if conditions: add option for disabling newly added literal or/and operators check;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

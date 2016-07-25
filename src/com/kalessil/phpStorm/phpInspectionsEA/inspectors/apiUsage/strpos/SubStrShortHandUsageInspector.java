@@ -20,7 +20,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SubStrShortHandUsageInspector extends BasePhpInspection {
-    private static final String strProblemSimplifyLength = "'%l%' can be safely dropped, so '-%r%' is only left";
+    private static final String strProblemSimplifyLength = "Normally '%l%' can be dropped, so '-%r%' is only left (sometimes we discovering a range bug here, see bug-report #271).";
     private static final String strProblemDropLength     = "'%l%' can be safely dropped";
 
     @NotNull

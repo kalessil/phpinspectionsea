@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.5.5</version>
+  <version>1.5.5.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -51,7 +51,7 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-22 July 2016: hot-fixes<br/>
+25 July 2016: hot-fixes<br/>
 <br/>
     - 'substr(...)' short-hand usage: update a warning message;<br/>
     - Usage of inclusion return value: fix internal plugin referencing causing IDE error reports;<br/>;<br/>

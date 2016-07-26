@@ -12,3 +12,5 @@ I want to say thank you and mention people who also contributed to this plugin.
 [Alexander Makarov](https://bitbucket.org/samdark)
 
 [Ryan Shay](https://bitbucket.org/ryanshay)
+
+[Ivan Scherbak](https://bitbucket.org/funivan)

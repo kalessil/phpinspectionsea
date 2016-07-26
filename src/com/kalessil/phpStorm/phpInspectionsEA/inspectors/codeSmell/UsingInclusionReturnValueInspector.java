@@ -16,7 +16,7 @@ public class UsingInclusionReturnValueInspector  extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return "UsingInclusionReturnValueInspectorion";
+        return "UsingInclusionReturnValueInspection";
     }
 
     @Override

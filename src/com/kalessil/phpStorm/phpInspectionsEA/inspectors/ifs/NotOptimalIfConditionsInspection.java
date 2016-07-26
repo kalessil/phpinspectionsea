@@ -17,22 +17,29 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
+import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
+    // configuration flags automatically saved by IDE
+    public boolean REPORT_LITERAL_OPERATORS = true;
+
     private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behaves properly with instanceof in this scenario";
     private static final String strProblemDescriptionConditionPartsIdentical   = "Probable bug: left and right operands are identical";
 
-    private static final String strProblemDescriptionInstanceOfAmbiguous = "This condition is ambiguous and can be safely removed";
-    private static final String strProblemDescriptionOrdering            = "This condition execution costs less than previous one";
-    private static final String strProblemDescriptionDuplicateConditions = "This condition is duplicated in other if/elseif branch";
-    private static final String strProblemDescriptionBooleans            = "This boolean in condition makes no sense or enforces condition result";
+    private static final String strProblemDescriptionInstanceOfAmbiguous     = "This condition is ambiguous and can be safely removed";
+    private static final String strProblemDescriptionOrdering                = "This condition execution costs less than previous one";
+    private static final String strProblemDescriptionDuplicateConditions     = "This condition is duplicated in other if/elseif branch";
+    private static final String strProblemDescriptionBooleans                = "This boolean in condition makes no sense or enforces condition result";
     private static final String strProblemDescriptionDuplicateConditionPart  = "This call is duplicated in conditions set";
     private static final String strProblemDescriptionIssetCanBeMergedAndCase = "This can be merged into previous 'isset(..., ...[, ...])'";
     private static final String strProblemDescriptionIssetCanBeMergedOrCase  = "This can be merged into previous '!isset(..., ...[, ...])'";
@@ -88,7 +95,9 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                     objConditionsFromStatement.clear();
 
-                    AndOrWordsUsageStrategy.apply(ifStatement.getCondition(), holder);
+                    if (REPORT_LITERAL_OPERATORS) {
+                        AndOrWordsUsageStrategy.apply(ifStatement.getCondition(), holder);
+                    }
                 }
 
                 for (ElseIf objElseIf : ifStatement.getElseIfBranches()) {
@@ -107,7 +116,9 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                         objConditionsFromStatement.clear();
 
-                        AndOrWordsUsageStrategy.apply(objElseIf.getCondition(), holder);
+                        if (REPORT_LITERAL_OPERATORS) {
+                            AndOrWordsUsageStrategy.apply(objElseIf.getCondition(), holder);
+                        }
                     }
                 }
 
@@ -703,5 +714,32 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 return 10;
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return (new NotOptimalIfConditionsInspection.OptionsPanel()).getComponent();
+    }
+
+    public class OptionsPanel {
+        final private JPanel optionsPanel;
+
+        final private JCheckBox reportLiteralOperators;
+
+        public OptionsPanel() {
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
+
+            reportLiteralOperators = new JCheckBox("Report literal and/or operators", REPORT_LITERAL_OPERATORS);
+            reportLiteralOperators.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    REPORT_LITERAL_OPERATORS = reportLiteralOperators.isSelected();
+                }
+            });
+            optionsPanel.add(reportLiteralOperators, "wrap");
+        }
+
+        public JPanel getComponent() {
+            return optionsPanel;
+        }
     }
 }

@@ -1,9 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
@@ -30,10 +34,61 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
 
                 PsiElement objDefaultValue = field.getDefaultValue();
                 if (objDefaultValue instanceof ConstantReference && PhpType.NULL == ((ConstantReference) objDefaultValue).getType()) {
-                    holder.registerProblem(objDefaultValue, strProblemDescription, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                    holder.registerProblem(objDefaultValue, strProblemDescription, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new TheLocalFix());
                 }
             }
         };
     }
+
+    private static class TheLocalFix implements LocalQuickFix {
+
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Remove null assignment";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+
+            final PsiElement constantRef = descriptor.getPsiElement();
+
+
+            /* detect assign element */
+            PsiElement assignment = constantRef.getPrevSibling();
+            if (assignment instanceof PsiWhiteSpace) {
+                assignment = assignment.getPrevSibling();
+            }
+
+            if (assignment == null) {
+                // Can not detect assign
+                return;
+            }
+
+            /* delete space before the assignment */
+            PsiElement prevExpression = assignment.getPrevSibling();
+            if (prevExpression instanceof PsiWhiteSpace) {
+                prevExpression.delete();
+            }
+
+            /* delete space after the assignment */
+            PsiElement nextExpression = assignment.getNextSibling();
+            if (nextExpression instanceof PsiWhiteSpace) {
+                nextExpression.delete();
+            }
+
+            /* delete assignment */
+            assignment.delete();
+            constantRef.delete();
+        }
+    }
+
 }
 

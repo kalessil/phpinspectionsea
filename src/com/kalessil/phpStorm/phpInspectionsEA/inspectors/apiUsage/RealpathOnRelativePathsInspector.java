@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class RealpathOnRelativePathsInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Relies on relative path, what will not work properly within phar:// stream due to realpath. Try using dirname instead.";
+    private static final String strProblemDescription = "Relies on relative path, what will not work properly within phar:// stream due to realpath (see PHP 'bug' #52769). Try using dirname instead.";
 
     @NotNull
     public String getShortName() {

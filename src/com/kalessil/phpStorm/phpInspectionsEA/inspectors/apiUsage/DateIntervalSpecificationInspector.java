@@ -5,9 +5,11 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.NewExpression;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.Variable;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -57,6 +59,10 @@ public class DateIntervalSpecificationInspector  extends BasePhpInspection {
                 final StringLiteralExpression pattern = ExpressionSemanticUtil.resolveAsStringLiteral(params[0]);
                 if (null != pattern) {
                     final String patternText = pattern.getContents();
+                    /* do not process patterns with inline variables */
+                    if (patternText.indexOf('$') >= 0 && PsiTreeUtil.findChildrenOfType(pattern, Variable.class).size() > 0) {
+                        return;
+                    }
 
                     Matcher regexMatcher = regexRegular.matcher(patternText);
                     if (!regexMatcher.find()) {

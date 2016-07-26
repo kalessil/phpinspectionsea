@@ -8,6 +8,7 @@
 
 
     /* not reported */
+    $x = new DateInterval("P28D{$inline}");
     $x = new DateTime('28D');
     $x = new DateInterval('P28D');
     $x = new DateInterval('P0000-00-00T00:00:01');

@@ -7,7 +7,6 @@ Inspections Lists (Quick-fixes for next release)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
 | Performance          | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                  | Prio1 |
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | Prio1 |
-| Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | Prio1 |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                  | Prio1 |
 | Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                  | Prio1 |
 
@@ -53,6 +52,7 @@ Inspections Lists (Unused)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
 | Unused               | OnlyWritesOnParameterInspection                 | Parameter/variable is not used                      | n/a |
 | Unused               | UselessUnsetInspection                          | Useless unset                                       | n/a |
+| Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | yes |
 
 Inspections Lists (Compatibility)
 ---

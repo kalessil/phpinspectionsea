@@ -53,7 +53,7 @@ public class DateIntervalSpecificationInspector  extends BasePhpInspection {
                     return;
                 }
 
-                /**/
+                /* now try getting string literal and test against valid patterns */
                 final StringLiteralExpression pattern = ExpressionSemanticUtil.resolveAsStringLiteral(params[0]);
                 if (null != pattern) {
                     final String patternText = pattern.getContents();

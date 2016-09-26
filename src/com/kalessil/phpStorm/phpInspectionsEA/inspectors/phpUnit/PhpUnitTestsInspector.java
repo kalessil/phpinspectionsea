@@ -67,22 +67,20 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
                     if (tagName.equals("@depends") && tag.getFirstPsiChild() instanceof PhpDocRef) {
                         final PhpDocRef methodNeeded = (PhpDocRef) tag.getFirstPsiChild();
-                        if (!(methodNeeded.resolve() instanceof Method)) {
-                            holder.registerProblem(objMethodName, "@depends referencing a non-existing method", ProblemHighlightType.GENERIC_ERROR);
+                        /* if resolved properly, it will have 1 reference */
+                        if (1 != methodNeeded.getReferences().length) {
+                            holder.registerProblem(objMethodName, "@depends referencing to a non-existing entity", ProblemHighlightType.GENERIC_ERROR);
                             continue;
                         }
                     }
 
                     if (tagName.equals("@covers") && tag.getFirstPsiChild() instanceof PhpDocRef) {
                         final PhpDocRef referenceNeeded = (PhpDocRef) tag.getFirstPsiChild();
-                        final String referenceText      = referenceNeeded.getText();
+                        final int referencesToExpect    = referenceNeeded.getText().contains("::") ? 2 : 1;
 
-                        final PsiElement resolvedReference = referenceNeeded.resolve();
-                        if (
-                            null == resolvedReference ||
-                            (resolvedReference instanceof PhpClass && referenceText.contains("::") && !referenceText.endsWith("::"))
-                        ) {
-                            holder.registerProblem(objMethodName, "@covers referencing a non-existing class/method/function", ProblemHighlightType.GENERIC_ERROR);
+                        /* if resolved properly, it will will have references */
+                        if (referencesToExpect != referenceNeeded.getReferences().length) {
+                            holder.registerProblem(objMethodName, "@covers referencing to a non-existing entity", ProblemHighlightType.GENERIC_ERROR);
                             continue;
                         }
                     }

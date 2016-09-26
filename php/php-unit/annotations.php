@@ -17,7 +17,7 @@ class theOneToCover
 class theOneToCoverTest
 {
     /**  */
-    public function init() // <- reported as not a UT
+    public function init() // not reported (once was reported as not a test)
     {
     }
 

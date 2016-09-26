@@ -8,8 +8,10 @@
   <depends>com.intellij.modules.platform</depends>
 
   <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="143.1480" />
+  <idea-version since-build="162.1889" />
   <!-- SDKs:
+     162.1889                           -> PhpStorm 2016.2.1
+
     141.2462 — 141.2462  PS 9.0.2      -> 1.3.9   [ok]
     143.382  — 143.382   PS 10.0.1     -> 1.3.9.1 [ok]
     143.1184 — 143.1184  PS 10.0.2     -> 1.3.9.2 [ok]
@@ -51,11 +53,9 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-25 July 2016: hot-fixes<br/>
+26 September 2016: hot-fix for PhpStorm 2016.2.1<br/>
 <br/>
-    - 'substr(...)' short-hand usage: update a warning message;<br/>
-    - Usage of inclusion return value: fix internal plugin referencing causing IDE error reports;<br/>;<br/>
-    - Non-optimal if conditions: add option for disabling newly added literal or/and operators check;<br/>
+    - Fixed no such method exception;<br/>
 <br/>
 <hr/>
   ]]></change-notes>

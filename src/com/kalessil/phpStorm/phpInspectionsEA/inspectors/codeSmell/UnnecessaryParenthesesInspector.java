@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -63,6 +64,13 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     (parent instanceof ParameterList && argument instanceof TernaryExpression) ||
                     (parent instanceof MethodReference && argument instanceof NewExpression)
                 ;
+
+                /* (clone ...)->...: detection moved into separate if-block */
+                if (!knowsLegalCases && parent instanceof MethodReference && argument instanceof UnaryExpression) {
+                    final PsiElement operator = ((UnaryExpression) argument).getOperation();
+                    knowsLegalCases = null != operator && PhpTokenTypes.kwCLONE == operator.getNode().getElementType();
+                }
+
                 if (knowsLegalCases) {
                     return;
                 }

@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.Function;
@@ -27,9 +28,10 @@ public class MoreThanThreeArgumentsInspector extends BasePhpInspection {
             }
 
             public void visitPhpFunction(Function function) {
-                PsiElement objFunctionName = function.getNameIdentifier();
-                if (objFunctionName != null && function.getParameters().length > 3) {
-                    holder.registerProblem(objFunctionName, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                final PsiElement functionName   = function.getNameIdentifier();
+                final boolean isValidIdentifier = functionName != null && !StringUtil.isEmpty(functionName.getText());
+                if (isValidIdentifier && function.getParameters().length > 3) {
+                    holder.registerProblem(functionName, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
                 }
             }
         };

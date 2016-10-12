@@ -26,7 +26,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
         return "StrStrUsedAsStrPosInspection";
     }
 
-    private static HashMap<String, String> mapping = new HashMap<String, String>();
+    private static final HashMap<String, String> mapping = new HashMap<String, String>();
     static {
         mapping.put("strstr",  "strpos");
         mapping.put("stristr", "stripos");

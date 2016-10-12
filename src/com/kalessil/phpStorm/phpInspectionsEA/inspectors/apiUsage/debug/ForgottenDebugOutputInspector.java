@@ -73,7 +73,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         return "ForgottenDebugOutputInspection";
     }
 
-    private static HashMap<String, Integer> functionsRequirements = new HashMap<String, Integer>();
+    private static final HashMap<String, Integer> functionsRequirements = new HashMap<String, Integer>();
     static {
         /* function name => amount of arguments considered legal */
         functionsRequirements.put("print_r",               2);

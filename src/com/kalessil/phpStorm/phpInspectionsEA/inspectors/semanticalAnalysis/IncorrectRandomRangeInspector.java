@@ -17,7 +17,7 @@ import java.util.HashSet;
 public class IncorrectRandomRangeInspector extends BasePhpInspection {
     private static final String strProblemDescription = "The range is not defined properly";
 
-    private static HashSet<String> functions = new HashSet<String>();
+    private static final HashSet<String> functions = new HashSet<String>();
     static {
         functions.add("mt_rand");
         functions.add("random_int");

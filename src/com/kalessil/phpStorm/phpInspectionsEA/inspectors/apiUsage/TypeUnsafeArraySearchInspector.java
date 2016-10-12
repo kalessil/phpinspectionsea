@@ -21,7 +21,7 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
         return "TypeUnsafeArraySearchInspection";
     }
 
-    private static HashSet<String> functionsSet = new HashSet<String>();
+    private static final HashSet<String> functionsSet = new HashSet<String>();
     static {
         functionsSet.add("array_search");
         functionsSet.add("in_array");

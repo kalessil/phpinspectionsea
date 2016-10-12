@@ -23,7 +23,7 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         return "AliasFunctionsUsageInspection";
     }
 
-    private static HashMap<String, String> mapping = new HashMap<String, String>();
+    private static final HashMap<String, String> mapping = new HashMap<String, String>();
     static {
         mapping.put("is_double",            "is_float");
         mapping.put("is_integer",           "is_int");

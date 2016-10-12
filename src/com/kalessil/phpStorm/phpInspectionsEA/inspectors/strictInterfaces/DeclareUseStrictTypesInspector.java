@@ -34,7 +34,7 @@ public class DeclareUseStrictTypesInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* fin and inspect all declarations, hopefully you respect small files approach :) */
+                /* find and inspect all declarations, hopefully you respect small files approach :) */
                 boolean isStrictRegardingTypes = false;
                 final Collection<DeclareImpl> declares = PsiTreeUtil.findChildrenOfType(file, DeclareImpl.class);
                 if (declares.size() > 0) {

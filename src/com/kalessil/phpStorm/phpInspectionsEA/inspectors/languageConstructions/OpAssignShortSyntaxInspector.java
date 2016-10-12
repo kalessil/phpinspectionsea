@@ -24,7 +24,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
         return "OpAssignShortSyntaxInspection";
     }
 
-    private static HashMap<IElementType, IElementType> mapping = new HashMap<IElementType, IElementType>();
+    private static final HashMap<IElementType, IElementType> mapping = new HashMap<IElementType, IElementType>();
     static {
         // todo: check when JB added constants for %
         mapping.put(PhpTokenTypes.opPLUS,        PhpTokenTypes.opPLUS_ASGN);

@@ -25,7 +25,7 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
         return "PrintfScanfArgumentsInspection";
     }
 
-    private static HashMap<String, Integer> functions = new HashMap<String, Integer>();
+    private static final HashMap<String, Integer> functions = new HashMap<String, Integer>();
     static {
         /* pairs function name -> pattern position */
         functions.put("printf",  0);

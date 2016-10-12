@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 public class IsNullFunctionUsageInspector extends BasePhpInspection {
     private static final String strProblemDescriptionIsNull  = "'null === ...' construction shall be used instead";
     private static final String strProblemDescriptionNotNull = "'null !== ...' construction shall be used instead";
-    private static final String strIsNull = "is_null";
 
     @NotNull
     public String getShortName() {
@@ -36,7 +35,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                 /* check parameters amount and name */
                 final String strFunctionName = reference.getName();
                 final int parametersCount    = reference.getParameters().length;
-                if (1 != parametersCount || StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals(strIsNull)) {
+                if (1 != parametersCount || StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("is_null")) {
                     return;
                 }
 

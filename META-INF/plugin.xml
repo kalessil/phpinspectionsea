@@ -128,7 +128,7 @@ with a laptop.
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrTrUsageAsStrReplaceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="CaseInsensitiveStringFunctionsMissUseInspection" displayName="'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()'"
+        shortName="CaseInsensitiveStringFunctionsMissUseInspection" displayName="'stristr(...)/stripos(...)/strripos(...)' could be replaced with 'strstr(...)/strpos()/strrpos()'"
         groupName="Performance"                                     enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.CaseInsensitiveStringFunctionsMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -152,7 +152,7 @@ with a laptop.
         groupName="Performance"                                   enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.InArrayMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="LowPerformanceArrayUniqueUsageInspection"      displayName="'array_unique()' low performing usage"
+        shortName="LowPerformanceArrayUniqueUsageInspection"      displayName="'array_unique(...)' low performing usage"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.LowPerformanceArrayUniqueUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -259,6 +259,10 @@ with a laptop.
         shortName="MultiAssignmentUsageInspection"                 displayName="'list(...) = ' usage possible"
         groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.MultiAssignmentUsageInspector"/>
+  <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="GetTypeMissUseInspection"                      displayName="'gettype(...)' could be replaces with 'is_*(...)'"
+         groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.GetTypeMissUseInspector"/>
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
        shortName="ArrayFunctionsInvariantsInspection"             displayName="Foreach behaves as an array function"
        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"

@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class IssetAndNullComparisonStrategy {
-    final static String messagePattern = "It seems like '%e%' is already covered by isset";
+    private final static String messagePattern = "It seems like '%e%' is already covered by isset";
 
     static public boolean apply(@NotNull LinkedList<PsiElement> conditions, @NotNull ProblemsHolder holder) {
         /* first ensure that we have null identity checks at all */

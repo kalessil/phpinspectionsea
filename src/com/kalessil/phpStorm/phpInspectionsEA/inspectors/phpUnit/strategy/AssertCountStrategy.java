@@ -14,7 +14,7 @@ import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import org.jetbrains.annotations.NotNull;
 
 public class AssertCountStrategy {
-    final static String message = "assertCount should be used instead";
+    private final static String message = "assertCount should be used instead";
 
     static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();

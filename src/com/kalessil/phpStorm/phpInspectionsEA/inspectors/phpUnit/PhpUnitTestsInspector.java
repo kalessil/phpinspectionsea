@@ -32,6 +32,7 @@ import java.util.Collection;
 
 public class PhpUnitTestsInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_TO_USE_ASSERTSAME = false;
 
     @NotNull

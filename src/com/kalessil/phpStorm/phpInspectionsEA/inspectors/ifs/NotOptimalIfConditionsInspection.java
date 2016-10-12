@@ -31,6 +31,7 @@ import java.util.Map;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
     public boolean REPORT_LITERAL_OPERATORS = true;
 
     private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behaves properly with instanceof in this scenario";

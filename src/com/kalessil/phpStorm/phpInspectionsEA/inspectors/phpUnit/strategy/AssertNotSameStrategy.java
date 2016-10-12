@@ -12,7 +12,7 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import org.jetbrains.annotations.NotNull;
 
 public class AssertNotSameStrategy {
-    final static String message = "This check is type-unsafe, consider using assertNotSame instead";
+    private final static String message = "This check is type-unsafe, consider using assertNotSame instead";
 
     static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();

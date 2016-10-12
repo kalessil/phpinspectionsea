@@ -23,7 +23,9 @@ import java.util.HashSet;
 
 public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_TO_USE_ARRAY_KEY_EXISTS = true;
+    @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_TO_USE_NULL_COMPARISON = true;
 
     // static messages for triggered messages

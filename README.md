@@ -39,6 +39,7 @@ Inspections Lists (Control flow)
 | Control flow         | PdoApiUsageInspection                           | PDO api usage                                       | n/a |
 | Control flow         | OneTimeUseVariablesInspection                   | One-time use variables                              | yes |
 | Control flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                       | no  |
+| Control flow         | GetTypeMissUseInspector                         | 'gettype(...)' could be replaced with 'is_*(...)'   | yes |
 
 Inspections Lists (PhpUnit)
 ---

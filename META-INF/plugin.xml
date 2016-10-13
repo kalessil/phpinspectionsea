@@ -260,8 +260,8 @@ with a laptop.
         groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.MultiAssignmentUsageInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-         shortName="GetTypeMissUseInspection"                      displayName="'gettype(...)' could be replaces with 'is_*(...)'"
-         groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
+         shortName="GetTypeMissUseInspection"                      displayName="'gettype(...)' could be replaced with 'is_*(...)'"
+         groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.GetTypeMissUseInspector"/>
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
        shortName="ArrayFunctionsInvariantsInspection"             displayName="Foreach behaves as an array function"

@@ -480,7 +480,7 @@ with a laptop.
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnnecessaryPropertyDependenciesInspection"     displayName="Unnecessary property"
         groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessaryPropertyDependenciesInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessaryPropertyInitializationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UsingInclusionReturnValueInspection"           displayName="Usage of inclusion return value"
         groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"

@@ -56,6 +56,7 @@ Inspections Lists (Unused)
 | Unused               | OnlyWritesOnParameterInspection                 | Parameter/variable is not used                      | n/a |
 | Unused               | UselessUnsetInspection                          | Useless unset                                       | n/a |
 | Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | yes |
+| Unused               | UnusedConstructorDependenciesInspector          | Unused constructor dependencies                     | n/a |
 
 Inspections Lists (Compatibility)
 ---

@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
-    private static final String message = "This construct is probably unnecessary as property seems to be not used";
+    private static final String message = "Parent construct is probably dead code as the property is not used anywhere else";
 
     @NotNull
     public String getShortName() {
@@ -159,7 +159,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
 
                             /* report directly expressions in constructor, PS will cover unused fields detection */
                             for (FieldReference reference : constructorsReferences.get(fieldName)) {
-                                holder.registerProblem(reference, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
                             }
                         }
 

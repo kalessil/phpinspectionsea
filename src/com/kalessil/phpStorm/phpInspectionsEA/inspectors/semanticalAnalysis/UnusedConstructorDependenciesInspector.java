@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
-    private static final String message = "Parent construct is probably dead code as the property is not used anywhere else";
+    private static final String message = "Property is used only in constructor, perhaps we are dealing with dead code here";
 
     @NotNull
     public String getShortName() {

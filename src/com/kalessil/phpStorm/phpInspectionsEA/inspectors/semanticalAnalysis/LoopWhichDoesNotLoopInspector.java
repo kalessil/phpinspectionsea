@@ -49,10 +49,13 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* prevent false-positives with preceding if { ...; continue; } */
-                final StatementWithArgument lastStatement = (StatementWithArgument) lastExpression;
-                if (null != lastStatement && lastStatement.getPrevPsiSibling() instanceof If) {
-                    final GroupStatement previous = ExpressionSemanticUtil.getGroupStatement(lastStatement.getPrevPsiSibling());
+                /* prevent false-positives when loop has if { ...; continue; } at some place */
+                for (PsiElement expressionInLoopBody : groupStatement.getStatements()) {
+                    if (!(expressionInLoopBody instanceof If)) {
+                        continue;
+                    }
+
+                    final GroupStatement previous = ExpressionSemanticUtil.getGroupStatement(expressionInLoopBody);
                     if (null != previous) {
                         final PsiElement terminationCandidate = ExpressionSemanticUtil.getLastStatement(previous);
                         if (terminationCandidate instanceof PhpContinue || terminationCandidate instanceof PhpReturn) {

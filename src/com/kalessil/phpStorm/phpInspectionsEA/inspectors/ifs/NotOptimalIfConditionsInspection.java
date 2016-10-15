@@ -572,6 +572,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     );
 
                     if (!isPreviousCondCostCanBeBigger && intLoopCurrentCost < intPreviousCost) {
+                        // - detect array access variables in a current expression;
+                        // - lookup if a previous expression uses higher-level parts of the array;
                         holder.registerProblem(objCond, strProblemDescriptionOrdering, ProblemHighlightType.WEAK_WARNING);
                     }
 
@@ -607,6 +609,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     return 0;
                 }
                 if (objExpression instanceof FieldReference) {
+                    /* $x->y and $x->y->z to have the same cost. Because of magic methods, which are slower. */
                     return getExpressionCost(((FieldReference) objExpression).getFirstPsiChild(), functionsSetToAllow);
                 }
 

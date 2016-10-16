@@ -3,16 +3,15 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy.AndOrWordsUsageStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy.IssetAndNullComparisonStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -562,7 +561,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 int intLoopCurrentCost;
                 boolean isPreviousCondCostCanBeBigger;
                 for (PsiElement objCond : objPartsCollection) {
-                    intLoopCurrentCost = this.getExpressionCost(objCond, functionsSetToAllow);
+                    intLoopCurrentCost = ExpressionCostEstimateUtil.getExpressionCost(objCond, functionsSetToAllow);
 
                     /* special case when costs estimation is overridden with general practices */
                     isPreviousCondCostCanBeBigger = (
@@ -583,140 +582,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                 return objPartsCollection;
             }
-
-            /**
-             * Estimates execution cost on basis 0-10 for simple parts. Complex constructions can be estimated
-             * to more than 10.
-             *
-             * @param objExpression to estimate for execution cost
-             * @return costs
-             */
-            private int getExpressionCost(@Nullable PsiElement objExpression, @NotNull HashSet<String> functionsSetToAllow) {
-                objExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(objExpression);
-
-                if (
-                    null == objExpression ||
-                    objExpression instanceof ConstantReference ||
-                    objExpression instanceof StringLiteralExpression ||
-                    objExpression instanceof ClassReference ||
-                    objExpression instanceof Variable
-                ) {
-                    return 0;
-                }
-
-                /* additional factor is due to hash-maps internals not considered */
-                if (objExpression instanceof ClassConstantReference) {
-                    return 0;
-                }
-                if (objExpression instanceof FieldReference) {
-                    /* $x->y and $x->y->z to have the same cost. Because of magic methods, which are slower. */
-                    return getExpressionCost(((FieldReference) objExpression).getFirstPsiChild(), functionsSetToAllow);
-                }
-
-                /* additional factor is due to hash-maps internals */
-                if (objExpression instanceof ArrayAccessExpression) {
-                    ArrayAccessExpression arrayAccess = (ArrayAccessExpression) objExpression;
-                    ArrayIndex arrayIndex             =  arrayAccess.getIndex();
-
-                    int intOwnCosts = getExpressionCost(arrayAccess.getValue(), functionsSetToAllow);
-                    if (null != arrayIndex) {
-                        intOwnCosts += getExpressionCost(arrayIndex.getValue(), functionsSetToAllow);
-                    }
-
-                    return (1 + intOwnCosts);
-                }
-
-                /* empty counts too much as empty, so it still sensitive overhead, but not add any factor */
-                if (objExpression instanceof PhpEmpty) {
-                    int intArgumentsCost = 0;
-                    for (PsiElement objParameter : ((PhpEmpty) objExpression).getVariables()) {
-                        intArgumentsCost += this.getExpressionCost(objParameter, functionsSetToAllow);
-                    }
-
-                    return intArgumentsCost;
-                }
-
-                /* isset brings no additional costs, often used for aggressive optimization */
-                if (objExpression instanceof PhpIsset) {
-                    int intArgumentsCost = 0;
-                    for (PsiElement objParameter : ((PhpIsset) objExpression).getVariables()) {
-                        intArgumentsCost += this.getExpressionCost(objParameter, functionsSetToAllow);
-                    }
-
-                    return intArgumentsCost;
-                }
-
-                /* didn't see anu usages in if, but who knows */
-                if (objExpression instanceof PhpUnset) {
-                    int intArgumentsCost = 0;
-                    for (PsiElement objParameter : ((PhpUnset) objExpression).getArguments()) {
-                        intArgumentsCost += this.getExpressionCost(objParameter, functionsSetToAllow);
-                    }
-
-                    return intArgumentsCost;
-                }
-
-                if (objExpression instanceof FunctionReference) {
-                    int intArgumentsCost = 0;
-                    for (PsiElement objParameter : ((FunctionReference) objExpression).getParameters()) {
-                        intArgumentsCost += this.getExpressionCost(objParameter, functionsSetToAllow);
-                    }
-
-                    /* quite complex part - differentiate methods, functions and specially type-check functions */
-                    if (objExpression instanceof MethodReference) {
-                        intArgumentsCost += this.getExpressionCost(((MethodReference) objExpression).getFirstPsiChild(), functionsSetToAllow);
-                        intArgumentsCost += 5;
-                    } else {
-                        String strFunctionName = ((FunctionReference) objExpression).getName();
-                        /* type-check functions and rest functions */
-                        if (!StringUtil.isEmpty(strFunctionName) && functionsSetToAllow.contains(strFunctionName)) {
-                            intArgumentsCost += 0;
-                        } else {
-                            intArgumentsCost += 5;
-                        }
-                    }
-
-                    return intArgumentsCost;
-                }
-
-                if (objExpression instanceof UnaryExpression) {
-                    return this.getExpressionCost(((UnaryExpression) objExpression).getValue(), functionsSetToAllow);
-                }
-
-/*                if (objExpression instanceof TernaryExpression) {
-                    return
-                        this.getExpressionCost(((TernaryExpression) objExpression).getCondition()) +
-                        Math.max(
-                                this.getExpressionCost(((TernaryExpression) objExpression).getTrueVariant()),
-                                this.getExpressionCost(((TernaryExpression) objExpression).getFalseVariant())
-                        );
-                }
-*/
-
-                if (objExpression instanceof BinaryExpression) {
-                    return
-                        this.getExpressionCost(((BinaryExpression) objExpression).getRightOperand(), functionsSetToAllow) +
-                        this.getExpressionCost(((BinaryExpression) objExpression).getLeftOperand(), functionsSetToAllow);
-                }
-
-                if (objExpression instanceof ArrayCreationExpression) {
-                    int intCosts = 0;
-                    for (ArrayHashElement objEntry : ((ArrayCreationExpression) objExpression).getHashElements()) {
-                        intCosts += this.getExpressionCost(objEntry.getKey(), functionsSetToAllow);
-                        intCosts += this.getExpressionCost(objEntry.getValue(), functionsSetToAllow);
-                    }
-                    return intCosts;
-                }
-
-                if (
-                    objExpression instanceof PhpExpression &&
-                    objExpression.getNode().getElementType() == PhpElementTypes.NUMBER
-                ) {
-                    return 0;
-                }
-
-                return 10;
-            }
         };
     }
 
@@ -724,7 +589,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
         return (new NotOptimalIfConditionsInspection.OptionsPanel()).getComponent();
     }
 
-    public class OptionsPanel {
+    private class OptionsPanel {
         final private JPanel optionsPanel;
 
         final private JCheckBox reportLiteralOperators;
@@ -742,7 +607,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             optionsPanel.add(reportLiteralOperators, "wrap");
         }
 
-        public JPanel getComponent() {
+        JPanel getComponent() {
             return optionsPanel;
         }
     }

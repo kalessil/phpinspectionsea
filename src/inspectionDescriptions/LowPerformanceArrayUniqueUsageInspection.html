@@ -1,9 +1,9 @@
 <html>
 <body>
-Analyses array_unique(...) calls and reports slow usage cases.
+Analyzes array_unique(...) calls and reports cases when it may cause performance issues.
 <!-- tooltip end -->
 To improve performance and memory usage, the following pattern should be used 
-(array_merge would create temporary arrays of growing size on each iteration).
+(array_merge would create temporary arrays of growing size on each iteration):
 <code>
     $arrSequencesContainer = array();
 

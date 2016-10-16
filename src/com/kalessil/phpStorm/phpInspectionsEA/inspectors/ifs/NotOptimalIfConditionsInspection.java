@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy.AndOrWordsUsageStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy.IssetAndNullComparisonStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionsCouplingCheckUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -554,8 +555,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
                 /* verify if costs estimated are optimal */
-                int intPreviousCost = 0;
-                PsiElement objPreviousCond = null;
+                int intPreviousCost                 = 0;
+                PsiElement objPreviousCond          = null;
                 HashSet<String> functionsSetToAllow = getFunctionsSet();
 
                 int intLoopCurrentCost;
@@ -570,9 +571,10 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         /* ! no isset, empty or array access here */
                     );
 
-                    if (!isPreviousCondCostCanBeBigger && intLoopCurrentCost < intPreviousCost) {
-                        // - detect array access variables in a current expression;
-                        // - lookup if a previous expression uses higher-level parts of the array;
+                    if (
+                        !isPreviousCondCostCanBeBigger && intLoopCurrentCost < intPreviousCost &&
+                        null != objPreviousCond && !ExpressionsCouplingCheckUtil.isSecondCoupledWithFirst(objPreviousCond, objCond)
+                    ) {
                         holder.registerProblem(objCond, strProblemDescriptionOrdering, ProblemHighlightType.WEAK_WARNING);
                     }
 

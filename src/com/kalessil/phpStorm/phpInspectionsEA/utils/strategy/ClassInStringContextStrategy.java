@@ -14,7 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-public class ClassInStringContextStrategy {
+final public class ClassInStringContextStrategy {
     public static boolean apply (
         PsiElement objNonStringOperand,
         ProblemsHolder holder,

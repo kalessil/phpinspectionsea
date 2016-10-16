@@ -9,7 +9,7 @@ import com.jetbrains.php.refactoring.PhpRefactoringUtil;
 
 import java.util.HashSet;
 
-public class TypeFromPlatformResolverUtil {
+final public class TypeFromPlatformResolverUtil {
     public static void resolveExpressionType(PsiElement objSubjectExpression, HashSet<String> objTypesSet) {
         Project project = objSubjectExpression.getProject();
 

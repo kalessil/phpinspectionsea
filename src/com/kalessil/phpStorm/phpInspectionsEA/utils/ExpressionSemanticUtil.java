@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-public class ExpressionSemanticUtil {
+final public class ExpressionSemanticUtil {
     /**
      * @param ifStatement if expression to check
      * @return boolean

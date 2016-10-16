@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class TypeFromPsiResolvingUtil {
+final public class TypeFromPsiResolvingUtil {
 
     /** adds type, handling | and #, invoking signatures resolving */
     private static void storeAsTypeWithSignaturesImport(String strTypeToImport, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {

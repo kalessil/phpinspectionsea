@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class IssetAndNullComparisonStrategy {
+final public class IssetAndNullComparisonStrategy {
     private final static String messagePattern = "It seems like '%e%' is already covered by isset";
 
     static public boolean apply(@NotNull LinkedList<PsiElement> conditions, @NotNull ProblemsHolder holder) {

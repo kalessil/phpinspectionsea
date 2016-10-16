@@ -5,7 +5,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 
 import java.util.LinkedList;
 
-public class PhpIndexUtil {
+final public class PhpIndexUtil {
 
     static public LinkedList<PhpClass> getObjectInterfaces(String strName, PhpIndex objIndex, boolean strict) {
         LinkedList<PhpClass> collection = new LinkedList<PhpClass>();

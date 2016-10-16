@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
-public class TypeFromSignatureResolvingUtil {
+final public class TypeFromSignatureResolvingUtil {
 
     static public void resolveSignature (String strSignatureToResolve, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> extractedTypesSet) {
         /** do nothing with empty signatures */

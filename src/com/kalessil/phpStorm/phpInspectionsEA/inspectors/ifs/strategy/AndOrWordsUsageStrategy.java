@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public class AndOrWordsUsageStrategy {
+final public class AndOrWordsUsageStrategy {
     private final static String messagePattern = "'%o%' should be used instead (best practices)";
 
     static public void apply(PsiElement condition, @NotNull ProblemsHolder holder) {

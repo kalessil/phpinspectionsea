@@ -5,7 +5,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import java.security.InvalidParameterException;
 import java.util.HashSet;
 
-public class InterfacesExtractUtil {
+final public class InterfacesExtractUtil {
     public static HashSet<PhpClass> getCrawlCompleteInheritanceTree(PhpClass objClass, boolean withClasses) {
         HashSet<PhpClass> processedItems = new HashSet<PhpClass>();
 

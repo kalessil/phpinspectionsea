@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
-public class Types {
+final public class Types {
     final static public String strArray    = "array";
     final static public String strString   = "string";
     final static public String strBoolean  = "bool";

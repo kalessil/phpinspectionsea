@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import java.util.HashSet;
 
-public class TypesSemanticsUtil {
+final public class TypesSemanticsUtil {
 
     /** check if nullable object interfaces */
     public static boolean isNullableObjectInterface(HashSet<String> resolvedTypesSet) {

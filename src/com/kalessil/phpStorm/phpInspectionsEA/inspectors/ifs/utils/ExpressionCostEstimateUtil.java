@@ -42,8 +42,8 @@ final public class ExpressionCostEstimateUtil {
 
         /* additional factor is due to hash-maps internals */
         if (objExpression instanceof ArrayAccessExpression) {
-            ArrayAccessExpression arrayAccess = (ArrayAccessExpression) objExpression;
-            ArrayIndex arrayIndex             =  arrayAccess.getIndex();
+            final ArrayAccessExpression arrayAccess = (ArrayAccessExpression) objExpression;
+            final ArrayIndex arrayIndex             =  arrayAccess.getIndex();
 
             int intOwnCosts = getExpressionCost(arrayAccess.getValue(), functionsSetToAllow);
             if (null != arrayIndex) {
@@ -94,7 +94,7 @@ final public class ExpressionCostEstimateUtil {
                 intArgumentsCost += getExpressionCost(((MethodReference) objExpression).getFirstPsiChild(), functionsSetToAllow);
                 intArgumentsCost += 5;
             } else {
-                String strFunctionName = ((FunctionReference) objExpression).getName();
+                final String strFunctionName = ((FunctionReference) objExpression).getName();
                 /* type-check functions and rest functions */
                 if (!StringUtil.isEmpty(strFunctionName) && functionsSetToAllow.contains(strFunctionName)) {
                     intArgumentsCost += 0;

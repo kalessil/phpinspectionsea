@@ -4,7 +4,6 @@ import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -12,9 +11,10 @@ import java.util.HashSet;
 
 final public class ExpressionsCouplingCheckUtil {
     public static boolean isSecondCoupledWithFirst(@NotNull PsiElement first, @NotNull PsiElement second) {
-        boolean isCoupled = false;
+        boolean isCoupled                             = false;
         final HashSet<PsiElement> expressionsInSecond = new HashSet<PsiElement>();
 
+        /* TODO: non-static method/property */
         final Collection<ArrayAccessExpression> arrayAccess = PsiTreeUtil.findChildrenOfType(second, ArrayAccessExpression.class);
         if (arrayAccess.size() > 0) {
             /* extract array accesses, get unique variable expressions from them */

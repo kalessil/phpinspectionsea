@@ -11,9 +11,18 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpModifierList;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 public class AccessModifierPresentedInspector extends BasePhpInspection {
+    // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
+    public boolean ANALYZE_INTERFACES = true;
+
     private static final String strProblemDescription = "%s% should be declared with access modifier.";
 
     @NotNull
@@ -26,6 +35,11 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
+                /* community request: interfaces have only public methods, what is default access levels */
+                if (!ANALYZE_INTERFACES && clazz.isInterface()){
+                    return;
+                }
+
                 /** inspect methods */
                 for (Method objMethod : clazz.getOwnMethods()) {
                     if (objMethod.getAccess().isPublic()) {
@@ -87,5 +101,32 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return (new AccessModifierPresentedInspector.OptionsPanel()).getComponent();
+    }
+
+    private class OptionsPanel {
+        final private JPanel optionsPanel;
+
+        final private JCheckBox analyzeInterfaces;
+
+        public OptionsPanel() {
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
+
+            analyzeInterfaces = new JCheckBox("Analyze interfaces", ANALYZE_INTERFACES);
+            analyzeInterfaces.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    ANALYZE_INTERFACES = analyzeInterfaces.isSelected();
+                }
+            });
+            optionsPanel.add(analyzeInterfaces, "wrap");
+        }
+
+        JPanel getComponent() {
+            return optionsPanel;
+        }
     }
 }

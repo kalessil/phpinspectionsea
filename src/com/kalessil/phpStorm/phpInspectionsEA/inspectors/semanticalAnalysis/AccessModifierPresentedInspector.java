@@ -40,10 +40,10 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** inspect methods */
+                /* inspect methods */
                 for (Method objMethod : clazz.getOwnMethods()) {
                     if (objMethod.getAccess().isPublic()) {
-                        /** find modifiers list */
+                        /* find modifiers list */
                         String strModifiers = null;
                         for (PsiElement objChild : objMethod.getChildren()) {
                             if (objChild instanceof PhpModifierList) {
@@ -54,27 +54,27 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
 
                         final PsiElement methodNameNode = objMethod.getNameIdentifier();
                         if (null != strModifiers && null != methodNameNode && !(methodNameNode instanceof PsiErrorElement)) {
-                            /** scan modifiers defined */
-                            /** TODO: re-evaluate if JB completed modifiers list construction */
-                            boolean hasAccessModifiers =
+                            /* scan modifiers defined */
+                            /* TODO: re-evaluate if JB completed modifiers list construction */
+                            final boolean hasAccessModifiers =
                                     strModifiers.contains("public") ||
                                     strModifiers.contains("protected") ||
                                     strModifiers.contains("private");
 
-                            /** scan modifiers defined */
+                            /* scan modifiers defined */
                             if (!hasAccessModifiers) {
-                                String strWarning = strProblemDescription.replace("%s%", objMethod.getName());
-                                holder.registerProblem(methodNameNode, strWarning, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                final String message = strProblemDescription.replace("%s%", objMethod.getName());
+                                holder.registerProblem(methodNameNode, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         }
                     }
                 }
 
-                /** inspect fields */
+                /* inspect fields */
                 for (Field objField : clazz.getOwnFields()) {
-                    /** TODO: re-evaluate if JB added access api to fields */
+                    /* TODO: re-evaluate if JB added access api to fields */
                     if (!objField.isConstant()) {
-                        /** find modifiers list */
+                        /* find modifiers list */
                         String strModifiers = null;
                         for (PsiElement objChild : objField.getParent().getChildren()) {
                             if (objChild instanceof PhpModifierList) {
@@ -84,17 +84,17 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                         }
 
                         if (null != strModifiers && null != objField.getNameIdentifier()) {
-                            /** scan modifiers defined */
-                            /** TODO: re-evaluate if JB completed modifiers list construction */
-                            boolean hasAccessModifiers =
+                            /* scan modifiers defined */
+                            /* TODO: re-evaluate if JB completed modifiers list construction */
+                            final boolean hasAccessModifiers =
                                     strModifiers.contains("public") ||
                                     strModifiers.contains("protected") ||
                                     strModifiers.contains("private");
 
-                            /** report issues */
+                            /* report issues */
                             if (!hasAccessModifiers) {
-                                String strWarning = strProblemDescription.replace("%s%", objField.getName());
-                                holder.registerProblem(objField.getNameIdentifier(), strWarning, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                final String message = strProblemDescription.replace("%s%", objField.getName());
+                                holder.registerProblem(objField.getNameIdentifier(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         }
                     }

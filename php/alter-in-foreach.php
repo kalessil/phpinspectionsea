@@ -15,7 +15,7 @@
                 }
             }
         }
-        unset($level1, $level2, $level3);
+        unset($level1, $level2, $level3); // <- reported $level2, $level3
 
         foreach ($source as & $el) {
             ++$el;

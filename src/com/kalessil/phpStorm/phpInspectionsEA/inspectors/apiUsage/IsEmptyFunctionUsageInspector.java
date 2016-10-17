@@ -26,9 +26,9 @@ import java.util.HashSet;
 public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
     @SuppressWarnings("WeakerAccess")
-    public boolean REPORT_EMPTY_USAGE = true;
+    public boolean REPORT_EMPTY_USAGE = false;
     @SuppressWarnings("WeakerAccess")
-    public boolean SUGGEST_TO_USE_COUNT_CHECK = true;
+    public boolean SUGGEST_TO_USE_COUNT_CHECK = false;
     @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_TO_USE_NULL_COMPARISON = true;
 

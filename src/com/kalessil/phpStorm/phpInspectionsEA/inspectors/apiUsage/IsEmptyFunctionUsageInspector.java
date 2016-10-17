@@ -33,8 +33,8 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     public boolean SUGGEST_TO_USE_NULL_COMPARISON = true;
 
     // static messages for triggered messages
-    private static final String strProblemDescriptionDoNotUse = "'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks";
-    private static final String strProblemDescriptionUseCount = "'0 === count($...)' construction shall be used instead";
+    private static final String strProblemDescriptionDoNotUse          = "'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks";
+    private static final String strProblemDescriptionUseCount          = "'0 === count($...)' construction shall be used instead";
     private static final String strProblemDescriptionUseNullComparison = "Probably it should be 'null === $...' construction used";
     
     @NotNull
@@ -47,22 +47,22 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpEmpty(PhpEmpty emptyExpression) {
-                PhpExpression[] arrValues = emptyExpression.getVariables();
+                final PhpExpression[] arrValues = emptyExpression.getVariables();
                 if (arrValues.length == 1) {
-                    PsiElement objParameterToInspect = ExpressionSemanticUtil.getExpressionTroughParenthesis(arrValues[0]);
+                    final PsiElement objParameterToInspect = ExpressionSemanticUtil.getExpressionTroughParenthesis(arrValues[0]);
                     if (objParameterToInspect instanceof ArrayAccessExpression) {
-                        /** currently php docs lacks of array structure notations, skip it */
+                        /* currently php docs lacks of array structure notations, skip it */
                         return;
                     }
 
 
-                    /** extract types */
-                    PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
-                    Function objScope = ExpressionSemanticUtil.getScope(emptyExpression);
-                    HashSet<String> objResolvedTypes = new HashSet<String>();
+                    /* extract types */
+                    final PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
+                    final Function objScope = ExpressionSemanticUtil.getScope(emptyExpression);
+                    final HashSet<String> objResolvedTypes = new HashSet<String>();
                     TypeFromPsiResolvingUtil.resolveExpressionType(objParameterToInspect, objScope, objIndex, objResolvedTypes);
 
-                    /** Case 1: empty(array) - hidden logic - empty array */
+                    /* Case 1: empty(array) - hidden logic - empty array */
                     if (this.isArrayType(objResolvedTypes)) {
                         objResolvedTypes.clear();
 
@@ -73,7 +73,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         return;
                     }
 
-                    /** case 2: nullable classes, int, float, resource */
+                    /* case 2: nullable classes, int, float, resource */
                     if (this.isNullableCoreType(objResolvedTypes) || TypesSemanticsUtil.isNullableObjectInterface(objResolvedTypes)) {
                         objResolvedTypes.clear();
 
@@ -116,7 +116,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
         return (new IsEmptyFunctionUsageInspector.OptionsPanel()).getComponent();
     }
 
-    public class OptionsPanel {
+    private class OptionsPanel {
         final private JPanel optionsPanel;
 
         final private JCheckBox reportEmptyUsage;
@@ -152,7 +152,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
             optionsPanel.add(suggestToUseNullComparison, "wrap");
         }
 
-        public JPanel getComponent() {
+        JPanel getComponent() {
             return optionsPanel;
         }
     }

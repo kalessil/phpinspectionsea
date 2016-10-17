@@ -12,9 +12,18 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 public class AlterInForeachInspector extends BasePhpInspection {
+    // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
+    public boolean SUGGEST_USING_VALUE_BY_REF = false;
+
     private static final String strProblemDescription     = "Can be refactored as '$%c% = ...' if $%v% is defined as reference (ensure that array supplied). Suppress if causes memory mismatches.";
     private static final String strProblemUnsafeReference = "This variable must be unset just after foreach to prevent possible side-effects";
     private static final String strProblemKeyReference    = "Provokes PHP Fatal error (key element cannot be a reference)";
@@ -142,6 +151,10 @@ public class AlterInForeachInspector extends BasePhpInspection {
             }
 
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
+                if (!SUGGEST_USING_VALUE_BY_REF) {
+                    return;
+                }
+
                 final PhpPsiElement objOperand = assignmentExpression.getVariable();
                 if (!(objOperand instanceof ArrayAccessExpression)) {
                     return;
@@ -199,5 +212,32 @@ public class AlterInForeachInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return (new AlterInForeachInspector.OptionsPanel()).getComponent();
+    }
+
+    private class OptionsPanel {
+        final private JPanel optionsPanel;
+
+        final private JCheckBox suggestUsingValueByRef;
+
+        public OptionsPanel() {
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
+
+            suggestUsingValueByRef = new JCheckBox("Suggest using value by reference", SUGGEST_USING_VALUE_BY_REF);
+            suggestUsingValueByRef.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    SUGGEST_USING_VALUE_BY_REF = suggestUsingValueByRef.isSelected();
+                }
+            });
+            optionsPanel.add(suggestUsingValueByRef, "wrap");
+        }
+
+        JPanel getComponent() {
+            return optionsPanel;
+        }
     }
 }

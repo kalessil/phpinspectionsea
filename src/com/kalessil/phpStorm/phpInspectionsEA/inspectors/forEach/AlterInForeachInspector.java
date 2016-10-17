@@ -12,9 +12,18 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 public class AlterInForeachInspector extends BasePhpInspection {
+    // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
+    public boolean SUGGEST_USING_VALUE_BY_REF = false;
+
     private static final String strProblemDescription     = "Can be refactored as '$%c% = ...' if $%v% is defined as reference (ensure that array supplied). Suppress if causes memory mismatches.";
     private static final String strProblemUnsafeReference = "This variable must be unset just after foreach to prevent possible side-effects";
     private static final String strProblemKeyReference    = "Provokes PHP Fatal error (key element cannot be a reference)";
@@ -32,7 +41,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
 
             public void visitPhpForeach(ForeachStatement foreach) {
                 /* lookup for reference preceding value */
-                Variable objForeachValue = foreach.getValue();
+                final Variable objForeachValue = foreach.getValue();
                 if (null != objForeachValue) {
                     PsiElement prevElement = objForeachValue.getPrevSibling();
                     if (prevElement instanceof PsiWhiteSpace) {
@@ -63,7 +72,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                                 isRequirementFullFilled = true;
                             }
                             /* check unset is applied to value-variable */
-                            String foreachValueName = objForeachValue.getName();
+                            final String foreachValueName = objForeachValue.getName();
                             if (nextExpression instanceof PhpUnset && !StringUtil.isEmpty(foreachValueName)) {
                                 for (PhpPsiElement unsetArgument : ((PhpUnset) nextExpression).getArguments()) {
                                     // skip non-variable expressions
@@ -72,7 +81,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                                     }
 
                                     // check argument matched foreach value name
-                                    String unsetArgumentName = unsetArgument.getName();
+                                    final String unsetArgumentName = unsetArgument.getName();
                                     if (!StringUtil.isEmpty(unsetArgumentName) && unsetArgumentName.equals(foreachValueName)) {
                                         isRequirementFullFilled = true;
                                         break;
@@ -98,22 +107,22 @@ public class AlterInForeachInspector extends BasePhpInspection {
 
                             /* check if un-sets non-reference value - not needed at all, probably forgotten to cleanup */
                             if (nextExpression instanceof PhpUnset) {
-                                PhpPsiElement[] unsetArguments = ((PhpUnset) nextExpression).getArguments();
+                                final PhpPsiElement[] unsetArguments = ((PhpUnset) nextExpression).getArguments();
                                 if (unsetArguments.length > 0) {
-                                    String foreachValueName = objForeachValue.getName();
+                                    final String foreachValueName = objForeachValue.getName();
 
                                     for (PhpPsiElement unsetExpression : unsetArguments) {
                                         if (!(unsetArguments[0] instanceof Variable)) {
                                             continue;
                                         }
 
-                                        String unsetArgumentName = unsetExpression.getName();
+                                        final String unsetArgumentName = unsetExpression.getName();
                                         if (
                                             !StringUtil.isEmpty(unsetArgumentName) &&
                                             !StringUtil.isEmpty(foreachValueName) &&
                                             unsetArgumentName.equals(foreachValueName)
                                         ) {
-                                            String message = strProblemAmbiguousUnset.replace("%v%", foreachValueName);
+                                            final String message = strProblemAmbiguousUnset.replace("%v%", foreachValueName);
                                             holder.registerProblem(unsetExpression, message, ProblemHighlightType.WEAK_WARNING);
                                         }
                                     }
@@ -128,7 +137,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
 
             private void strategyKeyCanNotBeReference(ForeachStatement foreach) {
                 /* lookup for incorrect reference preceding key: foreach (... as &$key => ...) */
-                Variable objForeachKey = foreach.getKey();
+                final Variable objForeachKey = foreach.getKey();
                 if (null != objForeachKey) {
                     PsiElement prevElement = objForeachKey.getPrevSibling();
                     if (prevElement instanceof PsiWhiteSpace) {
@@ -142,13 +151,17 @@ public class AlterInForeachInspector extends BasePhpInspection {
             }
 
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
-                PhpPsiElement objOperand = assignmentExpression.getVariable();
+                if (!SUGGEST_USING_VALUE_BY_REF) {
+                    return;
+                }
+
+                final PhpPsiElement objOperand = assignmentExpression.getVariable();
                 if (!(objOperand instanceof ArrayAccessExpression)) {
                     return;
                 }
 
                 /* ensure assignment structure is complete */
-                ArrayAccessExpression objContainer = (ArrayAccessExpression) objOperand;
+                final ArrayAccessExpression objContainer = (ArrayAccessExpression) objOperand;
                 if (
                     null == objContainer.getIndex() ||
                     null == objContainer.getValue() ||
@@ -159,8 +172,8 @@ public class AlterInForeachInspector extends BasePhpInspection {
 
 
                 /* get parts of assignment */
-                PhpPsiElement objForeachSourceCandidate = objContainer.getValue();
-                PhpPsiElement objForeachKeyCandidate = objContainer.getIndex().getValue();
+                final PhpPsiElement objForeachSourceCandidate = objContainer.getValue();
+                final PhpPsiElement objForeachKeyCandidate    = objContainer.getIndex().getValue();
 
 
                 PsiElement objParent = assignmentExpression.getParent();
@@ -172,10 +185,10 @@ public class AlterInForeachInspector extends BasePhpInspection {
 
                     if (objParent instanceof ForeachStatement) {
                         /* get parts of foreach: array, key, value */
-                        ForeachStatement objForeach = (ForeachStatement) objParent;
-                        Variable objForeachValue    = objForeach.getValue();
-                        Variable objForeachKey      = objForeach.getKey();
-                        PsiElement objForeachArray  = objForeach.getArray();
+                        final ForeachStatement objForeach = (ForeachStatement) objParent;
+                        final Variable objForeachValue    = objForeach.getValue();
+                        final Variable objForeachKey      = objForeach.getKey();
+                        final PsiElement objForeachArray  = objForeach.getArray();
 
                         /* report if aggressive optimization possible: foreach(... as &$value) */
                         if (
@@ -183,12 +196,12 @@ public class AlterInForeachInspector extends BasePhpInspection {
                             PsiEquivalenceUtil.areElementsEquivalent(objForeachKey, objForeachKeyCandidate) &&
                             PsiEquivalenceUtil.areElementsEquivalent(objForeachArray, objForeachSourceCandidate)
                         ) {
-                            String strName = objForeachValue.getName();
+                            final String strName = objForeachValue.getName();
                             if (!StringUtil.isEmpty(strName)) {
-                                String strMessage = strProblemDescription
+                                final String message = strProblemDescription
                                         .replace("%c%", strName)
                                         .replace("%v%", strName);
-                                holder.registerProblem(objOperand, strMessage, ProblemHighlightType.WEAK_WARNING);
+                                holder.registerProblem(objOperand, message, ProblemHighlightType.WEAK_WARNING);
 
                                 return;
                             }
@@ -199,5 +212,32 @@ public class AlterInForeachInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return (new AlterInForeachInspector.OptionsPanel()).getComponent();
+    }
+
+    private class OptionsPanel {
+        final private JPanel optionsPanel;
+
+        final private JCheckBox suggestUsingValueByRef;
+
+        public OptionsPanel() {
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
+
+            suggestUsingValueByRef = new JCheckBox("Suggest using value by reference", SUGGEST_USING_VALUE_BY_REF);
+            suggestUsingValueByRef.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    SUGGEST_USING_VALUE_BY_REF = suggestUsingValueByRef.isSelected();
+                }
+            });
+            optionsPanel.add(suggestUsingValueByRef, "wrap");
+        }
+
+        JPanel getComponent() {
+            return optionsPanel;
+        }
     }
 }

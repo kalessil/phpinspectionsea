@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.5.5.2</version>
+  <version>1.5.6</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -53,9 +53,19 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-26 September 2016: hot-fix for PhpStorm 2016.2.1<br/>
+23 October 2016: improvements and new inspections<br/>
 <br/>
-    - Fixed no such method exception;<br/>
+    - Documentation updated: thank you <a href="https://github.com/samdark">@samdark</a>;<br/>
+    - More than 3 parameters in callable: added settings (threshold, ignore constructors);<br/>
+    - Access modifiers shall be defined: added settings (analyze interfaces);<br/>
+    - Slow alter in foreach: added settings (suggest using variable by reference);<br/>
+    <br/>
+    - Unnecessary parentheses: resolved false-positives (clone-expression);<br/>
+    - Loop which does not loop: resolved false-positives;<br/>
+    - Non-optimal if conditions: resolved false-positives (conditions interconnected with array variables);<br/>
+    <br/>
+    - 'gettype(...)' could be replaced with 'is_*(...)': implemented;<br/>
+    - Unused constructor dependencies: implemented (thank you <a href="https://github.com/funivan">@funivan</a>);<br/>
 <br/>
 <hr/>
   ]]></change-notes>

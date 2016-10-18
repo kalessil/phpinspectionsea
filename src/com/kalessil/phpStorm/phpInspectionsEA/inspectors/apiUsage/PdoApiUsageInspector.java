@@ -33,13 +33,13 @@ public class PdoApiUsageInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* TODO: successor must not be same call (arguments can differ) */
-
-                /* inspect preceding statement */
+                /* inspect preceding and succeeding statement */
                 final PsiElement parent = reference.getParent();
                 PsiElement predecessor  = null;
+                PsiElement successor    = null;
                 if (parent instanceof StatementImpl) {
                     predecessor = ((StatementImpl) parent).getPrevPsiSibling();
+                    successor   = ((StatementImpl) parent).getNextPsiSibling();
                 }
                 if (null != predecessor && predecessor.getFirstChild() instanceof AssignmentExpression) {
                     /* predecessor needs to be an assignment */
@@ -61,6 +61,18 @@ public class PdoApiUsageInspector extends BasePhpInspection {
                         null != variableAssigned && null != variableUsed &&
                         PsiEquivalenceUtil.areElementsEquivalent(variableAssigned, variableUsed)
                     ) {
+                        /* succeeding statement must not be ...->execute (bulk execution of prepared statement) */
+                        if (null != successor && successor.getFirstChild() instanceof MethodReference) {
+                            final MethodReference succeedingReference = (MethodReference) successor.getFirstChild();
+                            final String succeedingMethod             = succeedingReference.getName();
+                            if (
+                                !StringUtil.isEmpty(succeedingMethod) && succeedingMethod.equals("execute") &&
+                                PsiEquivalenceUtil.areElementsEquivalent(variableUsed, succeedingReference.getFirstChild())
+                            ){
+                                return;
+                            }
+                        }
+
                         holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
                     }
                 }

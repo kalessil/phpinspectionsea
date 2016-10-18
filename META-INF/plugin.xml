@@ -59,6 +59,7 @@ with a laptop.
     - More than 3 parameters in callable: added settings (threshold, ignore constructors);<br/>
     - Access modifiers shall be defined: added settings (analyze interfaces);<br/>
     - Slow alter in foreach: added settings (suggest using variable by reference);<br/>
+    - Static methods invocation via '->': follow PHPUnit best practices (do not report it's assert* methods)
     <br/>
     - Unnecessary parentheses: resolved false-positives (clone-expression);<br/>
     - Loop which does not loop: resolved false-positives;<br/>

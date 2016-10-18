@@ -48,6 +48,10 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                         if (null == clazz || clazz.isInterface() || !method.isStatic() || method.isAbstract()) {
                             return;
                         }
+                        /* PHP Unit's official docs saying to use $this, follow the guidance */
+                        if (clazz.getFQN().equals("\\PHPUnit_Framework_Assert")) {
+                            return;
+                        }
 
                         /* check first pattern $this->static */
                         final PsiElement thisCandidate = reference.getFirstChild();

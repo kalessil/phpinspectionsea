@@ -33,27 +33,30 @@ public class PdoApiUsageInspector extends BasePhpInspection {
                     return;
                 }
 
+                /* TODO: successor must not be same call (arguments can differ) */
+
                 /* inspect preceding statement */
-                PsiElement predecessor = reference.getParent();
-                if (predecessor instanceof StatementImpl) {
-                    predecessor = ((StatementImpl) predecessor).getPrevPsiSibling();
+                final PsiElement parent = reference.getParent();
+                PsiElement predecessor  = null;
+                if (parent instanceof StatementImpl) {
+                    predecessor = ((StatementImpl) parent).getPrevPsiSibling();
                 }
                 if (null != predecessor && predecessor.getFirstChild() instanceof AssignmentExpression) {
                     /* predecessor needs to be an assignment */
-                    AssignmentExpression assignment = (AssignmentExpression) predecessor.getFirstChild();
+                    final AssignmentExpression assignment = (AssignmentExpression) predecessor.getFirstChild();
                     if (!(assignment.getValue() instanceof MethodReference)) {
                         return;
                     }
 
                     /* predecessor's value is ->prepare */
-                    MethodReference precedingReference = (MethodReference) assignment.getValue();
-                    String precedingMethod = precedingReference.getName();
+                    final MethodReference precedingReference = (MethodReference) assignment.getValue();
+                    final String precedingMethod             = precedingReference.getName();
                     if (StringUtil.isEmpty(precedingMethod) || !precedingMethod.equals("prepare")) {
                         return;
                     }
 
-                    PsiElement variableAssigned = assignment.getVariable();
-                    PsiElement variableUsed     = reference.getClassReference();
+                    final PsiElement variableAssigned = assignment.getVariable();
+                    final PsiElement variableUsed     = reference.getClassReference();
                     if (
                         null != variableAssigned && null != variableUsed &&
                         PsiEquivalenceUtil.areElementsEquivalent(variableAssigned, variableUsed)

@@ -41,7 +41,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void checkOneTimeUse(@NotNull StatementWithArgument returnOrThrow, @NotNull Variable argument) {
+            void checkOneTimeUse(@NotNull StatementWithArgument returnOrThrow, @NotNull Variable argument) {
                 final String variableName = argument.getName();
                 /* verify preceding expression (assignment needed) */
                 if (

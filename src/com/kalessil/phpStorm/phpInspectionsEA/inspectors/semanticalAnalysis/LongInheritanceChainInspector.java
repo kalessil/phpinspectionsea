@@ -41,7 +41,7 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
 
                     /* count parents */
                     PhpClass classToCheck = clazz;
-                    while (null != classToCheck.getSuperClass()) {
+                    while (null != classToCheck.getSuperClass() && clazz != classToCheck.getSuperClass()) {
                         classToCheck = classToCheck.getSuperClass();
                         ++intParentsCount;
                     }

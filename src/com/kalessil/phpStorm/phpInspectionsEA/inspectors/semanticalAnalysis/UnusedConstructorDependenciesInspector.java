@@ -39,7 +39,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                 final Field[] ownFields = clazz.getOwnFields();
                 if (ownFields.length > 0) {
                     for (Field field : ownFields) {
-                        if (field.isConstant() || !field.getModifier().getAccess().isPrivate()) {
+                        if (field.isConstant() || !field.getModifier().isPrivate() || field.getModifier().isStatic()) {
                             continue;
                         }
 

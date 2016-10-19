@@ -23,3 +23,8 @@ function x (&$x, $y) {
     $x = $y;      // <- shall not be reported
     return $x;
 }
+
+function y ($x, $y) {
+    $x += $y;     // <- shall not be reported
+    return $x;
+}

@@ -18,6 +18,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.AssignmentExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.FieldReferenceImpl;
+import com.jetbrains.php.lang.psi.elements.impl.SelfAssignmentExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -47,9 +48,13 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                     !StringUtil.isEmpty(variableName) && null != returnOrThrow.getPrevPsiSibling() &&
                     returnOrThrow.getPrevPsiSibling().getFirstChild() instanceof AssignmentExpressionImpl
                 ) {
-                    /* ensure variables are the same */
                     final AssignmentExpressionImpl assign = (AssignmentExpressionImpl) returnOrThrow.getPrevPsiSibling().getFirstChild();
+                    /* ensure it's not a self-assignment */
+                    if (assign instanceof SelfAssignmentExpressionImpl) {
+                        return;
+                    }
 
+                    /* ensure variables are the same */
                     final PhpPsiElement assignVariable = assign.getVariable();
                     final PsiElement assignValue       = ExpressionSemanticUtil.getExpressionTroughParenthesis(assign.getValue());
                     if (assignVariable instanceof Variable && null != assignValue) {
@@ -99,7 +104,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                             }
                         }
 
-                        final String message = messagePattern.replace("%v%", variableName);
+                        final String message    = messagePattern.replace("%v%", variableName);
                         final TheLocalFix fixer = new TheLocalFix(assign.getParent(), argument, assignValue);
                         holder.registerProblem(assignVariable, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixer);
                     }

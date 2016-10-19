@@ -127,6 +127,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 /* TODO: If not binary/ternary/assignment/array access expression,  */
                 /* TODO: perform types lookup - nullable core types/classes shall be compared with null.  */
                 /* TODO: Inversion should be un-boxed to get expression. */
+
+                objAllConditions.clear();
             }
 
             private void inspectConditionsForIdenticalOperands(@NotNull LinkedList<PsiElement> objBranchConditions) {

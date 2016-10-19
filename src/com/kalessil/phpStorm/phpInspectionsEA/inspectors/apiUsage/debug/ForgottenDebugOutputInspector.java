@@ -131,9 +131,9 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                     if (parent instanceof StatementImpl) {
                         final PsiElement preceding = ((StatementImpl) parent).getPrevPsiSibling();
                         if (null != preceding && preceding.getFirstChild() instanceof FunctionReferenceImpl) {
-                            final FunctionReferenceImpl proceedingCall = (FunctionReferenceImpl) preceding.getFirstChild();
-                            final String proceedingFunction            = proceedingCall.getName();
-                            if (!StringUtil.isEmpty(proceedingFunction) && proceedingFunction.equals("ob_start")) {
+                            final FunctionReferenceImpl precedingCall = (FunctionReferenceImpl) preceding.getFirstChild();
+                            final String precedingFunction            = precedingCall.getName();
+                            if (!StringUtil.isEmpty(precedingFunction) && precedingFunction.equals("ob_start")) {
                                 return;
                             }
                         }

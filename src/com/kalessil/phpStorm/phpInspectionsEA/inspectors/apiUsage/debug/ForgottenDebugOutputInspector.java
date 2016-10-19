@@ -12,6 +12,8 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
+import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.gui.PrettyListControl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -124,11 +126,24 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                     !StringUtil.isEmpty(function) && functionsRequirements.containsKey(function) &&
                     reference.getParameters().length != functionsRequirements.get(function) // keep it here when function hit
                 ) {
+                    /* ensure it's not prepended with 'ob_start();' */
+                    final PsiElement parent = reference.getParent();
+                    if (parent instanceof StatementImpl) {
+                        final PsiElement preceding = ((StatementImpl) parent).getPrevPsiSibling();
+                        if (null != preceding && preceding.getFirstChild() instanceof FunctionReferenceImpl) {
+                            final FunctionReferenceImpl proceedingCall = (FunctionReferenceImpl) preceding.getFirstChild();
+                            final String proceedingFunction            = proceedingCall.getName();
+                            if (!StringUtil.isEmpty(proceedingFunction) && proceedingFunction.equals("ob_start")) {
+                                return;
+                            }
+                        }
+                    }
+
                     holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
 
-                // user-defined functions
+                /* user-defined functions */
                 if (customFunctions.contains(function)) {
                     holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }

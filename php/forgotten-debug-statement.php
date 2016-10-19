@@ -15,3 +15,6 @@
     debug_zval_dump($a, $b);   // <- reported
 
     debug_print_backtrace();   // <- reported
+
+    ob_start();
+    print_r($a);               // <- NOT reported

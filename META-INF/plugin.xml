@@ -66,6 +66,7 @@ with a laptop.
     - Non-optimal if conditions: resolved false-positives (conditions interconnected with array variables);<br/>
     - PDO api usage: resolved false-positives (bulk execution of prepared statement);<br/>
     - One-time use variables: resolved false-positives (self-assignments);<br/>
+    - Forgotten debug statements: resolved false-positives (preceding ob_start());<br/>
     <br/>
     - 'gettype(...)' could be replaced with 'is_*(...)': implemented;<br/>
     - Unused constructor dependencies: implemented (thank you <a href="https://github.com/funivan">@funivan</a>);<br/>

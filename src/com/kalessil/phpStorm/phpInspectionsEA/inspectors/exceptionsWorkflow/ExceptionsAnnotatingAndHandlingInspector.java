@@ -35,6 +35,8 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection {
+    /* TODO: add settings for FQNs which doesn't need to be reported */
+
     private static final String strProblemDescription       = "Throws a non-annotated/unhandled exception: '%c%'";
     private static final String strProblemFinallyExceptions = "Exceptions management inside finally has variety of side-effects in certain PHP versions";
 

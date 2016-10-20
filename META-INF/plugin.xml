@@ -59,7 +59,8 @@ with a laptop.
     - More than 3 parameters in callable: added settings (threshold, ignore constructors);<br/>
     - Access modifiers shall be defined: added settings (analyze interfaces);<br/>
     - Slow alter in foreach: added settings (suggest using variable by reference);<br/>
-    - Static methods invocation via '->': follow PHPUnit best practices (do not report it's assert* methods)
+    - Static methods invocation via '->': follow PHPUnit best practices (do not report it's assert* methods);<br/>
+    - Implicit magic method calls: added settings (suggest using string casting);<br/>
     <br/>
     - Unnecessary parentheses: resolved false-positives (clone-expression);<br/>
     - Loop which does not loop: resolved false-positives;<br/>
@@ -67,6 +68,7 @@ with a laptop.
     - PDO api usage: resolved false-positives (bulk execution of prepared statement);<br/>
     - One-time use variables: resolved false-positives (self-assignments);<br/>
     - Forgotten debug statements: resolved false-positives (preceding ob_start());<br/>
+    - Implicit magic method calls: resolved false-positives (__construct in serialize);<br/>
     <br/>
     - 'gettype(...)' could be replaced with 'is_*(...)': implemented;<br/>
     - Unused constructor dependencies: implemented (thank you <a href="https://github.com/funivan">@funivan</a>);<br/>

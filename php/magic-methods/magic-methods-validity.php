@@ -10,6 +10,8 @@
         /** @noinspection PhpHierarchyChecksInspection */
         /* name (1) and return (2) are highlighted */
         static protected function __construct(&$arg1, &$arg2, &$arg3) {
+            \Exception::__construct();  // <- NOT reported
+
             if (1) return ''; else return '';
         }
 
@@ -61,4 +63,8 @@
 
         static private function __sleep($arg)  { return 'a'; }
         static private function __wakeup($arg) { return 'a'; }
+
+        private function unserialize() {
+            $this->__construct();  // <- NOT reported
+        }
     }

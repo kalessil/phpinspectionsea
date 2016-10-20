@@ -12,7 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "If and following return can be replaced with 'return %c%'";
+    private static final String messagePattern = "If and following return can be replaced with 'return %c%'";
 
     @NotNull
     public String getShortName() {
@@ -40,17 +40,31 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 /* or condition is not an binary expression */
                 final PsiElement objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(ifStatement.getCondition());
                 /* or maybe try resolving type when not on-the-fly analysis is running */
+                /* TODO: function/method/property/constant reference, ternary and etc? Do we check not null?  */
                 if (!(objCondition instanceof BinaryExpression)) {
                     return;
                 }
 
 
                 /* next expression is not return */
-                final PhpPsiElement objNextExpression = ifStatement.getNextPsiSibling();
+                final PsiElement objNextExpression = ifStatement.getNextPsiSibling();
                 if (!(objNextExpression instanceof PhpReturn)) {
                     return;
                 }
-                /* TODO: previous is not if-return */
+
+
+                /* when if has preceding if-return */
+                final PsiElement previousExpression = ifStatement.getPrevPsiSibling();
+                if (previousExpression instanceof If && !ExpressionSemanticUtil.hasAlternativeBranches((If) previousExpression)) {
+                    final GroupStatement previousIfBody = ExpressionSemanticUtil.getGroupStatement(previousExpression);
+                    if (null != previousIfBody) {
+                        final PsiElement previousReturnCandidate = ExpressionSemanticUtil.getLastStatement(previousIfBody);
+                        if (previousReturnCandidate instanceof PhpReturn) {
+                            return;
+                        }
+                    }
+                }
+
 
                 /* or return not a boolean */
                 final PhpReturn objSecondReturn = (PhpReturn) objNextExpression;
@@ -93,11 +107,13 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
 
                 /* point the problem out */
                 final boolean isInverted = PhpLangUtil.isFalse((ConstantReference) objFirstReturn.getArgument());
-                String message = isInverted ? strProblemDescription.replace("%c%", "!(%c%)") : strProblemDescription;
+                String message = isInverted ? messagePattern.replace("%c%", "!(%c%)") : messagePattern;
 
                 message = message.replace("%c%", ifStatement.getCondition().getText());
-                holder.registerProblem(ifStatement.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(ifStatement.getFirstChild(), message, ProblemHighlightType.WEAK_WARNING);
             }
         };
     }
+
+    // TODO: quick fixing: double double inversion must be handled properly
 }

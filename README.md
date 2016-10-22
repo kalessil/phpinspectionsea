@@ -25,11 +25,11 @@ Inspections Lists (Type compatibility)
 
 Inspections Lists (Control flow)
 ---
-| Group                | Short Name                                      | Full Name                                           | Quick fix |
-| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
+| Group                | Short Name                                      | Full Name                                           | Quick fix | UTs | QFTs |
+| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
 | Control flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                  | no  |
 | Control flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                | no  |
-| Control flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                | yes |
+| Control flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                | yes       | yes | n/a  |
 | Control flow         | DefaultValueInElseBranchInspection              | Default value is hidden in else branch              | no  |
 | Control flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                           | n/a |
 | Control flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                            | n/a |
@@ -82,8 +82,8 @@ Inspections Lists (Confusing constructs)
 
 Inspections Lists (Code style)
 ---
-| Group                | Short Name                                      | Full Name                                           | Quick fix |
-| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
+| Group                | Short Name                                      | Full Name                                           | Quick fix | UTs | QFTs |
+| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
 | Code style           | UnNecessaryDoubleQuotesInspection               | Unnecessary double quotes                           | yes |
 | Code style           | IfConditionalsWithoutCurvyBracketsInspection    | Missing or empty conditionals group statement       | no  |
 | Code style           | SenselessCommaInArrayDefinitionInspection       | Unnecessary last comma in array definition          | no  |
@@ -93,7 +93,7 @@ Inspections Lists (Code style)
 | Code style           | CallableReferenceNameMismatchInspection         | Callable name case mismatched in a call             | yes |
 | Code style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                 | no  |
 | Code style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                  | yes |
-| Code style           | UnnecessaryParenthesesInspection                | Unnecessary parentheses                             | yes |
+| Code style           | UnnecessaryParenthesesInspection                | Unnecessary parentheses                             | yes       | yes | n/a  |
 | Code style           | DynamicInvocationViaScopeResolutionInspector    | Dynamic methods invocation via '::'                 | yes |
 | Code style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes |
 | Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | yes |
@@ -116,8 +116,8 @@ Inspections Lists (Architecture)
 
 Inspections Lists (Probable bugs)
 ---
-| Group                | Short Name                                      | Full Name                                                 | Quick fix |
-| :------------------- | :-------------------------------------------    | :--------------------------------------------------       | --------: |
+| Group                | Short Name                                      | Full Name                                                 | Quick fix | UTs | QFTs |
+| :------------------- | :-------------------------------------------    | :--------------------------------------------------       | --------: | --: | ---: |
 | Probable bugs        | ForgottenDebugOutputInspection                  | Forgotten debug statements                                | n/a |
 | Probable bugs        | AdditionOperationOnArraysInspection             | Addition operator used on arrays                          | n/a |
 | Probable bugs        | MagicMethodsValidityInspection                  | Magic methods validity                                    | n/a |
@@ -131,7 +131,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | n/a |
 | Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a |
 | Probable bugs        | UntrustedInclusionInspection                    | Untrusted files inclusion                                 | n/a |
-| Probable bugs        | NonSecureUniqidUsageInspection                  | Insecure 'uniqid()' usage                                 | yes |
+| Probable bugs        | NonSecureUniqidUsageInspection                  | Insecure 'uniqid()' usage                                 | yes       | yes | n/a  |
 | Probable bugs        | NonSecureExtractUsageInspection                 | Insecure 'extract(...)' usage                             | n/a |
 | Probable bugs        | NonSecureParseStrUsageInspection                | Insecure 'parse_str(...)' usage                           | n/a |
 | Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | n/a |

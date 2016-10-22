@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>1.5.6</version>
+  <version>2.0.0</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -73,6 +73,7 @@ with a laptop.
     <br/>
     - 'gettype(...)' could be replaced with 'is_*(...)': implemented;<br/>
     - Unused constructor dependencies: implemented (thank you <a href="https://github.com/funivan">@funivan</a>);<br/>
+    - If-return-return could be simplified: implemented quick-fix (thank you <a href="https://github.com/funivan">@funivan</a>);<br/>
 <br/>
 <hr/>
   ]]></change-notes>

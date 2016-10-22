@@ -29,7 +29,7 @@ Inspections Lists (Control flow)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
 | Control flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                  | no  |
 | Control flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                | no  |
-| Control flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                | no  |
+| Control flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                | yes |
 | Control flow         | DefaultValueInElseBranchInspection              | Default value is hidden in else branch              | no  |
 | Control flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                           | n/a |
 | Control flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                            | n/a |

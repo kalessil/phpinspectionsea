@@ -5,8 +5,7 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessaryParenthesesInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.tests.utils.FixturesLocationUtil;
 
-public class UnnecessaryParenthesesInspectorTest  extends CodeInsightFixtureTestCase {
-
+public class UnnecessaryParenthesesInspectorTest extends CodeInsightFixtureTestCase {
     @Override
     protected String getBasePath() {
         return FileUtil.toSystemDependentName(FixturesLocationUtil.RELATIVE_TEST_DATA_PATH);

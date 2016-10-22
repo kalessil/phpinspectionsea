@@ -1,4 +1,5 @@
 <?php
-    <generic_error descr="Usage of a variable variable">uniqid()</generic_error>;
-    <generic_error descr="Usage of a variable variable">uniqid('q')</generic_error>;
+    <error descr="Please provide both prefix and more entropy parameters">uniqid()</error>;
+    <error descr="Please provide both prefix and more entropy parameters">uniqid('q')</error>;
+
     uniqid('', true);

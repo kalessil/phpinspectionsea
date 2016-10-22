@@ -62,7 +62,7 @@ with a laptop.
     - Static methods invocation via '->': follow PHPUnit best practices (do not report it's assert* methods);<br/>
     - Implicit magic method calls: added settings (suggest using string casting);<br/>
     <br/>
-    - Unnecessary parentheses: resolved false-positives (clone-expression);<br/>
+    - Unnecessary parentheses: resolved false-positives (clone-expression, callables invocation);<br/>
     - Loop which does not loop: resolved false-positives;<br/>
     - Non-optimal if conditions: resolved false-positives (conditions interconnected with array variables);<br/>
     - PDO api usage: resolved false-positives (bulk execution of prepared statement);<br/>

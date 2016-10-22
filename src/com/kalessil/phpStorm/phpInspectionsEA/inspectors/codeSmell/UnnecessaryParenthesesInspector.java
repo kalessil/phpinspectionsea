@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -24,14 +25,14 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpParenthesizedExpression(ParenthesizedExpression expression) {
-                String fileName = holder.getFile().getName();
+                final String fileName = holder.getFile().getName();
                 if (fileName.endsWith(".blade.php")) {
                     /* syntax injection there is not done properly for elseif, causing false-positives */
                     return;
                 }
 
-                PhpPsiElement argument = expression.getArgument();
-                PsiElement parent      = expression.getParent();
+                final PhpPsiElement argument = expression.getArgument();
+                final PsiElement parent      = expression.getParent();
                 if (null == argument || null == parent) {
                     return;
                 }
@@ -65,10 +66,21 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     (parent instanceof MethodReference && argument instanceof NewExpression)
                 ;
 
-                /* (clone ...)->...: detection moved into separate if-block */
-                if (!knowsLegalCases && parent instanceof MethodReference && argument instanceof UnaryExpression) {
+                /* (clone ...)->...: allow method/property access on cloned objects */
+                if (
+                    !knowsLegalCases && argument instanceof UnaryExpression &&
+                    (parent instanceof MethodReference || parent instanceof FieldReference)
+                ) {
                     final PsiElement operator = ((UnaryExpression) argument).getOperation();
                     knowsLegalCases = null != operator && PhpTokenTypes.kwCLONE == operator.getNode().getElementType();
+                }
+
+                /* (...->property)(...), (...->method())(...): allow callable invocation */
+                if (
+                    !knowsLegalCases && parent instanceof FunctionReferenceImpl &&
+                    (argument instanceof FieldReference || argument instanceof MethodReference)
+                ) {
+                    knowsLegalCases = true;
                 }
 
                 if (knowsLegalCases) {

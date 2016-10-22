@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.tests.api.utils;
+package com.kalessil.phpStorm.phpInspectionsEA.tests.utils;
 
 public class FixturesLocationUtil {
 

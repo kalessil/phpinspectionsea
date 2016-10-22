@@ -26,6 +26,9 @@ final public class ExpressionSemanticUtil {
         return (null != ifStatement.getElseBranch() || ifStatement.getElseIfBranches().length > 0);
     }
 
+    /**
+     * @deprecated to re-check if API already has a method for this
+     */
     @Nullable
     public static PhpExpression getReturnValue(@NotNull PhpReturn objReturn) {
         for (PsiElement objChild : objReturn.getChildren()) {

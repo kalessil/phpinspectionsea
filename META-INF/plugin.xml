@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.0.0</version>
+  <version>2.0.0.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -53,27 +53,7 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-23 October 2016: improvements and new inspections<br/>
-<br/>
-    - Documentation updated: thank you <a href="https://github.com/samdark">@samdark</a>;<br/>
-    - More than 3 parameters in callable: added settings (threshold, ignore constructors);<br/>
-    - Access modifiers shall be defined: added settings (analyze interfaces);<br/>
-    - Slow alter in foreach: added settings (suggest using variable by reference);<br/>
-    - Static methods invocation via '->': follow PHPUnit best practices (do not report it's assert* methods);<br/>
-    - Implicit magic method calls: added settings (suggest using string casting);<br/>
-    <br/>
-    - Unnecessary parentheses: resolved false-positives (clone-expression, callables invocation);<br/>
-    - Loop which does not loop: resolved false-positives;<br/>
-    - Non-optimal if conditions: resolved false-positives (conditions interconnected with array variables);<br/>
-    - PDO api usage: resolved false-positives (bulk execution of prepared statement);<br/>
-    - One-time use variables: resolved false-positives (self-assignments);<br/>
-    - Forgotten debug statements: resolved false-positives (preceding ob_start());<br/>
-    - Implicit magic method calls: resolved false-positives (__construct in serialize);<br/>
-    - If-return-return could be simplified: resolved false-positives (preceding if-return);<br/>
-    <br/>
-    - 'gettype(...)' could be replaced with 'is_*(...)': implemented;<br/>
-    - Unused constructor dependencies: implemented (thank you <a href="https://github.com/funivan">@funivan</a>);<br/>
-    - If-return-return could be simplified: implemented quick-fix (thank you <a href="https://github.com/funivan">@funivan</a>);<br/>
+23 October 2016: minor fix for EAP versions<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -430,7 +410,7 @@ with a laptop.
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UselessUnsetInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="UnnecessaryPropertyDependenciesInspection"     displayName="Unused constructor dependencies"
+        shortName="UnusedConstructorDependenciesInspection"       displayName="Unused constructor dependencies"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UnusedConstructorDependenciesInspector"/>
 

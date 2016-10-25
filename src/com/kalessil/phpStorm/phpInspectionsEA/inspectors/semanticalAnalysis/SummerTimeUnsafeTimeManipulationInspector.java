@@ -40,11 +40,14 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
                     operationType == PhpTokenTypes.opMINUS ||
                     operationType == PhpTokenTypes.opPLUS
                 ) {
-                    final boolean is24Used = (
-                        right.textMatches("24") ||
-                        (!(left instanceof BinaryExpression) && left.textMatches("24"))
+                    final boolean isOneDayNumberUsed = (
+                        right.textMatches("24") || right.textMatches("86400") ||
+                        (
+                            !(left instanceof BinaryExpression) &&
+                            (left.textMatches("24") || left.textMatches("86400"))
+                        )
                     );
-                    if (is24Used) {
+                    if (isOneDayNumberUsed) {
                         holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                 }

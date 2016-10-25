@@ -2,10 +2,10 @@
 
     $arr = array();
     // shall be reported - index access is used
-    for ($i = 0, $max = count($arr); $i < $max; ++$i, $z = 0) {
+    for ($i = 0, $max = count($arr); $i < $max; ++$i, $z = 0) { // <- reported
         echo $arr[$i];
     }
-    for ($i = 0, $max = count($arr); $i < $max; $i++, $z = 0) {
+    for ($i = 0, $max = count($arr); $i < $max; $i++, $z = 0) { // <- reported
         echo $arr[$i];
     }
 
@@ -15,4 +15,8 @@
     }
     for ($i = 0; $i < 10; $i++, $z = 0) {
         echo $arr[$i];
+    }
+
+    while (list($k, $v) = each($arr)) {  // <- reported
+        echo $v;
     }

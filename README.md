@@ -142,8 +142,8 @@ Inspections Lists (Probable bugs)
 
 Inspections Lists (Performance)
 ---
-| Group                | Short Name                                      | Full Name                                                                                   | Quick fix |
-| :------------------- | :---------------------------------------------- | :------------------------------------------------------------------------------------------ | --------: |
+| Group                | Short Name                                      | Full Name                                                                                   | Quick fix | UTs | QFTs |
+| :------------------- | :---------------------------------------------- | :------------------------------------------------------------------------------------------ | --------: | --: | ---: |
 | Performance          | IsNullFunctionUsageInspection                   | 'is_null(...)' could be replaced by 'null === ...'                                          | yes |
 | Performance          | dirnameCallOnFileConstantInspection             | 'dirname(...)' could be replaced by '__DIR__'                                               | yes |
 | Performance          | AmbiguousMethodsCallsInArrayMappingInspection   | Non-optimized arrays mapping                                                                | n/a |
@@ -162,7 +162,7 @@ Inspections Lists (Performance)
 | Performance          | ForeachOnArrayComponentsInspection              | 'array_keys(...)/array_values(...)' used as foreach array                                   | n/a |
 | Performance          | LowPerformanceArrayUniqueUsageInspection        | 'array_unique()' low performing usage                                                       | n/a |
 | Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused"                                                                  | yes |
-| Performance          | FileFunctionMissUseInspection                   |  'file(...)' misused                                                                        | yes |
+| Performance          | FileFunctionMissUseInspection                   | 'file(...)' misused                                                                         | yes       | yes | no  |
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                              | n/a |
 | Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                    | no  |
 | Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                              | yes |

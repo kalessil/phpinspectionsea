@@ -85,6 +85,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         functionsRequirements.put("var_dump",              -1);
         functionsRequirements.put("debug_zval_dump",       -1);
         functionsRequirements.put("debug_print_backtrace", -1);
+        functionsRequirements.put("phpinfo",               -1);
     }
 
     @Override
@@ -147,13 +148,6 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                 if (customFunctions.contains(function)) {
                     holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
-
-                /*
-                TODO:
-                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, * != 2);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                    -> but wen is not configured CURLOPT_CAINFO, CURLOPT_CAPATH
-                 */
             }
         };
     }

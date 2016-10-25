@@ -1,11 +1,15 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
@@ -42,7 +46,6 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
                     final PsiElement operation = ((UnaryExpressionImpl) parent).getOperation();
                     if (null != operation && PhpTokenTypes.opSILENCE == operation.getNode().getElementType()) {
                         parent = parent.getParent();
-
                     }
                 }
                 if (!(parent instanceof ParameterListImpl) || !(parent.getParent() instanceof FunctionReferenceImpl)) {
@@ -66,8 +69,46 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
                 }
 
                 final String message = messagePattern.replace("%p%", params[0].getText());
-                holder.registerProblem(parentReference, message, ProblemHighlightType.GENERIC_ERROR);
+                holder.registerProblem(parentReference, message, ProblemHighlightType.GENERIC_ERROR, new FileFunctionMissUseInspector.TheLocalFix());
             }
         };
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use file_get_contents(...)";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression instanceof FunctionReference) {
+                final PsiElement replacement = PhpPsiElementFactory.createFromText(project, FunctionReferenceImpl.class, "file_get_contents($x)");
+                final FunctionReferenceImpl fileGetContents = (FunctionReferenceImpl) replacement;
+
+                PsiElement fileFunction = ((FunctionReference) expression).getParameters()[1];
+                if (fileFunction instanceof UnaryExpressionImpl) {
+                    final PsiElement operation = ((UnaryExpressionImpl) fileFunction).getOperation();
+                    if (null != operation && PhpTokenTypes.opSILENCE == operation.getNode().getElementType()) {
+                        fileFunction = ((UnaryExpressionImpl) fileFunction).getValue();
+                    }
+                }
+
+                final FunctionReference fileFunctionReference = (FunctionReference) fileFunction;
+                //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here and below
+                fileGetContents.getParameters()[0].replace(fileFunctionReference.getParameters()[0].copy());
+
+                //noinspection ConstantConditions
+                expression.replace(replacement);
+            }
+        }
     }
 }

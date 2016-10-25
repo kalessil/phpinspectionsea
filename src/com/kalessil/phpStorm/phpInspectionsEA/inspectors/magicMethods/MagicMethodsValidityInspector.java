@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy.*;
@@ -116,6 +117,7 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                     CanNotTakeArgumentsStrategy.apply(method, holder);
                     MustBePublicStrategy.apply(method, holder);
                     MustReturnSpecifiedTypeStrategy.apply(arrayOrNullType, method, holder);
+                    MinimalPhpVersionStrategy.apply(method, holder, PhpLanguageLevel.PHP560);
 
                     return;
                 }

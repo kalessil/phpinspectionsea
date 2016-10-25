@@ -162,6 +162,7 @@ Inspections Lists (Performance)
 | Performance          | ForeachOnArrayComponentsInspection              | 'array_keys(...)/array_values(...)' used as foreach array                                   | n/a |
 | Performance          | LowPerformanceArrayUniqueUsageInspection        | 'array_unique()' low performing usage                                                       | n/a |
 | Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused"                                                                  | yes |
+| Performance          | FileFunctionMissUseInspection                   |  'file(...)' misused                                                                        | no  |
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                              | n/a |
 | Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                    | no  |
 | Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                              | yes |

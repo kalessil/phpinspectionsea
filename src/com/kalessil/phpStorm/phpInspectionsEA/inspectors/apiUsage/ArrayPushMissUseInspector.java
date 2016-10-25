@@ -78,8 +78,8 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
-                final PsiElement replacement          = PhpPsiElementFactory.createFromText(project, AssignmentExpression.class, "$x[] = null");
-                final AssignmentExpression assign     = (AssignmentExpression) replacement;
+                final PsiElement replacement      = PhpPsiElementFactory.createFromText(project, AssignmentExpression.class, "$x[] = null");
+                final AssignmentExpression assign = (AssignmentExpression) replacement;
 
                 //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here and below
                 final ArrayAccessExpression container = (ArrayAccessExpression) assign.getVariable();

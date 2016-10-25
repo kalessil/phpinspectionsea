@@ -158,6 +158,10 @@ with a laptop.
         groupName="Performance"                                   enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ArrayPushMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="FileFunctionMissUseInspection"                 displayName="'file(...)' misused"
+        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.FileFunctionMissUseInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="NotOptimalRegularExpressionsInspection"        displayName="Non-optimal regular expression"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.NotOptimalRegularExpressionsInspector"/>

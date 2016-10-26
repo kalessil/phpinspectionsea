@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
-    private static final String strProblemSingletonConstructor = "Singleton constructor should be protected";
-    private static final String strProblemUtilNotFinal         = "Utility class should be final (breaks backward compatibility)";
-    private static final String strProblemUtilNaming           = "Utility class's name should end with 'Util'";
+    private static final String messageSingletonConstructor = "Singleton constructor should be protected";
+    private static final String messageUtilNotFinal         = "Utility class should be final (breaks backward compatibility)";
+    private static final String messageUtilNaming           = "Utility class's name should end with 'Util'";
 
     @NotNull
     public String getShortName() {
@@ -35,7 +35,7 @@ public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
                 }
 
                 if (null != clazz.findOwnMethodByName("getInstance")) {
-                    holder.registerProblem(nameNode, strProblemSingletonConstructor, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(nameNode, messageSingletonConstructor, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
 
@@ -49,26 +49,32 @@ public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** should have only static methods plus constructor */
+                /* should have only static methods plus constructor */
                 final Method[] arrMethods = clazz.getOwnMethods();
                 if (null == arrMethods || arrMethods.length == 1) {
                     return;
                 }
                 for (Method objMethod : arrMethods) {
-                    if (!objMethod.isStatic() && !objMethod.getName().equals("__construct")) {
+                    final String methodName = objMethod.getName();
+                    if (!objMethod.isStatic() && !methodName.equals("__construct")) {
                         // non static method and it's not constructor - terminate inspection
                         return;
                     }
+
+                    /* class has factory methods mixed in */
+                    if (objMethod.isStatic() && (methodName.startsWith("create") || methodName.startsWith("from"))) {
+                        return;
+                    }
                 }
-                /** TODO: constants only - enum equivalent */
+                /* TODO: constants only - enum equivalent */
 
                 /* ensure utility class is defined properly */
                 final String strFqn = clazz.getFQN();
                 if (!strFqn.endsWith("Util") && !strFqn.endsWith("Utils")) {
-                    holder.registerProblem(nameNode, strProblemUtilNaming, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(nameNode, messageUtilNaming, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
                 if (!clazz.isFinal()) {
-                    holder.registerProblem(nameNode, strProblemUtilNotFinal, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(nameNode, messageUtilNotFinal, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }
         };

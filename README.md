@@ -101,14 +101,14 @@ Inspections Lists (Code style)
 
 Inspections Lists (Architecture)
 ---
-| Group                | Short Name                                      | Full Name                                           | Quick fix |
-| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
+| Group                | Short Name                                      | Full Name                                           | Quick fix | UTs | QFTs |
+| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
 | Architecture         | BadExceptionsProcessingInspection               | Badly organized exception handling                  | n/a |
 | Architecture         | MoreThanThreeArgumentsInspection                | More than 3 parameters in callable                  | n/a |
 | Architecture         | CallableParameterUseCaseInTypeContextInspection | Callable parameter usage violates definition        | n/a |
 | Architecture         | ClassOverridesFieldOfSuperClassInspection       | Class overrides a field of a parent class           | no  |
 | Architecture         | SingletonFactoryPatternViolationInspection      | Class violates singleton/factory pattern definition | n/a |
-| Architecture         | PrivateConstructorSemanticsInspection           | Private constructor semantics                       | n/a |
+| Architecture         | PrivateConstructorSemanticsInspection           | Private constructor semantics                       | n/a       | yes | n/a  |
 | Architecture         | LongInheritanceChainInspection                  | Long inheritance chain                              | n/a |
 | Architecture         | PropertyCanBeStaticInspection                   | Property could be static                            | no  |
 | Architecture         | EmptyClassInspection                            | Empty class                                         | n/a |

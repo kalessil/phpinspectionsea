@@ -132,11 +132,11 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
 
         TheLocalFix(@NotNull If ifExpression, @NotNull PhpReturn returnExpression, boolean isInverted) {
             super();
-
             final SmartPointerManager factory = SmartPointerManager.getInstance(ifExpression.getProject());
-            this.ifExpression = factory.createSmartPsiElementPointer(ifExpression, ifExpression.getContainingFile());
+
+            this.ifExpression     = factory.createSmartPsiElementPointer(ifExpression, ifExpression.getContainingFile());
             this.returnExpression = factory.createSmartPsiElementPointer(returnExpression, returnExpression.getContainingFile());
-            this.isInverted = isInverted;
+            this.isInverted       = isInverted;
         }
 
         @NotNull

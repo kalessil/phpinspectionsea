@@ -6,16 +6,11 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -93,13 +88,15 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private PsiElement variable;
-        private PsiElement operator;
+        private SmartPsiElementPointer<PsiElement> variable;
+        private SmartPsiElementPointer<PsiElement> operator;
 
         TheLocalFix(@NotNull PsiElement variable, @NotNull PsiElement operator) {
             super();
-            this.variable = variable;
-            this.operator = operator;
+            final SmartPointerManager factory = SmartPointerManager.getInstance(variable.getProject());
+
+            this.variable = factory.createSmartPsiElementPointer(variable, variable.getContainingFile());
+            this.operator = factory.createSmartPsiElementPointer(operator, operator.getContainingFile());
         }
 
         @NotNull
@@ -118,14 +115,16 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement().getParent();
             if (expression instanceof FunctionReference) {
-                //noinspection ConstantConditions I' sure NPE will not happen as pattern hardcoded
-                this.operator.replace(PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "::"));
-                this.variable.replace(PhpPsiElementFactory.createClassReference(project, "static"));
-            }
+                final PsiElement operator = this.operator.getElement();
+                final PsiElement variable = this.variable.getElement();
+                if (null == operator || null == variable) {
+                    return;
+                }
 
-            /* release a tree node reference */
-            this.variable = null;
-            this.operator = null;
+                //noinspection ConstantConditions I' sure NPE will not happen as pattern hardcoded
+                operator.replace(PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "::"));
+                variable.replace(PhpPsiElementFactory.createClassReference(project, "static"));
+            }
         }
     }
 }

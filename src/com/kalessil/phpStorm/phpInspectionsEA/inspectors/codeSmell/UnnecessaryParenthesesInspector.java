@@ -55,16 +55,22 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                         parent instanceof PhpReturn
                     )
                 );
-                knowsLegalCases =
-                    knowsLegalCases ||
+                knowsLegalCases = knowsLegalCases ||
                     /* some of questionable constructs, but lets start first with them */
                     argument instanceof Include ||
                     parent instanceof PhpCase ||
                     parent instanceof PhpEchoStatement ||
                     parent instanceof PhpPrintExpression ||
-                    (parent instanceof ParameterList && argument instanceof TernaryExpression) ||
-                    (parent instanceof MethodReference && argument instanceof NewExpression)
+                    (parent instanceof ParameterList && argument instanceof TernaryExpression)
                 ;
+
+                /* (new ...)->...: allow method/property access on newly created objects */
+                if (
+                    !knowsLegalCases && argument instanceof NewExpression &&
+                    (parent instanceof MethodReference || parent instanceof FieldReference)
+                ) {
+                    knowsLegalCases = true;
+                }
 
                 /* (clone ...)->...: allow method/property access on cloned objects */
                 if (

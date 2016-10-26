@@ -50,11 +50,11 @@ public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
                 }
 
                 /* should have only static methods plus constructor */
-                final Method[] arrMethods = clazz.getOwnMethods();
-                if (null == arrMethods || arrMethods.length == 1) {
+                final Method[] ownMethods = clazz.getOwnMethods();
+                if (null == ownMethods || ownMethods.length == 1) {
                     return;
                 }
-                for (Method objMethod : arrMethods) {
+                for (Method objMethod : ownMethods) {
                     final String methodName = objMethod.getName();
                     if (!objMethod.isStatic() && !methodName.equals("__construct")) {
                         // non static method and it's not constructor - terminate inspection
@@ -69,8 +69,8 @@ public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
                 /* TODO: constants only - enum equivalent */
 
                 /* ensure utility class is defined properly */
-                final String strFqn = clazz.getFQN();
-                if (!strFqn.endsWith("Util") && !strFqn.endsWith("Utils")) {
+                final String classFQN = clazz.getFQN();
+                if (!classFQN.endsWith("Util") && !classFQN.endsWith("Utils")) {
                     holder.registerProblem(nameNode, messageUtilNaming, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
                 if (!clazz.isFinal()) {

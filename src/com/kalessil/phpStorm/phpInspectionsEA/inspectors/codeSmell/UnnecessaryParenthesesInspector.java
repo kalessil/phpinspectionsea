@@ -86,7 +86,7 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     !knowsLegalCases && parent instanceof FunctionReferenceImpl &&
                     (argument instanceof FieldReference || argument instanceof MethodReference)
                 ) {
-                    knowsLegalCases = true;
+                    return;
                 }
 
                 if (knowsLegalCases) {

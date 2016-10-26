@@ -29,7 +29,7 @@ Inspections Lists (Control flow)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
 | Control flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                  | no  |
 | Control flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                | no  |
-| Control flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                | yes       | yes | n/a  |
+| Control flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                | yes       | yes | no   |
 | Control flow         | DefaultValueInElseBranchInspection              | Default value is hidden in else branch              | no  |
 | Control flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                           | n/a |
 | Control flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                            | n/a |
@@ -92,8 +92,8 @@ Inspections Lists (Code style)
 | Code style           | AccessModifierPresentedInspection               | Access modifiers shall be defined                   | no  |
 | Code style           | CallableReferenceNameMismatchInspection         | Callable name case mismatched in a call             | yes |
 | Code style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                 | no  |
-| Code style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                  | yes |
-| Code style           | UnnecessaryParenthesesInspection                | Unnecessary parentheses                             | yes       | yes | n/a  |
+| Code style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                  | yes       | yes | no   |
+| Code style           | UnnecessaryParenthesesInspection                | Unnecessary parentheses                             | yes       | yes | no   |
 | Code style           | DynamicInvocationViaScopeResolutionInspector    | Dynamic methods invocation via '::'                 | yes |
 | Code style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes |
 | Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | yes |
@@ -131,7 +131,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | n/a |
 | Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a |
 | Probable bugs        | UntrustedInclusionInspection                    | Untrusted files inclusion                                 | n/a |
-| Probable bugs        | NonSecureUniqidUsageInspection                  | Insecure 'uniqid()' usage                                 | yes       | yes | n/a  |
+| Probable bugs        | NonSecureUniqidUsageInspection                  | Insecure 'uniqid()' usage                                 | yes       | yes | no   |
 | Probable bugs        | NonSecureExtractUsageInspection                 | Insecure 'extract(...)' usage                             | n/a |
 | Probable bugs        | NonSecureParseStrUsageInspection                | Insecure 'parse_str(...)' usage                           | n/a |
 | Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | n/a |

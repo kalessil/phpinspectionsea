@@ -21,8 +21,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class StaticInvocationViaThisInspector extends BasePhpInspection {
-    private static final String strProblemThisUsed       = "'static::%m%(...)' should be used instead";
-    private static final String strProblemExpressionUsed = "'...::%m%(...)' should be used instead";
+    private static final String messageThisUsed       = "'static::%m%(...)' should be used instead";
+    private static final String messageExpressionUsed = "'...::%m%(...)' should be used instead";
 
     @NotNull
     public String getShortName() {
@@ -49,7 +49,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                             return;
                         }
                         /* PHP Unit's official docs saying to use $this, follow the guidance */
-                        if (clazz.getFQN().equals("\\PHPUnit_Framework_Assert")) {
+                        if (clazz.getFQN().startsWith("\\PHPUnit_Framework_")) {
                             return;
                         }
 
@@ -62,7 +62,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                                 operator = operator.getNextSibling();
                             }
 
-                            final String message = strProblemThisUsed.replace("%m%", methodName);
+                            final String message = messageThisUsed.replace("%m%", methodName);
                             holder.registerProblem(thisCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(thisCandidate, operator));
 
                             return;
@@ -82,7 +82,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
 
                             if (operator.getText().replaceAll("\\s+","").equals("->")) {
                                 /* info: no local fix, people shall check this code */
-                                final String message = strProblemExpressionUsed.replace("%m%", reference.getName());
+                                final String message = messageExpressionUsed.replace("%m%", reference.getName());
                                 holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         }

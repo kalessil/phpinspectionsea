@@ -13,9 +13,18 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 public class StaticInvocationViaThisInspector extends BasePhpInspection {
+    // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
+    public boolean RESPECT_PHPUNIT_STANDARDS = true;
+
     private static final String messageThisUsed       = "'static::%m%(...)' should be used instead";
     private static final String messageExpressionUsed = "'...::%m%(...)' should be used instead";
 
@@ -43,8 +52,9 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                         if (null == clazz || clazz.isInterface() || !method.isStatic() || method.isAbstract()) {
                             return;
                         }
+
                         /* PHP Unit's official docs saying to use $this, follow the guidance */
-                        if (clazz.getFQN().startsWith("\\PHPUnit_Framework_")) {
+                        if (RESPECT_PHPUNIT_STANDARDS && clazz.getFQN().startsWith("\\PHPUnit_Framework_")) {
                             return;
                         }
 
@@ -125,6 +135,33 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                 operator.replace(PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "::"));
                 variable.replace(PhpPsiElementFactory.createClassReference(project, "static"));
             }
+        }
+    }
+
+    public JComponent createOptionsPanel() {
+        return (new StaticInvocationViaThisInspector.OptionsPanel()).getComponent();
+    }
+
+    private class OptionsPanel {
+        final private JPanel optionsPanel;
+
+        final private JCheckBox respectPhpunitStandards;
+
+        public OptionsPanel() {
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
+
+            respectPhpunitStandards = new JCheckBox("Follow PHPUnit standards", RESPECT_PHPUNIT_STANDARDS);
+            respectPhpunitStandards.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    RESPECT_PHPUNIT_STANDARDS = respectPhpunitStandards.isSelected();
+                }
+            });
+            optionsPanel.add(respectPhpunitStandards, "wrap");
+        }
+
+        public JPanel getComponent() {
+            return optionsPanel;
         }
     }
 }

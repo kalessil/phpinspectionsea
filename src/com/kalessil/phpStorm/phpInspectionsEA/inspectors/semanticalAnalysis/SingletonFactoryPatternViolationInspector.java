@@ -47,7 +47,8 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
                     return;
                 }
                 for (Method ownMethod: clazz.getOwnMethods()) {
-                    if (ownMethod.getName().startsWith("create")) {
+                    final String methodName = ownMethod.getName();
+                    if (methodName.startsWith("create") || methodName.startsWith("from")) {
                         return;
                     }
                 }

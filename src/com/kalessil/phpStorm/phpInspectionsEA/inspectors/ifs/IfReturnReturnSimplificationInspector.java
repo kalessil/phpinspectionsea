@@ -11,7 +11,6 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl;
 import com.jetbrains.php.lang.PhpLangUtil;
-import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;

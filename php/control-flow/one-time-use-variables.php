@@ -1,13 +1,20 @@
 <?php
 
-$x = 1; // <- reported
+$x = 1;                   // <- reported
 return $x;
 
 $x = returnByReference(); // <- reported
 return $x->x;
 
-$y = new Exception(); // <- reported
+$y = new Exception();     // <- reported
 throw $y;
+
+function listUnpack () {
+    $list = array(1, 2);  // <- reported
+    list($a, $b) = $list;
+
+    return $a + $b;
+}
 
 function &returnByReference () {
     $null = null; // <- shall not be reported

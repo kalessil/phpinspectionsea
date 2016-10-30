@@ -16,10 +16,7 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstr
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.AssignmentExpressionImpl;
-import com.jetbrains.php.lang.psi.elements.impl.FieldReferenceImpl;
-import com.jetbrains.php.lang.psi.elements.impl.SelfAssignmentExpressionImpl;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
+import com.jetbrains.php.lang.psi.elements.impl.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -41,7 +38,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            void checkOneTimeUse(@NotNull StatementWithArgument returnOrThrow, @NotNull Variable argument) {
+            void checkOneTimeUse(@NotNull PhpPsiElement returnOrThrow, @NotNull Variable argument) {
                 final String variableName = argument.getName();
                 /* verify preceding expression (assignment needed) */
                 if (
@@ -135,6 +132,16 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 }
             }
 
+            public void visitPhpMultiassignmentExpression(MultiassignmentExpression multiassignmentExpression) {
+                final PsiElement firstChild = multiassignmentExpression.getFirstChild();
+                if (null != firstChild && firstChild.getText().equals("list")) {
+                    final Variable variable = this.getVariable(multiassignmentExpression.getValue());
+                    if (null != variable) {
+                        checkOneTimeUse(multiassignmentExpression, variable);
+                    }
+                }
+            }
+
             public void visitPhpThrow(PhpThrow throwStatement) {
                 final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(throwStatement.getArgument());
                 if (argument instanceof PhpPsiElement) {
@@ -160,6 +167,10 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                     if (propertyAccess.getFirstChild() instanceof Variable) {
                         return (Variable) propertyAccess.getFirstChild();
                     }
+                }
+
+                if (expression instanceof PhpExpressionImpl) {
+                    return getVariable(expression.getFirstPsiChild());
                 }
 
                 return null;

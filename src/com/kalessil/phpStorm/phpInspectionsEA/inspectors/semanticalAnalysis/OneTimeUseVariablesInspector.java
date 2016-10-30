@@ -38,14 +38,14 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            void checkOneTimeUse(@NotNull PhpPsiElement returnOrThrow, @NotNull Variable argument) {
+            void checkOneTimeUse(@NotNull PhpPsiElement construct, @NotNull Variable argument) {
                 final String variableName = argument.getName();
                 /* verify preceding expression (assignment needed) */
                 if (
-                    !StringUtil.isEmpty(variableName) && null != returnOrThrow.getPrevPsiSibling() &&
-                    returnOrThrow.getPrevPsiSibling().getFirstChild() instanceof AssignmentExpressionImpl
+                    !StringUtil.isEmpty(variableName) && null != construct.getPrevPsiSibling() &&
+                    construct.getPrevPsiSibling().getFirstChild() instanceof AssignmentExpressionImpl
                 ) {
-                    final AssignmentExpressionImpl assign = (AssignmentExpressionImpl) returnOrThrow.getPrevPsiSibling().getFirstChild();
+                    final AssignmentExpressionImpl assign = (AssignmentExpressionImpl) construct.getPrevPsiSibling().getFirstChild();
                     /* ensure it's not a self-assignment */
                     if (assign instanceof SelfAssignmentExpressionImpl) {
                         return;
@@ -54,14 +54,14 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                     /* ensure variables are the same */
                     final PhpPsiElement assignVariable = assign.getVariable();
                     final PsiElement assignValue       = ExpressionSemanticUtil.getExpressionTroughParenthesis(assign.getValue());
-                    if (assignVariable instanceof Variable && null != assignValue) {
+                    if (null != assignValue && assignVariable instanceof Variable) {
                         final String assignVariableName = assignVariable.getName();
                         if (StringUtil.isEmpty(assignVariableName) || !assignVariableName.equals(variableName)) {
                             return;
                         }
 
                         /* check if variable as a function/use(...) parameter by reference */
-                        final Function function = ExpressionSemanticUtil.getScope(returnOrThrow);
+                        final Function function = ExpressionSemanticUtil.getScope(construct);
                         if (null != function) {
                             for (Parameter param: function.getParameters()) {
                                 if (param.isPassByRef() && param.getName().equals(variableName)) {
@@ -136,8 +136,9 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 final PsiElement firstChild = multiassignmentExpression.getFirstChild();
                 if (null != firstChild && firstChild.getText().equals("list")) {
                     final Variable variable = this.getVariable(multiassignmentExpression.getValue());
-                    if (null != variable) {
-                        checkOneTimeUse(multiassignmentExpression, variable);
+                    final PsiElement parent = multiassignmentExpression.getParent();
+                    if (null != variable && parent instanceof StatementImpl) {
+                        checkOneTimeUse((PhpPsiElement) parent, variable);
                     }
                 }
             }

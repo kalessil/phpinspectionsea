@@ -9,6 +9,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
@@ -72,7 +73,16 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                             LinkedList<Variable> useList = ExpressionSemanticUtil.getUseListVariables(function);
                             if (null != useList) {
                                 for (Variable param: useList) {
-                                    if (param.getName().equals(variableName) && param.getText().contains("&")) {
+                                    if (!param.getName().equals(variableName)) {
+                                        continue;
+                                    }
+
+                                    /* detect parameters by reference in use clause */
+                                    PsiElement ampersandCandidate = param.getPrevSibling();
+                                    if (ampersandCandidate instanceof PsiWhiteSpace) {
+                                        ampersandCandidate = ampersandCandidate.getPrevSibling();
+                                    }
+                                    if (null != ampersandCandidate && ampersandCandidate.getText().equals("&")) {
                                         return;
                                     }
                                 }

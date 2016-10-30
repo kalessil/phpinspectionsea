@@ -6,10 +6,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl;
+import com.intellij.psi.*;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
@@ -191,15 +188,17 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private PsiElement assignment;
-        private PsiElement value;
-        private Variable returnOrThrowVariable;
+        private SmartPsiElementPointer<PsiElement> assignment;
+        private SmartPsiElementPointer<PsiElement> value;
+        private SmartPsiElementPointer<Variable> variable;
 
-        TheLocalFix(@NotNull PsiElement assignment, @NotNull Variable returnOrThrowVariable, @NotNull PsiElement value) {
+        TheLocalFix(@NotNull PsiElement assignment, @NotNull Variable variable, @NotNull PsiElement value) {
             super();
-            this.assignment            = assignment;
-            this.returnOrThrowVariable = returnOrThrowVariable;
-            this.value                 = value;
+            final SmartPointerManager factory = SmartPointerManager.getInstance(value.getProject());
+
+            this.assignment = factory.createSmartPsiElementPointer(assignment, assignment.getContainingFile());
+            this.variable   = factory.createSmartPsiElementPointer(variable, variable.getContainingFile());
+            this.value      = factory.createSmartPsiElementPointer(value, value.getContainingFile());
         }
 
         @NotNull
@@ -216,26 +215,28 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement assignment = this.assignment.getElement();
+            final Variable variable     = this.variable.getElement();
+            final PsiElement value      = this.value.getElement();
+            if (null == assignment || null == variable || null == value) {
+                return;
+            }
+
             /* delete preceding PhpDoc */
-            final PhpPsiElement previous = ((StatementImpl) this.assignment).getPrevPsiSibling();
+            final PhpPsiElement previous = ((StatementImpl) assignment).getPrevPsiSibling();
             if (previous instanceof PhpDocCommentImpl) {
                 previous.delete();
             }
 
             /* delete space after the method */
-            PsiElement nextExpression = this.assignment.getNextSibling();
+            PsiElement nextExpression = assignment.getNextSibling();
             if (nextExpression instanceof PsiWhiteSpace) {
                 nextExpression.delete();
             }
 
             /* delete assignment itself */
-            this.returnOrThrowVariable.replace(this.value);
-            this.assignment.delete();
-
-            /* release a tree node reference */
-            this.assignment            = null;
-            this.returnOrThrowVariable = null;
-            this.value                 = null;
+            variable.replace(value);
+            assignment.delete();
         }
     }
 }

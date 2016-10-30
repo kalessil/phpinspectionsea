@@ -16,6 +16,11 @@ function listUnpack () {
     return $a + $b;
 }
 
+function inline () {
+    $a = '';      // <- shall not be reported
+    return "$a";
+}
+
 function &returnByReference () {
     $null = null; // <- shall not be reported
     return $null;

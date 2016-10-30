@@ -170,7 +170,8 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                     }
                 }
 
-                if (expression instanceof PhpExpressionImpl) {
+                /* instanceof passes child classes as well, what isn't correct */
+                if (expression.getClass() == PhpExpressionImpl.class) {
                     return getVariable(expression.getFirstPsiChild());
                 }
 

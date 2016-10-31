@@ -12,6 +12,7 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessInstructi
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -46,10 +47,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 /* check assignments containing variable as container */
                 if (objVariable instanceof Variable) {
                     String variableName = ((Variable) objVariable).getName();
-                    if (
-                        StringUtil.isEmpty(variableName) ||
-                        "|_GET|_POST|_SESSION|_REQUEST|_FILES|_COOKIE|_ENV|_SERVER|".contains("|" + variableName + "|")
-                    ) {
+                    if (StringUtil.isEmpty(variableName) || ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
                         return;
                     }
 

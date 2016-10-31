@@ -11,6 +11,18 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 
 final public class ExpressionCostEstimateUtil {
+    public final static HashSet<String> predefinedVars = new HashSet<String>();
+    static {
+        predefinedVars.add("_GET");
+        predefinedVars.add("_POST");
+        predefinedVars.add("_SESSION");
+        predefinedVars.add("_REQUEST");
+        predefinedVars.add("_FILES");
+        predefinedVars.add("_COOKIE");
+        predefinedVars.add("_ENV");
+        predefinedVars.add("_SERVER");
+    }
+
     /**
      * Estimates execution cost on basis 0-10 for simple parts. Complex constructions can be estimated
      * to more than 10.
@@ -57,10 +69,7 @@ final public class ExpressionCostEstimateUtil {
                 @see https://bitbucket.org/kalessil/phpinspectionsea/issues/239/non-optimal-if-conditions-incorrect */
             if (arrayAccess.getValue() instanceof Variable) {
                 final String variableName = arrayAccess.getValue().getName();
-                if (
-                    !StringUtil.isEmpty(variableName) &&
-                    "|_GET|_POST|_SESSION|_REQUEST|_FILES|_COOKIE|_ENV|_SERVER|".contains("|" + variableName + "|")
-                ) {
+                if (!StringUtil.isEmpty(variableName) && predefinedVars.contains(variableName)) {
                     additionalCosts = 0;
                 }
             }

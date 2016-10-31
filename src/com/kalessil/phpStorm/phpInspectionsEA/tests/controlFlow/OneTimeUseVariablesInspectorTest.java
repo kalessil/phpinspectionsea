@@ -5,7 +5,7 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OneTimeUseVariablesInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.tests.utils.FixturesLocationUtil;
 
-public class OneTimeUseVariablesInspectorTest  extends CodeInsightFixtureTestCase {
+public class OneTimeUseVariablesInspectorTest extends CodeInsightFixtureTestCase {
     @Override
     protected String getBasePath() {
         return FileUtil.toSystemDependentName(FixturesLocationUtil.RELATIVE_TEST_DATA_PATH);

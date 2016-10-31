@@ -23,7 +23,21 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
+                /* parent class might already introduce fields */
+                final PhpClass parent = clazz.getSuperClass();
+
                 for (Field field : clazz.getOwnFields()) {
+                    /* if we can report field at all */
+                    final PsiElement fieldName = field.getNameIdentifier();
+                    if (null == fieldName) {
+                        continue;
+                    }
+                    /* do not process overriding, there is an inspection for this */
+                    if (null != parent && null != parent.findFieldByName(field.getName(), false)) {
+                        continue;
+                    }
+
+
                     /** due to lack of api get raw text with all modifiers */
                     String strModifiers = null;
                     for (PsiElement objChild : field.getParent().getChildren()) {
@@ -52,7 +66,7 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
                         }
 
                         if (intArrayOrStringCount == 3) {
-                            holder.registerProblem(field.getParent(), strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                            holder.registerProblem(fieldName, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
                             break;
                         }
                     }
@@ -66,7 +80,7 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
                                 }
 
                                 if (intArrayOrStringCount == 3) {
-                                    holder.registerProblem(field.getParent(), strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                                    holder.registerProblem(fieldName, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
                                     break;
                                 }
                             }

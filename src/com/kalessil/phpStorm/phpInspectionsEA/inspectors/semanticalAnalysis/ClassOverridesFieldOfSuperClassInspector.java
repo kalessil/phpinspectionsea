@@ -54,6 +54,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
                     }
                 }
                 /* skip static variables - they shall not be changed via constructor */
+                /* TODO: use field.getModifier() */
                 if (!StringUtil.isEmpty(strModifiers) && strModifiers.contains("static")) {
                     return;
                 }
@@ -82,6 +83,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
                                     break;
                                 }
                             }
+                            /* TODO: use field.getModifier() */
                             final boolean isPrivate = (!StringUtil.isEmpty(strSuperModifiers) && strSuperModifiers.contains("private"));
 
                             /* prepare message, make it helpful */

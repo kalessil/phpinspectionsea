@@ -55,7 +55,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                         final PsiElement methodNameNode = objMethod.getNameIdentifier();
                         if (null != strModifiers && null != methodNameNode && !(methodNameNode instanceof PsiErrorElement)) {
                             /* scan modifiers defined */
-                            /* TODO: re-evaluate if JB completed modifiers list construction */
+                            /* TODO: use field.getModifier() */
                             final boolean hasAccessModifiers =
                                     strModifiers.contains("public") ||
                                     strModifiers.contains("protected") ||
@@ -85,7 +85,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
 
                         if (null != strModifiers && null != objField.getNameIdentifier()) {
                             /* scan modifiers defined */
-                            /* TODO: re-evaluate if JB completed modifiers list construction */
+                            /* TODO: use field.getModifier() */
                             final boolean hasAccessModifiers =
                                     strModifiers.contains("public") ||
                                     strModifiers.contains("protected") ||

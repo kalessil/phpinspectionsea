@@ -50,7 +50,22 @@ final public class ExpressionCostEstimateUtil {
                 intOwnCosts += getExpressionCost(arrayIndex.getValue(), functionsSetToAllow);
             }
 
-            return (1 + intOwnCosts);
+            /* default additional cost */
+            int additionalCosts = 1;
+
+            /* for pre-defined variables add no costs:
+                @see https://bitbucket.org/kalessil/phpinspectionsea/issues/239/non-optimal-if-conditions-incorrect */
+            if (arrayAccess.getValue() instanceof Variable) {
+                final String variableName = arrayAccess.getValue().getName();
+                if (
+                    !StringUtil.isEmpty(variableName) &&
+                    "|_GET|_POST|_SESSION|_REQUEST|_FILES|_COOKIE|_ENV|_SERVER|".contains("|" + variableName + "|")
+                ) {
+                    additionalCosts = 0;
+                }
+            }
+
+            return (additionalCosts + intOwnCosts);
         }
 
         /* empty counts too much as empty, so it still sensitive overhead, but not add any factor */

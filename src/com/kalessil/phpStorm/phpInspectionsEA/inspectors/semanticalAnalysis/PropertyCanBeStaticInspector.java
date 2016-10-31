@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -38,18 +37,10 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
                     }
 
 
-                    /** due to lack of api get raw text with all modifiers */
-                    String strModifiers = null;
-                    for (PsiElement objChild : field.getParent().getChildren()) {
-                        if (objChild instanceof PhpModifierList) {
-                            strModifiers = objChild.getText();
-                            break;
-                        }
-                    }
-                    /** skip static and public variables - they shall not be changed via constructor */
+                    /* skip static and public variables - they shall not be changed via constructor */
+                    final PhpModifier modifier = field.getModifier();
                     if (
-                        StringUtil.isEmpty(strModifiers) ||
-                        strModifiers.contains("static") || strModifiers.contains("public") ||
+                        modifier.isStatic() || modifier.isPublic() ||
                         !(field.getDefaultValue() instanceof ArrayCreationExpression)
                     ) {
                         continue;
@@ -57,7 +48,7 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
 
 
                     /* look into array for key-value pairs */
-                    /** TODO: merge into next loop */
+                    /* TODO: merge into next loop */
                     int intArrayOrStringCount = 0;
                     for (ArrayHashElement objEntry : ((ArrayCreationExpression) field.getDefaultValue()).getHashElements()) {
                         PhpPsiElement item = objEntry.getValue();

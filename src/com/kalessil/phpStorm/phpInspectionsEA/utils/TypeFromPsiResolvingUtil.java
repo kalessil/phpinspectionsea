@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionImpl;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -78,11 +79,12 @@ final public class TypeFromPsiResolvingUtil {
 
         if (objSubjectExpression instanceof Variable) {
             String strVariableName = ((Variable) objSubjectExpression).getName();
-            if (!StringUtil.isEmpty(strVariableName) && strVariableName.charAt(0) == '_') {
-                if ("|_GET|_POST|_SESSION|_REQUEST|_FILES|_COOKIE|_ENV|_SERVER|".contains("|" + strVariableName + "|")) {
-                    storeAsTypeWithSignaturesImport(Types.strArray, objScope, objIndex, objTypesSet);
-                    return;
-                }
+            if (
+                !StringUtil.isEmpty(strVariableName) && strVariableName.charAt(0) == '_' &&
+                ExpressionCostEstimateUtil.predefinedVars.contains(strVariableName)
+            ) {
+                storeAsTypeWithSignaturesImport(Types.strArray, objScope, objIndex, objTypesSet);
+                return;
             }
 //
 //            PsiElement var = ((Variable) objSubjectExpression).resolve();

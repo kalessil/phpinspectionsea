@@ -69,7 +69,10 @@ final public class ExpressionCostEstimateUtil {
                 @see https://bitbucket.org/kalessil/phpinspectionsea/issues/239/non-optimal-if-conditions-incorrect */
             if (arrayAccess.getValue() instanceof Variable) {
                 final String variableName = arrayAccess.getValue().getName();
-                if (!StringUtil.isEmpty(variableName) && predefinedVars.contains(variableName)) {
+                if (
+                    !StringUtil.isEmpty(variableName) && variableName.charAt(0) == '_' &&
+                    predefinedVars.contains(variableName)
+                ) {
                     additionalCosts = 0;
                 }
             }

@@ -559,6 +559,10 @@ with a laptop.
         shortName="MktimeUsageInspection"                           displayName="'gmmktime()'/'mktime()' usage"
         groupName="Compatibility"                                   enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.MktimeUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="FopenBinaryUnsafeUsageInspection"                displayName="Binary-unsafe fopen usage"
+        groupName="Compatibility"                                   enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.FopenBinaryUnsafeUsageInspector"/>
 
     <!--localInspection language="PHP" groupPath="PHP"
         shortName="StrictArgumentsInspection"                       displayName="Type compatibility: check types of call arguments"

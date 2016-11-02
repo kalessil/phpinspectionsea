@@ -1,14 +1,39 @@
 <?php
+    /* @var array $files */
+    $class = \DateTime::class;
 
-    // WEAK: This statement seems to be disconnected from parent foreach
-    // WEAK: Objects should be created outside of a loop and cloned instead
+    foreach ($files as & $file1) {
+        <weak_warning descr="Objects should be created outside of a loop and cloned instead">$now = new $class();</weak_warning>
+        // Should be reported: Objects should be created outside of a loop and cloned instead, but 2 SDKs broke method resolving
+        // $domElement = (new \DOMDocument())->createElement('');
 
-    // new, dom element create
-//    $log = '/tmp/debug';
-//
-//    /* @var array $files */
-//    foreach ($files as &$file1) {
-//        error_log('Procesing next file', 3, $log);
-//    }
+        <weak_warning descr="This statement seems to be disconnected from parent foreach">error_log('Processing next file', 3, '/tmp/debug');</weak_warning>
+        <weak_warning descr="This statement seems to be disconnected from parent foreach">error_log($class, 3, '/tmp/debug');</weak_warning>
 
-    // loops, ifs, switches, try's needs to be reported on keyword, others - complete
+        <weak_warning descr="This statement seems to be disconnected from parent foreach">for</weak_warning> (; $for < 10;){
+            echo $for;
+        }
+        <weak_warning descr="This statement seems to be disconnected from parent foreach">foreach</weak_warning> ([] as $foreach){
+            echo $foreach;
+        }
+        <weak_warning descr="This statement seems to be disconnected from parent foreach">while</weak_warning> ($while < 10) {
+            echo $while;
+        }
+
+        <weak_warning descr="This statement seems to be disconnected from parent foreach">if</weak_warning> ($if > 0) {
+            echo $if;
+        }
+
+        <weak_warning descr="This statement seems to be disconnected from parent foreach">switch</weak_warning> ($switch) {
+            case 0:
+            case 1:
+            default:
+                break;
+        }
+
+        <weak_warning descr="This statement seems to be disconnected from parent foreach">try</weak_warning> {
+            throw new \RuntimeException('');
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
+    }

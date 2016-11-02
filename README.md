@@ -34,7 +34,7 @@ Inspections Lists (Control flow)
 | Control flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                           | n/a |
 | Control flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                            | n/a |
 | Control flow         | ThrowRawExceptionInspection                     | General '\Exception' is thrown                      | no  |
-| Control flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach           | n/a |
+| Control flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach           | n/a       | yes | n/a  |
 | Control flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                  | yes |
 | Control flow         | DegradedSwitchInspection                        | Switch-case could be simplified                     | n/a |
 | Control flow         | ForeachInvariantsInspection                     | Foreach usage possible                              | n/a |

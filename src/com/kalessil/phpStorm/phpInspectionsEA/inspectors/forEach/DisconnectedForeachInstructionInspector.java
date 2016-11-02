@@ -66,12 +66,10 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     for (PsiElement oneInstruction : foreachBody.getStatements()) {
                         if (oneInstruction instanceof PhpPsiElement && !(oneInstruction instanceof PsiComment)) {
                             boolean isDependOnModifiedVariables = false;
-                            boolean hasDependencies             = false;
 
                             /* check if any dependency is overridden */
                             final HashSet<String> individualDependencies = instructionDependencies.get(oneInstruction);
                             if (null != individualDependencies && individualDependencies.size() > 1) {
-                                hasDependencies = true;
                                 /* contains not only this */
                                 for (String dependencyName : individualDependencies) {
                                     if (allModifiedVariables.contains(dependencyName)) {
@@ -82,7 +80,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             }
 
                             /* verify and report if violation detected */
-                            if (!isDependOnModifiedVariables && hasDependencies) {
+                            if (!isDependOnModifiedVariables) {
                                 final ExpressionType target = getExpressionType(oneInstruction);
                                 if (
                                     ExpressionType.NEW                 != target &&

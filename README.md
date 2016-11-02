@@ -67,7 +67,7 @@ Inspections Lists (Compatibility)
 | Compatibility        | RandomApiMigrationInspection                    | Random API migration                                | yes |
 | Compatibility        | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | yes |
 | Compatibility        | MktimeUsageInspection                           | 'gmmktime()'/'mktime()' usage                       | yes |
-| Compatibility        | FopenBinaryUnsafeUsageInspection                | Binary-unsafe fopen usage                           | no        | yes | no   |
+| Compatibility        | FopenBinaryUnsafeUsageInspection                | Binary-unsafe fopen usage                           | yes       | yes | no   |
 
 Inspections Lists (Confusing constructs)
 ---

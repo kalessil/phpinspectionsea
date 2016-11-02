@@ -290,7 +290,11 @@ final public class ExpressionSemanticUtil {
     }
 
     @Nullable
-    public static StringLiteralExpression resolveAsStringLiteral(PsiElement obj) {
+    public static StringLiteralExpression resolveAsStringLiteral(@Nullable PsiElement obj) {
+        if (null == obj) {
+            return null;
+        }
+
         if (obj instanceof StringLiteralExpression) {
             return (StringLiteralExpression) obj;
         }

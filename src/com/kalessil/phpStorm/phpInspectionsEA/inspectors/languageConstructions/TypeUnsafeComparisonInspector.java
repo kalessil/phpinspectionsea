@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ClassInStringContextStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.DateTimeComparisonStrategy;
 import org.jetbrains.annotations.NotNull;
 
 public class TypeUnsafeComparisonInspector extends BasePhpInspection {
@@ -29,12 +30,11 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpBinaryExpression(BinaryExpression expression) {
-                PsiElement objOperation = expression.getOperation();
+                /* verify operation is as expected */
+                final PsiElement objOperation = expression.getOperation();
                 if (null == objOperation) {
                     return;
                 }
-
-                /**  */
                 final IElementType operationType = objOperation.getNode().getElementType();
                 if (operationType != PhpTokenTypes.opEQUAL && operationType != PhpTokenTypes.opNOT_EQUAL) {
                     return;
@@ -45,8 +45,8 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
 
             /** generates more specific warnings for given expression */
             private void triggerProblem(BinaryExpression objExpression) {
-                PsiElement objLeftOperand = objExpression.getLeftOperand();
-                PsiElement objRightOperand = objExpression.getRightOperand();
+                final PsiElement objLeftOperand  = objExpression.getLeftOperand();
+                final PsiElement objRightOperand = objExpression.getRightOperand();
                 if (
                     objRightOperand instanceof StringLiteralExpression ||
                     objLeftOperand instanceof StringLiteralExpression
@@ -54,21 +54,21 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                     PsiElement objNonStringOperand;
                     String strLiteralValue;
                     if (objRightOperand instanceof StringLiteralExpression) {
-                        strLiteralValue = ((StringLiteralExpression) objRightOperand).getContents();
+                        strLiteralValue     = ((StringLiteralExpression) objRightOperand).getContents();
                         objNonStringOperand = objLeftOperand;
                     } else {
-                        strLiteralValue = ((StringLiteralExpression) objLeftOperand).getContents();
+                        strLiteralValue     = ((StringLiteralExpression) objLeftOperand).getContents();
                         objNonStringOperand = objRightOperand;
                     }
 
 
-                    /** resolve 2nd operand type, if class ensure __toString is implemented */
+                    /* resolve 2nd operand type, if class ensure __toString is implemented */
                     objNonStringOperand = ExpressionSemanticUtil.getExpressionTroughParenthesis(objNonStringOperand);
                     if (
                         null != objNonStringOperand &&
                         ClassInStringContextStrategy.apply(objNonStringOperand, holder, objExpression, strProblemDescriptionMissingToStringMethod)
                     ) {
-                        /** TODO: weak warning regarding under-the-hood string casting */
+                        /* TODO: weak warning regarding under-the-hood string casting */
                         return;
                     }
 
@@ -79,11 +79,13 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                     }
                 }
 
+                /* some of objects supporting direct comparison: search for .compare_objects in PHP sources */
+                if (DateTimeComparisonStrategy.apply(objLeftOperand, objRightOperand, holder)) {
+                    return;
+                }
+
                 holder.registerProblem(objExpression, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
             }
-
-
-
         };
     }
 }

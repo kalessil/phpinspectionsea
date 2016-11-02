@@ -1,12 +1,14 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy;
 
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import org.jetbrains.annotations.NotNull;
 
 import java.security.InvalidParameterException;
 import java.util.HashSet;
 
 final public class InterfacesExtractUtil {
-    public static HashSet<PhpClass> getCrawlCompleteInheritanceTree(PhpClass objClass, boolean withClasses) {
+    @NotNull
+    public static HashSet<PhpClass> getCrawlCompleteInheritanceTree(@NotNull PhpClass objClass, boolean withClasses) {
         HashSet<PhpClass> processedItems = new HashSet<PhpClass>();
 
         if (objClass.isInterface()) {

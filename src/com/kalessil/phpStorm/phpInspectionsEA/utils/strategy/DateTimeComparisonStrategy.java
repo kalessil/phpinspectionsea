@@ -1,0 +1,68 @@
+package com.kalessil.phpStorm.phpInspectionsEA.utils.strategy;
+
+import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
+import com.jetbrains.php.PhpIndex;
+import com.jetbrains.php.lang.psi.elements.Function;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+
+final public class DateTimeComparisonStrategy {
+    public static boolean apply (@Nullable PsiElement leftOperand, @Nullable PsiElement rightOperand, ProblemsHolder holder) {
+        /* validate parameters and prepare needed objects */
+        if (null == leftOperand || null == rightOperand) {
+            return false;
+        }
+        final Function scope = ExpressionSemanticUtil.getScope(leftOperand);
+        if (null == scope) {
+            return false;
+        }
+        final PhpIndex projectIndex = PhpIndex.getInstance(holder.getProject());
+
+        return isDateTime(leftOperand, scope, projectIndex, holder) && isDateTime(rightOperand, scope, projectIndex, holder);
+
+    }
+
+    private static boolean isDateTime (@NotNull PsiElement operand, @NotNull Function scope, @NotNull PhpIndex projectIndex, ProblemsHolder holder) {
+        /* extract types of operand, check if classes are/inherited from \DateTime */
+        final HashSet<String> operandTypes = new HashSet<String>();
+        TypeFromPsiResolvingUtil.resolveExpressionType(operand, scope, projectIndex, operandTypes);
+        if (!TypesSemanticsUtil.isNullableObjectInterface(operandTypes)) {
+            operandTypes.clear();
+            return false;
+        }
+
+        /* collect classes to check for \DateTime relationship */
+        final LinkedList<PhpClass> leftOperandClasses = new LinkedList<PhpClass>();
+        for (String classFQN : operandTypes) {
+            if (classFQN.charAt(0) == '\\') {
+                leftOperandClasses.addAll(PhpIndexUtil.getObjectInterfaces(classFQN, projectIndex, false));
+            }
+        }
+        operandTypes.clear();
+
+        /* inspect classes for being a/child of special once */
+        for (PhpClass clazz : leftOperandClasses) {
+            final HashSet<PhpClass> hierarchy = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true);
+            for (PhpClass oneClass : hierarchy){
+                if (oneClass.getFQN().equals("\\DateTime")) {
+                    return true;
+                }
+            }
+            hierarchy.clear();
+        }
+        leftOperandClasses.clear();
+
+        return false;
+    }
+}

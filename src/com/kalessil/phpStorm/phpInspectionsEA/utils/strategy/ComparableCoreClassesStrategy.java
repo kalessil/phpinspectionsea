@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils.strategy;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.PhpIndex;
@@ -42,11 +41,11 @@ final public class ComparableCoreClassesStrategy {
         }
         final PhpIndex projectIndex = PhpIndex.getInstance(holder.getProject());
 
-        return isDateTime(leftOperand, scope, projectIndex, holder) && isDateTime(rightOperand, scope, projectIndex, holder);
+        return isComparableObject(leftOperand, scope, projectIndex, holder) && isComparableObject(rightOperand, scope, projectIndex, holder);
 
     }
 
-    private static boolean isDateTime (@NotNull PsiElement operand, @NotNull Function scope, @NotNull PhpIndex projectIndex, ProblemsHolder holder) {
+    private static boolean isComparableObject(@NotNull PsiElement operand, @NotNull Function scope, @NotNull PhpIndex projectIndex, ProblemsHolder holder) {
         /* extract types of operand, check if classes are/inherited from \DateTime */
         final HashSet<String> operandTypes = new HashSet<String>();
         TypeFromPsiResolvingUtil.resolveExpressionType(operand, scope, projectIndex, operandTypes);

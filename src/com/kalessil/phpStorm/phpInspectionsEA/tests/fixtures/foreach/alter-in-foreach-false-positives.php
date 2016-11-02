@@ -15,3 +15,16 @@ function AIFDocBlockBeforeUnset(array $x){
     /** dock-block here */
     unset($y);
 }
+
+function AIFScope(array $x){
+    if (is_array($x)) {
+        /* no next statement in the scope context */
+        foreach ($x as & $y) {
+            ++$y;
+        }
+    } else {
+        ++$x;
+    }
+
+    return $x;
+}

@@ -7,6 +7,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -51,7 +52,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                         PhpPsiElement nextExpression = foreach.getNextPsiSibling();
 
                         if (PhpTokenTypes.opBIT_AND == prevElement.getNode().getElementType()) {
-                            /* === requested by the community, not part of original idea  === */
+                            /* === requested by the community, not part of original idea === */
                             /* look up for parents which doesn't have following statements, eg #53 */
                             PsiElement foreachParent = foreach.getParent();
                             while (null == nextExpression && null != foreachParent) {
@@ -64,10 +65,13 @@ public class AlterInForeachInspector extends BasePhpInspection {
                                     break;
                                 }
                             }
-                            /* === requested by the community, not part of original idea  === */
+                            /* === requested by the community, not part of original idea === */
 
-                            /* allow return after loop - no issues can be introduced */
+                            /* allow return/end of control flow after the loop - no issues can be introduced */
                             boolean isRequirementFullFilled = false;
+                            if (nextExpression instanceof PhpDocComment) {
+                                nextExpression = nextExpression.getNextPsiSibling();
+                            }
                             if (null == nextExpression || nextExpression instanceof PhpReturn) {
                                 isRequirementFullFilled = true;
                             }
@@ -147,7 +151,6 @@ public class AlterInForeachInspector extends BasePhpInspection {
                         holder.registerProblem(prevElement, strProblemKeyReference, ProblemHighlightType.ERROR);
                     }
                 }
-
             }
 
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
@@ -174,7 +177,6 @@ public class AlterInForeachInspector extends BasePhpInspection {
                 /* get parts of assignment */
                 final PhpPsiElement objForeachSourceCandidate = objContainer.getValue();
                 final PhpPsiElement objForeachKeyCandidate    = objContainer.getIndex().getValue();
-
 
                 PsiElement objParent = assignmentExpression.getParent();
                 while (null != objParent && !(objParent instanceof PhpFile)) {

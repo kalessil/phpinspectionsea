@@ -27,14 +27,14 @@ final public class AndOrWordsUsageStrategy {
                 }
 
                 final String operator = operation.getText().trim();
-                if (operator.equals("and")) {
+                if (operator.equalsIgnoreCase("and")) {
                     final String message = messagePattern.replace("%o%", "&&");
                     holder.registerProblem(operation, message, ProblemHighlightType.WEAK_WARNING);
 
                     continue;
                 }
 
-                if (operator.equals("or")) {
+                if (operator.equalsIgnoreCase("or")) {
                     final String message = messagePattern.replace("%o%", "||");
                     holder.registerProblem(operation, message, ProblemHighlightType.WEAK_WARNING);
 

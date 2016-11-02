@@ -17,7 +17,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-final public class DateTimeComparisonStrategy {
+final public class ComparableCoreClassesStrategy {
+    private final static HashSet<String> comparableObjects = new HashSet<String>();
+    static {
+        comparableObjects.add("\\Closure");
+        comparableObjects.add("\\DateTime");
+        comparableObjects.add("\\DateTimeImmutable");
+        comparableObjects.add("\\IntlBreakIterator");
+        comparableObjects.add("\\IntlTimeZone");
+        comparableObjects.add("\\PDO");
+        comparableObjects.add("\\PDOStatement");
+        comparableObjects.add("\\ArrayObject");
+        comparableObjects.add("\\SplObjectStorage");
+    }
+
     public static boolean apply (@Nullable PsiElement leftOperand, @Nullable PsiElement rightOperand, ProblemsHolder holder) {
         /* validate parameters and prepare needed objects */
         if (null == leftOperand || null == rightOperand) {
@@ -55,7 +68,7 @@ final public class DateTimeComparisonStrategy {
         for (PhpClass clazz : leftOperandClasses) {
             final HashSet<PhpClass> hierarchy = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true);
             for (PhpClass oneClass : hierarchy){
-                if (oneClass.getFQN().equals("\\DateTime")) {
+                if (comparableObjects.contains(oneClass.getFQN())) {
                     return true;
                 }
             }

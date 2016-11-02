@@ -12,7 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ClassInStringContextStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.DateTimeComparisonStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ComparableCoreClassesStrategy;
 import org.jetbrains.annotations.NotNull;
 
 public class TypeUnsafeComparisonInspector extends BasePhpInspection {
@@ -80,7 +80,7 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                 }
 
                 /* some of objects supporting direct comparison: search for .compare_objects in PHP sources */
-                if (DateTimeComparisonStrategy.apply(objLeftOperand, objRightOperand, holder)) {
+                if (ComparableCoreClassesStrategy.apply(objLeftOperand, objRightOperand, holder)) {
                     return;
                 }
 

@@ -55,16 +55,16 @@ final public class ComparableCoreClassesStrategy {
         }
 
         /* collect classes to check for \DateTime relationship */
-        final LinkedList<PhpClass> leftOperandClasses = new LinkedList<PhpClass>();
+        final LinkedList<PhpClass> operandClasses = new LinkedList<PhpClass>();
         for (String classFQN : operandTypes) {
             if (classFQN.charAt(0) == '\\') {
-                leftOperandClasses.addAll(PhpIndexUtil.getObjectInterfaces(classFQN, projectIndex, false));
+                operandClasses.addAll(PhpIndexUtil.getObjectInterfaces(classFQN, projectIndex, false));
             }
         }
         operandTypes.clear();
 
         /* inspect classes for being a/child of special once */
-        for (PhpClass clazz : leftOperandClasses) {
+        for (PhpClass clazz : operandClasses) {
             final HashSet<PhpClass> hierarchy = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true);
             for (PhpClass oneClass : hierarchy){
                 if (comparableObjects.contains(oneClass.getFQN())) {
@@ -73,7 +73,7 @@ final public class ComparableCoreClassesStrategy {
             }
             hierarchy.clear();
         }
-        leftOperandClasses.clear();
+        operandClasses.clear();
 
         return false;
     }

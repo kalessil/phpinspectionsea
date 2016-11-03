@@ -125,7 +125,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                 this.inspectDuplicatedConditions(objAllConditions, ifStatement);
                 /* TODO: If not binary/ternary/assignment/array access expression,  */
-                /* TODO: perform types lookup - nullable core types/com.kalessil.phpStorm.phpInspectionsEA.classes shall be compared with null.  */
+                /* TODO: perform types lookup - nullable core types/classes shall be compared with null.  */
                 /* TODO: Inversion should be un-boxed to get expression. */
 
                 objAllConditions.clear();

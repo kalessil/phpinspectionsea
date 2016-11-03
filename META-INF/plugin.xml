@@ -329,7 +329,7 @@ with a laptop.
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RealpathOnRelativePathsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="OffsetOperationsInspection"                    displayName="Array and string offset validity"
-        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        groupName="Probable bugs"                                 enabledByDefault="false" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OffsetOperationsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SummerTimeUnsafeTimeManipulationInspection"    displayName="Summer-time unsafe date manipulations"

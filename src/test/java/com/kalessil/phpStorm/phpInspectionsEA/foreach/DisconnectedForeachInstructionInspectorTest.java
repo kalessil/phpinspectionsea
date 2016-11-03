@@ -1,16 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.foreach;
 
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.DisconnectedForeachInstructionInspector;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.FixturesLocationUtil;
 
 public class DisconnectedForeachInstructionInspectorTest extends CodeInsightFixtureTestCase {
-    @Override
-    protected String getBasePath() {
-        return FileUtil.toSystemDependentName(FixturesLocationUtil.RELATIVE_TEST_DATA_PATH);
-    }
-
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/foreach/disconnected-statements-foreach.php");
         myFixture.enableInspections(DisconnectedForeachInstructionInspector.class);

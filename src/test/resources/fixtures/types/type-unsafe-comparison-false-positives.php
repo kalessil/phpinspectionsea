@@ -1,6 +1,6 @@
 <?php
 
-/* core com.kalessil.phpStorm.phpInspectionsEA.classes with .compare_objects support */
+/* core classes with .compare_objects support */
 class myDateTime extends DateTime {
 }
 function TUCObjectCompare() {

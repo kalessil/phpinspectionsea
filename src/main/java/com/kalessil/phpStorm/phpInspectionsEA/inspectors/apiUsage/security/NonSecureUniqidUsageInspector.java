@@ -15,7 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class NonSecureUniqidUsageInspector extends BasePhpInspection {
-    private static final String message = "Please provide both prefix and more entropy parameters";
+    private static final String message = "Please provide both prefix and more entropy parameters (see CVE-2010-1128)";
 
     @NotNull
     public String getShortName() {

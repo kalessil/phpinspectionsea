@@ -32,10 +32,10 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                 }
 
                 if (reference.getParent() instanceof BinaryExpression) {
-                    BinaryExpression objParent = (BinaryExpression) reference.getParent();
+                    final BinaryExpression objParent = (BinaryExpression) reference.getParent();
                     if (null != objParent.getOperation() && null != objParent.getOperation().getNode()) {
-                        IElementType objOperation = objParent.getOperation().getNode().getElementType();
-                        /** === use-case implicit boolean test === */
+                        final IElementType objOperation = objParent.getOperation().getNode().getElementType();
+                        /* === use-case implicit boolean test === */
                         if (
                             (objOperation == PhpTokenTypes.opIDENTICAL || objOperation == PhpTokenTypes.opNOT_IDENTICAL) &&
                             strFunctionName.equals("array_search")
@@ -54,7 +54,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                             }
                         }
 
-                        /** === use-case complex NON implicit boolean test === */
+                        /* === use-case complex NON implicit boolean test === */ /* TODO: ExpressionSemanticUtil.isUsedAsLogicalOperand */
                         if (
                             (objOperation == PhpTokenTypes.opAND || objOperation == PhpTokenTypes.opOR) &&
                             strFunctionName.equals("array_search")
@@ -65,11 +65,11 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                     }
                 }
 
-                /** === use-case single implicit boolean test with ! === */
+                /* === use-case single implicit boolean test with ! === */ /* TODO: ExpressionSemanticUtil.isUsedAsLogicalOperand */
                 if (reference.getParent() instanceof UnaryExpression) {
-                    PsiElement objOperation = ((UnaryExpression) reference.getParent()).getOperation();
+                    final PsiElement objOperation = ((UnaryExpression) reference.getParent()).getOperation();
                     if (null != objOperation) {
-                        IElementType typeOperation = objOperation.getNode().getElementType();
+                        final IElementType typeOperation = objOperation.getNode().getElementType();
                         if (typeOperation == PhpTokenTypes.opNOT && strFunctionName.equals("array_search")) {
                             holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             return;
@@ -77,12 +77,11 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                     }
                 }
 
-                /** === use-case single NON implicit boolean test === */
+                /* === use-case single NON implicit boolean test === */ /* TODO: ExpressionSemanticUtil.isUsedAsLogicalOperand */
                 if (reference.getParent() instanceof If && strFunctionName.equals("array_search")) {
                     holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     // return;
                 }
-                /* TODO: ExpressionSemanticUtil.isUsedAsLogicalOperand */
             }
         };
     }

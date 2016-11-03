@@ -86,6 +86,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         functionsRequirements.put("debug_zval_dump",       -1);
         functionsRequirements.put("debug_print_backtrace", -1);
         functionsRequirements.put("phpinfo",               -1);
+        functionsRequirements.put("error_log",             -1);
     }
 
     @Override

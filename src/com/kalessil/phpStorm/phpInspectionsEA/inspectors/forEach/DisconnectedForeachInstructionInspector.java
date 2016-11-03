@@ -31,7 +31,12 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
         return "DisconnectedForeachInstructionInspection";
     }
 
-    private enum ExpressionType { INCREMENT, DECREMENT, CLONE, NEW, REASSIGN, DOM_ELEMENT_CREATE, ACCUMULATE_IN_ARRAY, OTHER }
+    private enum ExpressionType {
+        INCREMENT, DECREMENT,
+        CLONE, NEW, DOM_ELEMENT_CREATE,
+        CONTROL_STATEMENTS, ASSIGNMENT,
+        ACCUMULATE_IN_ARRAY, OTHER
+    }
 
     @Override
     @NotNull
@@ -55,7 +60,6 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     for (PsiElement oneInstruction : foreachBody.getStatements()) {
                         if (oneInstruction instanceof PhpPsiElement && !(oneInstruction instanceof PsiComment)) {
                             final HashSet<String> individualDependencies = new HashSet<String>();
-                            individualDependencies.add("this");
 
                             instructionDependencies.put(oneInstruction, individualDependencies);
                             investigateInfluence((PhpPsiElement) oneInstruction, individualDependencies, allModifiedVariables);
@@ -69,7 +73,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
                             /* check if any dependency is overridden */
                             final HashSet<String> individualDependencies = instructionDependencies.get(oneInstruction);
-                            if (null != individualDependencies && individualDependencies.size() > 1) {
+                            if (null != individualDependencies && individualDependencies.size() > 0) {
                                 /* contains not only this */
                                 for (String dependencyName : individualDependencies) {
                                     if (allModifiedVariables.contains(dependencyName)) {
@@ -84,12 +88,13 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                 final ExpressionType target = getExpressionType(oneInstruction);
                                 if (
                                     ExpressionType.NEW                 != target &&
-                                    ExpressionType.REASSIGN            != target &&
+                                    ExpressionType.ASSIGNMENT          != target &&
                                     ExpressionType.CLONE               != target &&
                                     ExpressionType.INCREMENT           != target &&
                                     ExpressionType.DECREMENT           != target &&
                                     ExpressionType.DOM_ELEMENT_CREATE  != target &&
-                                    ExpressionType.ACCUMULATE_IN_ARRAY != target
+                                    ExpressionType.ACCUMULATE_IN_ARRAY != target &&
+                                    ExpressionType.CONTROL_STATEMENTS  != target
                                 ) {
                                     /* loops, ifs, switches, try's needs to be reported on keyword, others - complete */
                                     final PsiElement reportingTarget =
@@ -127,16 +132,24 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 for (PsiElement variable : PsiTreeUtil.findChildrenOfType(oneInstruction, Variable.class)) {
                     final String variableName = ((Variable) variable).getName();
                     if (!StringUtil.isEmpty(variableName)) {
-                        final PsiElement parent = variable.getParent();
+                        PsiElement valueContainer = variable;
+                        PsiElement parent         = variable.getParent();
+                        while (parent instanceof FieldReference) {
+                            valueContainer = parent;
+                            parent         = parent.getParent();
+                        }
 
                         /* writing into variable */
                         if (parent instanceof AssignmentExpression) {
                             final AssignmentExpression assignment = (AssignmentExpression) parent;
-                            if (assignment.getVariable() == variable) {
+                            if (assignment.getVariable() == valueContainer) {
                                 /* we are modifying the variable */
                                 allModifiedVariables.add(variableName);
-                                /* self-assignment makes the variable dependent on itself  */
-                                if (parent instanceof SelfAssignmentExpression) {
+                                /* self-assignment and field assignment makes the variable dependent on itself  */
+                                if (
+                                    parent instanceof SelfAssignmentExpression ||
+                                    valueContainer instanceof FieldReference
+                                ) {
                                     individualDependencies.add(variableName);
                                 }
 
@@ -164,7 +177,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             final String functionName     = call.getName();
                             final PsiElement[] parameters = call.getParameters();
 
-                            // TODO: array_pop, array_shift, next, current, ... -> use mapping function => argument modified
+                            // TODO: array_pop, array_shift, next, current, fwrite... -> use mapping function => argument modified
                             if (
                                 3 == parameters.length && parameters[2] == variable &&
                                 !StringUtil.isEmpty(functionName) && functionName.startsWith("preg_match")
@@ -178,6 +191,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                         final ExpressionType type = getExpressionType(parent);
                         if (ExpressionType.INCREMENT == type || ExpressionType.DECREMENT == type) {
                             allModifiedVariables.add(variableName);
+                            individualDependencies.add(variableName);
                             continue;
                         }
                         /* TODO: lookup for array access and property access */
@@ -189,6 +203,13 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
             @NotNull
             private ExpressionType getExpressionType(@Nullable PsiElement expression) {
+                if (
+                    expression instanceof PhpBreak || expression instanceof PhpContinue ||
+                    expression instanceof PhpReturn
+                ) {
+                    return ExpressionType.CONTROL_STATEMENTS;
+                }
+
                 /* regular '...;' statements */
                 if (expression instanceof StatementImpl) {
                     return getExpressionType(((StatementImpl) expression).getFirstPsiChild());
@@ -201,10 +222,8 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     if (null != operation) {
                         operationType = operation.getNode().getElementType();
                     }
-
                     if (PhpTokenTypes.opINCREMENT == operationType) {
                         return ExpressionType.INCREMENT;
-
                     }
                     if (PhpTokenTypes.opDECREMENT == operationType) {
                         return ExpressionType.DECREMENT;
@@ -220,9 +239,6 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                         if (value instanceof NewExpression) {
                             return ExpressionType.NEW;
                         }
-                        if (value instanceof Variable) {
-                            return ExpressionType.REASSIGN;
-                        }
 
                         if (value instanceof UnaryExpressionImpl) {
                             final PsiElement operation = ((UnaryExpressionImpl) value).getOperation();
@@ -231,6 +247,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             }
                         }
 
+                        /* TODO: configurable \DOMNode::appendChild, \DOMDocument::createTextNode */
                         if (value instanceof MethodReference) {
                             final MethodReference call = (MethodReference) value;
                             final String methodName    = call.getName();
@@ -244,6 +261,9 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                 }
                             }
                         }
+
+                        /* allow all assignations afterwards */
+                        return ExpressionType.ASSIGNMENT;
                     }
 
                     /* accumulating something in external container */

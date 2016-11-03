@@ -41,9 +41,28 @@ foreach ($files as & $file7) {
     unset($first, $second, $matched);
 }
 
-/* different assignments: clone, reassigning variables with variables */
-$tomorrow = new DateTime();
+/* different assignments: clone, reassigning variables with variables; control statements */
+$tomorrow = new \DateTime();
 foreach ($files as & $file8) {
     $tomorrowInstance = clone $tomorrow;
     $tomorrowBackup   = $tomorrow;
+    $bool             = true;
+    $array            = [];
+    $const            = \DateTime::ATOM;
+
+    break;
+    continue 1;
+    return;
+
+    $file8->timestamp            = $tomorrowInstance;
+    $tomorrowInstance->timestamp = $file8;
+    $tomorrow->timestamp         = $file8;
+}
+
+/* nested dependencies resolution correctness */
+$count = 0;
+foreach ($files as & $file9) {
+    if (++$count > 0) {
+        break;
+    }
 }

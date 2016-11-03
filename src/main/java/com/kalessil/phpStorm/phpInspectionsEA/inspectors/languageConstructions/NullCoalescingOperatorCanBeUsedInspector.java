@@ -130,5 +130,4 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
             }
         }
     }
-
 }

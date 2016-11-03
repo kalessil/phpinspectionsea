@@ -119,7 +119,7 @@ Inspections Lists (Probable bugs)
 ---
 | Group                | Short Name                                      | Full Name                                                 | Quick fix | UTs | QFTs |
 | :------------------- | :-------------------------------------------    | :--------------------------------------------------       | --------: | --: | ---: |
-| Probable bugs        | ForgottenDebugOutputInspection                  | Forgotten debug statements                                | n/a |
+| Probable bugs        | ForgottenDebugOutputInspection                  | Forgotten debug statements                                | n/a       | yes | n/a  |
 | Probable bugs        | AdditionOperationOnArraysInspection             | Addition operator used on arrays                          | n/a |
 | Probable bugs        | MagicMethodsValidityInspection                  | Magic methods validity                                    | n/a |
 | Probable bugs        | SuspiciousLoopInspection                        | Suspicious loop                                           | n/a |

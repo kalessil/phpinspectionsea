@@ -8,12 +8,14 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.xmlb.XmlSerializer;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
+import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.gui.PrettyListControl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -128,8 +130,17 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                     !StringUtil.isEmpty(function) && functionsRequirements.containsKey(function) &&
                     reference.getParameters().length != functionsRequirements.get(function) // keep it here when function hit
                 ) {
+                    PsiElement parent = reference.getParent();
+
+                    /* statement can be prepended by @ (silence) */
+                    if (parent instanceof UnaryExpressionImpl) {
+                        final PsiElement operation = ((UnaryExpressionImpl) parent).getOperation();
+                        if (null != operation && PhpTokenTypes.opSILENCE == operation.getNode().getElementType()) {
+                            parent = parent.getParent();
+                        }
+                    }
+
                     /* ensure it's not prepended with 'ob_start();' */
-                    final PsiElement parent = reference.getParent();
                     if (parent instanceof StatementImpl) {
                         final PsiElement preceding = ((StatementImpl) parent).getPrevPsiSibling();
                         if (null != preceding && preceding.getFirstChild() instanceof FunctionReferenceImpl) {

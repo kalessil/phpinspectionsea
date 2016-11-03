@@ -5,11 +5,12 @@ Some facts about this project: https://www.openhub.net/p/phpinspectionsea
 
 Inspections Lists (Quick-fixes for next release)
 ---
-| Group                | Short Name                                      | Full Name                                           | Quick fix |
-| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
-| Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | Prio1 |
-| Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                  | Prio1 |
-| Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                  | Prio1 |
+| Group                | Short Name                                      | Full Name                                                | Quick fix |
+| :------------------- | :-------------------------------------------    | :------------------------------------------------------- | --------: |
+| Performance          | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)' | Prio1     |
+| Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent                  | Prio1     |
+| Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                       | Prio1     |
+| Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                       | Prio1     |
 
 Inspections Lists (Type compatibility)
 ---
@@ -153,7 +154,6 @@ Inspections Lists (Performance)
 | Performance          | CountOnPropelCollectionInspection               | 'count(...)' calls on Propel collection                                                     | n/a |
 | Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                               | n/a |
 | Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                            | n/a |
-| Performance          | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)'                                    | no  |
 | Performance          | StrStrUsedAsStrPosInspection                    | 'strstr(...)/stristr(...)' could be replaced with 'strpos(...)/stripos(...)'                | no  |
 | Performance          | StrNcmpUsedAsStrPosInspection                   | 'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)'           | no  |
 | Performance          | SubStrUsedAsStrPosInspection                    | 'substr(...)' could be replaced with 'strpos(...)'                                          | no  |

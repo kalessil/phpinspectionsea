@@ -121,7 +121,7 @@ public class CountOnPropelCollectionInspector extends BasePhpInspection {
                     }
 
                     String strMethodName = matcher.group(2);
-                    /** lookup method, but base com.kalessil.phpStorm.phpInspectionsEA.classes can be not generated yet */
+                    /** lookup method, but base classes can be not generated yet */
                     for (Method objMethod: objObjectClass.getMethods()) {
                         if (!objMethod.getName().equals(strMethodName)) {
                             continue;

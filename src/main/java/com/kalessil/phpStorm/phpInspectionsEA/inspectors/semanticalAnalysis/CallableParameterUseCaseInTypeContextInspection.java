@@ -198,15 +198,15 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     }
                 }
 
-                /** com.kalessil.phpStorm.phpInspectionsEA.classes/interfaces */
+                /** classes/interfaces */
                 if (strType.length() > 0 && strType.charAt(0) == '\\') {
-                    /** collect com.kalessil.phpStorm.phpInspectionsEA.classes/interfaces for type we going to analyse for compatibility */
+                    /** collect classes/interfaces for type we going to analyse for compatibility */
                     Collection<PhpClass> classesToTest = PhpIndexUtil.getObjectInterfaces(strType, objIndex, false);
                     if (classesToTest.size() == 0) {
                         return false;
                     }
 
-                    /** collect parent com.kalessil.phpStorm.phpInspectionsEA.classes/interfaces for bulk check */
+                    /** collect parent classes/interfaces for bulk check */
                     LinkedList<PhpClass> classesAllowed = new LinkedList<PhpClass>();
                     for (String strAllowedType: listAllowedTypes) {
                         if (

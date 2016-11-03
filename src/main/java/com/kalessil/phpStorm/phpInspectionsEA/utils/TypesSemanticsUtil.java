@@ -18,7 +18,7 @@ final public class TypesSemanticsUtil {
             return false;
         }
 
-        /** work through types, ensure it's null or com.kalessil.phpStorm.phpInspectionsEA.classes references */
+        /** work through types, ensure it's null or classes references */
         for (String strTypeToInspect : resolvedTypesSet) {
             /** skip core types, but null */
             if (strTypeToInspect.charAt(0) != '\\' && !strTypeToInspect.equals(Types.strNull)) {

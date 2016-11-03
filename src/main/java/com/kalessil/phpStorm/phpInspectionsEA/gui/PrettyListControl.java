@@ -37,7 +37,7 @@ public class PrettyListControl {
     }
 
     protected void fireContentsChanged() {
-        /* injection point for implementation com.kalessil.phpStorm.phpInspectionsEA.classes */
+        /* injection point for implementation classes */
     }
 
     public JPanel getComponent() {

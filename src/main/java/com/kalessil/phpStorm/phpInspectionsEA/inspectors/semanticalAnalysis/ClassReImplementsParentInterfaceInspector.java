@@ -31,7 +31,7 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
-                /* skip com.kalessil.phpStorm.phpInspectionsEA.classes which we cannot report */
+                /* skip classes which we cannot report */
                 final PsiElement classNameNode = clazz.getNameIdentifier();
                 if (null == classNameNode) {
                     return;

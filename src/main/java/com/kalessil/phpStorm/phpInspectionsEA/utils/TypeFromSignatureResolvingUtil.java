@@ -77,7 +77,7 @@ final public class TypeFromSignatureResolvingUtil {
             return;
         }
 
-        /** com.kalessil.phpStorm.phpInspectionsEA.classes and core types */
+        /** classes and core types */
         if (charTypeOfSignature == 'C') {
             String typeName = strSignatureToResolve.replace("#C", "");
             if (objScope instanceof Method && typeName.equals("static")) {
@@ -91,7 +91,7 @@ final public class TypeFromSignatureResolvingUtil {
         }
 
         /**
-         * Ok, woodoo wizards musts envy here, we are checking com.kalessil.phpStorm.phpInspectionsEA.classes structures
+         * Ok, woodoo wizards musts envy here, we are checking classes structures
          * while getting thought execution chain, until we run into poly-variants
          * or missing annotations.
          **/
@@ -240,7 +240,7 @@ final public class TypeFromSignatureResolvingUtil {
         }
 
 
-        /** can be resolved in several com.kalessil.phpStorm.phpInspectionsEA.classes - often duplicated ones, or not resolved at all */
+        /** can be resolved in several classes - often duplicated ones, or not resolved at all */
         if (resolvedTypesSet.size() == 0) {
             resolvedTypesSet.add(Types.strClassNotResolved);
         }

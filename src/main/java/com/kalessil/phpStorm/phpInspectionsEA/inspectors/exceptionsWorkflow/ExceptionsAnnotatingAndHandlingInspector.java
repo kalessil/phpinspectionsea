@@ -101,7 +101,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     return;
                 }
                 final String strClassFQN = clazz.getFQN();
-                /* skip un-explorable and test com.kalessil.phpStorm.phpInspectionsEA.classes */
+                /* skip un-explorable and test classes */
                 if (
                     StringUtil.isEmpty(strClassFQN)  || strClassFQN.endsWith("Test") ||
                     strClassFQN.contains("\\Tests\\") || strClassFQN.contains("\\Test\\")

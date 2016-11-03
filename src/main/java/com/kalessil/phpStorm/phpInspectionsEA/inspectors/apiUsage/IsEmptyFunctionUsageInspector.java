@@ -73,7 +73,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         return;
                     }
 
-                    /* case 2: nullable com.kalessil.phpStorm.phpInspectionsEA.classes, int, float, resource */
+                    /* case 2: nullable classes, int, float, resource */
                     if (this.isNullableCoreType(objResolvedTypes) || TypesSemanticsUtil.isNullableObjectInterface(objResolvedTypes)) {
                         objResolvedTypes.clear();
 

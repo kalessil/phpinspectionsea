@@ -164,7 +164,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 break;
             }
 
-            // now we are at point when analyzing com.kalessil.phpStorm.phpInspectionsEA.classes only
+            // now we are at point when analyzing classes only
             for (PhpClass classToCheck : PhpIndexUtil.getObjectInterfaces(typeToCheck, objIndex, false)) {
                 boolean isOffsetFunctionsPrecessed = false;
 
@@ -242,7 +242,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 continue;
             }
 
-            // TODO: check com.kalessil.phpStorm.phpInspectionsEA.classes relations
+            // TODO: check classes relations
 
             // scalar types, check if mixed allowed
             if (!isAnyScalarAllowed) {

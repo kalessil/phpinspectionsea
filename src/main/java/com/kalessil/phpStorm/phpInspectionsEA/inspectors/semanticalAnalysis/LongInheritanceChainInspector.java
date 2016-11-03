@@ -30,7 +30,7 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
                 final String strClassFQN = clazz.getFQN();
-                /* skip un-explorable com.kalessil.phpStorm.phpInspectionsEA.classes */
+                /* skip un-explorable classes */
                 if (StringUtil.isEmpty(strClassFQN) || strClassFQN.endsWith("Exception")) {
                     return;
                 }
@@ -54,7 +54,7 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
 
             /**
              * TODO: code duplicate of com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor#isDeprecated
-             * Personally I deprecating such com.kalessil.phpStorm.phpInspectionsEA.classes before they can be dropped.
+             * Personally I deprecating such classes before they can be dropped.
              */
             private boolean isDeprecated(PhpClass clazz) {
                 PhpPsiElement classDoc = clazz.getPrevPsiSibling();

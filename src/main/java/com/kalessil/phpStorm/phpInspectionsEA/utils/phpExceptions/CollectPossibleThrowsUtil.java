@@ -154,7 +154,7 @@ final public class CollectPossibleThrowsUtil {
 
                         for (String type : types) {
                             if (type.startsWith("\\")) {
-                                /* process com.kalessil.phpStorm.phpInspectionsEA.classes references */
+                                /* process classes references */
                                 Collection<PhpClass> classes = objIndex.getClassesByFQN(type);
                                 if (classes.size() > 0) {
                                     /* put an expression, create container if necessary */

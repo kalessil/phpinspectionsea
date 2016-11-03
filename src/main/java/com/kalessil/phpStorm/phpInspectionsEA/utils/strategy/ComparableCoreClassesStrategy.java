@@ -46,7 +46,7 @@ final public class ComparableCoreClassesStrategy {
     }
 
     private static boolean isComparableObject(@NotNull PsiElement operand, @NotNull Function scope, @NotNull PhpIndex projectIndex, ProblemsHolder holder) {
-        /* extract types of operand, check if com.kalessil.phpStorm.phpInspectionsEA.classes are/inherited from \DateTime */
+        /* extract types of operand, check if classes are/inherited from \DateTime */
         final HashSet<String> operandTypes = new HashSet<String>();
         TypeFromPsiResolvingUtil.resolveExpressionType(operand, scope, projectIndex, operandTypes);
         if (!TypesSemanticsUtil.isNullableObjectInterface(operandTypes)) {
@@ -54,7 +54,7 @@ final public class ComparableCoreClassesStrategy {
             return false;
         }
 
-        /* collect com.kalessil.phpStorm.phpInspectionsEA.classes to check for \DateTime relationship */
+        /* collect classes to check for \DateTime relationship */
         final LinkedList<PhpClass> operandClasses = new LinkedList<PhpClass>();
         for (String classFQN : operandTypes) {
             if (classFQN.charAt(0) == '\\') {
@@ -63,7 +63,7 @@ final public class ComparableCoreClassesStrategy {
         }
         operandTypes.clear();
 
-        /* inspect com.kalessil.phpStorm.phpInspectionsEA.classes for being a/child of special once */
+        /* inspect classes for being a/child of special once */
         for (PhpClass clazz : operandClasses) {
             final HashSet<PhpClass> hierarchy = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true);
             for (PhpClass oneClass : hierarchy){

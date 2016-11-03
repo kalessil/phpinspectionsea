@@ -29,7 +29,7 @@ public class EmptyClassInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
                 final String strClassFQN = clazz.getFQN();
-                /* skip un-explorable and exception com.kalessil.phpStorm.phpInspectionsEA.classes */
+                /* skip un-explorable and exception classes */
                 if (StringUtil.isEmpty(strClassFQN) || strClassFQN.endsWith("Exception")) {
                     return;
                 }
@@ -46,7 +46,7 @@ public class EmptyClassInspector extends BasePhpInspection {
             }
 
             /**
-             * Personally I deprecating empty com.kalessil.phpStorm.phpInspectionsEA.classes before they can be dropped.
+             * Personally I deprecating empty classes before they can be dropped.
              */
             private boolean isDeprecated(PhpClass clazz) {
                 PhpPsiElement classDoc = clazz.getPrevPsiSibling();

@@ -42,7 +42,7 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
                     final PhpClass clazz    = ((Method) callable).getContainingClass();
                     final String methodName = callable.getName();
                     if (!StringUtil.isEmpty(methodName) && null != clazz && !clazz.isInterface()) {
-                        /* ensure not reporting children com.kalessil.phpStorm.phpInspectionsEA.classes, only parent definitions */
+                        /* ensure not reporting children classes, only parent definitions */
                         for (PhpClass parent : clazz.getSupers()) {
                             if (null != parent.findMethodByName(methodName)) {
                                 return;

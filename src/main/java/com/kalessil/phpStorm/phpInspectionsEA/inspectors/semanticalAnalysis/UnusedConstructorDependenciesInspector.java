@@ -124,7 +124,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
             }
 
             public void visitPhpMethod(Method method) {
-                /* filter com.kalessil.phpStorm.phpInspectionsEA.classes which needs to be analyzed */
+                /* filter classes which needs to be analyzed */
                 final PhpClass clazz = method.getContainingClass();
                 if (
                     null == clazz || clazz.isInterface() || clazz.isTrait() ||

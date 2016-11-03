@@ -83,7 +83,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                             continue;
                         }
 
-                        /* check com.kalessil.phpStorm.phpInspectionsEA.classes: collect hierarchy of possible com.kalessil.phpStorm.phpInspectionsEA.classes */
+                        /* check classes: collect hierarchy of possible classes */
                         final HashSet<PhpClass> poolToCheck = new HashSet<PhpClass>();
                         final Collection<PhpClass> classes  = PhpIndexUtil.getObjectInterfaces(type, index, true);
                         if (classes.size() > 0) {
@@ -99,7 +99,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                             classes.clear();
                         }
 
-                        /* analyze com.kalessil.phpStorm.phpInspectionsEA.classes for having \Traversable in parents */
+                        /* analyze classes for having \Traversable in parents */
                         boolean hasTraversable = false;
                         if (poolToCheck.size() > 0) {
                             for (PhpClass clazz : poolToCheck) {

@@ -51,7 +51,7 @@ public class ShortClassDefinitionStrategy {
                 }
             }
 
-            //TODO: handle [0-9,] and similar cases when com.kalessil.phpStorm.phpInspectionsEA.classes are part of allowed/escaped sets
+            //TODO: handle [0-9,] and similar cases when classes are part of allowed/escaped sets
         }
     }
 }

@@ -27,7 +27,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpField(Field ownField) {
-                /* skip un-explorable and test com.kalessil.phpStorm.phpInspectionsEA.classes */
+                /* skip un-explorable and test classes */
                 PhpClass clazz = ownField.getContainingClass();
                 if (null == clazz || null == clazz.getNameIdentifier()) {
                     return;

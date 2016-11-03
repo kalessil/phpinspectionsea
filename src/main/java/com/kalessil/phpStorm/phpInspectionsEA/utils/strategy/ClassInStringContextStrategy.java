@@ -34,7 +34,7 @@ final public class ClassInStringContextStrategy {
             return false;
         }
 
-        /* collect com.kalessil.phpStorm.phpInspectionsEA.classes to check if __toString() is there */
+        /* collect classes to check if __toString() is there */
         LinkedList<PhpClass> listClasses = new LinkedList<PhpClass>();
         for (String strClass : objResolvedTypes) {
             if (strClass.charAt(0) == '\\') {

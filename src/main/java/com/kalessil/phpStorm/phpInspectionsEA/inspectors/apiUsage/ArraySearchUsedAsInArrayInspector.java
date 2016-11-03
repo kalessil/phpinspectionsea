@@ -26,6 +26,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
+                /* TODO: validate amount of arguments and function name here */
                 final String strFunctionName = reference.getName();
                 if (StringUtil.isEmpty(strFunctionName)) {
                     return;

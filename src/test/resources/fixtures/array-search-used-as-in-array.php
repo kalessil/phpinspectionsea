@@ -1,15 +1,15 @@
 <?php
 
-if (!<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search</warning>('', array()))          {}
-if (<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search</warning>('', array()))           {}
+if (!<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search('', array())</warning>)          {}
+if (<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search('', array())</warning>)           {}
 
-if (<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search</warning>('', array()) || false)  {}
-if (<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search</warning>('', array()) or false)  {}
-if (<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search</warning>('', array()) OR false)  {}
+if (<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search('', array())</warning> || false)  {}
+if (<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search('', array())</warning> or false)  {}
+if (<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search('', array())</warning> OR false)  {}
 
-if (<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search</warning>('', array()) && true)   {}
-if (<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search</warning>('', array()) and true)  {}
-if (<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search</warning>('', array()) AND true)  {}
+if (<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search('', array())</warning> && true)   {}
+if (<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search('', array())</warning> and true)  {}
+if (<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search('', array())</warning> AND true)  {}
 
 if (<warning descr="'in_array(...)' shall be used instead (clearer intention)">array_search('', array()) === false</warning>) {}
 if (<warning descr="'in_array(...)' shall be used instead (clearer intention)">false === array_search('', array())</warning>) {}

@@ -10,6 +10,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.Variable;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -43,17 +44,19 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpForeach(ForeachStatement foreach) {
-                final Variable value             = foreach.getValue();
+                final List<Variable> variables   = foreach.getVariables();
                 final GroupStatement foreachBody = ExpressionSemanticUtil.getGroupStatement(foreach);
                 /* ensure foreach structure is ready for inspection */
-                if (null != foreachBody && null != value && !StringUtil.isEmpty(value.getName())) {
+                if (null != foreachBody && variables.size() > 0) {
                     /* pre-collect introduced and internally used variables */
                     final HashSet<String> allModifiedVariables = new HashSet<String>();
-                    allModifiedVariables.add(value.getName());
-                    final Variable key = foreach.getKey();
-                    if (null != key && !StringUtil.isEmpty(key.getName())) {
-                        allModifiedVariables.add(key.getName());
+                    for (Variable variable : variables) {
+                        final String variableName = variable.getName();
+                        if (!StringUtil.isEmpty(variableName)) {
+                            allModifiedVariables.add(variableName);
+                        }
                     }
+                    variables.clear();
 
                     final HashMap<PsiElement, HashSet<String>> instructionDependencies = new HashMap<PsiElement, HashSet<String>>();
                     /* iteration 1 - investigate what are dependencies and influence */

@@ -66,3 +66,10 @@ foreach ($files as & $file9) {
         break;
     }
 }
+
+/* loop with unpacking array into multiple variables */
+foreach ([[], [], []] as list($a, $b, $c)) {
+    if ($b === $count) {
+        break;
+    }
+}

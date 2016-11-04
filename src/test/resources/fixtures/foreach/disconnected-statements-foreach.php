@@ -2,7 +2,7 @@
     /* @var array $files */
     $class = \DateTime::class;
 
-    foreach ($files as & $file1) {
+    foreach ($files as $index => & $file1) {
         <weak_warning descr="Objects should be created outside of a loop and cloned instead">$now = new $class();</weak_warning>
         // Should be reported: Objects should be created outside of a loop and cloned instead, but 2 SDKs broke method resolving
         // $domElement = (new \DOMDocument())->createElement('');

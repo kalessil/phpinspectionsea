@@ -280,7 +280,10 @@ final public class ExpressionSemanticUtil {
             PsiElement objOperation = ((BinaryExpression) parent).getOperation();
             if (null != objOperation && null != objOperation.getNode()) {
                 IElementType operationType = objOperation.getNode().getElementType();
-                if (PhpTokenTypes.opAND == operationType || PhpTokenTypes.opOR == operationType) {
+                if (
+                    PhpTokenTypes.opAND == operationType     || PhpTokenTypes.opOR == operationType ||
+                    PhpTokenTypes.opLIT_AND == operationType || PhpTokenTypes.opLIT_OR == operationType
+                ) {
                     return true;
                 }
             }

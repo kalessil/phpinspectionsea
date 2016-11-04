@@ -10,7 +10,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.Variable;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;

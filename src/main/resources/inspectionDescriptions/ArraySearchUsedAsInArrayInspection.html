@@ -2,7 +2,9 @@
 <body>
 Reports if array_search(...) is used in the context of in_array(...).
 <!-- tooltip end -->
-array_search overhead lies in storing and returning index, which
-is not used in case of in_array.
+array_search overhead is minor and lies in storing and returning index, which
+is not used in case of in_array.<br />
+Also reported cases are misleading and refactoring with in_array would clearer
+express intention of code constructs.
 </body>
 </html>

@@ -114,10 +114,6 @@ with a laptop.
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SlowArrayOperationsInLoopInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="ArraySearchUsedAsInArrayInspection"            displayName="'array_search(...)' could be replaced by 'in_array(...)'"
-        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ArraySearchUsedAsInArrayInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="StrStrUsedAsStrPosInspection"                  displayName="'strstr(...)/stristr(...)' could be replaced with 'strpos(...)/stripos(...)'"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.StrStrUsedAsStrPosInspector"/>
@@ -273,6 +269,11 @@ with a laptop.
          shortName="GetTypeMissUseInspection"                      displayName="'gettype(...)' could be replaced with 'is_*(...)'"
          groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.GetTypeMissUseInspector"/>
+  <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="ArraySearchUsedAsInArrayInspection"            displayName="'array_search(...)' could be replaced by 'in_array(...)'"
+         groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ArraySearchUsedAsInArrayInspector"/>
+
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
        shortName="ArrayFunctionsInvariantsInspection"             displayName="Foreach behaves as an array function"
        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"

@@ -8,8 +8,6 @@ Inspections Lists (Quick-fixes for next release)
 | Group                | Short Name                                      | Full Name                                                | Quick fix |
 | :------------------- | :-------------------------------------------    | :------------------------------------------------------- | --------: |
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent                  | Prio1     |
-| Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                       | Prio1     |
-| Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                       | Prio1     |
 
 Inspections Lists (Type compatibility)
 ---
@@ -170,3 +168,5 @@ Inspections Lists (Performance)
 | Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes |
 | Performance          | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                                                          | yes       | no  | no  |
 | Performance          | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)'                                    | yes       | yes | no  |
+| Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | n/a |
+| Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                          | n/a |

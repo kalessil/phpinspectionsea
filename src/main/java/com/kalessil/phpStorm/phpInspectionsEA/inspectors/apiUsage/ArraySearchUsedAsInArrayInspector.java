@@ -27,9 +27,9 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                /* TODO: validate amount of arguments and function name here */
+                final PsiElement[] params    = reference.getParameters();
                 final String strFunctionName = reference.getName();
-                if (StringUtil.isEmpty(strFunctionName)) {
+                if (params.length < 2 || StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("array_search")) {
                     return;
                 }
 
@@ -38,10 +38,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                     if (null != objParent.getOperation() && null != objParent.getOperation().getNode()) {
                         final IElementType objOperation = objParent.getOperation().getNode().getElementType();
                         /* === use-case implicit boolean test === */
-                        if (
-                            (objOperation == PhpTokenTypes.opIDENTICAL || objOperation == PhpTokenTypes.opNOT_IDENTICAL) &&
-                            strFunctionName.equals("array_search")
-                        ) {
+                        if (objOperation == PhpTokenTypes.opIDENTICAL || objOperation == PhpTokenTypes.opNOT_IDENTICAL) {
                             PsiElement objSecondOperand = objParent.getLeftOperand();
                             if (objSecondOperand == reference) {
                                 objSecondOperand = objParent.getRightOperand();
@@ -64,11 +61,8 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
 
                         /* === use-case complex NON implicit boolean test === */ /* TODO: ExpressionSemanticUtil.isUsedAsLogicalOperand */
                         if (
-                            (
-                                objOperation == PhpTokenTypes.opAND || objOperation == PhpTokenTypes.opLIT_AND ||
-                                objOperation == PhpTokenTypes.opOR  || objOperation == PhpTokenTypes.opLIT_OR
-                            ) &&
-                            strFunctionName.equals("array_search")
+                            objOperation == PhpTokenTypes.opAND || objOperation == PhpTokenTypes.opLIT_AND ||
+                            objOperation == PhpTokenTypes.opOR  || objOperation == PhpTokenTypes.opLIT_OR
                         ) {
                             holder.registerProblem(reference, messageUseInArray, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             return;
@@ -81,7 +75,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                     final PsiElement objOperation = ((UnaryExpression) reference.getParent()).getOperation();
                     if (null != objOperation) {
                         final IElementType typeOperation = objOperation.getNode().getElementType();
-                        if (typeOperation == PhpTokenTypes.opNOT && strFunctionName.equals("array_search")) {
+                        if (typeOperation == PhpTokenTypes.opNOT) {
                             holder.registerProblem(reference, messageUseInArray, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             return;
                         }
@@ -89,7 +83,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                 }
 
                 /* === use-case single NON implicit boolean test === */ /* TODO: ExpressionSemanticUtil.isUsedAsLogicalOperand */
-                if (reference.getParent() instanceof If && strFunctionName.equals("array_search")) {
+                if (reference.getParent() instanceof If) {
                     holder.registerProblem(reference, messageUseInArray, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     // return;
                 }

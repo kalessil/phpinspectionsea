@@ -38,7 +38,7 @@ Inspections Lists (Control flow)
 | Control flow         | PdoApiUsageInspection                           | PDO api usage                                       | n/a |
 | Control flow         | OneTimeUseVariablesInspection                   | One-time use variables                              | yes       | yes | no   |
 | Control flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                       | no  |
-| Control flow         | GetTypeMissUseInspector                         | 'gettype(...)' could be replaced with 'is_*(...)'   | yes |
+| Control flow         | GetTypeMissUseInspection                        | 'gettype(...)' could be replaced with 'is_*(...)'   | yes |
 
 Inspections Lists (PhpUnit)
 ---
@@ -53,7 +53,7 @@ Inspections Lists (Unused)
 | Unused               | OnlyWritesOnParameterInspection                 | Parameter/variable is not used                      | n/a |
 | Unused               | UselessUnsetInspection                          | Useless unset                                       | n/a |
 | Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | yes |
-| Unused               | UnusedConstructorDependenciesInspector          | Unused constructor dependencies                     | n/a |
+| Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a |
 
 Inspections Lists (Compatibility)
 ---
@@ -92,7 +92,7 @@ Inspections Lists (Code style)
 | Code style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                 | no  |
 | Code style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                  | yes       | yes | no   |
 | Code style           | UnnecessaryParenthesesInspection                | Unnecessary parentheses                             | yes       | yes | no   |
-| Code style           | DynamicInvocationViaScopeResolutionInspector    | Dynamic methods invocation via '::'                 | yes |
+| Code style           | DynamicInvocationViaScopeResolutionInspection   | Dynamic methods invocation via '::'                 | yes |
 | Code style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes |
 | Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | yes |
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes |

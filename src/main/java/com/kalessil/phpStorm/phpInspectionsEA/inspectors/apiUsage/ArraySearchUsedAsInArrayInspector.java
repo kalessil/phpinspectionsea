@@ -27,65 +27,44 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final PsiElement[] params    = reference.getParameters();
-                final String strFunctionName = reference.getName();
-                if (params.length < 2 || StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("array_search")) {
+                final PsiElement[] params = reference.getParameters();
+                final String functionName = reference.getName();
+                if (params.length < 2 || StringUtil.isEmpty(functionName) || !functionName.equals("array_search")) {
                     return;
                 }
 
+                /* check if the call used as (boolean) logical operand */
+                if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
+                    holder.registerProblem(reference, messageUseInArray, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    return;
+                }
+
+                /* inspect implicit booleans comparison */
                 if (reference.getParent() instanceof BinaryExpression) {
-                    final BinaryExpression objParent = (BinaryExpression) reference.getParent();
-                    if (null != objParent.getOperation() && null != objParent.getOperation().getNode()) {
-                        final IElementType objOperation = objParent.getOperation().getNode().getElementType();
-                        /* === use-case implicit boolean test === */
-                        if (objOperation == PhpTokenTypes.opIDENTICAL || objOperation == PhpTokenTypes.opNOT_IDENTICAL) {
-                            PsiElement objSecondOperand = objParent.getLeftOperand();
-                            if (objSecondOperand == reference) {
-                                objSecondOperand = objParent.getRightOperand();
+                    final BinaryExpression parent = (BinaryExpression) reference.getParent();
+                    if (null != parent.getOperation() && null != parent.getOperation().getNode()) {
+                        final IElementType operation = parent.getOperation().getNode().getElementType();
+                        if (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
+                            PsiElement secondOperand = parent.getLeftOperand();
+                            if (secondOperand == reference) {
+                                secondOperand = parent.getRightOperand();
                             }
 
                             if (
-                                objSecondOperand instanceof ConstantReference &&
-                                ExpressionSemanticUtil.isBoolean((ConstantReference) objSecondOperand)
+                                secondOperand instanceof ConstantReference &&
+                                ExpressionSemanticUtil.isBoolean((ConstantReference) secondOperand)
                             ) {
-                                final String booleanName = ((ConstantReference) objSecondOperand).getName();
+                                final String booleanName = ((ConstantReference) secondOperand).getName();
+                                /* should not compare true: makes no sense as it never returned */
                                 if (!StringUtil.isEmpty(booleanName) && booleanName.equals("true")) {
-                                    holder.registerProblem(objSecondOperand, messageComparingWithTrue, ProblemHighlightType.GENERIC_ERROR);
+                                    holder.registerProblem(secondOperand, messageComparingWithTrue, ProblemHighlightType.GENERIC_ERROR);
                                     return;
                                 }
 
-                                holder.registerProblem(objParent, messageUseInArray, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                                return;
+                                holder.registerProblem(parent, messageUseInArray, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         }
-
-                        /* === use-case complex NON implicit boolean test === */ /* TODO: ExpressionSemanticUtil.isUsedAsLogicalOperand */
-                        if (
-                            objOperation == PhpTokenTypes.opAND || objOperation == PhpTokenTypes.opLIT_AND ||
-                            objOperation == PhpTokenTypes.opOR  || objOperation == PhpTokenTypes.opLIT_OR
-                        ) {
-                            holder.registerProblem(reference, messageUseInArray, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                            return;
-                        }
                     }
-                }
-
-                /* === use-case single implicit boolean test with ! === */ /* TODO: ExpressionSemanticUtil.isUsedAsLogicalOperand */
-                if (reference.getParent() instanceof UnaryExpression) {
-                    final PsiElement objOperation = ((UnaryExpression) reference.getParent()).getOperation();
-                    if (null != objOperation) {
-                        final IElementType typeOperation = objOperation.getNode().getElementType();
-                        if (typeOperation == PhpTokenTypes.opNOT) {
-                            holder.registerProblem(reference, messageUseInArray, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                            return;
-                        }
-                    }
-                }
-
-                /* === use-case single NON implicit boolean test === */ /* TODO: ExpressionSemanticUtil.isUsedAsLogicalOperand */
-                if (reference.getParent() instanceof If) {
-                    holder.registerProblem(reference, messageUseInArray, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                    // return;
                 }
             }
         };

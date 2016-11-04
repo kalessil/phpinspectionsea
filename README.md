@@ -7,7 +7,6 @@ Inspections Lists (Quick-fixes for next release)
 ---
 | Group                | Short Name                                      | Full Name                                                | Quick fix |
 | :------------------- | :-------------------------------------------    | :------------------------------------------------------- | --------: |
-| Performance          | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)' | Prio1     |
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent                  | Prio1     |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                       | Prio1     |
 | Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                       | Prio1     |
@@ -170,3 +169,4 @@ Inspections Lists (Performance)
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes |
 | Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes |
 | Performance          | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                                                          | yes       | no  | no  |
+| Performance          | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)'                                    | yes       | yes | no  |

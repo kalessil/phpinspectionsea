@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MultiAssignmentUsageInspector extends BasePhpInspection {
-    private static final String messagePattern      = "Perhaps 'list(...) = %a%' can be used instead";
+    private static final String messagePattern      = "Perhaps 'list(...) = %a%' can be used instead (check similar statements)";
     private static final String messageImplicitList = "foreach (... as list(...)) is possible since PHP 5.5";
 
     @NotNull
@@ -88,7 +88,12 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
             }
 
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
-                /* ensure that preceding expression is also assignment */
+                /* ensure we are writing into a variable */
+                if (!(assignmentExpression.getVariable() instanceof VariableImpl)){
+                    return;
+                }
+
+                /* ensure that preceding expression is also an assignment */
                 final PsiElement parent = assignmentExpression.getParent();
                 if (!(parent instanceof StatementImpl)) {
                     return;
@@ -102,7 +107,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* analyze if containers matches */
+                /* analyze if containers are matching */
                 final PsiElement ownContainer = getContainer(assignmentExpression);
                 if (null != ownContainer) {
                     final PsiElement previousContainer = getContainer((AssignmentExpression) previousExpression);

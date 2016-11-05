@@ -100,7 +100,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                     return;
                 }
                 PsiElement previous = ((StatementImpl) parent).getPrevPsiSibling();
-                if (previous instanceof PhpDocCommentImpl) {
+                while (previous instanceof PhpDocCommentImpl) {
                     previous = ((PhpDocCommentImpl) previous).getPrevPsiSibling();
                 }
                 if (!(previous instanceof StatementImpl)) {

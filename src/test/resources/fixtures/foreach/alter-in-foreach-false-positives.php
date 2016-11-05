@@ -13,6 +13,7 @@ function AIFDocBlockBeforeUnset(array $x){
         echo $y;
     }
     /** dock-block here */
+    /** multiple dock-blocks here */
     unset($y);
 }
 

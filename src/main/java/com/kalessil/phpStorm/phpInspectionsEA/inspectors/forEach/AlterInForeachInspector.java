@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -69,7 +70,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
 
                             /* allow return/end of control flow after the loop - no issues can be introduced */
                             boolean isRequirementFullFilled = false;
-                            if (nextExpression instanceof PhpDocComment) {
+                            while (nextExpression instanceof PhpDocCommentImpl) {
                                 nextExpression = nextExpression.getNextPsiSibling();
                             }
                             if (null == nextExpression || nextExpression instanceof PhpReturn) {

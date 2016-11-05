@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -98,7 +99,10 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                 if (!(parent instanceof StatementImpl)) {
                     return;
                 }
-                final PsiElement previous = ((StatementImpl) parent).getPrevPsiSibling();
+                PsiElement previous = ((StatementImpl) parent).getPrevPsiSibling();
+                if (previous instanceof PhpDocCommentImpl) {
+                    previous = ((PhpDocCommentImpl) previous).getPrevPsiSibling();
+                }
                 if (!(previous instanceof StatementImpl)) {
                     return;
                 }

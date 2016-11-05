@@ -37,7 +37,7 @@ Inspections Lists (Control flow)
 | Control flow         | ForeachInvariantsInspection                     | Foreach usage possible                                   | n/a |
 | Control flow         | PdoApiUsageInspection                           | PDO api usage                                            | n/a |
 | Control flow         | OneTimeUseVariablesInspection                   | One-time use variables                                   | yes       | yes | no   |
-| Control flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                            | no  |
+| Control flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                            | n/a       | tes | no   |
 | Control flow         | GetTypeMissUseInspection                        | 'gettype(...)' could be replaced with 'is_*(...)'        | yes |
 | Control flow         | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)' | yes       | yes | no   |
 

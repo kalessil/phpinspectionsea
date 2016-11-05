@@ -22,23 +22,24 @@ Inspections Lists (Type compatibility)
 
 Inspections Lists (Control flow)
 ---
-| Group                | Short Name                                      | Full Name                                           | Quick fix | UTs | QFTs |
-| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
-| Control flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                  | no  |
-| Control flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                | no  |
-| Control flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                | yes       | yes | no   |
-| Control flow         | DefaultValueInElseBranchInspection              | Default value is hidden in else branch              | no  |
-| Control flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                           | n/a |
-| Control flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                            | n/a |
-| Control flow         | ThrowRawExceptionInspection                     | General '\Exception' is thrown                      | no  |
-| Control flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach           | n/a       | yes | n/a  |
-| Control flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                  | yes |
-| Control flow         | DegradedSwitchInspection                        | Switch-case could be simplified                     | n/a |
-| Control flow         | ForeachInvariantsInspection                     | Foreach usage possible                              | n/a |
-| Control flow         | PdoApiUsageInspection                           | PDO api usage                                       | n/a |
-| Control flow         | OneTimeUseVariablesInspection                   | One-time use variables                              | yes       | yes | no   |
-| Control flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                       | no  |
-| Control flow         | GetTypeMissUseInspection                        | 'gettype(...)' could be replaced with 'is_*(...)'   | yes |
+| Group                | Short Name                                      | Full Name                                                | Quick fix | UTs | QFTs |
+| :------------------- | :-------------------------------------------    | :------------------------------------------------------- | --------: | --: | ---: |
+| Control flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                       | no  |
+| Control flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                     | no  |
+| Control flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                     | yes       | yes | no   |
+| Control flow         | DefaultValueInElseBranchInspection              | Default value is hidden in else branch                   | no  |
+| Control flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                | n/a |
+| Control flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                                 | n/a |
+| Control flow         | ThrowRawExceptionInspection                     | General '\Exception' is thrown                           | no  |
+| Control flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach                | n/a       | yes | n/a  |
+| Control flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                       | yes |
+| Control flow         | DegradedSwitchInspection                        | Switch-case could be simplified                          | n/a |
+| Control flow         | ForeachInvariantsInspection                     | Foreach usage possible                                   | n/a |
+| Control flow         | PdoApiUsageInspection                           | PDO api usage                                            | n/a |
+| Control flow         | OneTimeUseVariablesInspection                   | One-time use variables                                   | yes       | yes | no   |
+| Control flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                            | no  |
+| Control flow         | GetTypeMissUseInspection                        | 'gettype(...)' could be replaced with 'is_*(...)'        | yes |
+| Control flow         | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)' | yes       | yes | no   |
 
 Inspections Lists (PhpUnit)
 ---
@@ -167,6 +168,5 @@ Inspections Lists (Performance)
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes |
 | Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes |
 | Performance          | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                                                          | yes       | no  | no  |
-| Performance          | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)'                                    | yes       | yes | no  |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | n/a |
 | Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                          | n/a |

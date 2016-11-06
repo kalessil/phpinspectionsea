@@ -39,7 +39,7 @@ public class DeclareUseStrictTypesInspector extends BasePhpInspection {
                 final Collection<DeclareImpl> declares = PsiTreeUtil.findChildrenOfType(file, DeclareImpl.class);
                 if (declares.size() > 0) {
                     for (DeclareImpl declare : declares) {
-                        if (declare.getText().replaceAll("\\s+","").contains("trict_types=1")) {
+                        if (declare.getText().replaceAll("\\s+","").contains("strict_types=1")) {
                             isStrictRegardingTypes = true;
                             break;
                         }

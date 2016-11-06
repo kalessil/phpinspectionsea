@@ -53,12 +53,16 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         customMethods.clear();
         customMethodsNames.clear();
 
-        if (0 == configuration.size()) {
-            return;
-        }
+        final LinkedList<String> customDebugFQNs = new LinkedList<String>();
+        customDebugFQNs.addAll(this.configuration);
 
-        // parse what was provided
-        for (String stringDescriptor : configuration) {
+        /* known debug methods from community */
+        customDebugFQNs.add("\\Codeception\\Util\\Debug::pause");
+        customDebugFQNs.add("\\Codeception\\Util\\Debug::debug");
+        /* known debug methods from community */
+
+        /* parse what was provided FQNs */
+        for (String stringDescriptor : customDebugFQNs) {
             stringDescriptor = stringDescriptor.trim();
             if (!stringDescriptor.contains("::")) {
                 customFunctions.add(stringDescriptor);

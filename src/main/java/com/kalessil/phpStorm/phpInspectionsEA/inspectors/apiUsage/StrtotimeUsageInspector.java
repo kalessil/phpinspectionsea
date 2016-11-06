@@ -32,9 +32,15 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final PsiElement[] params = reference.getParameters();
                 final String functionName = reference.getName();
+                if (
+                    params.length == 0 || params.length > 2 ||
+                    StringUtil.isEmpty(functionName) || !functionName.equals("strtotime")
+                ) {
+                    return;
+                }
 
                 /* handle case: strtotime("now") -> time() */
-                if (params.length == 1 && !StringUtil.isEmpty(functionName) && functionName.equals("strtotime")) {
+                if (params.length == 1) {
                     if (params[0] instanceof StringLiteralExpressionImpl) {
                         final StringLiteralExpressionImpl pattern = (StringLiteralExpressionImpl) params[0];
                         if (pattern.getContents().equalsIgnoreCase("now")) {
@@ -45,7 +51,7 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
                 }
 
                 /* handle case: strtotime(..., time()) -> date(...) */
-                if (params.length == 2 && !StringUtil.isEmpty(functionName) && functionName.equals("strtotime")) {
+                if (params.length == 2) {
                     if (params[1] instanceof FunctionReferenceImpl) {
                         final FunctionReferenceImpl call = (FunctionReferenceImpl) params[1];
                         final String callName            = call.getName();

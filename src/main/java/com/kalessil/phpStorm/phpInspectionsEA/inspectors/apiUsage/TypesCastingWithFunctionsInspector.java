@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "'(%s) ...' construction shall be used instead";
+    private static final String strProblemDescription = "'(%s) ...' construction shall be used instead (up to 6x times faster)";
 
     @NotNull
     public String getShortName() {
@@ -45,7 +45,10 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
                 /* check construction requirements */
                 final int intArgumentsCount = reference.getParameters().length;
                 final String strFunction    = reference.getName();
-                if (intArgumentsCount != 1 || StringUtil.isEmpty(strFunction)) {
+                if ((intArgumentsCount != 1 && intArgumentsCount != 2)|| StringUtil.isEmpty(strFunction)) {
+                    return;
+                }
+                if (intArgumentsCount == 2 && !strFunction.equals("settype")) {
                     return;
                 }
 

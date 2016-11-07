@@ -147,7 +147,7 @@ Inspections Lists (Performance)
 | Performance          | dirnameCallOnFileConstantInspection             | 'dirname(...)' could be replaced by '__DIR__'                                               | yes |
 | Performance          | AmbiguousMethodsCallsInArrayMappingInspection   | Non-optimized arrays mapping                                                                | n/a |
 | Performance          | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' should not be used to check if string is empty                                | n/a |
-| Performance          | TypesCastingWithFunctionsInspection             | Type casting via PHP4 functions                                                             | yes |
+| Performance          | TypesCastingWithFunctionsInspection             | Type casting via PHP4 functions                                                             | yes       | yes | no   |
 | Performance          | ArrayCastingEquivalentInspection                | Could be replaced with '(array) ...'                                                        | n/a |
 | Performance          | CountOnPropelCollectionInspection               | 'count(...)' calls on Propel collection                                                     | n/a |
 | Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                               | n/a |
@@ -170,4 +170,4 @@ Inspections Lists (Performance)
 | Performance          | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                                                          | yes       | no  | no  |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | n/a |
 | Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                          | n/a |
-| Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' missed                                                                     | yes       | yes | no  |
+| Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                     | yes       | yes | no  |

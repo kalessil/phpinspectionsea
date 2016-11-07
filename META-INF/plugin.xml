@@ -182,7 +182,7 @@ with a laptop.
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.SubStrUsedAsArrayAccessInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="StrtotimeUsageInspection"                      displayName="'strtotime(...)' missed"
+        shortName="StrtotimeUsageInspection"                      displayName="'strtotime(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrtotimeUsageInspector"/>
 

@@ -170,4 +170,4 @@ Inspections Lists (Performance)
 | Performance          | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                                                          | yes       | no  | no  |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | n/a |
 | Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                          | n/a |
-| Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                     | yes       | yes | no  |
+| Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                     | yes      | yes | no  |

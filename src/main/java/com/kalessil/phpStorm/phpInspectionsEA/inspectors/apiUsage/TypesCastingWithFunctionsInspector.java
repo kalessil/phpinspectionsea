@@ -14,6 +14,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.jetbrains.php.lang.psi.elements.impl.ParenthesizedExpressionImpl;
+import com.jetbrains.php.lang.psi.elements.impl.StringLiteralExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "'(%s) ...' construction shall be used instead (up to 6x times faster)";
+    private static final String messagePattern = "'(%s) ...' construction shall be used instead (up to 6x times faster)";
 
     @NotNull
     public String getShortName() {
@@ -34,7 +35,7 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
         mapping.put("floatval", "float");
         mapping.put("strval",   "string");
         mapping.put("boolval",  "bool");
-        mapping.put("settype",  "bool|float|int|string");
+        mapping.put("settype",  "<needed type>");
     }
 
     @Override
@@ -43,24 +44,27 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /* check construction requirements */
-                final int intArgumentsCount = reference.getParameters().length;
-                final String strFunction    = reference.getName();
-                if ((intArgumentsCount != 1 && intArgumentsCount != 2)|| StringUtil.isEmpty(strFunction)) {
+                final PsiElement[] params   = reference.getParameters();
+                final String functionName   = reference.getName();
+                final int intArgumentsCount = params.length;
+                if ((intArgumentsCount != 1 && intArgumentsCount != 2) || StringUtil.isEmpty(functionName)) {
                     return;
                 }
-                if (intArgumentsCount == 2 && !strFunction.equals("settype")) {
+                if (intArgumentsCount == 2 && !functionName.equals("settype")) {
                     return;
                 }
 
                 /* check if inspection subject*/
-                if (mapping.containsKey(strFunction)) {
-                    final String suggestedType = mapping.get(strFunction);
-                    final String strWarning    = strProblemDescription.replace("%s", suggestedType);
+                if (mapping.containsKey(functionName)) {
+                    final String suggestedType = mapping.get(functionName);
+                    final String message       = messagePattern.replace("%s", suggestedType);
 
-                    if (strFunction.equals("settype")) {
-                        holder.registerProblem(reference, strWarning, ProblemHighlightType.LIKE_DEPRECATED);
+                    if (functionName.equals("settype")) {
+                        if (params[1] instanceof StringLiteralExpressionImpl) {
+                            holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED);
+                        }
                     } else {
-                        holder.registerProblem(reference, strWarning, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedType));
+                        holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedType));
                     }
                 }
             }

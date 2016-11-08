@@ -37,3 +37,8 @@
             echo $e->getMessage();
         }
     }
+?>
+
+<?php foreach ([] as $item): ?>
+    <a href=""><?= <error descr="Expected: expression">?</error>></a>
+<?php endforeach; ?>

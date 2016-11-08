@@ -10,6 +10,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.PhpPsiElementImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -107,7 +108,11 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                             )
                                                     ? oneInstruction.getFirstChild()
                                                     : oneInstruction;
-                                    holder.registerProblem(reportingTarget, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+
+                                    /* secure exceptions with '<?= ?>' constructions, false-positives with html */
+                                    if (PhpPsiElementImpl.class != oneInstruction.getClass() && oneInstruction.getTextLength() > 0) {
+                                        holder.registerProblem(reportingTarget, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                                    }
                                 }
 
                                 if (ExpressionType.DOM_ELEMENT_CREATE == target || ExpressionType.NEW == target) {

@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.0.1</version>
+  <version>2.0.2</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -53,15 +53,22 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-28 October 2016: improvements and bug-fixes<br/>
+8 November 2016: improvements and new inspections<br/>
 <br/>
-- Forgotten debug statements: now reports phpinfo() usage<br/>
-- Summer-time unsafe date manipulations: now reports 86400 usage<br/>
-- Unnecessary parentheses: resolved a false-positive (property access on new expression)<br/>
-- Private constructor semantics: fixed a false-positive (entities with mixed in factory methods)<br/>
-- Static methods invocation via '->': resolved false positives, added options (Follow PHPUnit standards)<br/>
+- Forgotten debug statements: more patterns, resolved false-positives (silence operator)<br/>
+- 'list(...) = ' usage possible: more patterns, resolved false-positives (writing into non-variables)<br/>
+- Type unsafe comparison: resolved false-positives (comparable objects)<br/>
+- Slow alter in foreach: resolved false-positives (doc-blocks after loop)<br/>
+- Property could be static: resolved false-positives (overridden properties)<br/>
+- One-time use variables: more patterns<br/>
+- Statement could be decoupled from foreach: resolved multiple false-positives<br/>
+- Non-optimal if conditions: resolved multiple false-positives<br/>
+- Array and string offset validity: deactivated by default<br/>
+- 'array_search(...)' could be replaced by 'in_array(...)': relocated into "Control Flow" group, QF implemented<br/>
+- Short syntax for applied operation: QF implemented<br/>
 <br/>
-- 'file(...)' misused: implemented<br/>
+- Binary-unsafe 'fopen(...)' usage: implemented<br/>
+- 'strtotime(...)' misused: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -565,7 +572,7 @@ with a laptop.
         groupName="Compatibility"                                   enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.MktimeUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="FopenBinaryUnsafeUsageInspection"                displayName="Binary-unsafe fopen usage"
+        shortName="FopenBinaryUnsafeUsageInspection"                displayName="Binary-unsafe 'fopen(...)' usage"
         groupName="Compatibility"                                   enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.FopenBinaryUnsafeUsageInspector"/>
 

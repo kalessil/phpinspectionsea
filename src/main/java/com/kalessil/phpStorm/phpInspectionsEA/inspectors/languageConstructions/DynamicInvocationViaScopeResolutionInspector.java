@@ -6,9 +6,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -95,13 +93,17 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private PsiElement object;
-        private PsiElement operator;
+        @Nullable
+        private SmartPsiElementPointer<PsiElement> object;
+        @NotNull
+        private SmartPsiElementPointer<PsiElement> operator;
 
         TheLocalFix(@NotNull PsiElement operator, @Nullable PsiElement object) {
             super();
-            this.object   = object;
-            this.operator = operator;
+            SmartPointerManager manager =  SmartPointerManager.getInstance(operator.getProject());
+
+            this.object   = null == object ? null : manager.createSmartPsiElementPointer(object);
+            this.operator = manager.createSmartPsiElementPointer(operator);
         }
 
         @NotNull
@@ -118,14 +120,21 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            this.operator.replace(PhpPsiElementFactory.createArrow(project));
-            if (null != this.object) {
-                this.object.replace(PhpPsiElementFactory.createVariable(project, "this", true));
+            final PsiElement operator = this.operator.getElement();
+            final PsiElement arrow    = PhpPsiElementFactory.createArrow(project);
+            //noinspection ConstantConditions - createArrow CAN return null
+            if (null == operator || null == arrow) {
+                return;
             }
 
-            /* release a tree node reference */
-            this.object   = null;
-            this.operator = null;
+            operator.replace(arrow);
+
+            final PsiElement object       = null == this.object ? null : this.object.getElement();
+            final PsiElement thisVariable = PhpPsiElementFactory.createVariable(project, "this", true);
+            //noinspection ConstantConditions - let's secureourselves here as well
+            if (null != object && null != thisVariable) {
+                object.replace(thisVariable);
+            }
         }
     }
 }

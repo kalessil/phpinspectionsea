@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.api;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.FopenBinaryUnsafeUsageInspector;
 
-public class FopenBinaryUnsafeUsageInspectorTest extends CodeInsightFixtureTestCase {
+final public class FopenBinaryUnsafeUsageInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/fopen-binary-unsafe.php");
         myFixture.enableInspections(FopenBinaryUnsafeUsageInspector.class);

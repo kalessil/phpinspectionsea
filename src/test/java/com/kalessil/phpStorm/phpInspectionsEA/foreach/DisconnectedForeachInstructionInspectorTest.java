@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.foreach;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.DisconnectedForeachInstructionInspector;
 
-public class DisconnectedForeachInstructionInspectorTest extends CodeInsightFixtureTestCase {
+final public class DisconnectedForeachInstructionInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/foreach/disconnected-statements-foreach.php");
         myFixture.enableInspections(DisconnectedForeachInstructionInspector.class);

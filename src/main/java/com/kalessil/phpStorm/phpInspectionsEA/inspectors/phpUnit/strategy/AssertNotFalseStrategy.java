@@ -23,12 +23,12 @@ public class AssertNotFalseStrategy {
             boolean isFirstFalse = false;
             if (params[0] instanceof ConstantReference) {
                 final String constantName = ((ConstantReference) params[0]).getName();
-                isFirstFalse = !StringUtil.isEmpty(constantName) && constantName.equals("false");
+                isFirstFalse = !StringUtil.isEmpty(constantName) && constantName.equalsIgnoreCase("false");
             }
             boolean isSecondFalse = false;
             if (params[1] instanceof ConstantReference) {
                 final String referenceName = ((ConstantReference) params[1]).getName();
-                isSecondFalse = !StringUtil.isEmpty(referenceName) && referenceName.equals("false");
+                isSecondFalse = !StringUtil.isEmpty(referenceName) && referenceName.equalsIgnoreCase("false");
             }
 
             /* fire assertNotFalse warning when needed */

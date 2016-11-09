@@ -61,7 +61,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                             ) {
                                 final String booleanName = ((ConstantReference) secondOperand).getName();
                                 /* should not compare true: makes no sense as it never returned */
-                                if (!StringUtil.isEmpty(booleanName) && booleanName.equals("true")) {
+                                if (!StringUtil.isEmpty(booleanName) && booleanName.equalsIgnoreCase("true")) {
                                     holder.registerProblem(secondOperand, messageComparingWithTrue, ProblemHighlightType.GENERIC_ERROR);
                                     return;
                                 }

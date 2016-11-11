@@ -108,7 +108,7 @@ Inspections Lists (Architecture)
 | Architecture         | ClassOverridesFieldOfSuperClassInspection       | Class overrides a field of a parent class           | no  |
 | Architecture         | SingletonFactoryPatternViolationInspection      | Class violates singleton/factory pattern definition | n/a |
 | Architecture         | PrivateConstructorSemanticsInspection           | Private constructor semantics                       | n/a       | yes | n/a  |
-| Architecture         | LongInheritanceChainInspection                  | Long inheritance chain                              | n/a |
+| Architecture         | LongInheritanceChainInspection                  | Long inheritance chain                              | n/a       | yes | n/a  |
 | Architecture         | PropertyCanBeStaticInspection                   | Property could be static                            | no        | yes | no   |
 | Architecture         | EmptyClassInspection                            | Empty class                                         | n/a |
 | Architecture         | ClassReImplementsParentInterfaceInspection      | Class re-implements interface of a parent class     | yes |

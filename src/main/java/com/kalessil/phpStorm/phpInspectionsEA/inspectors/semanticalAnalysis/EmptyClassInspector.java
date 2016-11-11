@@ -3,20 +3,15 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.tags.PhpDocTagImpl;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-
 public class EmptyClassInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Class does not contain any properties or methods";
+    private static final String message = "Class does not contain any properties or methods";
 
     @NotNull
     public String getShortName() {
@@ -28,45 +23,23 @@ public class EmptyClassInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
-                final String strClassFQN = clazz.getFQN();
+                final String className = clazz.getName();
                 /* skip un-explorable and exception classes */
-                if (StringUtil.isEmpty(strClassFQN) || strClassFQN.endsWith("Exception")) {
+                if (StringUtil.isEmpty(className) || className.endsWith("Exception")) {
                     return;
                 }
 
                 /* require class with name which can be targeted by warning */
-                if (clazz.isInterface() || clazz.isTrait() || null == clazz.getNameIdentifier()) {
+                final PsiElement psiClassName = clazz.getNameIdentifier();
+                if (null == psiClassName || clazz.isInterface() || clazz.isTrait()) {
                     return;
                 }
 
+                /* check if class is empty, take into account used traits */
                 final boolean isEmpty = (0 == clazz.getOwnFields().length + clazz.getOwnMethods().length);
-                if (isEmpty && 0 == clazz.getTraitUseRules().size() && !isDeprecated(clazz)) {
-                    holder.registerProblem( clazz.getNameIdentifier(), strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                if (isEmpty && !clazz.isDeprecated() && 0 == clazz.getTraits().length) {
+                    holder.registerProblem(psiClassName, message, ProblemHighlightType.WEAK_WARNING);
                 }
-            }
-
-            /**
-             * Personally I deprecating empty classes before they can be dropped.
-             */
-            private boolean isDeprecated(PhpClass clazz) {
-                PhpPsiElement classDoc = clazz.getPrevPsiSibling();
-                if (!(classDoc instanceof PhpDocCommentImpl)) {
-                    return false;
-                }
-
-                /* try to find @deprecated */
-                Collection<PhpDocTagImpl> tags = PsiTreeUtil.findChildrenOfType(classDoc, PhpDocTagImpl.class);
-                if (tags.size() > 0) {
-                    for (PhpDocTagImpl subject : tags) {
-                        if (subject.getName().equals("@deprecated")) {
-                            tags.clear();
-                            return true;
-                        }
-                    }
-                    tags.clear();
-                }
-
-                return false;
             }
         };
     }

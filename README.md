@@ -109,8 +109,8 @@ Inspections Lists (Architecture)
 | Architecture         | SingletonFactoryPatternViolationInspection      | Class violates singleton/factory pattern definition | n/a |
 | Architecture         | PrivateConstructorSemanticsInspection           | Private constructor semantics                       | n/a       | yes | n/a  |
 | Architecture         | LongInheritanceChainInspection                  | Long inheritance chain                              | n/a       | yes | n/a  |
-| Architecture         | PropertyCanBeStaticInspection                   | Property could be static                            | no        | yes | no   |
-| Architecture         | EmptyClassInspection                            | Empty class                                         | n/a |
+| Architecture         | PropertyCanBeStaticInspection                   | Property could be static                            | n/a       | yes | n/a  |
+| Architecture         | EmptyClassInspection                            | Empty class                                         | n/a       | yes | n/a  |
 | Architecture         | ClassReImplementsParentInterfaceInspection      | Class re-implements interface of a parent class     | yes |
 
 Inspections Lists (Probable bugs)

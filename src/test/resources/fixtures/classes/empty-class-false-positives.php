@@ -18,3 +18,13 @@ class AnEmptyException {
  */
 class AnEmptyDeprecatedClass {
 }
+
+class AClassWithAProperty {
+    public $property;
+}
+
+class AClassWithAMethod {
+    public function __construct()
+    {
+    }
+}

@@ -10,10 +10,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-
 public class LongInheritanceChainInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Class has 3 or more parent classes, consider using appropriate design patterns.";
+    private static final String message = "Class has 3 or more parent classes, consider using appropriate design patterns.";
 
     @NotNull
     public String getShortName() {
@@ -46,7 +44,7 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
                 }
 
                 if (intParentsCount >= 3 && !clazz.isDeprecated()) {
-                    holder.registerProblem(psiClassName, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(psiClassName, message, ProblemHighlightType.WEAK_WARNING);
                 }
             }
         };

@@ -164,6 +164,12 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             }
                         }
 
+                        /* adding into an arrays; we both depend and modify the container */
+                        if (parent instanceof ArrayAccessExpression && valueContainer == ((ArrayAccessExpression) parent).getValue()) {
+                            allModifiedVariables.add(variableName);
+                            individualDependencies.add(variableName);
+                        }
+
                         /* php-specific list(...) = ... construction */
                         if (parent instanceof MultiassignmentExpression) {
                             final List<PhpPsiElement> variables = ((MultiassignmentExpression) parent).getVariables();

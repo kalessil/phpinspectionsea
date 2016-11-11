@@ -2,6 +2,7 @@
 
 /* @var array $files */
 /* @var array $processed */
+/* @var stdClass $processedBag */
 /* @var string $hash */
 
 /* dependencies resolution correctness */
@@ -17,8 +18,17 @@ foreach ($files as & $file3) {
 
 /* accumulating in external storage, e.g. bulk operations */
 foreach ($files as & $file4) {
+    if (count($processed) >= 10) {
+        break;
+    }
+    if (count($processedBag->processed) >= 10) {
+        break;
+    }
+
     $processed []= 'Next file has been processed';
     $processed []= $file4;
+
+    $processedBag->processed []= $file4;
 }
 
 /* increments/decrements, e.g. counters */

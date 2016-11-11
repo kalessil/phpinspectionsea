@@ -173,14 +173,14 @@ final public class ExpressionSemanticUtil {
         LinkedList<PsiElement> objPartsCollection = new LinkedList<PsiElement>();
         PsiElement objItemToAdd;
 
-        /** right expression first */
+        /* right expression first */
         objItemToAdd = ExpressionSemanticUtil.getExpressionTroughParenthesis(objTarget.getRightOperand());
         if (null != objItemToAdd) {
             objPartsCollection.add(objItemToAdd);
         }
         PsiElement objExpressionToExpand = ExpressionSemanticUtil.getExpressionTroughParenthesis(objTarget.getLeftOperand());
 
-        /** expand binary operation while it's a binary operation */
+        /* expand binary operation while it's a binary operation */
         //noinspection ConstantConditions
         while (
                 objExpressionToExpand instanceof BinaryExpression &&
@@ -196,7 +196,7 @@ final public class ExpressionSemanticUtil {
         }
 
 
-        /** don't forget very first one */
+        /* don't forget very first one */
         if (null != objExpressionToExpand) {
             objPartsCollection.addFirst(objExpressionToExpand);
         }
@@ -343,5 +343,5 @@ final public class ExpressionSemanticUtil {
     }
 
 
-    /** TODO: get BO type */
+    /* TODO: get BO type */
 }

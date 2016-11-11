@@ -27,12 +27,12 @@ public class IfExpressionInEarlyReturnContextInspector extends BasePhpInspection
                     return;
                 }
 
-                /** ensure if has no alternative branches as well */
+                /* ensure if has no alternative branches as well */
                 if (ExpressionSemanticUtil.hasAlternativeBranches(ifStatement)) {
                     return;
                 }
 
-                /** ensure it's right context */
+                /* ensure it's right context */
                 GroupStatement objGroupExpression = (GroupStatement) ifStatement.getParent();
                 final boolean isTargetContext = (
                     objGroupExpression.getParent() instanceof ForeachStatement ||
@@ -45,13 +45,13 @@ public class IfExpressionInEarlyReturnContextInspector extends BasePhpInspection
                 }
 
 
-                /** ensure that if is single expression in group */
+                /* ensure that if is single expression in group */
                 int intCountStatementsInParentGroup = ExpressionSemanticUtil.countExpressionsInGroup(objGroupExpression);
                 if (intCountStatementsInParentGroup > 1) {
                     return;
                 }
 
-                /** point the problem out */
+                /* point the problem out */
                 holder.registerProblem(ifStatement.getFirstChild(), strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };

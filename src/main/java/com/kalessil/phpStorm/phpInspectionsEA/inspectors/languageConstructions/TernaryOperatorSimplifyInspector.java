@@ -33,7 +33,7 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
 
 
                 final boolean isTrueVariantBoolean = ExpressionSemanticUtil.isBoolean((ConstantReference) objTrueVariant);
-                /** skip false variant test if true one already did not meet pre-conditions */
+                /* skip false variant test if true one already did not meet pre-conditions */
                 final boolean isFalseVariantBoolean = (
                     isTrueVariantBoolean &&
                     ExpressionSemanticUtil.isBoolean((ConstantReference) objFalseVariant)
@@ -43,7 +43,7 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                 }
 
                 final PsiElement objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
-                /** or maybe try resolving type when not on-the-fly analysis is running */
+                /* or maybe try resolving type when not on-the-fly analysis is running */
                 if (!(objCondition instanceof BinaryExpression)) {
                     return;
                 }

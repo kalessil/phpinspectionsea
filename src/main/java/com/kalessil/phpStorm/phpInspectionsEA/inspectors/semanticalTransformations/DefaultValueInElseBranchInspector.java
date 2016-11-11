@@ -105,7 +105,7 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
                         return;
                     }
 
-                    /** ensure target variables matches */
+                    /* ensure target variables matches */
                     if (!PsiEquivalenceUtil.areElementsEquivalent(objSubjectToCompareWith, objSubjectFromExpression)) {
                         objAssignmentsList.clear();
                         return;

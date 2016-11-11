@@ -108,7 +108,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    /** TODO: has method/function reference as index */
+                    /* TODO: has method/function reference as index */
                     if (!isResultStored && this.hasConcatenationAsIndex((ArrayAccessExpression) parameter)) {
                         holder.registerProblem(parameter, strProblemDescriptionConcatenationInIndex, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         continue;
@@ -120,8 +120,8 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                 }
             }
 
-            /** checks if any of indexes is concatenation expression */
-            /** TODO: iterator for array access expression */
+            /* checks if any of indexes is concatenation expression */
+            /* TODO: iterator for array access expression */
             private boolean hasConcatenationAsIndex(ArrayAccessExpression objExpression) {
                 PsiElement objExpressionToInspect = objExpression;
                 while (objExpressionToInspect instanceof ArrayAccessExpression) {

@@ -100,7 +100,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
             }
 
             private void checkCall (String strFunctionName, FunctionReference reference, StringLiteralExpression target, String regex, String modifiers) {
-                /** Modifiers validity (done):
+                /* Modifiers validity (done):
                  * + /no-az-chars/i => /no-az-chars/
                  * + /no-dot-char/s => /no-dot-char/
                  * + /no-$/D => /no-$/
@@ -115,7 +115,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 UselessDotAllModifierCheckStrategy.apply(modifiers, regex, target, holder);
                 UselessIgnoreCaseModifierCheckStrategy.apply(modifiers, regex, target, holder);
 
-                /** Plain API simplification (done):
+                /* Plain API simplification (done):
                  * + /^text/ => 0 === strpos(...) (match)
                  * + /text/ => false !== strpos(...) (match) / str_replace (replace)
                  * + /^text/i => 0 === stripos(...) (match)
@@ -126,7 +126,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 FunctionCallCheckStrategy.apply(strFunctionName, reference, holder);
                 PlainApiUseCheckStrategy.apply(strFunctionName, reference, modifiers, regex, holder);
 
-                /** Classes shortening (done):
+                /* Classes shortening (done):
                  * + [0-9] => \d
                  * + [^0-9] => \D
                  * + [:digit:] => \d
@@ -136,7 +136,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  */
                 ShortClassDefinitionStrategy.apply(modifiers, regex, target, holder);
 
-                /** Optimizations:
+                /* Optimizations:
                  * (...) => (?:...) (if there is no back-reference)
                  *
                  * + .*?[symbol] at the end of regexp => [^symbol]*[symbol] (e.g. xml/html parsing using <.*?> vs <[^>]*>)
@@ -151,7 +151,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 AmbiguousAnythingTrimCheckStrategy.apply(strFunctionName, reference, regex, target, holder);
                 //NonGreedyTransformCheckStrategy.apply(regex, target, holder);
 
-                /**
+                /*
                  * Probably bugs: nested tags check without /s
                  */
                 MissingDotAllCheckStrategy.apply(modifiers, regex, target, holder);

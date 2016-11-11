@@ -29,7 +29,7 @@ public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpTernaryExpression(TernaryExpression expression) {
-                /** construction requirements */
+                /* construction requirements */
                 final PsiElement objTrueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
                 if (null == objTrueVariant) {
                     return;
@@ -39,7 +39,7 @@ public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** if true variant is the object or expressions are not equals */
+                /* if true variant is the object or expressions are not equals */
                 if (objCondition != objTrueVariant && PsiEquivalenceUtil.areElementsEquivalent(objCondition, objTrueVariant)) {
                     holder.registerProblem(expression.getTrueVariant(), strProblemDescription, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                 }

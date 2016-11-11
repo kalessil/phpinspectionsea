@@ -29,7 +29,7 @@ public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection 
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
-                /** TODO: stick to class */
+                /* TODO: stick to class */
                 PhpClass objClass = method.getContainingClass();
                 String strMethodName = method.getName();
                 if (null == objClass || StringUtil.isEmpty(strMethodName) || null == method.getNameIdentifier()) {

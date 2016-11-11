@@ -25,7 +25,7 @@ public class ForeachOnArrayComponentsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpForeach(ForeachStatement foreach) {
                 PsiElement objArray = ExpressionSemanticUtil.getExpressionTroughParenthesis(foreach.getArray());
-                /** verify structure */
+                /* verify structure */
                 if (objArray instanceof FunctionReference && null == foreach.getKey()) {
                     String strFunction = ((FunctionReference) objArray).getName();
                     if (null != strFunction && (strFunction.equals("array_keys") || strFunction.equals("array_values"))) {

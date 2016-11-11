@@ -26,9 +26,7 @@ public class UselessUnsetInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
 
-        /**
-         * foreach is also a case, but there is no way to get flow entry point in actual JB platform API
-         */
+        /* foreach is also a case, but there is no way to get flow entry point in actual JB platform API */
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
                 this.inspectUsages(method.getParameters(), method);
@@ -47,18 +45,18 @@ public class UselessUnsetInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    /** find all usages of a parameter */
+                    /* find all usages of a parameter */
                     PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, strParameterName, false);
                     if (arrUsages.length == 0) {
                         continue;
                     }
 
-                    /** iterate over usages */
+                    /* iterate over usages */
                     for (PhpAccessVariableInstruction objInstruction : arrUsages) {
                         PsiElement objExpression = objInstruction.getAnchor();
-                        /** target pattern detection */
+                        /* target pattern detection */
                         if (objExpression.getParent() instanceof PhpUnset) {
-                            /** choose warning target */
+                            /* choose warning target */
                             int unsetParametersCount = 0;
                             for (PsiElement objChild : objExpression.getParent().getChildren()) {
                                 if (objChild instanceof PhpExpression) {

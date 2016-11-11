@@ -42,24 +42,24 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
 
                 PsiElement objParent = reference.getParent();
                 if (!(objParent instanceof AssignmentExpression)) {
-                    /** let's focus on assignment expressions */
+                    /* let's focus on assignment expressions */
                     return;
                 }
 
                 while (null != objParent && !(objParent instanceof PhpFile)) {
-                    /** terminate if reached callable */
+                    /* terminate if reached callable */
                     if (objParent instanceof Function) {
                         return;
                     }
 
                     if (objParent instanceof ForeachStatement || objParent instanceof For || objParent instanceof While) {
-                        /** loop test is positive, check pattern */
+                        /* loop test is positive, check pattern */
                         final PhpPsiElement objContainer = ((AssignmentExpression) reference.getParent()).getVariable();
                         if (null == objContainer) {
                             return;
                         }
 
-                        /** pattern itself: container overridden */
+                        /* pattern itself: container overridden */
                         for (PsiElement objParameter : reference.getParameters()) {
                             if (PsiEquivalenceUtil.areElementsEquivalent(objContainer, objParameter)) {
                                 final String message = strProblemDescription.replace("%s%", strFunctionName);

@@ -13,14 +13,14 @@ final public class TypesSemanticsUtil {
         if (resolvedTypesSet.contains(Types.strNull)) {
             --intCountTypesToInspect;
         }
-        /** ensure we still have variants left */
+        /* ensure we still have variants left */
         if (intCountTypesToInspect == 0) {
             return false;
         }
 
-        /** work through types, ensure it's null or classes references */
+        /* work through types, ensure it's null or classes references */
         for (String strTypeToInspect : resolvedTypesSet) {
-            /** skip core types, but null */
+            /* skip core types, but null */
             if (strTypeToInspect.charAt(0) != '\\' && !strTypeToInspect.equals(Types.strNull)) {
                 return false;
             }

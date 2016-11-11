@@ -145,7 +145,7 @@ final public class TypeFromPsiResolvingUtil {
             return;
         }
 
-        /** lambda/anonymous function*/
+        /* lambda/anonymous function*/
         if (objSubjectExpression instanceof FunctionImpl) {
             objTypesSet.add(Types.strCallable);
             return;
@@ -155,7 +155,7 @@ final public class TypeFromPsiResolvingUtil {
             resolvePhpExpression((PhpExpression) objSubjectExpression, objScope, objIndex, objTypesSet);
         }
 
-        /** TODO: check which case is not worked out */
+        /* TODO: check which case is not worked out */
     }
 
     private static void checkCallables(ArrayCreationExpression objSubjectExpression, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {

@@ -73,7 +73,7 @@ public class PrefixedIncDecrementEquivalentInspector extends BasePhpInspection {
                 if (null != variable && assignmentExpression.getValue() instanceof BinaryExpression) {
                     BinaryExpression value = (BinaryExpression) assignmentExpression.getValue();
 
-                    /** operation and operands provided */
+                    /* operation and operands provided */
                     PsiElement leftOperand  = value.getLeftOperand();
                     PsiElement rightOperand = value.getRightOperand();
                     if (null == leftOperand || null == rightOperand) {
@@ -82,7 +82,7 @@ public class PrefixedIncDecrementEquivalentInspector extends BasePhpInspection {
 
                     IElementType operation  = value.getOperationType();
                     if (operation == PhpTokenTypes.opPLUS) {
-                        /** plus operation: operand position NOT important */
+                        /* plus operation: operand position NOT important */
                         if (
                             (leftOperand.getText().equals("1") && PsiEquivalenceUtil.areElementsEquivalent(rightOperand, variable)) ||
                             (rightOperand.getText().equals("1") && PsiEquivalenceUtil.areElementsEquivalent(leftOperand, variable))

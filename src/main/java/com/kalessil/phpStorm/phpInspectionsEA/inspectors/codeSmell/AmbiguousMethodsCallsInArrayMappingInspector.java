@@ -27,7 +27,7 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
              * @param foreach statement to inspect
              */
             public void visitPhpForeach(ForeachStatement foreach) {
-                /** check if group statement used */
+                /* check if group statement used */
                 GroupStatement objGroupStatement = ExpressionSemanticUtil.getGroupStatement(foreach);
                 if (objGroupStatement == null) {
                     return;
@@ -54,7 +54,7 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
                 FunctionReference objValueExpression = (FunctionReference) objAssignment.getValue();
 
                 PhpPsiElement objContainer = objAssignment.getVariable();
-                /** TODO: iterator for array access expression */
+                /* TODO: iterator for array access expression */
                 while (objContainer instanceof ArrayAccessExpression) {
                     ArrayIndex objIndex = ((ArrayAccessExpression) objContainer).getIndex();
                     if (objIndex != null && objIndex.getValue() instanceof FunctionReference) {

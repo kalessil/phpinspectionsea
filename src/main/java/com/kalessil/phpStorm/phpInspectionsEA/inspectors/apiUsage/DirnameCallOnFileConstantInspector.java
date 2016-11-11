@@ -29,7 +29,7 @@ public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                /** check requirements */
+                /* check requirements */
                 final PsiElement[] params = reference.getParameters();
                 final String name         = reference.getName();
                 if (1 != params.length || StringUtil.isEmpty(name) || !name.equals("dirname")) {

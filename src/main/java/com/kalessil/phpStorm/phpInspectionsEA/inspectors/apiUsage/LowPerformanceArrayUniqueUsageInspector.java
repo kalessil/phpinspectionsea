@@ -25,29 +25,29 @@ public class LowPerformanceArrayUniqueUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                /** try filtering by args count first */
+                /* try filtering by args count first */
                 final PsiElement[] parameters = reference.getParameters();
                 final String strFunctionName  = reference.getName();
                 if (parameters.length != 1 || StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("array_unique")) {
                     return;
                 }
 
-                /** check it's nested call */
+                /* check it's nested call */
                 if (reference.getParent() instanceof ParameterList) {
                     ParameterList params = (ParameterList) reference.getParent();
                     if (params.getParent() instanceof FunctionReference) {
                         FunctionReference parentCall = (FunctionReference) params.getParent();
-                        /** look up for parent function name */
+                        /* look up for parent function name */
                         String strParentFunction = parentCall.getName();
                         if (! StringUtil.isEmpty(strParentFunction)) {
 
-                            /** === test array_values(array_unique(<expression>)) case === */
+                            /* === test array_values(array_unique(<expression>)) case === */
                             if (strParentFunction.equals("array_values")) {
                                 holder.registerProblem(parentCall, strProblemUseArrayKeysWithCountValues, ProblemHighlightType.WEAK_WARNING);
                                 return;
                             }
 
-                            /** === test count(array_unique(<expression>)) case === */
+                            /* === test count(array_unique(<expression>)) case === */
                             if (strParentFunction.equals("count")) {
                                 holder.registerProblem(parentCall, strProblemUseCountWithCountValues, ProblemHighlightType.WEAK_WARNING);
                                 // return;

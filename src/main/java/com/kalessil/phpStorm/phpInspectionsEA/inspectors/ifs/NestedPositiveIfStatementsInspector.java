@@ -29,7 +29,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpIf(If ifStatement) {
-                /** meet pre-conditions */
+                /* meet pre-conditions */
                 PsiElement objParent = ifStatement.getParent();
                 if (!(objParent instanceof GroupStatement)) {
                     return;
@@ -39,7 +39,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** ensure parent if and the expression has no alternative branches */
+                /* ensure parent if and the expression has no alternative branches */
                 if (
                     ExpressionSemanticUtil.hasAlternativeBranches(ifStatement) ||
                     ExpressionSemanticUtil.hasAlternativeBranches((If) objParent)
@@ -47,21 +47,21 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** ensure that if is single expression in group */
+                /* ensure that if is single expression in group */
                 GroupStatement objGroupStatement = (GroupStatement) ifStatement.getParent();
                 int intCountStatementsInParentGroup = ExpressionSemanticUtil.countExpressionsInGroup(objGroupStatement);
                 if (intCountStatementsInParentGroup > 1) {
                     return;
                 }
 
-                /** ensure that the same logical operator being used (to not increase the visual complexity) */
+                /* ensure that the same logical operator being used (to not increase the visual complexity) */
                 IElementType operator       = getOperator(ifStatement);
                 IElementType parentOperator = getOperator((If) objParent);
                 if (operator != parentOperator) {
                     return;
                 }
 
-                /** point on the issues */
+                /* point on the issues */
                 PhpPsiElement objIfCondition = ifStatement.getCondition();
                 if (objIfCondition == null) {
                     return;

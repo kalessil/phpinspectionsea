@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class UntrustedInclusionInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "This relies on include_path and not guaranted to load the right file. Concatenate with __DIR__ or use namespaces + class loading instead.";
+    private static final String strProblemDescription = "This relies on include_path and not guaranteed to load the right file. Concatenate with __DIR__ or use namespaces + class loading instead.";
 
     @NotNull
     public String getShortName() {

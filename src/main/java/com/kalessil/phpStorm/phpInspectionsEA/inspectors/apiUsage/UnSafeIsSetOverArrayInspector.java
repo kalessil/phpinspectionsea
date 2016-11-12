@@ -139,7 +139,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                 return false;
             }
 
-            // partially duplicates semanticalAnalysis.OffsetOperationsInspector.isContainerSupportsArrayAccess()
+            // TODO: partially duplicates semanticalAnalysis.OffsetOperationsInspector.isContainerSupportsArrayAccess()
             private  boolean isArrayAccess(@NotNull ArrayAccessExpression expression) {
                 // ok JB parses `$var[]= ...` always as array, lets make it working properly and report them later
                 PsiElement container = expression.getValue();

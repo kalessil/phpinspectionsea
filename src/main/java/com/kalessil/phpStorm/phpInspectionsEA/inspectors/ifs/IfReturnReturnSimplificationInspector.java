@@ -192,7 +192,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                     /* fix return first */
                     returnArgument.replace(replacement);
 
-                    /* nowdrop if and succeding whitespaces */
+                    /* now drop if and succeeding whitespaces */
                     if (ifExpression.getNextSibling() instanceof PsiWhiteSpaceImpl) {
                         ifExpression.getNextSibling().delete();
                     }

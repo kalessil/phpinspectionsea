@@ -117,12 +117,12 @@ public class PhpExpressionTypes {
                     return true;
                 }
 
-                final HashSet<String> extendslist = new HashSet<String>();
-                getParentsList(type1, extendslist);
+                final HashSet<String> extendsList = new HashSet<String>();
+                getParentsList(type1, extendsList);
 
                 for (final String type2 : base.types) {
                     if (type2.charAt(0) == '\\') {
-                        if (extendslist.contains(type2)) {
+                        if (extendsList.contains(type2)) {
                             return true;
                         }
                     }
@@ -183,9 +183,9 @@ public class PhpExpressionTypes {
     public boolean isArrayAccess() {
         for (final String type : types) {
             if (type.charAt(0) == '\\') {
-                final HashSet<String> extendslist = new HashSet<String>();
-                getParentsList(type, extendslist);
-                if (extendslist.contains(strTypeArrayAccess)) {
+                final HashSet<String> extendsList = new HashSet<String>();
+                getParentsList(type, extendsList);
+                if (extendsList.contains(strTypeArrayAccess)) {
                     return true;
                 }
             }
@@ -196,8 +196,8 @@ public class PhpExpressionTypes {
     public boolean isTrait() {
         for (final String type : types) {
             if (type.charAt(0) == '\\') {
-                for (PhpClass typeclass : objIndex.getAnyByFQN(type)) {
-                    if (typeclass.isTrait()) {
+                for (PhpClass typeClass : objIndex.getAnyByFQN(type)) {
+                    if (typeClass.isTrait()) {
                         return true;
                     }
                 }
@@ -206,23 +206,23 @@ public class PhpExpressionTypes {
         return false;
     }
 
-    private void getParentsList(final String className, final HashSet<String> extendslist) {
-        for (PhpClass typeclass : objIndex.getAnyByFQN(className)) {
-            while (typeclass != null) {
-                extendslist.add(typeclass.getFQN());
+    private void getParentsList(final String className, final HashSet<String> extendsList) {
+        for (PhpClass typeClass : objIndex.getAnyByFQN(className)) {
+            while (typeClass != null) {
+                extendsList.add(typeClass.getFQN());
 
-                String[] interfaceNames = typeclass.getInterfaceNames();
+                String[] interfaceNames = typeClass.getInterfaceNames();
                 for (final String interfaceName : interfaceNames) {
-                    if (!extendslist.contains(interfaceName)) {
-                        extendslist.add(interfaceName);
-                        getParentsList(interfaceName, extendslist);
+                    if (!extendsList.contains(interfaceName)) {
+                        extendsList.add(interfaceName);
+                        getParentsList(interfaceName, extendsList);
                     }
                 }
 
-                extendslist.addAll(Arrays.asList(typeclass.getTraitNames()));
-                extendslist.addAll(Arrays.asList(typeclass.getMixinNames()));
+                extendsList.addAll(Arrays.asList(typeClass.getTraitNames()));
+                extendsList.addAll(Arrays.asList(typeClass.getMixinNames()));
 
-                typeclass = typeclass.getSuperClass();
+                typeClass = typeClass.getSuperClass();
             }
         }
     }

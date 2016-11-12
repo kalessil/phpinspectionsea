@@ -221,9 +221,13 @@ final public class CollectPossibleThrowsUtil {
         final HashMap<PhpClass, HashSet<PsiElement>> unhandledInCatches = new HashMap<PhpClass, HashSet<PsiElement>>();
         for (Catch catchInTry : scope.getCatchClauses()) {
             /* resolve catch-class */
-            ClassReference catchClassReference = catchInTry.getExceptionType();
-            if (null != catchClassReference && catchClassReference.resolve() instanceof PhpClass) {
-                PhpClass caughtClass = (PhpClass) catchClassReference.resolve();
+            final Collection<ClassReference> catchClassReferences = catchInTry.getExceptionTypes();
+            for (ClassReference catchClassReference : catchClassReferences) {
+                if (!(catchClassReference.resolve() instanceof PhpClass)) {
+                    continue;
+                }
+
+                final PhpClass caughtClass = (PhpClass) catchClassReference.resolve();
 //holder.registerProblem(catchInTry.getFirstChild(), "Catches: " + caughtClass.toString(), ProblemHighlightType.WEAK_WARNING);
 
                 /* inspect what covered */
@@ -255,6 +259,7 @@ final public class CollectPossibleThrowsUtil {
                     handledInCurrentCatch.clear();
                 }
             }
+            catchClassReferences.clear();
 
             /* resolve catch-body and mark as processed */
             final HashMap<PhpClass, HashSet<PsiElement>> catchBodyExceptions = collectNestedAndWorkflowExceptions(catchInTry, processed, holder);

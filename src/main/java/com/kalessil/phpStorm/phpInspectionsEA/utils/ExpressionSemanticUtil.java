@@ -27,7 +27,7 @@ final public class ExpressionSemanticUtil {
     }
 
     /**
-     * @deprecated to re-check if API already has a method for this
+     * TODO: to re-check if API already has a method for this
      */
     @Nullable
     public static PhpExpression getReturnValue(@NotNull PhpReturn objReturn) {

@@ -29,7 +29,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
-                /** try getting function reference, indicating pattern match */
+                /* try getting function reference, indicating pattern match */
                 FunctionReference functionCall = getStrReplaceReference(assignmentExpression);
                 if (null != functionCall) {
                     /* get previous non-comment expression */
@@ -40,17 +40,17 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     final PsiElement[] params = functionCall.getParameters();
 
 
-                    /** === cascade calls check === */
-                    /** previous assignment shall be inspected, probably we can merge this one into it */
+                    /* === cascade calls check === */
+                    /* previous assignment shall be inspected, probably we can merge this one into it */
                     if (
                         null != previous &&
                         previous.getFirstChild() instanceof AssignmentExpression &&
                         null != getStrReplaceReference((AssignmentExpression) previous.getFirstChild())
                     ) {
-                        /** ensure linking variable discoverable and call contains all params */
+                        /* ensure linking variable discoverable and call contains all params */
                         PsiElement objLinkingVariable = ((AssignmentExpression) previous.getFirstChild()).getVariable();
                         if (3 == params.length && objLinkingVariable instanceof Variable && params[2] instanceof Variable) {
-                            /** extract variable names from link points */
+                            /* extract variable names from link points */
                             String strPreviousVariable = ((Variable) objLinkingVariable).getName();
                             String strCallSubject      = ((Variable) params[2]).getName();
                             if (
@@ -63,7 +63,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     }
 
 
-                    /** === nested calls check === */
+                    /* === nested calls check === */
                     if (
                         3 == params.length && params[2] instanceof FunctionReferenceImpl
                     ) {
@@ -75,14 +75,14 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     }
 
 
-                    /** === replacements uniqueness check === */
+                    /* === replacements uniqueness check === */
                     if (3 == params.length && params[1] instanceof ArrayCreationExpression) {
                         HashSet<String> replacements = new HashSet<String>();
 
                         for (PsiElement oneReplacement : params[1].getChildren()) {
                             if (oneReplacement instanceof PhpPsiElement) {
                                 PhpPsiElement item = ((PhpPsiElement) oneReplacement).getFirstPsiChild();
-                                /** abort on non-string entries  */
+                                /* abort on non-string entries  */
                                 if (!(item instanceof StringLiteralExpression)) {
                                     return;
                                 }
@@ -91,7 +91,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                             }
                         }
 
-                        /** count unique replacements */
+                        /* count unique replacements */
                         final int uniqueReplacements = replacements.size();
                         replacements.clear();
 
@@ -106,10 +106,10 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
 
     private FunctionReference getStrReplaceReference(AssignmentExpression assignment) {
         PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
-        /** ensure function and not method reference */
+        /* ensure function and not method reference */
         if (value instanceof FunctionReferenceImpl) {
             String strFunction = ((FunctionReference) value).getName();
-            /** is target function */
+            /* is target function */
             if (!StringUtil.isEmpty(strFunction) && strFunction.equals("str_replace")) {
                 return (FunctionReference) value;
             }

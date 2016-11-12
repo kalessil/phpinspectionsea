@@ -161,6 +161,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
             PsiElement conditions           = ExpressionSemanticUtil.getExpressionTroughParenthesis(ifExpression.getCondition());
             final PsiElement returnArgument = returnExpression.getArgument();
             if (null != conditions && null != returnArgument) {
+                @SuppressWarnings("UnnecessaryLocalVariable")
                 boolean invertCondition = this.isInverted;
 
                 /* inverting will be needed, check if it leads to double inverting */

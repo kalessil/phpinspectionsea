@@ -12,12 +12,12 @@ import java.util.HashSet;
 final public class TypeFromSignatureResolvingUtil {
 
     static public void resolveSignature (String strSignatureToResolve, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> extractedTypesSet) {
-        /** do nothing with empty signatures */
+        /* do nothing with empty signatures */
         if (StringUtil.isEmpty(strSignatureToResolve)) {
             return;
         }
 
-        /** re-dispatch poly-variants to single-variant processing */
+        /* re-dispatch poly-variants to single-variant processing */
         if (strSignatureToResolve.contains("|")) {
             for (String strOneVariantFromSplitToResolve : strSignatureToResolve.split("\\|")) {
                 resolveSignature(strOneVariantFromSplitToResolve, objScope, objIndex, extractedTypesSet);
@@ -25,7 +25,7 @@ final public class TypeFromSignatureResolvingUtil {
             return;
         }
 
-        /** skip primitive types */
+        /* skip primitive types */
         if (strSignatureToResolve.charAt(0) != '#' && strSignatureToResolve.charAt(0) != '?') {
             extractedTypesSet.add(Types.getType(strSignatureToResolve));
             return;
@@ -34,21 +34,21 @@ final public class TypeFromSignatureResolvingUtil {
 
         char charTypeOfSignature = ((strSignatureToResolve.length()) >= 2 ? strSignatureToResolve.charAt(1) : '?');
         if (
-            charTypeOfSignature == 'D' || /** pre-defined constants type is not resolved */
-            charTypeOfSignature == '?' || /** have no idea what does it mean */
-            charTypeOfSignature == 'A' || /** parameter type is not resolved */
-            charTypeOfSignature == 'E'    /** array item type is not resolved */
+            charTypeOfSignature == 'D' || /* pre-defined constants type is not resolved */
+            charTypeOfSignature == '?' || /* have no idea what does it mean */
+            charTypeOfSignature == 'A' || /* parameter type is not resolved */
+            charTypeOfSignature == 'E'    /* array item type is not resolved */
         ) {
-            /** do nothing here */
+            /* do nothing here */
             return;
         }
 
-        /** resolve functions */
+        /* resolve functions */
         if (charTypeOfSignature == 'F') {
             String strFunctionName = strSignatureToResolve.replace("#F", "");
             Collection<Function> objFunctionsCollection = objIndex.getFunctionsByName(strFunctionName);
             for (Function objFunction : objFunctionsCollection) {
-                /**
+                /*
                  * infinity loop was discovered for drupal 7 (drupal_find_base_themes)
                  * IDE for some reason resolved type including self-reference of this function
                  */
@@ -60,7 +60,7 @@ final public class TypeFromSignatureResolvingUtil {
             return;
         }
 
-        /** resolve params and scope variables */
+        /* resolve params and scope variables */
         if (charTypeOfSignature == 'V'){
             String strParameterOrVariableName = strSignatureToResolve.replace("#V", "");
             if (null != objScope) {
@@ -72,12 +72,12 @@ final public class TypeFromSignatureResolvingUtil {
                 }
             }
 
-            /** TODO: resolve local vars - find assignments */
+            /* TODO: resolve local vars - find assignments */
 
             return;
         }
 
-        /** classes and core types */
+        /* classes and core types */
         if (charTypeOfSignature == 'C') {
             String typeName = strSignatureToResolve.replace("#C", "");
             if (objScope instanceof Method && typeName.equals("static")) {
@@ -90,7 +90,7 @@ final public class TypeFromSignatureResolvingUtil {
             return;
         }
 
-        /**
+        /*
          * Ok, woodoo wizards musts envy here, we are checking classes structures
          * while getting thought execution chain, until we run into poly-variants
          * or missing annotations.
@@ -100,7 +100,7 @@ final public class TypeFromSignatureResolvingUtil {
         final boolean isConstant = (charTypeOfSignature == 'K');
         if (isProperty || isMethod || isConstant) {
             String[] arrInternalsAndChain = strSignatureToResolve.split("#C");
-            /** { <some garbage>, <target chain> }  */
+            /* { <some garbage>, <target chain> }  */
             if (arrInternalsAndChain.length != 2) {
                 return;
             }
@@ -120,23 +120,23 @@ final public class TypeFromSignatureResolvingUtil {
                 -- intCountItemsToProcess;
                 isLastPair = (intCountItemsToProcess == 0);
 
-                /** start point for resolving */
+                /* start point for resolving */
                 if (null == strClassResolved) {
                     strClassResolved = strSlot;
                     continue;
                 }
 
-                /** resolve pair */
+                /* resolve pair */
                 typesOfSlotSet = resolveSlot(strClassResolved, strSlot, objIndex, charTypeOfSignature);
 
 
-                /**
+                /*
                  * That's actually a hack, but assumption was correct for real-world frameworks.
                  * if mixed is in mid of resolving, ignore it for poly-variants, so possibly more issues will be found
                  */
                 intCountNotMixedTypes = typesOfSlotSet.size();
                 for (String strOne :typesOfSlotSet) {
-                    /** skip mixed types */
+                    /* skip mixed types */
                     if (
                         !isLastPair && intCountNotMixedTypes > 1 &&
                         Types.getType(strOne).equals(Types.strMixed)
@@ -149,20 +149,20 @@ final public class TypeFromSignatureResolvingUtil {
                         strFirstTypeResolved = strOne;
                     }
                 }
-                /** finished handling poly-variants with mixed in mid of chain */
+                /* finished handling poly-variants with mixed in mid of chain */
 
 
-                /** what was resolved and becomes class */
+                /* what was resolved and becomes class */
                 strClassResolved = strFirstTypeResolved;
 
-                /** break on poly-variant/no-variant in middle of chain */
+                /* break on poly-variant/no-variant in middle of chain */
                 isPolyVariant = (intCountNotMixedTypes > 1);
                 if (!isLastPair && (isPolyVariant || StringUtil.isEmpty(strClassResolved))) {
                     typesOfSlotSet.add(Types.strClassNotResolved);
                     return;
                 }
 
-                /** break looking up if pair is not resolved */
+                /* break looking up if pair is not resolved */
                 //noinspection ConstantConditions
                 if (strClassResolved.equals(Types.strClassNotResolved)) {
                     typesOfSlotSet.add(Types.strClassNotResolved);
@@ -184,14 +184,14 @@ final public class TypeFromSignatureResolvingUtil {
     static public HashSet<String> resolveSlot(String strClass, String strSlot, PhpIndex objIndex, char type) {
         HashSet<String> resolvedTypesSet = new HashSet<String>();
 
-        /** try resolving an object interface */
+        /* try resolving an object interface */
         Collection<PhpClass> objClasses = PhpIndexUtil.getObjectInterfaces(strClass, objIndex, false);
         if (0 == objClasses.size() || StringUtil.isEmpty(strSlot)) {
             resolvedTypesSet.add(Types.strClassNotResolved);
             return resolvedTypesSet;
         }
 
-        /** iterate methods and properties to match slot name */
+        /* iterate methods and properties to match slot name */
         boolean isSlotFound;
         String strTypeExtracted;
 
@@ -240,7 +240,7 @@ final public class TypeFromSignatureResolvingUtil {
         }
 
 
-        /** can be resolved in several classes - often duplicated ones, or not resolved at all */
+        /* can be resolved in several classes - often duplicated ones, or not resolved at all */
         if (resolvedTypesSet.size() == 0) {
             resolvedTypesSet.add(Types.strClassNotResolved);
         }

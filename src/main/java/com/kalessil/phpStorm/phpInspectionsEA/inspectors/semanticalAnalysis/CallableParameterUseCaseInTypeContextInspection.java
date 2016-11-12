@@ -58,16 +58,16 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     if (
                         StringUtil.isEmpty(strParameterName) ||
                         StringUtil.isEmpty(strParameterType) ||
-                        strParameterType.contains("mixed") ||   /** fair enough */
-                        strParameterType.contains("#")          /** TODO: types lookup */
+                        strParameterType.contains("mixed") ||   /* fair enough */
+                        strParameterType.contains("#")          /* TODO: types lookup */
                     ) {
                         continue;
                     }
-                    /** too lazy to do anything more elegant */
+                    /* too lazy to do anything more elegant */
                     strParameterType = strParameterType.replace(Types.strCallable, "array|string|callable");
 
 
-                    /** resolve types for parameter */
+                    /* resolve types for parameter */
                     HashSet<String> objParameterTypesResolved = new HashSet<String>();
                     TypeFromSignatureResolvingUtil.resolveSignature(strParameterType, (Function) objScopeHolder, objIndex, objParameterTypesResolved);
 
@@ -79,11 +79,11 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                     PsiElement objExpression;
                     FunctionReference objFunctionCall;
-                    /** TODO: dedicate to method */
+                    /* TODO: dedicate to method */
                     for (PhpAccessVariableInstruction objInstruction : arrUsages) {
                         objExpression = objInstruction.getAnchor().getParent();
 
-                        /** inspect type checks are used */
+                        /* inspect type checks are used */
                         if (
                             objExpression instanceof ParameterList &&
                             objExpression.getParent() instanceof FunctionReference
@@ -138,8 +138,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             continue;
                         }
 
-                        /** check if assignments not violating defined interfaces */
-                        /** TODO: dedicate to method */
+                        /* check if assignments not violating defined interfaces */
+                        /* TODO: dedicate to method */
                         if (objExpression instanceof AssignmentExpression) {
                             AssignmentExpression objAssignment = (AssignmentExpression) objExpression;
 
@@ -191,22 +191,22 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
             }
 
             private boolean isTypeCompatibleWith(String strType, HashSet<String> listAllowedTypes, PhpIndex objIndex) {
-                /** identical definitions */
+                /* identical definitions */
                 for (String strPossibleType: listAllowedTypes) {
                     if (strPossibleType.equals(strType)) {
                         return true;
                     }
                 }
 
-                /** classes/interfaces */
+                /* classes/interfaces */
                 if (strType.length() > 0 && strType.charAt(0) == '\\') {
-                    /** collect classes/interfaces for type we going to analyse for compatibility */
+                    /* collect classes/interfaces for type we going to analyse for compatibility */
                     Collection<PhpClass> classesToTest = PhpIndexUtil.getObjectInterfaces(strType, objIndex, false);
                     if (classesToTest.size() == 0) {
                         return false;
                     }
 
-                    /** collect parent classes/interfaces for bulk check */
+                    /* collect parent classes/interfaces for bulk check */
                     LinkedList<PhpClass> classesAllowed = new LinkedList<PhpClass>();
                     for (String strAllowedType: listAllowedTypes) {
                         if (
@@ -219,22 +219,22 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                         classesAllowed.addAll(PhpIndexUtil.getObjectInterfaces(strAllowedType, objIndex, false));
                     }
 
-                    /** run test through 2 sets */
+                    /* run test through 2 sets */
                     for (PhpClass testSubject: classesToTest) {
-                        /** collect hierarchy chain for interface inheritance checks */
+                        /* collect hierarchy chain for interface inheritance checks */
                         LinkedList<PhpClass> testSubjectInheritanceChain = new LinkedList<PhpClass>();
                         testSubjectInheritanceChain.add(testSubject);
                         Collections.addAll(testSubjectInheritanceChain, testSubject.getSupers());
 
                         for (PhpClass testAgainst: classesAllowed) {
-                            /** TODO: not clear why, but isSuperClass receives a null on VCS commit */
+                            /* TODO: not clear why, but isSuperClass receives a null on VCS commit */
                             if (null == testAgainst || null == testSubject) {
                                 continue;
                             }
 
-                            /** interface implementation checks */
+                            /* interface implementation checks */
                             if (testAgainst.isInterface()) {
-                                /**
+                                /*
                                  * PhpClassHierarchyUtils.isSuperClass not handling interfaces,
                                  * so scan complete inheritance tree
                                  */
@@ -247,7 +247,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 }
                             }
 
-                            /** class-hierarchy checks */
+                            /* class-hierarchy checks */
                             if (PhpClassHierarchyUtils.isSuperClass(testAgainst, testSubject, true)) {
                                 return true;
                             }

@@ -44,7 +44,7 @@ public class CountOnPropelCollectionInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** only count calls to check */
+                /* only count calls to check */
                 String strName = reference.getName();
                 if (null == strName || !strName.equals("count")) {
                     return;
@@ -61,7 +61,7 @@ public class CountOnPropelCollectionInspector extends BasePhpInspection {
                     return;
                 }
 
-                /** only count calls with one parameter to check */
+                /* only count calls with one parameter to check */
                 final String strName             = reference.getName();
                 final PsiElement[] arrParameters = reference.getParameters();
                 if (arrParameters.length != 1 || StringUtil.isEmpty(strName) || !strName.equals("count")) {
@@ -95,14 +95,14 @@ public class CountOnPropelCollectionInspector extends BasePhpInspection {
             }
 
             private void inspectSignature(String strSignature, PsiElement objExpression, String strMethodSuffix) {
-                /** re-dispatch poly-variant signatures */
+                /* re-dispatch poly-variant signatures */
                 if (strSignature.contains("|")) {
                     for (String strOneSignature : strSignature.split("\\|")) {
                         this.inspectSignature(strOneSignature, objExpression, strMethodSuffix);
                     }
                     return;
                 }
-                /** should contain .count even if counted with function */
+                /* should contain .count even if counted with function */
                 if (null != strMethodSuffix) {
                     strSignature += strMethodSuffix;
                 }
@@ -111,35 +111,35 @@ public class CountOnPropelCollectionInspector extends BasePhpInspection {
                 Pattern pattern = Pattern.compile(".+\\\\([\\w]+)\\.(get\\w+s)\\.count$");
                 Matcher matcher = pattern.matcher(strSignature);
 
-                /** 1st case: FKs collections usages */
+                /* 1st case: FKs collections usages */
                 final boolean isCountOnCollectionViaFK = (strSignature.contains(".get") && matcher.matches());
                 if (isCountOnCollectionViaFK) {
-                    /** lookup class and method definition */
+                    /* lookup class and method definition */
                     PhpClass objObjectClass = PhpIndex.getInstance(holder.getProject()).getClassByName(matcher.group(1));
                     if (null == objObjectClass) {
                         return;
                     }
 
                     String strMethodName = matcher.group(2);
-                    /** lookup method, but base classes can be not generated yet */
+                    /* lookup method, but base classes can be not generated yet */
                     for (Method objMethod: objObjectClass.getMethods()) {
                         if (!objMethod.getName().equals(strMethodName)) {
                             continue;
                         }
 
-                        /** ensure propel generated method */
+                        /* ensure propel generated method */
                         if (objMethod.getParameters().length != 2 || !objMethod.getType().toString().contains("PropelObjectCollection")) {
                             return;
                         }
                     }
 
-                    /** finally we are sure */
+                    /* finally we are sure */
                     holder.registerProblem(objExpression, strProblemDescriptionFkCollection, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
 
 
-                /** 2nd case: found results collections usages */
+                /* 2nd case: found results collections usages */
                 final boolean isCountOnResults =
                     strSignature.contains(".create.") &&
                     strSignature.matches(".+\\.create(\\.\\w+)*\\.find(By\\w+)?(\\.toArray)?\\.count$")
@@ -150,7 +150,7 @@ public class CountOnPropelCollectionInspector extends BasePhpInspection {
                 }
 
 
-                /** 3rd case - signature affected by types annotating */
+                /* 3rd case - signature affected by types annotating */
                 final boolean isCountOnCollection =
                     strSignature.contains("\\Propel") && strSignature.endsWith("Collection.count")
                 ;

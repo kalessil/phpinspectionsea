@@ -508,7 +508,7 @@ with a laptop.
         groupName="Language level migration"                      enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.TypesCastingWithFunctionsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="dirnameCallOnFileConstantInspection"           displayName="'dirname(...)' could be replaced by '__DIR__'"
+        shortName="dirnameCallOnFileConstantInspection"           displayName="__DIR__ can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.DirnameCallOnFileConstantInspector"/>
 

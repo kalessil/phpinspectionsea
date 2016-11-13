@@ -103,7 +103,7 @@ Inspections Lists (Language level migration)
 | Language level migration | ElvisOperatorCanBeUsedInspection                | Elvis operator can be used                          | yes |
 | Language level migration | NullCoalescingOperatorCanBeUsedInspection       | Null coalescing operator can be used                | yes |
 | Language level migration | TypesCastingWithFunctionsInspection             | Type casting can be used                            | yes       | yes | no   |
-| Language level migration | dirnameCallOnFileConstantInspection             | 'dirname(...)' could be replaced by '__DIR__'       | yes |
+| Language level migration | dirnameCallOnFileConstantInspection             | __DIR__ can be used                                 | yes |
 
 Inspections Lists (Architecture)
 ---

@@ -10,6 +10,7 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.ForeachStatement;
 import com.jetbrains.php.lang.psi.elements.MultiassignmentExpression;
 import com.jetbrains.php.lang.psi.elements.Variable;
+import com.jetbrains.php.lang.psi.elements.impl.GroupStatementImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -52,9 +53,15 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
             public void visitPhpForeach(ForeachStatement foreach) {
                 final List<Variable> variables = foreach.getVariables();
                 if (variables.size() > 0) {
-                    for (PsiElement node : foreach.getChildren()) {
-                        if (node.getClass() == LeafPsiElement.class && node.getText().equalsIgnoreCase("list")) {
-                            holder.registerProblem(node, messageForeach, ProblemHighlightType.WEAK_WARNING);
+                    PsiElement childNode = foreach.getFirstChild();
+                    while (null != childNode) {
+                        if (childNode.getClass() == LeafPsiElement.class && childNode.getText().equalsIgnoreCase("list")) {
+                            holder.registerProblem(childNode, messageForeach, ProblemHighlightType.WEAK_WARNING);
+                            break;
+                        }
+
+                        childNode = childNode.getNextSibling();
+                        if (childNode instanceof GroupStatementImpl) {
                             break;
                         }
                     }

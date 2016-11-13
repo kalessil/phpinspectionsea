@@ -104,6 +104,7 @@ Inspections Lists (Language level migration)
 | Language level migration | NullCoalescingOperatorCanBeUsedInspection       | Null coalescing operator can be used                | yes |
 | Language level migration | TypesCastingWithFunctionsInspection             | Type casting can be used                            | yes       | yes | no   |
 | Language level migration | dirnameCallOnFileConstantInspection             | __DIR__ can be used                                 | yes |
+| Language level migration | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes |
 
 Inspections Lists (Architecture)
 ---
@@ -155,7 +156,6 @@ Inspections Lists (Performance)
 ---
 | Group                | Short Name                                      | Full Name                                                                                   | Quick fix | UTs | QFTs |
 | :------------------- | :---------------------------------------------- | :------------------------------------------------------------------------------------------ | --------: | --: | ---: |
-| Performance          | IsNullFunctionUsageInspection                   | 'is_null(...)' could be replaced by 'null === ...'                                          | yes |
 | Performance          | AmbiguousMethodsCallsInArrayMappingInspection   | Non-optimized arrays mapping                                                                | n/a |
 | Performance          | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' should not be used to check if string is empty                                | n/a |
 | Performance          | ArrayCastingEquivalentInspection                | Could be replaced with '(array) ...'                                                        | n/a |

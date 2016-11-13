@@ -81,10 +81,6 @@ with a laptop.
 
   <extensions defaultExtensionNs="com.intellij">
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="IsNullFunctionUsageInspection"                 displayName="'is_null(...)' could be replaced by 'null === ...'"
-        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="AmbiguousMethodsCallsInArrayMappingInspection" displayName="Non-optimized arrays mapping"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.AmbiguousMethodsCallsInArrayMappingInspector"/>
@@ -511,6 +507,10 @@ with a laptop.
         shortName="dirnameCallOnFileConstantInspection"           displayName="__DIR__ can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.DirnameCallOnFileConstantInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="IsNullFunctionUsageInspection"                 displayName="'null === ...' can be used"
+        groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

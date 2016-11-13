@@ -86,8 +86,6 @@ Inspections Lists (Code style)
 | Code style           | UnNecessaryDoubleQuotesInspection               | Unnecessary double quotes                           | yes |
 | Code style           | IfConditionalsWithoutCurvyBracketsInspection    | Missing or empty conditionals group statement       | no  |
 | Code style           | SenselessCommaInArrayDefinitionInspection       | Unnecessary last comma in array definition          | no  |
-| Code style           | ElvisOperatorCanBeUsedInspection                | Elvis operator can be used                          | yes |
-| Code style           | NullCoalescingOperatorCanBeUsedInspection       | Null coalescing operator can be used                | yes |
 | Code style           | AccessModifierPresentedInspection               | Access modifiers shall be defined                   | no  |
 | Code style           | CallableReferenceNameMismatchInspection         | Callable name case mismatched in a call             | yes |
 | Code style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                 | no  |
@@ -97,6 +95,14 @@ Inspections Lists (Code style)
 | Code style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes |
 | Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | yes |
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes |
+
+Inspections Lists (Language level migration)
+---
+| Group                    | Short Name                                      | Full Name                                           | Quick fix | UTs | QFTs |
+| :----------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
+| Language level migration | ElvisOperatorCanBeUsedInspection                | Elvis operator can be used                          | yes |
+| Language level migration | NullCoalescingOperatorCanBeUsedInspection       | Null coalescing operator can be used                | yes |
+| Language level migration | TypesCastingWithFunctionsInspection             | Type casting can be used                            | yes       | yes | no   |
 
 Inspections Lists (Architecture)
 ---
@@ -152,7 +158,6 @@ Inspections Lists (Performance)
 | Performance          | dirnameCallOnFileConstantInspection             | 'dirname(...)' could be replaced by '__DIR__'                                               | yes |
 | Performance          | AmbiguousMethodsCallsInArrayMappingInspection   | Non-optimized arrays mapping                                                                | n/a |
 | Performance          | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' should not be used to check if string is empty                                | n/a |
-| Performance          | TypesCastingWithFunctionsInspection             | Type casting via PHP4 functions                                                             | yes       | yes | no   |
 | Performance          | ArrayCastingEquivalentInspection                | Could be replaced with '(array) ...'                                                        | n/a |
 | Performance          | CountOnPropelCollectionInspection               | 'count(...)' calls on Propel collection                                                     | n/a |
 | Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                               | n/a |

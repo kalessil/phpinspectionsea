@@ -101,10 +101,6 @@ with a laptop.
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.StrlenInEmptyStringCheckContextInspection"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="TypesCastingWithFunctionsInspection"           displayName="Type casting via PHP4 functions"
-        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.TypesCastingWithFunctionsInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ArrayCastingEquivalentInspection"              displayName="Could be replaced with '(array) ...'"
         groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.ArrayCastingEquivalentInspector"/>
@@ -454,14 +450,6 @@ with a laptop.
         groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.SenselessCommaInArrayDefinitionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="ElvisOperatorCanBeUsedInspection"              displayName="Elvis operator can be used"
-        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ElvisOperatorCanBeUsedInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="NullCoalescingOperatorCanBeUsedInspection"     displayName="Null coalescing operator can be used"
-        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.NullCoalescingOperatorCanBeUsedInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="AccessModifierPresentedInspection"             displayName="Access modifiers shall be defined"
         groupName="Code Style"                                    enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.AccessModifierPresentedInspector"/>
@@ -509,6 +497,20 @@ with a laptop.
         shortName="UsingInclusionReturnValueInspection"           displayName="Usage of inclusion return value"
         groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UsingInclusionReturnValueInspector"/>
+
+
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ElvisOperatorCanBeUsedInspection"              displayName="Elvis operator can be used"
+        groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ElvisOperatorCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="NullCoalescingOperatorCanBeUsedInspection"     displayName="Null coalescing operator can be used"
+        groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.NullCoalescingOperatorCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="TypesCastingWithFunctionsInspection"           displayName="Type casting can be used"
+        groupName="Language level migration"                      enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.TypesCastingWithFunctionsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

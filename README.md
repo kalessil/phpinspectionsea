@@ -138,7 +138,6 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | SummerTimeUnsafeTimeManipulationInspection      | Summer-time unsafe date manipulations                     | n/a |
 | Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | n/a |
 | Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a |
-| Probable bugs        | UntrustedInclusionInspection                    | Untrusted files inclusion                                 | n/a |
 | Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | n/a |
 | Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result               | yes |
 | Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes |
@@ -152,6 +151,7 @@ Inspections Lists (Security)
 | Security             | NonSecureUniqidUsageInspection                  | Insecure 'uniqid()' usage                                 | yes       | yes | no   |
 | Security             | NonSecureExtractUsageInspection                 | Insecure 'extract(...)' usage                             | n/a |
 | Security             | NonSecureParseStrUsageInspection                | Insecure 'parse_str(...)' usage                           | n/a |
+| Security             | UntrustedInclusionInspection                    | Untrusted files inclusion                                 | n/a |
 
 Inspections Lists (Performance)
 ---

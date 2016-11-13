@@ -47,10 +47,15 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
                 if (null != listKeyword && listKeyword.getText().equalsIgnoreCase("list")) {
                     holder.registerProblem(listKeyword, messageAssign, ProblemHighlightType.WEAK_WARNING);
                 }
-
             }
 
             public void visitPhpForeach(ForeachStatement foreach) {
+                /* ensure php version is at least PHP 7.1 */
+                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (phpVersion.compareTo(PhpLanguageLevel.PHP710) < 0) {
+                    return;
+                }
+
                 final List<Variable> variables = foreach.getVariables();
                 if (variables.size() > 0) {
                     PsiElement childNode = foreach.getFirstChild();

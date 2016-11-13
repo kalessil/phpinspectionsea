@@ -42,7 +42,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
             }
 
             private void analyseContainer(@NotNull PsiElement container) {
-                HashSet<String> types = new HashSet<String>();
+                HashSet<String> types = new HashSet<>();
                 TypeFromPlatformResolverUtil.resolveExpressionType(container, types);
                 if (0 == types.size()) {
                     holder.registerProblem(container, patternNotRecognized, ProblemHighlightType.WEAK_WARNING);
@@ -84,7 +84,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         }
 
                         /* check classes: collect hierarchy of possible classes */
-                        final HashSet<PhpClass> poolToCheck = new HashSet<PhpClass>();
+                        final HashSet<PhpClass> poolToCheck = new HashSet<>();
                         final Collection<PhpClass> classes  = PhpIndexUtil.getObjectInterfaces(type, index, true);
                         if (classes.size() > 0) {
                             /* collect all interfaces*/

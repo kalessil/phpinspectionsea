@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 
 final public class ExpressionCostEstimateUtil {
-    public final static HashSet<String> predefinedVars = new HashSet<String>();
+    public final static HashSet<String> predefinedVars = new HashSet<>();
     static {
         predefinedVars.add("_GET");
         predefinedVars.add("_POST");

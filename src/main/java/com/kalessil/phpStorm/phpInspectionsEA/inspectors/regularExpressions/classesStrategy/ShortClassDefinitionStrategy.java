@@ -12,7 +12,7 @@ import java.util.Map;
 public class ShortClassDefinitionStrategy {
     private static final String messagePattern = "'%p%' can be replaced with '%r%' (%h%)";
 
-    private static final HashMap<String, String> mapping = new HashMap<String, String>();
+    private static final HashMap<String, String> mapping = new HashMap<>();
     static {
         mapping.put("[0-9]",         "\\d");
         mapping.put("[:digit:]",     "\\d");

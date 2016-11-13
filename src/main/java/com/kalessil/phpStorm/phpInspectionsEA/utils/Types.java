@@ -25,7 +25,7 @@ final public class Types {
     static private HashMap<String, String> mapTypes = null;
     static private HashMap<String, String> getTypesMap () {
         if (null == mapTypes) {
-            mapTypes = new HashMap<String, String>();
+            mapTypes = new HashMap<>();
 
             mapTypes.put(strArray,     strArray);
             mapTypes.put("\\array",    strArray);

@@ -44,7 +44,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                 }
 
                 /* extract variables names needed */
-                final HashSet<String> variablesCompacted = new HashSet<String>();
+                final HashSet<String> variablesCompacted = new HashSet<>();
                 for (PsiElement compactParameter : params) {
                     if (!(compactParameter instanceof StringLiteralExpressionImpl)) {
                         continue;
@@ -59,7 +59,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
 
                 /* if we have something to analyze, collect what scope provides */
                 if (variablesCompacted.size() > 0) {
-                    final HashSet<String> variablesDeclared = new HashSet<String>();
+                    final HashSet<String> variablesDeclared = new HashSet<>();
                     /* parameters can be compacted */
                     for (Parameter scopeParameter : scope.getParameters()) {
                         variablesDeclared.add(scopeParameter.getName());

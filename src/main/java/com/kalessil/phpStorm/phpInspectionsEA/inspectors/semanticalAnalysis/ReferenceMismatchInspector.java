@@ -28,7 +28,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
     final static private String strErrorForeachIntoReference = "Probable bug: variable should be renamed to prevent writing into already existing reference";
 
     private static final PhpType legalizedTypesForMismatchingSet       = new PhpType();
-    private static final HashSet<String> legalizedMismatchingFunctions = new HashSet<String>();
+    private static final HashSet<String> legalizedMismatchingFunctions = new HashSet<>();
     static {
         legalizedTypesForMismatchingSet.add(PhpType.STRING);
         legalizedTypesForMismatchingSet.add(PhpType.FLOAT);
@@ -49,9 +49,9 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
         legalizedMismatchingFunctions.add("method_exists");
     }
 
-    private final static ConcurrentHashMap<Function, HashSet<PsiElement>> reportedIssues = new ConcurrentHashMap<Function, HashSet<PsiElement>>();
+    private final static ConcurrentHashMap<Function, HashSet<PsiElement>> reportedIssues = new ConcurrentHashMap<>();
     private static HashSet<PsiElement> getFunctionReportingRegistry(Function key) {
-        reportedIssues.putIfAbsent(key, new HashSet<PsiElement>());
+        reportedIssues.putIfAbsent(key, new HashSet<>());
         return reportedIssues.get(key);
     }
 

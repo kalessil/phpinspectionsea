@@ -26,7 +26,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
         return "CaseInsensitiveStringFunctionsMissUseInspection";
     }
 
-    private static final HashMap<String, String> mapping = new HashMap<String, String>();
+    private static final HashMap<String, String> mapping = new HashMap<>();
     static {
         mapping.put("stristr",  "strstr");
         mapping.put("stripos",  "strpos");

@@ -46,7 +46,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
 
                 final Function function = ExpressionSemanticUtil.getScope(loop);
                 if (null != function) {
-                    final HashSet<String> parameters = new HashSet<String>();
+                    final HashSet<String> parameters = new HashSet<>();
                     for (Parameter param : function.getParameters()) {
                         parameters.add(param.getName());
                     }
@@ -83,7 +83,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
             }
 
             private HashSet<String> getLoopVariables(PhpPsiElement loop) {
-                final HashSet<String> loopVariables = new HashSet<String>();
+                final HashSet<String> loopVariables = new HashSet<>();
 
                 if (loop instanceof For) {
                     /* find assignments in init expressions */

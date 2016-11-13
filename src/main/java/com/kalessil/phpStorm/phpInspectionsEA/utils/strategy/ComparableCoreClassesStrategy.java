@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 final public class ComparableCoreClassesStrategy {
-    private final static HashSet<String> comparableObjects = new HashSet<String>();
+    private final static HashSet<String> comparableObjects = new HashSet<>();
     static {
         comparableObjects.add("\\Closure");
         comparableObjects.add("\\DateTime");
@@ -47,7 +47,7 @@ final public class ComparableCoreClassesStrategy {
 
     private static boolean isComparableObject(@NotNull PsiElement operand, @NotNull Function scope, @NotNull PhpIndex projectIndex, ProblemsHolder holder) {
         /* extract types of operand, check if classes are/inherited from \DateTime */
-        final HashSet<String> operandTypes = new HashSet<String>();
+        final HashSet<String> operandTypes = new HashSet<>();
         TypeFromPsiResolvingUtil.resolveExpressionType(operand, scope, projectIndex, operandTypes);
         if (!TypesSemanticsUtil.isNullableObjectInterface(operandTypes)) {
             operandTypes.clear();
@@ -55,7 +55,7 @@ final public class ComparableCoreClassesStrategy {
         }
 
         /* collect classes to check for \DateTime relationship */
-        final LinkedList<PhpClass> operandClasses = new LinkedList<PhpClass>();
+        final LinkedList<PhpClass> operandClasses = new LinkedList<>();
         for (String classFQN : operandTypes) {
             if (classFQN.charAt(0) == '\\') {
                 operandClasses.addAll(PhpIndexUtil.getObjectInterfaces(classFQN, projectIndex, false));

@@ -49,7 +49,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 /* ensure foreach structure is ready for inspection */
                 if (null != foreachBody && variables.size() > 0) {
                     /* pre-collect introduced and internally used variables */
-                    final HashSet<String> allModifiedVariables = new HashSet<String>();
+                    final HashSet<String> allModifiedVariables = new HashSet<>();
                     for (Variable variable : variables) {
                         final String variableName = variable.getName();
                         if (!StringUtil.isEmpty(variableName)) {
@@ -58,11 +58,11 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     }
                     variables.clear();
 
-                    final HashMap<PsiElement, HashSet<String>> instructionDependencies = new HashMap<PsiElement, HashSet<String>>();
+                    final HashMap<PsiElement, HashSet<String>> instructionDependencies = new HashMap<>();
                     /* iteration 1 - investigate what are dependencies and influence */
                     for (PsiElement oneInstruction : foreachBody.getStatements()) {
                         if (oneInstruction instanceof PhpPsiElement && !(oneInstruction instanceof PsiComment)) {
-                            final HashSet<String> individualDependencies = new HashSet<String>();
+                            final HashSet<String> individualDependencies = new HashSet<>();
 
                             instructionDependencies.put(oneInstruction, individualDependencies);
                             investigateInfluence((PhpPsiElement) oneInstruction, individualDependencies, allModifiedVariables);

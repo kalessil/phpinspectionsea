@@ -23,7 +23,7 @@ final public class IssetAndNullComparisonStrategy {
 
     static public boolean apply(@NotNull LinkedList<PsiElement> conditions, @NotNull ProblemsHolder holder) {
         /* first ensure that we have null identity checks at all */
-        final HashMap<PsiElement, PsiElement> nullTestSubjects = new HashMap<PsiElement, PsiElement>();
+        final HashMap<PsiElement, PsiElement> nullTestSubjects = new HashMap<>();
         for (PsiElement oneCondition : conditions) {
             if (oneCondition instanceof BinaryExpressionImpl) {
                 final BinaryExpressionImpl expression = (BinaryExpressionImpl) oneCondition;

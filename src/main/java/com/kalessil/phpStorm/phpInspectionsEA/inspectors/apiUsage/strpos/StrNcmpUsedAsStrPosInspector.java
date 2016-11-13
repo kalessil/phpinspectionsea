@@ -26,7 +26,7 @@ public class StrNcmpUsedAsStrPosInspector extends BasePhpInspection {
         return "StrNcmpUsedAsStrPosInspection";
     }
 
-    private static final HashMap<String, String> mapping = new HashMap<String, String>();
+    private static final HashMap<String, String> mapping = new HashMap<>();
     static {
         mapping.put("strncmp",     "strpos");
         mapping.put("strncasecmp", "stripos");

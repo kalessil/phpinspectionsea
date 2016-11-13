@@ -55,13 +55,13 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     return;
                 }
 
-                final HashSet<PsiElement> processedRegistry             = new HashSet<PsiElement>();
+                final HashSet<PsiElement> processedRegistry             = new HashSet<>();
                 final HashMap<PhpClass, HashSet<PsiElement>> exceptions =
                         CollectPossibleThrowsUtil.collectNestedAndWorkflowExceptions(element, processedRegistry, holder);
 
                 /* report individual statements */
                 if (exceptions.size() > 0) {
-                    final HashSet<PsiElement> reportedExpressions = new HashSet<PsiElement>();
+                    final HashSet<PsiElement> reportedExpressions = new HashSet<>();
                     for (HashSet<PsiElement> pool : exceptions.values()) {
                         for (PsiElement expression : pool) {
                             if (!reportedExpressions.contains(expression)) {
@@ -111,12 +111,12 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
 
                 /* collect announced cases */
-                final HashSet<PhpClass> annotatedExceptions = new HashSet<PhpClass>();
+                final HashSet<PhpClass> annotatedExceptions = new HashSet<>();
                 if (ThrowsResolveUtil.ResolveType.NOT_RESOLVED == ThrowsResolveUtil.resolveThrownExceptions(method, annotatedExceptions)) {
                     return;
                 }
 
-                HashSet<PsiElement> processedRegistry = new HashSet<PsiElement>();
+                HashSet<PsiElement> processedRegistry = new HashSet<>();
                 HashMap<PhpClass, HashSet<PsiElement>> throwsExceptions =
                         CollectPossibleThrowsUtil.collectNestedAndWorkflowExceptions(method, processedRegistry, holder);
 //holder.registerProblem(objMethodName, "Processed: " + processedRegistry.size(), ProblemHighlightType.WEAK_WARNING);
@@ -135,7 +135,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 if (throwsExceptions.size() > 0) {
 //holder.registerProblem(objMethodName, "Throws: " + throwsExceptions.keySet().toString(), ProblemHighlightType.WEAK_WARNING);
                     /* deeper analysis needed */
-                    HashMap<PhpClass, HashSet<PsiElement>> unhandledExceptions = new HashMap<PhpClass, HashSet<PsiElement>>();
+                    HashMap<PhpClass, HashSet<PsiElement>> unhandledExceptions = new HashMap<>();
                     if (annotatedExceptions.size() > 0) {
                         /* filter what to report based on annotated exceptions  */
                         for (PhpClass annotated : annotatedExceptions) {
@@ -237,7 +237,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 final String[] comment = phpDoc.getText().split("\\n");
 
                 boolean isInjected = false;
-                final LinkedList<String> newCommentLines = new LinkedList<String>();
+                final LinkedList<String> newCommentLines = new LinkedList<>();
                 for (String line : comment) {
                     /* injecting after return tag: probe 1 */
                     if (!isInjected && line.contains("@return")) {

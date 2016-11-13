@@ -32,7 +32,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
         if (null == mapping || languageLevel != phpVersion) {
             languageLevel = phpVersion;
 
-            mapping = new HashMap<String, String>();
+            mapping = new HashMap<>();
             mapping.put("srand",      "mt_srand");
             mapping.put("getrandmax", "mt_getrandmax");
 

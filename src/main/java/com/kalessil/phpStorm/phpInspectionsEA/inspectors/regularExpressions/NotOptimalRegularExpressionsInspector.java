@@ -30,7 +30,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
         return "NotOptimalRegularExpressionsInspection";
     }
 
-    private static final HashSet<String> functions = new HashSet<String>();
+    private static final HashSet<String> functions = new HashSet<>();
     static {
         functions.add("preg_filter");
         functions.add("preg_grep");

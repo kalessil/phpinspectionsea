@@ -22,7 +22,7 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
         return "SlowArrayOperationsInLoopInspection";
     }
 
-    private static final HashSet<String> functionsSet = new HashSet<String>();
+    private static final HashSet<String> functionsSet = new HashSet<>();
     static {
         functionsSet.add("array_merge");
         functionsSet.add("array_merge_recursive");

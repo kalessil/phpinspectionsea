@@ -53,7 +53,7 @@ public class PlainApiUseCheckStrategy {
     @SuppressWarnings("CanBeFinal")
     static private HashMap<String, String> ctypePatterns = null;
     static {
-        ctypePatterns = new HashMap<String, String>();
+        ctypePatterns = new HashMap<>();
 
         ctypePatterns.put("^\\d+$",          "ctype_digit");
         ctypePatterns.put("^[^\\d]+$",       "!ctype_digit");

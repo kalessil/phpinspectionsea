@@ -147,7 +147,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                     return false;
                 }
 
-                HashSet<String> containerTypes = new HashSet<String>();
+                HashSet<String> containerTypes = new HashSet<>();
                 TypeFromPlatformResolverUtil.resolveExpressionType(container, containerTypes);
 
                 // failed to resolve, don't try to guess anything

@@ -12,7 +12,7 @@ import java.util.HashSet;
 final public class ExpressionsCouplingCheckUtil {
     public static boolean isSecondCoupledWithFirst(@NotNull PsiElement first, @NotNull PsiElement second) {
         boolean isCoupled                             = false;
-        final HashSet<PsiElement> expressionsInSecond = new HashSet<PsiElement>();
+        final HashSet<PsiElement> expressionsInSecond = new HashSet<>();
 
         /* TODO: non-static method/property */
         final Collection<ArrayAccessExpression> arrayAccess = PsiTreeUtil.findChildrenOfType(second, ArrayAccessExpression.class);

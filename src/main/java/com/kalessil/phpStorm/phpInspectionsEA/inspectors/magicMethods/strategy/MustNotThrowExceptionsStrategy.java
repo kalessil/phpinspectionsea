@@ -19,7 +19,7 @@ public class MustNotThrowExceptionsStrategy {
             return;
         }
 
-        final HashSet<PsiElement> processedRegistry                   = new HashSet<PsiElement>();
+        final HashSet<PsiElement> processedRegistry                   = new HashSet<>();
         final HashMap<PhpClass, HashSet<PsiElement>> throwsExceptions = CollectPossibleThrowsUtil.collectNestedAndWorkflowExceptions(method, processedRegistry, holder);
 
         processedRegistry.clear();

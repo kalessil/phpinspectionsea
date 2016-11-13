@@ -45,7 +45,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 }
 
                 // ensure offsets operations are supported, do nothing if no types were resolved
-                HashSet<String> allowedIndexTypes = new HashSet<String>();
+                HashSet<String> allowedIndexTypes = new HashSet<>();
                 if (!isContainerSupportsArrayAccess(expression, allowedIndexTypes) && allowedIndexTypes.size() > 0) {
                     final String message = strProblemNoOffsetSupport
                             .replace("%t%", allowedIndexTypes.toString())
@@ -62,7 +62,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                     PhpPsiElement indexValue = expression.getIndex().getValue();
                     if (null != indexValue && allowedIndexTypes.size() > 0) {
                         // resolve types with custom resolver, native gives type sets which not comparable properly
-                        HashSet<String> possibleIndexTypes = new HashSet<String>();
+                        HashSet<String> possibleIndexTypes = new HashSet<>();
                         TypeFromPlatformResolverUtil.resolveExpressionType(indexValue, possibleIndexTypes);
 
                         // now check if any type provided and check sets validity
@@ -106,7 +106,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         }
 
         // TODO: report to JB and get rid of this workarounds, move workaround into TypeFromPlatformResolverUtil.resolveExpressionType
-        HashSet<String> containerTypes = new HashSet<String>();
+        HashSet<String> containerTypes = new HashSet<>();
         if (isWrongResolvedArrayPush) {
             TypeFromPsiResolvingUtil.resolveExpressionType(
                     container,
@@ -225,7 +225,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             @NotNull HashSet<String> possibleIndexTypes,
             @NotNull HashSet<String> allowedIndexTypes
     ) {
-        HashSet<String> secureIterator = new HashSet<String>();
+        HashSet<String> secureIterator = new HashSet<>();
 
         final boolean isAnyObjectAllowed = allowedIndexTypes.contains(Types.strObject);
         final boolean isAnyScalarAllowed = allowedIndexTypes.contains(Types.strMixed);

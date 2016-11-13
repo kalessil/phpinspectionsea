@@ -32,7 +32,7 @@ public class PrefixedIncDecrementEquivalentInspector extends BasePhpInspection {
             /* ensures we are not touching arrays only, not strings and not objects */
             private boolean isArrayAccessOrString(PhpPsiElement variable) {
                 if (variable instanceof ArrayAccessExpression) {
-                    HashSet<String> containerTypes = new HashSet<String>();
+                    HashSet<String> containerTypes = new HashSet<>();
                     TypeFromPlatformResolverUtil.resolveExpressionType(((ArrayAccessExpression) variable).getValue(), containerTypes);
                     boolean isArray = !containerTypes.contains(Types.strString) && containerTypes.contains(Types.strArray);
 

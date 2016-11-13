@@ -134,7 +134,7 @@ final public class ExpressionSemanticUtil {
         }
 
         /* init container */
-        LinkedList<PsiElement> objPartsCollection = new LinkedList<PsiElement>();
+        LinkedList<PsiElement> objPartsCollection = new LinkedList<>();
 
         /* return non-binary expressions, eg. callable execution */
         if (!(objCondition instanceof BinaryExpression)) {
@@ -170,7 +170,7 @@ final public class ExpressionSemanticUtil {
      * @return list of sub-conditions in native order
      */
     private static LinkedList<PsiElement> getConditions(BinaryExpression objTarget, IElementType operationType) {
-        LinkedList<PsiElement> objPartsCollection = new LinkedList<PsiElement>();
+        LinkedList<PsiElement> objPartsCollection = new LinkedList<>();
         PsiElement objItemToAdd;
 
         /* right expression first */
@@ -241,7 +241,7 @@ final public class ExpressionSemanticUtil {
         for (PsiElement objChild : objFunction.getChildren()) {
             /* iterated child is use list */
             if (objChild instanceof PhpUseList) {
-                final LinkedList<Variable> list = new LinkedList<Variable>();
+                final LinkedList<Variable> list = new LinkedList<>();
                 for (PsiElement objUseChild : objChild.getChildren()) {
                     /* collect variables */
                     if (objUseChild instanceof Variable) {
@@ -314,7 +314,7 @@ final public class ExpressionSemanticUtil {
             if (!StringUtil.isEmpty(variable)) {
                 Function scope = ExpressionSemanticUtil.getScope(obj);
                 if (null != scope) {
-                    HashSet<AssignmentExpression> matched = new HashSet<AssignmentExpression>();
+                    HashSet<AssignmentExpression> matched = new HashSet<>();
 
                     Collection<AssignmentExpression> assignments = PsiTreeUtil.findChildrenOfType(scope, AssignmentExpression.class);
                     /* collect self-assignments as well */

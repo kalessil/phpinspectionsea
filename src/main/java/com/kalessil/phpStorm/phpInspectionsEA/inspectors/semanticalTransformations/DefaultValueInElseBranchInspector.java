@@ -37,7 +37,7 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
 
 
                 /* collect all group statement for further analysis */
-                LinkedList<GroupStatement> objGroupStatementsList = new LinkedList<GroupStatement>();
+                LinkedList<GroupStatement> objGroupStatementsList = new LinkedList<>();
                 objGroupStatementsList.add(ExpressionSemanticUtil.getGroupStatement(ifStatement));
                 for (ControlStatement objElseIf : ifStatement.getElseIfBranches()) {
                     objGroupStatementsList.add(ExpressionSemanticUtil.getGroupStatement(objElseIf));
@@ -46,7 +46,7 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
 
 
                 /* collect assignments or stop inspecting when structure expectations are not met */
-                LinkedList<AssignmentExpression> objAssignmentsList = new LinkedList<AssignmentExpression>();
+                LinkedList<AssignmentExpression> objAssignmentsList = new LinkedList<>();
                 for (GroupStatement objGroup : objGroupStatementsList) {
                     /* only one expression in group statement */
                     if (null == objGroup || 1 != ExpressionSemanticUtil.countExpressionsInGroup(objGroup)) {

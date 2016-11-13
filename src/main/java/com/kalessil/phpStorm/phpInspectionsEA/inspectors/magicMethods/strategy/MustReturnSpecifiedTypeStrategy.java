@@ -30,7 +30,7 @@ public class MustReturnSpecifiedTypeStrategy {
                 PhpExpression returnValue        = ExpressionSemanticUtil.getReturnValue(returnExpression);
                 PsiElement returnValueExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(returnValue);
                 if (returnValueExpression instanceof PhpTypedElement) {
-                    final HashSet<String> resolvedArgumentType = new HashSet<String>();
+                    final HashSet<String> resolvedArgumentType = new HashSet<>();
                     TypeFromPlatformResolverUtil.resolveExpressionType(returnValueExpression, resolvedArgumentType);
 
                     /*

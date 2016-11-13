@@ -34,7 +34,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
              * and direct comparision of object pointers unique for field objects.
              */
             private HashMap<String, Field> getPrivateFields(@NotNull PhpClass clazz) {
-                final HashMap<String, Field> privateFields = new HashMap<String, Field>();
+                final HashMap<String, Field> privateFields = new HashMap<>();
 
                 final Field[] ownFields = clazz.getOwnFields();
                 if (ownFields.length > 0) {
@@ -54,7 +54,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
              * Extracts private fields references from method as field name => reference objects, so we could use name as glue.
              */
             private HashMap<String, LinkedList<FieldReference>> getFieldReferences(@NotNull Method method, @NotNull HashMap<String, Field> privateFields) {
-                final HashMap<String, LinkedList<FieldReference>> filteredReferences = new HashMap<String, LinkedList<FieldReference>>();
+                final HashMap<String, LinkedList<FieldReference>> filteredReferences = new HashMap<>();
                 /* not all methods needs to be analyzed */
                 if (method.isAbstract() || method.isStatic()) {
                     return filteredReferences;
@@ -77,7 +77,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
 
                         /* bingo, store newly found reference */
                         if (!filteredReferences.containsKey(fieldName)) {
-                            filteredReferences.put(fieldName, new LinkedList<FieldReference>());
+                            filteredReferences.put(fieldName, new LinkedList<>());
                         }
                         filteredReferences.get(fieldName).add(ref);
                     }
@@ -92,7 +92,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
              * Orchestrates extraction of references from methods
              */
             private HashMap<String, LinkedList<FieldReference>> getMethodsFieldReferences(@NotNull Method constructor, @NotNull HashMap<String, Field> privateFields) {
-                final HashMap<String, LinkedList<FieldReference>> filteredReferences = new HashMap<String, LinkedList<FieldReference>>();
+                final HashMap<String, LinkedList<FieldReference>> filteredReferences = new HashMap<>();
 
                 //noinspection ConstantConditions as this checked in visitPhpMethod
                 for (Method method : constructor.getContainingClass().getOwnMethods()) {
@@ -105,7 +105,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                         /* merge method's scan results into common container */
                         for (String fieldName : methodsReferences.keySet()) {
                             if (!filteredReferences.containsKey(fieldName)) {
-                                filteredReferences.put(fieldName, new LinkedList<FieldReference>());
+                                filteredReferences.put(fieldName, new LinkedList<>());
                             }
                             filteredReferences
                                     .get(fieldName)

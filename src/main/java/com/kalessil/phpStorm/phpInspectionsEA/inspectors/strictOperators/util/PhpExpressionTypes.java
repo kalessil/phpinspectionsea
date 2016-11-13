@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class PhpExpressionTypes {
-    private final HashSet<String> types = new HashSet<String>();
+    private final HashSet<String> types = new HashSet<>();
     private boolean isMixed;
     private final PhpIndex objIndex;
     final static private String strTypeObject = "object";
@@ -83,7 +83,7 @@ public class PhpExpressionTypes {
             return true;
         }
 
-        final HashSet<String> copy = new HashSet<String>(types);
+        final HashSet<String> copy = new HashSet<>(types);
         copy.retainAll(another.types);
         return !copy.isEmpty();
 
@@ -117,7 +117,7 @@ public class PhpExpressionTypes {
                     return true;
                 }
 
-                final HashSet<String> extendsList = new HashSet<String>();
+                final HashSet<String> extendsList = new HashSet<>();
                 getParentsList(type1, extendsList);
 
                 for (final String type2 : base.types) {
@@ -183,7 +183,7 @@ public class PhpExpressionTypes {
     public boolean isArrayAccess() {
         for (final String type : types) {
             if (type.charAt(0) == '\\') {
-                final HashSet<String> extendsList = new HashSet<String>();
+                final HashSet<String> extendsList = new HashSet<>();
                 getParentsList(type, extendsList);
                 if (extendsList.contains(strTypeArrayAccess)) {
                     return true;

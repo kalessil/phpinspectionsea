@@ -182,7 +182,7 @@ final public class TypeFromSignatureResolvingUtil {
     }
 
     static public HashSet<String> resolveSlot(String strClass, String strSlot, PhpIndex objIndex, char type) {
-        HashSet<String> resolvedTypesSet = new HashSet<String>();
+        HashSet<String> resolvedTypesSet = new HashSet<>();
 
         /* try resolving an object interface */
         Collection<PhpClass> objClasses = PhpIndexUtil.getObjectInterfaces(strClass, objIndex, false);

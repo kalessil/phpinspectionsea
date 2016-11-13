@@ -31,11 +31,11 @@ import java.util.LinkedList;
 public class ForgottenDebugOutputInspector extends BasePhpInspection {
     // custom configuration, automatically saved between restarts so keep out of changing modifiers
     @SuppressWarnings("WeakerAccess")
-    final public LinkedList<String> configuration = new LinkedList<String>();
+    final public LinkedList<String> configuration = new LinkedList<>();
 
-    final private HashSet<String> customFunctions = new HashSet<String>();
-    final private HashMap<String, Pair<String, String>> customMethods = new HashMap<String, Pair<String, String>>();
-    final private HashSet<String> customMethodsNames = new HashSet<String>();
+    final private HashSet<String> customFunctions = new HashSet<>();
+    final private HashMap<String, Pair<String, String>> customMethods = new HashMap<>();
+    final private HashSet<String> customMethodsNames = new HashSet<>();
 
     // prepared content for smooth runtime
     static private final String strProblemDescription = "Please ensure this is not a forgotten debug statement";
@@ -53,7 +53,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         customMethods.clear();
         customMethodsNames.clear();
 
-        final LinkedList<String> customDebugFQNs = new LinkedList<String>();
+        final LinkedList<String> customDebugFQNs = new LinkedList<>();
         customDebugFQNs.addAll(this.configuration);
 
         /* known debug methods from community */
@@ -83,7 +83,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         return "ForgottenDebugOutputInspection";
     }
 
-    private static final HashMap<String, Integer> functionsRequirements = new HashMap<String, Integer>();
+    private static final HashMap<String, Integer> functionsRequirements = new HashMap<>();
     static {
         /* function name => amount of arguments considered legal */
         functionsRequirements.put("print_r",               2);

@@ -16,6 +16,8 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.jetbrains.php.lang.psi.elements.impl.BinaryExpressionImpl;
+import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
+import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -32,7 +34,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
         return "GetTypeMissUseInspection";
     }
 
-    private static final HashMap<String, String> mapping = new HashMap<String, String>();
+    private static final HashMap<String, String> mapping = new HashMap<>();
     static {
         mapping.put("boolean",  "is_bool");
         mapping.put("integer",  "is_int");
@@ -144,10 +146,17 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
                 final String pattern =
                         (isInverted ? "!" : "") +
                         (suggestedName + "(%p%)".replace("%p%", param.getText()));
-                final PsiElement replacement =
-                        PhpPsiElementFactory.createFromText(project, isInverted ? UnaryExpression.class : FunctionReference.class, pattern);
 
-                expression.replace(replacement);
+                final PsiElement replacement;
+                if (isInverted) {
+                    replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, pattern);
+                } else {
+                    replacement = PhpPsiElementFactory.createFromText(project, FunctionReference.class, pattern);
+                }
+
+                if (null != replacement) {
+                    expression.replace(replacement);
+                }
             }
         }
     }

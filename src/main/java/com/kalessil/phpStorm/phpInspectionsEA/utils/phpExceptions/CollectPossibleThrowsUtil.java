@@ -17,7 +17,7 @@ import java.util.Map;
 
 final public class CollectPossibleThrowsUtil {
     static public HashMap<PhpClass, HashSet<PsiElement>> collectNestedAndWorkflowExceptions(PsiElement scope, HashSet<PsiElement> processed, @NotNull final ProblemsHolder holder) {
-        final HashMap<PhpClass, HashSet<PsiElement>> exceptions = new HashMap<PhpClass, HashSet<PsiElement>>();
+        final HashMap<PhpClass, HashSet<PsiElement>> exceptions = new HashMap<>();
 
         /* recursively invoke and analyse nested try-catches checks */
         final Collection<Try> tryStatements = PsiTreeUtil.findChildrenOfType(scope, Try.class);
@@ -94,7 +94,7 @@ final public class CollectPossibleThrowsUtil {
                 if (newExpression.getParent() instanceof PhpThrow) {
                     /* put an expression, create container if necessary */
                     if (!exceptions.containsKey(newClass)) {
-                        exceptions.put(newClass, new HashSet<PsiElement>());
+                        exceptions.put(newClass, new HashSet<>());
                     }
                     exceptions.get(newClass).add(newExpression.getParent());
 
@@ -107,7 +107,7 @@ final public class CollectPossibleThrowsUtil {
                 if (null != constructor) {
 //holder.registerProblem(newExpression, "Constructor found", ProblemHighlightType.WEAK_WARNING);
                     /* lookup for annotated exceptions */
-                    final HashSet<PhpClass> constructorExceptions = new HashSet<PhpClass>();
+                    final HashSet<PhpClass> constructorExceptions = new HashSet<>();
                     ThrowsResolveUtil.resolveThrownExceptions(constructor, constructorExceptions);
 
                     /* link expression with each possible exception */
@@ -115,7 +115,7 @@ final public class CollectPossibleThrowsUtil {
                         for (PhpClass constructorException : constructorExceptions) {
                             /* put an expression, create container if necessary */
                             if (!exceptions.containsKey(constructorException)) {
-                                exceptions.put(constructorException, new HashSet<PsiElement>());
+                                exceptions.put(constructorException, new HashSet<>());
                             }
                             exceptions.get(constructorException).add(newExpression.getParent());
                         }
@@ -142,7 +142,7 @@ final public class CollectPossibleThrowsUtil {
                 PsiElement argument = throwExpression.getArgument();
                 if (null != argument) {
                     /* resolve argument types */
-                    final HashSet<String> types = new HashSet<String>();
+                    final HashSet<String> types = new HashSet<>();
                     TypeFromPlatformResolverUtil.resolveExpressionType(argument, types);
 
                     if (types.size() > 0) {
@@ -160,7 +160,7 @@ final public class CollectPossibleThrowsUtil {
                                     /* put an expression, create container if necessary */
                                     PhpClass exception = classes.iterator().next();
                                     if (!exceptions.containsKey(exception)) {
-                                        exceptions.put(exception, new HashSet<PsiElement>());
+                                        exceptions.put(exception, new HashSet<>());
                                     }
                                     exceptions.get(exception).add(throwExpression);
                                 }
@@ -187,7 +187,7 @@ final public class CollectPossibleThrowsUtil {
                 PsiElement methodResolved = call.resolve();
                 if (methodResolved instanceof Method) {
                     /* lookup for annotated exceptions */
-                    final HashSet<PhpClass> methodExceptions = new HashSet<PhpClass>();
+                    final HashSet<PhpClass> methodExceptions = new HashSet<>();
                     ThrowsResolveUtil.resolveThrownExceptions((Method) methodResolved, methodExceptions);
 
                     /* link expression with each possible exception */
@@ -195,7 +195,7 @@ final public class CollectPossibleThrowsUtil {
                         for (PhpClass methodException : methodExceptions) {
                             /* put an expression, create container if necessary */
                             if (!exceptions.containsKey(methodException)) {
-                                exceptions.put(methodException, new HashSet<PsiElement>());
+                                exceptions.put(methodException, new HashSet<>());
                             }
                             exceptions.get(methodException).add(call);
                         }
@@ -212,13 +212,13 @@ final public class CollectPossibleThrowsUtil {
     }
 
     static private HashMap<PhpClass, HashSet<PsiElement>> collectTryWorkflowExceptions(Try scope, HashSet<PsiElement> processed, @NotNull final ProblemsHolder holder) {
-        final HashMap<PhpClass, HashSet<PsiElement>> exceptions = new HashMap<PhpClass, HashSet<PsiElement>>();
+        final HashMap<PhpClass, HashSet<PsiElement>> exceptions = new HashMap<>();
 
         /* resolve try-body */
         final HashMap<PhpClass, HashSet<PsiElement>> unhandledInTry = collectNestedAndWorkflowExceptions(scope.getStatement(), processed, holder);
 
         /* resolve all catches */
-        final HashMap<PhpClass, HashSet<PsiElement>> unhandledInCatches = new HashMap<PhpClass, HashSet<PsiElement>>();
+        final HashMap<PhpClass, HashSet<PsiElement>> unhandledInCatches = new HashMap<>();
         for (Catch catchInTry : scope.getCatchClauses()) {
             /* resolve catch-class */
             final Collection<ClassReference> catchClassReferences = catchInTry.getExceptionTypes();
@@ -231,7 +231,7 @@ final public class CollectPossibleThrowsUtil {
 //holder.registerProblem(catchInTry.getFirstChild(), "Catches: " + caughtClass.toString(), ProblemHighlightType.WEAK_WARNING);
 
                 /* inspect what covered */
-                final HashSet<PhpClass> handledInCurrentCatch = new HashSet<PhpClass>();
+                final HashSet<PhpClass> handledInCurrentCatch = new HashSet<>();
                 handledInCurrentCatch.add(caughtClass);
 
                 for (PhpClass unhandled : unhandledInTry.keySet()) {

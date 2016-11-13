@@ -54,7 +54,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private HashSet<String> functionsSet = null;
     private HashSet<String> getFunctionsSet() {
         if (null == functionsSet) {
-            functionsSet = new HashSet<String>();
+            functionsSet = new HashSet<>();
 
             functionsSet.add("array_key_exists");
             functionsSet.add("defined");
@@ -77,7 +77,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpIf(If ifStatement) {
-                LinkedList<PsiElement> objAllConditions = new LinkedList<PsiElement>();
+                LinkedList<PsiElement> objAllConditions = new LinkedList<>();
                 IElementType[] arrOperationHolder = { null };
 
                 LinkedList<PsiElement> objConditionsFromStatement = this.inspectExpressionsOrder(ifStatement.getCondition(), arrOperationHolder);
@@ -177,7 +177,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
                 // find all instanceof expressions
-                LinkedList<BinaryExpression> instanceOfExpressions = new LinkedList<BinaryExpression>();
+                LinkedList<BinaryExpression> instanceOfExpressions = new LinkedList<>();
                 for (PsiElement objExpression : objBranchConditions) {
                     if (objExpression instanceof BinaryExpression) {
                         PsiElement objOperation = ((BinaryExpression) objExpression).getOperation();
@@ -203,7 +203,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                                     condition => class
                                 ]
                  */
-                HashMap<PsiElement, HashMap<PsiElement, PhpClass>> mappedChecks = new HashMap<PsiElement, HashMap<PsiElement, PhpClass>>();
+                HashMap<PsiElement, HashMap<PsiElement, PhpClass>> mappedChecks = new HashMap<>();
                 for (BinaryExpression instanceOfExpression : instanceOfExpressions) {
                     // ensure expression is well-formed
                     PsiElement subject = instanceOfExpression.getLeftOperand();
@@ -228,7 +228,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     }
                     // put empty container if it's not known
                     if (null == registeredSubject) {
-                        mappedChecks.put(subject, new HashMap<PsiElement, PhpClass>());
+                        mappedChecks.put(subject, new HashMap<>());
                         registeredSubject = subject;
                     }
 
@@ -240,7 +240,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
 
                 // process entries, perform subject container clean up on each iteration
-                HashMap<PhpClass, HashSet<PhpClass>> resolvedInheritanceChains = new HashMap<PhpClass, HashSet<PhpClass>>();
+                HashMap<PhpClass, HashSet<PhpClass>> resolvedInheritanceChains = new HashMap<>();
                 for (HashMap<PsiElement, PhpClass> subjectContainer : mappedChecks.values()) {
                     // investigate one subject when it has multiple instanceof-expressions
                     if (subjectContainer.size() > 1) {
@@ -380,7 +380,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
                 /* extract calls */
-                LinkedList<PsiElement> objCallsExtracted = new LinkedList<PsiElement>();
+                LinkedList<PsiElement> objCallsExtracted = new LinkedList<>();
                 for (PsiElement objCondition : objBranchConditions) {
                     if (!(objCondition instanceof BinaryExpression)) {
                         continue;
@@ -447,7 +447,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
              * @param ifStatement current scope
              */
             private void inspectDuplicatedConditions(LinkedList<PsiElement> objAllConditions, If ifStatement) {
-                LinkedList<PsiElement> objParentConditions = new LinkedList<PsiElement>();
+                LinkedList<PsiElement> objParentConditions = new LinkedList<>();
 
                 /* collect parent scopes conditions */
                 PsiElement objParent = ifStatement.getParent();

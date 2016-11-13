@@ -68,7 +68,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
 
                     /* resolve types for parameter */
-                    HashSet<String> objParameterTypesResolved = new HashSet<String>();
+                    HashSet<String> objParameterTypesResolved = new HashSet<>();
                     TypeFromSignatureResolvingUtil.resolveSignature(strParameterType, (Function) objScopeHolder, objIndex, objParameterTypesResolved);
 
 
@@ -153,7 +153,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 objVariable instanceof Variable &&
                                 null != objVariable.getName() && objVariable.getName().equals(strParameterName)
                             ) {
-                                final HashSet<String> objTypesResolved = new HashSet<String>();
+                                final HashSet<String> objTypesResolved = new HashSet<>();
                                 TypeFromPlatformResolverUtil.resolveExpressionType(objValue, objTypesResolved);
 
                                 boolean isCallViolatesDefinition;
@@ -207,7 +207,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     }
 
                     /* collect parent classes/interfaces for bulk check */
-                    LinkedList<PhpClass> classesAllowed = new LinkedList<PhpClass>();
+                    LinkedList<PhpClass> classesAllowed = new LinkedList<>();
                     for (String strAllowedType: listAllowedTypes) {
                         if (
                             strAllowedType.length() == 0 || strAllowedType.charAt(0) != '\\' ||
@@ -222,7 +222,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     /* run test through 2 sets */
                     for (PhpClass testSubject: classesToTest) {
                         /* collect hierarchy chain for interface inheritance checks */
-                        LinkedList<PhpClass> testSubjectInheritanceChain = new LinkedList<PhpClass>();
+                        LinkedList<PhpClass> testSubjectInheritanceChain = new LinkedList<>();
                         testSubjectInheritanceChain.add(testSubject);
                         Collections.addAll(testSubjectInheritanceChain, testSubject.getSupers());
 

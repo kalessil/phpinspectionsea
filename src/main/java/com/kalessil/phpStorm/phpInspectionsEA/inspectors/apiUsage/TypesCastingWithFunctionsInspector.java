@@ -29,7 +29,7 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
         return "TypesCastingWithFunctionsInspection";
     }
 
-    private static final HashMap<String, String> mapping = new HashMap<String, String>();
+    private static final HashMap<String, String> mapping = new HashMap<>();
     static {
         mapping.put("intval",   "int");
         mapping.put("floatval", "float");

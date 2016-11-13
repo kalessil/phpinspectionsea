@@ -20,7 +20,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
     private static final List<String> INI_FUNCTIONS = Arrays.asList(
             "ini_set", "ini_get", "ini_alter", "ini_restore"
     );
-    private static final Map<String, String> INI_OPTIONS = new HashMap<String, String>();
+    private static final Map<String, String> INI_OPTIONS = new HashMap<>();
     static {
         INI_OPTIONS.put("asp_tags", "'asp_tags' is a deprecated option since PHP 7.0.0.");
         INI_OPTIONS.put("always_populate_raw_post_data", "'always_populate_raw_post_data' is a deprecated option since PHP 7.0.0.");

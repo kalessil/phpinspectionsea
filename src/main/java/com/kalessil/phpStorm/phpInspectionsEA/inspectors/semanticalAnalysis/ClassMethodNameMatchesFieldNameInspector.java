@@ -36,7 +36,7 @@ public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection 
                     return;
                 }
 
-                HashSet<String> resolvedTypes = new HashSet<String>();
+                HashSet<String> resolvedTypes = new HashSet<>();
                 for (Field objField : objClass.getFields()) {
                     if (!objField.isConstant() && objField.getName().equals(strMethodName)) {
                         TypeFromPlatformResolverUtil.resolveExpressionType(objField, resolvedTypes);

@@ -77,7 +77,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
 
                     /* === replacements uniqueness check === */
                     if (3 == params.length && params[1] instanceof ArrayCreationExpression) {
-                        HashSet<String> replacements = new HashSet<String>();
+                        HashSet<String> replacements = new HashSet<>();
 
                         for (PsiElement oneReplacement : params[1].getChildren()) {
                             if (oneReplacement instanceof PhpPsiElement) {

@@ -102,7 +102,7 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
                 }
 
                 /* extract array values, expected one value only */
-                LinkedList<PsiElement> valuesSet = new LinkedList<PsiElement>();
+                LinkedList<PsiElement> valuesSet = new LinkedList<>();
                 for (PsiElement objChild : objFalse.getChildren()) {
                     if (objChild instanceof PhpPsiElement) {
                         valuesSet.add(objChild.getFirstChild());

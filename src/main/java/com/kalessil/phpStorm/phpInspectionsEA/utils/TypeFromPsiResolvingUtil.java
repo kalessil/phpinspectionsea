@@ -161,13 +161,13 @@ final public class TypeFromPsiResolvingUtil {
     private static void checkCallables(ArrayCreationExpression objSubjectExpression, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
         final PsiElement[] children = objSubjectExpression.getChildren();
         if ((children.length == 2) && (children[0] instanceof PhpPsiElement) && (children[1] instanceof PhpPsiElement)) {
-            HashSet<String> itemMethodType = new HashSet<String>();
+            HashSet<String> itemMethodType = new HashSet<>();
             resolveExpressionType(((PhpPsiElement) children[1]).getFirstPsiChild(), objScope, objIndex, itemMethodType);
             if (!itemMethodType.contains(Types.strString)) {
                 return;
             }
 
-            HashSet<String> itemClassType = new HashSet<String>();
+            HashSet<String> itemClassType = new HashSet<>();
             resolveExpressionType(((PhpPsiElement) children[0]).getFirstPsiChild(), objScope, objIndex, itemClassType);
             if (!itemClassType.contains(Types.strString)) {
                 boolean isObject = false;

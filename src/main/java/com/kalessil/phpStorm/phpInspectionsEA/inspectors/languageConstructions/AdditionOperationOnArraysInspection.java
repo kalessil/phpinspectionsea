@@ -48,7 +48,7 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
                 final PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
                 final Function objScope = ExpressionSemanticUtil.getScope(expression);
 
-                final HashSet<String> typesResolved = new HashSet<String>();
+                final HashSet<String> typesResolved = new HashSet<>();
                 TypeFromPsiResolvingUtil.resolveExpressionType(expression, objScope, objIndex, typesResolved);
                 if (typesResolved.size() == 1 && typesResolved.iterator().next().equals(Types.strArray)) {
                     holder.registerProblem(objOperation, strProblemDescription, ProblemHighlightType.ERROR);

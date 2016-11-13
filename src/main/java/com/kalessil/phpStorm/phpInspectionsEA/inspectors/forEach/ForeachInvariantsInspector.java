@@ -23,7 +23,7 @@ import java.util.Collection;
 
 public class ForeachInvariantsInspector extends BasePhpInspection {
     private static final String strForBehavesAsForeach   = "Foreach can probably be used instead (easier to read and support; ensure a string is not iterated)";
-    private static final String strEachBehavesAsForeach  = "Foreach should be used instead (performance improvements)";
+    private static final String strEachBehavesAsForeach  = "Foreach should be used instead (8x faster)";
 
     @NotNull
     public String getShortName() {
@@ -46,7 +46,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                     if (!StringUtil.isEmpty(function) && function.equals("each")) {
                         final PsiElement parent = multiassignmentExpression.getParent();
                         if (parent instanceof While || parent instanceof For) {
-                            holder.registerProblem(parent.getFirstChild(), strEachBehavesAsForeach, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(parent.getFirstChild(), strEachBehavesAsForeach, ProblemHighlightType.GENERIC_ERROR);
                         }
                     }
                 }

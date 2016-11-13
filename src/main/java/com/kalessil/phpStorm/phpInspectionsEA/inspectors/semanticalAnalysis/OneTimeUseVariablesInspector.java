@@ -141,7 +141,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             public void visitPhpMultiassignmentExpression(MultiassignmentExpression multiassignmentExpression) {
                 final PsiElement firstChild = multiassignmentExpression.getFirstChild();
-                if (null != firstChild && firstChild.getText().equals("list")) {
+                if (null != firstChild && firstChild.getText().equalsIgnoreCase("list")) {
                     final Variable variable = this.getVariable(multiassignmentExpression.getValue());
                     final PsiElement parent = multiassignmentExpression.getParent();
                     if (null != variable && parent instanceof StatementImpl) {

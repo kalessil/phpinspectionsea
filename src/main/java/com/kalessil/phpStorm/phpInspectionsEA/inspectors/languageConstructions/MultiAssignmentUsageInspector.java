@@ -49,7 +49,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                     return;
                 }
                 final PsiElement listKeyword = multiassignmentExpression.getFirstChild();
-                if (null == listKeyword || !listKeyword.getText().equals("list")) {
+                if (null == listKeyword || !listKeyword.getText().equalsIgnoreCase("list")) {
                     return;
                 }
 

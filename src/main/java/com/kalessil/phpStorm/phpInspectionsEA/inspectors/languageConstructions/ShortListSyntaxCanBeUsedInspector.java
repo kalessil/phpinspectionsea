@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.ForeachStatement;
 import com.jetbrains.php.lang.psi.elements.MultiassignmentExpression;
 import com.jetbrains.php.lang.psi.elements.Variable;
@@ -44,7 +45,7 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
                     return;
                 }
                 final PsiElement listKeyword = multiassignmentExpression.getFirstChild();
-                if (null != listKeyword && listKeyword.getText().equalsIgnoreCase("list")) {
+                if (null != listKeyword && PhpTokenTypes.kwLIST == listKeyword.getNode().getElementType()) {
                     holder.registerProblem(listKeyword, messageAssign, ProblemHighlightType.WEAK_WARNING);
                 }
             }
@@ -60,7 +61,7 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
                 if (variables.size() > 0) {
                     PsiElement childNode = foreach.getFirstChild();
                     while (null != childNode) {
-                        if (childNode.getClass() == LeafPsiElement.class && childNode.getText().equalsIgnoreCase("list")) {
+                        if (childNode.getClass() == LeafPsiElement.class && PhpTokenTypes.kwLIST == childNode.getNode().getElementType()) {
                             holder.registerProblem(childNode, messageForeach, ProblemHighlightType.WEAK_WARNING);
                             break;
                         }

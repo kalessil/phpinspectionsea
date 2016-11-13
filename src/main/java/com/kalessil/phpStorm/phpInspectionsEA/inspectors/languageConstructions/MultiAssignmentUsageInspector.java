@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -49,7 +50,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                     return;
                 }
                 final PsiElement listKeyword = multiassignmentExpression.getFirstChild();
-                if (null == listKeyword || !listKeyword.getText().equalsIgnoreCase("list")) {
+                if (null == listKeyword || PhpTokenTypes.kwLIST != listKeyword.getNode().getElementType()) {
                     return;
                 }
 

@@ -130,14 +130,19 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | n/a |
 | Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a |
 | Probable bugs        | UntrustedInclusionInspection                    | Untrusted files inclusion                                 | n/a |
-| Probable bugs        | NonSecureUniqidUsageInspection                  | Insecure 'uniqid()' usage                                 | yes       | yes | no   |
-| Probable bugs        | NonSecureExtractUsageInspection                 | Insecure 'extract(...)' usage                             | n/a |
-| Probable bugs        | NonSecureParseStrUsageInspection                | Insecure 'parse_str(...)' usage                           | n/a |
 | Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | n/a |
 | Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result               | yes |
 | Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes |
 | Probable bugs        | CompactArgumentsInspection                      | 'compact(...)' variables existence                        | n/a |
 | Probable bugs        | DispatchingThisIntoClosuresInspection           | Incorrect dispatching $this into closures                 | n/a |
+
+Inspections Lists (Security)
+---
+| Group                | Short Name                                      | Full Name                                                 | Quick fix | UTs | QFTs |
+| :------------------- | :-------------------------------------------    | :--------------------------------------------------       | --------: | --: | ---: |
+| Security             | NonSecureUniqidUsageInspection                  | Insecure 'uniqid()' usage                                 | yes       | yes | no   |
+| Security             | NonSecureExtractUsageInspection                 | Insecure 'extract(...)' usage                             | n/a |
+| Security             | NonSecureParseStrUsageInspection                | Insecure 'parse_str(...)' usage                           | n/a |
 
 Inspections Lists (Performance)
 ---

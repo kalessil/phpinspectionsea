@@ -5,9 +5,9 @@ Some facts about this project: https://www.openhub.net/p/phpinspectionsea
 
 Inspections Lists (Quick-fixes for next release)
 ---
-| Group                | Short Name                                      | Full Name                                                | Quick fix |
-| :------------------- | :-------------------------------------------    | :------------------------------------------------------- | --------: |
-| Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent                  | Prio1     |
+| Group                | Short Name                                      | Full Name                                                | Quick fix | UTs | QFTs |
+| :------------------- | :-------------------------------------------    | :------------------------------------------------------- | --------: | --: | ---: |
+| Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent                  | Prio1     | yes | no   |
 
 Inspections Lists (Type compatibility)
 ---

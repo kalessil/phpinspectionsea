@@ -1,13 +1,19 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ForeachStatement;
 import com.jetbrains.php.lang.psi.elements.MultiassignmentExpression;
 import com.jetbrains.php.lang.psi.elements.Variable;
@@ -46,7 +52,7 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
                 }
                 final PsiElement listKeyword = multiassignmentExpression.getFirstChild();
                 if (null != listKeyword && PhpTokenTypes.kwLIST == listKeyword.getNode().getElementType()) {
-                    holder.registerProblem(listKeyword, messageAssign, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(listKeyword, messageAssign, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                 }
             }
 
@@ -62,7 +68,7 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
                     PsiElement childNode = foreach.getFirstChild();
                     while (null != childNode) {
                         if (childNode.getClass() == LeafPsiElement.class && PhpTokenTypes.kwLIST == childNode.getNode().getElementType()) {
-                            holder.registerProblem(childNode, messageForeach, ProblemHighlightType.WEAK_WARNING);
+                            holder.registerProblem(childNode, messageForeach, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                             break;
                         }
 
@@ -75,4 +81,68 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
             }
         };
     }
+
+    static private class TheLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use [...] instead";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement listKeyword = descriptor.getPsiElement();
+            if (null == listKeyword) {
+                return;
+            }
+
+            /* find needed brackets */
+            PsiElement openingBracket = null;
+            PsiElement closingBracket = null;
+            PsiElement current        = listKeyword;
+            int nestingLevel          = 0;
+            while (null != current) {
+                final IElementType nodeType = current.getNode().getElementType();
+
+                if (PhpTokenTypes.chLPAREN == nodeType) {
+                    if (0 == nestingLevel) {
+                        openingBracket = current;
+                    }
+                    ++nestingLevel;
+                }
+                if (PhpTokenTypes.chRPAREN == nodeType) {
+                    --nestingLevel;
+                    if (0 == nestingLevel) {
+                        closingBracket = current;
+                    }
+                }
+
+                current = current.getNextSibling();
+            }
+
+            /* apply refactoring */
+            if (null != openingBracket && null != closingBracket) {
+                final PsiElement openBracket  = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "[");
+                final PsiElement closeBracket = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "]");
+                if (null != openBracket && null != closeBracket) {
+                    /* cleanup following-up space */
+                    final PsiElement after = listKeyword.getNextSibling();
+                    if (after instanceof PsiWhiteSpace) {
+                        after.delete();
+                    }
+                    /* transform brackets, drop list keyword */
+                    openingBracket.replace(openBracket);
+                    closingBracket.replace(closeBracket);
+                    listKeyword.delete();
+                }
+            }
+        }
+    }
+
 }

@@ -105,7 +105,7 @@ Inspections Lists (Language level migration)
 | Language level migration | TypesCastingWithFunctionsInspection             | Type casting can be used                            | yes       | yes | no   |
 | Language level migration | dirnameCallOnFileConstantInspection             | __DIR__ can be used                                 | yes |
 | Language level migration | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes |
-| Language level migration | ShortListSyntaxCanBeUsedInspection              | Short list syntax can be used                       | no  |     | yes | no   |
+| Language level migration | ShortListSyntaxCanBeUsedInspection              | Short list syntax can be used                       | yes |     | yes | no   |
 
 Inspections Lists (Architecture)
 ---

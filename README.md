@@ -3,12 +3,6 @@ distributed as a PhpStorm plugin.
 
 Some facts about this project: https://www.openhub.net/p/phpinspectionsea
 
-Inspections Lists (Quick-fixes for next release)
----
-| Group                | Short Name                                      | Full Name                                                | Quick fix | UTs | QFTs |
-| :------------------- | :-------------------------------------------    | :------------------------------------------------------- | --------: | --: | ---: |
-| Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent                  | Prio1     | yes | no   |
-
 Inspections Lists (Type compatibility)
 ---
 | Group                | Short Name                                      | Full Name                                           | Quick fix |
@@ -95,6 +89,7 @@ Inspections Lists (Code style)
 | Code style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes |
 | Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | yes |
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes |
+| Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | yes       | yes | no   |
 
 Inspections Lists (Language level migration)
 ---

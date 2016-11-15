@@ -10,7 +10,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
+import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,8 +21,8 @@ public class AssertBoolInvertedStrategy {
         final PsiElement[] params = reference.getParameters();
         if (params.length > 0 && (function.equals("assertTrue") || function.equals("assertFalse"))) {
             final PsiElement param = ExpressionSemanticUtil.getExpressionTroughParenthesis(params[0]);
-            if (param instanceof UnaryExpressionImpl) {
-                final UnaryExpressionImpl not = (UnaryExpressionImpl) param;
+            if (param instanceof UnaryExpression) {
+                final UnaryExpression not = (UnaryExpression) param;
                 if (null == not.getOperation() || PhpTokenTypes.opNOT != not.getOperation().getNode().getElementType()) {
                     return false;
                 }

@@ -11,9 +11,9 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.jetbrains.php.lang.psi.elements.impl.ClassReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.MethodReferenceImpl;
-import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -123,9 +123,9 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof MethodReferenceImpl) {
-                final PsiElement replacement = PhpPsiElementFactory.createFromText(project, UnaryExpressionImpl.class, "(string) null");
+                final PsiElement replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "(string) null");
                 //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here
-                ((UnaryExpressionImpl) replacement).getValue().replace(expression.getFirstChild().copy());
+                ((UnaryExpression) replacement).getValue().replace(expression.getFirstChild().copy());
 
                 expression.replace(replacement);
             }

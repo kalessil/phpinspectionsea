@@ -12,7 +12,6 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.PhpPsiElementImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
-import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -229,8 +228,8 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 }
 
                 /* unary operations */
-                if (expression instanceof UnaryExpressionImpl) {
-                    final PsiElement operation = ((UnaryExpressionImpl) expression).getOperation();
+                if (expression instanceof UnaryExpression) {
+                    final PsiElement operation = ((UnaryExpression) expression).getOperation();
                     IElementType operationType = null;
                     if (null != operation) {
                         operationType = operation.getNode().getElementType();
@@ -253,8 +252,8 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             return ExpressionType.NEW;
                         }
 
-                        if (value instanceof UnaryExpressionImpl) {
-                            final PsiElement operation = ((UnaryExpressionImpl) value).getOperation();
+                        if (value instanceof UnaryExpression) {
+                            final PsiElement operation = ((UnaryExpression) value).getOperation();
                             if (null != operation && PhpTokenTypes.kwCLONE == operation.getNode().getElementType()) {
                                 return ExpressionType.CLONE;
                             }

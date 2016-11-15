@@ -6,8 +6,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
-import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -42,8 +42,8 @@ public class IncorrectRandomRangeInspector extends BasePhpInspection {
                 }
 
                 if (
-                    params[1] instanceof PhpExpressionImpl && !(params[1] instanceof UnaryExpressionImpl) &&
-                    params[0] instanceof PhpExpressionImpl && !(params[0] instanceof UnaryExpressionImpl)
+                    params[1] instanceof PhpExpressionImpl && !(params[1] instanceof UnaryExpression) &&
+                    params[0] instanceof PhpExpressionImpl && !(params[0] instanceof UnaryExpression)
                 ) {
                     try {
                         if (Integer.parseInt(params[1].getText()) < Integer.parseInt(params[0].getText())) {

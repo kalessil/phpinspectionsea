@@ -13,7 +13,6 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.AssignmentExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
-import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -90,11 +89,11 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 // check if variable incremented
                 boolean isVariableIncremented = false;
                 for (PhpPsiElement repeat : expression.getRepeatedExpressions()) {
-                    if (!(repeat instanceof UnaryExpressionImpl)) {
+                    if (!(repeat instanceof UnaryExpression)) {
                         continue;
                     }
 
-                    UnaryExpressionImpl repeatCasted = (UnaryExpressionImpl) repeat;
+                    final UnaryExpression repeatCasted = (UnaryExpression) repeat;
                     // operation applied to a variable
                     if (null != repeatCasted.getOperation() && repeatCasted.getFirstPsiChild() instanceof Variable) {
                         // increment on our variable

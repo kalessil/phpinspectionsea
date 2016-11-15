@@ -9,13 +9,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
-import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.gui.PrettyListControl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -137,8 +133,8 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                     PsiElement parent = reference.getParent();
 
                     /* statement can be prepended by @ (silence) */
-                    if (parent instanceof UnaryExpressionImpl) {
-                        final PsiElement operation = ((UnaryExpressionImpl) parent).getOperation();
+                    if (parent instanceof UnaryExpression) {
+                        final PsiElement operation = ((UnaryExpression) parent).getOperation();
                         if (null != operation && PhpTokenTypes.opSILENCE == operation.getNode().getElementType()) {
                             parent = parent.getParent();
                         }

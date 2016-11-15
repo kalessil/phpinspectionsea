@@ -12,9 +12,9 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.ParameterListImpl;
-import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -42,8 +42,8 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
 
                 /* function can be silenced, get parent for this case; validate parent structure */
                 PsiElement parent = reference.getParent();
-                if (parent instanceof UnaryExpressionImpl) {
-                    final PsiElement operation = ((UnaryExpressionImpl) parent).getOperation();
+                if (parent instanceof UnaryExpression) {
+                    final PsiElement operation = ((UnaryExpression) parent).getOperation();
                     if (null != operation && PhpTokenTypes.opSILENCE == operation.getNode().getElementType()) {
                         parent = parent.getParent();
                     }
@@ -95,10 +95,10 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
                 final FunctionReferenceImpl fileGetContents = (FunctionReferenceImpl) replacement;
 
                 PsiElement fileFunction = ((FunctionReference) expression).getParameters()[1];
-                if (fileFunction instanceof UnaryExpressionImpl) {
-                    final PsiElement operation = ((UnaryExpressionImpl) fileFunction).getOperation();
+                if (fileFunction instanceof UnaryExpression) {
+                    final PsiElement operation = ((UnaryExpression) fileFunction).getOperation();
                     if (null != operation && PhpTokenTypes.opSILENCE == operation.getNode().getElementType()) {
-                        fileFunction = ((UnaryExpressionImpl) fileFunction).getValue();
+                        fileFunction = ((UnaryExpression) fileFunction).getValue();
                     }
                 }
 

@@ -13,7 +13,6 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
-import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -73,8 +72,8 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
             if (expression instanceof FunctionReference) {
                 final PsiElement parent = expression.getParent();
                 boolean isInverted = false;
-                if (parent instanceof UnaryExpressionImpl) {
-                    final UnaryExpressionImpl not = (UnaryExpressionImpl) parent;
+                if (parent instanceof UnaryExpression) {
+                    final UnaryExpression not = (UnaryExpression) parent;
                     isInverted = (null != not.getOperation() && PhpTokenTypes.opNOT == not.getOperation().getNode().getElementType());
                 }
 

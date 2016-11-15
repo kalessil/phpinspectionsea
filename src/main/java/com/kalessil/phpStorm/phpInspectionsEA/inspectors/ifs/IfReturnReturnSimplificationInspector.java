@@ -9,7 +9,6 @@ import com.intellij.psi.*;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -178,7 +177,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 final PsiElement replacement;
                 if (invertCondition) {
                     final String pattern = "!(" + conditions.getText() + ")";
-                    replacement = PhpPsiElementFactory.createFromText(project, UnaryExpressionImpl.class, pattern);
+                    replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, pattern);
                 } else {
                     replacement = conditions.copy();
                 }

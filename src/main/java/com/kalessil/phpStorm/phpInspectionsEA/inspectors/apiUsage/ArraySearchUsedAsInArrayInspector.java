@@ -14,7 +14,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
+import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -110,7 +110,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                         ((FunctionReference) call).handleElementRename("in_array");
                         if (PhpTokenTypes.opIDENTICAL == operation.getNode().getElementType()) {
                             /* we want false, hence need invert the call */
-                            UnaryExpressionImpl inverted = PhpPsiElementFactory.createFromText(project, UnaryExpressionImpl.class, "!$x");
+                            UnaryExpression inverted = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "!$x");
                             //noinspection ConstantConditions - as we are safe from NPE here due to hardcoded pattern
                             inverted.getValue().replace(call);
                             expression.replace(inverted);

@@ -8,14 +8,10 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.If;
-import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.BinaryExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
-import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -96,8 +92,8 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     return getCompleteExpression(parent);
                 }
 
-                if (parent instanceof UnaryExpressionImpl) {
-                    UnaryExpressionImpl unary = (UnaryExpressionImpl) parent;
+                if (parent instanceof UnaryExpression) {
+                    final UnaryExpression unary = (UnaryExpression) parent;
                     if (null != unary.getOperation()) {
                         final IElementType operation = unary.getOperation().getNode().getElementType();
                         if (PhpTokenTypes.opSILENCE == operation || PhpTokenTypes.opNOT == operation) {

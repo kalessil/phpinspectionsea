@@ -7,7 +7,6 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.ClassReferenceImpl;
@@ -61,7 +60,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
                             } else {
                                 /* find operator for quick-fix */
                                 PsiElement operator = staticCandidate.getNextSibling();
-                                if (operator instanceof PsiWhiteSpaceImpl) {
+                                if (operator instanceof PsiWhiteSpace) {
                                     operator = operator.getNextSibling();
                                 }
 
@@ -77,7 +76,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
                         if (null != objectExpression && !(objectExpression instanceof FunctionReference) && !(staticCandidate instanceof ClassReferenceImpl)) {
                             /* check operator */
                             PsiElement operator = objectExpression.getNextSibling();
-                            if (operator instanceof PsiWhiteSpaceImpl) {
+                            if (operator instanceof PsiWhiteSpace) {
                                 operator = operator.getNextSibling();
                             }
 

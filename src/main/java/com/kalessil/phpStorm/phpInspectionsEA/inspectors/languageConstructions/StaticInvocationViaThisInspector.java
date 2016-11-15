@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Method;
@@ -66,7 +65,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                         if (thisCandidate.getText().equals("$this")) {
                             /* find operator for quick-fix */
                             PsiElement operator = thisCandidate.getNextSibling();
-                            if (operator instanceof PsiWhiteSpaceImpl) {
+                            if (operator instanceof PsiWhiteSpace) {
                                 operator = operator.getNextSibling();
                             }
 
@@ -81,7 +80,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                         if (null != objectExpression && !(objectExpression instanceof FunctionReference)) {
                             /* check operator */
                             PsiElement operator = objectExpression.getNextSibling();
-                            if (operator instanceof PsiWhiteSpaceImpl) {
+                            if (operator instanceof PsiWhiteSpace) {
                                 operator = operator.getNextSibling();
                             }
                             if (null == operator) {

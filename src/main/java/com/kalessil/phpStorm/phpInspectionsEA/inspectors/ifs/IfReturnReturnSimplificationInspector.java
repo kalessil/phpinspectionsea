@@ -5,11 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
-import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl;
+import com.intellij.psi.*;
 import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -193,7 +189,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                     returnArgument.replace(replacement);
 
                     /* now drop if and succeeding whitespaces */
-                    if (ifExpression.getNextSibling() instanceof PsiWhiteSpaceImpl) {
+                    if (ifExpression.getNextSibling() instanceof PsiWhiteSpace) {
                         ifExpression.getNextSibling().delete();
                     }
                     ifExpression.delete();

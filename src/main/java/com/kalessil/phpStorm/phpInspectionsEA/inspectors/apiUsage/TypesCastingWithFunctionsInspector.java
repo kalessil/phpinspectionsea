@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.ParenthesizedExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -94,7 +93,7 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
                 PsiElement parameter = ((FunctionReference) expression).getParameters()[0];
                 if (parameter instanceof BinaryExpression || parameter instanceof UnaryExpression || parameter instanceof TernaryExpression) {
                     final String castingParameter  = "(" + parameter.getText() + ")";
-                    parameter = PhpPsiElementFactory.createFromText(project, ParenthesizedExpressionImpl.class, castingParameter);
+                    parameter = PhpPsiElementFactory.createFromText(project, ParenthesizedExpression.class, castingParameter);
                 }
 
                 final String castingPattern  = "(" + this.suggestedType + ") null";

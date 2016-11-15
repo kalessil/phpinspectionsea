@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.Field;
-import com.jetbrains.php.lang.psi.elements.impl.FieldImpl;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -56,7 +55,7 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final ConstantReference nullValue = (ConstantReference) descriptor.getPsiElement();
-            final FieldImpl field             = (FieldImpl) nullValue.getParent();
+            final Field field                 = (Field) nullValue.getParent();
 
             final PsiElement fieldName = field.getNameIdentifier();
             if (null != fieldName) {

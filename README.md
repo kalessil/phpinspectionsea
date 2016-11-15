@@ -147,6 +147,7 @@ Inspections Lists (Security)
 | Security             | NonSecureExtractUsageInspection                 | Insecure 'extract(...)' usage                             | n/a |
 | Security             | NonSecureParseStrUsageInspection                | Insecure 'parse_str(...)' usage                           | n/a |
 | Security             | UntrustedInclusionInspection                    | Untrusted files inclusion                                 | n/a |
+| Security             | SecurityAdvisoriesInspection                    | Security advisories for composer packages                 | no        | no  | no   |
 
 Inspections Lists (Performance)
 ---

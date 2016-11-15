@@ -373,6 +373,10 @@ with a laptop.
          shortName="UntrustedInclusionInspection"                  displayName="Untrusted files inclusion"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UntrustedInclusionInspector"/>
+    <localInspection language="JSON" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="SecurityAdvisoriesInspection"                  displayName="Security advisories for Composer packages"
+         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.SecurityAdvisoriesInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

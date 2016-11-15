@@ -6,8 +6,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpExpression;
+import com.jetbrains.php.lang.psi.elements.PhpReturn;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
-import com.jetbrains.php.lang.psi.elements.impl.PhpReturnImpl;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
@@ -19,14 +19,14 @@ public class MustReturnSpecifiedTypeStrategy {
     private static final String strProblemDescription = "%m% must return %t%";
 
     static public void apply(final PhpType allowedTypes, final Method method, final ProblemsHolder holder) {
-        Collection<PhpReturnImpl> returnStatements = PsiTreeUtil.findChildrenOfType(method, PhpReturnImpl.class);
+        Collection<PhpReturn> returnStatements = PsiTreeUtil.findChildrenOfType(method, PhpReturn.class);
 
         if (returnStatements.size() > 0 && null != method.getNameIdentifier()) {
             final String strMessage = strProblemDescription
                     .replace("%m%", method.getName())
                     .replace("%t%", allowedTypes.toString());
 
-            for (PhpReturnImpl returnExpression : returnStatements) {
+            for (PhpReturn returnExpression : returnStatements) {
                 PhpExpression returnValue        = ExpressionSemanticUtil.getReturnValue(returnExpression);
                 PsiElement returnValueExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(returnValue);
                 if (returnValueExpression instanceof PhpTypedElement) {

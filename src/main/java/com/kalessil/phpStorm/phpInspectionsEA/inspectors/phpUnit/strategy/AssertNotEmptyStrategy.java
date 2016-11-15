@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.impl.PhpEmptyImpl;
+import com.jetbrains.php.lang.psi.elements.PhpEmpty;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,8 +20,8 @@ public class AssertNotEmptyStrategy {
         final PsiElement[] params = reference.getParameters();
         if (params.length > 0 && (function.equals("assertFalse") || function.equals("assertNotTrue"))) {
             final PsiElement param = ExpressionSemanticUtil.getExpressionTroughParenthesis(params[0]);
-            if (param instanceof PhpEmptyImpl) {
-                final PsiElement[] variables = ((PhpEmptyImpl) param).getVariables();
+            if (param instanceof PhpEmpty) {
+                final PsiElement[] variables = ((PhpEmpty) param).getVariables();
                 if (1 != variables.length) {
                     return false;
                 }

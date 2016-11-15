@@ -6,6 +6,8 @@ Some facts about this project: https://www.openhub.net/p/phpinspectionsea
 To be tested: 
 CompactArgumentsInspector.java (Inspection)
 MustReturnSpecifiedTypeStrategy.java (Inspection)
+AssertEmptyStrategy.java (Inspection)
+AssertNotEmptyStrategy.java (Inspection)
 
 SwitchContinuationInLoopInspector.java (QF)
 OpAssignShortSyntaxInspector.java (QF)

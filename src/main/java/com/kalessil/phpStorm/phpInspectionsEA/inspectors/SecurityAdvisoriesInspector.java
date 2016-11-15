@@ -1,8 +1,8 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors;
 
 import com.intellij.codeInspection.*;
-import com.intellij.json.psi.impl.JsonObjectImpl;
-import com.intellij.json.psi.impl.JsonPropertyImpl;
+import com.intellij.json.psi.JsonObject;
+import com.intellij.json.psi.JsonProperty;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -25,31 +25,31 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
             return null;
         }
         final PsiElement config = file.getFirstChild();
-        if(!(config instanceof JsonObjectImpl)) {
+        if(!(config instanceof JsonObject)) {
             return null;
         }
 
         for (PsiElement option : config.getChildren()) {
-            @Nullable JsonPropertyImpl requireProperty = null;
+            @Nullable JsonProperty requireProperty = null;
 
             /* find "require" property */
-            if (option instanceof JsonPropertyImpl) {
-                final String propertyName = ((JsonPropertyImpl)option).getName();
+            if (option instanceof JsonProperty) {
+                final String propertyName = ((JsonProperty) option).getName();
                 if (!StringUtil.isEmpty(propertyName) && propertyName.equals("require")) {
-                    requireProperty = (JsonPropertyImpl) option;
+                    requireProperty = (JsonProperty) option;
                 }
             }
 
             /* inspect packages, break afterwards */
             if (null != requireProperty) {
-                if (requireProperty.getValue() instanceof JsonObjectImpl) {
+                if (requireProperty.getValue() instanceof JsonObject) {
                     for (PsiElement component : requireProperty.getValue().getChildren()) {
                         /* we expect certain structure for package definition */
-                        if (!(component instanceof JsonPropertyImpl)) {
+                        if (!(component instanceof JsonProperty)) {
                             continue;
                         }
                         /* the package is there already, terminate inspection */
-                        if (((JsonPropertyImpl) component).getName().equals("roave/security-advisories")) {
+                        if (((JsonProperty) component).getName().equals("roave/security-advisories")) {
                             return null;
                         }
                     }

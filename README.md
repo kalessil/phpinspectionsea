@@ -6,6 +6,7 @@ Some facts about this project: https://www.openhub.net/p/phpinspectionsea
 To be tested: 
 CompactArgumentsInspector.java (Inspection)
 
+OpAssignShortSyntaxInspector.java (QF)
 ArraySearchUsedAsInArrayInspector.java (QF)
 IsNullFunctionUsageInspector.java (QF)
 NestedNotOperatorsInspector.java (QF)

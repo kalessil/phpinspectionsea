@@ -45,7 +45,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 ) {
                     final AssignmentExpressionImpl assign = (AssignmentExpressionImpl) construct.getPrevPsiSibling().getFirstChild();
                     /* ensure it's not a self-assignment */
-                    if (assign instanceof SelfAssignmentExpressionImpl) {
+                    if (assign instanceof SelfAssignmentExpression) {
                         return;
                     }
 

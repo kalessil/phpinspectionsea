@@ -13,7 +13,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.impl.SelfAssignmentExpressionImpl;
+import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -105,7 +105,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
             final PsiElement target = descriptor.getPsiElement();
             if (target instanceof AssignmentExpression) {
                 //noinspection ConstantConditions - as we safe from NPE due to hardcoded pattern
-                target.replace(PhpPsiElementFactory.createFromText(project, SelfAssignmentExpressionImpl.class, this.suggestedReplacement));
+                target.replace(PhpPsiElementFactory.createFromText(project, SelfAssignmentExpression.class, this.suggestedReplacement));
             }
         }
     }

@@ -3,6 +3,15 @@ distributed as a PhpStorm plugin.
 
 Some facts about this project: https://www.openhub.net/p/phpinspectionsea
 
+To be tested: 
+ArraySearchUsedAsInArrayInspector.java (QF)
+IsNullFunctionUsageInspector.java (QF)
+NestedNotOperatorsInspector.java (QF)
+IfReturnReturnSimplificationInspector.java (QF)
+ImplicitMagicMethodCallInspector.java (QF, string cast)
+AmbiguousMemberInitializationInspector.java (QF)
+AssertBoolInvertedStrategy.java (Inspection)
+
 Inspections Lists (Type compatibility)
 ---
 | Group                | Short Name                                      | Full Name                                           | Quick fix |
@@ -28,7 +37,7 @@ Inspections Lists (Control flow)
 | Control flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach                | n/a       | yes | n/a  |
 | Control flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                       | yes |
 | Control flow         | DegradedSwitchInspection                        | Switch-case could be simplified                          | n/a |
-| Control flow         | ForeachInvariantsInspection                     | Foreach usage possible                                   | n/a |
+| Control flow         | ForeachInvariantsInspection                     | Foreach usage possible                                   | no        | yes | no   |
 | Control flow         | PdoApiUsageInspection                           | PDO api usage                                            | n/a |
 | Control flow         | OneTimeUseVariablesInspection                   | One-time use variables                                   | yes       | yes | no   |
 | Control flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                            | n/a       | yes | n/a  |
@@ -85,7 +94,7 @@ Inspections Lists (Code style)
 | Code style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                 | no  |
 | Code style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                  | yes       | yes | no   |
 | Code style           | UnnecessaryParenthesesInspection                | Unnecessary parentheses                             | yes       | yes | no   |
-| Code style           | DynamicInvocationViaScopeResolutionInspection   | Dynamic methods invocation via '::'                 | yes |
+| Code style           | DynamicInvocationViaScopeResolutionInspection   | Dynamic methods invocation via '::'                 | yes       | yes | no   |
 | Code style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes |
 | Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | yes |
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes |
@@ -131,8 +140,8 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | RealpathOnRelativePathsInspection               | Phar-incompatible 'realpath()' applied to a relative path | no  |
 | Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | n/a |
 | Probable bugs        | SummerTimeUnsafeTimeManipulationInspection      | Summer-time unsafe date manipulations                     | n/a |
-| Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | n/a |
-| Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a |
+| Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | n/a       | yes | n/a  |
+| Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a       | yes | n/a  |
 | Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | n/a |
 | Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result               | yes |
 | Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes |
@@ -147,7 +156,7 @@ Inspections Lists (Security)
 | Security             | NonSecureExtractUsageInspection                 | Insecure 'extract(...)' usage                             | n/a |
 | Security             | NonSecureParseStrUsageInspection                | Insecure 'parse_str(...)' usage                           | n/a |
 | Security             | UntrustedInclusionInspection                    | Untrusted files inclusion                                 | n/a |
-| Security             | SecurityAdvisoriesInspection                    | Security advisories for composer packages                 | no        | no  | no   |
+| Security             | SecurityAdvisoriesInspection                    | Security advisories for composer packages                 | no        | yes | no   |
 
 Inspections Lists (Performance)
 ---

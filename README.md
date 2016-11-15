@@ -14,6 +14,7 @@ ImplicitMagicMethodCallInspector.java (QF, string cast)
 AmbiguousMemberInitializationInspector.java (QF)
 AssertInstanceOfStrategy.java (QF)
 AssertNotInstanceOfStrategy.java (QF)
+SubStrUsedAsArrayAccessInspector.java (QF)
 AssertBoolInvertedStrategy.java (Inspection)
 
 Inspections Lists (Type compatibility)

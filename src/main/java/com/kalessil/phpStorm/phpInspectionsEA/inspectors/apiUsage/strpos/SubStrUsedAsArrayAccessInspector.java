@@ -9,8 +9,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.impl.ArrayAccessExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -65,9 +65,9 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
                 final PsiElement[] params = ((FunctionReference) expression).getParameters();
-                final PsiElement pattern  = PhpPsiElementFactory.createFromText(project, ArrayAccessExpressionImpl.class, "$x[$y]");
+                final PsiElement pattern  = PhpPsiElementFactory.createFromText(project, ArrayAccessExpression.class, "$x[$y]");
 
-                final ArrayAccessExpressionImpl replacement = (ArrayAccessExpressionImpl) pattern;
+                final ArrayAccessExpression replacement = (ArrayAccessExpression) pattern;
                 //noinspection ConstantConditions I'm sure that NPE will not happen - pattern is hardcoded
                 replacement.getValue().replace(params[0].copy());
                 //noinspection ConstantConditions I'm sure that NPE will not happen - pattern is hardcoded

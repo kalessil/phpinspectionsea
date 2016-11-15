@@ -1,0 +1,9 @@
+{
+  "name":        "",
+  "description": "",
+  "license":     "",
+
+  "require": {
+    "roave/security-advisories" : <error descr="Please use dev-master instead">"dev-master#commit"</error>
+  }
+}

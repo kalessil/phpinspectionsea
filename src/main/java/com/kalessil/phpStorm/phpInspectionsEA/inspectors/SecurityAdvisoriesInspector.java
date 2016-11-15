@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors;
 import com.intellij.codeInspection.*;
 import com.intellij.json.psi.JsonObject;
 import com.intellij.json.psi.JsonProperty;
+import com.intellij.json.psi.JsonStringLiteral;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -10,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SecurityAdvisoriesInspector extends LocalInspectionTool {
-    private static final String message = "Please add roave/security-advisories:dev-master as a firewall for vulnerable components";
+    private static final String message   = "Please add roave/security-advisories:dev-master as a firewall for vulnerable components";
+    private static final String useMaster = "Please use dev-master instead";
 
     @NotNull
     public String getShortName() {
@@ -29,6 +31,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
             return null;
         }
 
+        ProblemsHolder holder = new ProblemsHolder(manager, file, isOnTheFly);
         for (PsiElement option : config.getChildren()) {
             @Nullable JsonProperty requireProperty = null;
 
@@ -49,13 +52,21 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                             continue;
                         }
                         /* the package is there already, terminate inspection */
-                        if (((JsonProperty) component).getName().equals("roave/security-advisories")) {
+                        JsonProperty componentEntry = (JsonProperty) component;
+                        if (componentEntry.getName().equals("roave/security-advisories")) {
+                            if (componentEntry.getValue() instanceof JsonStringLiteral) {
+                                JsonStringLiteral version = (JsonStringLiteral) componentEntry.getValue();
+                                if (!version.getText().equals("\"dev-master\"")) {
+                                    holder.registerProblem(version, useMaster, ProblemHighlightType.GENERIC_ERROR);
+                                    return holder.getResultsArray();
+                                }
+                            }
+
                             return null;
                         }
                     }
 
                     /* fire error message */
-                    ProblemsHolder holder = new ProblemsHolder(manager, file, isOnTheFly);
                     holder.registerProblem(requireProperty.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR);
                     return holder.getResultsArray();
                 }

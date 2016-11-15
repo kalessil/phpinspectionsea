@@ -11,7 +11,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiWhiteSpace;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -142,7 +142,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
             if (expression instanceof Method) {
                 /* delete preceding PhpDoc */
                 final PhpPsiElement previous = ((Method) expression).getPrevPsiSibling();
-                if (previous instanceof PhpDocCommentImpl) {
+                if (previous instanceof PhpDocComment) {
                     previous.delete();
                 }
 

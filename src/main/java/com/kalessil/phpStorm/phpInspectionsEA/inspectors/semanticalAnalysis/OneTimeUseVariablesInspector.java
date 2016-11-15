@@ -11,7 +11,7 @@ import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.*;
@@ -224,7 +224,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             /* delete preceding PhpDoc */
             final PhpPsiElement previous = ((StatementImpl) assignment).getPrevPsiSibling();
-            if (previous instanceof PhpDocCommentImpl) {
+            if (previous instanceof PhpDocComment) {
                 previous.delete();
             }
 

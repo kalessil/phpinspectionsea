@@ -15,7 +15,6 @@ import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Finally;
 import com.jetbrains.php.lang.psi.elements.Method;
@@ -265,7 +264,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 newCommentLines.clear();
 
                 //noinspection ConstantConditions I' sure NPE will not happen as we get valid structure for input
-                phpDoc.replace(PhpPsiElementFactory.createFromText(project, PhpDocCommentImpl.class, newCommentText));
+                phpDoc.replace(PhpPsiElementFactory.createFromText(project, PhpDocComment.class, newCommentText));
             }
 
             /* release a tree node reference */

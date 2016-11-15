@@ -11,8 +11,8 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
@@ -58,7 +58,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 final boolean isMethodNamedAsTest = strMethodName.startsWith("test");
 
                 final PhpPsiElement previous = method.getPrevPsiSibling();
-                if (!(previous instanceof PhpDocCommentImpl)) {
+                if (!(previous instanceof PhpDocComment)) {
                     return;
                 }
 

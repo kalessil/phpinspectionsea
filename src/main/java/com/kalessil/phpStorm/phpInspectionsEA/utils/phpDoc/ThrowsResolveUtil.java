@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils.phpDoc;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocCommentImpl;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.tags.PhpDocTagImpl;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocReturnTag;
@@ -25,7 +25,7 @@ final public class ThrowsResolveUtil {
     static public ResolveType resolveThrownExceptions(@NotNull final Method method, @NotNull HashSet<PhpClass> declaredExceptions) {
         /* TODO: use method.getDocComment() */
         PhpPsiElement previous = method.getPrevPsiSibling();
-        if (!(previous instanceof PhpDocCommentImpl)) {
+        if (!(previous instanceof PhpDocComment)) {
             return ResolveType.NOT_RESOLVED;
         }
 

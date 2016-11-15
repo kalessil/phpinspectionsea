@@ -4,11 +4,15 @@ distributed as a PhpStorm plugin.
 Some facts about this project: https://www.openhub.net/p/phpinspectionsea
 
 To be tested: 
+PhpUnitTestsInspector.java (Inspection)
 CompactArgumentsInspector.java (Inspection)
 MustReturnSpecifiedTypeStrategy.java (Inspection)
 AssertEmptyStrategy.java (Inspection)
 AssertNotEmptyStrategy.java (Inspection)
 
+ExceptionsAnnotatingAndHandlingInspector.java (QF)
+OneTimeUseVariablesInspector.java (QF)
+SenselessProxyMethodInspector.java (QF)
 SwitchContinuationInLoopInspector.java (QF)
 OpAssignShortSyntaxInspector.java (QF)
 ArraySearchUsedAsInArrayInspector.java (QF)

@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.PhpContinueImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -80,7 +79,7 @@ public class SwitchContinuationInLoopInspector extends BasePhpInspection {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof PhpContinue) {
                 //noinspection ConstantConditions I' sure that NPE will not happen as we have hardcoded pattern
-                expression.replace(PhpPsiElementFactory.createFromText(project, PhpContinueImpl.class, "continue 2;"));
+                expression.replace(PhpPsiElementFactory.createFromText(project, PhpContinue.class, "continue 2;"));
             }
         }
     }

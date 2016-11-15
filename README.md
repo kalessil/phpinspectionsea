@@ -4,11 +4,13 @@ distributed as a PhpStorm plugin.
 Some facts about this project: https://www.openhub.net/p/phpinspectionsea
 
 To be tested: 
-PhpUnitTestsInspector.java (Inspection)
 CompactArgumentsInspector.java (Inspection)
 MustReturnSpecifiedTypeStrategy.java (Inspection)
+
+PhpUnitTestsInspector.java (Inspection)
 AssertEmptyStrategy.java (Inspection)
 AssertNotEmptyStrategy.java (Inspection)
+AssertBoolInvertedStrategy.java (Inspection)
 
 ExceptionsAnnotatingAndHandlingInspector.java (QF)
 OneTimeUseVariablesInspector.java (QF)
@@ -24,7 +26,6 @@ AmbiguousMemberInitializationInspector.java (QF)
 AssertInstanceOfStrategy.java (QF)
 AssertNotInstanceOfStrategy.java (QF)
 SubStrUsedAsArrayAccessInspector.java (QF)
-AssertBoolInvertedStrategy.java (Inspection)
 
 Inspections Lists (Type compatibility)
 ---
@@ -80,7 +81,6 @@ Inspections Lists (Compatibility)
 | Compatibility        | AliasFunctionsUsageInspection                   | Alias functions usage                               | yes |
 | Compatibility        | DeprecatedIniOptionsInspection                  | Deprecated configuration options                    | n/a |
 | Compatibility        | RandomApiMigrationInspection                    | Random API migration                                | yes |
-| Compatibility        | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | yes |
 | Compatibility        | MktimeUsageInspection                           | 'gmmktime()'/'mktime()' usage                       | yes |
 | Compatibility        | FopenBinaryUnsafeUsageInspection                | Binary-unsafe fopen usage                           | yes       | yes | no   |
 
@@ -124,6 +124,7 @@ Inspections Lists (Language level migration)
 | Language level migration | dirnameCallOnFileConstantInspection             | __DIR__ can be used                                 | yes |
 | Language level migration | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes |
 | Language level migration | ShortListSyntaxCanBeUsedInspection              | Short list syntax can be used                       | yes |     | yes | no   |
+| Language level migration | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | yes       | yes | no   |
 
 Inspections Lists (Architecture)
 ---

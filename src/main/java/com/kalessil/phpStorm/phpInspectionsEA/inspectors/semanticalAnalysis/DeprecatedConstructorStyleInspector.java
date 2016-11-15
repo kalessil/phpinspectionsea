@@ -29,18 +29,18 @@ public class DeprecatedConstructorStyleInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
-                final PhpClass objClass    = method.getContainingClass();
-                final String strMethodName = method.getName();
+                final PhpClass clazz    = method.getContainingClass();
+                final String methodName = method.getName();
                 if (
-                    null == objClass || objClass.isTrait() || objClass.isInterface() ||
-                    StringUtil.isEmpty(strMethodName) || null == method.getNameIdentifier()
+                    null == clazz || clazz.isTrait() || clazz.isInterface() ||
+                    StringUtil.isEmpty(methodName) || null == method.getNameIdentifier()
                 ) {
                     return;
                 }
 
-                final String className = objClass.getName();
-                if (strMethodName.equals(className)) {
-                    final String message    = messagePattern.replace("%s%", className);
+                final String className = clazz.getName();
+                if (methodName.equals(className)) {
+                    final String message = messagePattern.replace("%s%", className);
                     holder.registerProblem(method.getNameIdentifier(), message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
                 }
             }

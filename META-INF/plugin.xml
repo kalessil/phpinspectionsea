@@ -519,6 +519,10 @@ with a laptop.
         shortName="ShortListSyntaxCanBeUsedInspection"            displayName="Short list syntax can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ShortListSyntaxCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="DeprecatedConstructorStyleInspection"          displayName="Deprecated constructor style"
+        groupName="Language level migration"                      enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.DeprecatedConstructorStyleInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -567,10 +571,6 @@ with a laptop.
         shortName="AliasFunctionsUsageInspection"                   displayName="Alias functions usage"
         groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.AliasFunctionsUsageInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="DeprecatedConstructorStyleInspection"            displayName="Deprecated constructor style"
-        groupName="Compatibility"                                   enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.DeprecatedConstructorStyleInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DeprecatedIniOptionsInspection"                  displayName="Deprecated configuration options"
         groupName="Compatibility"                                   enabledByDefault="true" level="ERROR"

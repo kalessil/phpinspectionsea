@@ -9,7 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Parameter;
-import com.jetbrains.php.lang.psi.elements.impl.StringLiteralExpressionImpl;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.elements.impl.VariableImpl;
 import com.jetbrains.php.refactoring.PhpRefactoringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -46,12 +46,12 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                 /* extract variables names needed */
                 final HashSet<String> variablesCompacted = new HashSet<>();
                 for (PsiElement compactParameter : params) {
-                    if (!(compactParameter instanceof StringLiteralExpressionImpl)) {
+                    if (!(compactParameter instanceof StringLiteralExpression)) {
                         continue;
                     }
 
-                    final StringLiteralExpressionImpl expression = (StringLiteralExpressionImpl) compactParameter;
-                    final String name                            = expression.getContents();
+                    final StringLiteralExpression expression = (StringLiteralExpression) compactParameter;
+                    final String name                        = expression.getContents();
                     if (!StringUtil.isEmpty(name) && !PhpRefactoringUtil.containsLocalVariables(expression)) {
                         variablesCompacted.add(name);
                     }

@@ -14,10 +14,10 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.elements.impl.BinaryExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.ClassConstantReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.ClassReferenceImpl;
-import com.jetbrains.php.lang.psi.elements.impl.StringLiteralExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -85,7 +85,7 @@ public class AssertNotInstanceOfStrategy {
                         final String fqn = ((ClassReferenceImpl) this.classIdentity).getFQN();
                         if (!StringUtil.isEmpty(fqn)) {
                             final String pattern = "'" + fqn.replaceAll("\\\\", "\\\\\\\\") + "'"; // <- I hate Java escaping
-                            this.classIdentity = PhpPsiElementFactory.createFromText(project, StringLiteralExpressionImpl.class, pattern);
+                            this.classIdentity = PhpPsiElementFactory.createFromText(project, StringLiteralExpression.class, pattern);
                         }
                     }
                 }

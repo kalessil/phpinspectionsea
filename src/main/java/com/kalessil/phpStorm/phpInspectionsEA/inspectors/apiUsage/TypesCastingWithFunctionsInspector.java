@@ -9,12 +9,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.TernaryExpression;
-import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.ParenthesizedExpressionImpl;
-import com.jetbrains.php.lang.psi.elements.impl.StringLiteralExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +56,7 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
                     final String message       = messagePattern.replace("%s", suggestedType);
 
                     if (functionName.equals("settype")) {
-                        if (params[1] instanceof StringLiteralExpressionImpl) {
+                        if (params[1] instanceof StringLiteralExpression) {
                             holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED);
                         }
                     } else {

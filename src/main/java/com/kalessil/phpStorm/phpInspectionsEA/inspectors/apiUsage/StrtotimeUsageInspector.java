@@ -10,8 +10,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
-import com.jetbrains.php.lang.psi.elements.impl.StringLiteralExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -41,8 +41,8 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
 
                 /* handle case: strtotime("now") -> time() */
                 if (params.length == 1) {
-                    if (params[0] instanceof StringLiteralExpressionImpl) {
-                        final StringLiteralExpressionImpl pattern = (StringLiteralExpressionImpl) params[0];
+                    if (params[0] instanceof StringLiteralExpression) {
+                        final StringLiteralExpression pattern = (StringLiteralExpression) params[0];
                         if (pattern.getContents().equalsIgnoreCase("now")) {
                             holder.registerProblem(reference, messageUseTime, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseTimeFunctionLocalFix());
                         }

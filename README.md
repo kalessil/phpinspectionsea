@@ -4,12 +4,16 @@ distributed as a PhpStorm plugin.
 Some facts about this project: https://www.openhub.net/p/phpinspectionsea
 
 To be tested: 
+CompactArgumentsInspector.java (Inspection)
+
 ArraySearchUsedAsInArrayInspector.java (QF)
 IsNullFunctionUsageInspector.java (QF)
 NestedNotOperatorsInspector.java (QF)
 IfReturnReturnSimplificationInspector.java (QF)
 ImplicitMagicMethodCallInspector.java (QF, string cast)
 AmbiguousMemberInitializationInspector.java (QF)
+AssertInstanceOfStrategy.java (QF)
+AssertNotInstanceOfStrategy.java (QF)
 AssertBoolInvertedStrategy.java (Inspection)
 
 Inspections Lists (Type compatibility)

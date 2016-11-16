@@ -200,6 +200,6 @@ Inspections Lists (Performance)
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes |
 | Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes |
 | Performance          | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                                                          | yes       | no  | no  |
-| Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | n/a |
+| Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | n/a       | yes | n/a |
 | Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                          | n/a |
 | Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                    | yes       | yes | no  |

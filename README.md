@@ -133,13 +133,13 @@ Inspections Lists (Architecture)
 | Architecture         | BadExceptionsProcessingInspection               | Badly organized exception handling                  | n/a |
 | Architecture         | MoreThanThreeArgumentsInspection                | More than 3 parameters in callable                  | n/a |
 | Architecture         | CallableParameterUseCaseInTypeContextInspection | Callable parameter usage violates definition        | n/a |
-| Architecture         | ClassOverridesFieldOfSuperClassInspection       | Class overrides a field of a parent class           | no  |
+| Architecture         | ClassOverridesFieldOfSuperClassInspection       | Class overrides a field of a parent class           | n/a |
 | Architecture         | SingletonFactoryPatternViolationInspection      | Class violates singleton/factory pattern definition | n/a |
 | Architecture         | PrivateConstructorSemanticsInspection           | Private constructor semantics                       | n/a       | yes | n/a  |
 | Architecture         | LongInheritanceChainInspection                  | Long inheritance chain                              | n/a       | yes | n/a  |
 | Architecture         | PropertyCanBeStaticInspection                   | Property could be static                            | n/a       | yes | n/a  |
 | Architecture         | EmptyClassInspection                            | Empty class                                         | n/a       | yes | n/a  |
-| Architecture         | ClassReImplementsParentInterfaceInspection      | Class re-implements interface of a parent class     | yes |
+| Architecture         | ClassReImplementsParentInterfaceInspection      | Class re-implements interface of a parent class     | yes       | yes | no   |
 
 Inspections Lists (Probable bugs)
 ---
@@ -202,4 +202,4 @@ Inspections Lists (Performance)
 | Performance          | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                                                          | yes       | no  | no  |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | n/a |
 | Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                          | n/a |
-| Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                     | yes      | yes | no  |
+| Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                    | yes       | yes | no  |

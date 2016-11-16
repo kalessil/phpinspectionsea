@@ -67,10 +67,10 @@ Inspections Lists (PhpUnit)
 
 Inspections Lists (Unused)
 ---
-| Group                | Short Name                                      | Full Name                                           | Quick fix |
-| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
+| Group                | Short Name                                      | Full Name                                           | Quick fix | UTs | QFTs |
+| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
 | Unused               | OnlyWritesOnParameterInspection                 | Parameter/variable is not used                      | n/a |
-| Unused               | UselessUnsetInspection                          | Useless unset                                       | n/a |
+| Unused               | UselessUnsetInspection                          | Useless unset                                       | n/a       | yes | n/a  |
 | Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | yes |
 | Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a |
 

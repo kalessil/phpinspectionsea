@@ -15,7 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class UselessUnsetInspector extends BasePhpInspection {
-    private static final String strProblemNoSense = "Only local copy/reference will be unset. Probably this unset can be removed.";
+    private static final String message = "Only local copy/reference will be unset. Probably this unset can be removed.";
 
     @NotNull
     public String getShortName() {
@@ -36,36 +36,31 @@ public class UselessUnsetInspector extends BasePhpInspection {
                 this.inspectUsages(function.getParameters(), function);
             }
 
-            private void inspectUsages(Parameter[] arrParameters, PhpScopeHolder objScopeHolder) {
-                PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
+            private void inspectUsages(@NotNull Parameter[] parameters, @NotNull PhpScopeHolder objScopeHolder) {
+                final PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
 
-                for (Parameter objParameter : arrParameters) {
-                    String strParameterName = objParameter.getName();
-                    if (StringUtil.isEmpty(strParameterName)) {
+                for (Parameter parameter : parameters) {
+                    final String parameterName = parameter.getName();
+                    if (StringUtil.isEmpty(parameterName)) {
                         continue;
                     }
 
                     /* find all usages of a parameter */
-                    PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, strParameterName, false);
-                    if (arrUsages.length == 0) {
+                    PhpAccessVariableInstruction[] usages =
+                            PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, parameterName, false);
+                    if (usages.length == 0) {
                         continue;
                     }
 
                     /* iterate over usages */
-                    for (PhpAccessVariableInstruction objInstruction : arrUsages) {
-                        PsiElement objExpression = objInstruction.getAnchor();
+                    for (PhpAccessVariableInstruction instruction : usages) {
+                        final PsiElement expression = instruction.getAnchor();
                         /* target pattern detection */
-                        if (objExpression.getParent() instanceof PhpUnset) {
+                        if (expression.getParent() instanceof PhpUnset) {
                             /* choose warning target */
-                            int unsetParametersCount = 0;
-                            for (PsiElement objChild : objExpression.getParent().getChildren()) {
-                                if (objChild instanceof PhpExpression) {
-                                    ++unsetParametersCount;
-                                }
-                            }
-                            PsiElement objWaringTarget = (unsetParametersCount == 1 ? objExpression.getParent() : objExpression);
-
-                            holder.registerProblem(objWaringTarget, strProblemNoSense, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                            int unsetParametersCount = ((PhpUnset) expression.getParent()).getArguments().length;
+                            final PsiElement target  = (unsetParametersCount == 1 ? expression.getParent() : expression);
+                            holder.registerProblem(target, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                         }
                     }
                 }

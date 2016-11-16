@@ -160,7 +160,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a       | yes | n/a  |
 | Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | n/a |
 | Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result               | yes       | yes | no   |
-| Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes |
+| Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes       | yes | no   |
 | Probable bugs        | CompactArgumentsInspection                      | 'compact(...)' variables existence                        | n/a |
 | Probable bugs        | DispatchingThisIntoClosuresInspection           | Incorrect dispatching $this into closures                 | n/a |
 | Probable bugs        | DateIntervalSpecificationInspection             | Date interval specification validity                      | n/a       | yes | n/a  |

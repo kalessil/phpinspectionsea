@@ -15,7 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SwitchContinuationInLoopInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "In PHP continue inside switch behaves as break. Use 'continue 2;' for continuation of an external loop.";
+    private static final String message = "In PHP continue inside switch behaves as break. Use 'continue 2;' for continuation of an external loop.";
 
     @NotNull
     public String getShortName() {
@@ -32,7 +32,7 @@ public class SwitchContinuationInLoopInspector extends BasePhpInspection {
                     return;
                 }
 
-                boolean isSwitch = false;
+                boolean isSwitch     = false;
                 PsiElement objParent = continueStatement.getParent();
                 while (null != objParent) {
                     /* reached file or callable */
@@ -48,8 +48,7 @@ public class SwitchContinuationInLoopInspector extends BasePhpInspection {
                     /* when met a loop, complete analysis */
                     if (objParent instanceof For || objParent instanceof ForeachStatement || objParent instanceof While) {
                         if (isSwitch) {
-                            final UseContinue2LocalFix fixer = new UseContinue2LocalFix();
-                            holder.registerProblem(continueStatement, strProblemDescription, ProblemHighlightType.GENERIC_ERROR, fixer);
+                            holder.registerProblem(continueStatement, message, ProblemHighlightType.GENERIC_ERROR, new UseContinue2LocalFix());
                         }
 
                         return;

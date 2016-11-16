@@ -1,19 +1,18 @@
 <?php
 
-foreach(array() as $item) {
+foreach ([] as $item) {
     switch ($item) {
         case 0:
             continue 2;
 
         case 1:
-            continue; // <- reported
-
+            <error descr="In PHP continue inside switch behaves as break. Use 'continue 2;' for continuation of an external loop.">continue;</error>
 
         case 2:
             foreach (array() as $x) {
                 continue;
             }
-        break;
+            break;
 
         default:
             break;

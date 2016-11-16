@@ -13,7 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Consider using \\DateTime for DST safe date/time manipulation";
+    private static final String message = "Consider using \\DateTime for DST safe date/time manipulation";
 
     @NotNull
     public String getShortName() {
@@ -25,14 +25,14 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpBinaryExpression(BinaryExpression expression) {
-                PsiElement operation = expression.getOperation();
-                PsiElement left = expression.getLeftOperand();
-                PsiElement right = expression.getRightOperand();
+                final PsiElement operation = expression.getOperation();
+                final PsiElement left      = expression.getLeftOperand();
+                final PsiElement right     = expression.getRightOperand();
                 if (null == operation || null == left || null == right) {
                     return;
                 }
 
-                IElementType operationType = operation.getNode().getElementType();
+                final IElementType operationType = operation.getNode().getElementType();
                 if (
                     operationType == PhpTokenTypes.opMUL ||
                     operationType == PhpTokenTypes.opDIV ||
@@ -48,20 +48,20 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
                         )
                     );
                     if (isOneDayNumberUsed) {
-                        holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                 }
             }
 
             public void visitPhpSelfAssignmentExpression(SelfAssignmentExpression expression) {
-                PsiElement operation = expression.getOperation();
-                PsiElement left = expression.getVariable();
-                PsiElement right = expression.getValue();
+                final PsiElement operation = expression.getOperation();
+                final PsiElement left      = expression.getVariable();
+                final PsiElement right     = expression.getValue();
                 if (null == operation || null == left || null == right) {
                     return;
                 }
 
-                IElementType operationType = operation.getNode().getElementType();
+                final IElementType operationType = operation.getNode().getElementType();
                 if (
                     operationType == PhpTokenTypes.opMUL_ASGN ||
                     operationType == PhpTokenTypes.opDIV_ASGN ||
@@ -69,8 +69,8 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
                     operationType == PhpTokenTypes.opMINUS_ASGN ||
                     operationType == PhpTokenTypes.opPLUS_ASGN
                 ) {
-                    if (right.textMatches("24")) {
-                        holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    if (right.textMatches("24") || right.textMatches("86400")) {
+                        holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                 }
             }

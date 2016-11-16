@@ -16,8 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
-    private final LocalQuickFix fixQuick              = new TheLocalFix();
-    private static final String strProblemDescription = "__DIR__ should be used instead";
+    private static final String message = "__DIR__ should be used instead";
 
     @NotNull
     public String getShortName() {
@@ -43,7 +42,7 @@ public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
                 /* inspect given construct */
                 final String constant = ((ConstantReference) firstParameter).getName();
                 if (!StringUtil.isEmpty(constant) && constant.equals("__FILE__")) {
-                    holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.LIKE_DEPRECATED, fixQuick);
+                    holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
                 }
             }
         };

@@ -31,11 +31,11 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
 
     private static final HashMap<IElementType, IElementType> mapping = new HashMap<>();
     static {
-        // todo: check when JB added constants for %
         mapping.put(PhpTokenTypes.opPLUS,        PhpTokenTypes.opPLUS_ASGN);
         mapping.put(PhpTokenTypes.opMINUS,       PhpTokenTypes.opMINUS_ASGN);
         mapping.put(PhpTokenTypes.opMUL,         PhpTokenTypes.opMUL_ASGN);
         mapping.put(PhpTokenTypes.opDIV,         PhpTokenTypes.opDIV_ASGN);
+        mapping.put(PhpTokenTypes.opREM,         PhpTokenTypes.opREM_ASGN);
         mapping.put(PhpTokenTypes.opCONCAT,      PhpTokenTypes.opCONCAT_ASGN);
         mapping.put(PhpTokenTypes.opBIT_AND,     PhpTokenTypes.opBIT_AND_ASGN);
         mapping.put(PhpTokenTypes.opBIT_OR,      PhpTokenTypes.opBIT_OR_ASGN);
@@ -53,9 +53,9 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
                 /* try reaching operator in binary expression, expected as value */
                 if (value instanceof BinaryExpression) {
                     final BinaryExpression valueExpression = (BinaryExpression) value;
-                    final PsiElement objOperation          = valueExpression.getOperation();
-                    if (null != objOperation) {
-                        final IElementType operation  = objOperation.getNode().getElementType();
+                    final PsiElement operator              = valueExpression.getOperation();
+                    if (null != operator) {
+                        final IElementType operation  = operator.getNode().getElementType();
                         final PsiElement leftOperand  = valueExpression.getLeftOperand();
                         final PsiElement rightOperand = valueExpression.getRightOperand();
                         final PsiElement variable     = assignmentExpression.getVariable();
@@ -67,7 +67,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
                         ) {
                             final String replacement = "%v% %o%= %e%"
                                     .replace("%v%", leftOperand.getText())
-                                    .replace("%o%", objOperation.getText())
+                                    .replace("%o%", operator.getText())
                                     .replace("%e%", rightOperand.getText());
 
                             final String message = messagePattern.replace("%r%", replacement);
@@ -109,5 +109,4 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
             }
         }
     }
-
 }

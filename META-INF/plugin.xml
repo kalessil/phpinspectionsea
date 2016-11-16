@@ -129,10 +129,6 @@ with a laptop.
         groupName="Performance"                                     enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.CaseInsensitiveStringFunctionsMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="OpAssignShortSyntaxInspection"                 displayName="Short syntax for applied operation"
-        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.OpAssignShortSyntaxInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="AlterInForeachInspection"                      displayName="Slow alter in foreach"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.AlterInForeachInspector"/>
@@ -493,6 +489,10 @@ with a laptop.
         shortName="UsingInclusionReturnValueInspection"           displayName="Usage of inclusion return value"
         groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UsingInclusionReturnValueInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="OpAssignShortSyntaxInspection"                 displayName="Short syntax for applied operation"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.OpAssignShortSyntaxInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

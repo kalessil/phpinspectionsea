@@ -112,6 +112,7 @@ Inspections Lists (Code style)
 | Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | yes |
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes |
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | yes       | yes | no   |
+| Code style           | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                  | yes       | yes | no   |
 
 Inspections Lists (Language level migration)
 ---
@@ -199,7 +200,6 @@ Inspections Lists (Performance)
 | Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | n/a |
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes |
 | Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes |
-| Performance          | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                                                          | yes       | no  | no  |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | n/a       | yes | n/a |
 | Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                          | n/a |
 | Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                    | yes       | yes | no  |

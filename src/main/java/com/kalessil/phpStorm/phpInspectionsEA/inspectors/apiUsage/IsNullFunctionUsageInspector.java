@@ -18,8 +18,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class IsNullFunctionUsageInspector extends BasePhpInspection {
-    private static final String strProblemDescriptionIsNull  = "'null === ...' construction shall be used instead";
-    private static final String strProblemDescriptionNotNull = "'null !== ...' construction shall be used instead";
+    private static final String messageIdenticalToNull   = "'null === ...' construction shall be used instead";
+    private static final String messageNoIdenticalToNull = "'null !== ...' construction shall be used instead";
 
     @NotNull
     public String getShortName() {
@@ -32,23 +32,23 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /* check parameters amount and name */
-                final String strFunctionName = reference.getName();
-                final int parametersCount    = reference.getParameters().length;
-                if (1 != parametersCount || StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("is_null")) {
+                final String functionName = reference.getName();
+                final int parametersCount = reference.getParameters().length;
+                if (1 != parametersCount || StringUtil.isEmpty(functionName) || !functionName.equals("is_null")) {
                     return;
                 }
 
                 /* decide which message to use */
-                String strError = strProblemDescriptionIsNull;
+                String message = messageIdenticalToNull;
                 if (reference.getParent() instanceof UnaryExpression) {
-                    final PsiElement objOperation = ((UnaryExpression) reference.getParent()).getOperation();
-                    if (null != objOperation && PhpTokenTypes.opNOT == objOperation.getNode().getElementType()) {
-                        strError = strProblemDescriptionNotNull;
+                    final PsiElement operation = ((UnaryExpression) reference.getParent()).getOperation();
+                    if (null != operation && PhpTokenTypes.opNOT == operation.getNode().getElementType()) {
+                        message = messageNoIdenticalToNull;
                     }
                 }
 
                 /* report the issue */
-                holder.registerProblem(reference, strError, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
             }
         };
     }
@@ -71,13 +71,13 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
                 final PsiElement parent = expression.getParent();
-                boolean isInverted = false;
+                boolean isInverted      = false;
                 if (parent instanceof UnaryExpression) {
                     final UnaryExpression not = (UnaryExpression) parent;
                     isInverted = (null != not.getOperation() && PhpTokenTypes.opNOT == not.getOperation().getNode().getElementType());
                 }
 
-                final String pattern = isInverted ? "null !== null" : "null === null";
+                final String pattern         = isInverted ? "null !== null" : "null === null";
                 final PsiElement replacement = PhpPsiElementFactory.createFromText(project, BinaryExpression.class, pattern);
                 //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here
                 ((BinaryExpression) replacement).getRightOperand().replace(((FunctionReference) expression).getParameters()[0]);

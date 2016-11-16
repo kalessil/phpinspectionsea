@@ -29,14 +29,14 @@ SubStrUsedAsArrayAccessInspector.java (QF)
 
 Inspections Lists (Type compatibility)
 ---
-| Group                | Short Name                                      | Full Name                                           | Quick fix |
-| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
+| Group                | Short Name                                      | Full Name                                           | Quick fix | UTs | QFTs |
+| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
 | Type compatibility   | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                  | no  |
 | Type compatibility   | TypeUnsafeComparisonInspection                  | Type unsafe comparison                              | no  |
 | Type compatibility   | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search()' type unsafe usage | n/a |
 | Type compatibility   | ForeachSourceInspection                         | Foreach source to iterate over                      | n/a |
 | Type compatibility   | GenericObjectTypeUsageInspection                | Usage of object type in PhpDoc                      | n/a |
-| Type compatibility   | ArrayTypeOfParameterByDefaultValueInspection    | Parameter could be declared as array                | yes |
+| Type compatibility   | ArrayTypeOfParameterByDefaultValueInspection    | Parameter could be declared as array                | yes       | yes | no   |
 
 Inspections Lists (Control flow)
 ---

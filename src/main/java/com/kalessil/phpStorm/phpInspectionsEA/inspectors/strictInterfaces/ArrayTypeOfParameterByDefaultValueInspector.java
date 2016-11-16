@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -34,14 +35,15 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
             }
 
             private void inspectCallable (Function callable) {
-                if (null == callable.getNameIdentifier()) {
+                final PsiElement nameNode = callable.getNameIdentifier();
+                if (null == nameNode || 0 == nameNode.getTextLength()) {
                     return;
                 }
 
                 if (callable instanceof Method) {
                     final PhpClass clazz    = ((Method) callable).getContainingClass();
                     final String methodName = callable.getName();
-                    if (!StringUtil.isEmpty(methodName) && null != clazz && !clazz.isInterface()) {
+                    if (null != clazz && !clazz.isInterface() && !StringUtil.isEmpty(methodName)) {
                         /* ensure not reporting children classes, only parent definitions */
                         for (PhpClass parent : clazz.getSupers()) {
                             if (null != parent.findMethodByName(methodName)) {
@@ -54,12 +56,12 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
                 for (Parameter param : callable.getParameters()) {
                     if (this.canBePrependedWithArrayType(param)) {
                         final String message = messagePattern.replace("%p%", param.getName());
-                        holder.registerProblem(callable.getNameIdentifier(), message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(param));
+                        holder.registerProblem(nameNode, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(param));
                     }
                 }
             }
 
-            public boolean canBePrependedWithArrayType(@NotNull Parameter parameter) {
+            private boolean canBePrependedWithArrayType(@NotNull Parameter parameter) {
                 return parameter.isOptional() &&
                         parameter.getDeclaredType().isEmpty() &&
                         parameter.getDefaultValue() instanceof ArrayCreationExpression;

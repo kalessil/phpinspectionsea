@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class AliasFunctionsUsageInspector extends BasePhpInspection {
-    private static final String strProblemDescription  = "'%a%(...)' is an alias function. Use '%f%(...)' instead";
+    private static final String messagePattern = "'%a%(...)' is an alias function. Use '%f%(...)' instead";
 
     @NotNull
     public String getShortName() {
@@ -49,12 +49,12 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final String strFunctionName = reference.getName();
-                if (!StringUtil.isEmpty(strFunctionName) && mapping.containsKey(strFunctionName)) {
-                    final String suggestedName = mapping.get(strFunctionName);
+                final String functionName = reference.getName();
+                if (!StringUtil.isEmpty(functionName) && mapping.containsKey(functionName)) {
+                    final String suggestedName = mapping.get(functionName);
 
-                    final String message = strProblemDescription
-                            .replace("%a%", strFunctionName)
+                    final String message = messagePattern
+                            .replace("%a%", functionName)
                             .replace("%f%", suggestedName);
                     holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedName));
                 }

@@ -53,7 +53,7 @@ Inspections Lists (Control flow)
 | Control flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                       | yes |
 | Control flow         | DegradedSwitchInspection                        | Switch-case could be simplified                          | n/a |
 | Control flow         | ForeachInvariantsInspection                     | Foreach usage possible                                   | no        | yes | no   |
-| Control flow         | PdoApiUsageInspection                           | PDO api usage                                            | n/a |
+| Control flow         | PdoApiUsageInspection                           | PDO api usage                                            | n/a       | yes | no   |
 | Control flow         | OneTimeUseVariablesInspection                   | One-time use variables                                   | yes       | yes | no   |
 | Control flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                            | n/a       | yes | n/a  |
 | Control flow         | GetTypeMissUseInspection                        | 'gettype(...)' could be replaced with 'is_*(...)'        | yes       | yes | no   |
@@ -78,7 +78,6 @@ Inspections Lists (Compatibility)
 ---
 | Group                | Short Name                                      | Full Name                                           | Quick fix | UTs | QFTs |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
-| Compatibility        | AliasFunctionsUsageInspection                   | Alias functions usage                               | yes |
 | Compatibility        | DeprecatedIniOptionsInspection                  | Deprecated configuration options                    | n/a |
 | Compatibility        | RandomApiMigrationInspection                    | Random API migration                                | yes |
 | Compatibility        | MktimeUsageInspection                           | 'gmmktime()'/'mktime()' usage                       | yes |
@@ -125,6 +124,7 @@ Inspections Lists (Language level migration)
 | Language level migration | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes |
 | Language level migration | ShortListSyntaxCanBeUsedInspection              | Short list syntax can be used                       | yes |     | yes | no   |
 | Language level migration | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | yes       | yes | no   |
+| Language level migration | AliasFunctionsUsageInspection                   | Alias functions usage                               | yes       | yes | no   |
 
 Inspections Lists (Architecture)
 ---

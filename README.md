@@ -70,9 +70,10 @@ Inspections Lists (Unused)
 | Group                | Short Name                                      | Full Name                                           | Quick fix | UTs | QFTs |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
 | Unused               | OnlyWritesOnParameterInspection                 | Parameter/variable is not used                      | n/a |
-| Unused               | UselessUnsetInspection                          | Useless unset                                       | n/a       | yes | n/a  |
+| Unused               | UselessUnsetInspection                          | Useless unset                                       | no        | yes | no   |
 | Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | yes |
 | Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a |
+| Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes       | yes | n/a  |
 
 Inspections Lists (Compatibility)
 ---
@@ -92,7 +93,6 @@ Inspections Lists (Confusing constructs)
 | Confusing constructs | NestedTernaryOperatorInspection                 | Nested ternary operator                             | n/a |
 | Confusing constructs | UselessReturnInspection                         | Useless return                                      | n/a |
 | Confusing constructs | ParameterByRefWithDefaultInspection             | Parameter passed by reference has default value     | n/a |
-| Confusing constructs | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes |
 | Confusing constructs | ReferencingObjectsInspection                    | Referencing objects                                 | yes |
 
 Inspections Lists (Code style)

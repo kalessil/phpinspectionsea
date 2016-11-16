@@ -33,12 +33,12 @@ class B extends A
     /**
      * Some PhpDoc here
      */
-    public function doSomething1() // -> reported
+    public function <weak_warning descr="'doSomething1' method can be dropped, as it only calls parent's one">doSomething1</weak_warning>()
     {
         parent::doSomething1();
     }
 
-    public function doSomething2($x) // -> reported
+    public function <weak_warning descr="'doSomething2' method can be dropped, as it only calls parent's one">doSomething2</weak_warning>($x)
     {
         parent::doSomething2($x);
     }

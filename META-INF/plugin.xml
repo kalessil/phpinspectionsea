@@ -390,10 +390,6 @@ with a laptop.
         groupName="Confusing constructs"                          enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ClassMethodNameMatchesFieldNameInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="SenselessProxyMethodInspection"                displayName="Senseless proxy function"
-        groupName="Confusing constructs"                          enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SenselessProxyMethodInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="NestedTernaryOperatorInspection"               displayName="Nested ternary operator"
         groupName="Confusing constructs"                          enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.NestedTernaryOperatorInspector"/>
@@ -427,6 +423,10 @@ with a laptop.
         shortName="UnusedConstructorDependenciesInspection"       displayName="Unused constructor dependencies"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UnusedConstructorDependenciesInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="SenselessProxyMethodInspection"                displayName="Senseless proxy function"
+        groupName="Unused"                                        enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SenselessProxyMethodInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

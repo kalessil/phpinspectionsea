@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
@@ -39,7 +40,14 @@ public class PdoApiUsageInspector extends BasePhpInspection {
                 PsiElement successor    = null;
                 if (parent instanceof StatementImpl) {
                     predecessor = ((StatementImpl) parent).getPrevPsiSibling();
-                    successor   = ((StatementImpl) parent).getNextPsiSibling();
+                    while (predecessor instanceof PhpDocComment) {
+                        predecessor = ((PhpDocComment) predecessor).getPrevPsiSibling();
+                    }
+
+                    successor = ((StatementImpl) parent).getNextPsiSibling();
+                    while (successor instanceof PhpDocComment) {
+                        successor = ((PhpDocComment) successor).getNextPsiSibling();
+                    }
                 }
                 if (null != predecessor && predecessor.getFirstChild() instanceof AssignmentExpression) {
                     /* predecessor needs to be an assignment */

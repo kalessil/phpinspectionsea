@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.SecurityAdvisoriesInspector;
 
-public class SecurityAdvisoriesInspectorTest extends CodeInsightFixtureTestCase {
+final public class SecurityAdvisoriesInspectorTest extends CodeInsightFixtureTestCase {
     public void testMissingAdvisory() {
         myFixture.configureByFile("fixtures/securityAdvisories/needsAdvisories/composer.json");
         myFixture.enableInspections(SecurityAdvisoriesInspector.class);

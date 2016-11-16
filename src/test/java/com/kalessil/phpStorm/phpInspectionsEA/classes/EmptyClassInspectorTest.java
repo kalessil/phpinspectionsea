@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.classes;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.EmptyClassInspector;
 
-public class EmptyClassInspectorTest extends CodeInsightFixtureTestCase {
+final public class EmptyClassInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/classes/empty-class.php");
         myFixture.enableInspections(EmptyClassInspector.class);

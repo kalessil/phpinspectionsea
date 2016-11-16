@@ -5,7 +5,7 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ShortListSyntaxCanBeUsedInspector;
 
-public class ShortListSyntaxCanBeUsedInspectorTest extends CodeInsightFixtureTestCase {
+final public class ShortListSyntaxCanBeUsedInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
 

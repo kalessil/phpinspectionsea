@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.PrefixedIncDecrementEquivalentInspector;
 
-public class PrefixedIncDecrementEquivalentInspectorTest extends CodeInsightFixtureTestCase {
+final public class PrefixedIncDecrementEquivalentInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/codeStyle/prefixed-increment-decrement.php");
         myFixture.enableInspections(PrefixedIncDecrementEquivalentInspector.class);

@@ -162,6 +162,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes |
 | Probable bugs        | CompactArgumentsInspection                      | 'compact(...)' variables existence                        | n/a |
 | Probable bugs        | DispatchingThisIntoClosuresInspection           | Incorrect dispatching $this into closures                 | n/a |
+| Probable bugs        | DateIntervalSpecificationInspection             | Date interval specification validity                      | n/a       | yes | n/a  |
 
 Inspections Lists (Security)
 ---

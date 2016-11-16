@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DateIntervalSpecificationInspector  extends BasePhpInspection {
+public class DateIntervalSpecificationInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Date interval specification seems to be invalid";
 
     @NotNull
@@ -50,6 +50,7 @@ public class DateIntervalSpecificationInspector  extends BasePhpInspection {
                 if (null == classReference) {
                     return;
                 }
+                /* TODO: child classes support */
                 final String classFQN = classReference.getFQN();
                 if (StringUtil.isEmpty(classFQN) || !classFQN.equals("\\DateInterval")) {
                     return;

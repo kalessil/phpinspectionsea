@@ -190,7 +190,7 @@ Inspections Lists (Performance)
 | Performance          | AlterInForeachInspection                        | Slow alter in foreach                                                                       | n/a       | yes | n/a |
 | Performance          | ForeachOnArrayComponentsInspection              | 'array_keys(...)/array_values(...)' used as foreach array                                   | n/a |
 | Performance          | LowPerformanceArrayUniqueUsageInspection        | 'array_unique()' low performing usage                                                       | n/a |
-| Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused"                                                                  | yes |
+| Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused"                                                                  | yes       | yes | no  |
 | Performance          | FileFunctionMissUseInspection                   | 'file(...)' misused                                                                         | yes       | yes | no  |
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                              | n/a |
 | Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                    | no  |

@@ -18,7 +18,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Safely use single quotes instead";
+    private static final String message = "Safely use single quotes instead";
 
     @NotNull
     public String getShortName() {
@@ -30,18 +30,19 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpStringLiteralExpression(StringLiteralExpression expression) {
-                String strValueWithQuotes = expression.getText();
+                String valueWithQuotes = expression.getText();
                 if (
-                    strValueWithQuotes.charAt(0) != '"' ||
-                    strValueWithQuotes.indexOf('$') > 0 ||
-                    strValueWithQuotes.indexOf('\\') > 0 ||
-                    strValueWithQuotes.indexOf('\'') > 0
+                    valueWithQuotes.charAt(0) != '"' ||
+                    valueWithQuotes.indexOf('$') > 0 ||
+                    valueWithQuotes.indexOf('\\') > 0 ||
+                    valueWithQuotes.indexOf('\'') > 0
                 ) {
                     return;
                 }
 
+                /* annotation is doc-blocks must not be analyzed */
                 if (!(ExpressionSemanticUtil.getBlockScope(expression) instanceof PhpDocComment)) {
-                    holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                    holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                 }
             }
         };

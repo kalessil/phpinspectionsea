@@ -99,7 +99,7 @@ Inspections Lists (Code style)
 ---
 | Group                | Short Name                                      | Full Name                                           | Quick fix | UTs | QFTs |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
-| Code style           | UnNecessaryDoubleQuotesInspection               | Unnecessary double quotes                           | yes |
+| Code style           | UnNecessaryDoubleQuotesInspection               | Unnecessary double quotes                           | yes       | yes | no   |
 | Code style           | IfConditionalsWithoutCurvyBracketsInspection    | Missing or empty conditionals group statement       | no  |
 | Code style           | SenselessCommaInArrayDefinitionInspection       | Unnecessary last comma in array definition          | no  |
 | Code style           | AccessModifierPresentedInspection               | Access modifiers shall be defined                   | no  |

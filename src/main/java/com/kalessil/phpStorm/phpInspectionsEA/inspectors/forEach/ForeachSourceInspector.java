@@ -42,7 +42,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
             }
 
             private void analyseContainer(@NotNull PsiElement container) {
-                HashSet<String> types = new HashSet<>();
+                final HashSet<String> types = new HashSet<>();
                 TypeFromPlatformResolverUtil.resolveExpressionType(container, types);
                 if (0 == types.size()) {
                     holder.registerProblem(container, patternNotRecognized, ProblemHighlightType.WEAK_WARNING);
@@ -61,6 +61,12 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     holder.registerProblem(container, message, ProblemHighlightType.WEAK_WARNING);
 
                     types.remove(Types.strObject);
+                }
+
+                /* respect patter when returned array and bool|null for indicating failures*/
+                if (2 == types.size() && types.contains(Types.strArray)) {
+                    types.remove(Types.strBoolean);
+                    types.remove(Types.strNull);
                 }
 
                 /* do not process foreach-compatible types */

@@ -34,7 +34,7 @@ Inspections Lists (Type compatibility)
 | Type compatibility   | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                  | no  |
 | Type compatibility   | TypeUnsafeComparisonInspection                  | Type unsafe comparison                              | no  |
 | Type compatibility   | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search()' type unsafe usage | n/a |
-| Type compatibility   | ForeachSourceInspection                         | Foreach source to iterate over                      | n/a |
+| Type compatibility   | ForeachSourceInspection                         | Foreach source to iterate over                      | n/a       | yes | n/a  |
 | Type compatibility   | GenericObjectTypeUsageInspection                | Usage of object type in PhpDoc                      | n/a |
 | Type compatibility   | ArrayTypeOfParameterByDefaultValueInspection    | Parameter could be declared as array                | yes       | yes | no   |
 

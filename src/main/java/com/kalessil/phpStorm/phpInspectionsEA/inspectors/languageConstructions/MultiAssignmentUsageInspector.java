@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
@@ -26,7 +27,7 @@ import java.util.List;
 
 public class MultiAssignmentUsageInspector extends BasePhpInspection {
     private static final String messagePattern      = "Perhaps 'list(...) = %a%' can be used instead (check similar statements)";
-    private static final String messageImplicitList = "foreach (... as list(...)) is possible since PHP 5.5";
+    private static final String messageImplicitList = "foreach (... as list(...)) is possible";
 
     @NotNull
     public String getShortName() {
@@ -40,7 +41,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
             public void visitPhpMultiassignmentExpression(MultiassignmentExpression multiassignmentExpression) {
                 /* ensure php version is at least PHP 5.5 */
                 final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (phpVersion.compareTo(PhpLanguageLevel.PHP550) < 0) {
+                if (!phpVersion.hasFeature(PhpLanguageFeature.FOREACH_LIST)) {
                     return;
                 }
 

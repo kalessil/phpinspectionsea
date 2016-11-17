@@ -1,7 +1,7 @@
 <?php
 
     foreach ([] as $item) {
-        <weak_warning descr="foreach (... as list(...)) is possible since PHP 5.5">list($a, $b) = $item</weak_warning>;
+        <weak_warning descr="foreach (... as list(...)) is possible">list($a, $b) = $item</weak_warning>;
 
         $a = $item[0];
         /** PhpDoc should not break analysis */

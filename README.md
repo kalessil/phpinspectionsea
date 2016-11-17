@@ -154,7 +154,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | ImplicitMagicMethodCallInspection               | Implicit magic method calls                               | yes |
 | Probable bugs        | PrintfScanfArgumentsInspection                  | -printf/-scanf arguments count mismatches                 | n/a |
 | Probable bugs        | RealpathOnRelativePathsInspection               | Phar-incompatible 'realpath()' applied to a relative path | no  |
-| Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | n/a |
+| Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | n/a       | yes | n/a  |
 | Probable bugs        | SummerTimeUnsafeTimeManipulationInspection      | Summer-time unsafe date manipulations                     | n/a       | yes | n/a  |
 | Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | n/a       | yes | n/a  |
 | Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a       | yes | n/a  |

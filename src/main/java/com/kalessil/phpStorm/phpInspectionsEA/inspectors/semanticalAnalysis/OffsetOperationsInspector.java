@@ -19,9 +19,9 @@ import java.util.HashSet;
  * @author Vladimir Reznichenko
  */
 public class OffsetOperationsInspector extends BasePhpInspection {
-    private static final String strProblemUseSquareBrackets = "Using [ ] instead of { } makes possible to analyze this expression";
-    private static final String strProblemNoOffsetSupport   = "'%c%' may not support offset operations (or it's type not annotated properly: %t%)";
-    private static final String strProblemInvalidIndex      = "Resolved index type (%p%) is incompatible with possible %a%. Probably just proper type hinting needed.";
+    private static final String messageUseSquareBrackets = "Using [ ] instead of { } makes possible to analyze this expression";
+    private static final String patternNoOffsetSupport   = "'%c%' may not support offset operations (or it's type not annotated properly: %t%)";
+    private static final String patternInvalidIndex      = "Resolved index type (%p%) is incompatible with possible %a%. Probably just proper type hinting needed.";
 
     @NotNull
     public String getShortName() {
@@ -33,21 +33,21 @@ public class OffsetOperationsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpArrayAccessExpression(ArrayAccessExpression expression) {
-                PsiElement bracketNode = expression.getLastChild();
+                final PsiElement bracketNode = expression.getLastChild();
                 if (null == bracketNode || null == expression.getValue()) {
                     return;
                 }
 
-                // promote using []
+                // promote using [], TODO: use PhpTokenTypes.op*
                 if (bracketNode.getText().equals("}")) {
-                    holder.registerProblem(expression, strProblemUseSquareBrackets, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(expression, messageUseSquareBrackets, ProblemHighlightType.WEAK_WARNING);
                     return;
                 }
 
                 // ensure offsets operations are supported, do nothing if no types were resolved
-                HashSet<String> allowedIndexTypes = new HashSet<>();
+                final HashSet<String> allowedIndexTypes = new HashSet<>();
                 if (!isContainerSupportsArrayAccess(expression, allowedIndexTypes) && allowedIndexTypes.size() > 0) {
-                    final String message = strProblemNoOffsetSupport
+                    final String message = patternNoOffsetSupport
                             .replace("%t%", allowedIndexTypes.toString())
                             .replace("%c%", expression.getValue().getText());
                     holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR);
@@ -59,10 +59,10 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 // ensure index is one of (string, float, bool, null) when we acquired possible types information
                 // TODO: hash-elements e.g. array initialization
                 if (null != expression.getIndex()) {
-                    PhpPsiElement indexValue = expression.getIndex().getValue();
+                    final PhpPsiElement indexValue = expression.getIndex().getValue();
                     if (null != indexValue && allowedIndexTypes.size() > 0) {
                         // resolve types with custom resolver, native gives type sets which not comparable properly
-                        HashSet<String> possibleIndexTypes = new HashSet<>();
+                        final HashSet<String> possibleIndexTypes = new HashSet<>();
                         TypeFromPlatformResolverUtil.resolveExpressionType(indexValue, possibleIndexTypes);
 
                         // now check if any type provided and check sets validity
@@ -73,10 +73,10 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                             }
 
                             if (possibleIndexTypes.size() > 0) {
-                                String strError = strProblemInvalidIndex
+                                final String message = patternInvalidIndex
                                         .replace("%p%", possibleIndexTypes.toString())
                                         .replace("%a%", allowedIndexTypes.toString());
-                                holder.registerProblem(indexValue, strError, ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(indexValue, message, ProblemHighlightType.GENERIC_ERROR);
                             }
                         }
                         possibleIndexTypes.clear();
@@ -93,7 +93,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
     private boolean isContainerSupportsArrayAccess(@NotNull ArrayAccessExpression expression, @NotNull HashSet<String> indexTypesSupported) {
 
         // ok JB parses `$var[]= ...` always as array, lets make it working properly and report them later
-        PsiElement container = expression.getValue();
+        final PsiElement container = expression.getValue();
         if (null == container) {
             return false;
         }
@@ -106,7 +106,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         }
 
         // TODO: report to JB and get rid of this workarounds, move workaround into TypeFromPlatformResolverUtil.resolveExpressionType
-        HashSet<String> containerTypes = new HashSet<>();
+        final HashSet<String> containerTypes = new HashSet<>();
         if (isWrongResolvedArrayPush) {
             TypeFromPsiResolvingUtil.resolveExpressionType(
                     container,
@@ -225,7 +225,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             @NotNull HashSet<String> possibleIndexTypes,
             @NotNull HashSet<String> allowedIndexTypes
     ) {
-        HashSet<String> secureIterator = new HashSet<>();
+        final HashSet<String> secureIterator = new HashSet<>();
 
         final boolean isAnyObjectAllowed = allowedIndexTypes.contains(Types.strObject);
         final boolean isAnyScalarAllowed = allowedIndexTypes.contains(Types.strMixed);

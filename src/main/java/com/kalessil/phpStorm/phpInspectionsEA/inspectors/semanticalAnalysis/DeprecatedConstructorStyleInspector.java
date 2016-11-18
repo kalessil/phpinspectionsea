@@ -39,7 +39,7 @@ public class DeprecatedConstructorStyleInspector extends BasePhpInspection {
                 }
 
                 final String className = clazz.getName();
-                if (methodName.equals(className)) {
+                if (methodName.equals(className) && null == clazz.findOwnMethodByName("__construct")) {
                     final String message = messagePattern.replace("%s%", className);
                     holder.registerProblem(method.getNameIdentifier(), message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
                 }

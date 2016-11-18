@@ -7,6 +7,19 @@ class ClassWithDeprecatedConstructor
     }
 }
 
+class ClassWithBakCompatibleConstructor
+{
+    public function __construct()
+    {
+    }
+
+    public function ClassWithBakCompatibleConstructor()
+    {
+        $this->__construct();
+    }
+}
+
+
 trait TraitWithNameMatchingMethod
 {
     public function TraitWithNameMatchingMethod()

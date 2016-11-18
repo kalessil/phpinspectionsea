@@ -83,6 +83,3 @@ class aClass {
     preg_match('/[0-9a-zA-Z_]/', '');             //reported
 
     preg_match('/\R/',     '');                 //reported
-
-    preg_match('/deprecated/e', '');            //reported
-    preg_match('/non-existing/Zy', '');         //reported

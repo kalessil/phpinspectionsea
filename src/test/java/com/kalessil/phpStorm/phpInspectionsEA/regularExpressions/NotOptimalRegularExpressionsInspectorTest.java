@@ -9,4 +9,10 @@ public class NotOptimalRegularExpressionsInspectorTest extends CodeInsightFixtur
         myFixture.enableInspections(NotOptimalRegularExpressionsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
+
+    public void testProblematicModifiers() {
+        myFixture.configureByFile("fixtures/regularExpressions/problematic-modifiers.php");
+        myFixture.enableInspections(NotOptimalRegularExpressionsInspector.class);
+        myFixture.testHighlighting(true, false, true);
+    }
 }

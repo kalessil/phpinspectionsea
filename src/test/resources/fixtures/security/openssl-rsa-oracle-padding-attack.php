@@ -21,33 +21,42 @@ class OraclePaddingAttacks
         return $encrypted;
     }
 
-    public function pattern2()
+    public function pattern2($optionalParameter = OPENSSL_PKCS1_PADDING)
     {
-        $encrypted = '';
+        $encrypted     = '';
+        $localVariable = OPENSSL_PKCS1_PADDING;
 
         openssl_public_encrypt('', $encrypted, '');                         // <- reported
         openssl_public_encrypt('', $encrypted, '', OPENSSL_PKCS1_PADDING);  // <- reported
         openssl_public_encrypt('', $encrypted, '', self::PADDING);          // <- reported
         openssl_public_encrypt('', $encrypted, '', $this->padding);         // <- reported
+        openssl_public_encrypt('', $encrypted, '', $optionalParameter);     // <- reported
+        openssl_public_encrypt('', $encrypted, '', $localVariable);         // <- reported
 
         openssl_private_encrypt('', $encrypted, '');                        // <- reported
         openssl_private_encrypt('', $encrypted, '', OPENSSL_PKCS1_PADDING); // <- reported
         openssl_private_encrypt('', $encrypted, '', self::PADDING);         // <- reported
-        openssl_private_encrypt('', $encrypted, '', $this->padding);        // <- reported
+        openssl_private_encrypt('', $encrypted, '', $optionalParameter);    // <- reported
+        openssl_private_encrypt('', $encrypted, '', $localVariable);        // <- reported
     }
 
-    public function pattern3()
+    public function pattern3($optionalParameter = OPENSSL_PKCS1_PADDING)
     {
-        $encrypted = '';
+        $encrypted     = '';
+        $localVariable = OPENSSL_PKCS1_PADDING;
 
         openssl_public_decrypt('', $encrypted, '');                         // <- reported
         openssl_public_decrypt('', $encrypted, '', OPENSSL_PKCS1_PADDING);  // <- reported
         openssl_public_decrypt('', $encrypted, '', self::PADDING);          // <- reported
         openssl_public_decrypt('', $encrypted, '', $this->padding);         // <- reported
+        openssl_public_decrypt('', $encrypted, '', $optionalParameter);     // <- reported
+        openssl_public_decrypt('', $encrypted, '', $localVariable);         // <- reported
 
         openssl_private_decrypt('', $encrypted, '');                        // <- reported
         openssl_private_decrypt('', $encrypted, '', OPENSSL_PKCS1_PADDING); // <- reported
         openssl_private_decrypt('', $encrypted, '', self::PADDING);         // <- reported
         openssl_private_decrypt('', $encrypted, '', $this->padding);        // <- reported
+        openssl_private_decrypt('', $encrypted, '', $optionalParameter);    // <- reported
+        openssl_private_decrypt('', $encrypted, '', $localVariable);        // <- reported
     }
 }

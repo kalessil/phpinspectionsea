@@ -1,6 +1,6 @@
 <?php
 
-class OraclePaddingAttacks
+class OpensslRsaPaddingOracle
 {
     private $padding = OPENSSL_PKCS1_PADDING;
     const PADDING    = OPENSSL_PKCS1_PADDING;

@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.explosiveStrategy;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -21,7 +21,7 @@ public class GreedyCharactersSetCheckStrategy {
 
     static public void apply(final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
         if (!StringUtil.isEmpty(pattern) && pattern.indexOf('[') >= 0) {
-            Matcher regexMatcher = regexGreedyCharacterSet.matcher(pattern);
+            final Matcher regexMatcher = regexGreedyCharacterSet.matcher(pattern);
             while (regexMatcher.find()) {
                 final String set = regexMatcher.group(1);
                 String message   = null;

@@ -11,9 +11,10 @@ import com.jetbrains.php.lang.psi.elements.Variable;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.FunctionCallCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.PlainApiUseCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.classesStrategy.ShortClassDefinitionStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.explosiveStrategy.QuantifierCompoundsQuantifierCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.modifiersStrategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.AmbiguousAnythingTrimCheckStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.GreedyCharactersSetCheckStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.explosiveStrategy.GreedyCharactersSetCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.SequentialClassesCollapseCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -149,11 +150,13 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  * + [seq][seq]? => [seq]{1,2}
                  *
                  * + greedy character classes [\d\w][\D\W]
+                 * + dangerous (a+)+ pattern
                  */
                 SequentialClassesCollapseCheckStrategy.apply(regex, target, holder);
                 AmbiguousAnythingTrimCheckStrategy.apply(strFunctionName, reference, regex, target, holder);
                 //NonGreedyTransformCheckStrategy.apply(regex, target, holder);
                 GreedyCharactersSetCheckStrategy.apply(regex, target, holder);
+                QuantifierCompoundsQuantifierCheckStrategy.apply(regex, target, holder);
 
                 /*
                  * Probably bugs: nested tags check without /s

@@ -15,4 +15,10 @@ public class NotOptimalRegularExpressionsInspectorTest extends CodeInsightFixtur
         myFixture.enableInspections(NotOptimalRegularExpressionsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
+
+    public void testNestedQuantifiers() {
+        myFixture.configureByFile("fixtures/regularExpressions/quantifier-compounds-quantifier.php");
+        myFixture.enableInspections(NotOptimalRegularExpressionsInspector.class);
+        myFixture.testHighlighting(true, false, true);
+    }
 }

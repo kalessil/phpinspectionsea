@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.security;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.security;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -9,12 +9,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
-public class NonSecureParseStrUsageInspector  extends BasePhpInspection {
-    private static final String strProblemDescription = "Please provide second parameter to not influence globals";
+public class NonSecureExtractUsageInspector extends BasePhpInspection {
+    private static final String strProblemDescription = "Please provide second parameter to clearly state intended behaviour";
 
     @NotNull
     public String getShortName() {
-        return "NonSecureParseStrUsageInspection";
+        return "NonSecureExtractUsageInspection";
     }
 
     @Override
@@ -25,8 +25,7 @@ public class NonSecureParseStrUsageInspector  extends BasePhpInspection {
                 final String strFunction = reference.getName();
                 if (
                     1 == reference.getParameters().length &&
-                    !StringUtil.isEmpty(strFunction) &&
-                    (strFunction.equals("parse_str") || strFunction.equals("mb_parse_str"))
+                    !StringUtil.isEmpty(strFunction) && strFunction.equals("extract")
                 ) {
                     holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR);
                 }

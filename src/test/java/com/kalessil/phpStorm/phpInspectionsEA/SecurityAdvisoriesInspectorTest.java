@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.SecurityAdvisoriesInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.SecurityAdvisoriesInspector;
 
 final public class SecurityAdvisoriesInspectorTest extends CodeInsightFixtureTestCase {
     public void testMissingAdvisory() {

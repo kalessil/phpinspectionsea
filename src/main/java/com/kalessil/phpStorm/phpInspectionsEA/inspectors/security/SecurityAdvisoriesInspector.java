@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.security;
 
 import com.intellij.codeInspection.*;
 import com.intellij.json.psi.JsonObject;

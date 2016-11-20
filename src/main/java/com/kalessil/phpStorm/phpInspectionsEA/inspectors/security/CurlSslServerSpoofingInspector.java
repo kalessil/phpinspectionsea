@@ -6,17 +6,16 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
+import com.jetbrains.php.lang.psi.elements.ConstantReference;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-
 public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
-    private static final String messageVerifyHost = "CURLOPT_SSL_VERIFYHOST should be 2";
-    private static final String messageVerifyPeer = "CURLOPT_SSL_VERIFYPEER should be 1";
+    private static final String messageVerifyHost = "Exposes a connection to MITM attacks. Use 2 (default) to stay safe.";
+    private static final String messageVerifyPeer = "Exposes a connection to MITM attacks. Use true (default) to stay safe.";
 
     @NotNull
     public String getShortName() {

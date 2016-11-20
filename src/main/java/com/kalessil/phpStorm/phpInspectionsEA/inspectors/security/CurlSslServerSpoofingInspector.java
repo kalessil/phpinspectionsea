@@ -6,11 +6,13 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
-import com.jetbrains.php.lang.psi.elements.ConstantReference;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
     private static final String messageVerifyHost = "CURLOPT_SSL_VERIFYHOST should be 2";
@@ -71,6 +73,9 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                             final String optionName = ((ConstantReference) params[2]).getName();
                             disabled = !StringUtil.isEmpty(optionName) && !optionName.equalsIgnoreCase("true");
                         }
+                        if (!disabled && params[2] instanceof StringLiteralExpression) {
+                            disabled = ((StringLiteralExpression) params[2]).getContents().equals("0");
+                        }
                         if (!disabled && 1 == params[2].getTextLength() && params[2].getText().equals("0")) {
                             disabled = true;
                         }
@@ -102,6 +107,9 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                         if (value instanceof ConstantReference) {
                             final String optionName = ((ConstantReference) value).getName();
                             disabled = !StringUtil.isEmpty(optionName) && !optionName.equalsIgnoreCase("true");
+                        }
+                        if (!disabled && value instanceof StringLiteralExpression) {
+                            disabled = ((StringLiteralExpression) value).getContents().equals("0");
                         }
                         if (!disabled && 1 == value.getTextLength() && value.getText().equals("0")) {
                             disabled = true;

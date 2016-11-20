@@ -374,7 +374,7 @@ with a laptop.
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.SecurityAdvisoriesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-         shortName="CurlSslServerSpoofingInspection"               displayName="SSL server spoofing (MITM Attacks)"
+         shortName="CurlSslServerSpoofingInspection"               displayName="CURL: SSL server spoofing (MITM Attacks)"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.CurlSslServerSpoofingInspector"/>
 

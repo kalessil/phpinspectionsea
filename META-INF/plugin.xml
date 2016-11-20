@@ -356,23 +356,27 @@ with a laptop.
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="NonSecureUniqidUsageInspection"                displayName="Insecure 'uniqid(...)' usage"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
-         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.security.NonSecureUniqidUsageInspector"/>
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureUniqidUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="NonSecureParseStrUsageInspection"              displayName="Insecure 'parse_str(...)' usage"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
-         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.security.NonSecureParseStrUsageInspector"/>
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureParseStrUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="NonSecureExtractUsageInspection"               displayName="Insecure 'extract(...)' usage"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
-         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.security.NonSecureExtractUsageInspector"/>
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureExtractUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="UntrustedInclusionInspection"                  displayName="Untrusted files inclusion"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
-         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UntrustedInclusionInspector"/>
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.UntrustedInclusionInspector"/>
     <localInspection language="JSON" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="SecurityAdvisoriesInspection"                  displayName="Security advisories for Composer packages"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
-         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.SecurityAdvisoriesInspector"/>
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.SecurityAdvisoriesInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="CurlSslServerSpoofingInspection"               displayName="SSL server spoofing (MITM Attacks)"
+         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.CurlSslServerSpoofingInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

@@ -2,5 +2,5 @@
   "name":        "",
   "description": "",
   "license":     "",
-  <error descr="Please add roave/security-advisories:dev-master as a firewall for vulnerable components">"require"</error>: {}
+  <warning descr="Please add roave/security-advisories:dev-master as a firewall for vulnerable components">"require"</warning>: {}
 }

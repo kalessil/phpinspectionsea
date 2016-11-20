@@ -57,7 +57,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                             if (componentEntry.getValue() instanceof JsonStringLiteral) {
                                 JsonStringLiteral version = (JsonStringLiteral) componentEntry.getValue();
                                 if (!version.getText().equals("\"dev-master\"")) {
-                                    holder.registerProblem(version, useMaster, ProblemHighlightType.GENERIC_ERROR);
+                                    holder.registerProblem(version, useMaster, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                                     return holder.getResultsArray();
                                 }
                             }
@@ -67,7 +67,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                     }
 
                     /* fire error message */
-                    holder.registerProblem(requireProperty.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(requireProperty.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return holder.getResultsArray();
                 }
 

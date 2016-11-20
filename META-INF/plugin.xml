@@ -371,7 +371,7 @@ with a laptop.
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.UntrustedInclusionInspector"/>
     <localInspection language="JSON" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="SecurityAdvisoriesInspection"                  displayName="Security advisories for Composer packages"
-         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         groupName="Security"                                      enabledByDefault="true" level="WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.SecurityAdvisoriesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="CurlSslServerSpoofingInspection"               displayName="CURL: SSL server spoofing (MITM Attacks)"

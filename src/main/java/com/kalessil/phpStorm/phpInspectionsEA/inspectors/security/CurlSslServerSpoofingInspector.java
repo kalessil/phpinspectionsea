@@ -61,7 +61,18 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                     }
 
                     if (constantName.equals("CURLOPT_SSL_VERIFYHOST")) {
-                        if (1 != params[2].getTextLength() || !params[2].getText().equals("2")) {
+                        boolean disabled = false;
+                        if (params[2] instanceof ConstantReference) {
+                            disabled = true;
+                        }
+                        if (!disabled && params[2] instanceof StringLiteralExpression) {
+                            disabled = !((StringLiteralExpression) params[2]).getContents().equals("2");
+                        }
+                        if (!disabled && 1 == params[2].getTextLength() && !params[2].getText().equals("2")) {
+                            disabled = true;
+                        }
+
+                        if (disabled) {
                             holder.registerProblem(parent, messageVerifyHost, ProblemHighlightType.GENERIC_ERROR);
                         }
                         return;
@@ -96,7 +107,18 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                     }
 
                     if (constantName.equals("CURLOPT_SSL_VERIFYHOST")) {
-                        if (1 != value.getTextLength() || !value.getText().equals("2")) {
+                        boolean disabled = false;
+                        if (value instanceof ConstantReference) {
+                            disabled = true;
+                        }
+                        if (!disabled && value instanceof StringLiteralExpression) {
+                            disabled = !((StringLiteralExpression) value).getContents().equals("2");
+                        }
+                        if (!disabled && 1 == value.getTextLength() && !value.getText().equals("2")) {
+                            disabled = true;
+                        }
+
+                        if (disabled) {
                             holder.registerProblem(parent, messageVerifyHost, ProblemHighlightType.GENERIC_ERROR);
                         }
                         return;

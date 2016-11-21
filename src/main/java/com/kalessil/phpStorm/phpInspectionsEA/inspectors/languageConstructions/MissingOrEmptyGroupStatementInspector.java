@@ -9,13 +9,13 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class IfConditionalsWithoutGroupStatementInspector extends BasePhpInspection {
+public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
     private static final String strProblemMissingBrackets = "Wrap the conditional body with group statement";
     private static final String strProblemEmptyBody       = "Empty group statement";
 
     @NotNull
     public String getShortName() {
-        return "IfConditionalsWithoutCurvyBracketsInspection";
+        return "MissingOrEmptyGroupStatementInspection";
     }
 
     @Override

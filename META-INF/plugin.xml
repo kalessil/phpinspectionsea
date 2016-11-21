@@ -438,9 +438,9 @@ with a laptop.
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnNecessaryDoubleQuotesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="IfConditionalsWithoutCurvyBracketsInspection"  displayName="Missing or empty conditionals group statement"
+        shortName="MissingOrEmptyGroupStatementInspection"        displayName="Missing or empty conditionals group statement"
         groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.IfConditionalsWithoutGroupStatementInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.MissingOrEmptyGroupStatementInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SenselessCommaInArrayDefinitionInspection"     displayName="Unnecessary last comma in array definition"
         groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"

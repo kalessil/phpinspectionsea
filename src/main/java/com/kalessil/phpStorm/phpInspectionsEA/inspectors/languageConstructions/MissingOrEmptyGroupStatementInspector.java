@@ -35,16 +35,27 @@ public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
                 this.checkBrackets(elseStatement);
             }
 
-            // public void visitPhpForeach(ForeachStatement foreach) {}
-            // public void visitPhpFor(For forStatement) {}
-            // public void visitPhpWhile(While whileStatement) {}
-            // public void visitPhpDoWhile(DoWhile doWhileStatement) {}
+            public void visitPhpForeach(ForeachStatement foreach) {
+                this.checkBrackets(foreach);
+            }
+
+            public void visitPhpFor(For forStatement) {
+                this.checkBrackets(forStatement);
+            }
+
+            public void visitPhpWhile(While whileStatement) {
+                this.checkBrackets(whileStatement);
+            }
+
+            public void visitPhpDoWhile(DoWhile doWhileStatement) {
+                this.checkBrackets(doWhileStatement);
+            }
 
             private void checkBrackets(@NotNull PhpPsiElement construct) {
                 final PsiElement target   = construct.getFirstChild();
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(construct);
                 if (null != body) {
-                    if (ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
+                    if (0 == ExpressionSemanticUtil.countExpressionsInGroup(body)) {
                         holder.registerProblem(target, messageEmptyBody, ProblemHighlightType.WEAK_WARNING);
                     }
                     return;

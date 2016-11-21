@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -10,8 +11,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
-    private static final String strProblemMissingBrackets = "Wrap the conditional body with group statement";
-    private static final String strProblemEmptyBody       = "Empty group statement";
+    private static final String messageMissingBrackets = "Wrap the conditional body with group statement";
+    private static final String messageEmptyBody       = "Empty group statement";
 
     @NotNull
     public String getShortName() {
@@ -34,22 +35,28 @@ public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
                 this.checkBrackets(elseStatement);
             }
 
-            private void checkBrackets(PhpPsiElement objConditional) {
-                GroupStatement objGroupStatement = ExpressionSemanticUtil.getGroupStatement(objConditional);
-                if (null != objGroupStatement) {
-                    if (ExpressionSemanticUtil.countExpressionsInGroup(objGroupStatement) == 0) {
-                        holder.registerProblem(objConditional.getFirstChild(), strProblemEmptyBody, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                    }
+            // public void visitPhpForeach(ForeachStatement foreach) {}
+            // public void visitPhpFor(For forStatement) {}
+            // public void visitPhpFor(For forStatement) {}
+            // public void visitPhpWhile(While whileStatement) {}
+            // public void visitPhpDoWhile(DoWhile doWhileStatement) {}
 
+            private void checkBrackets(@NotNull PhpPsiElement construct) {
+                final PsiElement target   = construct.getFirstChild();
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(construct);
+                if (null != body) {
+                    if (ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
+                        holder.registerProblem(target, messageEmptyBody, ProblemHighlightType.WEAK_WARNING);
+                    }
                     return;
                 }
 
                 /* community feedback: do not report "else if" constructions */
-                if (objConditional instanceof Else && objConditional.getFirstPsiChild() instanceof If) {
+                if (construct instanceof Else && construct.getFirstPsiChild() instanceof If) {
                     return;
                 }
 
-                holder.registerProblem(objConditional.getFirstChild(), strProblemMissingBrackets, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(target, messageMissingBrackets, ProblemHighlightType.WEAK_WARNING);
             }
         };
     }

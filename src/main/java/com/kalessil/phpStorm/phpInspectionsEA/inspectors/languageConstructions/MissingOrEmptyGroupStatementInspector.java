@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
-    private static final String messageMissingBrackets = "Wrap the conditional body with group statement";
+    private static final String messageMissingBrackets = "Wrap constructs' body with a group statement";
     private static final String messageEmptyBody       = "Empty group statement";
 
     @NotNull
@@ -36,7 +36,6 @@ public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
             }
 
             // public void visitPhpForeach(ForeachStatement foreach) {}
-            // public void visitPhpFor(For forStatement) {}
             // public void visitPhpFor(For forStatement) {}
             // public void visitPhpWhile(While whileStatement) {}
             // public void visitPhpDoWhile(DoWhile doWhileStatement) {}

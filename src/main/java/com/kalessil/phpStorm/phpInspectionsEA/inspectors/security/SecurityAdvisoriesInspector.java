@@ -10,6 +10,15 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     private static final String message   = "Please add roave/security-advisories:dev-master as a firewall for vulnerable components";
     private static final String useMaster = "Please use dev-master instead";

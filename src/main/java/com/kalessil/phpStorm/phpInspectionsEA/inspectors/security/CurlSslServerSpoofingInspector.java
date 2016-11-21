@@ -6,10 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
-import com.jetbrains.php.lang.psi.elements.ConstantReference;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,37 +57,13 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                     }
 
                     if (constantName.equals("CURLOPT_SSL_VERIFYHOST")) {
-                        boolean disabled = false;
-                        if (params[2] instanceof ConstantReference) {
-                            disabled = true;
-                        }
-                        if (!disabled && params[2] instanceof StringLiteralExpression) {
-                            disabled = !((StringLiteralExpression) params[2]).getContents().equals("2");
-                        }
-                        if (!disabled && 1 == params[2].getTextLength() && !params[2].getText().equals("2")) {
-                            disabled = true;
-                        }
-
-                        if (disabled) {
+                        if (isHostVerifyDisabled(params[2])) {
                             holder.registerProblem(parent, messageVerifyHost, ProblemHighlightType.GENERIC_ERROR);
                         }
                         return;
                     }
-
                     if (constantName.equals("CURLOPT_SSL_VERIFYPEER")) {
-                        boolean disabled = false;
-                        if (params[2] instanceof ConstantReference) {
-                            final String optionName = ((ConstantReference) params[2]).getName();
-                            disabled = !StringUtil.isEmpty(optionName) && !optionName.equalsIgnoreCase("true");
-                        }
-                        if (!disabled && params[2] instanceof StringLiteralExpression) {
-                            disabled = ((StringLiteralExpression) params[2]).getContents().equals("0");
-                        }
-                        if (!disabled && 1 == params[2].getTextLength() && params[2].getText().equals("0")) {
-                            disabled = true;
-                        }
-
-                        if (disabled) {
+                        if (isPeerVerifyDisabled(params[2])) {
                             holder.registerProblem(parent, messageVerifyPeer, ProblemHighlightType.GENERIC_ERROR);
                         }
                         return;
@@ -106,37 +79,13 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                     }
 
                     if (constantName.equals("CURLOPT_SSL_VERIFYHOST")) {
-                        boolean disabled = false;
-                        if (value instanceof ConstantReference) {
-                            disabled = true;
-                        }
-                        if (!disabled && value instanceof StringLiteralExpression) {
-                            disabled = !((StringLiteralExpression) value).getContents().equals("2");
-                        }
-                        if (!disabled && 1 == value.getTextLength() && !value.getText().equals("2")) {
-                            disabled = true;
-                        }
-
-                        if (disabled) {
+                        if (isHostVerifyDisabled(value)) {
                             holder.registerProblem(parent, messageVerifyHost, ProblemHighlightType.GENERIC_ERROR);
                         }
                         return;
                     }
-
                     if (constantName.equals("CURLOPT_SSL_VERIFYPEER")) {
-                        boolean disabled = false;
-                        if (value instanceof ConstantReference) {
-                            final String optionName = ((ConstantReference) value).getName();
-                            disabled = !StringUtil.isEmpty(optionName) && !optionName.equalsIgnoreCase("true");
-                        }
-                        if (!disabled && value instanceof StringLiteralExpression) {
-                            disabled = ((StringLiteralExpression) value).getContents().equals("0");
-                        }
-                        if (!disabled && 1 == value.getTextLength() && value.getText().equals("0")) {
-                            disabled = true;
-                        }
-
-                        if (disabled) {
+                        if (isPeerVerifyDisabled(value)) {
                             holder.registerProblem(parent, messageVerifyPeer, ProblemHighlightType.GENERIC_ERROR);
                         }
                         // return;
@@ -144,6 +93,43 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
 
                     // return;
                 }
+            }
+
+            private boolean isHostVerifyDisabled(@NotNull PsiElement value) {
+                if (value instanceof ConstantReference) {
+                    return true;
+                }
+                if (value instanceof StringLiteralExpression) {
+                    return  !((StringLiteralExpression) value).getContents().equals("2");
+                }
+                if (1 == value.getTextLength() && !value.getText().equals("2")) {
+                    return true;
+                }
+                if (value instanceof TernaryExpression) {
+                    final PsiElement trueVariant  = ((TernaryExpression) value).getTrueVariant();
+                    final PsiElement falseVariant = ((TernaryExpression) value).getFalseVariant();
+                    if (null != trueVariant && null != falseVariant) {
+                        return isHostVerifyDisabled(trueVariant) && isHostVerifyDisabled(falseVariant);
+                    }
+                }
+
+                return false;
+            }
+
+            private boolean isPeerVerifyDisabled(@NotNull PsiElement value) {
+                if (value instanceof ConstantReference) {
+                    final String optionName = ((ConstantReference) value).getName();
+                    return !StringUtil.isEmpty(optionName) && !optionName.equalsIgnoreCase("true");
+                }
+                if (value instanceof StringLiteralExpression) {
+                    return  ((StringLiteralExpression) value).getContents().equals("0");
+                }
+                //noinspection RedundantIfStatement
+                if (1 == value.getTextLength() && value.getText().equals("0")) {
+                    return true;
+                }
+
+                return false;
             }
         };
     }

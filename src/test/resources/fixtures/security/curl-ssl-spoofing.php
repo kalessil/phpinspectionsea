@@ -12,6 +12,7 @@ class OpensslRsaPaddingOracle
             <error descr="Exposes a connection to MITM attacks. Use 2 (default) to stay safe.">CURLOPT_SSL_VERIFYHOST => true</error>,
             <error descr="Exposes a connection to MITM attacks. Use 2 (default) to stay safe.">CURLOPT_SSL_VERIFYHOST => 1</error>,
             <error descr="Exposes a connection to MITM attacks. Use 2 (default) to stay safe.">CURLOPT_SSL_VERIFYHOST => '1'</error>,
+            <error descr="Exposes a connection to MITM attacks. Use 2 (default) to stay safe.">CURLOPT_SSL_VERIFYHOST => $debug ? '0' : '1'</error>,
             CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_SSL_VERIFYHOST => '2'
         ];
@@ -23,6 +24,7 @@ class OpensslRsaPaddingOracle
         <error descr="Exposes a connection to MITM attacks. Use 2 (default) to stay safe.">curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, true)</error>;
         <error descr="Exposes a connection to MITM attacks. Use 2 (default) to stay safe.">curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 1)</error>;
         <error descr="Exposes a connection to MITM attacks. Use 2 (default) to stay safe.">curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, '1')</error>;
+        <error descr="Exposes a connection to MITM attacks. Use 2 (default) to stay safe.">curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $debug ? '0' : '1')</error>;
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, '2');
 

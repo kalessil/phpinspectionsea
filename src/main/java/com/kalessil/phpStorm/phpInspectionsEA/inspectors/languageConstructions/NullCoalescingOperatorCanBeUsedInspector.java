@@ -14,9 +14,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.PhpIsset;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
@@ -24,6 +22,7 @@ import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection {
@@ -72,8 +71,8 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     String functionName = ((FunctionReference) issetCandidate).getName();
                     if (!StringUtil.isEmpty(functionName) && functionName.equals("array_key_exists")) {
                         /* when array_key_exists alternative value is not null, it intended to be so */
-                        final PsiElement objFalseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
-                        if (!(objFalseVariant instanceof ConstantReference) || !PhpLangUtil.isNull((ConstantReference) objFalseVariant)) {
+                        final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
+                        if (!PhpLanguageUtil.isNull(falseVariant)) {
                             return;
                         }
 

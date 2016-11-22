@@ -5,12 +5,11 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class AssertNotNullStrategy {
@@ -20,16 +19,8 @@ public class AssertNotNullStrategy {
         final PsiElement[] params = reference.getParameters();
         if (params.length > 1 && function.equals("assertNotSame")) {
             /* analyze parameters which makes the call equal to assertNotNull */
-            boolean isFirstNull = false;
-            if (params[0] instanceof ConstantReference) {
-                final String constantName = ((ConstantReference) params[0]).getName();
-                isFirstNull = !StringUtil.isEmpty(constantName) && constantName.equals("null");
-            }
-            boolean isSecondNull = false;
-            if (params[1] instanceof ConstantReference) {
-                final String referenceName = ((ConstantReference) params[1]).getName();
-                isSecondNull = !StringUtil.isEmpty(referenceName) && referenceName.equals("null");
-            }
+            final boolean isFirstNull  = PhpLanguageUtil.isNull(params[0]);
+            final boolean isSecondNull = PhpLanguageUtil.isNull(params[1]);
 
             /* fire assertNotNull warning when needed */
             if ((isFirstNull && !isSecondNull) || (!isFirstNull && isSecondNull)) {

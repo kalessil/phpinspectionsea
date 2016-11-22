@@ -5,7 +5,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.PhpIndex;
-import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionImpl;
@@ -261,7 +260,7 @@ final public class TypeFromPsiResolvingUtil {
             return;
         }
 
-        if (PhpLangUtil.isNull(objSubjectExpression)) {
+        if (PhpLanguageUtil.isNull(objSubjectExpression)) {
             objTypesSet.add(Types.strNull);
             return;
         }

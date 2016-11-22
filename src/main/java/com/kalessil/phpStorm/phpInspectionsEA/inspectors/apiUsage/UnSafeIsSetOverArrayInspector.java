@@ -5,12 +5,12 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import net.miginfocom.swing.MigLayout;
@@ -70,9 +70,9 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                 PsiElement conditionCandidate = issetInverted ? issetExpression.getParent() : issetExpression;
                 boolean isTernaryCondition = issetParent instanceof TernaryExpression && conditionCandidate == ((TernaryExpression) issetParent).getCondition();
                 if (isTernaryCondition) {
-                    TernaryExpression ternary = (TernaryExpression) issetParent;
-                    PsiElement nullCandidate  = issetInverted ? ternary.getTrueVariant() : ternary.getFalseVariant();
-                    if (nullCandidate instanceof ConstantReference && PhpLangUtil.isNull((ConstantReference) nullCandidate)) {
+                    final TernaryExpression ternary = (TernaryExpression) issetParent;
+                    final PsiElement nullCandidate  = issetInverted ? ternary.getTrueVariant() : ternary.getFalseVariant();
+                    if (PhpLanguageUtil.isNull(nullCandidate)) {
                         return;
                     }
                 }

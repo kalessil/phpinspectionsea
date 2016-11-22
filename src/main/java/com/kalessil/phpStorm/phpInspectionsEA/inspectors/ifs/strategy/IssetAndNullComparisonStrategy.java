@@ -5,13 +5,13 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
-import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.PhpIsset;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.jetbrains.php.lang.psi.elements.impl.BinaryExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.ConstantReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -43,13 +43,13 @@ final public class IssetAndNullComparisonStrategy {
                 }
 
                 /* store null test subjects */
-                if (right instanceof ConstantReferenceImpl && PhpLangUtil.isNull((ConstantReferenceImpl) right)) {
+                if (PhpLanguageUtil.isNull(right)) {
                     if (null != left) {
                         nullTestSubjects.put(expression, left);
                     }
                     continue;
                 }
-                if (left instanceof ConstantReferenceImpl && PhpLangUtil.isNull((ConstantReferenceImpl) left)) {
+                if (PhpLanguageUtil.isNull(left)) {
                     if (null != right) {
                         nullTestSubjects.put(expression, right);
                     }

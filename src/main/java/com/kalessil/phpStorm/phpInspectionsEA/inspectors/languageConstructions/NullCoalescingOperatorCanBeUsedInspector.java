@@ -15,9 +15,7 @@ import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.PhpIsset;
-import com.jetbrains.php.lang.psi.elements.TernaryExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -26,8 +24,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "' ... ?? ...' construction shall be used instead";
-    private static final String strProblemCandidate   = "isset(...) can be used instead (was wrongly reported in older inspections set)";
+    private static final String messageUseOperator = "' ... ?? ...' construction shall be used instead";
 
     @NotNull
     public String getShortName() {
@@ -46,29 +43,29 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
 
                 PsiElement issetCandidate = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
                 if (issetCandidate instanceof PhpIsset) {
-                    PhpIsset isset = (PhpIsset) issetCandidate;
-                    if (isset.getVariables().length != 1) {
+                    final PhpIsset isset = (PhpIsset) issetCandidate;
+                    if (1 != isset.getVariables().length) {
                         return;
                     }
 
                     /* construction requirements */
-                    final PsiElement objTrueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
-                    if (null == objTrueVariant) {
+                    final PsiElement trueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
+                    if (null == trueVariant) {
                         return;
                     }
-                    final PsiElement objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(isset.getVariables()[0]);
-                    if (null == objCondition) {
+                    final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(isset.getVariables()[0]);
+                    if (null == condition) {
                         return;
                     }
 
-                    if (PsiEquivalenceUtil.areElementsEquivalent(objCondition, objTrueVariant)) {
-                        holder.registerProblem(expression.getTrueVariant(), strProblemDescription, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                    if (PsiEquivalenceUtil.areElementsEquivalent(condition, trueVariant)) {
+                        holder.registerProblem(trueVariant, messageUseOperator, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                     }
                 }
 
                 /* older version might influence isset->array_key_exists in ternary conditions */
-                if (issetCandidate instanceof FunctionReferenceImpl) {
-                    String functionName = ((FunctionReference) issetCandidate).getName();
+                if (issetCandidate instanceof FunctionReference) {
+                    final String functionName = ((FunctionReference) issetCandidate).getName();
                     if (!StringUtil.isEmpty(functionName) && functionName.equals("array_key_exists")) {
                         /* when array_key_exists alternative value is not null, it intended to be so */
                         final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
@@ -76,7 +73,28 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                             return;
                         }
 
-                        holder.registerProblem(issetCandidate, strProblemCandidate, ProblemHighlightType.WEAK_WARNING);
+                        /* construction requirements */
+                        final PsiElement trueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
+                        if (trueVariant instanceof ArrayAccessExpression) {
+                            final ArrayAccessExpression array = (ArrayAccessExpression) trueVariant;
+                            final PsiElement container        = array.getValue();
+                            final ArrayIndex index            = array.getIndex();
+                            if (null == container || null == index || null == index.getValue()) {
+                                return;
+                            }
+
+                            /* match array_key_exists arguments with corresponding true variant */
+                            final PsiElement[] params = ((FunctionReference) issetCandidate).getParameters();
+                            if (
+                                null == params[0] || null == params[1] ||
+                                !PsiEquivalenceUtil.areElementsEquivalent(params[1], container) ||
+                                !PsiEquivalenceUtil.areElementsEquivalent(params[0], index.getValue())
+                            ) {
+                                return;
+                            }
+
+                            holder.registerProblem(trueVariant, messageUseOperator, ProblemHighlightType.WEAK_WARNING);
+                        }
                     }
                 }
             }

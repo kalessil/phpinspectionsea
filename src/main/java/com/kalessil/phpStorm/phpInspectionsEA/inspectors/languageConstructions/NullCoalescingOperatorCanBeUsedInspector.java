@@ -74,7 +74,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
 
                     /* inspection itself */
                     if (PsiEquivalenceUtil.areElementsEquivalent(condition, alternativeVariant)) {
-                        holder.registerProblem(alternativeVariant, messageUseOperator, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                        holder.registerProblem(alternativeVariant, messageUseOperator, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(isInverted));
                     }
 
                     return;
@@ -117,7 +117,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                             return;
                         }
 
-                        holder.registerProblem(primaryVariant, messageUseOperator, ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(primaryVariant, messageUseOperator, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(isInverted));
                     }
                 }
             }
@@ -125,6 +125,14 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
     }
 
     static private class TheLocalFix implements LocalQuickFix {
+        private boolean isInverted;
+
+        public TheLocalFix(boolean isInverted) {
+            super();
+
+            this.isInverted = isInverted;
+        }
+
         @NotNull
         @Override
         public String getName() {
@@ -139,12 +147,21 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement target           = descriptor.getPsiElement();
+            PsiElement target                 = descriptor.getPsiElement();
             final PsiElement ternaryCandidate = target.getParent();
             if (ternaryCandidate instanceof TernaryExpression) {
                 final TernaryExpression ternary = (TernaryExpression) ternaryCandidate;
                 if (null == ternary.getCondition()) {
                     return;
+                }
+
+                /* if inverted case, swap branches and use regular fixing procedure */
+                if (this.isInverted && null != ternary.getTrueVariant() && null != ternary.getFalseVariant()) {
+                    final PsiElement temp = ternary.getTrueVariant().copy();
+                    ternary.getTrueVariant().replace(ternary.getFalseVariant().copy());
+                    ternary.getFalseVariant().replace(temp);
+
+                    target = ternary.getTrueVariant();
                 }
 
                 /* swap parts */

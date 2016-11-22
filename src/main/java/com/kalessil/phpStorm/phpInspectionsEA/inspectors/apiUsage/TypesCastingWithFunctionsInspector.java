@@ -92,8 +92,11 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
             if (expression instanceof FunctionReference) {
                 PsiElement parameter = ((FunctionReference) expression).getParameters()[0];
                 if (parameter instanceof BinaryExpression || parameter instanceof UnaryExpression || parameter instanceof TernaryExpression) {
-                    final String castingParameter  = "(" + parameter.getText() + ")";
-                    parameter = PhpPsiElementFactory.createFromText(project, ParenthesizedExpression.class, castingParameter);
+                    PsiElement wrappedParameter = PhpPsiElementFactory.createFromText(project, ParenthesizedExpression.class, "(null)");
+                    if (null != wrappedParameter) {
+                        ((ParenthesizedExpression) wrappedParameter).getArgument().replace(parameter);
+                        parameter = wrappedParameter;
+                    }
                 }
 
                 final String castingPattern  = "(" + this.suggestedType + ") null";

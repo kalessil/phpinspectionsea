@@ -41,31 +41,35 @@ final public class ExpressionSemanticUtil {
     }
 
     /**
-     * @param objGroupStatement group expression to check
+     * @param groupStatement group expression to check
      * @return integer
      */
-    public static int countExpressionsInGroup(GroupStatement objGroupStatement) {
-        int intCountStatements = 0;
-        for (PsiElement objStatement : objGroupStatement.getChildren()) {
-            if (!(objStatement instanceof PhpPsiElement) || objStatement instanceof PhpDocTypeImpl) {
+    public static int countExpressionsInGroup(@NotNull GroupStatement groupStatement) {
+        int count = 0;
+        for (PsiElement statement : groupStatement.getChildren()) {
+            if (!(statement instanceof PhpPsiElement) || statement instanceof PhpDocTypeImpl) {
+                continue;
+            }
+            /* skip doc-blocks */
+            if (statement instanceof PhpDocComment){
                 continue;
             }
 
-            ++intCountStatements;
+            ++count;
         }
 
-        return intCountStatements;
+        return count;
     }
 
     @Nullable
-    public static PsiElement getLastStatement(@NotNull GroupStatement objGroupStatement) {
-        PsiElement objLastChild = objGroupStatement.getLastChild();
-        while (null != objLastChild) {
-            if (objLastChild instanceof PhpPsiElement) {
-                return objLastChild;
+    public static PsiElement getLastStatement(@NotNull GroupStatement groupStatement) {
+        PsiElement lastChild = groupStatement.getLastChild();
+        while (null != lastChild) {
+            if (lastChild instanceof PhpPsiElement && !(lastChild instanceof PhpDocComment)) {
+                return lastChild;
             }
 
-            objLastChild = objLastChild.getPrevSibling();
+            lastChild = lastChild.getPrevSibling();
         }
 
         return null;

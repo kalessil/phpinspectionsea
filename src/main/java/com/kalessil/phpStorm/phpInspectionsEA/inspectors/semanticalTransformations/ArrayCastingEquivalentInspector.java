@@ -36,7 +36,7 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
 
                 /* body has only assignment, which to be extracted */
                 GroupStatement objBody = ExpressionSemanticUtil.getGroupStatement(expression);
-                if (null == objBody || ExpressionSemanticUtil.countExpressionsInGroup(objBody) != 1) {
+                if (null == objBody || 1 != ExpressionSemanticUtil.countExpressionsInGroup(objBody)) {
                     return;
                 }
                 PsiElement objAction = ExpressionSemanticUtil.getLastStatement(objBody);

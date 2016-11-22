@@ -76,17 +76,17 @@ final public class ExpressionSemanticUtil {
     }
 
     /**
-     * @param objControlExpression expression to scan for group definition
+     * @param expression expression to scan for group definition
      * @return null|GroupStatement
      */
     @Nullable
-    public static GroupStatement getGroupStatement(PsiElement objControlExpression) {
-        for (PsiElement objChild : objControlExpression.getChildren()) {
-            if (!(objChild instanceof GroupStatement)) {
+    public static GroupStatement getGroupStatement(@NotNull PsiElement expression) {
+        for (PsiElement child : expression.getChildren()) {
+            if (!(child instanceof GroupStatement)) {
                 continue;
             }
 
-            return (GroupStatement) objChild;
+            return (GroupStatement) child;
         }
 
         return null;
@@ -101,21 +101,21 @@ final public class ExpressionSemanticUtil {
     }
 
     /**
-     * @param objExpression to process
+     * @param expression to process
      * @return inner expression
      */
     @Nullable
-    public static PsiElement getExpressionTroughParenthesis(@Nullable PsiElement objExpression) {
-        if (!(objExpression instanceof ParenthesizedExpression)) {
-            return objExpression;
+    public static PsiElement getExpressionTroughParenthesis(@Nullable PsiElement expression) {
+        if (!(expression instanceof ParenthesizedExpression)) {
+            return expression;
         }
 
-        PsiElement objInnerExpression = ((ParenthesizedExpression) objExpression).getArgument();
-        while (objInnerExpression instanceof ParenthesizedExpression) {
-            objInnerExpression = ((ParenthesizedExpression) objInnerExpression).getArgument();
+        PsiElement innerExpression = ((ParenthesizedExpression) expression).getArgument();
+        while (innerExpression instanceof ParenthesizedExpression) {
+            innerExpression = ((ParenthesizedExpression) innerExpression).getArgument();
         }
 
-        return objInnerExpression;
+        return innerExpression;
     }
 
     /**

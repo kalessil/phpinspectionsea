@@ -14,6 +14,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
@@ -42,6 +43,18 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 }
 
                 PsiElement issetCandidate = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+
+                /* condition can be inverted */
+                boolean isInverted = false;
+                if (issetCandidate instanceof UnaryExpression) {
+                    final PsiElement operator = ((UnaryExpression) issetCandidate).getOperation();
+                    if (null != operator && PhpTokenTypes.opNOT == operator.getNode().getElementType()) {
+                        isInverted = true;
+                        issetCandidate = ((UnaryExpression) issetCandidate).getValue();
+                    }
+                }
+
+
                 if (issetCandidate instanceof PhpIsset) {
                     final PhpIsset isset = (PhpIsset) issetCandidate;
                     if (1 != isset.getVariables().length) {
@@ -49,8 +62,9 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     }
 
                     /* construction requirements */
-                    final PsiElement trueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
-                    if (null == trueVariant) {
+                    PsiElement alternativeVariant = isInverted ? expression.getFalseVariant() : expression.getTrueVariant();
+                    alternativeVariant            = ExpressionSemanticUtil.getExpressionTroughParenthesis(alternativeVariant);
+                    if (null == alternativeVariant) {
                         return;
                     }
                     final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(isset.getVariables()[0]);
@@ -58,43 +72,52 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                         return;
                     }
 
-                    if (PsiEquivalenceUtil.areElementsEquivalent(condition, trueVariant)) {
-                        holder.registerProblem(trueVariant, messageUseOperator, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                    /* inspection itself */
+                    if (PsiEquivalenceUtil.areElementsEquivalent(condition, alternativeVariant)) {
+                        holder.registerProblem(alternativeVariant, messageUseOperator, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                     }
+
+                    return;
                 }
 
                 /* older version might influence isset->array_key_exists in ternary conditions */
                 if (issetCandidate instanceof FunctionReference) {
-                    final String functionName = ((FunctionReference) issetCandidate).getName();
-                    if (!StringUtil.isEmpty(functionName) && functionName.equals("array_key_exists")) {
-                        /* when array_key_exists alternative value is not null, it intended to be so */
-                        final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
-                        if (!PhpLanguageUtil.isNull(falseVariant)) {
+                    /* verify  general function requirements */
+                    final FunctionReference call = (FunctionReference) issetCandidate;
+                    final PsiElement[] params    = call.getParameters();
+                    final String functionName    = call.getName();
+                    if (2 != params.length || StringUtil.isEmpty(functionName) || !functionName.equals("array_key_exists")) {
+                        return;
+                    }
+
+                    /* when array_key_exists alternative value is not null, it intended to be so */
+                    PsiElement alternativeVariant = isInverted ? expression.getTrueVariant() : expression.getFalseVariant();
+                    alternativeVariant            = ExpressionSemanticUtil.getExpressionTroughParenthesis(alternativeVariant);
+                    if (!PhpLanguageUtil.isNull(alternativeVariant)) {
+                        return;
+                    }
+
+                    /* construction requirements */
+                    PsiElement primaryVariant = isInverted ? expression.getFalseVariant() : expression.getTrueVariant();
+                    primaryVariant            = ExpressionSemanticUtil.getExpressionTroughParenthesis(primaryVariant);
+                    if (primaryVariant instanceof ArrayAccessExpression) {
+                        final ArrayAccessExpression array = (ArrayAccessExpression) primaryVariant;
+                        final PsiElement container        = array.getValue();
+                        final ArrayIndex index            = array.getIndex();
+                        if (null == container || null == index || null == index.getValue()) {
                             return;
                         }
 
-                        /* construction requirements */
-                        final PsiElement trueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
-                        if (trueVariant instanceof ArrayAccessExpression) {
-                            final ArrayAccessExpression array = (ArrayAccessExpression) trueVariant;
-                            final PsiElement container        = array.getValue();
-                            final ArrayIndex index            = array.getIndex();
-                            if (null == container || null == index || null == index.getValue()) {
-                                return;
-                            }
-
-                            /* match array_key_exists arguments with corresponding true variant */
-                            final PsiElement[] params = ((FunctionReference) issetCandidate).getParameters();
-                            if (
-                                null == params[0] || null == params[1] ||
-                                !PsiEquivalenceUtil.areElementsEquivalent(params[1], container) ||
-                                !PsiEquivalenceUtil.areElementsEquivalent(params[0], index.getValue())
-                            ) {
-                                return;
-                            }
-
-                            holder.registerProblem(trueVariant, messageUseOperator, ProblemHighlightType.WEAK_WARNING);
+                        /* match array_key_exists arguments with corresponding true variant */
+                        if (
+                            null == params[0] || null == params[1] ||
+                            !PsiEquivalenceUtil.areElementsEquivalent(params[1], container) ||
+                            !PsiEquivalenceUtil.areElementsEquivalent(params[0], index.getValue())
+                        ) {
+                            return;
                         }
+
+                        holder.registerProblem(primaryVariant, messageUseOperator, ProblemHighlightType.WEAK_WARNING);
                     }
                 }
             }

@@ -4,19 +4,19 @@ class TestCaseAssertNullNotNull
 {
     public function test()
     {
-        $this->assertSame(1, null);
-        $this->assertSame(null, 1);
+        <weak_warning descr="assertNull should be used instead">$this->assertSame(1, null)</weak_warning>;
+        <weak_warning descr="assertNull should be used instead">$this->assertSame(null, 1)</weak_warning>;
 
-        $this->assertNotSame(1, null);
-        $this->assertNotSame(null, 1);
+        <weak_warning descr="assertNotNull should be used instead">$this->assertNotSame(1, null)</weak_warning>;
+        <weak_warning descr="assertNotNull should be used instead">$this->assertNotSame(null, 1)</weak_warning>;
     }
 
     public function testWithMessages()
     {
-        $this->assertSame(1, null, '');
-        $this->assertSame(null, 1, '');
+        <weak_warning descr="assertNull should be used instead">$this->assertSame(1, null, '')</weak_warning>;
+        <weak_warning descr="assertNull should be used instead">$this->assertSame(null, 1, '')</weak_warning>;
 
-        $this->assertNotSame(1, null, '');
-        $this->assertNotSame(null, 1, '');
+        <weak_warning descr="assertNotNull should be used instead">$this->assertNotSame(1, null, '')</weak_warning> ;
+        <weak_warning descr="assertNotNull should be used instead">$this->assertNotSame(null, 1, '')</weak_warning>;
     }
 }

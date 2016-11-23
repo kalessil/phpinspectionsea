@@ -15,8 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class SenselessTernaryOperatorInspector extends BasePhpInspection {
-    private static final String messageUseOperands       = "Can be replaced with a compared operand";
-    private static final String messageOperandsIdentical = "True and false variants are identical, the ternary makes no sense";
+    private static final String patternUseOperands = "Can be replaced with '%o%'";
 
     @NotNull
     public String getShortName() {
@@ -43,10 +42,7 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
                 }
 
                 final IElementType operationType = operation.getNode().getElementType();
-                final boolean isTargetOperation = (
-                    operationType == PhpTokenTypes.opEQUAL     || operationType == PhpTokenTypes.opIDENTICAL ||
-                    operationType == PhpTokenTypes.opNOT_EQUAL || operationType == PhpTokenTypes.opNOT_IDENTICAL
-                );
+                final boolean isTargetOperation  = operationType == PhpTokenTypes.opEQUAL || operationType == PhpTokenTypes.opIDENTICAL;
                 if (!isTargetOperation) {
                     return;
                 }
@@ -69,7 +65,8 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
                     return;
                 }
 
-                holder.registerProblem(expression, messageUseOperands, ProblemHighlightType.WEAK_WARNING);
+                final String message = patternUseOperands.replace("%o%", rightOperand.getText());
+                holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING);
             }
         };
     }

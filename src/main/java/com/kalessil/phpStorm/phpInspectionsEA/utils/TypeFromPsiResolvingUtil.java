@@ -255,7 +255,7 @@ final public class TypeFromPsiResolvingUtil {
 
     /** Will resolve constants references */
     private static void resolveConstantReference (ConstantReference objSubjectExpression, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
-        if (ExpressionSemanticUtil.isBoolean(objSubjectExpression)) {
+        if (PhpLanguageUtil.isBoolean(objSubjectExpression)) {
             objTypesSet.add(Types.strBoolean);
             return;
         }

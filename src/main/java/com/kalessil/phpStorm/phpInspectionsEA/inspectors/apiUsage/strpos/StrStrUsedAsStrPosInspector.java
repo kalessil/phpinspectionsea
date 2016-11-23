@@ -8,18 +8,18 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
 public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String strProblemDescription  = "'false %o% %f%(%s%, %p%)' should be used instead";
+    private static final String messagePattern = "'false %o% %f%(%s%, %p%)' should be used instead (saves memory)";
 
     @NotNull
     public String getShortName() {
@@ -39,7 +39,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /* check if it's the target function */
                 final String strFunctionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
+                final PsiElement[] params    = reference.getParameters();
                 if (params.length < 2 || StringUtil.isEmpty(strFunctionName) || !mapping.containsKey(strFunctionName)) {
                     return;
                 }
@@ -61,9 +61,9 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                             }
 
                             /* verify if operand is a boolean and report an issue */
-                            if (secondOperand instanceof ConstantReference && ExpressionSemanticUtil.isBoolean((ConstantReference) secondOperand)) {
+                            if (PhpLanguageUtil.isBoolean(secondOperand)) {
                                 final String operator = operation.getText();
-                                final String message = strProblemDescription
+                                final String message = messagePattern
                                         .replace("%o%", operator.length() == 2 ? operator + "=": operator)
                                         .replace("%f%", mapping.get(strFunctionName))
                                         .replace("%s%", params[0].getText())
@@ -79,7 +79,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
 
                 /* checks NON-implicit boolean comparison patternS */
                 if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
-                    final String message = strProblemDescription
+                    final String message = messagePattern
                             .replace("%o%", reference.getParent() instanceof UnaryExpression ? "===": "!==")
                             .replace("%f%", mapping.get(strFunctionName))
                             .replace("%s%", params[0].getText())

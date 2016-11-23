@@ -185,7 +185,7 @@ Inspections Lists (Performance)
 | Performance          | CountOnPropelCollectionInspection               | 'count(...)' calls on Propel collection                                                     | n/a |
 | Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                               | n/a |
 | Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                            | n/a |
-| Performance          | StrStrUsedAsStrPosInspection                    | 'strstr(...)/stristr(...)' could be replaced with 'strpos(...)/stripos(...)'                | no  |
+| Performance          | StrStrUsedAsStrPosInspection                    | 'strstr(...)/stristr(...)' could be replaced with 'strpos(...)/stripos(...)'                | no        | yes | no  | 
 | Performance          | StrNcmpUsedAsStrPosInspection                   | 'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)'           | no  |
 | Performance          | SubStrUsedAsStrPosInspection                    | 'substr(...)' could be replaced with 'strpos(...)'                                          | no  |
 | Performance          | StrTrUsageAsStrReplaceInspection                | 'strtr(...)' could be replaced with 'str_replace(...)'                                      | no  |

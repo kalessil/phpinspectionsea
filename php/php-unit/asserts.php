@@ -4,8 +4,6 @@ class TestCase
 {
     public function testNormalization()
     {
-        $this->assertFalse(!$y);            // <- reported assertNotFalse
-
         $this->assertTrue(false == $x);     // <- reported assertEquals
         $this->assertNotFalse(false === $x);// <- reported assertSame
         $this->assertTrue(false != $x);     // <- reported assertNotEquals
@@ -19,8 +17,6 @@ class TestCase
 
     public function testNormalizationWithMessage()
     {
-        $this->assertFalse(!$y, '');            // <- reported assertNotFalse
-
         $this->assertTrue(false == $x, '');     // <- reported assertEquals
         $this->assertNotFalse(false === $x, '');// <- reported assertSame
         $this->assertTrue(false != $x, '');     // <- reported assertNotEquals
@@ -57,16 +53,10 @@ class TestCase
         $this->assertFalse(empty($x));     // <- reported assertNotEmpty
         $this->assertTrue(empty($x));      // <- reported assertEmpty
         $this->assertNotFalse(empty($x));  // <- reported assertEmpty
-
-        $this->assertSame(false, 0);        // <- reported assertFalse
-        $this->assertNotSame(false, 0);     // <- reported assertNotFalse
     }
 
     public function testWithMessages()
     {
-        $this->assertSame(false, 0, '');       // <- reported assertFalse
-        $this->assertNotSame(false, 0, '');    // <- reported assertNotFalse
-
         $this->assertNotTrue(empty($x), '');   // <- reported assertNotEmpty
         $this->assertFalse(empty($x), '');     // <- reported assertNotEmpty
         $this->assertTrue(empty($x), '');      // <- reported assertEmpty

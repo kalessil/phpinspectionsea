@@ -14,4 +14,9 @@ final public class PhpUnitTestsInspectorTest extends CodeInsightFixtureTestCase 
         myFixture.enableInspections(PhpUnitTestsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
+    public void testIfFindsAssetFalseNotFalsePatterns() {
+        myFixture.configureByFile("fixtures/phpUnit/assert-false-not-false.php");
+        myFixture.enableInspections(PhpUnitTestsInspector.class);
+        myFixture.testHighlighting(true, false, true);
+    }
 }

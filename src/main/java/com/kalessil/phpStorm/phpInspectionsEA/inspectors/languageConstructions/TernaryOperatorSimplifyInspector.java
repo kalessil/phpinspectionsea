@@ -27,7 +27,7 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
             public void visitPhpTernaryExpression(TernaryExpression expression) {
                 final PsiElement trueVariant  = expression.getTrueVariant();
                 final PsiElement falseVariant = expression.getFalseVariant();
-                /* if both variants are identical, senseless ternary operator will spot it */
+                /* if both variants are identical, nested ternary inspection will spot it */
                 if (!PhpLanguageUtil.isBoolean(trueVariant) || !PhpLanguageUtil.isBoolean(falseVariant)) {
                     return;
                 }
@@ -35,7 +35,7 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                 PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
                 /* TODO: resolve type of other expressions */
                 if (condition instanceof BinaryExpression) {
-                    holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING);
                 }
             }
         };

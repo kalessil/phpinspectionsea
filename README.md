@@ -43,7 +43,7 @@ Inspections Lists (Control flow)
 | Group                | Short Name                                      | Full Name                                                | Quick fix | UTs | QFTs |
 | :------------------- | :-------------------------------------------    | :------------------------------------------------------- | --------: | --: | ---: |
 | Control flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                       | no        | yes | no   |
-| Control flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                     | no  |
+| Control flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                     | no        | yes | no   |
 | Control flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                     | yes       | yes | no   |
 | Control flow         | DefaultValueInElseBranchInspection              | Default value is hidden in else branch                   | no  |
 | Control flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                | n/a |
@@ -86,9 +86,9 @@ Inspections Lists (Compatibility)
 
 Inspections Lists (Confusing constructs)
 ---
-| Group                | Short Name                                      | Full Name                                           | Quick fix |
-| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: |
-| Confusing constructs | SenselessTernaryOperatorInspection              | Suspicious ternary operator                         | n/a |
+| Group                | Short Name                                      | Full Name                                           | Quick fix | UTs | QFTs |
+| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
+| Confusing constructs | SenselessTernaryOperatorInspection              | Suspicious ternary operator                         | n/a       | yes | n/a  |
 | Confusing constructs | ClassMethodNameMatchesFieldNameInspection       | Method name matches existing field name             | n/a |
 | Confusing constructs | NestedTernaryOperatorInspection                 | Nested ternary operator                             | n/a |
 | Confusing constructs | UselessReturnInspection                         | Useless return                                      | n/a |

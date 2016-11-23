@@ -15,7 +15,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class SenselessTernaryOperatorInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Can be replaced with comparison operand";
+    private static final String messageUseOperands       = "Can be replaced with a compared operand";
+    private static final String messageOperandsIdentical = "True and false variants are identical, the ternary makes no sense";
 
     @NotNull
     public String getShortName() {
@@ -27,51 +28,48 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpTernaryExpression(TernaryExpression expression) {
-                final PsiElement objTrueVariant = expression.getTrueVariant();
-                final PsiElement objFalseVariant = expression.getFalseVariant();
-                final PsiElement objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
-                if (null == objTrueVariant || null == objFalseVariant || null == objCondition) {
+                final PsiElement trueVariant  = expression.getTrueVariant();
+                final PsiElement falseVariant = expression.getFalseVariant();
+                final PsiElement condition    = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+                /* TODO: resolve type of other expressions */
+                if (null == trueVariant || null == falseVariant || !(condition instanceof BinaryExpression)) {
                     return;
                 }
 
-                if (!(objCondition instanceof BinaryExpression)) {
-                    return;
-                }
-                PsiElement objOperation = ((BinaryExpression) objCondition).getOperation();
-                if (null == objOperation) {
+                final BinaryExpression binaryExpression = (BinaryExpression) condition;
+                final PsiElement operation              = binaryExpression.getOperation();
+                if (null == operation) {
                     return;
                 }
 
-                IElementType objOperationType = objOperation.getNode().getElementType();
+                final IElementType operationType = operation.getNode().getElementType();
                 final boolean isTargetOperation = (
-                    objOperationType == PhpTokenTypes.opEQUAL ||
-                    objOperationType == PhpTokenTypes.opIDENTICAL ||
-                    objOperationType == PhpTokenTypes.opNOT_EQUAL ||
-                    objOperationType == PhpTokenTypes.opNOT_IDENTICAL
+                    operationType == PhpTokenTypes.opEQUAL     || operationType == PhpTokenTypes.opIDENTICAL ||
+                    operationType == PhpTokenTypes.opNOT_EQUAL || operationType == PhpTokenTypes.opNOT_IDENTICAL
                 );
                 if (!isTargetOperation) {
                     return;
                 }
 
-                PsiElement objLeftOperand = ((BinaryExpression) objCondition).getLeftOperand();
-                PsiElement objRightOperand = ((BinaryExpression) objCondition).getRightOperand();
-                if (null == objLeftOperand || null == objRightOperand) {
+                final PsiElement leftOperand  = binaryExpression.getLeftOperand();
+                final PsiElement rightOperand = binaryExpression.getRightOperand();
+                if (null == leftOperand || null == rightOperand) {
                     return;
                 }
 
                 final boolean isLeftPartReturned = (
-                    PsiEquivalenceUtil.areElementsEquivalent(objLeftOperand, objTrueVariant) ||
-                    PsiEquivalenceUtil.areElementsEquivalent(objLeftOperand, objFalseVariant)
+                    PsiEquivalenceUtil.areElementsEquivalent(leftOperand, trueVariant) ||
+                    PsiEquivalenceUtil.areElementsEquivalent(leftOperand, falseVariant)
                 );
                 final boolean isRightPartReturned = (isLeftPartReturned && (
-                    PsiEquivalenceUtil.areElementsEquivalent(objRightOperand, objFalseVariant) ||
-                    PsiEquivalenceUtil.areElementsEquivalent(objRightOperand, objTrueVariant)
+                    PsiEquivalenceUtil.areElementsEquivalent(rightOperand, falseVariant) ||
+                    PsiEquivalenceUtil.areElementsEquivalent(rightOperand, trueVariant)
                 ));
                 if (!isLeftPartReturned || !isRightPartReturned) {
                     return;
                 }
 
-                holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(expression, messageUseOperands, ProblemHighlightType.WEAK_WARNING);
             }
         };
     }

@@ -6,12 +6,12 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
@@ -34,8 +34,8 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
 
 
                 /* Skip ifs without group statement */
-                final GroupStatement objGroupStatement = ExpressionSemanticUtil.getGroupStatement(ifStatement);
-                if (null == objGroupStatement) {
+                final GroupStatement groupStatement = ExpressionSemanticUtil.getGroupStatement(ifStatement);
+                if (null == groupStatement) {
                     return;
                 }
 
@@ -43,15 +43,15 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 /* or condition is not an binary expression */
                 final PsiElement conditions = ExpressionSemanticUtil.getExpressionTroughParenthesis(ifStatement.getCondition());
                 /* or maybe try resolving type when not on-the-fly analysis is running */
-                /* TODO: function/method/property/constant reference, ternary and etc? Do we check not null?  */
+                /* TODO: resolve type of other expressions */
                 if (!(conditions instanceof BinaryExpression)) {
                     return;
                 }
 
 
                 /* next expression is not return */
-                final PsiElement objNextExpression = ifStatement.getNextPsiSibling();
-                if (!(objNextExpression instanceof PhpReturn)) {
+                final PsiElement nextExpression = ifStatement.getNextPsiSibling();
+                if (!(nextExpression instanceof PhpReturn)) {
                     return;
                 }
 
@@ -70,26 +70,23 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
 
 
                 /* or return not a boolean */
-                final PhpReturn secondReturn = (PhpReturn) objNextExpression;
-                final boolean isSecondReturnUsesBool = (
-                    secondReturn.getArgument() instanceof ConstantReference &&
-                    ExpressionSemanticUtil.isBoolean((ConstantReference) secondReturn.getArgument())
-                );
+                final PhpReturn secondReturn         = (PhpReturn) nextExpression;
+                final boolean isSecondReturnUsesBool = PhpLanguageUtil.isBoolean(secondReturn.getArgument());
                 if (!isSecondReturnUsesBool) {
                     return;
                 }
 
 
                 /* analyse if structure contains only one expression */
-                final int intCountExpressionsInCurrentGroup = ExpressionSemanticUtil.countExpressionsInGroup(objGroupStatement);
+                final int intCountExpressionsInCurrentGroup = ExpressionSemanticUtil.countExpressionsInGroup(groupStatement);
                 if (intCountExpressionsInCurrentGroup != 1) {
                     return;
                 }
                 /* and it's a return expression */
                 PhpReturn firstReturn = null;
-                for (PsiElement objIfChild : objGroupStatement.getChildren()) {
-                    if (objIfChild instanceof PhpReturn) {
-                        firstReturn = (PhpReturn) objIfChild;
+                for (PsiElement ifChild : groupStatement.getChildren()) {
+                    if (ifChild instanceof PhpReturn) {
+                        firstReturn = (PhpReturn) ifChild;
                         break;
                     }
                 }
@@ -99,17 +96,14 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
 
 
                 /* check if first return also boolean */
-                final boolean isFirstReturnUsesBool = (
-                    firstReturn.getArgument() instanceof ConstantReference &&
-                    ExpressionSemanticUtil.isBoolean((ConstantReference) firstReturn.getArgument())
-                );
+                final boolean isFirstReturnUsesBool = PhpLanguageUtil.isBoolean(firstReturn.getArgument());
                 if (!isFirstReturnUsesBool) {
                     return;
                 }
 
 
                 /* point the problem out */
-                final boolean isInverted = PhpLangUtil.isFalse((ConstantReference) firstReturn.getArgument());
+                final boolean isInverted = PhpLanguageUtil.isFalse(firstReturn.getArgument());
                 String message = isInverted ? messagePattern.replace("%c%", "!(%c%)") : messagePattern;
 
                 message = message.replace("%c%", ifStatement.getCondition().getText());

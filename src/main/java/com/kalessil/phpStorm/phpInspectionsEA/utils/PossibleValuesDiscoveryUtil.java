@@ -1,12 +1,17 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.FieldReference;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.jetbrains.php.lang.psi.elements.Variable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public class PossibleValuesDiscoveryUtil {
     @NotNull
@@ -26,22 +31,40 @@ public class PossibleValuesDiscoveryUtil {
         }
 
         /* Case 2: ternary, recursively check variants */
-        if (isTernary && !handleTernary((TernaryExpression) expression, result)) {
+        if (isTernary) {
+            handleTernary((TernaryExpression) expression, result);
+            return result;
+        }
+
+        /* Case 3: a field/constant reference */
+        /* TODO: analyze $htis->property modifications in the scope */
+        if (isProperty) {
+            handleFieldReference((FieldReference) expression, result);
             return result;
         }
 
         return result;
     }
 
-    /**
-     * Will return false if ternary is incomplete and processing terminated
-     * @return boolean
-     */
-    static private boolean handleTernary(@NotNull TernaryExpression ternary, @NotNull HashSet<PsiElement> result) {
+    static private void handleFieldReference(@NotNull FieldReference reference, @NotNull HashSet<PsiElement> result) {
+        final PsiElement resolvedReference = reference.resolve();
+        if (null == resolvedReference) {
+            return;
+        }
+
+        if (resolvedReference instanceof Field) {
+            final PsiElement defaultValue = ((Field) resolvedReference).getDefaultValue();
+            if (null != defaultValue) {
+                result.add(defaultValue);
+            }
+        }
+    }
+
+    static private void handleTernary(@NotNull TernaryExpression ternary, @NotNull HashSet<PsiElement> result) {
         final PsiElement trueVariant  = ternary.getTrueVariant();
         final PsiElement falseVariant = ternary.getFalseVariant();
         if (null == trueVariant || null == falseVariant) {
-            return false;
+            return;
         }
 
         /* discover true and false branches */
@@ -56,6 +79,6 @@ public class PossibleValuesDiscoveryUtil {
             falseVariants.clear();
         }
 
-        return true;
+        return;
     }
 }

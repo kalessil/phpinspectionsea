@@ -6,10 +6,10 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.PhpIsset;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
-import com.jetbrains.php.lang.psi.elements.impl.BinaryExpressionImpl;
-import com.jetbrains.php.lang.psi.elements.impl.ConstantReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +25,8 @@ final public class IssetAndNullComparisonStrategy {
         /* first ensure that we have null identity checks at all */
         final HashMap<PsiElement, PsiElement> nullTestSubjects = new HashMap<>();
         for (PsiElement oneCondition : conditions) {
-            if (oneCondition instanceof BinaryExpressionImpl) {
-                final BinaryExpressionImpl expression = (BinaryExpressionImpl) oneCondition;
+            if (oneCondition instanceof BinaryExpression) {
+                final BinaryExpression expression = (BinaryExpression) oneCondition;
 
                 /* we need only !== and === operations */
                 final PsiElement operation  = expression.getOperation();
@@ -38,7 +38,7 @@ final public class IssetAndNullComparisonStrategy {
                 /* quickly check if any operands is a constant */
                 final PsiElement left  = expression.getLeftOperand();
                 final PsiElement right = expression.getRightOperand();
-                if (!(left instanceof ConstantReferenceImpl) && !(right instanceof ConstantReferenceImpl)) {
+                if (!(left instanceof ConstantReference) && !(right instanceof ConstantReference)) {
                     continue;
                 }
 

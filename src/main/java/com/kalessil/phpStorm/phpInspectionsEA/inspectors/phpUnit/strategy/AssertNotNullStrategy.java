@@ -6,6 +6,8 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
@@ -35,11 +37,14 @@ public class AssertNotNullStrategy {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private PsiElement value;
+        @NotNull
+        private SmartPsiElementPointer<PsiElement> value;
 
         TheLocalFix(@NotNull PsiElement value) {
             super();
-            this.value = value;
+            SmartPointerManager manager =  SmartPointerManager.getInstance(value.getProject());
+
+            this.value = manager.createSmartPsiElementPointer(value);
         }
 
         @NotNull
@@ -64,7 +69,12 @@ public class AssertNotNullStrategy {
                 final String pattern                = hasCustomMessage ? "pattern(null, null)" : "pattern(null)";
                 final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, pattern);
                 final PsiElement[] replaceParams    = replacement.getParameters();
-                replaceParams[0].replace(this.value);
+
+                final PsiElement value = this.value.getElement();
+                if (null == value) {
+                    return;
+                }
+                replaceParams[0].replace(value);
                 if (hasCustomMessage) {
                     replaceParams[1].replace(params[2]);
                 }
@@ -74,9 +84,6 @@ public class AssertNotNullStrategy {
                 call.getParameterList().replace(replacement.getParameterList());
                 call.handleElementRename("assertNotNull");
             }
-
-            /* release a tree node reference */
-            this.value = null;
         }
     }
 }

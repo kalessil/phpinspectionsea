@@ -60,9 +60,6 @@ class TestCase
         $this->assertTrue(empty($x));      // <- reported assertEmpty
         $this->assertNotFalse(empty($x));  // <- reported assertEmpty
 
-        $this->assertSame(1, null);        // <- reported assertNull
-        $this->assertNotSame(1, null);     // <- reported assertNotNull
-
         $this->assertSame(true, 0);        // <- reported assertTrue
         $this->assertNotSame(true, 0);     // <- reported assertNotTrue
 
@@ -77,9 +74,6 @@ class TestCase
 
         $this->assertSame(false, 0, '');       // <- reported assertFalse
         $this->assertNotSame(false, 0, '');    // <- reported assertNotFalse
-
-        $this->assertSame(1, null, '');        // <- reported assertNull
-        $this->assertNotSame(1, null, '');     // <- reported assertNotNull
 
         $this->assertNotTrue(empty($x), '');   // <- reported assertNotEmpty
         $this->assertFalse(empty($x), '');     // <- reported assertNotEmpty

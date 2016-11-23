@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.PhpReturn;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 
-public class PhpLanguageUtilTest extends CodeInsightFixtureTestCase {
+final public class PhpLanguageUtilTest extends CodeInsightFixtureTestCase {
     public void testIsNull() {
         Project project = myFixture.getProject();
         PsiElement statement;

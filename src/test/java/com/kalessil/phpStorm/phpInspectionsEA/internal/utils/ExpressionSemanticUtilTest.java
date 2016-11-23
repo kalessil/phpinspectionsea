@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.elements.PhpEchoStatement;
 import com.jetbrains.php.lang.psi.elements.PhpReturn;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 
-public class ExpressionSemanticUtilTest extends CodeInsightFixtureTestCase {
+final public class ExpressionSemanticUtilTest extends CodeInsightFixtureTestCase {
     public void testCountExpressionsInGroup() {
         Project project = myFixture.getProject();
         GroupStatement statement;

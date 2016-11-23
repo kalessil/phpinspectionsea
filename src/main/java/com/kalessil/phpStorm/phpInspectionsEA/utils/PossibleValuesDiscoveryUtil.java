@@ -2,10 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.php.lang.psi.elements.Field;
-import com.jetbrains.php.lang.psi.elements.FieldReference;
-import com.jetbrains.php.lang.psi.elements.TernaryExpression;
-import com.jetbrains.php.lang.psi.elements.Variable;
+import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -20,15 +17,9 @@ public class PossibleValuesDiscoveryUtil {
         expression = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression);
 
         HashSet<PsiElement> result = new HashSet<>();
-        final boolean isTernary  = expression instanceof TernaryExpression; /* recursive discovery of variants */
         final boolean isVariable = expression instanceof Variable;          /* parameter defaults, assignments */
         final boolean isProperty = expression instanceof FieldReference;    /* default value discovery */
-
-        /* Case 1: nothing to discover, return expression itself */
-        if (!isTernary && !isVariable && !isProperty) {
-            result.add(expression);
-            return result;
-        }
+        final boolean isTernary  = expression instanceof TernaryExpression; /* recursive discovery of variants */
 
         /* Case 2: ternary, recursively check variants */
         if (isTernary) {
@@ -37,17 +28,43 @@ public class PossibleValuesDiscoveryUtil {
         }
 
         /* Case 3: a field/constant reference */
-        /* TODO: analyze $htis->property modifications in the scope */
         if (isProperty) {
             handleFieldReference((FieldReference) expression, result);
             return result;
         }
 
+        /* Case 4: variable reference */
+        if (isVariable) {
+            handleVariable((Variable) expression, result);
+            return result;
+        }
+
+        /* default case: add expression itself */
+        result.add(expression);
         return result;
     }
 
+    static private void handleVariable(@NotNull Variable variable, @NotNull HashSet<PsiElement> result) {
+        final String variableName = variable.getName();
+        final Function callable   = StringUtil.isEmpty(variableName) ? null : ExpressionSemanticUtil.getScope(variable);
+        if (null == callable) {
+            return;
+        }
+
+        /* collect default value if variable is a parameter */
+        for (Parameter parameter : callable.getParameters()) {
+            final PsiElement defaultValue = parameter.getDefaultValue();
+            if (null != defaultValue && parameter.getName().equals(variableName)) {
+                result.add(defaultValue);
+                break;
+            }
+        }
+
+        /* TODO: find writes into the variable; incl. ternaries provided for values */
+    }
+
     static private void handleFieldReference(@NotNull FieldReference reference, @NotNull HashSet<PsiElement> result) {
-        final PsiElement resolvedReference = reference.resolve();
+        final PsiElement resolvedReference = StringUtil.isEmpty(reference.getName()) ? null : reference.resolve();
         if (null == resolvedReference) {
             return;
         }
@@ -58,6 +75,8 @@ public class PossibleValuesDiscoveryUtil {
                 result.add(defaultValue);
             }
         }
+
+        /* TODO: analyze writes into the property in the scope; incl. ternaries provided for values */
     }
 
     static private void handleTernary(@NotNull TernaryExpression ternary, @NotNull HashSet<PsiElement> result) {
@@ -78,7 +97,5 @@ public class PossibleValuesDiscoveryUtil {
             result.addAll(falseVariants);
             falseVariants.clear();
         }
-
-        return;
     }
 }

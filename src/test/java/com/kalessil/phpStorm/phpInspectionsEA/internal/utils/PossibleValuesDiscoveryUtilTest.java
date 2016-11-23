@@ -5,10 +5,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.FieldReference;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.jetbrains.php.lang.psi.elements.TernaryExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 
 import java.util.HashSet;
@@ -38,5 +35,26 @@ final public class PossibleValuesDiscoveryUtilTest extends CodeInsightFixtureTes
         HashSet<PsiElement> values = PossibleValuesDiscoveryUtil.discover(expression);
         assertEquals(1, values.size());
         assertInstanceOf(values.iterator().next(), StringLiteralExpression.class);
+    }
+
+    public void testVariableDiscoveryForParamWithDefaultValue() {
+        Function callable = PhpPsiElementFactory.createFromText(
+                myFixture.getProject(), Function.class,
+                "function testFunction($parameter = false) { return $parameter; }"
+        );
+        assertNotNull(callable);
+
+        PsiElement expression = PsiTreeUtil.findChildOfType(callable, GroupStatement.class);
+        assertNotNull(expression);
+        expression = PsiTreeUtil.findChildOfType(expression, Variable.class);
+        assertNotNull(expression);
+
+        HashSet<PsiElement> values = PossibleValuesDiscoveryUtil.discover(expression);
+        assertEquals(1, values.size());
+        assertInstanceOf(values.iterator().next(), ConstantReference.class);
+    }
+
+    public void testVariableDiscoveryForOverriddenVariables() {
+
     }
 }

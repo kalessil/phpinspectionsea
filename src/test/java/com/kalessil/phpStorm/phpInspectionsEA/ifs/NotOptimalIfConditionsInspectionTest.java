@@ -14,4 +14,9 @@ final public class NotOptimalIfConditionsInspectionTest extends CodeInsightFixtu
         myFixture.enableInspections(NotOptimalIfConditionsInspection.class);
         myFixture.testHighlighting(true, false, true);
     }
+    public void testInlineBooleansPatterns() {
+        myFixture.configureByFile("fixtures/ifs/if-inline-booleans.php");
+        myFixture.enableInspections(NotOptimalIfConditionsInspection.class);
+        myFixture.testHighlighting(true, false, true);
+    }
 }

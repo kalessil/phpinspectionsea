@@ -16,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionsCo
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +41,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String strProblemDescriptionInstanceOfAmbiguous     = "This condition is ambiguous and can be safely removed";
     private static final String strProblemDescriptionOrdering                = "This condition execution costs less than previous one";
     private static final String strProblemDescriptionDuplicateConditions     = "This condition is duplicated in other if/elseif branch";
-    private static final String strProblemDescriptionBooleans                = "This boolean in condition makes no sense or enforces condition result";
+    private static final String messageBooleansUsed                          = "This boolean in condition makes no sense or enforces condition result";
     private static final String strProblemDescriptionDuplicateConditionPart  = "This call is duplicated in conditions set";
     private static final String strProblemDescriptionIssetCanBeMergedAndCase = "This can be merged into previous 'isset(..., ...[, ...])'";
     private static final String strProblemDescriptionIssetCanBeMergedOrCase  = "This can be merged into previous '!isset(..., ...[, ...])'";
@@ -427,16 +428,12 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
             /**
              * Checks if any of conditions is boolean
-             * @param objBranchConditions to check
+             * @param branchConditions to check
              */
-            private void inspectConditionsWithBooleans(LinkedList<PsiElement> objBranchConditions) {
-                for (PsiElement objExpression : objBranchConditions) {
-                    if (!(objExpression instanceof ConstantReference)) {
-                        continue;
-                    }
-
-                    if (ExpressionSemanticUtil.isBoolean((ConstantReference) objExpression)) {
-                        holder.registerProblem(objExpression, strProblemDescriptionBooleans, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+            private void inspectConditionsWithBooleans(@NotNull LinkedList<PsiElement> branchConditions) {
+                for (PsiElement expression : branchConditions) {
+                    if (PhpLanguageUtil.isBoolean(expression)) {
+                        holder.registerProblem(expression, messageBooleansUsed, ProblemHighlightType.GENERIC_ERROR);
                     }
                 }
             }

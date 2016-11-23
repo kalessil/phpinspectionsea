@@ -5,12 +5,11 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class AssertTrueStrategy {
@@ -20,16 +19,8 @@ public class AssertTrueStrategy {
         final PsiElement[] params = reference.getParameters();
         if (params.length > 1 && function.equals("assertSame")) {
             /* analyze parameters which makes the call equal to assertTrue */
-            boolean isFirstTrue = false;
-            if (params[0] instanceof ConstantReference) {
-                final String constantName = ((ConstantReference) params[0]).getName();
-                isFirstTrue = !StringUtil.isEmpty(constantName) && constantName.equalsIgnoreCase("true");
-            }
-            boolean isSecondTrue = false;
-            if (params[1] instanceof ConstantReference) {
-                final String referenceName = ((ConstantReference) params[1]).getName();
-                isSecondTrue = !StringUtil.isEmpty(referenceName) && referenceName.equalsIgnoreCase("true");
-            }
+            final boolean isFirstTrue  = PhpLanguageUtil.isTrue(params[0]);
+            final boolean isSecondTrue = PhpLanguageUtil.isTrue(params[1]);
 
             /* fire assertTrue warning when needed */
             if ((isFirstTrue && !isSecondTrue) || (!isFirstTrue && isSecondTrue)) {

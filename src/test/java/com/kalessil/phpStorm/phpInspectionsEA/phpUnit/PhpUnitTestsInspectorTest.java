@@ -4,8 +4,13 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitTestsInspector;
 
 final public class PhpUnitTestsInspectorTest extends CodeInsightFixtureTestCase {
-    public void testIfFindsAllPatterns() {
+    public void testIfFindsAssetNullNotNullPatterns() {
         myFixture.configureByFile("fixtures/phpUnit/assert-null-not-null.php");
+        myFixture.enableInspections(PhpUnitTestsInspector.class);
+        myFixture.testHighlighting(true, false, true);
+    }
+    public void testIfFindsAssetTrueNotTruePatterns() {
+        myFixture.configureByFile("fixtures/phpUnit/assert-true-not-true.php");
         myFixture.enableInspections(PhpUnitTestsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }

@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -127,8 +128,7 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
 
             private boolean isPeerVerifyDisabled(@NotNull PsiElement value) {
                 if (value instanceof ConstantReference) {
-                    final String optionName = ((ConstantReference) value).getName();
-                    return !StringUtil.isEmpty(optionName) && !optionName.equalsIgnoreCase("true");
+                    return !PhpLanguageUtil.isTrue(value);
                 }
                 if (value instanceof StringLiteralExpression) {
                     return  ((StringLiteralExpression) value).getContents().equals("0");

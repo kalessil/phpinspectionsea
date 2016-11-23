@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
  * - enclosing the expression in an atomic group, e.g. (?>(?:\D+|0(?!1))*)
  */
 public class QuantifierCompoundsQuantifierCheckStrategy {
-    private static final String messagePattern = "(...%i%...)%o% can be exploited (ReDoS, Regular Expression Denial of Service)";
+    private static final String messagePattern = "(...%i%...)%o% might be exploited (ReDoS, Regular Expression Denial of Service)";
 
     @SuppressWarnings("CanBeFinal")
     static private Pattern regexMarker = null;

@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.0.2</version>
+  <version>2.1.0</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -53,22 +53,21 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-8 November 2016: improvements and new inspections<br/>
+23 November 2016: improvements and new inspections<br/>
 <br/>
-- Forgotten debug statements: more patterns, resolved false-positives (silence operator)<br/>
-- 'list(...) = ' usage possible: more patterns, resolved false-positives (writing into non-variables)<br/>
-- Type unsafe comparison: resolved false-positives (comparable objects)<br/>
-- Slow alter in foreach: resolved false-positives (doc-blocks after loop)<br/>
-- Property could be static: resolved false-positives (overridden properties)<br/>
-- One-time use variables: more patterns<br/>
-- Statement could be decoupled from foreach: resolved multiple false-positives<br/>
-- Non-optimal if conditions: resolved multiple false-positives<br/>
-- Array and string offset validity: deactivated by default<br/>
-- 'array_search(...)' could be replaced by 'in_array(...)': relocated into "Control Flow" group, QF implemented<br/>
-- Short syntax for applied operation: QF implemented<br/>
+- Type casting can be used: bug-fix for Quick-Fix<br/>
+- Deprecated constructor style: resolved a false-positive (BC constructors in WP)<br/>
+- Foreach source to iterate over: resolved false-positives (mixed boolean/array types)<br/>
+- Statement could be decoupled from foreach: resolved a false-positive (mixing html and php)<br/>
+- Null coalescing operator can be used: new patterns<br/>
+- 'isset(...)' usage: resolved false-positives (inverted statements)<br/>
+- Missing or empty conditionals group statement: new patterns (do, while, for, foreach)<br/>
+- Non-optimal regular expression: new patterns (greedy sets, ReDOS)<br/>
+- Prefixed increment/decrement equivalent: Quick-Fix implemented<br/>
 <br/>
-- Binary-unsafe 'fopen(...)' usage: implemented<br/>
-- 'strtotime(...)' misused: implemented<br/>
+- CURL: SSL server spoofing (SSL MITM and Spoofing Attacks): implemented<br/>
+- Security advisories for Composer packages (Components Firewall): implemented<br/>
+- Short list syntax can be used: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>

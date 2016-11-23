@@ -12,9 +12,8 @@ import java.util.HashSet;
 
 final public class PossibleValuesDiscoveryUtilTest extends CodeInsightFixtureTestCase {
     public void testTernaryDiscovery() {
-        PsiElement expression = PhpPsiElementFactory.createFromText(
-                myFixture.getProject(), TernaryExpression.class, "$x ? true : false;"
-        );
+        String pattern        = "$x ? true : false;";
+        PsiElement expression = PhpPsiElementFactory.createFromText(myFixture.getProject(), TernaryExpression.class, pattern);
         assertNotNull(expression);
 
         HashSet<PsiElement> values = PossibleValuesDiscoveryUtil.discover(expression);
@@ -23,10 +22,8 @@ final public class PossibleValuesDiscoveryUtilTest extends CodeInsightFixtureTes
 
     public void testFieldReferenceDiscovery() {
         /* let's cover simple case, without complicating test cases */
-        PsiElement clazz = PhpPsiElementFactory.createFromText(
-                myFixture.getProject(), PhpClass.class,
-                "class TestClass { var $property = 'default'; function say(){ echo $this->property; } }"
-        );
+        String pattern   = "class TestClass { var $property = 'default'; function say(){ echo $this->property; } }";
+        PsiElement clazz = PhpPsiElementFactory.createFromText(myFixture.getProject(), PhpClass.class, pattern);
         assertNotNull(clazz);
 
         PsiElement expression = PsiTreeUtil.findChildOfType(clazz, FieldReference.class);
@@ -37,11 +34,13 @@ final public class PossibleValuesDiscoveryUtilTest extends CodeInsightFixtureTes
         assertInstanceOf(values.iterator().next(), StringLiteralExpression.class);
     }
 
+    public void testOverriddenFieldReferenceDiscovery() {
+        /* no default, property overridden with boolean */
+    }
+
     public void testVariableDiscoveryForParamWithDefaultValue() {
-        Function callable = PhpPsiElementFactory.createFromText(
-                myFixture.getProject(), Function.class,
-                "function testFunction($parameter = false) { return $parameter; }"
-        );
+        String pattern    = "function testFunction($parameter = false) { return $parameter; }";
+        Function callable = PhpPsiElementFactory.createFromText(myFixture.getProject(), Function.class, pattern);
         assertNotNull(callable);
 
         PsiElement expression = PsiTreeUtil.findChildOfType(callable, GroupStatement.class);
@@ -55,6 +54,6 @@ final public class PossibleValuesDiscoveryUtilTest extends CodeInsightFixtureTes
     }
 
     public void testVariableDiscoveryForOverriddenVariables() {
-
+        /* no default, property overridden with string => 2 items, 2nd is string literal */
     }
 }

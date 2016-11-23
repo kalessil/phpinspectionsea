@@ -5,15 +5,15 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Positive and negative variants can be skipped: the condition already returns a boolean";
+    private static final String message = "Positive and negative variants can be skipped: the condition already returns a boolean";
 
     @NotNull
     public String getShortName() {
@@ -25,30 +25,18 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpTernaryExpression(TernaryExpression expression) {
-                final PsiElement objTrueVariant = expression.getTrueVariant();
-                final PsiElement objFalseVariant = expression.getFalseVariant();
-                if (!(objTrueVariant instanceof ConstantReference) || !(objFalseVariant instanceof ConstantReference)) {
+                final PsiElement trueVariant  = expression.getTrueVariant();
+                final PsiElement falseVariant = expression.getFalseVariant();
+                /* if both variants are identical, senseless ternary operator will spot it */
+                if (!PhpLanguageUtil.isBoolean(trueVariant) || !PhpLanguageUtil.isBoolean(falseVariant)) {
                     return;
                 }
 
-
-                final boolean isTrueVariantBoolean = ExpressionSemanticUtil.isBoolean((ConstantReference) objTrueVariant);
-                /* skip false variant test if true one already did not meet pre-conditions */
-                final boolean isFalseVariantBoolean = (
-                    isTrueVariantBoolean &&
-                    ExpressionSemanticUtil.isBoolean((ConstantReference) objFalseVariant)
-                );
-                if (!isFalseVariantBoolean) {
-                    return;
+                PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+                /* TODO: resolve type of other expressions */
+                if (condition instanceof BinaryExpression) {
+                    holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
-
-                final PsiElement objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
-                /* or maybe try resolving type when not on-the-fly analysis is running */
-                if (!(objCondition instanceof BinaryExpression)) {
-                    return;
-                }
-
-                holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

@@ -4,7 +4,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.PhpLangUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
@@ -90,14 +89,6 @@ final public class ExpressionSemanticUtil {
         }
 
         return null;
-    }
-
-    /**
-     * @param objConstant expression to check
-     * @return boolean
-     */
-    public static boolean isBoolean(ConstantReference objConstant){
-        return (PhpLangUtil.isTrue(objConstant) || PhpLangUtil.isFalse(objConstant));
     }
 
     /**

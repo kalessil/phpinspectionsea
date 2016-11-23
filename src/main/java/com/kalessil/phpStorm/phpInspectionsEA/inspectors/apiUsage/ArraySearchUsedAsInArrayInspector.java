@@ -18,6 +18,7 @@ import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
@@ -57,13 +58,9 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                                 secondOperand = parent.getRightOperand();
                             }
 
-                            if (
-                                secondOperand instanceof ConstantReference &&
-                                ExpressionSemanticUtil.isBoolean((ConstantReference) secondOperand)
-                            ) {
-                                final String booleanName = ((ConstantReference) secondOperand).getName();
-                                /* should not compare true: makes no sense as it never returned */
-                                if (!StringUtil.isEmpty(booleanName) && booleanName.equalsIgnoreCase("true")) {
+                            if (PhpLanguageUtil.isBoolean(secondOperand)) {
+                                /* should not compare with true: makes no sense as it never returned */
+                                if (PhpLanguageUtil.isTrue(secondOperand)) {
                                     holder.registerProblem(secondOperand, messageComparingWithTrue, ProblemHighlightType.GENERIC_ERROR);
                                     return;
                                 }

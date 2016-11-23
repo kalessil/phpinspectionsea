@@ -17,11 +17,57 @@ public class PhpLanguageUtilTest extends CodeInsightFixtureTestCase {
 
         statement = PhpPsiElementFactory.createFromText(project, PhpReturn.class, "return null;");
         assertFalse(PhpLanguageUtil.isNull(statement));
-
         statement = PhpPsiElementFactory.createFromText(project, ConstantReference.class, "true");
         assertFalse(PhpLanguageUtil.isNull(statement));
 
         statement = PhpPsiElementFactory.createFromText(project, ConstantReference.class, "null");
         assertTrue(PhpLanguageUtil.isNull(statement));
+    }
+
+    public void testIsTrue() {
+        Project project = myFixture.getProject();
+        PsiElement statement;
+
+        assertFalse(PhpLanguageUtil.isTrue(null));
+
+        statement = PhpPsiElementFactory.createFromText(project, PhpReturn.class, "return null;");
+        assertFalse(PhpLanguageUtil.isTrue(statement));
+        statement = PhpPsiElementFactory.createFromText(project, ConstantReference.class, "null");
+        assertFalse(PhpLanguageUtil.isTrue(statement));
+
+        statement = PhpPsiElementFactory.createFromText(project, ConstantReference.class, "true");
+        assertTrue(PhpLanguageUtil.isTrue(statement));
+    }
+
+    public void testIsFalse() {
+        Project project = myFixture.getProject();
+        PsiElement statement;
+
+        assertFalse(PhpLanguageUtil.isFalse(null));
+
+        statement = PhpPsiElementFactory.createFromText(project, PhpReturn.class, "return null;");
+        assertFalse(PhpLanguageUtil.isFalse(statement));
+        statement = PhpPsiElementFactory.createFromText(project, ConstantReference.class, "null");
+        assertFalse(PhpLanguageUtil.isFalse(statement));
+
+        statement = PhpPsiElementFactory.createFromText(project, ConstantReference.class, "false");
+        assertTrue(PhpLanguageUtil.isFalse(statement));
+    }
+
+    public void testIsBoolean() {
+        Project project = myFixture.getProject();
+        PsiElement statement;
+
+        assertFalse(PhpLanguageUtil.isBoolean(null));
+
+        statement = PhpPsiElementFactory.createFromText(project, PhpReturn.class, "return null;");
+        assertFalse(PhpLanguageUtil.isBoolean(statement));
+        statement = PhpPsiElementFactory.createFromText(project, ConstantReference.class, "null");
+        assertFalse(PhpLanguageUtil.isBoolean(statement));
+
+        statement = PhpPsiElementFactory.createFromText(project, ConstantReference.class, "false");
+        assertTrue(PhpLanguageUtil.isBoolean(statement));
+        statement = PhpPsiElementFactory.createFromText(project, ConstantReference.class, "true");
+        assertTrue(PhpLanguageUtil.isBoolean(statement));
     }
 }

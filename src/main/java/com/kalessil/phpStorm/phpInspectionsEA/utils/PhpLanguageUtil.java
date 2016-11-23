@@ -12,4 +12,28 @@ final public class PhpLanguageUtil {
         }
         return false;
     }
+
+    public static boolean isTrue(@Nullable PsiElement expression) {
+        if (expression instanceof ConstantReference) {
+            String name = ((ConstantReference) expression).getName();
+            return null != name && name.equalsIgnoreCase("true");
+        }
+        return false;
+    }
+
+    public static boolean isFalse(@Nullable PsiElement expression) {
+        if (expression instanceof ConstantReference) {
+            String name = ((ConstantReference) expression).getName();
+            return null != name && name.equalsIgnoreCase("false");
+        }
+        return false;
+    }
+
+    public static boolean isBoolean(@Nullable PsiElement expression) {
+        if (expression instanceof ConstantReference) {
+            String name = ((ConstantReference) expression).getName();
+            return null != name && (name.equalsIgnoreCase("false") || name.equalsIgnoreCase("true"));
+        }
+        return false;
+    }
 }

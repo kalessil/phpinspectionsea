@@ -54,6 +54,7 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
                     return;
                 }
 
+                /* variable functions are not supported, as we are checking 2 different extensions functions */
                 if (functionName.equals("openssl_encrypt") || functionName.equals("mcrypt_encrypt")) {
                     /* discover and inspect possible values */
                     final HashSet<PsiElement> processed = new HashSet<>();

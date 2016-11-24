@@ -28,40 +28,36 @@ public class PossibleValuesDiscoveryUtil {
         /* do not process same expressions multiple times */
         HashSet<PsiElement> result = new HashSet<>();
         if (processed.contains(expression)) {
-            return processed;
+            return result;
         }
+        processed.add(expression);
 
         /* Case 1: ternary, recursively check variants */
         if (expression instanceof TernaryExpression) {
             handleTernary((TernaryExpression) expression, result, processed);
-            processed.add(expression);
             return result;
         }
 
         /* Case 2: parameter defaults, assignments */
         if (expression instanceof Variable) {
             handleVariable((Variable) expression, result, processed);
-            processed.add(expression);
             return result;
         }
 
         /* Case 3: default value discovery */
         if (expression instanceof FieldReference) {
             handleClassFieldReference((FieldReference) expression, result, processed);
-            processed.add(expression);
             return result;
         }
 
         /* Case 4: constants value discovery */
         if (expression instanceof ClassConstantReference) {
             handleClassConstantReference((ClassConstantReference) expression, result, processed);
-            processed.add(expression);
             return result;
         }
 
         /* default case: add expression itself */
         result.add(expression);
-        processed.add(expression);
         return result;
     }
 

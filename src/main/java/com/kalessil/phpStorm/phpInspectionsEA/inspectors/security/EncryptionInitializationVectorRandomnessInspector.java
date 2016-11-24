@@ -12,10 +12,22 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class EncryptionInitializationVectorRandomnessInspector extends BasePhpInspection {
-    private static final String messagePattern = "%e%: IV should only be initialized with random_bytes/openssl_random_pseudo_bytes/mcrypt_create_iv functions.";
+    private static final String messagePattern = "%f%() should be used for IV, but found: %e%";
 
     @NotNull
     private static final HashSet<String> secureFunctions = new HashSet<>();
@@ -43,11 +55,13 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
                 }
 
                 if (functionName.equals("openssl_encrypt") || functionName.equals("mcrypt_encrypt")) {
-                    /* discover what can be provided as 5th argument within callable and class property */
-
+                    /* discover and inspect possible values */
                     final HashSet<PsiElement> processed = new HashSet<>();
                     final HashSet<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(params[4], processed);
                     if (values.size() > 0) {
+                        List<String> reporting = new LinkedList<>();
+
+                        /* check all possible values */
                         for (PsiElement source : values) {
                             if (source instanceof FunctionReferenceImpl) {
                                 final String sourceName = ((FunctionReferenceImpl) source).getName();
@@ -55,12 +69,24 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
                                     continue;
                                 }
                             }
-
-                            /* TODO: compact into single message */
-                            final String message = messagePattern.replace("%e%", source.getText());
-                            holder.registerProblem(params[4], message, ProblemHighlightType.GENERIC_ERROR);
+                            reporting.add(source.getText());
                         }
                         values.clear();
+
+                        /* got something for reporting */
+                        if (reporting.size() > 0) {
+                            /* sort reporting list to produce testable results */
+                            Collections.sort(reporting);
+
+                            /* report now */
+                            final String ivFunction = functionName.startsWith("openssl_") ? "openssl_random_pseudo_bytes" : "mcrypt_create_iv";
+                            final String message    = messagePattern
+                                    .replace("%e%", String.join(", ", reporting))
+                                    .replace("%f%", ivFunction);
+                            holder.registerProblem(params[4], message, ProblemHighlightType.GENERIC_ERROR);
+
+                            reporting.clear();
+                        }
                     }
                     processed.clear();
                 }

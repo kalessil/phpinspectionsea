@@ -3,6 +3,7 @@
 class IvRandomness {
     private $iv = 'default';
     private $_iv;
+    const IV = 'constant';
 
     private function notHandledCases() {
         openssl_encrypt('data', 'method', 'password');
@@ -28,18 +29,23 @@ class IvRandomness {
         mcrypt_encrypt('cipher', 'key', 'data', 'mode', $this->_iv);
     }
 
-    private function invalidCases($iv){
-        $iv = 'variable';
-        $iv = mt_rand();
-
-        openssl_encrypt('data', 'method', 'password', 0, $iv);       // <- reported, report parameter?
-        mcrypt_encrypt('cipher', 'key', 'data', 'mode', $iv);        // <- reported, report parameter?
-
-        $this->iv = 'property';
+    private function invalidCases($iv = 'variable'){
+        $iv       = mt_rand();
         $this->iv = mt_rand();
 
-        openssl_encrypt('data', 'method', 'password', 0, $this->iv); // <- reported, report parameter?
-        mcrypt_encrypt('cipher', 'key', 'data', 'mode', $this->iv);  // <- reported, report parameter?
+        openssl_encrypt('data', 'method', 'password', 0,
+            <error descr="openssl_random_pseudo_bytes() should be used for IV, but found: 'variable', mt_rand()">$iv</error>);
+        mcrypt_encrypt('cipher', 'key', 'data', 'mode',
+            <error descr="mcrypt_create_iv() should be used for IV, but found: 'variable', mt_rand()">$iv</error>);
 
+        openssl_encrypt('data', 'method', 'password', 0,
+            <error descr="openssl_random_pseudo_bytes() should be used for IV, but found: 'default', mt_rand()">$this->iv</error>);
+        mcrypt_encrypt('cipher', 'key', 'data', 'mode',
+            <error descr="mcrypt_create_iv() should be used for IV, but found: 'default', mt_rand()">$this->iv</error>);
+
+        openssl_encrypt('data', 'method', 'password', 0,
+            <error descr="openssl_random_pseudo_bytes() should be used for IV, but found: 'constant'">self::IV</error>);
+        mcrypt_encrypt('cipher', 'key', 'data', 'mode',
+            <error descr="mcrypt_create_iv() should be used for IV, but found: 'constant'">self::IV</error>);
     }
 }

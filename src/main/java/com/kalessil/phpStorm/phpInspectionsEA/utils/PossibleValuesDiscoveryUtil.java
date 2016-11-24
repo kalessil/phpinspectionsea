@@ -10,6 +10,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class PossibleValuesDiscoveryUtil {
     @NotNull
     static public HashSet<PsiElement> discover(@NotNull PsiElement expression, @NotNull HashSet<PsiElement> processed) {
@@ -116,18 +125,20 @@ public class PossibleValuesDiscoveryUtil {
         final PsiElement resolvedReference = StringUtil.isEmpty(fieldName) ? null : reference.resolve();
         if (resolvedReference instanceof Field) {
             /* TODO: properties without defaults returning variable as default are difficult to identify */
+            /* TODO: multi-assignments */
             final PsiElement defaultValue = ((Field) resolvedReference).getDefaultValue();
             if (null != defaultValue && !defaultValue.getText().endsWith(fieldName)) {
                 result.add(defaultValue);
             }
         }
 
-
+        /* TODO: inspect own constructor for overriding property there */
         final Function callable = ExpressionSemanticUtil.getScope(reference);
         if (null != callable) {
             final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(callable);
             for (AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
                 /* TODO: probable bug - self-assignment does not override instance of */
+                /* TODO: multi-assignments */
                 if (expression instanceof SelfAssignmentExpression) {
                     continue;
                 }

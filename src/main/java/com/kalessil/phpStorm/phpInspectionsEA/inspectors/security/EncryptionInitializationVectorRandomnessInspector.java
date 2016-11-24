@@ -35,7 +35,9 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
 
                 if (functionName.equals("openssl_encrypt") || functionName.equals("mcrypt_encrypt")) {
                     /* discover what can be provided as 5th argument within callable and class property */
-                    HashSet<PsiElement> values = PossibleValuesDiscoveryUtil.discover(params[4]);
+
+                    HashSet<PsiElement> processed = new HashSet<>();
+                    HashSet<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(params[4], processed);
                     if (values.size() > 0) {
                         for (PsiElement source : values) {
                             // functions: only random_bytes,openssl_random_pseudo_bytes,mcrypt_create_iv are allowed
@@ -44,6 +46,7 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
 
                         values.clear();
                     }
+                    processed.clear();
                 }
             }
         };

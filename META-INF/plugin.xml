@@ -376,6 +376,10 @@ with a laptop.
          shortName="CurlSslServerSpoofingInspection"               displayName="CURL: SSL server spoofing (SSL MITM and Spoofing Attacks)"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.CurlSslServerSpoofingInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="EncryptionInitializationVectorRandomnessInspection" displayName="Encryption initialization vector randomness"
+         groupName="Security"                                           enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.EncryptionInitializationVectorRandomnessInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

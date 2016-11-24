@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 
 public class EncryptionInitializationVectorRandomnessInspector extends BasePhpInspection {
-    private static final String message = "Source might be not secure: ";
+    private static final String messagePattern = "%e%: IV should only be initialized with random_bytes/openssl_random_pseudo_bytes/mcrypt_create_iv functions.";
 
     @NotNull
     private static final HashSet<String> secureFunctions = new HashSet<>();
@@ -56,7 +56,9 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
                                 }
                             }
 
-                            holder.registerProblem(reference, message + source.getText(), ProblemHighlightType.GENERIC_ERROR);
+                            /* TODO: compact into single message */
+                            final String message = messagePattern.replace("%e%", source.getText());
+                            holder.registerProblem(params[4], message, ProblemHighlightType.GENERIC_ERROR);
                         }
                         values.clear();
                     }

@@ -5,6 +5,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.ClassConstImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -15,6 +16,7 @@ public class PossibleValuesDiscoveryUtil {
         /* un-wrap parenthesises to avoid false-positives */
         expression = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression);
 
+        /* do not process same expressions multiple times */
         HashSet<PsiElement> result = new HashSet<>();
         if (processed.contains(expression)) {
             return processed;
@@ -27,16 +29,23 @@ public class PossibleValuesDiscoveryUtil {
             return result;
         }
 
-        /* Case 2: default value discovery */
-        if (expression instanceof FieldReference) {
-            handleFieldReference((FieldReference) expression, result, processed);
+        /* Case 2: parameter defaults, assignments */
+        if (expression instanceof Variable) {
+            handleVariable((Variable) expression, result, processed);
             processed.add(expression);
             return result;
         }
 
-        /* Case 3: parameter defaults, assignments */
-        if (expression instanceof Variable) {
-            handleVariable((Variable) expression, result, processed);
+        /* Case 3: default value discovery */
+        if (expression instanceof FieldReference) {
+            handleClassFieldReference((FieldReference) expression, result, processed);
+            processed.add(expression);
+            return result;
+        }
+
+        /* Case 4: constants value discovery */
+        if (expression instanceof ClassConstantReference) {
+            handleClassConstantReference((ClassConstantReference) expression, result, processed);
             processed.add(expression);
             return result;
         }
@@ -87,7 +96,20 @@ public class PossibleValuesDiscoveryUtil {
         }
     }
 
-    static private void handleFieldReference(
+    static private void handleClassConstantReference(
+            @NotNull ClassConstantReference reference, @NotNull HashSet<PsiElement> result, @NotNull HashSet<PsiElement> processed
+    ) {
+        final String constantName          = reference.getName();
+        final PsiElement resolvedReference = StringUtil.isEmpty(constantName) ? null : reference.resolve();
+        if (resolvedReference instanceof Field) {
+            final PsiElement value = ((Field) resolvedReference).getDefaultValue();
+            if (null != value) {
+                result.add(value);
+            }
+        }
+    }
+
+    static private void handleClassFieldReference(
             @NotNull FieldReference reference, @NotNull HashSet<PsiElement> result, @NotNull HashSet<PsiElement> processed
     ) {
         final String fieldName             = reference.getName();

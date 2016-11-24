@@ -21,13 +21,27 @@ final public class PossibleValuesDiscoveryUtilTest extends CodeInsightFixtureTes
         assertInstanceOf(values.iterator().next(), ConstantReference.class);
     }
 
-    public void testFieldReferenceDiscovery() {
+    public void testClassFieldReferenceDiscovery() {
         /* let's cover simple case, without complicating test cases */
         String pattern   = "class test { var $property = 'default'; function say(){ echo $this->property; } }";
         PsiElement clazz = PhpPsiElementFactory.createFromText(myFixture.getProject(), PhpClass.class, pattern);
         assertNotNull(clazz);
 
         PsiElement expression = PsiTreeUtil.findChildOfType(clazz, FieldReference.class);
+        assertNotNull(expression);
+
+        HashSet<PsiElement> processed = new HashSet<>();
+        HashSet<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(expression, processed);
+        assertEquals(1, values.size());
+        assertInstanceOf(values.iterator().next(), StringLiteralExpression.class);
+    }
+
+    public void testClassConstantReferenceDiscovery() {
+        String pattern   = "class test { const PROPERTY = 'default'; function say(){ echo self::PROPERTY; } }";
+        PsiElement clazz = PhpPsiElementFactory.createFromText(myFixture.getProject(), PhpClass.class, pattern);
+        assertNotNull(clazz);
+
+        PsiElement expression = PsiTreeUtil.findChildOfType(clazz, ClassConstantReference.class);
         assertNotNull(expression);
 
         HashSet<PsiElement> processed = new HashSet<>();

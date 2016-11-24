@@ -164,6 +164,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | CompactArgumentsInspection                      | 'compact(...)' variables existence                        | n/a |
 | Probable bugs        | DispatchingThisIntoClosuresInspection           | Incorrect dispatching $this into closures                 | n/a |
 | Probable bugs        | DateIntervalSpecificationInspection             | Date interval specification validity                      | n/a       | yes | n/a  |
+| Probable bugs        | UsingInclusionOnceReturnValueInspection         | Suspicious usage of include_once/require_once return value| yes       | yes | no   |
 
 Inspections Lists (Security)
 ---

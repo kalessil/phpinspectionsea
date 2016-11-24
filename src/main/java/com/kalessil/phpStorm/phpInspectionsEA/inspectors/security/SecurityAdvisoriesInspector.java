@@ -55,16 +55,21 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
             /* inspect packages, break afterwards */
             if (null != requireProperty) {
                 if (requireProperty.getValue() instanceof JsonObject) {
+                    int packagesCount = 0;
+
                     for (PsiElement component : requireProperty.getValue().getChildren()) {
                         /* we expect certain structure for package definition */
                         if (!(component instanceof JsonProperty)) {
                             continue;
                         }
                         /* the package is there already, terminate inspection */
-                        JsonProperty componentEntry = (JsonProperty) component;
-                        if (componentEntry.getName().equals("roave/security-advisories")) {
+                        final JsonProperty componentEntry = (JsonProperty) component;
+                        final String componentName        = componentEntry.getName();
+
+                        /* if advisories already there, verify usage of dev-master */
+                        if (componentName.equals("roave/security-advisories")) {
                             if (componentEntry.getValue() instanceof JsonStringLiteral) {
-                                JsonStringLiteral version = (JsonStringLiteral) componentEntry.getValue();
+                                final JsonStringLiteral version = (JsonStringLiteral) componentEntry.getValue();
                                 if (!version.getText().equals("\"dev-master\"")) {
                                     holder.registerProblem(version, useMaster, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                                     return holder.getResultsArray();
@@ -73,11 +78,17 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
                             return null;
                         }
+
+                        if (-1 != componentName.indexOf('/')) {
+                            ++packagesCount;
+                        }
                     }
 
-                    /* fire error message */
-                    holder.registerProblem(requireProperty.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                    return holder.getResultsArray();
+                    /* fire error message if we have any packages. If no packages, nothing to worry about. */
+                    if (packagesCount > 0) {
+                        holder.registerProblem(requireProperty.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        return holder.getResultsArray();
+                    }
                 }
 
                 break;

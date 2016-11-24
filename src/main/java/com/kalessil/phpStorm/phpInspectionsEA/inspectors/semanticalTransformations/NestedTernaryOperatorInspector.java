@@ -16,9 +16,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class NestedTernaryOperatorInspector extends BasePhpInspection {
-    private static final String strProblemNested            = "Nested ternary operator should not be used";
-    private static final String strProblemPriorities        = "Inspect this operation, it may not work as expected";
-    private static final String strProblemVariantsIdentical = "True and false variants are identical";
+    private static final String messageNested            = "Nested ternary operator should not be used (maintainability issues)";
+    private static final String messagePriorities        = "Inspect this operation, it may not work as expected (priorities issues)";
+    private static final String messageVariantsIdentical = "True and false variants are identical";
 
     @NotNull
     public String getShortName() {
@@ -31,27 +31,27 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpTernaryExpression(TernaryExpression expression) {
                 /* check for nested TO cases */
-                PsiElement objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
-                if (objCondition instanceof TernaryExpression) {
-                    holder.registerProblem(objCondition, strProblemNested, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+                if (condition instanceof TernaryExpression) {
+                    holder.registerProblem(condition, messageNested, ProblemHighlightType.WEAK_WARNING);
                 }
-                PsiElement objTrueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
-                if (objTrueVariant instanceof TernaryExpression) {
-                    holder.registerProblem(objTrueVariant, strProblemNested, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                PsiElement trueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
+                if (trueVariant instanceof TernaryExpression) {
+                    holder.registerProblem(trueVariant, messageNested, ProblemHighlightType.WEAK_WARNING);
                 }
-                PsiElement objFalseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
-                if (objFalseVariant instanceof TernaryExpression) {
-                    holder.registerProblem(objFalseVariant, strProblemNested, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
+                if (falseVariant instanceof TernaryExpression) {
+                    holder.registerProblem(falseVariant, messageNested, ProblemHighlightType.WEAK_WARNING);
                 }
 
                 /* check if return variants identical */
-                if (null != objTrueVariant && null != objFalseVariant && PsiEquivalenceUtil.areElementsEquivalent(objTrueVariant, objFalseVariant)) {
-                    holder.registerProblem(expression, strProblemVariantsIdentical, ProblemHighlightType.GENERIC_ERROR);
+                if (null != trueVariant && null != falseVariant && PsiEquivalenceUtil.areElementsEquivalent(trueVariant, falseVariant)) {
+                    holder.registerProblem(expression, messageVariantsIdentical, ProblemHighlightType.GENERIC_ERROR);
                 }
 
                 /* check for confusing condition */
-                if (objCondition instanceof BinaryExpression && !(expression.getCondition() instanceof ParenthesizedExpression)) {
-                    PsiElement operation       = ((BinaryExpression) objCondition).getOperation();
+                if (condition instanceof BinaryExpression && !(expression.getCondition() instanceof ParenthesizedExpression)) {
+                    final PsiElement operation = ((BinaryExpression) condition).getOperation();
                     IElementType operationType = null;
                     if (null != operation) {
                         operationType = operation.getNode().getElementType();
@@ -60,7 +60,9 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
                     /* don't report easily recognized cases */
                     if (
                             PhpTokenTypes.opAND              != operationType &&
+                            PhpTokenTypes.opLIT_AND          != operationType &&
                             PhpTokenTypes.opOR               != operationType &&
+                            PhpTokenTypes.opLIT_OR           != operationType &&
                             PhpTokenTypes.opIDENTICAL        != operationType &&
                             PhpTokenTypes.opNOT_IDENTICAL    != operationType &&
                             PhpTokenTypes.opEQUAL            != operationType &&
@@ -68,10 +70,9 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
                             PhpTokenTypes.opGREATER          != operationType &&
                             PhpTokenTypes.opGREATER_OR_EQUAL != operationType &&
                             PhpTokenTypes.opLESS             != operationType &&
-                            PhpTokenTypes.opLESS_OR_EQUAL    != operationType &&
-                            PhpTokenTypes.kwINSTANCEOF       != operationType
+                            PhpTokenTypes.opLESS_OR_EQUAL    != operationType
                     ) {
-                        holder.registerProblem(objCondition, strProblemPriorities, ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(condition, messagePriorities, ProblemHighlightType.WEAK_WARNING);
                     }
                 }
             }

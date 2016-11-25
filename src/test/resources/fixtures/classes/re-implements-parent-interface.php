@@ -19,3 +19,10 @@ class CParent2 extends AParent2
         <error descr="IParent1 is already announced in \AParent2.">IParent1</error>,
         <error descr="IParent2 is already announced in \AParent2.">IParent2</error>
 { private $xx; }
+
+class ClassImplementsSameInterfaceTwice
+    implements
+        IParent2,
+        <error descr="\IParent2 is already announced. Duplicate announcements causing Fatal error.">IParent2</error>
+{
+}

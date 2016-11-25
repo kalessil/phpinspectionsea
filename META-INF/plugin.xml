@@ -350,6 +350,10 @@ with a laptop.
         shortName="DateIntervalSpecificationInspection"           displayName="Date interval specification validity"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.DateIntervalSpecificationInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ClassReImplementsParentInterfaceInspection"    displayName="Class implements interfaces multiple times"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ClassReImplementsParentInterfaceInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -548,10 +552,6 @@ with a laptop.
         shortName="CallableParameterUseCaseInTypeContextInspection" displayName="Callable parameter usage violates definition"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.CallableParameterUseCaseInTypeContextInspection"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="ClassReImplementsParentInterfaceInspection"      displayName="Class re-implements interface of a parent class"
-        groupName="Architecture"                                    enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ClassReImplementsParentInterfaceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ClassOverridesFieldOfSuperClassInspection"       displayName="Class overrides a field of a parent class"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"

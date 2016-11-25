@@ -140,7 +140,6 @@ Inspections Lists (Architecture)
 | Architecture         | LongInheritanceChainInspection                  | Long inheritance chain                              | n/a       | yes | n/a  |
 | Architecture         | PropertyCanBeStaticInspection                   | Property could be static                            | n/a       | yes | n/a  |
 | Architecture         | EmptyClassInspection                            | Empty class                                         | n/a       | yes | n/a  |
-| Architecture         | ClassReImplementsParentInterfaceInspection      | Class re-implements interface of a parent class     | yes       | yes | no   |
 
 Inspections Lists (Probable bugs)
 ---
@@ -165,6 +164,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | DispatchingThisIntoClosuresInspection           | Incorrect dispatching $this into closures                 | n/a |
 | Probable bugs        | DateIntervalSpecificationInspection             | Date interval specification validity                      | n/a       | yes | n/a  |
 | Probable bugs        | UsingInclusionOnceReturnValueInspection         | Suspicious usage of include_once/require_once return value| yes       | yes | no   |
+| Probable bugs        | ClassReImplementsParentInterfaceInspection      | Class implements interfaces multiple times                | yes       | yes | no   |
 
 Inspections Lists (Security)
 ---

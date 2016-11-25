@@ -113,6 +113,7 @@ Inspections Lists (Code style)
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes |
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | yes       | yes | no   |
 | Code style           | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                  | yes       | yes | no   |
+| Code style           | UnnecessaryFinalModifierInspecti                | Unnecessary final modifiers                         | yes       | yes | no   |
 
 Inspections Lists (Language level migration)
 ---

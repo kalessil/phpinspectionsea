@@ -32,7 +32,7 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
                 if (0 == statement.getChildren().length) {
                     final PsiElement parent = statement.getParent();
                     if (null != parent) {
-                        final IElementType declareCandidate = statement.getParent().getFirstChild().getNode().getElementType();
+                        IElementType declareCandidate = statement.getParent().getFirstChild().getNode().getElementType();
                         if (
                             PhpTokenTypes.kwDECLARE == declareCandidate ||
                             parent instanceof DoWhile ||

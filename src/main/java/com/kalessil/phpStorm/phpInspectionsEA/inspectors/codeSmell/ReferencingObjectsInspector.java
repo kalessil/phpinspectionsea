@@ -22,13 +22,11 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
 
     private static final PhpType php7Types = new PhpType();
     static {
-        php7Types
-            .add(PhpType.STRING)
-            .add(PhpType.INT)
-            .add(PhpType.FLOAT)
-            .add(PhpType.BOOLEAN)
-            .add(PhpType.ARRAY)
-        ;
+        php7Types.add(PhpType.STRING);
+        php7Types.add(PhpType.INT);
+        php7Types.add(PhpType.FLOAT);
+        php7Types.add(PhpType.BOOLEAN);
+        php7Types.add(PhpType.ARRAY);
     }
 
     @NotNull

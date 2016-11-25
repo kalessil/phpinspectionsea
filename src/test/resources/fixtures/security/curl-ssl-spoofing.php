@@ -26,6 +26,7 @@ class OpensslRsaPaddingOracle
         <error descr="Exposes a connection to MITM attacks. Use 2 (default) to stay safe.">curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, '1')</error>;
         <error descr="Exposes a connection to MITM attacks. Use 2 (default) to stay safe.">curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $debug ? '0' : '1')</error>;
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $debug ? 0 : 2);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, '2');
 
         $options = [
@@ -44,6 +45,7 @@ class OpensslRsaPaddingOracle
         <error descr="Exposes a connection to MITM attacks. Use true (default) to stay safe.">curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, null)</error>;
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $debug ? 0 : 1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, '1');
     }
 

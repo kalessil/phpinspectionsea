@@ -9,7 +9,10 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashSet;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -106,39 +109,76 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
             }
 
             private boolean isHostVerifyDisabled(@NotNull PsiElement value) {
-                if (value instanceof ConstantReference) {
-                    return true;
-                }
-                if (value instanceof StringLiteralExpression) {
-                    return  !((StringLiteralExpression) value).getContents().equals("2");
-                }
-                if (1 == value.getTextLength() && !value.getText().equals("2")) {
-                    return true;
-                }
-                if (value instanceof TernaryExpression) {
-                    final PsiElement trueVariant  = ((TernaryExpression) value).getTrueVariant();
-                    final PsiElement falseVariant = ((TernaryExpression) value).getFalseVariant();
-                    if (null != trueVariant && null != falseVariant) {
-                        return isHostVerifyDisabled(trueVariant) && isHostVerifyDisabled(falseVariant);
+                boolean result = false;
+
+                final HashSet<PsiElement> processed  = new HashSet<>();
+                final HashSet<PsiElement> discovered = PossibleValuesDiscoveryUtil.discover(value, processed);
+                if (discovered.size() > 0) {
+                    int countDisables = 0;
+                    int countEnables  = 0;
+
+                    for (PsiElement possibleValue : discovered) {
+                        if (possibleValue instanceof StringLiteralExpression) {
+                            boolean disabled = !((StringLiteralExpression) possibleValue).getContents().equals("2");
+                            int dummy        = disabled ? ++countDisables : ++countEnables;
+                            continue;
+                        }
+                        if (possibleValue instanceof ConstantReference) {
+                            ++countDisables;
+                            continue;
+                        }
+                        if (1 == possibleValue.getTextLength()) {
+                            boolean disabled = !possibleValue.getText().equals("2");
+                            int dummy        = disabled ? ++countDisables : ++countEnables;
+                            //continue;
+                        }
+
+                        /* other expressions are not supported currently */
                     }
+                    discovered.clear();
+
+                    result = countDisables > 0 && 0 == countEnables;
                 }
 
-                return false;
+                processed.clear();
+                return result;
             }
 
-            private boolean isPeerVerifyDisabled(@NotNull PsiElement value) {
-                if (value instanceof ConstantReference) {
-                    return !PhpLanguageUtil.isTrue(value);
-                }
-                if (value instanceof StringLiteralExpression) {
-                    return  ((StringLiteralExpression) value).getContents().equals("0");
-                }
-                //noinspection RedundantIfStatement
-                if (1 == value.getTextLength() && value.getText().equals("0")) {
-                    return true;
+            private boolean isPeerVerifyDisabled(@NotNull PsiElement _value) {
+                boolean result = false;
+
+                final HashSet<PsiElement> processed  = new HashSet<>();
+                final HashSet<PsiElement> discovered = PossibleValuesDiscoveryUtil.discover(_value, processed);
+                if (discovered.size() > 0) {
+                    int countDisables = 0;
+                    int countEnables  = 0;
+
+                    for (PsiElement possibleValue : discovered) {
+                        if (possibleValue instanceof StringLiteralExpression) {
+                            boolean disabled = !((StringLiteralExpression) possibleValue).getContents().equals("1");
+                            int dummy        = disabled ? ++countDisables : ++countEnables;
+                            continue;
+                        }
+                        if (possibleValue instanceof ConstantReference) {
+                            boolean disabled = !PhpLanguageUtil.isTrue(possibleValue);
+                            int dummy        = disabled ? ++countDisables : ++countEnables;
+                            continue;
+                        }
+                        if (1 == possibleValue.getTextLength()) {
+                            boolean disabled = !possibleValue.getText().equals("1");
+                            int dummy        = disabled ? ++countDisables : ++countEnables;
+                            // continue;
+                        }
+
+                        /* other expressions are not supported currently */
+                    }
+                    discovered.clear();
+
+                    result = countDisables > 0 && 0 == countEnables;
                 }
 
-                return false;
+                processed.clear();
+                return result;
             }
         };
     }

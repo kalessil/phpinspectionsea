@@ -37,7 +37,11 @@ public class UnnecessaryFinalModifierInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
                 final PhpClass clazz = method.getContainingClass();
-                if (null != clazz && clazz.isFinal() && method.isFinal() && null != method.getNameIdentifier()) {
+                if (null != clazz && clazz.isFinal() && method.isFinal()) {
+                    if (null == method.getNameIdentifier() || 0 == method.getNameIdentifier().getTextLength()) {
+                        return;
+                    }
+
                     holder.registerProblem(method.getNameIdentifier(), message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                 }
             }
@@ -64,7 +68,7 @@ public class UnnecessaryFinalModifierInspector extends BasePhpInspection {
                 final Method target   = (Method) expression.getParent();
                 final String modifier = target.getModifier().toString().replace("final", "").replace("  ", "").trim();
                 Method replacement    = PhpPsiElementFactory.createMethod(project, modifier + " function x(){}");
-                target.getFirstChild().replace((PsiElement) replacement.getModifier());
+                target.getFirstChild().replace(replacement.getFirstChild());
             }
         }
     }

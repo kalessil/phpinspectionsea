@@ -2,5 +2,7 @@
   "name":        "",
   "description": "",
   "license":     "",
-  "require":     {}
+  "require":     {
+      "php": "^7.0"
+  }
 }

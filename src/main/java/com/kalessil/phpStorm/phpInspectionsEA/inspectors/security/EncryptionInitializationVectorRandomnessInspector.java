@@ -50,7 +50,7 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
                 /* verify general requirements to the call */
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if (5 != params.length || null == params[4] || StringUtil.isEmpty(functionName)) {
+                if (5 != params.length || null == params[4] || 0 == params[4].getTextLength() || StringUtil.isEmpty(functionName)) {
                     return;
                 }
 

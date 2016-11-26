@@ -384,6 +384,10 @@ with a laptop.
          shortName="EncryptionInitializationVectorRandomnessInspection" displayName="Encryption initialization vector randomness"
          groupName="Security"                                           enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.EncryptionInitializationVectorRandomnessInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="UnserializeExploitsInspection"                 displayName="Exploiting unserialize (PHP Object Injection Vulnerability)"
+         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.UnserializeExploitsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

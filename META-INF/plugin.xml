@@ -392,6 +392,10 @@ with a laptop.
          shortName="PotentialMalwareInspection"                    displayName="Basic malware patterns"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.PotentialMalwareInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="CryptographicallySecureRandomnessInspection"   displayName="Cryptographically secure randomness"
+         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.CryptographicallySecureRandomnessInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

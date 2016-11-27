@@ -9,6 +9,15 @@ final public class ForgottenDebugOutputInspectorTest extends CodeInsightFixtureT
         myFixture.enableInspections(ForgottenDebugOutputInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
+    public void testMethodsNameCollision() {
+        ForgottenDebugOutputInspector inspector = new ForgottenDebugOutputInspector();
+        inspector.registerCustomDebugMethod("\\DebugClass1::debug");
+        inspector.registerCustomDebugMethod("\\DebugClass2::debug");
+
+        myFixture.configureByFile("fixtures/forgotten-debug-statements-collisions.php");
+        myFixture.enableInspections(inspector);
+        myFixture.testHighlighting(true, false, true);
+    }
 
     public void testFalsePositives() {
         myFixture.configureByFile("fixtures/forgotten-debug-statements-false-positives.php");

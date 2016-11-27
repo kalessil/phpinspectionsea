@@ -44,6 +44,11 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         recompileConfiguration();
     }
 
+    public void registerCustomDebugMethod(@NotNull String fqn) {
+        this.configuration.add(fqn);
+        this.recompileConfiguration();
+    }
+
     private void recompileConfiguration() {
         customFunctions.clear();
         customMethods.clear();
@@ -53,8 +58,17 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         customDebugFQNs.addAll(this.configuration);
 
         /* known debug methods from community */
+        /* codeception */
         customDebugFQNs.add("\\Codeception\\Util\\Debug::pause");
         customDebugFQNs.add("\\Codeception\\Util\\Debug::debug");
+        /* symfony 2/3; */
+        customDebugFQNs.add("\\Symfony\\Component\\Debug\\Debug::enable");
+        customDebugFQNs.add("\\Symfony\\Component\\Debug\\ErrorHandler::register");
+        customDebugFQNs.add("\\Symfony\\Component\\Debug\\ExceptionHandler::register");
+        customDebugFQNs.add("\\Symfony\\Component\\Debug\\DebugClassLoader::enable");
+        /* ZF 2 */
+        customDebugFQNs.add("\\Zend\\Debug\\Debug::dump");
+        customDebugFQNs.add("\\Zend\\Di\\Display\\Console::export");
         /* known debug methods from community */
 
         /* parse what was provided FQNs */

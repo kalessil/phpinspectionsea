@@ -2,7 +2,12 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.security;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.config.PhpLanguageFeature;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -19,17 +24,15 @@ import org.jetbrains.annotations.NotNull;
 /*
  - Cryptographically secure random:
      - openssl_random_pseudo_bytes()
-         - use random_bytes() PHP7
          - report missing 2nd argument;
          - report if argument is not verified;
      - mcrypt_create_iv()
-         - use random_bytes() PHP7
          - report if MCRYPT_DEV_RANDOM (strong) MCRYPT_DEV_RANDOM (secure) not provided as 2nd argument
          - report using MCRYPT_DEV_RANDOM and side-effects;
  */
 
 public class CryptographicallySecureRandomnessInspector extends BasePhpInspection {
-    private static final String messageUseRandomBytes                    = "..."; // weak warning
+    private static final String messageUseRandomBytes                    = "Consider using cryptographically secure random_bytes() instead";
     private static final String messageVerifyBytes                       = "..."; // error
     private static final String messageOpenssl2ndArgumentNotDefined      = "..."; // error
     private static final String messageOpenssl2ndArgumentNotVerified     = "..."; // error
@@ -46,7 +49,27 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                // holder.registerProblem(reference, messageUseRandomBytes, ProblemHighlightType.GENERIC_ERROR);
+                /* genera and function name requirements */
+                final String functionName = reference.getName();
+                final PsiElement[] params = reference.getParameters();
+                if ((1 != params.length && 2 != params.length) || StringUtil.isEmpty(functionName)) {
+                    return;
+                }
+                if (!functionName.equals("openssl_random_pseudo_bytes") && !functionName.equals("mcrypt_create_iv")) {
+                    return;
+                }
+
+                /* Case 1: use random_bytes in PHP7 */
+                PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (php.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
+                    holder.registerProblem(reference, messageUseRandomBytes, ProblemHighlightType.WEAK_WARNING);
+                }
+
+                /* Case 2: report missing 2nd argument */
+
+                /* Case 3: unchecked generation result */
+
+                /* Case 4: is 2nd argument verified/strong enough */
             }
         };
     }

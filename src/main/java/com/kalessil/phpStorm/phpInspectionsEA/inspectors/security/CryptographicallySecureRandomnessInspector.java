@@ -77,7 +77,6 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
 
 
                 /* Case 3: unchecked generation result */
-                boolean resultVerified = false;
                 /* TODO: get parent thru parenthesises and silence operator - util method */
                 /* unwrap reference if it silenced */
                 PsiElement parent = reference.getParent();
@@ -88,42 +87,11 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                         parent = parent.getParent();
                     }
                 }
-                /* check if result has been saved and verified against null */
+                /* check if result has been saved and verified against false */
+                boolean resultVerified = false;
                 if (parent instanceof AssignmentExpression) {
-                    final AssignmentExpression assignment = (AssignmentExpression) parent;
-                    final PsiElement assignmentContainer  = assignment.getVariable();
-                    if (null != assignmentContainer) {
-                        final Function scope      = ExpressionSemanticUtil.getScope(reference);
-                        final GroupStatement body = null == scope ? null : ExpressionSemanticUtil.getGroupStatement(scope);
-                        if (null != body) {
-                            Collection<BinaryExpression> checks = PsiTreeUtil.findChildrenOfType(body, BinaryExpression.class);
-                            for (BinaryExpression expression : checks) {
-                                /* ensure binary expression is complete */
-                                final PsiElement left      = expression.getLeftOperand();
-                                final PsiElement right     = expression.getRightOperand();
-                                final PsiElement operation = expression.getOperation();
-                                if (null == operation || null == left || null == right) {
-                                    continue;
-                                }
-
-                                /* expression should be a comparison with a false */
-                                if (!PhpLanguageUtil.isFalse(left) && !PhpLanguageUtil.isFalse(right)) {
-                                    continue;
-                                }
-                                final IElementType operator = operation.getNode().getElementType();
-                                if (PhpTokenTypes.opIDENTICAL != operator && PhpTokenTypes.opNOT_IDENTICAL != operator) {
-                                    continue;
-                                }
-
-                                final PsiElement operatorValue = PhpLanguageUtil.isFalse(left) ? right : left;
-                                if (PsiEquivalenceUtil.areElementsEquivalent(operatorValue, assignmentContainer)) {
-                                    resultVerified = true;
-                                    break;
-                                }
-                            }
-                            checks.clear();
-                        }
-                    }
+                    final PsiElement variable = ((AssignmentExpression) parent).getVariable();
+                    resultVerified            = null == variable || isCheckedForFalse(variable);
                 }
                 if (!resultVerified) {
                     holder.registerProblem(reference, messageVerifyBytes, ProblemHighlightType.GENERIC_ERROR);
@@ -143,41 +111,49 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                     }
                 }
                 if (hasSecondArgument && isOpenSSL) {
-                    boolean sourceVerified    = false;
-                    final Function scope      = ExpressionSemanticUtil.getScope(reference);
-                    final GroupStatement body = null == scope ? null : ExpressionSemanticUtil.getGroupStatement(scope);
-                    if (null != body) {
-                        Collection<BinaryExpression> checks = PsiTreeUtil.findChildrenOfType(body, BinaryExpression.class);
-                        for (BinaryExpression expression : checks) {
-                                /* ensure binary expression is complete */
-                            final PsiElement left      = expression.getLeftOperand();
-                            final PsiElement right     = expression.getRightOperand();
-                            final PsiElement operation = expression.getOperation();
-                            if (null == operation || null == left || null == right) {
-                                continue;
-                            }
-
-                                /* expression should be a comparison with a false */
-                            if (!PhpLanguageUtil.isFalse(left) && !PhpLanguageUtil.isFalse(right)) {
-                                continue;
-                            }
-                            final IElementType operator = operation.getNode().getElementType();
-                            if (PhpTokenTypes.opIDENTICAL != operator && PhpTokenTypes.opNOT_IDENTICAL != operator) {
-                                continue;
-                            }
-
-                            final PsiElement operatorValue = PhpLanguageUtil.isFalse(left) ? right : left;
-                            if (PsiEquivalenceUtil.areElementsEquivalent(operatorValue, params[1])) {
-                                sourceVerified = true;
-                                break;
-                            }
-                        }
-                        checks.clear();
-                    }
-                    if (!sourceVerified) {
+                    if (!isCheckedForFalse(params[1])) {
                         holder.registerProblem(params[1], messageOpenssl2ndArgumentNotVerified, ProblemHighlightType.GENERIC_ERROR);
                     }
                 }
+            }
+
+            private boolean isCheckedForFalse(@NotNull PsiElement subject) {
+                /* ensure we are in a callable, and assume checked if it's plain script (no false-positives) */
+                final Function scope      = ExpressionSemanticUtil.getScope(subject);
+                final GroupStatement body = null == scope ? null : ExpressionSemanticUtil.getGroupStatement(scope);
+                if (null == body) {
+                    return true;
+                }
+
+                boolean isChecked                   = false;
+                Collection<BinaryExpression> checks = PsiTreeUtil.findChildrenOfType(body, BinaryExpression.class);
+                for (BinaryExpression expression : checks) {
+                    /* ensure binary expression is complete */
+                    final PsiElement left      = expression.getLeftOperand();
+                    final PsiElement right     = expression.getRightOperand();
+                    final PsiElement operation = expression.getOperation();
+                    if (null == operation || null == left || null == right) {
+                        continue;
+                    }
+
+                    /* expression should be a comparison with a false */
+                    if (!PhpLanguageUtil.isFalse(left) && !PhpLanguageUtil.isFalse(right)) {
+                        continue;
+                    }
+                    final IElementType operator = operation.getNode().getElementType();
+                    if (PhpTokenTypes.opIDENTICAL != operator && PhpTokenTypes.opNOT_IDENTICAL != operator) {
+                        continue;
+                    }
+
+                    final PsiElement operatorValue = PhpLanguageUtil.isFalse(left) ? right : left;
+                    if (PsiEquivalenceUtil.areElementsEquivalent(operatorValue, subject)) {
+                        isChecked = true;
+                        break;
+                    }
+                }
+                checks.clear();
+
+                return isChecked;
             }
         };
     }

@@ -33,10 +33,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class CryptographicallySecureRandomnessInspector extends BasePhpInspection {
     private static final String messageUseRandomBytes                    = "Consider using cryptographically secure random_bytes() instead";
+    private static final String messageOpenssl2ndArgumentNotDefined      = "Use 2nd parameter for determining if the algorithm used was cryptographically strong";
+    private static final String messageMcrypt2ndArgumentNotDefined       = "Please provide 2nd parameter implicitly as default value has changed between PHP versions";
+
     private static final String messageVerifyBytes                       = "..."; // error
-    private static final String messageOpenssl2ndArgumentNotDefined      = "..."; // error
     private static final String messageOpenssl2ndArgumentNotVerified     = "..."; // error
-    private static final String messageMcrypt2ndArgumentNotDefined       = "..."; // error
     private static final String messageMcrypt2ndArgumentStrongNotSecure  = "..."; // error
 
     @NotNull
@@ -58,6 +59,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                 if (!functionName.equals("openssl_random_pseudo_bytes") && !functionName.equals("mcrypt_create_iv")) {
                     return;
                 }
+                final boolean isOpenSSL = functionName.equals("openssl_random_pseudo_bytes");
 
                 /* Case 1: use random_bytes in PHP7 */
                 PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
@@ -66,6 +68,11 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                 }
 
                 /* Case 2: report missing 2nd argument */
+                final boolean hasSecondArgument = 2 == params.length;
+                if (!hasSecondArgument) {
+                    final String message = isOpenSSL ? messageOpenssl2ndArgumentNotDefined : messageMcrypt2ndArgumentNotDefined;
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                }
 
                 /* Case 3: unchecked generation result */
 

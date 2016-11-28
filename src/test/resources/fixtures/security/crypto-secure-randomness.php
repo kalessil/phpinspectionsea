@@ -17,7 +17,7 @@ class CryptoSecureRandomness
     }
 
     public function hardenSecondParameters() {
-        $x = openssl_random_pseudo_bytes (32, $isSecure);
+        $x = openssl_random_pseudo_bytes (32, <error descr="$crypto_strong can be false, please add necessary checks">$isSecure</error>);
         if ($x === false) {
             return false;
         }
@@ -34,6 +34,9 @@ class CryptoSecureRandomness
     {
         $x = <error descr="The IV generated can be false, please add necessary checks">openssl_random_pseudo_bytes</error> (32, $isCryptoStrong);
         $x = @<error descr="The IV generated can be false, please add necessary checks">openssl_random_pseudo_bytes</error> (32, $isCryptoStrong);
+        if (false === $isCryptoStrong) {
+            return false;
+        }
 
         $x = <error descr="The IV generated can be false, please add necessary checks">mcrypt_create_iv</error> (32, MCRYPT_DEV_RANDOM);
         $x = @<error descr="The IV generated can be false, please add necessary checks">mcrypt_create_iv</error> (32, MCRYPT_DEV_RANDOM);

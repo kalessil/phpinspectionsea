@@ -36,7 +36,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
     private static final String messageOpenssl2ndArgumentNotDefined  = "Use 2nd parameter for determining if the algorithm used was cryptographically strong";
     private static final String messageMcrypt2ndArgumentNotDefined   = "Please provide 2nd parameter implicitly as default value has changed between PHP versions";
 
-    private static final String messageOpenssl2ndArgumentNotVerified = "..."; // error
+    private static final String messageOpenssl2ndArgumentNotVerified = "$crypto_strong can be false, please add necessary checks";
     private static final String messageMcrypt2ndArgumentNotSecure    = "It's better to use MCRYPT_DEV_RANDOM here (may block until more entropy is available)";
 
     @NotNull
@@ -143,7 +143,40 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                     }
                 }
                 if (hasSecondArgument && isOpenSSL) {
+                    boolean sourceVerified    = false;
+                    final Function scope      = ExpressionSemanticUtil.getScope(reference);
+                    final GroupStatement body = null == scope ? null : ExpressionSemanticUtil.getGroupStatement(scope);
+                    if (null != body) {
+                        Collection<BinaryExpression> checks = PsiTreeUtil.findChildrenOfType(body, BinaryExpression.class);
+                        for (BinaryExpression expression : checks) {
+                                /* ensure binary expression is complete */
+                            final PsiElement left      = expression.getLeftOperand();
+                            final PsiElement right     = expression.getRightOperand();
+                            final PsiElement operation = expression.getOperation();
+                            if (null == operation || null == left || null == right) {
+                                continue;
+                            }
 
+                                /* expression should be a comparison with a false */
+                            if (!PhpLanguageUtil.isFalse(left) && !PhpLanguageUtil.isFalse(right)) {
+                                continue;
+                            }
+                            final IElementType operator = operation.getNode().getElementType();
+                            if (PhpTokenTypes.opIDENTICAL != operator && PhpTokenTypes.opNOT_IDENTICAL != operator) {
+                                continue;
+                            }
+
+                            final PsiElement operatorValue = PhpLanguageUtil.isFalse(left) ? right : left;
+                            if (PsiEquivalenceUtil.areElementsEquivalent(operatorValue, params[1])) {
+                                sourceVerified = true;
+                                break;
+                            }
+                        }
+                        checks.clear();
+                    }
+                    if (!sourceVerified) {
+                        holder.registerProblem(params[1], messageOpenssl2ndArgumentNotVerified, ProblemHighlightType.GENERIC_ERROR);
+                    }
                 }
             }
         };

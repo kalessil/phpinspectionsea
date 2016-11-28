@@ -33,8 +33,10 @@ class CryptoSecureRandomness
     public function missingResultsVerification()
     {
         $x = <error descr="The IV generated can be false, please add necessary checks">openssl_random_pseudo_bytes</error> (32, $isCryptoStrong);
+        $x = @<error descr="The IV generated can be false, please add necessary checks">openssl_random_pseudo_bytes</error> (32, $isCryptoStrong);
 
         $x = <error descr="The IV generated can be false, please add necessary checks">mcrypt_create_iv</error> (32, MCRYPT_DEV_RANDOM);
+        $x = @<error descr="The IV generated can be false, please add necessary checks">mcrypt_create_iv</error> (32, MCRYPT_DEV_RANDOM);
 
         return $x;
     }

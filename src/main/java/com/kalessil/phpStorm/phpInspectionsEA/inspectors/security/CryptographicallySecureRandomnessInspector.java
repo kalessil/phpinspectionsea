@@ -17,6 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import org.jaxen.expr.UnaryExpr;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -78,12 +79,21 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
 
                 /* Case 3: unchecked generation result */
                 boolean resultVerified = false;
-                if (reference.getParent() instanceof AssignmentExpression) {
-                    /* can be @call() */
-
-                    final AssignmentExpression assignment = (AssignmentExpression) reference.getParent();
+                /* TODO: get parent thru parenthesises and silence operator - util method */
+                /* unwrap reference if it silenced */
+                PsiElement parent = reference.getParent();
+                if (parent instanceof UnaryExpression) {
+                    final UnaryExpression unary = (UnaryExpression) parent;
+                    final PsiElement operation  = unary.getOperation();
+                    if (null != operation && PhpTokenTypes.opSILENCE == operation.getNode().getElementType()) {
+                        parent = parent.getParent();
+                    }
+                }
+                /* check if result has been saved and verified against null */
+                if (parent instanceof AssignmentExpression) {
+                    final AssignmentExpression assignment = (AssignmentExpression) parent;
                     final PsiElement assignmentContainer  = assignment.getVariable();
-                    if (assignment.getValue() == reference && null != assignmentContainer) {
+                    if (null != assignmentContainer) {
                         final Function scope      = ExpressionSemanticUtil.getScope(reference);
                         final GroupStatement body = null == scope ? null : ExpressionSemanticUtil.getGroupStatement(scope);
                         if (null != body) {
@@ -122,7 +132,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
 
                 /* Case 4: is 2nd argument verified/strong enough */
                 if (hasSecondArgument && !isOpenSSL) {
-                    boolean reliableSource = false;
+                    boolean reliableSource = true; /* we'll check expected constant below */
                     if (params[1] instanceof ConstantReference) {
                         final ConstantReference secondArgument = (ConstantReference) params[1];
                         final String constant                  = secondArgument.getName();

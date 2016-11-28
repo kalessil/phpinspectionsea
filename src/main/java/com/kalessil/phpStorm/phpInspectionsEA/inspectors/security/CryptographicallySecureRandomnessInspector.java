@@ -29,25 +29,15 @@ import java.util.Collection;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-/*
- - Cryptographically secure random:
-     - openssl_random_pseudo_bytes()
-         - report missing 2nd argument;
-         - report if argument is not verified;
-     - mcrypt_create_iv()
-         - report if MCRYPT_DEV_RANDOM (strong) MCRYPT_DEV_RANDOM (secure) not provided as 2nd argument
-         - report using MCRYPT_DEV_RANDOM and side-effects;
- */
 
 public class CryptographicallySecureRandomnessInspector extends BasePhpInspection {
-    private static final String messageUseRandomBytes                    = "Consider using cryptographically secure random_bytes() instead";
-    private static final String messageVerifyBytes                       = "The IV generated can be false, please add necessary checks";
-    private static final String messageOpenssl2ndArgumentNotDefined      = "Use 2nd parameter for determining if the algorithm used was cryptographically strong";
-    private static final String messageMcrypt2ndArgumentNotDefined       = "Please provide 2nd parameter implicitly as default value has changed between PHP versions";
+    private static final String messageUseRandomBytes                = "Consider using cryptographically secure random_bytes() instead";
+    private static final String messageVerifyBytes                   = "The IV generated can be false, please add necessary checks";
+    private static final String messageOpenssl2ndArgumentNotDefined  = "Use 2nd parameter for determining if the algorithm used was cryptographically strong";
+    private static final String messageMcrypt2ndArgumentNotDefined   = "Please provide 2nd parameter implicitly as default value has changed between PHP versions";
 
-
-    private static final String messageOpenssl2ndArgumentNotVerified     = "..."; // error
-    private static final String messageMcrypt2ndArgumentStrongNotSecure  = "..."; // error
+    private static final String messageOpenssl2ndArgumentNotVerified = "..."; // error
+    private static final String messageMcrypt2ndArgumentNotSecure    = "It's better to use MCRYPT_DEV_RANDOM here (may block until more entropy is available)";
 
     @NotNull
     public String getShortName() {
@@ -89,6 +79,8 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                 /* Case 3: unchecked generation result */
                 boolean resultVerified = false;
                 if (reference.getParent() instanceof AssignmentExpression) {
+                    /* can be @call() */
+
                     final AssignmentExpression assignment = (AssignmentExpression) reference.getParent();
                     final PsiElement assignmentContainer  = assignment.getVariable();
                     if (assignment.getValue() == reference && null != assignmentContainer) {
@@ -129,6 +121,21 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                 }
 
                 /* Case 4: is 2nd argument verified/strong enough */
+                if (hasSecondArgument && !isOpenSSL) {
+                    boolean reliableSource = false;
+                    if (params[1] instanceof ConstantReference) {
+                        final ConstantReference secondArgument = (ConstantReference) params[1];
+                        final String constant                  = secondArgument.getName();
+                        reliableSource = !StringUtil.isEmpty(constant) && constant.equals("MCRYPT_DEV_RANDOM");
+                    }
+                    if (!reliableSource) {
+                        holder.registerProblem(params[1], messageMcrypt2ndArgumentNotSecure, ProblemHighlightType.GENERIC_ERROR);
+                        return;
+                    }
+                }
+                if (hasSecondArgument && isOpenSSL) {
+
+                }
             }
         };
     }

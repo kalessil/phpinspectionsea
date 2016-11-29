@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 
 public class SuspiciousLoopInspector extends BasePhpInspection {
-    private static final String strProblemMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
-    private static final String strProblemDescription        = "Variable '$%v%' is introduced in a outer loop and overridden here";
-    private static final String strProblemParameterName      = "Variable '$%v%' is introduced as a %t% parameter and overridden here";
+    private static final String messageMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
+    private static final String patternOverridesLoopVars  = "Variable '$%v%' is introduced in a outer loop and overridden here";
+    private static final String patternOverridesParameter = "Variable '$%v%' is introduced as a %t% parameter and overridden here";
 
     @NotNull
     public String getShortName() {
@@ -31,13 +31,13 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                 this.inspectVariables(foreach);
             }
             public void visitPhpFor(For forStatement) {
-                this.inspectVariables(forStatement);
                 this.inspectConditions(forStatement);
+                this.inspectVariables(forStatement);
             }
 
             private void inspectConditions(For forStatement) {
                 if (forStatement.getConditionalExpressions().length > 1) {
-                    holder.registerProblem(forStatement.getFirstChild(), strProblemMultipleConditions, ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(forStatement.getFirstChild(), messageMultipleConditions, ProblemHighlightType.GENERIC_ERROR);
                 }
             }
 
@@ -53,7 +53,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
 
                     for (String variable : loopVariables) {
                         if (parameters.contains(variable)) {
-                            final String message = strProblemParameterName
+                            final String message = patternOverridesParameter
                                     .replace("%v%", variable)
                                     .replace("%t%", function instanceof Method ? "method" : "function");
                             holder.registerProblem(loop.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
@@ -70,7 +70,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                         final HashSet<String> parentVariables = getLoopVariables((PhpPsiElement) parent);
                         for (String variable : loopVariables) {
                             if (parentVariables.contains(variable)) {
-                                final String message = strProblemDescription.replace("%v%", variable);
+                                final String message = patternOverridesLoopVars.replace("%v%", variable);
                                 holder.registerProblem(loop.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         }

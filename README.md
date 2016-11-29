@@ -149,7 +149,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | ForgottenDebugOutputInspection                  | Forgotten debug statements                                | n/a       | yes | n/a  |
 | Probable bugs        | AdditionOperationOnArraysInspection             | Addition operator used on arrays                          | n/a |
 | Probable bugs        | MagicMethodsValidityInspection                  | Magic methods validity                                    | n/a |
-| Probable bugs        | SuspiciousLoopInspection                        | Suspicious loop                                           | n/a |
+| Probable bugs        | SuspiciousLoopInspection                        | Suspicious loop                                           | n/a       | yes | n/a  |
 | Probable bugs        | ReferenceMismatchInspection                     | Reference mismatch                                        | n/a |
 | Probable bugs        | ImplicitMagicMethodCallInspection               | Implicit magic method calls                               | yes |
 | Probable bugs        | PrintfScanfArgumentsInspection                  | -printf/-scanf arguments count mismatches                 | n/a |

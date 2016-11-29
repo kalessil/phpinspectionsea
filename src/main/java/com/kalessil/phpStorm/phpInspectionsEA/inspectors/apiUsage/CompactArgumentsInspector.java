@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 
 public class CompactArgumentsInspector extends BasePhpInspection {
-    private static final String messagePattern = "'$%v%' might not be defined in the scope";
+    private static final String messagePattern = "$%v% might not be defined in the scope";
 
     @NotNull
     public String getShortName() {

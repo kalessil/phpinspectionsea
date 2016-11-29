@@ -10,7 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class GenericObjectTypeUsageInspector extends BasePhpInspection {
-    private static final String strProblemUseInterface  = "Please use a contract interface definition instead";
+    private static final String message = "Please use a contract interface definition instead";
 
     @NotNull
     public String getShortName() {
@@ -22,9 +22,9 @@ public class GenericObjectTypeUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpDocType(PhpDocType type) {
-                String typeFqn = type.getFQN();
+                final String typeFqn = type.getFQN();
                 if (!StringUtil.isEmpty(typeFqn) && typeFqn.equals("\\object")) {
-                    holder.registerProblem(type, strProblemUseInterface, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(type, message, ProblemHighlightType.WEAK_WARNING);
                 }
             }
         };

@@ -58,6 +58,7 @@ Inspections Lists (Control flow)
 | Control flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                            | n/a       | yes | n/a  |
 | Control flow         | GetTypeMissUseInspection                        | 'gettype(...)' could be replaced with 'is_*(...)'        | yes       | yes | no   |
 | Control flow         | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)' | yes       | yes | no   |
+| Control flow         | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                       | n/a       | yes | n/a  |
 
 Inspections Lists (PhpUnit)
 ---
@@ -203,5 +204,4 @@ Inspections Lists (Performance)
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes |
 | Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | n/a       | yes | n/a |
-| Performance          | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                          | n/a |
 | Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                    | yes       | yes | no  |

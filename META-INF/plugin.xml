@@ -84,10 +84,6 @@ with a laptop.
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.AmbiguousMethodsCallsInArrayMappingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="SequentialUnSetCallsInspection"                displayName="'unset(...)' calls could be merged"
-        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SequentialUnSetCallsInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="StrlenInEmptyStringCheckContextInspection"     displayName="'strlen(...)' should not be used to check if string is empty"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.StrlenInEmptyStringCheckContextInspection"/>
@@ -267,6 +263,10 @@ with a laptop.
          shortName="ArraySearchUsedAsInArrayInspection"            displayName="'array_search(...)' could be replaced by 'in_array(...)'"
          groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ArraySearchUsedAsInArrayInspector"/>
+  <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="SequentialUnSetCallsInspection"                displayName="'unset(...)' calls could be merged"
+         groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SequentialUnSetCallsInspector"/>
 
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
        shortName="ArrayFunctionsInvariantsInspection"             displayName="Foreach behaves as an array function"

@@ -17,7 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%c%[%i%]' might be used instead (invalid index accesses will popup)";
+    private static final String messagePattern = "'%c%[%i%]' might be used instead (invalid index accesses might show up)";
 
     @NotNull
     public String getShortName() {
@@ -32,7 +32,10 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
                 /* check if it's the target function */
                 final String function     = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if (3 != params.length || StringUtil.isEmpty(function) || !function.equals("substr")) {
+                if (
+                    params.length < 3 || StringUtil.isEmpty(function) ||
+                    (!function.equals("substr") && !function.equals("mb_substr"))
+                ) {
                     return;
                 }
 
@@ -41,7 +44,7 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
                         .replace("%c%", params[0].getText())
                         .replace("%i%", params[1].getText())
                     ;
-                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
                 }
             }
         };

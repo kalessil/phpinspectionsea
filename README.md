@@ -202,6 +202,6 @@ Inspections Lists (Performance)
 | Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                              | yes |
 | Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | n/a |
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes |
-| Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes |
+| Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes       | yes | no  |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | n/a       | yes | n/a |
 | Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                    | yes       | yes | no  |

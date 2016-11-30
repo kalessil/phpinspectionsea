@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.security;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class NonSecureParseStrUsageInspector  extends BasePhpInspection {
-    private static final String strProblemDescription = "Please provide second parameter to not influence globals";
+    private static final String message = "Please provide second parameter to not influence globals";
 
     @NotNull
     public String getShortName() {
@@ -31,13 +32,13 @@ public class NonSecureParseStrUsageInspector  extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final String strFunction = reference.getName();
+                final String strFunction  = reference.getName();
+                final PsiElement[] params = reference.getParameters();
                 if (
-                    1 == reference.getParameters().length &&
-                    !StringUtil.isEmpty(strFunction) &&
+                    1 == params.length && !StringUtil.isEmpty(strFunction) &&
                     (strFunction.equals("parse_str") || strFunction.equals("mb_parse_str"))
                 ) {
-                    holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
                 }
             }
         };

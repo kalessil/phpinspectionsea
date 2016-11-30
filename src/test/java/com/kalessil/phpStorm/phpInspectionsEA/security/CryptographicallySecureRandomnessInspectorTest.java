@@ -5,8 +5,7 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.CryptographicallySecureRandomnessInspector;
 
-
-public class CryptographicallySecureRandomnessInspectorTest extends CodeInsightFixtureTestCase {
+final public class CryptographicallySecureRandomnessInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/security/crypto-secure-randomness.php");
         myFixture.enableInspections(CryptographicallySecureRandomnessInspector.class);

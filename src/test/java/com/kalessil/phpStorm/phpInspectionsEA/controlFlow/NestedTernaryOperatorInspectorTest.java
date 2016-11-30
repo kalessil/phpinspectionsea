@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.controlFlow;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.NestedTernaryOperatorInspector;
 
-public class NestedTernaryOperatorInspectorTest extends CodeInsightFixtureTestCase {
+final public class NestedTernaryOperatorInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/controlFlow/ternary-nested-and-suspicious.php");
         myFixture.enableInspections(NestedTernaryOperatorInspector.class);

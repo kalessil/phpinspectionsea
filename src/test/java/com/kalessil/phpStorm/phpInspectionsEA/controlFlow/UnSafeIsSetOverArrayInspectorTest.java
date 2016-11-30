@@ -4,7 +4,7 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnSafeIsSetOverArrayInspector;
 import org.jetbrains.annotations.NotNull;
 
-public class UnSafeIsSetOverArrayInspectorTest extends CodeInsightFixtureTestCase {
+final public class UnSafeIsSetOverArrayInspectorTest extends CodeInsightFixtureTestCase {
     @NotNull
     private UnSafeIsSetOverArrayInspector getInspector() {
         UnSafeIsSetOverArrayInspector inspector = new UnSafeIsSetOverArrayInspector();

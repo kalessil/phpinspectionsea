@@ -173,7 +173,7 @@ Inspections Lists (Security)
 | Group                | Short Name                                      | Full Name                                                 | Quick fix | UTs | QFTs |
 | :------------------- | :-------------------------------------------    | :--------------------------------------------------       | --------: | --: | ---: |
 | Security             | NonSecureUniqidUsageInspection                  | Insecure 'uniqid()' usage                                 | yes       | yes | no   |
-| Security             | NonSecureExtractUsageInspection                 | Insecure 'extract(...)' usage                             | n/a |
+| Security             | NonSecureExtractUsageInspection                 | Insecure 'extract(...)' usage                             | n/a       | yes | no   |
 | Security             | NonSecureParseStrUsageInspection                | Insecure 'parse_str(...)' usage                           | n/a |
 | Security             | UntrustedInclusionInspection                    | Untrusted files inclusion                                 | n/a |
 | Security             | SecurityAdvisoriesInspection                    | Security advisories for composer packages                 | no        | yes | no   |

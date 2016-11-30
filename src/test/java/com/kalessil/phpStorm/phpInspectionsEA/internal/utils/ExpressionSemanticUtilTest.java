@@ -5,7 +5,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
-import com.jetbrains.php.lang.psi.elements.PhpEchoStatement;
 import com.jetbrains.php.lang.psi.elements.PhpReturn;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 

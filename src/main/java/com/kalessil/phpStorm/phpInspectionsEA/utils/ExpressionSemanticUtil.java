@@ -292,6 +292,7 @@ final public class ExpressionSemanticUtil {
         if (null == obj) {
             return null;
         }
+        obj = ExpressionSemanticUtil.getExpressionTroughParenthesis(obj);
 
         if (obj instanceof StringLiteralExpression) {
             return (StringLiteralExpression) obj;

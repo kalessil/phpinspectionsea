@@ -59,6 +59,7 @@ Inspections Lists (Control flow)
 | Control flow         | GetTypeMissUseInspection                        | 'gettype(...)' could be replaced with 'is_*(...)'        | yes       | yes | no   |
 | Control flow         | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)' | yes       | yes | no   |
 | Control flow         | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                       | n/a       | yes | n/a  |
+| --                   | ArrayFunctionsInvariantsInspection              |                                                          |           |     |      |
 
 Inspections Lists (PhpUnit)
 ---
@@ -114,7 +115,9 @@ Inspections Lists (Code style)
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes |
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | yes       | yes | no   |
 | Code style           | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                  | yes       | yes | no   |
-| Code style           | UnnecessaryFinalModifierInspecti                | Unnecessary final modifiers                         | yes       | yes | no   |
+| Code style           | UnnecessaryFinalModifierInspection              | Unnecessary final modifiers                         | yes       | yes | no   |
+| Code style           | DeclareUseStrictTypesInspection                 | 'declare(strict_types=1)' is missing                | n/a       | no  | n/a  |
+| Code style           | UsingInclusionReturnValueInspecti               | Usage of inclusion return value                     | n/a       | yes | n/a  |
 
 Inspections Lists (Language level migration)
 ---
@@ -167,16 +170,22 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | DateIntervalSpecificationInspection             | Date interval specification validity                      | n/a       | yes | n/a  |
 | Probable bugs        | UsingInclusionOnceReturnValueInspection         | Suspicious usage of include_once/require_once return value| yes       | yes | no   |
 | Probable bugs        | ClassReImplementsParentInterfaceInspection      | Class implements interfaces multiple times                | yes       | yes | no   |
+| Probable bugs        | PregQuoteUsageInspection                        | Proper preg_quote() usage                                 | n/a       | yes | n/a  |
 
 Inspections Lists (Security)
 ---
-| Group                | Short Name                                      | Full Name                                                 | Quick fix | UTs | QFTs |
-| :------------------- | :-------------------------------------------    | :--------------------------------------------------       | --------: | --: | ---: |
-| Security             | NonSecureUniqidUsageInspection                  | Insecure 'uniqid()' usage                                 | yes       | yes | no   |
-| Security             | NonSecureExtractUsageInspection                 | Insecure 'extract(...)' usage                             | n/a       | yes | no   |
-| Security             | NonSecureParseStrUsageInspection                | Insecure 'parse_str(...)' usage                           | n/a       | yes | no   |
-| Security             | UntrustedInclusionInspection                    | Untrusted files inclusion                                 | n/a       | yes | no   |
-| Security             | SecurityAdvisoriesInspection                    | Security advisories for composer packages                 | no        | yes | no   |
+| Group                | Short Name                                         | Full Name                                                 | Quick fix | UTs | QFTs |
+| :------------------- | :-------------------------------------------       | :--------------------------------------------------       | --------: | --: | ---: |
+| Security             | NonSecureUniqidUsageInspection                     | Insecure 'uniqid()' usage                                 | yes       | yes | no   |
+| Security             | NonSecureExtractUsageInspection                    | Insecure 'extract(...)' usage                             | n/a       | yes | no   |
+| Security             | NonSecureParseStrUsageInspection                   | Insecure 'parse_str(...)' usage                           | n/a       | yes | no   |
+| Security             | UntrustedInclusionInspection                       | Untrusted files inclusion                                 | n/a       | yes | no   |
+| Security             | SecurityAdvisoriesInspection                       | Security advisories for composer packages                 | no        | yes | no   |
+| Security             | CurlSslServerSpoofingInspection                    | | | | |
+| Security             | EncryptionInitializationVectorRandomnessInspection | | | | |
+| Security             | UnserializeExploitsInspection                      | | | | |
+| Security             | PotentialMalwareInspection                         | | | | |
+| Security             | CryptographicallySecureRandomnessInspection        | | | | |
 
 Inspections Lists (Performance)
 ---

@@ -400,6 +400,10 @@ with a laptop.
          shortName="CryptographicallySecureRandomnessInspection"   displayName="Cryptographically secure randomness"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.CryptographicallySecureRandomnessInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="CryptographicallySecureAlgorithms"             displayName="Cryptographically secure algorithms"
+         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.CryptographicallySecureAlgorithmsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

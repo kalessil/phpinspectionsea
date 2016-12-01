@@ -156,7 +156,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | SuspiciousLoopInspection                        | Suspicious loop                                           | n/a       | yes | n/a  |
 | Probable bugs        | ReferenceMismatchInspection                     | Reference mismatch                                        | n/a |
 | Probable bugs        | ImplicitMagicMethodCallInspection               | Implicit magic method calls                               | yes |
-| Probable bugs        | PrintfScanfArgumentsInspection                  | -printf/-scanf arguments count mismatches                 | n/a |
+| Probable bugs        | PrintfScanfArgumentsInspection                  | -printf/-scanf arguments count mismatches                 | n/a       | yes | n/a  |
 | Probable bugs        | RealpathOnRelativePathsInspection               | Phar-incompatible 'realpath()' applied to a relative path | no  |
 | Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | n/a       | yes | n/a  |
 | Probable bugs        | SummerTimeUnsafeTimeManipulationInspection      | Summer-time unsafe date manipulations                     | n/a       | yes | n/a  |

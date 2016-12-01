@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedList;
+import java.util.List;
 
 public class DispatchingThisIntoClosuresInspector extends BasePhpInspection {
     private static final String message = "Will not work. You have to define a temporary variable (e.g. $self) and use it instead.";
@@ -28,7 +28,7 @@ public class DispatchingThisIntoClosuresInspector extends BasePhpInspection {
             public void visitPhpFunction(Function function) {
                 /* closure must defined in a method */
                 if (function.isClosure() && ExpressionSemanticUtil.getScope(function) instanceof Method) {
-                    final LinkedList<Variable> use = ExpressionSemanticUtil.getUseListVariables(function);
+                    final List<Variable> use = ExpressionSemanticUtil.getUseListVariables(function);
                     if (null != use && use.size() > 0) {
                         for (Variable variable : use) {
                             if (variable.getName().equals("this")) {

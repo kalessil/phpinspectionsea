@@ -23,6 +23,7 @@ import javax.swing.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 public class ForgottenDebugOutputInspector extends BasePhpInspection {
     // custom configuration, automatically saved between restarts so keep out of changing modifiers
@@ -54,7 +55,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         customMethods.clear();
         customMethodsNames.clear();
 
-        final LinkedList<String> customDebugFQNs = new LinkedList<>();
+        final List<String> customDebugFQNs = new LinkedList<>();
         customDebugFQNs.addAll(this.configuration);
 
         /* known debug methods from community */

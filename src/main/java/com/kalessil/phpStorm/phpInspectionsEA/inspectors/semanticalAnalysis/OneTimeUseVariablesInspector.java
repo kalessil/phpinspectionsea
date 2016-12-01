@@ -23,7 +23,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedList;
+import java.util.List;
 
 
 public class OneTimeUseVariablesInspector extends BasePhpInspection {
@@ -69,7 +69,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                                 }
                             }
 
-                            LinkedList<Variable> useList = ExpressionSemanticUtil.getUseListVariables(function);
+                            final List<Variable> useList = ExpressionSemanticUtil.getUseListVariables(function);
                             if (null != useList) {
                                 for (Variable param: useList) {
                                     if (!param.getName().equals(variableName)) {

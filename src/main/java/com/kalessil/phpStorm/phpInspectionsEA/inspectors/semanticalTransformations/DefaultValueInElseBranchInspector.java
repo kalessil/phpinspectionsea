@@ -15,6 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class DefaultValueInElseBranchInspector extends BasePhpInspection {
     private static final String message = "Assignment in this branch shall be moved before if";
@@ -37,7 +38,7 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
 
 
                 /* collect all group statement for further analysis */
-                final LinkedList<GroupStatement> groupStatementsList = new LinkedList<>();
+                final List<GroupStatement> groupStatementsList = new LinkedList<>();
                 groupStatementsList.add(ExpressionSemanticUtil.getGroupStatement(ifStatement));
                 for (ControlStatement elseIf : ifStatement.getElseIfBranches()) {
                     groupStatementsList.add(ExpressionSemanticUtil.getGroupStatement(elseIf));

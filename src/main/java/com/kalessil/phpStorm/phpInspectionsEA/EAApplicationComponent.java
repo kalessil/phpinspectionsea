@@ -40,15 +40,15 @@ public class EAApplicationComponent implements ApplicationComponent {
         return "EAApplicationComponent";
     }
 
-    public boolean isUpdated() {
+    boolean isUpdated() {
         return updated;
     }
 
-    public boolean isUpdateNotificationShown() {
+    boolean isUpdateNotificationShown() {
         return updateNotificationShown;
     }
 
-    public void setUpdateNotificationShown(boolean shown) {
+    void setUpdateNotificationShown(boolean shown) {
         this.updateNotificationShown = shown;
     }
 }

@@ -53,7 +53,7 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-23 November 2016: improvements and new inspections<br/>
+Improvements and new inspections (support us by donating via <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RK7DPPHTSZXTA">PayPal</a>)<br/>
 <br/>
 - Type casting can be used: bug-fix for Quick-Fix<br/>
 - Deprecated constructor style: resolved a false-positive (BC constructors in WP)<br/>

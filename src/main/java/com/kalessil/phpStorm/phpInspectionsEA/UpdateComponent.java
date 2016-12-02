@@ -27,8 +27,6 @@ public class UpdateComponent implements ProjectComponent {
     @Override
     public void projectOpened() {
         if (applicationComponent.isUpdated() && !applicationComponent.isUpdateNotificationShown()) {
-            applicationComponent.setUpdateNotificationShown(true);
-
             IdeaPluginDescriptor plugin = PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA"));
             if (null == plugin) {
                 return;
@@ -40,6 +38,8 @@ public class UpdateComponent implements ProjectComponent {
                     popupTitle, plugin.getChangeNotes(), NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER
             );
             Notifications.Bus.notify(notification);
+
+            applicationComponent.setUpdateNotificationShown(true);
         }
     }
 

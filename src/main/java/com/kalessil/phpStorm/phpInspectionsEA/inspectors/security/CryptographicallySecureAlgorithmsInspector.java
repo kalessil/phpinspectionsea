@@ -36,6 +36,7 @@ public class CryptographicallySecureAlgorithmsInspector extends BasePhpInspectio
         constants.put("MCRYPT_DES",             "DES has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead");
         constants.put("MCRYPT_RC2",             "RC2 has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead");
         constants.put("MCRYPT_RC4",             "RC4 has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead");
+        constants.put("MCRYPT_ARCFOUR",         "RC4 has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead");
         /* weak algorithms, openssl constants */
         constants.put("OPENSSL_CIPHER_3DES",    "3DES has known vulnerabilities, consider using AES-128-* instead");
         constants.put("OPENSSL_CIPHER_DES",     "DES has known vulnerabilities, consider using AES-128-* instead");
@@ -53,7 +54,7 @@ public class CryptographicallySecureAlgorithmsInspector extends BasePhpInspectio
                 'sha[01]?'
                 'md[245]'
                 'rc2(-(40|64))?(-(cbc|cfb|ecb|ofb))?'
-                'rc4(-40)?'
+                '(arcfour)|(rc4(-40)?)'
          */
     }
 

@@ -675,14 +675,22 @@ with a laptop.
         shortName="StrictUnaryPlusInspection"                       displayName="Type compatibility: unary plus operator"
         groupName="Php Inspections (EA Extended)"                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictOperators.StrictUnaryPlusInspector"/-->
+
+    <applicationService
+            serviceInterface="com.kalessil.phpStorm.phpInspectionsEA.EASettings"
+            serviceImplementation="com.kalessil.phpStorm.phpInspectionsEA.EASettings" />
   </extensions>
 
   <application-components>
-    <!-- Add your application components here -->
+      <component>
+          <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.EAApplicationComponent</implementation-class>
+      </component>
   </application-components>
 
   <project-components>
-    <!-- Add your project components here -->
+      <component>
+          <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.UpdateComponent</implementation-class>
+      </component>
   </project-components>
 
   <actions>

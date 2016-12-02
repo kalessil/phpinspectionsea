@@ -25,13 +25,19 @@ public class CryptographicallySecureAlgorithmsInspector extends BasePhpInspectio
 
     final private static Map<String, String> constants = new HashMap<>();
     static {
+        /* known bugs */
         constants.put("MCRYPT_RIJNDAEL_192", "mcrypt's MCRYPT_RIJNDAEL_192 is not AES compliant, MCRYPT_RIJNDAEL_128 should be used instead");
         constants.put("MCRYPT_RIJNDAEL_256", "mcrypt's MCRYPT_RIJNDAEL_256 is not AES compliant, MCRYPT_RIJNDAEL_128 + 256-bit key should be used instead");
+        /* weak algorithms in general */
+        constants.put("MCRYPT_3DES",         "3DES has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead");
+        constants.put("MCRYPT_DES",          "DES has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead");
+        constants.put("MCRYPT_RC2",          "RC2 has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead");
+        constants.put("MCRYPT_RC4",          "RC4 has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead");
     }
 
     @NotNull
     public String getShortName() {
-        return "CryptographicallySecureAlgorithm";
+        return "CryptographicallySecureAlgorithms";
     }
 
     @Override

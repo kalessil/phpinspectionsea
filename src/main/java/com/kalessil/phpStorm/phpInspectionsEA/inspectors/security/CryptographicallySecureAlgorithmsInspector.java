@@ -26,13 +26,30 @@ public class CryptographicallySecureAlgorithmsInspector extends BasePhpInspectio
     final private static Map<String, String> constants = new HashMap<>();
     static {
         /* known bugs */
-        constants.put("MCRYPT_RIJNDAEL_192", "mcrypt's MCRYPT_RIJNDAEL_192 is not AES compliant, MCRYPT_RIJNDAEL_128 should be used instead");
-        constants.put("MCRYPT_RIJNDAEL_256", "mcrypt's MCRYPT_RIJNDAEL_256 is not AES compliant, MCRYPT_RIJNDAEL_128 + 256-bit key should be used instead");
-        /* weak algorithms in general */
-        constants.put("MCRYPT_3DES",         "3DES has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead");
-        constants.put("MCRYPT_DES",          "DES has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead");
-        constants.put("MCRYPT_RC2",          "RC2 has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead");
-        constants.put("MCRYPT_RC4",          "RC4 has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead");
+        constants.put("MCRYPT_RIJNDAEL_192",    "mcrypt's MCRYPT_RIJNDAEL_192 is not AES compliant, MCRYPT_RIJNDAEL_128 should be used instead");
+        constants.put("MCRYPT_RIJNDAEL_256",    "mcrypt's MCRYPT_RIJNDAEL_256 is not AES compliant, MCRYPT_RIJNDAEL_128 + 256-bit key should be used instead");
+        /* weak algorithms */
+        constants.put("MCRYPT_3DES",            "3DES has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead");
+        constants.put("MCRYPT_DES",             "DES has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead");
+        constants.put("MCRYPT_RC2",             "RC2 has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead");
+        constants.put("MCRYPT_RC4",             "RC4 has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead");
+        constants.put("OPENSSL_CIPHER_3DES",    "3DES has known vulnerabilities, consider using AES-128-* instead");
+        constants.put("OPENSSL_CIPHER_DES",     "DES has known vulnerabilities, consider using AES-128-* instead");
+        constants.put("OPENSSL_CIPHER_RC2_40",  "RC2 has known vulnerabilities, consider using AES-128-* instead");
+        constants.put("OPENSSL_CIPHER_RC2_64",  "RC2 has known vulnerabilities, consider using AES-128-* instead");
+
+        /*
+            Constants:
+                OPENSSL_ALGO_SHA1, OPENSSL_ALGO_MD5, OPENSSL_ALGO_MD4, OPENSSL_ALGO_MD2
+            Functions:
+                md5|sha1|crc32
+            Strings (possibly only resolved as string literals):
+                '(tripledes)|(des3)|(des(-(ede|ede3))?(-(cbc|cfb|ecb|cfb1|cfb8|ofb))?)'
+                'sha[01]?'
+                'md[245]'
+                'rc2(-(40|64))?(-(cbc|cfb|ecb|ofb))?'
+                'rc4(-40)?'
+         */
     }
 
     @NotNull

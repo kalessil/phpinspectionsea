@@ -74,10 +74,10 @@ parse_str($encodedString, $parsedValues);
 
 ## extract()
 
-The function imports variables from an array into the current scope. You can apply some rules to the extraction by 
+The function imports variables from an array into the current scope. You can apply some rules to extraction process by 
 providing second argument.
 ```php
-/* One example: we are protecting existing scope from modification */
+/* an example: we are protecting existing scope from modification */
 
 $countVariablesCreated = extract($values, EXTR_SKIP);
 if ($countVariablesCreated != count($values)) {
@@ -85,4 +85,30 @@ if ($countVariablesCreated != count($values)) {
 }
 ```
 
+# SSL server spoofing
+
+## curl_setopt()
+
+The function allows to manipulate CURLOPT_SSL_VERIFYHOST and CURLOPT_SSL_VERIFYPEER, responsible for SSL 
+connection certificate validation (host name and CA information). Disabling the settings allows to intercept SSL connections.
+
+```php
+/* case 1: debug/production environment */
+
+curl_setopt($curlHandler, CURLOPT_SSL_VERIFYHOST, $debug ? 0 : 2);
+curl_setopt($curlHandler, CURLOPT_SSL_VERIFYPEER, $debug ? 0 : 1);
+/* ternary operator informs Php Inspections (EA Extended) about the case, no warning will be reported */
+```
+
+```php
+/* case 2: self-sined certificates */
+
+/* clearly state that we do certificate validation */
+curl_setopt($curlHandler, CURLOPT_SSL_VERIFYHOST, 2);
+curl_setopt($curlHandler, CURLOPT_SSL_VERIFYPEER, 1);
+
+/* use one of those options: a CA certificate or folder containing multiple certificates */
+curl_setopt($curlHandler, CURLOPT_CAINFO,  '<path>/ca.crt');
+curl_setopt($curlHandler, CURLOPT_CAPATH , '<path>/');
+```
  

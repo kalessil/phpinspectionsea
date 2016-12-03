@@ -72,7 +72,7 @@ parse_str($encodedString, $parsedValues);
 /* now you can work with your data: $parsedValues['variable'] or $parsedValues['variable'][0] */
 ```
 
-## extract ()
+## extract()
 
 The function imports variables from an array into the current scope. You can apply some rules to the extraction by 
 providing second argument.
@@ -81,7 +81,7 @@ providing second argument.
 
 $countVariablesCreated = extract($values, EXTR_SKIP);
 if ($countVariablesCreated != count($values)) {
-    throw new \RuntimeException('Extraction failed: ');
+    throw new \RuntimeException('Extraction failed: scope modification attempted');
 }
 ```
 

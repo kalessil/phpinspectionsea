@@ -97,7 +97,7 @@ connection certificate validation (host name and CA information). Disabling the 
 
 curl_setopt($curlHandler, CURLOPT_SSL_VERIFYHOST, $debug ? 0 : 2);
 curl_setopt($curlHandler, CURLOPT_SSL_VERIFYPEER, $debug ? 0 : 1);
-/* ternary operator informs Php Inspections (EA Extended) about the case, no warning will be reported */
+/* ternary operator informs Php Inspections (EA Extended) about the case, no warnings will be reported */
 ```
 
 ```php

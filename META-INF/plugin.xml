@@ -390,7 +390,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.EncryptionInitializationVectorRandomnessInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="UnserializeExploitsInspection"                 displayName="Exploiting unserialize (PHP Object Injection Vulnerability)"
-         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         groupName="Security"                                      enabledByDefault="false" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.UnserializeExploitsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="PotentialMalwareInspection"                    displayName="Basic malware patterns"

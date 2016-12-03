@@ -59,3 +59,30 @@ if (false === $random) {
     throw new \RuntimeException('IV generation failed');
 }
 ```
+
+# Variables extraction
+
+## parse_str()
+
+The function parses encoded string as if it were the query string passed via a URL and sets variables in the current 
+scope (or in the array if second parameter is provided). To stay safe, you should always provide second parameter.
+```php
+parse_str($encodedString, $parsedValues);
+
+/* now you can work with your data: $parsedValues['variable'] or $parsedValues['variable'][0] */
+```
+
+## extract ()
+
+The function imports variables from an array into the current scope. You can apply some rules to the extraction by 
+providing second argument.
+```php
+/* One example: we are protecting existing scope from modification */
+
+$countVariablesCreated = extract($values, EXTR_SKIP);
+if ($countVariablesCreated != count($values)) {
+    throw new \RuntimeException('Extraction failed: ');
+}
+```
+
+ 

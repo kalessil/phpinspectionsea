@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.1.0</version>
+  <version>2.2.0</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -29,8 +29,7 @@ This plugin is a Static Code Analysis tool for PHP (aka inspections in JetBrains
 <br />
 It covers:<br />
 - architecture related issues (e.g. design pattern violations)<br />
-- possible code construct simplifications<br />
-- weak types control (important in Enterprise Applications)<br />
+- weak types control and possible code construct simplifications<br />
 - performance issues<br />
 - non-optimal, duplicate and suspicious "if" conditions<br />
 - validation of magic methods usage<br />
@@ -39,6 +38,7 @@ It covers:<br />
 - compatibility issues<br />
 - variety of time-consuming bugs<br />
 - PhpUnit API usage<br />
+- security issues<br />
 <br />
 Some of inspections are expecting conditional statements (e.g. "if") to use
 group statement for wrapping body expressions. If this requirement is met
@@ -55,19 +55,23 @@ with a laptop.
   <change-notes><![CDATA[
 Improvements and new inspections (support us by donating via <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RK7DPPHTSZXTA">PayPal</a>)<br/>
 <br/>
-- Type casting can be used: bug-fix for Quick-Fix<br/>
-- Deprecated constructor style: resolved a false-positive (BC constructors in WP)<br/>
-- Foreach source to iterate over: resolved false-positives (mixed boolean/array types)<br/>
-- Statement could be decoupled from foreach: resolved a false-positive (mixing html and php)<br/>
-- Null coalescing operator can be used: new patterns<br/>
-- 'isset(...)' usage: resolved false-positives (inverted statements)<br/>
-- Missing or empty conditionals group statement: new patterns (do, while, for, foreach)<br/>
-- Non-optimal regular expression: new patterns (greedy sets, ReDOS)<br/>
-- Prefixed increment/decrement equivalent: Quick-Fix implemented<br/>
+- Forgotten debug statements: new patterns (Symfony/ZF methods)<br/>
+- Nested ternary operator: new patterns (literal operands)<br/>
+- Security advisories: resolved false-positives (no packages required yet)<br/>
+- Suspicious ternary operator: resolved false-positives (not-operands)<br/>
+- *printf/*scanf arguments count mismatches: resolved false-positives (returning values array)<br/>
+- 'substr(...)' used as index-based access: new patterns (mb_* function)<br/>
+- 'unset(...)' calls could be merged: new patterns<br/>
+- Untrusted files inclusion: new patterns<br/>
 <br/>
-- CURL: SSL server spoofing (SSL MITM and Spoofing Attacks): implemented<br/>
-- Security advisories for Composer packages (Components Firewall): implemented<br/>
-- Short list syntax can be used: implemented<br/>
+- Basic malware patterns: implemented<br/>
+- Cryptographically secure algorithms: implemented<br/>
+- Cryptographically secure randomness: implemented<br/>
+- Encryption initialization vector randomness: implemented<br/>
+- Exploiting unserialize: implemented<br/>
+- Proper preg_quote() usage: implemented<br/>
+- Unnecessary final modifiers: implemented<br/>
+- 'declare(strict_types=1)' is missing: deprecated, to be dropped<br/>
 <br/>
 <hr/>
   ]]></change-notes>

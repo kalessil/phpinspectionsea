@@ -181,11 +181,12 @@ Inspections Lists (Security)
 | Security             | NonSecureParseStrUsageInspection                   | Insecure 'parse_str(...)' usage                           | n/a       | yes | no   |
 | Security             | UntrustedInclusionInspection                       | Untrusted files inclusion                                 | n/a       | yes | no   |
 | Security             | SecurityAdvisoriesInspection                       | Security advisories for composer packages                 | no        | yes | no   |
-| Security             | CurlSslServerSpoofingInspection                    | | | | |
-| Security             | EncryptionInitializationVectorRandomnessInspection | | | | |
-| Security             | UnserializeExploitsInspection                      | | | | |
-| Security             | PotentialMalwareInspection                         | | | | |
-| Security             | CryptographicallySecureRandomnessInspection        | | | | |
+| Security             | CurlSslServerSpoofingInspection                    | CURL: SSL server spoofing                                 | n/a       | yes | n/a  |
+| Security             | EncryptionInitializationVectorRandomnessInspection | Encryption initialization vector randomness               | n/a       | yes | n/a  |
+| Security             | UnserializeExploitsInspection                      | Exploiting unserialize                                    | n/a       | yes | n/a  |
+| Security             | PotentialMalwareInspection                         | Basic malware patterns                                    | n/a       | yes | n/a  |
+| Security             | CryptographicallySecureRandomnessInspection        | Cryptographically secure randomness                       | n/a       | yes | n/a  |
+| Security             | CryptographicallySecureAlgorithms                  | Cryptographically secure algorithms                       | n/a |
 
 Inspections Lists (Performance)
 ---

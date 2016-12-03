@@ -31,6 +31,20 @@ This technique allows to hook into class-loading during unserialize, making it p
     /* your code here */
 ```
 
+# Cryptographically secure algorithms
+
+## General
+
+MD2, MD4, MD5, SHA0, SHA1, DES, 3DES, RC2, RC4 algorithms are proven flawed or weak. Avoid using them when possible.
+
+## mcrypt extension
+
+The extension is not maintained and has been deprecated since PHP 7.1, consider migrating to openssl.
+
+Nevertheless if you still using mcrypt, Php Inspections (EA Extended) finds issues:
+* MCRYPT_RIJNDAEL_192 and MCRYPT_RIJNDAEL_256 [are not AES-compliant](https://bugs.php.net/bug.php?id=47125);
+* MCRYPT_RIJNDAEL_256 [is not AES-256](https://paragonie.com/blog/2015/05/if-you-re-typing-word-mcrypt-into-your-code-you-re-doing-it-wrong#title.1.2)
+
 # Cryptographically secure randomness
 
 For cryptographic operations purposes it's important to properly generate IV (Initialization Vector), which used for 

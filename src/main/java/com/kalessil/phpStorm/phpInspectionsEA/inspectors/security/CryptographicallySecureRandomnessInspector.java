@@ -111,7 +111,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                     }
                 }
                 if (hasSecondArgument && isOpenSSL) {
-                    if (!isCheckedForFalse(params[1])) {
+                    if (!isCheckedForFalse(params[1]) && params[1].getTextLength() > 0) {
                         holder.registerProblem(params[1], messageOpenssl2ndArgumentNotVerified, ProblemHighlightType.GENERIC_ERROR);
                     }
                 }

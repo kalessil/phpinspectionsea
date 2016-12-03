@@ -21,7 +21,7 @@ This technique allows to hook into class-loading during unserialize, making it p
 
 ```php
     function __autoload($classname) {
-        /* leave it empty to prevent further autoloading, only loaded classes will available */
+        /* leave it empty to prevent further autoloading, only loaded classes will be available */
     }
     
     $originalCallback = ini_set('unserialize_callback_func', '__autoload');

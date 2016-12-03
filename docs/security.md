@@ -7,7 +7,7 @@ There are several options how to resolve the issue:
 
 ## Using JSON format
 
-The approach is straightforward and include using json_decode()/json_encode() instead of serialization.
+The approach is straightforward and includes using json_decode()/json_encode() instead of serialization.
 Unfortunately it is not suitable for performance-optimized components.
 
 ## PHP 7.0.0+
@@ -33,7 +33,7 @@ This technique allows to hook into class-loading during unserialize, making it p
 
 # Cryptographically secure randomness
 
-For cryptographic operation purposes it's important to properly generate IV (Initialization Vector), which used for 
+For cryptographic operations purposes it's important to properly generate IV (Initialization Vector), which used for 
 further operations. In PHP you can use following functions for IV generation: openssl_random_pseudo_bytes, mcrypt_create_iv 
 and random_bytes.
 

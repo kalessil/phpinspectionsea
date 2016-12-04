@@ -15,14 +15,22 @@ import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
+    // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
+    public boolean SUGGEST_USING_CLONE = true;
+
     private static final String strProblemDescription = "This statement seems to be disconnected from parent foreach";
     private static final String strProblemUseClone    = "Objects should be created outside of a loop and cloned instead";
 
@@ -114,7 +122,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                     }
                                 }
 
-                                if (ExpressionType.DOM_ELEMENT_CREATE == target || ExpressionType.NEW == target) {
+                                if (SUGGEST_USING_CLONE && (ExpressionType.DOM_ELEMENT_CREATE == target || ExpressionType.NEW == target)) {
                                     holder.registerProblem(oneInstruction, strProblemUseClone, ProblemHighlightType.WEAK_WARNING);
                                 }
                             }
@@ -290,5 +298,32 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 return ExpressionType.OTHER;
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return (new DisconnectedForeachInstructionInspector.OptionsPanel()).getComponent();
+    }
+
+    public class OptionsPanel {
+        final private JPanel optionsPanel;
+
+        final private JCheckBox suggestUsingRandomInt;
+
+        public OptionsPanel() {
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
+
+            suggestUsingRandomInt = new JCheckBox("Suggest using clone", SUGGEST_USING_CLONE);
+            suggestUsingRandomInt.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    SUGGEST_USING_CLONE = suggestUsingRandomInt.isSelected();
+                }
+            });
+            optionsPanel.add(suggestUsingRandomInt, "wrap");
+        }
+
+        public JPanel getComponent() {
+            return optionsPanel;
+        }
     }
 }

@@ -116,7 +116,6 @@ Inspections Lists (Code style)
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | yes       | yes | no   |
 | Code style           | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                  | yes       | yes | no   |
 | Code style           | UnnecessaryFinalModifierInspection              | Unnecessary final modifiers                         | yes       | yes | no   |
-| Code style           | DeclareUseStrictTypesInspection                 | 'declare(strict_types=1)' is missing                | n/a       | no  | n/a  |
 | Code style           | UsingInclusionReturnValueInspecti               | Usage of inclusion return value                     | n/a       | yes | n/a  |
 
 Inspections Lists (Language level migration)

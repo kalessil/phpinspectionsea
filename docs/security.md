@@ -115,7 +115,7 @@ curl_setopt($curlHandler, CURLOPT_SSL_VERIFYPEER, $debug ? 0 : 1);
 ```
 
 ```php
-/* case 2: self-sined certificates */
+/* case 2: self-signed certificates */
 
 /* clearly state that we do certificate validation */
 curl_setopt($curlHandler, CURLOPT_SSL_VERIFYHOST, 2);

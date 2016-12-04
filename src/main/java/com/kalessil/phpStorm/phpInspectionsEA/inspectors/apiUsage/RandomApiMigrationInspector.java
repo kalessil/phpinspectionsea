@@ -17,34 +17,39 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class RandomApiMigrationInspector extends BasePhpInspection {
-    private static final String strProblemDescription  = "'%o%(...)' has recommended replacement '%n%(...)', consider migrating";
+    // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
+    public boolean SUGGEST_USING_RANDOM_INT = true;
+
+    private static final String messagePattern = "'%o%(...)' has recommended replacement '%n%(...)', consider migrating";
 
     @NotNull
     public String getShortName() {
         return "RandomApiMigrationInspection";
     }
 
-    private static HashMap<String, String> mapping = null;
-    private static PhpLanguageLevel languageLevel = null;
-    private static HashMap<String, String> getMapping(PhpLanguageLevel phpVersion) {
-        if (null == mapping || languageLevel != phpVersion) {
-            languageLevel = phpVersion;
+    private static Map<String, String> mappingMt   = new HashMap<>();
+    private static Map<String, String> mappingEdge = new HashMap<>();
+    static {
+        mappingMt.put("srand",        "mt_srand");
+        mappingMt.put("getrandmax",   "mt_getrandmax");
+        mappingMt.put("rand",         "mt_rand");
 
-            mapping = new HashMap<>();
-            mapping.put("srand",      "mt_srand");
-            mapping.put("getrandmax", "mt_getrandmax");
+        mappingEdge.put("srand",      "mt_srand");
+        mappingEdge.put("getrandmax", "mt_getrandmax");
+        mappingEdge.put("rand",       "random_int");
+        mappingEdge.put("mt_rand",    "random_int");
+    }
 
-            if (languageLevel.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
-                mapping.put("rand",    "random_int");
-                mapping.put("mt_rand", "random_int");
-            } else {
-                mapping.put("rand",    "mt_rand");
-            }
+    private Map<String, String> getMapping(PhpLanguageLevel phpVersion) {
+        if (SUGGEST_USING_RANDOM_INT && phpVersion.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) {
+            return mappingEdge;
         }
 
-        return mapping;
+        return mappingMt;
     }
 
     @Override
@@ -52,27 +57,28 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final String strFunctionName = reference.getName();
-                if (StringUtil.isEmpty(strFunctionName)) {
+                final String functionName = reference.getName();
+                if (StringUtil.isEmpty(functionName)) {
                     return;
                 }
 
-                HashMap<String, String> mapFunctions = getMapping(PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel());
-                if (mapFunctions.containsKey(strFunctionName)) {
-                    String suggestedName = mapFunctions.get(strFunctionName);
+                PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                Map<String, String> mapFunctions = getMapping(php);
+                if (mapFunctions.containsKey(functionName)) {
+                    String suggestedName = mapFunctions.get(functionName);
                     /* random_int needs 2 parameters always, so check if mt_rand can be suggested */
                     if (2 != reference.getParameters().length && suggestedName.equals("random_int")) {
-                        if (strFunctionName.equals("rand")) {
+                        if (functionName.equals("rand")) {
                             suggestedName = "mt_rand";
                         } else {
                             return;
                         }
                     }
 
-                    final String strMessage = strProblemDescription
-                            .replace("%o%", strFunctionName)
+                    final String message = messagePattern
+                            .replace("%o%", functionName)
                             .replace("%n%", suggestedName);
-                    holder.registerProblem(reference, strMessage, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedName));
+                    holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedName));
                 }
             }
         };

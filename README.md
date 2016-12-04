@@ -82,7 +82,7 @@ Inspections Lists (Compatibility)
 | Group                | Short Name                                      | Full Name                                           | Quick fix | UTs | QFTs |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
 | Compatibility        | DeprecatedIniOptionsInspection                  | Deprecated configuration options                    | n/a |
-| Compatibility        | RandomApiMigrationInspection                    | Random API migration                                | yes |
+| Compatibility        | RandomApiMigrationInspection                    | Random API migration                                | yes       | yes | no   |
 | Compatibility        | MktimeUsageInspection                           | 'gmmktime()'/'mktime()' usage                       | yes |
 | Compatibility        | FopenBinaryUnsafeUsageInspection                | Binary-unsafe fopen usage                           | yes       | yes | no   |
 

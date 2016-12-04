@@ -14,10 +14,23 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.util.HashMap;
 import java.util.Map;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class RandomApiMigrationInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
@@ -82,6 +95,33 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return (new RandomApiMigrationInspector.OptionsPanel()).getComponent();
+    }
+
+    public class OptionsPanel {
+        final private JPanel optionsPanel;
+
+        final private JCheckBox suggestUsingRandomInt;
+
+        public OptionsPanel() {
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
+
+            suggestUsingRandomInt = new JCheckBox("Suggest using random_int", SUGGEST_USING_RANDOM_INT);
+            suggestUsingRandomInt.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    SUGGEST_USING_RANDOM_INT = suggestUsingRandomInt.isSelected();
+                }
+            });
+            optionsPanel.add(suggestUsingRandomInt, "wrap");
+        }
+
+        public JPanel getComponent() {
+            return optionsPanel;
+        }
     }
 
     private static class TheLocalFix implements LocalQuickFix {

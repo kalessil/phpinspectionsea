@@ -21,7 +21,7 @@
   -->
 
   <description><![CDATA[
-For support and donations please visit <a href="https://github.com/kalessil/phpinspectionsea">Github</a> | <a href="https://github.com/kalessil/phpinspectionsea/issues">Issues</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RK7DPPHTSZXTA">PayPal</a>.<br />
+For support and donations please visit <a href="https://github.com/kalessil/phpinspectionsea">Github</a> | <a href="https://github.com/kalessil/phpinspectionsea/issues">Issues</a> | <a href="https://www.paypal.me/VReznichenko">PayPal</a>.<br />
 <br />
 Please follow me at <a href="https://twitter.com/kalessil">twitter</a> for status updates.<br />
 <br />
@@ -53,7 +53,7 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Improvements and new inspections (support us by donating via <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RK7DPPHTSZXTA">PayPal</a>)<br/>
+Improvements and new inspections (support us by donating via <a href="https://www.paypal.me/VReznichenko">PayPal</a>)<br/>
 <br/>
 - Basic malware patterns: implemented<br/>
 - Cryptographically secure algorithms: implemented<br/>

@@ -313,7 +313,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PrintfScanfArgumentsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="RealpathOnRelativePathsInspection"             displayName="Phar-incompatible 'realpath()' applied to a relative path"
+        shortName="RealpathOnRelativePathsInspection"             displayName="Phar-incompatible 'realpath()' usage"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RealpathOnRelativePathsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

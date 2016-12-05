@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class RealpathOnRelativePathsInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Relies on relative path, what will not work properly within phar:// stream due to realpath (see PHP 'bug' #52769). Try using dirname instead.";
+    private static final String message = "realpath() working differently in stream context (e.g. for phar://...), consider using dirname() instead";
 
     @NotNull
     public String getShortName() {
@@ -26,9 +27,10 @@ public class RealpathOnRelativePathsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                /* check name */
-                final String strFunctionName = reference.getName();
-                if (StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("realpath")) {
+                /* check general requirements */
+                final String functionName = reference.getName();
+                final PsiElement[] params = reference.getParameters();
+                if (1 != params.length || StringUtil.isEmpty(functionName) || !functionName.equals("realpath")) {
                     return;
                 }
 
@@ -37,8 +39,7 @@ public class RealpathOnRelativePathsInspector extends BasePhpInspection {
                     for (StringLiteralExpression oneString : strings) {
                         if (oneString.getContents().contains("..")) {
                             /* report the issue */
-                            holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR);
-
+                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
                             break;
                         }
                     }

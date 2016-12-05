@@ -14,12 +14,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public class RealpathOnRelativePathsInspector extends BasePhpInspection {
+public class RealpathInSteamContextInspector extends BasePhpInspection {
     private static final String message = "realpath() working differently in stream context (e.g. for phar://...), consider using dirname() instead";
 
     @NotNull
     public String getShortName() {
-        return "RealpathOnRelativePathsInspection";
+        return "RealpathInSteamContextInspection";
     }
 
     @Override

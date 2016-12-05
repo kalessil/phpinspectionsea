@@ -7,6 +7,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.Include;
+import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -34,6 +36,20 @@ public class RealpathInSteamContextInspector extends BasePhpInspection {
                     return;
                 }
 
+
+                /* case 1: include/require context */
+                /* get parent expression through () */
+                PsiElement parent = reference.getParent();
+                while (parent instanceof ParenthesizedExpression) {
+                    parent = parent.getParent();
+                }
+                if (parent instanceof Include) {
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                    return;
+                }
+
+
+                /* case 2: realpath applied to a relative path '..' */
                 Collection<StringLiteralExpression> strings = PsiTreeUtil.findChildrenOfType(reference, StringLiteralExpression.class);
                 if (strings.size() > 0) {
                     for (StringLiteralExpression oneString : strings) {

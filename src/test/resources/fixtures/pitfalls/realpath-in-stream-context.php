@@ -4,13 +4,13 @@
     <error descr="realpath() working differently in stream context (e.g. for phar://...), consider using dirname() instead">realpath</error> (__DIR__ . '/../');
 
     /*similar cases, when the issues will popup */
-    include realpath('/whatever/file.php');
-    include_once realpath('/whatever/file.php');
-    require realpath('/whatever/file.php');
-    require_once realpath('/whatever/file.php');
+    include <error descr="realpath() working differently in stream context (e.g. for phar://...), consider using dirname() instead">realpath</error> ('/whatever/file.php');
+    include_once <error descr="realpath() working differently in stream context (e.g. for phar://...), consider using dirname() instead">realpath</error> ('/whatever/file.php');
+    require <error descr="realpath() working differently in stream context (e.g. for phar://...), consider using dirname() instead">realpath</error> ('/whatever/file.php');
+    require_once <error descr="realpath() working differently in stream context (e.g. for phar://...), consider using dirname() instead">realpath</error> ('/whatever/file.php');
 
     /* same, but wrapped with () */
-    include (realpath('/whatever/file.php'));
+    include (<error descr="realpath() working differently in stream context (e.g. for phar://...), consider using dirname() instead">realpath</error> ('/whatever/file.php'));
 
 
     /* false-positives */

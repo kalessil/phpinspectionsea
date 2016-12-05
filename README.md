@@ -1,31 +1,6 @@
-Php Inspections (EA Extended) is a Static Code Analysis tool for PHP, 
-distributed as a PhpStorm plugin.
+Php Inspections (EA Extended) is a Static Code Analysis tool for PHP, distributed as a PhpStorm plugin.
 
 Some facts about this project: https://www.openhub.net/p/phpinspectionsea
-
-To be tested: 
-CompactArgumentsInspector.java (Inspection)
-MustReturnSpecifiedTypeStrategy.java (Inspection)
-
-PhpUnitTestsInspector.java (Inspection)
-AssertEmptyStrategy.java (Inspection)
-AssertNotEmptyStrategy.java (Inspection)
-AssertBoolInvertedStrategy.java (Inspection)
-
-ExceptionsAnnotatingAndHandlingInspector.java (QF)
-OneTimeUseVariablesInspector.java (QF)
-SenselessProxyMethodInspector.java (QF)
-SwitchContinuationInLoopInspector.java (QF)
-OpAssignShortSyntaxInspector.java (QF)
-ArraySearchUsedAsInArrayInspector.java (QF)
-IsNullFunctionUsageInspector.java (QF)
-NestedNotOperatorsInspector.java (QF)
-IfReturnReturnSimplificationInspector.java (QF)
-ImplicitMagicMethodCallInspector.java (QF, string cast)
-AmbiguousMemberInitializationInspector.java (QF)
-AssertInstanceOfStrategy.java (QF)
-AssertNotInstanceOfStrategy.java (QF)
-SubStrUsedAsArrayAccessInspector.java (QF)
 
 Inspections Lists (Type compatibility)
 ---

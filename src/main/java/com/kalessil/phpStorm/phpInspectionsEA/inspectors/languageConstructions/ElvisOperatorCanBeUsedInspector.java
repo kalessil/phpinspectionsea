@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -16,6 +15,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
     private static final String strProblemDescription = "' ... ?: ...' construction shall be used instead";
 
@@ -30,17 +38,17 @@ public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpTernaryExpression(TernaryExpression expression) {
                 /* construction requirements */
-                final PsiElement objTrueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
-                if (null == objTrueVariant) {
+                final PsiElement trueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
+                if (null == trueVariant) {
                     return;
                 }
-                final PsiElement objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
-                if (null == objCondition) {
+                final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+                if (null == condition) {
                     return;
                 }
 
                 /* if true variant is the object or expressions are not equals */
-                if (objCondition != objTrueVariant && PsiEquivalenceUtil.areElementsEquivalent(objCondition, objTrueVariant)) {
+                if (condition != trueVariant && PsiEquivalenceUtil.areElementsEquivalent(condition, trueVariant)) {
                     holder.registerProblem(expression.getTrueVariant(), strProblemDescription, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                 }
             }

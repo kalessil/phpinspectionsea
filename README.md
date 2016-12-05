@@ -136,7 +136,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | SummerTimeUnsafeTimeManipulationInspection      | Summer-time unsafe date manipulations                     | n/a       | yes | n/a  |
 | Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | n/a       | yes | n/a  |
 | Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a       | yes | n/a  |
-| Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | n/a |
+| Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | n/a       | yes | n/a  |
 | Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result               | yes       | yes | no   |
 | Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes       | yes | no   |
 | Probable bugs        | CompactArgumentsInspection                      | 'compact(...)' variables existence                        | n/a       | yes | n/a  |

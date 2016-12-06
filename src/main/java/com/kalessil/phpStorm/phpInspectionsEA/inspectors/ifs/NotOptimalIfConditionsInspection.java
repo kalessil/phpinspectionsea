@@ -559,20 +559,12 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 HashSet<String> functionsSetToAllow = getFunctionsSet();
 
                 int intLoopCurrentCost;
-                boolean isPreviousCondCostCanBeBigger;
                 for (PsiElement objCond : objPartsCollection) {
                     intLoopCurrentCost = ExpressionCostEstimateUtil.getExpressionCost(objCond, functionsSetToAllow);
 
-                    /* special case when costs estimation is overridden with general practices */
-                    isPreviousCondCostCanBeBigger = (
-                        //(objPreviousCond instanceof FunctionReference && functionsSetToAllow.contains(((FunctionReference) objPreviousCond).getName())) ||
-                        objPreviousCond instanceof AssignmentExpression
-                        /* ! no isset, empty or array access here */
-                    );
-
                     if (
-                        !isPreviousCondCostCanBeBigger && intLoopCurrentCost < intPreviousCost &&
-                        null != objPreviousCond && !ExpressionsCouplingCheckUtil.isSecondCoupledWithFirst(objPreviousCond, objCond)
+                        intLoopCurrentCost < intPreviousCost && null != objPreviousCond &&
+                        !ExpressionsCouplingCheckUtil.isSecondCoupledWithFirst(objPreviousCond, objCond)
                     ) {
                         holder.registerProblem(objCond, strProblemDescriptionOrdering, ProblemHighlightType.WEAK_WARNING);
                     }

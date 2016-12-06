@@ -184,7 +184,7 @@ Inspections Lists (Performance)
 | Performance          | FileFunctionMissUseInspection                   | 'file(...)' misused                                                                         | yes       | yes | no  |
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                              | n/a |
 | Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                    | no  |
-| Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                              | yes |
+| Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                              | yes       | yes | no  |
 | Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | no        | yes | no  |
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes |
 | Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes       | yes | no  |

@@ -19,9 +19,18 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class SubStrShortHandUsageInspector extends BasePhpInspection {
-    private static final String strProblemSimplifyLength = "Normally '%l%' can be dropped, so '-%r%' is only left (sometimes we discovering a range bug here, see bug-report #271).";
-    private static final String strProblemDropLength     = "'%l%' can be safely dropped";
+    private static final String patternSimplifyLength = "Normally '%l%' can be dropped, so '-%r%' is only left (range bugs can popup, see a bug-report #271 on Bitbucket)";
+    private static final String patternDropLength     = "'%l%' can be safely dropped";
 
     @NotNull
     public String getShortName() {
@@ -34,18 +43,18 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /* check if it's the target function: amount of parameters and name */
-                final String strFunctionName = reference.getName();
-                final PsiElement[] params    = reference.getParameters();
+                final String functionName = reference.getName();
+                final PsiElement[] params = reference.getParameters();
                 if (
-                    3 != params.length || !(params[2] instanceof BinaryExpression) ||
-                    StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("substr")
+                    (3 != params.length && 4 != params.length) || !(params[2] instanceof BinaryExpression) ||
+                    StringUtil.isEmpty(functionName) || (!functionName.equals("substr") && !functionName.equals("mb_substr"))
                 ) {
                     return;
                 }
 
 
-                /* Check if 3rd argument is "strlen($search) - strlen(...)"
-                 *  - "strlen($search)" is not needed
+                /* Check if 3rd argument is "[mb_]strlen($search) - [mb_]strlen(...)"
+                 *  - "[mb_]strlen($search)" is not needed
                  */
                 final BinaryExpression candidate = (BinaryExpression) params[2];
                 final PsiElement operation       = candidate.getOperation();
@@ -59,7 +68,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* should be "strlen($search) - *" */
+                /* should be "[mb_]strlen($search) - *" */
                 if (
                     candidate.getLeftOperand() instanceof FunctionReferenceImpl &&
                     null != candidate.getRightOperand()
@@ -68,20 +77,21 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                     final String leftCallName         = leftCall.getName();
                     final PsiElement[] leftCallParams = leftCall.getParameters();
                     if (
-                        1 == leftCallParams.length && !StringUtil.isEmpty(leftCallName) && leftCallName.equals("strlen") &&
+                        1 == leftCallParams.length && !StringUtil.isEmpty(leftCallName) &&
+                        (leftCallName.equals("strlen") || leftCallName.equals("mb_strlen")) &&
                         PsiEquivalenceUtil.areElementsEquivalent(leftCallParams[0], params[0])
                     ) {
                         if (PsiEquivalenceUtil.areElementsEquivalent(candidate.getRightOperand(), params[1])) {
                             /* 3rd parameter not needed at all */
-                            final String message = strProblemDropLength.replace("%l%", params[2].getText());
-                            holder.registerProblem(params[2], message, ProblemHighlightType.LIKE_DEPRECATED, new Drop3rdParameterLocalFix(reference));
+                            final String message = patternDropLength.replace("%l%", params[2].getText());
+                            holder.registerProblem(params[2], message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new Drop3rdParameterLocalFix(reference));
                         } else {
                             /* 3rd parameter can be simplified */
-                            final String message = strProblemSimplifyLength
+                            final String message = patternSimplifyLength
                                     .replace("%l%", leftCall.getText())
                                     .replace("%r%", candidate.getRightOperand().getText());
                             final Simplify3rdParameterLocalFix fix = new Simplify3rdParameterLocalFix(candidate);
-                            holder.registerProblem(leftCall, message, ProblemHighlightType.LIKE_DEPRECATED, fix);
+                            holder.registerProblem(leftCall, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, fix);
                         }
 
                         // return;

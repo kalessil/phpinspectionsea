@@ -189,7 +189,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TypeUnsafeComparisonInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="TypeUnsafeArraySearchInspection"               displayName="'in_array(...)', 'array_search()' type unsafe usage"
-        groupName="Type compatibility"                            enabledByDefault="true" level="WARNING"
+        groupName="Type compatibility"                            enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.TypeUnsafeArraySearchInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ArrayTypeOfParameterByDefaultValueInspection"  displayName="Parameter could be declared as array"

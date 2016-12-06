@@ -44,7 +44,7 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
                         strMessage = strProblemSafeToMakeStrict;
                     }
 
-                    holder.registerProblem(reference, strMessage, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(reference, strMessage, ProblemHighlightType.WEAK_WARNING);
                 }
             }
         };

@@ -691,7 +691,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
 
   <project-components>
       <component>
-          <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.UpdateComponent</implementation-class>
+          <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.EAUpdateComponent</implementation-class>
       </component>
   </project-components>
 

@@ -111,7 +111,7 @@ Inspections Lists (Architecture)
 | Group                | Short Name                                      | Full Name                                           | Quick fix | UTs | QFTs |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
 | Architecture         | BadExceptionsProcessingInspection               | Badly organized exception handling                  | n/a |
-| Architecture         | MoreThanThreeArgumentsInspection                | More than 3 parameters in callable                  | n/a |
+| Architecture         | MoreThanThreeArgumentsInspection                | Too many parameters in a callable                   | n/a       | yes | n/a  |
 | Architecture         | CallableParameterUseCaseInTypeContextInspection | Callable parameter usage violates definition        | n/a |
 | Architecture         | ClassOverridesFieldOfSuperClassInspection       | Class overrides a field of a parent class           | n/a |
 | Architecture         | SingletonFactoryPatternViolationInspection      | Class violates singleton/factory pattern definition | n/a |

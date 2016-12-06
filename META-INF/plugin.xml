@@ -571,7 +571,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
         groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.BadExceptionsProcessingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="MoreThanThreeArgumentsInspection"                displayName="More than 3 parameters in callable"
+        shortName="MoreThanThreeArgumentsInspection"                displayName="Too many parameters in a callable"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MoreThanThreeArgumentsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

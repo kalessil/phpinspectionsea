@@ -9,11 +9,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
-import com.jetbrains.php.lang.psi.elements.impl.ClassReferenceImpl;
-import com.jetbrains.php.lang.psi.elements.impl.MethodReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -24,16 +23,26 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.util.HashSet;
+import java.util.Set;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
     @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_USING_STRING_CASTING = false;
 
-    private static final String strProblemDescription      = "Implicit magic method calls shall be avoided as these methods are used by PHP internals.";
-    private static final String strProblemUseStringCasting = "Please use (string) %o% instead";
+    private static final String message              = "Implicit magic method calls shall be avoided as these methods are used by PHP internals.";
+    private static final String patternStringCasting = "Please use (string) %o% instead";
 
-    private static final HashSet<String> methods = new HashSet<>();
+    private static final Set<String> methods = new HashSet<>();
     static {
         methods.add("__construct");
         methods.add("__destruct");
@@ -65,14 +74,14 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
                 final String methodName = reference.getName();
                 if (!StringUtil.isEmpty(methodName) && methods.contains(methodName)) {
                     /* Pattern 1: direct calls ob objects */
-                    final String strReferenceObject = reference.getFirstChild().getText().trim();
+                    final String referenceObject = reference.getFirstChild().getText().trim();
                     if (
-                        !(reference.getFirstChild() instanceof ClassReferenceImpl) &&
-                        !strReferenceObject.equals("$this") && !strReferenceObject.equals("parent")
+                        !(reference.getFirstChild() instanceof ClassReference) &&
+                        !referenceObject.equals("$this") && !referenceObject.equals("parent")
                     ) {
                         /* __toString is a special case */
                         if (SUGGEST_USING_STRING_CASTING && methodName.equals("__toString")) {
-                            final String message = strProblemUseStringCasting.replace("%o%", strReferenceObject);
+                            final String message = patternStringCasting.replace("%o%", referenceObject);
                             holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseStringCastingLocalFix());
 
                             return;
@@ -83,7 +92,7 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
                         }
 
                         /* generally reported cases */
-                        holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         return;
                     }
 
@@ -99,7 +108,7 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
                             return;
                         }
 
-                        holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                 }
             }
@@ -122,7 +131,7 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof MethodReferenceImpl) {
+            if (expression instanceof MethodReference) {
                 final PsiElement replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "(string) null");
                 //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here
                 ((UnaryExpression) replacement).getValue().replace(expression.getFirstChild().copy());

@@ -129,7 +129,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | MagicMethodsValidityInspection                  | Magic methods validity                                    | n/a |
 | Probable bugs        | SuspiciousLoopInspection                        | Suspicious loop                                           | n/a       | yes | n/a  |
 | Probable bugs        | ReferenceMismatchInspection                     | Reference mismatch                                        | n/a |
-| Probable bugs        | ImplicitMagicMethodCallInspection               | Implicit magic method calls                               | yes |
+| Probable bugs        | ImplicitMagicMethodCallInspection               | Implicit magic method calls                               | yes       | yes | n/a  |
 | Probable bugs        | PrintfScanfArgumentsInspection                  | -printf/-scanf arguments count mismatches                 | n/a       | yes | n/a  |
 | Probable bugs        | RealpathInSteamContextInspection                | Phar-incompatible 'realpath()' usage                      | n/a       | yes | n/a  |
 | Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | n/a       | yes | n/a  |

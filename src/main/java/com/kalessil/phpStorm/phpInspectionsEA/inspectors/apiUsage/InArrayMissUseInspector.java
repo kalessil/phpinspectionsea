@@ -11,11 +11,13 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class InArrayMissUseInspector extends BasePhpInspection {
-    private static final String strProblemComparison = "'%v% === %e%' should be used instead";
-    private static final String strProblemKeyExists  = "This looks like array_key_exists(...) call equivalent. Safe to refactor for type-safe code when indexes are integers/strings only.";
+    private static final String messageStrictComparison   = "'%v% === %e%' should be used instead";
+    private static final String messageTolerateComparison = "'%v% == %e%' should be used instead";
+    private static final String messageKeyExists  = "This looks like array_key_exists(...) call equivalent (ensure the needle being of string/integer type).";
 
     @NotNull
     public String getShortName() {
@@ -27,34 +29,28 @@ public class InArrayMissUseInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                /* try filtering by args count first */
-                final PsiElement[] parameters = reference.getParameters();
-                final int intParamsCount      = parameters.length;
-                if (intParamsCount < 2 || intParamsCount > 3) {
+                /* general structure requirements */
+                final PsiElement[] params = reference.getParameters();
+                final String functionName = reference.getName();
+                if ((2 != params.length && 3 != params.length) || StringUtil.isEmpty(functionName) || !functionName.equals("in_array")) {
                     return;
                 }
-                /* now naming filter */
-                final String strFunctionName = reference.getName();
-                if (StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("in_array")) {
-                    return;
-                }
-
 
                 /* === test array_key_exists equivalence === */
-                if (parameters[1] instanceof FunctionReference) {
-                    final String strSubCallName = ((FunctionReference) parameters[1]).getName();
-                    if (!StringUtil.isEmpty(strSubCallName) && strSubCallName.equals("array_keys")) {
-                        holder.registerProblem(reference, strProblemKeyExists, ProblemHighlightType.WEAK_WARNING);
+                if (params[1] instanceof FunctionReference) {
+                    final String subcallName = ((FunctionReference) params[1]).getName();
+                    if (!StringUtil.isEmpty(subcallName) && subcallName.equals("array_keys")) {
+                        holder.registerProblem(reference, messageKeyExists, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         return;
                     }
                 }
 
 
                 /* === test comparison equivalence === */
-                if (parameters[1] instanceof ArrayCreationExpression) {
-                    int itemsCount = 0;
+                if (params[1] instanceof ArrayCreationExpression) {
+                    int itemsCount      = 0;
                     PsiElement lastItem = null;
-                    for (PsiElement oneItem : parameters[1].getChildren()) {
+                    for (PsiElement oneItem : params[1].getChildren()) {
                         if (oneItem instanceof PhpPsiElement) {
                             ++itemsCount;
                             lastItem = oneItem;
@@ -63,10 +59,11 @@ public class InArrayMissUseInspector extends BasePhpInspection {
 
                     lastItem = lastItem instanceof ArrayHashElement ? ((ArrayHashElement) lastItem).getValue() : lastItem;
                     if (itemsCount <= 1 && null != lastItem) {
-                        final String message = strProblemComparison
+                        final boolean isStrict = 3 == params.length && PhpLanguageUtil.isTrue(params[2]);
+                        final String message = (isStrict ? messageStrictComparison : messageTolerateComparison)
                                 .replace("%v%", lastItem.getText())
-                                .replace("%e%", parameters[0].getText());
-                        holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
+                                .replace("%e%", params[0].getText());
+                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         // return;
                     }
                 }

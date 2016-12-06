@@ -112,6 +112,7 @@ Inspections Lists (Architecture)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
 | Architecture         | BadExceptionsProcessingInspection               | Badly organized exception handling                  | n/a |
 | Architecture         | MoreThanThreeArgumentsInspection                | Too many parameters in a callable                   | n/a       | yes | n/a  |
+| Architecture         | MoreThanThreeArgumentsInspection                | Too many parameters in a callable                   | n/a       | yes | n/a  |
 | Architecture         | CallableParameterUseCaseInTypeContextInspection | Callable parameter usage violates definition        | n/a |
 | Architecture         | ClassOverridesFieldOfSuperClassInspection       | Class overrides a field of a parent class           | n/a |
 | Architecture         | SingletonFactoryPatternViolationInspection      | Class violates singleton/factory pattern definition | n/a |
@@ -184,7 +185,7 @@ Inspections Lists (Performance)
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                              | n/a |
 | Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                    | no  |
 | Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                              | yes |
-| Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | n/a |
+| Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | no        | yes | no  |
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes |
 | Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes       | yes | no  |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | n/a       | yes | n/a |

@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.api;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PrintfScanfArgumentsInspector;
 
-public class PrintfScanfArgumentsInspectorTest extends CodeInsightFixtureTestCase {
+final public class PrintfScanfArgumentsInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/api/printf-scanf.php");
         myFixture.enableInspections(PrintfScanfArgumentsInspector.class);

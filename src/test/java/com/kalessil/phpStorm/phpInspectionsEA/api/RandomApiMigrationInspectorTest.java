@@ -5,7 +5,7 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RandomApiMigrationInspector;
 
-public class RandomApiMigrationInspectorTest extends CodeInsightFixtureTestCase {
+final public class RandomApiMigrationInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsMtPatterns() {
         RandomApiMigrationInspector inspector = new RandomApiMigrationInspector();
         inspector.SUGGEST_USING_RANDOM_INT    = false;

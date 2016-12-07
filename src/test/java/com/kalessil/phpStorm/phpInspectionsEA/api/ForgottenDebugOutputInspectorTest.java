@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.debug.Forgotte
 
 final public class ForgottenDebugOutputInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.configureByFile("fixtures/forgotten-debug-statements.php");
+        myFixture.configureByFile("fixtures/pitfalls/forgotten-debug-statements.php");
         myFixture.enableInspections(ForgottenDebugOutputInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
@@ -14,13 +14,13 @@ final public class ForgottenDebugOutputInspectorTest extends CodeInsightFixtureT
         inspector.registerCustomDebugMethod("\\DebugClass1::debug");
         inspector.registerCustomDebugMethod("\\DebugClass2::debug");
 
-        myFixture.configureByFile("fixtures/forgotten-debug-statements-collisions.php");
+        myFixture.configureByFile("fixtures/pitfalls/forgotten-debug-statements-collisions.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }
 
     public void testFalsePositives() {
-        myFixture.configureByFile("fixtures/forgotten-debug-statements-false-positives.php");
+        myFixture.configureByFile("fixtures/pitfalls/forgotten-debug-statements-false-positives.php");
         myFixture.enableInspections(ForgottenDebugOutputInspector.class);
         myFixture.testHighlighting(true, false, true);
     }

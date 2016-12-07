@@ -9,9 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.Set;
 
 final public class ExpressionCostEstimateUtil {
-    public final static HashSet<String> predefinedVars = new HashSet<>();
+    public final static Set<String> predefinedVars = new HashSet<>();
     static {
         predefinedVars.add("_GET");
         predefinedVars.add("_POST");
@@ -30,7 +31,7 @@ final public class ExpressionCostEstimateUtil {
      * @param objExpression to estimate for execution cost
      * @return costs
      */
-    public static int getExpressionCost(@Nullable PsiElement objExpression, @NotNull HashSet<String> functionsSetToAllow) {
+    public static int getExpressionCost(@Nullable PsiElement objExpression, @NotNull Set<String> functionsSetToAllow) {
         objExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(objExpression);
 
         if (
@@ -167,6 +168,10 @@ final public class ExpressionCostEstimateUtil {
             objExpression.getNode().getElementType() == PhpElementTypes.NUMBER
         ) {
             return 0;
+        }
+
+        if (objExpression instanceof AssignmentExpression) {
+            return getExpressionCost(((AssignmentExpression) objExpression).getValue(), functionsSetToAllow);
         }
 
         return 10;

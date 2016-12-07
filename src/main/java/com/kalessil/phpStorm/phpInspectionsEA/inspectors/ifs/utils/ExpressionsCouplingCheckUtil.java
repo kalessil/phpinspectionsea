@@ -4,17 +4,67 @@ import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
+import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
+import com.jetbrains.php.lang.psi.elements.MultiassignmentExpression;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 final public class ExpressionsCouplingCheckUtil {
     public static boolean isSecondCoupledWithFirst(@NotNull PsiElement first, @NotNull PsiElement second) {
-        boolean isCoupled                             = false;
-        final HashSet<PsiElement> expressionsInSecond = new HashSet<>();
+        boolean isCoupled = false;
 
+        /* Scenario 1: 1st expression contains assignment */
+        final Set<PsiElement> expressionsInFirst      = new HashSet<>();
+        final Collection<AssignmentExpression> assign = PsiTreeUtil.findChildrenOfType(first, AssignmentExpression.class);
+        /* the util will return an empty collection when searching inside assignment, dealing with this */
+        if (first instanceof AssignmentExpression) {
+            assign.add((AssignmentExpression) first);
+        }
+        if (assign.size() > 0) {
+            /* extract all containers */
+            for (AssignmentExpression expression : assign) {
+                if (expression instanceof MultiassignmentExpression) {
+                    expressionsInFirst.addAll(((MultiassignmentExpression) expression).getVariables());
+                    continue;
+                }
+
+                expressionsInFirst.add(expression.getVariable());
+            }
+            assign.clear();
+
+            if (expressionsInFirst.size() > 0) {
+                /* now find containers usage, we can perform same class search multiple time - perhaps improvements possible */
+                for (PsiElement expression : expressionsInFirst) {
+                    final Collection<PsiElement> findings = PsiTreeUtil.findChildrenOfType(second, expression.getClass());
+                    if (findings.size() > 0) {
+                        for (PsiElement subject : findings) {
+                            if (PsiEquivalenceUtil.areElementsEquivalent(subject, expression)) {
+                                isCoupled = true;
+                                break;
+                            }
+                        }
+                        findings.clear();
+                    }
+
+                    /* inner loop found coupled expressions break this loop as well */
+                    if (isCoupled) {
+                        break;
+                    }
+                }
+                expressionsInFirst.clear();
+            }
+        }
+        if (isCoupled) {
+            return true;
+        }
+
+
+        /* Scenario 2: 2nd expression has array access, parts of which has been used in the 1st one */
         /* TODO: non-static method/property */
+        final Set<PsiElement> expressionsInSecond           = new HashSet<>();
         final Collection<ArrayAccessExpression> arrayAccess = PsiTreeUtil.findChildrenOfType(second, ArrayAccessExpression.class);
         if (arrayAccess.size() > 0) {
             /* extract array accesses, get unique variable expressions from them */

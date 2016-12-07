@@ -39,7 +39,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String strProblemDescriptionConditionPartsIdentical   = "Probable bug: left and right operands are identical";
 
     private static final String strProblemDescriptionInstanceOfAmbiguous     = "This condition is ambiguous and can be safely removed";
-    private static final String strProblemDescriptionOrdering                = "This condition execution costs less than previous one";
+    private static final String messageOrdering                              = "This condition execution costs less than previous one";
     private static final String strProblemDescriptionDuplicateConditions     = "This condition is duplicated in other if/elseif branch";
     private static final String messageBooleansUsed                          = "This boolean in condition makes no sense or enforces condition result";
     private static final String strProblemDescriptionDuplicateConditionPart  = "This call is duplicated in conditions set";
@@ -558,19 +558,18 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 PsiElement objPreviousCond          = null;
                 HashSet<String> functionsSetToAllow = getFunctionsSet();
 
-                int intLoopCurrentCost;
-                for (PsiElement objCond : objPartsCollection) {
-                    intLoopCurrentCost = ExpressionCostEstimateUtil.getExpressionCost(objCond, functionsSetToAllow);
+                for (PsiElement condition : objPartsCollection) {
+                    int intLoopCurrentCost = ExpressionCostEstimateUtil.getExpressionCost(condition, functionsSetToAllow);
 
                     if (
-                        intLoopCurrentCost < intPreviousCost && null != objPreviousCond &&
-                        !ExpressionsCouplingCheckUtil.isSecondCoupledWithFirst(objPreviousCond, objCond)
+                        null != objPreviousCond && intLoopCurrentCost < intPreviousCost &&
+                        !ExpressionsCouplingCheckUtil.isSecondCoupledWithFirst(objPreviousCond, condition)
                     ) {
-                        holder.registerProblem(objCond, strProblemDescriptionOrdering, ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(condition, messageOrdering, ProblemHighlightType.WEAK_WARNING);
                     }
 
                     intPreviousCost = intLoopCurrentCost;
-                    objPreviousCond = objCond;
+                    objPreviousCond = condition;
                 }
 
                 return objPartsCollection;

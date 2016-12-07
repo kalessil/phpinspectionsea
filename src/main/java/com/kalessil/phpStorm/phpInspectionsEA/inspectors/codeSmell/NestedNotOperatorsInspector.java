@@ -16,8 +16,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class NestedNotOperatorsInspector extends BasePhpInspection {
-    private static final String messagePatternUseBoolCasting = "Can be replaced with (bool)%e%";
-    private static final String messagePatternUseSingleNot   = "Can be replaced with !%e%";
+    private static final String messageUseBoolCasting = "Can be replaced with (bool)%e%";
+    private static final String messageUseSingleNot   = "Can be replaced with !%e%";
 
     @NotNull
     public String getShortName() {
@@ -69,7 +69,7 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
 
                 /* fire warning */
                 final String message =
-                        (nestingLevel % 2 == 0 ? messagePatternUseBoolCasting : messagePatternUseSingleNot)
+                        (nestingLevel % 2 == 0 ? messageUseBoolCasting : messageUseSingleNot)
                         .replace("%e%", value.getText());
                 final LocalQuickFix fixer =
                         nestingLevel % 2 == 0 ? new UseCastingLocalFix(value) : new UseSingleNotLocalFix(value);

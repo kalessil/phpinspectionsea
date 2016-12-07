@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.TypesCastingWi
 
 final public class TypesCastingWithFunctionsInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.configureByFile("fixtures/type-casting-php4-functions.php");
+        myFixture.configureByFile("fixtures/api/type-casting-php4-functions.php");
         myFixture.enableInspections(TypesCastingWithFunctionsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }

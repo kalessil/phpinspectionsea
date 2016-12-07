@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.S
 
 final public class StaticInvocationViaThisInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.configureByFile("fixtures/static-method-invocation-via-this.php");
+        myFixture.configureByFile("fixtures/classes/static-method-invocation-via-this.php");
         myFixture.enableInspections(StaticInvocationViaThisInspector.class);
         myFixture.testHighlighting(true, false, true);
     }

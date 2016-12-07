@@ -15,7 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class PdoApiUsageInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "'->query(...)' or '>exec(...)'  should be used instead of 'prepare-execute' calls chain";
+    private static final String message = "'->query(...)' or '>exec(...)'  should be used instead of 'prepare-execute' calls chain";
 
     @NotNull
     public String getShortName() {
@@ -29,8 +29,8 @@ public class PdoApiUsageInspector extends BasePhpInspection {
             public void visitPhpMethodReference(MethodReference reference) {
                 /* check requirements */
                 final PsiElement[] arrParams = reference.getParameters();
-                final String strMethod       = reference.getName();
-                if (arrParams.length > 1 || StringUtil.isEmpty(strMethod) || !strMethod.equals("execute")) {
+                final String methodName      = reference.getName();
+                if (0 != arrParams.length || StringUtil.isEmpty(methodName) || !methodName.equals("execute")) {
                     return;
                 }
 
@@ -81,7 +81,7 @@ public class PdoApiUsageInspector extends BasePhpInspection {
                             }
                         }
 
-                        holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
                     }
                 }
             }

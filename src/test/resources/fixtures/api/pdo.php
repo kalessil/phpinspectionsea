@@ -13,3 +13,8 @@ $y->execute();
 /* comment should not break inspection */
 /** multiple DocBlocks should not trigger false-positives */
 $y->execute();
+
+
+/* False-positives: parameters */
+$y = $x->prepare('');
+$y->execute([]);

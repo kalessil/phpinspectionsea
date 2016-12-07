@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrtotimeUsage
 
 final public class StrtotimeUsageInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.configureByFile("fixtures/strtotime-function-misuse.php");
+        myFixture.configureByFile("fixtures/api/strtotime-function-misuse.php");
         myFixture.enableInspections(StrtotimeUsageInspector.class);
         myFixture.testHighlighting(true, false, true);
     }

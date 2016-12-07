@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.IfReturnReturnSimpl
 
 final public class IfReturnReturnSimplificationInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.configureByFile("fixtures/if-return-return-simplify.php");
+        myFixture.configureByFile("fixtures/controlFlow/if-return-return-simplify.php");
         myFixture.enableInspections(IfReturnReturnSimplificationInspector.class);
         myFixture.testHighlighting(true, false, true);
     }

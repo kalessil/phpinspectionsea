@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
 
-
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -32,7 +31,7 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
                 if (0 == statement.getChildren().length) {
                     final PsiElement parent = statement.getParent();
                     if (null != parent) {
-                        IElementType declareCandidate = statement.getParent().getFirstChild().getNode().getElementType();
+                        IElementType declareCandidate = parent.getFirstChild().getNode().getElementType();
                         if (
                             PhpTokenTypes.kwDECLARE == declareCandidate ||
                             parent instanceof DoWhile ||

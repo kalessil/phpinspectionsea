@@ -85,7 +85,7 @@ Inspections Lists (Code style)
 | Code style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                  | yes       | yes | no   |
 | Code style           | UnnecessaryParenthesesInspection                | Unnecessary parentheses                             | yes       | yes | no   |
 | Code style           | DynamicInvocationViaScopeResolutionInspection   | Dynamic methods invocation via '::'                 | yes       | yes | no   |
-| Code style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes |
+| Code style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes       | yes | no   |
 | Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | yes       | yes | no   |
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes       | yes | no   |
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | yes       | yes | no   |

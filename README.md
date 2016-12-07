@@ -112,9 +112,8 @@ Inspections Lists (Architecture)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
 | Architecture         | BadExceptionsProcessingInspection               | Badly organized exception handling                  | n/a |
 | Architecture         | MoreThanThreeArgumentsInspection                | Too many parameters in a callable                   | n/a       | yes | n/a  |
-| Architecture         | MoreThanThreeArgumentsInspection                | Too many parameters in a callable                   | n/a       | yes | n/a  |
 | Architecture         | CallableParameterUseCaseInTypeContextInspection | Callable parameter usage violates definition        | n/a |
-| Architecture         | ClassOverridesFieldOfSuperClassInspection       | Class overrides a field of a parent class           | n/a |
+| Architecture         | ClassOverridesFieldOfSuperClassInspection       | Class overrides a field of a parent class           | n/a       | yes | n/a  |
 | Architecture         | SingletonFactoryPatternViolationInspection      | Class violates singleton/factory pattern definition | n/a |
 | Architecture         | PrivateConstructorSemanticsInspection           | Private constructor semantics                       | n/a       | yes | n/a  |
 | Architecture         | LongInheritanceChainInspection                  | Long inheritance chain                              | n/a       | yes | n/a  |

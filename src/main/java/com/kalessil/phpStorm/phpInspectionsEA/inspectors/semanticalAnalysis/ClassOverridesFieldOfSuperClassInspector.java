@@ -7,15 +7,26 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpModifierList;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection {
-    private static final String strProblemDescription      = "Field '%p%' should be defined as static or re-initialized in constructor as it already defined in %c%.";
-    private static final String strProblemParentOnePrivate = "Likely needs to be protected (also in the parent class).";
+    private static final String patternShadows            = "Field '%p%' is already defined in %c%. Consider initializing it in a constructor or making static.";
+    private static final String messageProtectedCandidate = "Likely needs to be protected (also in the parent class).";
 
     @NotNull
     public String getShortName() {
@@ -28,77 +39,44 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
         return new BasePhpElementVisitor() {
             public void visitPhpField(Field ownField) {
                 /* skip un-explorable and test classes */
-                PhpClass clazz = ownField.getContainingClass();
-                if (null == clazz || null == clazz.getNameIdentifier()) {
-                    return;
-                }
-                String strClassFQN = clazz.getFQN();
-                if (
-                    StringUtil.isEmpty(strClassFQN) ||
-                    strClassFQN.contains("\\Tests\\") || strClassFQN.contains("\\Test\\") || strClassFQN.endsWith("Test")
-                ) {
+                final PhpClass clazz = ownField.getContainingClass();
+                if (null == clazz || FileSystemUtil.isTestClass(clazz)) {
                     return;
                 }
 
-
-                /* skip static and un-processable */
-                if (ownField.isConstant() || null == ownField.getNameIdentifier()) {
+                /* skip static, constants and un-processable fields */
+                final PsiElement ownFieldNameId = NamedElementUtil.getNameIdentifier(ownField);
+                if (null == ownFieldNameId || ownField.isConstant() || ownField.getModifier().isStatic()) {
                     return;
                 }
-                /* due to lack of api get raw text with all modifiers */
-                String strModifiers = null;
-                for (PsiElement objChild : ownField.getParent().getChildren()) {
-                    if (objChild instanceof PhpModifierList) {
-                        strModifiers = objChild.getText();
-                        break;
-                    }
-                }
-                /* skip static variables - they shall not be changed via constructor */
-                /* TODO: use field.getModifier() */
-                if (!StringUtil.isEmpty(strModifiers) && strModifiers.contains("static")) {
+                /* ensure field is not defined via annotation */
+                if (!(ExpressionSemanticUtil.getBlockScope(ownFieldNameId) instanceof PhpClass)) {
                     return;
                 }
 
 
-                for (PhpClass objParentClass : clazz.getSupers()) {
+                final String ownFieldName       = ownField.getName();
+                final PsiElement ownFieldParent = ownField.getParent();
+                for (PhpClass parentClass : InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true)) {
                     /* ensure class and super are explorable */
-                    String strSuperFQN = objParentClass.getFQN();
-                    if (objParentClass.isInterface() || StringUtil.isEmpty(strSuperFQN)) {
+                    final String superClassFQN = parentClass.getFQN();
+                    if (clazz == parentClass || parentClass.isInterface() || StringUtil.isEmpty(superClassFQN)) {
                         continue;
                     }
 
-                    String strOwnField = ownField.getName();
-                    for (Field superclassField : objParentClass.getOwnFields()) {
-                        /* not possible to check access level */
-                        if (
-                            superclassField.getName().equals(strOwnField) &&
-                            ExpressionSemanticUtil.getBlockScope(ownField.getNameIdentifier()) instanceof PhpClass
-                            /* php doc can re-define property type */
-                        ) {
-                            /* find modifiers list and check if super declares private field */
-                            String strSuperModifiers = null;
-                            for (PsiElement objChild : superclassField.getParent().getChildren()) {
-                                if (objChild instanceof PhpModifierList) {
-                                    strSuperModifiers = objChild.getText();
-                                    break;
-                                }
-                            }
-                            /* TODO: use field.getModifier() */
-                            final boolean isPrivate = (!StringUtil.isEmpty(strSuperModifiers) && strSuperModifiers.contains("private"));
-
-                            /* prepare message, make it helpful */
-                            String strWarning = strProblemDescription
-                                    .replace("%p%", strOwnField)
-                                    .replace("%c%", strSuperFQN);
-                            /* private -> protected for constructor-approach */
-                            if (isPrivate) {
-                                holder.registerProblem(ownField.getParent(), strProblemParentOnePrivate, ProblemHighlightType.WEAK_WARNING);
-                            }
-
-                            /* fire warning */
-                            holder.registerProblem(ownField.getParent(), strWarning, ProblemHighlightType.WEAK_WARNING);
-                            return;
+                    for (Field superclassField : parentClass.getOwnFields()) {
+                        if (!superclassField.getName().equals(ownFieldName)) {
+                            continue;
                         }
+
+                        /* private -> protected for enabling constructor-approach */
+                        if (superclassField.getModifier().isPrivate()) {
+                            holder.registerProblem(ownFieldParent, messageProtectedCandidate, ProblemHighlightType.WEAK_WARNING);
+                        }
+
+                        /* fire common warning */
+                        final String message = patternShadows.replace("%p%", ownFieldName).replace("%c%", superClassFQN);
+                        holder.registerProblem(ownFieldParent, message, ProblemHighlightType.WEAK_WARNING);
                     }
                 }
             }

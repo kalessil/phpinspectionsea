@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ArraySearchUse
 
 final public class ArraySearchUsedAsInArrayInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.configureByFile("fixtures/array-search-used-as-in-array.php");
+        myFixture.configureByFile("fixtures/api/array-search-used-as-in-array.php");
         myFixture.enableInspections(ArraySearchUsedAsInArrayInspector.class);
         myFixture.testHighlighting(true, false, true);
     }

@@ -87,7 +87,7 @@ Inspections Lists (Code style)
 | Code style           | DynamicInvocationViaScopeResolutionInspection   | Dynamic methods invocation via '::'                 | yes       | yes | no   |
 | Code style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes |
 | Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | yes |
-| Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes |
+| Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes       | yes | no   |
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | yes       | yes | no   |
 | Code style           | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                  | yes       | yes | no   |
 | Code style           | UnnecessaryFinalModifierInspection              | Unnecessary final modifiers                         | yes       | yes | no   |

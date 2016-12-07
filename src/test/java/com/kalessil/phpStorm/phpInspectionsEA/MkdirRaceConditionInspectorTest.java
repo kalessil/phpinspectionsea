@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Mkdi
 
 final public class MkdirRaceConditionInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.configureByFile("fixtures/mkdir-race-conditions.php");
+        myFixture.configureByFile("fixtures/pitfalls/mkdir-race-conditions.php");
         myFixture.enableInspections(MkdirRaceConditionInspector.class);
         myFixture.testHighlighting(true, false, true);
     }

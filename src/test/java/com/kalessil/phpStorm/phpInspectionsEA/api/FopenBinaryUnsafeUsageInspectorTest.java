@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.FopenBinaryUns
 
 final public class FopenBinaryUnsafeUsageInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.configureByFile("fixtures/fopen-binary-unsafe.php");
+        myFixture.configureByFile("fixtures/api/fopen-binary-unsafe.php");
         myFixture.enableInspections(FopenBinaryUnsafeUsageInspector.class);
         myFixture.testHighlighting(true, false, true);
     }

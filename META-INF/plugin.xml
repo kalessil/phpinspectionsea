@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.2.0</version>
+  <version>2.2.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -53,27 +53,20 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Improvements and new inspections (support us by donating via <a href="https://www.paypal.me/VReznichenko">PayPal</a>)<br/>
+Bug and regressions fixes (support us by donating via <a href="https://www.paypal.me/VReznichenko">PayPal</a>)<br/>
 <br/>
-- Basic malware patterns: implemented<br/>
-- Cryptographically secure algorithms: implemented<br/>
-- Cryptographically secure randomness: implemented<br/>
-- Encryption initialization vector randomness: implemented<br/>
-- Exploiting unserialize: implemented<br/>
-- Proper preg_quote() usage: implemented<br/>
-- Unnecessary final modifiers: implemented<br/>
-- 'declare(strict_types=1)' is missing: deprecated, to be dropped<br/>
+- Array and string offset validity: regressions in PS 2016.3.1<br/>
+- Class overrides a field of a parent class: fixed regression<br/>
+- 'declare(strict_types=1)' is missing: dropped<br/>
+- Fixed component name collision exception<br/>
 <br/>
-- Forgotten debug statements: new patterns (Symfony/ZF methods)<br/>
-- Nested ternary operator: new patterns (literal operands)<br/>
-- Random API migration: added options (using random_int)<br/>
-- Security advisories: resolved false-positives (no packages required yet)<br/>
-- Statement could be decoupled from foreach: added options (using clone)<br/>
-- Suspicious ternary operator: resolved false-positives (not-operands)<br/>
-- Untrusted files inclusion: new patterns<br/>
-- *printf/*scanf arguments count mismatches: resolved false-positives (returning values array)<br/>
-- 'substr(...)' used as index-based access: new patterns (mb_* function)<br/>
-- 'unset(...)' calls could be merged: new patterns<br/>
+- Addition operator used on arrays: resolved false-positives (adding inline arrays)<br/>
+- PDO api usage: resolved false-positives (execute with parameters)<br/>
+- Non-optimal if conditions: resolved false-positives (interconnected statements)<br/>
+- 'substr(...)' short-hand usage: new patterns<br/>
+- 'in_array(...)' misused: new patterns<br/>
+- Phar-incompatible 'realpath()' usage: new patterns<br/>
+- Exploiting unserialize: new patterns<br/>
 <br/>
 <hr/>
   ]]></change-notes>

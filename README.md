@@ -126,7 +126,7 @@ Inspections Lists (Probable bugs)
 | Group                | Short Name                                      | Full Name                                                 | Quick fix | UTs | QFTs |
 | :------------------- | :-------------------------------------------    | :--------------------------------------------------       | --------: | --: | ---: |
 | Probable bugs        | ForgottenDebugOutputInspection                  | Forgotten debug statements                                | n/a       | yes | n/a  |
-| Probable bugs        | AdditionOperationOnArraysInspection             | Addition operator used on arrays                          | n/a |
+| Probable bugs        | AdditionOperationOnArraysInspection             | Addition operator used on arrays                          | n/a       | yes | n/a  |
 | Probable bugs        | MagicMethodsValidityInspection                  | Magic methods validity                                    | n/a |
 | Probable bugs        | SuspiciousLoopInspection                        | Suspicious loop                                           | n/a       | yes | n/a  |
 | Probable bugs        | ReferenceMismatchInspection                     | Reference mismatch                                        | n/a |
@@ -152,9 +152,9 @@ Inspections Lists (Security)
 | Group                | Short Name                                         | Full Name                                                 | Quick fix | UTs | QFTs |
 | :------------------- | :-------------------------------------------       | :--------------------------------------------------       | --------: | --: | ---: |
 | Security             | NonSecureUniqidUsageInspection                     | Insecure 'uniqid()' usage                                 | yes       | yes | no   |
-| Security             | NonSecureExtractUsageInspection                    | Insecure 'extract(...)' usage                             | n/a       | yes | no   |
-| Security             | NonSecureParseStrUsageInspection                   | Insecure 'parse_str(...)' usage                           | n/a       | yes | no   |
-| Security             | UntrustedInclusionInspection                       | Untrusted files inclusion                                 | n/a       | yes | no   |
+| Security             | NonSecureExtractUsageInspection                    | Insecure 'extract(...)' usage                             | n/a       | yes | n/a  |
+| Security             | NonSecureParseStrUsageInspection                   | Insecure 'parse_str(...)' usage                           | n/a       | yes | n/a  |
+| Security             | UntrustedInclusionInspection                       | Untrusted files inclusion                                 | n/a       | yes | n/a  |
 | Security             | SecurityAdvisoriesInspection                       | Security advisories for composer packages                 | no        | yes | no   |
 | Security             | CurlSslServerSpoofingInspection                    | CURL: SSL server spoofing                                 | n/a       | yes | n/a  |
 | Security             | EncryptionInitializationVectorRandomnessInspection | Encryption initialization vector randomness               | n/a       | yes | n/a  |

@@ -59,7 +59,7 @@ Inspections Lists (Compatibility)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
 | Compatibility        | DeprecatedIniOptionsInspection                  | Deprecated configuration options                    | n/a |
 | Compatibility        | RandomApiMigrationInspection                    | Random API migration                                | yes       | yes | no   |
-| Compatibility        | MktimeUsageInspection                           | 'gmmktime()'/'mktime()' usage                       | yes |
+| Compatibility        | MktimeUsageInspection                           | 'gmmktime()'/'mktime()' usage                       | yes       | yes | no   |
 | Compatibility        | FopenBinaryUnsafeUsageInspection                | Binary-unsafe fopen usage                           | yes       | yes | no   |
 
 Inspections Lists (Confusing constructs)

@@ -15,8 +15,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class MktimeUsageInspector extends BasePhpInspection {
-    private static final String strProblemUseTime             = "You shall use time() function instead (current usage produces a runtime warning)";
-    private static final String strProblemParameterDeprecated = "Parameter 'is_dst' is deprecated and removed in PHP 7";
+    private static final String messageUseTime             = "You shall use time() function instead (current usage produces a runtime warning)";
+    private static final String messageParameterDeprecated = "Parameter 'is_dst' is deprecated and removed in PHP 7";
 
     @NotNull
     public String getShortName() {
@@ -29,25 +29,23 @@ public class MktimeUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /* check parameters amount and name */
-                final String strFunctionName = reference.getName();
-                final PsiElement[] params    = reference.getParameters();
-                final int parametersCount    = params.length;
+                final String functionName = reference.getName();
+                final PsiElement[] params = reference.getParameters();
                 if (
-                    StringUtil.isEmpty(strFunctionName) ||
+                    StringUtil.isEmpty(functionName) ||
                     !(
-                        (0 == parametersCount ||  7 == parametersCount) &&
-                        (strFunctionName.equals("mktime") || strFunctionName.equals("gmmktime"))
+                        (0 == params.length ||  7 == params.length) &&
+                        (functionName.equals("mktime") || functionName.equals("gmmktime"))
                     )
                 ) {
                     return;
                 }
 
                 /* report the issue */
-                if (0 == parametersCount) {
-                    final UseTimeFunctionLocalFix fixer = new UseTimeFunctionLocalFix();
-                    holder.registerProblem(reference, strProblemUseTime, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixer);
+                if (0 == params.length) {
+                    holder.registerProblem(reference, messageUseTime, ProblemHighlightType.WEAK_WARNING, new UseTimeFunctionLocalFix());
                 } else {
-                    holder.registerProblem(params[6], strProblemParameterDeprecated, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(params[6], messageParameterDeprecated, ProblemHighlightType.LIKE_DEPRECATED);
                 }
             }
         };

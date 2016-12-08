@@ -607,7 +607,7 @@ Bug and regressions fixes (support us by donating via <a href="https://www.paypa
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RandomApiMigrationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MktimeUsageInspection"                           displayName="'gmmktime()'/'mktime()' usage"
-        groupName="Compatibility"                                   enabledByDefault="true" level="ERROR"
+        groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.MktimeUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="FopenBinaryUnsafeUsageInspection"                displayName="Binary-unsafe 'fopen(...)' usage"

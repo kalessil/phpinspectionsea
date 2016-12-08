@@ -55,8 +55,8 @@ with a laptop.
   <change-notes><![CDATA[
 Bug and regressions fixes (support us by donating via <a href="https://www.paypal.me/VReznichenko">PayPal</a>)<br/>
 <br/>
-- Array and string offset validity: regressions in PS 2016.3.1<br/>
-- Class overrides a field of a parent class: fixed regression<br/>
+- Array and string offset validity: fixed regressions in PS 2016.3.1<br/>
+- Class overrides a field of a parent class: fixed regressions<br/>
 - 'declare(strict_types=1)' is missing: dropped<br/>
 - Fixed component name collision exception<br/>
 <br/>

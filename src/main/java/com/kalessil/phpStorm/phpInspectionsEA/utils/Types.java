@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Map;
 
 final public class Types {
     final static public String strArray    = "array";
@@ -18,12 +19,13 @@ final public class Types {
     final static public String strStatic   = "static";
     final static public String strSelf     = "self";
     final static public String strObject   = "object";
+    final static public String strEmptySet = "ø";
 
     final static public String strResolvingAbortedOnPsiLevel = "\\aborted-on-psi-level";
     final static public String strClassNotResolved           = "\\class-not-resolved";
 
-    static private HashMap<String, String> mapTypes = null;
-    static private HashMap<String, String> getTypesMap () {
+    static private Map<String, String> mapTypes = null;
+    static private Map<String, String> getTypesMap () {
         if (null == mapTypes) {
             mapTypes = new HashMap<>();
 
@@ -37,6 +39,10 @@ final public class Types {
             mapTypes.put("\\bool",     strBoolean);
             mapTypes.put("boolean",    strBoolean);
             mapTypes.put("\\boolean",  strBoolean);
+            mapTypes.put("false",      strBoolean);
+            mapTypes.put("\\false",    strBoolean);
+            mapTypes.put("true",       strBoolean);
+            mapTypes.put("\\true",     strBoolean);
 
             mapTypes.put(strInteger,   strInteger);
             mapTypes.put("\\int",      strInteger);
@@ -76,18 +82,17 @@ final public class Types {
         return mapTypes;
     }
 
-    public static String getType (@NotNull String strGivenType) {
+    public static String getType (@NotNull String givenType) {
         /* special case: array definition */
-        if (strGivenType.contains("[]")) {
+        if (givenType.contains("[]")) {
             return strArray;
         }
 
-        HashMap<String, String> mapping = getTypesMap();
-        String strResolvedType = mapping.get(strGivenType.toLowerCase());
-        if (null != strResolvedType) {
-            return strResolvedType;
+        final String resolvedType = getTypesMap().get(givenType.toLowerCase());
+        if (null != resolvedType) {
+            return resolvedType;
         }
 
-        return strGivenType;
+        return givenType;
     }
 }

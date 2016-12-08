@@ -135,8 +135,9 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             containerTypes.add(Types.strArray);
             containerTypes.add(Types.strString);
         }
-        containerTypes.remove(Types.strNull);   // don't process nulls
-        containerTypes.remove(Types.strObject); // don't process generalized objects
+        containerTypes.remove(Types.strNull);     // don't process nulls
+        containerTypes.remove(Types.strObject);   // don't process generalized objects
+        containerTypes.remove(Types.strEmptySet); // don't process mysterious empty set type
 
         /* === if we could not resolve container, do nothing === */
         if (0 == containerTypes.size()) {
@@ -147,6 +148,9 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         final PhpIndex objIndex = PhpIndex.getInstance(container.getProject());
         boolean supportsOffsets = false;
         for (String typeToCheck : containerTypes) {
+            /* FIXME: appeared e.g. \array, see #65  */
+            typeToCheck = Types.getType(typeToCheck);
+
             // commonly used case: string and array
             if (typeToCheck.equals(Types.strArray) || typeToCheck.equals(Types.strString)) {
                 supportsOffsets = true;

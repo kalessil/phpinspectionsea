@@ -17,8 +17,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class ReferencingObjectsInspector extends BasePhpInspection {
-    private static final String strProblemParameter  = "Objects are always passed by reference; please correct '& $%p%'";
-    private static final String strProblemAssignment = "Objects are always passed by reference; please correct '= & new '";
+    private static final String messageParameter  = "Objects are always passed by reference; please correct '& $%p%'";
+    private static final String messageAssignment = "Objects are always passed by reference; please correct '= & new '";
 
     private static final PhpType php7Types = new PhpType();
     static {
@@ -51,14 +51,13 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
                     return;
                 }
 
-                for (Parameter objParameter : callable.getParameters()) {
+                for (Parameter parameter : callable.getParameters()) {
                     if (
-                        objParameter.isPassByRef() && !objParameter.getDeclaredType().isEmpty() &&
-                        !PhpType.isSubType(objParameter.getDeclaredType(), php7Types)
+                        parameter.isPassByRef() && !parameter.getDeclaredType().isEmpty() &&
+                        !PhpType.isSubType(parameter.getDeclaredType(), php7Types)
                     ) {
-                        final String message = strProblemParameter.replace("%p%", objParameter.getName());
-                        final ParameterLocalFix fixer = new ParameterLocalFix(objParameter);
-                        holder.registerProblem(objParameter, message, ProblemHighlightType.WEAK_WARNING, fixer);
+                        final String message = messageParameter.replace("%p%", parameter.getName());
+                        holder.registerProblem(parameter, message, ProblemHighlightType.WEAK_WARNING, new ParameterLocalFix(parameter));
                     }
                 }
             }
@@ -74,8 +73,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
                         }
 
                         if (null != operation && operation.getText().replaceAll("\\s+","").equals("=&")) {
-                            final InstantiationLocalFix fixer = new InstantiationLocalFix(operation);
-                            holder.registerProblem(expression, strProblemAssignment, ProblemHighlightType.WEAK_WARNING, fixer);
+                            holder.registerProblem(expression, messageAssignment, ProblemHighlightType.WEAK_WARNING, new InstantiationLocalFix(operation));
                         }
                     }
                 }

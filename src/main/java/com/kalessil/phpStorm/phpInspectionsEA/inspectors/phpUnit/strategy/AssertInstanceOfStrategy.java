@@ -12,12 +12,8 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.ClassConstantReferenceImpl;
-import com.jetbrains.php.lang.psi.elements.impl.ClassReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,7 +69,7 @@ public class AssertInstanceOfStrategy {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
-                if (this.classIdentity instanceof ClassReferenceImpl) {
+                if (this.classIdentity instanceof ClassReference) {
                     final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
                     final boolean useClassConstant    = phpVersion.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST);
 
@@ -82,7 +78,7 @@ public class AssertInstanceOfStrategy {
                         final String pattern = this.classIdentity.getText() + "::class";
                         this.classIdentity = PhpPsiElementFactory.createFromText(project, ClassConstantReferenceImpl.class, pattern);
                     } else {
-                        final String fqn = ((ClassReferenceImpl) this.classIdentity).getFQN();
+                        final String fqn = ((ClassReference) this.classIdentity).getFQN();
                         if (!StringUtil.isEmpty(fqn)) {
                             final String pattern = "'" + fqn.replaceAll("\\\\", "\\\\\\\\") + "'"; // <- I hate Java escaping
                             this.classIdentity = PhpPsiElementFactory.createFromText(project, StringLiteralExpression.class, pattern);

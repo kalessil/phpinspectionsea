@@ -9,7 +9,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.ClassReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -73,7 +72,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
 
                         /* check second pattern <expression>::dynamic */
                         final PsiElement objectExpression = reference.getFirstPsiChild();
-                        if (null != objectExpression && !(objectExpression instanceof FunctionReference) && !(staticCandidate instanceof ClassReferenceImpl)) {
+                        if (null != objectExpression && !(objectExpression instanceof FunctionReference) && !(staticCandidate instanceof ClassReference)) {
                             /* check operator */
                             PsiElement operator = objectExpression.getNextSibling();
                             if (operator instanceof PsiWhiteSpace) {

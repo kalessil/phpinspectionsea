@@ -17,8 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String strProblemUseStrpos = "'%i% %o% %f%(%s%, %p%)' should be used instead";
-
+    private static final String messagePattern = "'%i% %o% %f%(%s%, %p%)' can be used instead (improves maintainability)";
 
     @NotNull
     public String getShortName() {
@@ -31,9 +30,12 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /* check if it's the target function: amount of parameters and name */
-                final String strFunctionName = reference.getName();
+                final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if (3 != params.length || StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("substr")) {
+                if (
+                    (3 != params.length && 4 != params.length) || StringUtil.isEmpty(functionName) ||
+                    (!functionName.equals("substr") && !functionName.equals("mb_substr"))
+                ) {
                     return;
                 }
 
@@ -85,13 +87,13 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
 
                             if (null != secondOperand) {
                                 final String operator = operation.getText();
-                                final String message = strProblemUseStrpos
+                                final String message = messagePattern
                                         .replace("%f%", caseManipulated ? "stripos" : "strpos")
                                         .replace("%i%", index)
                                         .replace("%o%", operator.length() == 2 ? operator + "=" : operator)
                                         .replace("%s%", params[0].getText())
                                         .replace("%p%", secondOperand.getText());
-                                holder.registerProblem(parentExpression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                holder.registerProblem(parentExpression, message, ProblemHighlightType.WEAK_WARNING);
 
                                 // return;
                             }

@@ -11,7 +11,6 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Include;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.impl.ControlStatementImpl;
-import com.jetbrains.php.lang.psi.elements.impl.IncludeImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -62,9 +61,9 @@ public class UsingInclusionOnceReturnValueInspector extends BasePhpInspection {
                 final boolean isInclude = target.getFirstChild().getText().equals("include_once");
                 final String pattern    = isInclude ? "include ''" : "require ''";
 
-                PhpPsiElement replacement = PhpPsiElementFactory.createPhpPsiFromText(project, IncludeImpl.class, pattern);
+                PhpPsiElement replacement = PhpPsiElementFactory.createPhpPsiFromText(project, Include.class, pattern);
                 //noinspection ConstantConditions pattern hardcoded and arg is checked - safe
-                ((IncludeImpl) replacement).getArgument().replace(((Include) target).getArgument());
+                ((Include) replacement).getArgument().replace(((Include) target).getArgument());
                 target.replace(replacement);
             }
         }

@@ -15,9 +15,9 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ForeachStatement;
+import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.MultiassignmentExpression;
 import com.jetbrains.php.lang.psi.elements.Variable;
-import com.jetbrains.php.lang.psi.elements.impl.GroupStatementImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -73,7 +73,7 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
                         }
 
                         childNode = childNode.getNextSibling();
-                        if (childNode instanceof GroupStatementImpl) {
+                        if (childNode instanceof GroupStatement) {
                             break;
                         }
                     }

@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.lang.psi.elements.Method;
@@ -12,13 +13,17 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class MagicMethodsValidityInspector extends BasePhpInspection {
     private static final String messageUseSplAutoloading = "A common recommendation is to use spl_autoload_register(...) instead";
     private static final String messageNotMagic          = "Only magic methods should start with '__'";
 
-    private static final PhpType arrayType       = new PhpType();
-    private static final PhpType stringType      = new PhpType();
-    private static final PhpType arrayOrNullType = new PhpType();
+    private static final PhpType arrayType         = new PhpType();
+    private static final PhpType stringType        = new PhpType();
+    private static final PhpType arrayOrNullType   = new PhpType();
+    private static final Set<String> knownNonMagic = new HashSet<>();
     static {
         arrayType.add(PhpType.ARRAY);
 
@@ -26,6 +31,11 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
 
         arrayOrNullType.add(PhpType.NULL);
         arrayOrNullType.add(PhpType.ARRAY);
+
+        knownNonMagic.add("__inject");
+        knownNonMagic.add("__prepare");
+        knownNonMagic.add("__toArray");
+        knownNonMagic.add("__");
     }
 
     @NotNull
@@ -39,7 +49,8 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
                 final String methodName = method.getName();
-                if (StringUtil.isEmpty(methodName) || !methodName.startsWith("__") || null == method.getNameIdentifier()) {
+                final PsiElement nameId = method.getNameIdentifier();
+                if (null == nameId || StringUtil.isEmpty(methodName) || !methodName.startsWith("__")) {
                     return;
                 }
 
@@ -149,13 +160,15 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                 }
 
                 if (methodName.equals("__autoload")) {
-                    holder.registerProblem(method.getNameIdentifier(), messageUseSplAutoloading, ProblemHighlightType.LIKE_DEPRECATED);
+                    holder.registerProblem(nameId, messageUseSplAutoloading, ProblemHighlightType.LIKE_DEPRECATED);
                     TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
 
                     return;
                 }
 
-                holder.registerProblem(method.getNameIdentifier(), messageNotMagic, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                if (!knownNonMagic.contains(methodName)) {
+                    holder.registerProblem(nameId, messageNotMagic, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                }
             }
         };
     }

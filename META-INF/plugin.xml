@@ -429,7 +429,7 @@ Bug and regressions fixes (support us by donating via <a href="https://www.paypa
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UselessReturnInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ParameterByRefWithDefaultInspection"           displayName="Parameter passed by reference has default value"
-        groupName="Confusing constructs"                          enabledByDefault="true" level="WARNING"
+        groupName="Confusing constructs"                          enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ParameterByRefWithDefaultInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ReferencingObjectsInspection"                  displayName="Referencing objects"

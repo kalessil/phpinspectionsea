@@ -70,7 +70,7 @@ Inspections Lists (Confusing constructs)
 | Confusing constructs | ClassMethodNameMatchesFieldNameInspection       | Method name matches existing field name             | n/a |
 | Confusing constructs | NestedTernaryOperatorInspection                 | Nested ternary operator                             | no        | yes | no   |
 | Confusing constructs | UselessReturnInspection                         | Useless return                                      | n/a |
-| Confusing constructs | ParameterByRefWithDefaultInspection             | Parameter passed by reference has default value     | n/a |
+| Confusing constructs | ParameterByRefWithDefaultInspection             | Parameter passed by reference has default value     | n/a       | yes | n/a  |
 | Confusing constructs | ReferencingObjectsInspection                    | Referencing objects                                 | yes       | yes | no   |
 
 Inspections Lists (Code style)

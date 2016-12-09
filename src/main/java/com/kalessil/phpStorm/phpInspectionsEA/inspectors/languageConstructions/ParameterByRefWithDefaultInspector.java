@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class ParameterByRefWithDefaultInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Usually a default value is not needed in this scenario.";
+    private static final String message = "Usually a default value is not needed in this scenario.";
 
     @NotNull
     public String getShortName() {
@@ -34,9 +34,9 @@ public class ParameterByRefWithDefaultInspector extends BasePhpInspection {
              * @param callable to inspect
              */
             private void inspectCallable (Function callable) {
-                for (Parameter objParameter : callable.getParameters()) {
-                    if (objParameter.isPassByRef() && objParameter.isOptional()) {
-                        holder.registerProblem(objParameter, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                for (Parameter parameter : callable.getParameters()) {
+                    if (parameter.isPassByRef() && parameter.isOptional()) {
+                        holder.registerProblem(parameter, message, ProblemHighlightType.WEAK_WARNING);
                     }
                 }
             }

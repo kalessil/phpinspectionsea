@@ -9,9 +9,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.impl.BinaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,8 +27,8 @@ public class AssertBoolOfComparisonStrategy {
             )
         ) {
             final PsiElement param = ExpressionSemanticUtil.getExpressionTroughParenthesis(params[0]);
-            if (param instanceof BinaryExpressionImpl) {
-                final BinaryExpressionImpl argument = (BinaryExpressionImpl) param;
+            if (param instanceof BinaryExpression) {
+                final BinaryExpression argument = (BinaryExpression) param;
                 if (null == argument.getOperation() || null == argument.getLeftOperand() || null == argument.getRightOperand()) {
                     return false;
                 }

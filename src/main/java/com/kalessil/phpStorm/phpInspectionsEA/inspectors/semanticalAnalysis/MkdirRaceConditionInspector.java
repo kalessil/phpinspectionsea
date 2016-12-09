@@ -9,7 +9,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.BinaryExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -49,13 +48,13 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 }
 
                 // case 2: && and || expressions
-                if (parent.getParent() instanceof BinaryExpressionImpl) {
+                if (parent.getParent() instanceof BinaryExpression) {
                     boolean isSecondExistenceCheckExists = false;
 
                     /* deal with nested conditions */
-                    BinaryExpressionImpl binary = (BinaryExpressionImpl) parent.getParent();
-                    if (binary.getRightOperand() == parent && binary.getParent() instanceof BinaryExpressionImpl) {
-                        binary = (BinaryExpressionImpl) binary.getParent();
+                    BinaryExpression binary = (BinaryExpression) parent.getParent();
+                    if (binary.getRightOperand() == parent && binary.getParent() instanceof BinaryExpression) {
+                        binary = (BinaryExpression) binary.getParent();
                     }
 
                     /* check if following expression contains is_dir */
@@ -102,8 +101,8 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     }
                 }
 
-                if (parent instanceof BinaryExpressionImpl) {
-                    BinaryExpressionImpl binary = (BinaryExpressionImpl) parent;
+                if (parent instanceof BinaryExpression) {
+                    BinaryExpression binary = (BinaryExpression) parent;
                     if (null != binary.getOperation()) {
                         final IElementType operation = binary.getOperationType();
                         if (PhpTokenTypes.opAND == operation || PhpTokenTypes.opOR == operation) {

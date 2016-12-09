@@ -15,7 +15,6 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
-import com.jetbrains.php.lang.psi.elements.impl.BinaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -58,7 +57,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
 
                 /* check context: expected to be binary expression */
                 final PsiElement parent = reference.getParent();
-                if (!(parent instanceof BinaryExpressionImpl)) {
+                if (!(parent instanceof BinaryExpression)) {
                     return;
                 }
 
@@ -140,7 +139,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof BinaryExpressionImpl) {
+            if (expression instanceof BinaryExpression) {
                 final String pattern =
                         (isInverted ? "!" : "") +
                         (suggestedName + "(%p%)".replace("%p%", param.getText()));

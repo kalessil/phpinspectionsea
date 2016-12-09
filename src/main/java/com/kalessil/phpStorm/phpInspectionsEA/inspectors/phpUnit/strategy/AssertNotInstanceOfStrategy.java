@@ -12,10 +12,10 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.jetbrains.php.lang.psi.elements.impl.BinaryExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.ClassConstantReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.ClassReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -28,8 +28,8 @@ public class AssertNotInstanceOfStrategy {
         final PsiElement[] params = reference.getParameters();
         if (params.length > 0 && (function.equals("assertFalse") || function.equals("assertNotTrue"))) {
             final PsiElement param = ExpressionSemanticUtil.getExpressionTroughParenthesis(params[0]);
-            if (param instanceof BinaryExpressionImpl) {
-                final BinaryExpressionImpl instance = (BinaryExpressionImpl) param;
+            if (param instanceof BinaryExpression) {
+                final BinaryExpression instance = (BinaryExpression) param;
                 if (
                     null == instance.getOperation() || null == instance.getRightOperand() || null == instance.getLeftOperand() ||
                     PhpTokenTypes.kwINSTANCEOF != instance.getOperation().getNode().getElementType()

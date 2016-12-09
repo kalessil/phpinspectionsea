@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class StrNcmpUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String strProblemDescription  = "For short strings '0 %o% %f%(%s%, %p%)' should be used instead.";
+    private static final String messagePattern = "'0 %o% %f%(%s%, %p%)' can be used instead (improves maintainability)";
 
     @NotNull
     public String getShortName() {
@@ -38,9 +38,9 @@ public class StrNcmpUsedAsStrPosInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /* check if it's the target function */
-                final String strFunctionName = reference.getName();
+                final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if (params.length < 2 || StringUtil.isEmpty(strFunctionName) || !mapping.containsKey(strFunctionName)) {
+                if (params.length < 2 || StringUtil.isEmpty(functionName) || !mapping.containsKey(functionName)) {
                     return;
                 }
 
@@ -63,13 +63,13 @@ public class StrNcmpUsedAsStrPosInspector extends BasePhpInspection {
                             /* verify if operand is a boolean and report an issue */
                             if (secondOperand instanceof PhpExpressionImpl && secondOperand.getText().equals("0")) {
                                 final String operator = operation.getText();
-                                final String message = strProblemDescription
+                                final String message  = messagePattern
                                         .replace("%o%", operator.length() == 2 ? operator + "=": operator)
-                                        .replace("%f%", mapping.get(strFunctionName))
+                                        .replace("%f%", mapping.get(functionName))
                                         .replace("%s%", params[0].getText())
                                         .replace("%p%", params[1].getText())
                                 ;
-                                holder.registerProblem(parent, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                holder.registerProblem(parent, message, ProblemHighlightType.WEAK_WARNING);
 
                                 return;
                             }
@@ -79,13 +79,13 @@ public class StrNcmpUsedAsStrPosInspector extends BasePhpInspection {
 
                 /* checks NON-implicit boolean comparison patterns */
                 if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
-                    final String message = strProblemDescription
+                    final String message = messagePattern
                             .replace("%o%", reference.getParent() instanceof UnaryExpression ? "===": "!==")
-                            .replace("%f%", mapping.get(strFunctionName))
+                            .replace("%f%", mapping.get(functionName))
                             .replace("%s%", params[0].getText())
                             .replace("%p%", params[1].getText())
                     ;
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
 
                     //return;
                 }

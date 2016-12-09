@@ -17,7 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%i% %o% %f%(%s%, %p%)' can be used instead (improves maintainability)";
+    private static final String messagePattern = "'%i% %o% %f%(%s%, %p%%e%)' can be used instead (improves maintainability)";
 
     @NotNull
     public String getShortName() {
@@ -86,13 +86,16 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                             }
 
                             if (null != secondOperand) {
-                                final String operator = operation.getText();
+                                final String operator      = operation.getText();
+                                final boolean isMbFunction = functionName.equals("mb_substr");
+                                final boolean hasEncoding  = isMbFunction && 4 == params.length;
                                 final String message = messagePattern
-                                        .replace("%f%", caseManipulated ? "stripos" : "strpos")
+                                        .replace("%f%", (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"))
                                         .replace("%i%", index)
-                                        .replace("%o%", operator.length() == 2 ? operator + "=" : operator)
+                                        .replace("%o%", operator.length() == 2 ? (operator + "=") : operator)
                                         .replace("%s%", params[0].getText())
-                                        .replace("%p%", secondOperand.getText());
+                                        .replace("%p%", secondOperand.getText())
+                                        .replace("%e%", hasEncoding ? (", " + params[3].getText()) : "");
                                 holder.registerProblem(parentExpression, message, ProblemHighlightType.WEAK_WARNING);
 
                                 // return;

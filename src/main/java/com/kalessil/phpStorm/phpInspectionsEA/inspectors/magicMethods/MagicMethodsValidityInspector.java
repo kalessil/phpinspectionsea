@@ -13,7 +13,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class MagicMethodsValidityInspector extends BasePhpInspection {
-    private static final String strProblemUseSplAutoloading = "A common recommendation is to use spl_autoload_register(...) instead";
+    private static final String messageUseSplAutoloading = "A common recommendation is to use spl_autoload_register(...) instead";
+    private static final String messageNotMagic          = "Only magic methods should start with '__'";
 
     private static final PhpType arrayType       = new PhpType();
     private static final PhpType stringType      = new PhpType();
@@ -37,12 +38,12 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
-                String strMethodName = method.getName();
-                if (StringUtil.isEmpty(strMethodName) || !strMethodName.startsWith("__") || null == method.getNameIdentifier()) {
+                final String methodName = method.getName();
+                if (StringUtil.isEmpty(methodName) || !methodName.startsWith("__") || null == method.getNameIdentifier()) {
                     return;
                 }
 
-                if (strMethodName.equals("__construct")) {
+                if (methodName.equals("__construct")) {
                     CanNotBeStaticStrategy.apply(method, holder);
                     CanNotReturnTypeStrategy.apply(method, holder);
                     NormallyCallsParentMethodStrategy.apply(method, holder);
@@ -51,8 +52,8 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                 }
 
                 if (
-                    strMethodName.equals("__destruct") ||
-                    strMethodName.equals("__clone")
+                    methodName.equals("__destruct") ||
+                    methodName.equals("__clone")
                 ) {
                     CanNotBeStaticStrategy.apply(method, holder);
                     CanNotReturnTypeStrategy.apply(method, holder);
@@ -63,9 +64,9 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                 }
 
                 if (
-                    strMethodName.equals("__get") ||
-                    strMethodName.equals("__isset") ||
-                    strMethodName.equals("__unset")
+                    methodName.equals("__get") ||
+                    methodName.equals("__isset") ||
+                    methodName.equals("__unset")
                 ) {
                     CanNotBeStaticStrategy.apply(method, holder);
                     MustBePublicStrategy.apply(method, holder);
@@ -77,15 +78,15 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                 }
 
                 if (
-                    strMethodName.equals("__set") ||
-                    strMethodName.equals("__call")
+                    methodName.equals("__set") ||
+                    methodName.equals("__call")
                 ) {
                     CanNotBeStaticStrategy.apply(method, holder);
                     MustBePublicStrategy.apply(method, holder);
                     CanNotTakeArgumentsByReferenceStrategy.apply(method, holder);
                     TakesExactAmountOfArgumentsStrategy.apply(2, method, holder);
 
-                    if (strMethodName.equals("__set")) {
+                    if (methodName.equals("__set")) {
                         HasAlsoMethodStrategy.apply(method, "__isset", holder);
                         HasAlsoMethodStrategy.apply(method, "__get", holder);
                     }
@@ -93,7 +94,7 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (strMethodName.equals("__callStatic")) {
+                if (methodName.equals("__callStatic")) {
                     MustBePublicStrategy.apply(method, holder);
                     CanNotTakeArgumentsByReferenceStrategy.apply(method, holder);
                     TakesExactAmountOfArgumentsStrategy.apply(2, method, holder);
@@ -102,7 +103,7 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (strMethodName.equals("__toString")) {
+                if (methodName.equals("__toString")) {
                     CanNotBeStaticStrategy.apply(method, holder);
                     CanNotTakeArgumentsStrategy.apply(method, holder);
                     MustBePublicStrategy.apply(method, holder);
@@ -112,7 +113,7 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (strMethodName.equals("__debugInfo")) {
+                if (methodName.equals("__debugInfo")) {
                     CanNotBeStaticStrategy.apply(method, holder);
                     CanNotTakeArgumentsStrategy.apply(method, holder);
                     MustBePublicStrategy.apply(method, holder);
@@ -122,14 +123,14 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (strMethodName.equals("__invoke")) {
+                if (methodName.equals("__invoke")) {
                     CanNotBeStaticStrategy.apply(method, holder);
                     MustBePublicStrategy.apply(method, holder);
 
                     return;
                 }
 
-                if (strMethodName.equals("__wakeup")) {
+                if (methodName.equals("__wakeup")) {
                     CanNotBeStaticStrategy.apply(method, holder);
                     MustBePublicStrategy.apply(method, holder);
                     CanNotTakeArgumentsStrategy.apply(method, holder);
@@ -138,7 +139,7 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (strMethodName.equals("__sleep")) {
+                if (methodName.equals("__sleep")) {
                     CanNotBeStaticStrategy.apply(method, holder);
                     MustBePublicStrategy.apply(method, holder);
                     CanNotTakeArgumentsStrategy.apply(method, holder);
@@ -147,12 +148,14 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (strMethodName.equals("__autoload")) {
-                    holder.registerProblem(method.getNameIdentifier(), strProblemUseSplAutoloading, ProblemHighlightType.LIKE_DEPRECATED);
+                if (methodName.equals("__autoload")) {
+                    holder.registerProblem(method.getNameIdentifier(), messageUseSplAutoloading, ProblemHighlightType.LIKE_DEPRECATED);
                     TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
 
-                    // return;
+                    return;
                 }
+
+                holder.registerProblem(method.getNameIdentifier(), messageNotMagic, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

@@ -13,7 +13,6 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.ClassConstantReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,7 +75,7 @@ public class AssertInstanceOfStrategy {
                     if (useClassConstant) {
                         /* since PHP 5.5 we can use ::class constant */
                         final String pattern = this.classIdentity.getText() + "::class";
-                        this.classIdentity = PhpPsiElementFactory.createFromText(project, ClassConstantReferenceImpl.class, pattern);
+                        this.classIdentity = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, pattern);
                     } else {
                         final String fqn = ((ClassReference) this.classIdentity).getFQN();
                         if (!StringUtil.isEmpty(fqn)) {

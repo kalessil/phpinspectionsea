@@ -17,7 +17,6 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.AssignmentExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
-import com.jetbrains.php.lang.psi.elements.impl.VariableImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +59,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                 if (container instanceof PhpExpressionImpl) {
                     container = ((PhpExpressionImpl) container).getFirstPsiChild();
                 }
-                if (!(container instanceof VariableImpl)) {
+                if (!(container instanceof Variable)) {
                     return;
                 }
 
@@ -92,7 +91,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
 
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
                 /* ensure we are writing into a variable */
-                if (!(assignmentExpression.getVariable() instanceof VariableImpl)){
+                if (!(assignmentExpression.getVariable() instanceof Variable)){
                     return;
                 }
 

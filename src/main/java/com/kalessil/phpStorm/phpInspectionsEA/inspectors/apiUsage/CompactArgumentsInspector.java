@@ -6,11 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.Parameter;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.jetbrains.php.lang.psi.elements.impl.VariableImpl;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.refactoring.PhpRefactoringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -65,7 +61,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                         variablesDeclared.add(scopeParameter.getName());
                     }
                     /* local variables can be compacted */
-                    for (VariableImpl scopeVariable : PsiTreeUtil.findChildrenOfType(scope, VariableImpl.class)) {
+                    for (Variable scopeVariable : PsiTreeUtil.findChildrenOfType(scope, Variable.class)) {
                         variablesDeclared.add(scopeVariable.getName());
                     }
 

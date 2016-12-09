@@ -11,10 +11,10 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
-import com.jetbrains.php.lang.psi.elements.impl.ParameterListImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -48,7 +48,7 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
                         parent = parent.getParent();
                     }
                 }
-                if (!(parent instanceof ParameterListImpl) || !(parent.getParent() instanceof FunctionReferenceImpl)) {
+                if (!(parent instanceof ParameterList) || !(parent.getParent() instanceof FunctionReferenceImpl)) {
                     return;
                 }
 
@@ -91,8 +91,8 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
-                final PsiElement replacement = PhpPsiElementFactory.createFromText(project, FunctionReferenceImpl.class, "file_get_contents($x)");
-                final FunctionReferenceImpl fileGetContents = (FunctionReferenceImpl) replacement;
+                final PsiElement replacement = PhpPsiElementFactory.createFromText(project, FunctionReference.class, "file_get_contents($x)");
+                final FunctionReference fileGetContents = (FunctionReference) replacement;
 
                 PsiElement fileFunction = ((FunctionReference) expression).getParameters()[1];
                 if (fileFunction instanceof UnaryExpression) {

@@ -9,15 +9,21 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
  * file that was distributed with this source code.
  */
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -55,8 +61,8 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                 /* Skip Certain contexts processing and strings with inline injections */
                 final PsiElement parent = expression.getParent();
                 if (
-                    parent instanceof ConcatenationExpression || parent instanceof SelfAssignmentExpression ||
-                    parent instanceof BinaryExpression || null != expression.getFirstPsiChild()
+                    parent instanceof BinaryExpression || parent instanceof SelfAssignmentExpression ||
+                    null != expression.getFirstPsiChild()
                 ) {
                     return;
                 }
@@ -112,12 +118,44 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         Collection<PhpClass> classes = index.getClassesByFQN(fqnToLookup);
                         if (1 == classes.size() && classes.iterator().next().getFQN().equals(fqnToLookup)) {
                             final String message = messagePattern.replace("%c%", contents);
-                            holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING);
+                            holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(contents));
                         }
                     }
                     namesToLookup.clear();
                 }
             }
         };
+    }
+
+    static private class TheLocalFix implements LocalQuickFix {
+        final String fqn;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use ::class instead";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        TheLocalFix(@NotNull String fqn) {
+            super();
+            this.fqn = fqn;
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement target = descriptor.getPsiElement();
+            if (target instanceof StringLiteralExpression) {
+                PsiElement replacement = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, fqn + "::class");
+                if (null != replacement) {
+                    target.replace(replacement);
+                }
+            }
+        }
     }
 }

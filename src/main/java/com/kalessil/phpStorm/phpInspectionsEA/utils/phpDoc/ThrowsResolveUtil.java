@@ -4,9 +4,9 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.tags.PhpDocTagImpl;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocReturnTag;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
@@ -35,10 +35,10 @@ final public class ThrowsResolveUtil {
             for (PhpDocReturnTag returnOrThrow : returns) {
                 if (returnOrThrow.getName().equals("@throws")) {
                     /* definition styles can differ: single tags, pipe concatenated or combined  */
-                    Collection<PhpDocTypeImpl> exceptions = PsiTreeUtil.findChildrenOfType(returnOrThrow, PhpDocTypeImpl.class);
+                    Collection<PhpDocType> exceptions = PsiTreeUtil.findChildrenOfType(returnOrThrow, PhpDocType.class);
 
                     if (exceptions.size() > 0) {
-                        for (PhpDocTypeImpl type : exceptions) {
+                        for (PhpDocType type : exceptions) {
                             PsiElement typeResolved = type.resolve();
                             if (typeResolved instanceof PhpClass) {
                                 declaredExceptions.add((PhpClass) typeResolved);
@@ -52,9 +52,9 @@ final public class ThrowsResolveUtil {
         }
 
         // resolve inherit doc tags
-        Collection<PhpDocTagImpl> tags = PsiTreeUtil.findChildrenOfType(previous, PhpDocTagImpl.class);
+        Collection<PhpDocTag> tags = PsiTreeUtil.findChildrenOfType(previous, PhpDocTag.class);
         if (tags.size() > 0) {
-            for (PhpDocTagImpl tag : tags) {
+            for (PhpDocTag tag : tags) {
                 /* TODO: check if we can use phpDoc.hasInheritDocTag() - string search based */
                 if (tag.getName().toLowerCase().equals("@inheritdoc")) {
                     resolveInheritDoc(method, declaredExceptions);

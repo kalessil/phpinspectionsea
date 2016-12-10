@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -46,7 +46,7 @@ final public class ExpressionSemanticUtil {
     public static int countExpressionsInGroup(@NotNull GroupStatement groupStatement) {
         int count = 0;
         for (PsiElement statement : groupStatement.getChildren()) {
-            if (!(statement instanceof PhpPsiElement) || statement instanceof PhpDocTypeImpl) {
+            if (!(statement instanceof PhpPsiElement) || statement instanceof PhpDocType) {
                 continue;
             }
             /* skip doc-blocks */

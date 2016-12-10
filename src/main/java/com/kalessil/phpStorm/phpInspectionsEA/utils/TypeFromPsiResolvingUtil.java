@@ -7,7 +7,6 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.FunctionImpl;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import org.jetbrains.annotations.Nullable;
@@ -145,7 +144,7 @@ final public class TypeFromPsiResolvingUtil {
         }
 
         /* lambda/anonymous function*/
-        if (objSubjectExpression instanceof FunctionImpl) {
+        if (objSubjectExpression instanceof Function && ((Function) objSubjectExpression).isClosure()) {
             objTypesSet.add(Types.strCallable);
             return;
         }

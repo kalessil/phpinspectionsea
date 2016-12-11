@@ -354,6 +354,10 @@ Bug and regressions fixes (support us by donating via <a href="https://www.paypa
         shortName="PregQuoteUsageInspection"                      displayName="Proper preg_quote() usage"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PregQuoteUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="SuspiciousAssignmentsInspection"               displayName="Suspicious assignments"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SuspiciousAssignmentsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

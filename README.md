@@ -148,6 +148,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | UsingInclusionOnceReturnValueInspection         | Suspicious usage of include_once/require_once return value| yes       | yes | no   |
 | Probable bugs        | ClassReImplementsParentInterfaceInspection      | Class implements interfaces multiple times                | yes       | yes | no   |
 | Probable bugs        | PregQuoteUsageInspection                        | Proper preg_quote() usage                                 | n/a       | yes | n/a  |
+| Probable bugs        | SuspiciousAssignmentsInspection                 | Suspicious assignments                                    | n/a       | yes | n/a  |
 
 Inspections Lists (Security)
 ---

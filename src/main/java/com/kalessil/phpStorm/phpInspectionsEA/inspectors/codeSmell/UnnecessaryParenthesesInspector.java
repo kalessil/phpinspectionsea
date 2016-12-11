@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
+import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +57,6 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     )
                 );
                 knowsLegalCases = knowsLegalCases ||
-                    /* some of questionable constructs, but lets start first with them */
                     argument instanceof Include ||
                     parent instanceof PhpCase ||
                     parent instanceof PhpEchoStatement ||
@@ -81,10 +81,13 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     knowsLegalCases = null != operator && PhpTokenTypes.kwCLONE == operator.getNode().getElementType();
                 }
 
-                /* (...->property)(...), (...->method())(...): allow callable invocation */
+                /* (...->property)(...), (...->method())(...), (function(){})(...): allow callable invocation */
                 if (
                     !knowsLegalCases && parent instanceof FunctionReferenceImpl &&
-                    (argument instanceof FieldReference || argument instanceof MethodReference)
+                    (
+                        argument instanceof FieldReference || argument instanceof MethodReference ||
+                        (argument instanceof PhpExpressionImpl && ((PhpExpressionImpl) argument).getValue() instanceof Function)
+                    )
                 ) {
                     return;
                 }

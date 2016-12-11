@@ -2,6 +2,7 @@
 
     require_once <weak_warning descr="Unnecessary parentheses">('whatever.php')</weak_warning>;
     $x = <weak_warning descr="Unnecessary parentheses">($x)</weak_warning> + 1;
+    $x = <weak_warning descr="Unnecessary parentheses">(file_get_contents())</weak_warning>;
 
     $x = ($x + 1) / 2;
 
@@ -15,5 +16,7 @@
     ($x->getCallableProperty())();
 
     $mixedIncludeReturn = (include __DIR__ . '/foo.php');
+
+    (function(){})();
 
 

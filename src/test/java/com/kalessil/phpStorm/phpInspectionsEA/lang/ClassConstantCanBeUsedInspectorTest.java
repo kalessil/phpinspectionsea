@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.C
 public class ClassConstantCanBeUsedInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/lang/classConstant/class-in-the-same-namespace.php");
-        myFixture.configureByFile("fixtures/lang/classConstant/class-name-constant.php");
+        myFixture.configureByFile("fixtures/lang/classConstant/class-name-constant-ns.php");
         myFixture.enableInspections(ClassConstantCanBeUsedInspector.class);
         myFixture.testHighlighting(true, false, true);
     }

@@ -45,8 +45,8 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     @SuppressWarnings("CanBeFinal")
     static private Pattern classNameRegex = null;
     static {
-        // Original regex: (\\(\\)?)?([a-zA-z0-9]+\\(\\)?)?([a-zA-z0-9]+)
-        classNameRegex = Pattern.compile("(\\\\(\\\\)?)?([a-zA-z0-9]+\\\\(\\\\)?)?([a-zA-z0-9]+)");
+        // Original regex: (\\(\\)?)?([a-zA-z0-9_]+\\(\\)?)?([a-zA-z0-9_]+)
+        classNameRegex = Pattern.compile("(\\\\(\\\\)?)?([a-zA-z0-9_]+\\\\(\\\\)?)?([a-zA-z0-9_]+)");
     }
 
     @NotNull
@@ -81,50 +81,17 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     if (!regexMatcher.matches() || ExpressionSemanticUtil.getBlockScope(expression) instanceof PhpDocComment) {
                         return;
                     }
-                    final String normalizedContents = contents.replaceAll("\\\\\\\\", "\\\\");
+                    String normalizedContents = contents.replaceAll("\\\\\\\\", "\\\\");
 
                     /* TODO: handle __NAMESPACE__.'\Class' */
-                    final boolean isRootNamespace = normalizedContents.charAt(0) == '\\';
-                    final boolean lookupImports   = !isRootNamespace && normalizedContents.indexOf('\\') == -1;
-
+                    final boolean isFull = normalizedContents.charAt(0) == '\\';
                     Set<String> namesToLookup = new HashSet<>();
-                    if (isRootNamespace) {
+                    if (isFull) {
                         namesToLookup.add(normalizedContents);
                     } else {
-                        /* we have to look up imports and the same namespace */
-                        final PsiFile file = expression.getContainingFile();
-
-                        if (lookupImports) {
-                            for (PhpUseList use : PsiTreeUtil.findChildrenOfType(file, PhpUseList.class)) {
-                                final PsiElement used = use.getFirstPsiChild();
-                                if (used instanceof PhpUse) {
-                                    final String usedFqn = ((PhpUse) used).getFQN();
-                                    if (usedFqn.endsWith('\\' + normalizedContents)) {
-                                        namesToLookup.add(usedFqn);
-                                        break;
-                                    }
-
-                                    final String alias = ((PhpUse) used).getAliasName();
-                                    if (!StringUtil.isEmpty(alias) && alias.equals(normalizedContents)) {
-                                        namesToLookup.add(usedFqn);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-
-                        /* lookup the same namespace, also fallbacks after imports lookup */
-                        if (0 == namesToLookup.size()) {
-                            final PhpNamespace namespace = PsiTreeUtil.findChildOfType(file, PhpNamespace.class);
-                            if (null != namespace) {
-                                final String namespaceFqn = namespace.getFQN();
-                                if (!StringUtil.isEmpty(namespaceFqn)) {
-                                    namesToLookup.add(namespaceFqn + '\\' + normalizedContents);
-                                }
-                            }
-                        }
+                        normalizedContents = '\\' + normalizedContents;
+                        namesToLookup.add(normalizedContents);
                     }
-
 
                     /* if we could find an appropriate candidate and resolved the class => report (case must match) */
                     if (1 == namesToLookup.size()) {

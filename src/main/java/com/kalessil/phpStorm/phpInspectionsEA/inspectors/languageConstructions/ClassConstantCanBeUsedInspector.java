@@ -81,14 +81,15 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     if (!regexMatcher.matches() || ExpressionSemanticUtil.getBlockScope(expression) instanceof PhpDocComment) {
                         return;
                     }
+                    final String normalizedContents = contents.replaceAll("\\\\\\\\", "\\\\");
 
                     /* TODO: handle __NAMESPACE__.'\Class' */
-                    final boolean isRootNamespace = contents.charAt(0) == '\\';
-                    final boolean lookupImports   = !isRootNamespace && contents.indexOf('\\') == -1;
+                    final boolean isRootNamespace = normalizedContents.charAt(0) == '\\';
+                    final boolean lookupImports   = !isRootNamespace && normalizedContents.indexOf('\\') == -1;
 
                     Set<String> namesToLookup = new HashSet<>();
                     if (isRootNamespace) {
-                        namesToLookup.add(contents);
+                        namesToLookup.add(normalizedContents);
                     } else {
                         /* we have to look up imports and the same namespace */
                         final PsiFile file = expression.getContainingFile();
@@ -98,8 +99,15 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                                 final PsiElement used = use.getFirstPsiChild();
                                 if (used instanceof PhpUse) {
                                     final String usedFqn = ((PhpUse) used).getFQN();
-                                    if (usedFqn.endsWith('\\' + contents)) {
+                                    if (usedFqn.endsWith('\\' + normalizedContents)) {
                                         namesToLookup.add(usedFqn);
+                                        break;
+                                    }
+
+                                    final String alias = ((PhpUse) used).getAliasName();
+                                    if (!StringUtil.isEmpty(alias) && alias.equals(normalizedContents)) {
+                                        namesToLookup.add(usedFqn);
+                                        break;
                                     }
                                 }
                             }
@@ -111,7 +119,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                             if (null != namespace) {
                                 final String namespaceFqn = namespace.getFQN();
                                 if (!StringUtil.isEmpty(namespaceFqn)) {
-                                    namesToLookup.add(namespaceFqn + '\\' + contents);
+                                    namesToLookup.add(namespaceFqn + '\\' + normalizedContents);
                                 }
                             }
                         }
@@ -124,8 +132,8 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         PhpIndex index               = PhpIndex.getInstance(expression.getProject());
                         Collection<PhpClass> classes = index.getClassesByFQN(fqnToLookup);
                         if (1 == classes.size() && classes.iterator().next().getFQN().equals(fqnToLookup)) {
-                            final String message = messagePattern.replace("%c%", contents);
-                            holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(contents));
+                            final String message = messagePattern.replace("%c%", normalizedContents);
+                            holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(normalizedContents));
                         }
                     }
                     namesToLookup.clear();

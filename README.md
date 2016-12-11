@@ -108,6 +108,7 @@ Inspections Lists (Language level migration)
 | Language level migration | ShortListSyntaxCanBeUsedInspection              | Short list syntax can be used                       | yes       | yes | no   |
 | Language level migration | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | yes       | yes | no   |
 | Language level migration | AliasFunctionsUsageInspection                   | Alias functions usage                               | yes       | yes | no   |
+| Language level migration | ClassConstantCanBeUsedInspection                | ::class can be used                                 | yes       | yes | no   |
 
 Inspections Lists (Architecture)
 ---

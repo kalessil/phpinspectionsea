@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
@@ -143,7 +144,8 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             public void visitPhpMultiassignmentExpression(MultiassignmentExpression multiassignmentExpression) {
                 final PsiElement firstChild = multiassignmentExpression.getFirstChild();
-                if (null != firstChild && PhpTokenTypes.kwLIST == firstChild.getNode().getElementType()) {
+                final IElementType nodeType = null == firstChild ? null : firstChild.getNode().getElementType();
+                if (null != nodeType && (PhpTokenTypes.kwLIST == nodeType || PhpTokenTypes.chLBRACKET == nodeType)) {
                     final Variable variable = this.getVariable(multiassignmentExpression.getValue());
                     final PsiElement parent = multiassignmentExpression.getParent();
                     if (null != variable && parent instanceof StatementImpl) {

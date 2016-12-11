@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
@@ -50,7 +51,8 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                     return;
                 }
                 final PsiElement listKeyword = multiassignmentExpression.getFirstChild();
-                if (null == listKeyword || PhpTokenTypes.kwLIST != listKeyword.getNode().getElementType()) {
+                final IElementType nodeType  = null == listKeyword ? null : listKeyword.getNode().getElementType();
+                if (null == nodeType || (PhpTokenTypes.kwLIST != nodeType && PhpTokenTypes.chLBRACKET != nodeType)) {
                     return;
                 }
 

@@ -144,7 +144,6 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result               | yes       | yes | no   |
 | Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes       | yes | no   |
 | Probable bugs        | CompactArgumentsInspection                      | 'compact(...)' variables existence                        | n/a       | yes | n/a  |
-| Probable bugs        | DispatchingThisIntoClosuresInspection           | Incorrect dispatching $this into closures                 | no        | yes | no   |
 | Probable bugs        | DateIntervalSpecificationInspection             | Date interval specification validity                      | n/a       | yes | n/a  |
 | Probable bugs        | UsingInclusionOnceReturnValueInspection         | Suspicious usage of include_once/require_once return value| yes       | yes | no   |
 | Probable bugs        | ClassReImplementsParentInterfaceInspection      | Class implements interfaces multiple times                | yes       | yes | no   |

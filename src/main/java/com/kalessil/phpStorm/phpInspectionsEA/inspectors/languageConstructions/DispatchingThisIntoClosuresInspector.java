@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.Variable;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class DispatchingThisIntoClosuresInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunction(Function function) {
                 /* closure must defined in a method */
-                if (function.isClosure() && ExpressionSemanticUtil.getScope(function) instanceof Method) {
+                if (OpenapiTypesUtil.isLambda(function) && ExpressionSemanticUtil.getScope(function) instanceof Method) {
                     final List<Variable> use = ExpressionSemanticUtil.getUseListVariables(function);
                     if (null != use && use.size() > 0) {
                         for (Variable variable : use) {

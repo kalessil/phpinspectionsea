@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class UnnecessaryParenthesesInspector extends BasePhpInspection {
@@ -86,7 +87,7 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     !knowsLegalCases && parent instanceof FunctionReferenceImpl &&
                     (
                         argument instanceof FieldReference || argument instanceof MethodReference ||
-                        (argument instanceof PhpExpressionImpl && ((PhpExpressionImpl) argument).getValue() instanceof Function)
+                        OpenapiTypesUtil.isLambda(argument)
                     )
                 ) {
                     return;

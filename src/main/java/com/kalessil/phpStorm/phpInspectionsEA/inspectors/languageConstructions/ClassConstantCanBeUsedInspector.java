@@ -65,7 +65,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* Skip Certain contexts processing and strings with inline injections */
+                /* Skip certain contexts processing and strings with inline injections */
                 final PsiElement parent = expression.getParent();
                 if (
                     parent instanceof BinaryExpression || parent instanceof SelfAssignmentExpression ||

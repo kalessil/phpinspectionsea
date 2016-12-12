@@ -15,12 +15,12 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstr
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.AssignmentExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,16 +41,13 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             void checkOneTimeUse(@NotNull PhpPsiElement construct, @NotNull Variable argument) {
                 final String variableName = argument.getName();
+                final PsiElement previous = construct.getPrevPsiSibling();
                 /* verify preceding expression (assignment needed) */
                 if (
-                    !StringUtil.isEmpty(variableName) && null != construct.getPrevPsiSibling() &&
-                    construct.getPrevPsiSibling().getFirstChild() instanceof AssignmentExpressionImpl
+                    null != previous && !StringUtil.isEmpty(variableName) &&
+                    OpenapiTypesUtil.isAssignment(previous.getFirstChild())
                 ) {
-                    final AssignmentExpressionImpl assign = (AssignmentExpressionImpl) construct.getPrevPsiSibling().getFirstChild();
-                    /* ensure it's not a self-assignment */
-                    if (assign instanceof SelfAssignmentExpression) {
-                        return;
-                    }
+                    final AssignmentExpression assign = (AssignmentExpression) previous.getFirstChild();
 
                     /* ensure variables are the same */
                     final PhpPsiElement assignVariable = assign.getVariable();

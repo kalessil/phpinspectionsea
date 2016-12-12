@@ -1,5 +1,6 @@
 <?php
 
+// https://paragonie.com/blog/2016/12/everything-you-know-about-public-key-encryption-in-php-is-wrong
 class OpensslRsaPaddingOracle
 {
     private $padding = OPENSSL_PKCS1_PADDING;

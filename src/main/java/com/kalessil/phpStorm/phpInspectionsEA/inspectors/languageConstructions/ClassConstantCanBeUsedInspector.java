@@ -16,6 +16,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.config.PhpLanguageFeature;
@@ -153,6 +154,11 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
                     /* check all use-statements and use imported name for QF */
                     for (PhpUseList use : PsiTreeUtil.findChildrenOfType(file, PhpUseList.class)) {
+                        /* do not process `function() use () {}` constructs */
+                        if (use.getParent() instanceof Function) {
+                            continue;
+                        }
+
                         importMarker = use;
                         for (PsiElement used : use.getChildren()){
                             if (!(used instanceof PhpUse)) {
@@ -171,11 +177,35 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     if (!isImportedAlready && importClasses) {
                         /* do not import classes from the root namespace */
                         boolean makesSense = StringUtils.countMatches(classForReplacement, "\\") > 1;
-                        if (makesSense && null != importMarker) {
-                            PhpUseList use = PhpPsiElementFactory.createUseStatement(project, classForReplacement, null);
-                            importMarker.getParent().addAfter(use, importMarker);
-                            //noinspection ConstantConditions as we have hardcoded expression creation here
-                            classForReplacement = use.getFirstPsiChild().getName();
+                        if (makesSense) {
+                            boolean insertBefore = false;
+
+                            /* no marker: no imports yet added, so NS declaration will be the marker */
+                            if (null == importMarker) {
+                                PhpClass clazz = PsiTreeUtil.findChildOfType(file, PhpClass.class);
+                                if (null != clazz) {
+                                    importMarker = clazz.getPrevPsiSibling() instanceof PhpDocComment ? clazz.getPrevPsiSibling() : clazz;
+                                }
+                                insertBefore = true;
+                            }
+
+                            /* inject new import after the marker */
+                            if (null != importMarker) {
+                                PhpUseList use = PhpPsiElementFactory.createUseStatement(project, classForReplacement, null);
+
+                                if (insertBefore) {
+                                    importMarker.getParent().addBefore(use, importMarker);
+                                    PsiElement space = PhpPsiElementFactory.createFromText(project, PsiWhiteSpace.class, "\n\n");
+                                    if (null != space) {
+                                        use.getParent().addAfter(space, use);
+                                    }
+                                } else {
+                                    importMarker.getParent().addAfter(use, importMarker);
+                                }
+
+                                //noinspection ConstantConditions as we have hardcoded expression creation here
+                                classForReplacement = use.getFirstPsiChild().getName();
+                            }
                         }
                     }
                 }

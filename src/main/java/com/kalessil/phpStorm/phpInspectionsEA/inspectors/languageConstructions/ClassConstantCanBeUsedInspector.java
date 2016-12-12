@@ -16,6 +16,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
@@ -26,6 +27,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -35,6 +37,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
+    // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
+    public boolean IMPORT_CLASSES_ON_QF = true;
+
     private static final String messagePattern = "Perhaps this can be replaced with %c%::class";
 
     @SuppressWarnings("CanBeFinal")
@@ -102,7 +108,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         /* check resolved items */
                         if (1 == classes.size() && classes.iterator().next().getFQN().equals(fqnToLookup)) {
                             final String message = messagePattern.replace("%c%", normalizedContents);
-                            holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(normalizedContents));
+                            holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF));
                         }
                     }
                     namesToLookup.clear();
@@ -113,6 +119,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
     static private class TheLocalFix implements LocalQuickFix {
         final String fqn;
+        boolean importClasses;
 
         @NotNull
         @Override
@@ -126,16 +133,54 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
             return getName();
         }
 
-        TheLocalFix(@NotNull String fqn) {
+        TheLocalFix(@NotNull String fqn, boolean importClasses) {
             super();
-            this.fqn = fqn;
+
+            this.fqn           = fqn;
+            this.importClasses = importClasses;
         }
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
             if (target instanceof StringLiteralExpression) {
-                PsiElement replacement = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, fqn + "::class");
+                String classForReplacement = fqn;
+
+                synchronized (target.getContainingFile()) {
+                    final PsiElement file     = target.getContainingFile();
+                    boolean isImportedAlready = false;
+                    PsiElement importMarker   = null;
+
+                    /* check all use-statements and use imported name for QF */
+                    for (PhpUseList use : PsiTreeUtil.findChildrenOfType(file, PhpUseList.class)) {
+                        importMarker = use;
+                        for (PsiElement used : use.getChildren()){
+                            if (!(used instanceof PhpUse)) {
+                                continue;
+                            }
+
+                            final PhpUse useStatement = (PhpUse) used;
+                            if (useStatement.getFQN().equals(fqn)) {
+                                classForReplacement = useStatement.getName();
+                                isImportedAlready   = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!isImportedAlready && importClasses) {
+                        /* do not import classes from the root namespace */
+                        boolean makesSense = StringUtils.countMatches(classForReplacement, "\\") > 1;
+                        if (makesSense && null != importMarker) {
+                            PhpUseList use = PhpPsiElementFactory.createUseStatement(project, classForReplacement, null);
+                            importMarker.getParent().addAfter(use, importMarker);
+                            //noinspection ConstantConditions as we have hardcoded expression creation here
+                            classForReplacement = use.getFirstPsiChild().getName();
+                        }
+                    }
+                }
+
+                PsiElement replacement = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, classForReplacement + "::class");
                 if (null != replacement) {
                     target.replace(replacement);
                 }

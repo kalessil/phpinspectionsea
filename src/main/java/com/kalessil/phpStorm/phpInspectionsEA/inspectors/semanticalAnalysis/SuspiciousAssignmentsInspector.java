@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
+import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -11,11 +12,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SuspiciousAssignmentsInspector extends BasePhpInspection {
-    private static final String message = "Overrides value from a preceding case (perhaps beak is missing there)";
+    private static final String message = "Overrides value from a preceding case (perhaps break is missing there)";
 
     @NotNull
     public String getShortName() {
@@ -27,7 +28,7 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpSwitch(PhpSwitch switchStatement) {
-                final Set<PsiElement> written = new HashSet<>();
+                final List<PsiElement> written = new ArrayList<>();
                 for (PhpCase oneCase : switchStatement.getAllCases()) {
                     final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(oneCase);
                     if (null == body || 0 == ExpressionSemanticUtil.countExpressionsInGroup(body)) {
@@ -42,10 +43,19 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
 
                         if (expression instanceof MultiassignmentExpression) {
                             for (PsiElement variable : ((MultiassignmentExpression) expression).getVariables()) {
-                                if (written.contains(variable)) {
-                                    holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR);
+                                /* HashSet is not working here, hence manual checks */
+                                boolean isOverridden = false;
+                                for (PsiElement writtenVariable : written) {
+                                    if (PsiEquivalenceUtil.areElementsEquivalent(writtenVariable, variable)) {
+                                        isOverridden = true;
+                                        holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR);
+
+                                        break;
+                                    }
                                 }
-                                written.add(variable);
+                                if (!isOverridden) {
+                                    written.add(variable);
+                                }
                             }
                             continue;
                         }
@@ -53,10 +63,19 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
                         if (OpenapiTypesUtil.isAssignment(expression)) {
                             final PsiElement variable = ((AssignmentExpression) expression).getVariable();
                             if (null != variable) {
-                                if (written.contains(variable)) {
-                                    holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR);
+                                /* HashSet is not working here, hence manual checks */
+                                boolean isOverridden = false;
+                                for (PsiElement writtenVariable : written) {
+                                    if (PsiEquivalenceUtil.areElementsEquivalent(writtenVariable, variable)) {
+                                        isOverridden = true;
+                                        holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR);
+
+                                        break;
+                                    }
                                 }
-                                written.add(variable);
+                                if (!isOverridden) {
+                                    written.add(variable);
+                                }
                             }
                             // continue;
                         }

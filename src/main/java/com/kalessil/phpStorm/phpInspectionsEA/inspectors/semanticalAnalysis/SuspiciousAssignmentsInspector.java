@@ -35,6 +35,7 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
                         continue;
                     }
 
+                    final List<PsiElement> writtenLocally = new ArrayList<>();
                     for (PsiElement expression : body.getChildren()) {
                         /* get expression from '...;' constructs */
                         if (expression instanceof Statement) {
@@ -54,7 +55,7 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
                                     }
                                 }
                                 if (!isOverridden) {
-                                    written.add(variable);
+                                    writtenLocally.add(variable);
                                 }
                             }
                             continue;
@@ -63,6 +64,13 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
                         if (OpenapiTypesUtil.isAssignment(expression)) {
                             final PsiElement variable = ((AssignmentExpression) expression).getVariable();
                             if (null != variable) {
+                                if (variable instanceof ArrayAccessExpression) {
+                                    final ArrayIndex index = ((ArrayAccessExpression) variable).getIndex();
+                                    if (null == index || null == index.getValue()) {
+                                        continue;
+                                    }
+                                }
+
                                 /* HashSet is not working here, hence manual checks */
                                 boolean isOverridden = false;
                                 for (PsiElement writtenVariable : written) {
@@ -74,16 +82,33 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
                                     }
                                 }
                                 if (!isOverridden) {
-                                    written.add(variable);
+                                    writtenLocally.add(variable);
                                 }
                             }
                             // continue;
                         }
                     }
 
-                    /* once break met, clean the written expressions out */
+
+                    /* now flush local writes into shared one; manually as HashSet is not working */
+                    for (PsiElement localVariable : writtenLocally) {
+                        boolean isAddedAlready = false;
+                        for (PsiElement sharedVariable : written) {
+                            if (PsiEquivalenceUtil.areElementsEquivalent(localVariable, sharedVariable)) {
+                                isAddedAlready = true;
+                                break;
+                            }
+                        }
+                        if (!isAddedAlready) {
+                            written.add(localVariable);
+                        }
+                    }
+                    writtenLocally.clear();
+
+
+                    /* once break/return met, clean the written expressions out */
                     final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
-                    if (last instanceof PhpBreak) {
+                    if (last instanceof PhpBreak || last instanceof PhpReturn) {
                         written.clear();
                         // continue;
                     }

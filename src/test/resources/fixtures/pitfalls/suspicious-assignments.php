@@ -16,4 +16,12 @@
         case 'f':
             <error descr="Overrides value from a preceding case (perhaps break is missing there)">$z</error> = 0;
             break;
+        case 'g':
+            $arr[] = $x;
+            $arr[] = $y;
+            break;
+        case 'h':
+            $format = '%s';
+            $format = sprintf($format, $format);
+            break;
     }

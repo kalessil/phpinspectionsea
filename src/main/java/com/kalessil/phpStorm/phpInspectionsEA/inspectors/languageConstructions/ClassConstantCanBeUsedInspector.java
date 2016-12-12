@@ -14,13 +14,8 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
@@ -95,9 +90,16 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
                     /* if we could find an appropriate candidate and resolved the class => report (case must match) */
                     if (1 == namesToLookup.size()) {
-                        String fqnToLookup           = namesToLookup.iterator().next();
-                        PhpIndex index               = PhpIndex.getInstance(expression.getProject());
+                        String fqnToLookup = namesToLookup.iterator().next();
+                        PhpIndex index     = PhpIndex.getInstance(expression.getProject());
+
+                        /* try searching interfaces and classes for the given FQN */
                         Collection<PhpClass> classes = index.getClassesByFQN(fqnToLookup);
+                        if (0 == classes.size()) {
+                            classes = index.getInterfacesByFQN(fqnToLookup);
+                        }
+
+                        /* check resolved items */
                         if (1 == classes.size() && classes.iterator().next().getFQN().equals(fqnToLookup)) {
                             final String message = messagePattern.replace("%c%", normalizedContents);
                             holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(normalizedContents));

@@ -184,19 +184,30 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         /* do not import classes from the root namespace */
                         boolean makesSense = StringUtils.countMatches(classForReplacement, "\\") > 1;
                         if (makesSense) {
-                            boolean insertBefore = false;
+                            boolean insertBefore  = false;
+                            boolean useRelativeQN = false;
+
+                            /* try searching class, and identifying if relative FQ usage possible */
+                            PhpClass clazz = PsiTreeUtil.findChildOfType(file, PhpClass.class);
+                            if (null != clazz && !clazz.isAnonymous()) {
+                                final String classFQN = clazz.getFQN();
+                                final String classNs  = classFQN.substring(0, 1 + classFQN.lastIndexOf('\\'));
+                                if (classNs.length() > 1 && classForReplacement.startsWith(classNs)) {
+                                    classForReplacement = classForReplacement.replace(classNs, "");
+                                    useRelativeQN       = true;
+                                }
+                            }
 
                             /* no marker: no imports yet added, so NS declaration will be the marker */
                             if (null == importMarker) {
-                                PhpClass clazz = PsiTreeUtil.findChildOfType(file, PhpClass.class);
-                                if (null != clazz) {
+                                if (null != clazz && !clazz.isAnonymous()) {
                                     importMarker = clazz.getPrevPsiSibling() instanceof PhpDocComment ? clazz.getPrevPsiSibling() : clazz;
                                 }
                                 insertBefore = true;
                             }
 
-                            /* inject new import after the marker */
-                            if (null != importMarker) {
+                            /* inject new import after the marker, if relative QN are not possible */
+                            if (null != importMarker && !useRelativeQN) {
                                 PhpUseList use = PhpPsiElementFactory.createUseStatement(project, classForReplacement, null);
 
                                 if (insertBefore) {

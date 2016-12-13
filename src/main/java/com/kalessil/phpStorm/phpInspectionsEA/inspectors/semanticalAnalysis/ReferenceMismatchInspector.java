@@ -269,7 +269,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                             Parameter parameterForAnalysis = usageCallableParameters[indexInArguments];
                             if (!parameterForAnalysis.isPassByRef()) {
                                 /* additionally try filtering types for reducing false-positives on scalars */
-                                PhpType argumentType = PhpRefactoringUtil.getCompletedType(parameterForAnalysis, holder.getProject());
+                                PhpType argumentType = parameterForAnalysis.getType().global(holder.getProject());
                                 if (!PhpType.isSubType(argumentType, legalizedTypesForMismatchingSet)) {
                                     PsiElement itemToBeReported = reference.getParameters()[indexInArguments];
                                     if (!reportedItemsRegistry.contains(itemToBeReported)) {

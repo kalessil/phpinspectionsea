@@ -13,7 +13,7 @@ final public class TypeFromPlatformResolverUtil {
     public static void resolveExpressionType(PsiElement objSubjectExpression, HashSet<String> objTypesSet) {
         Project project = objSubjectExpression.getProject();
 
-        PhpType indexValueType = PhpRefactoringUtil.getCompletedType((PhpTypedElement) objSubjectExpression, project);
+        PhpType indexValueType = ((PhpTypedElement)objSubjectExpression).getType().global(project);
         if (indexValueType.getTypes().size() > 0) {
             for (String strType : indexValueType.getTypes()) {
                 final boolean isSignatureProvided = strType.contains("?") || strType.contains("#");

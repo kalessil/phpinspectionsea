@@ -2,12 +2,13 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class LongInheritanceChainInspector extends BasePhpInspection {
@@ -23,14 +24,10 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
-                final String className = clazz.getName();
-                /* skip un-explorable and exception classes */
-                if (StringUtil.isEmpty(className) || className.endsWith("Exception")) {
-                    return;
-                }
-
-                final PsiElement psiClassName = clazz.getNameIdentifier();
-                if (null == psiClassName) {
+                final PsiElement psiClassName = NamedElementUtil.getNameIdentifier(clazz);
+                final String className        = clazz.getName();
+                /* skip un-reportable, exception and test classes */
+                if (null == psiClassName || FileSystemUtil.isTestClass(clazz) || className.endsWith("Exception")) {
                     return;
                 }
 

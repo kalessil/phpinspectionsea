@@ -146,11 +146,13 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
             final PsiElement target = descriptor.getPsiElement();
             if (target instanceof StringLiteralExpression) {
                 String classForReplacement = fqn;
+                String className = classForReplacement.substring(1 + classForReplacement.lastIndexOf('\\'));
 
                 synchronized (target.getContainingFile()) {
-                    final PsiElement file     = target.getContainingFile();
-                    boolean isImportedAlready = false;
-                    PsiElement importMarker   = null;
+                    final PsiElement file         = target.getContainingFile();
+                    boolean isImportedAlready     = false;
+                    boolean isImportNameCollision = false;
+                    PsiElement importMarker       = null;
 
                     /* check all use-statements and use imported name for QF */
                     for (PhpUseList use : PsiTreeUtil.findChildrenOfType(file, PhpUseList.class)) {
@@ -171,10 +173,14 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                                 isImportedAlready   = true;
                                 break;
                             }
+
+                            if (className.equals(useStatement.getName())) {
+                                isImportNameCollision = true;
+                            }
                         }
                     }
 
-                    if (!isImportedAlready && importClasses) {
+                    if (!isImportedAlready && !isImportNameCollision && importClasses) {
                         /* do not import classes from the root namespace */
                         boolean makesSense = StringUtils.countMatches(classForReplacement, "\\") > 1;
                         if (makesSense) {

@@ -207,16 +207,16 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                             boolean useRelativeQN = false;
 
                             /* identify marker/use relative QNs */
-                            PhpNamespaceReference ns = PsiTreeUtil.findChildOfType(file, PhpNamespaceReference.class);
+                            PhpNamespace ns = PsiTreeUtil.findChildOfType(file, PhpNamespace.class);
                             if (null != ns) {
                                 /* NS-ed file */
-                                if (null == importMarker && ns.getNextPsiSibling() instanceof GroupStatement) {
-                                    importMarker = ns.getNextPsiSibling().getFirstPsiChild();
+                                if (null == importMarker && ns.getLastChild() instanceof GroupStatement) {
+                                    importMarker = ((GroupStatement) ns.getLastChild()).getFirstPsiChild();
                                     insertBefore = true;
                                 }
 
-                                if (this.useRelativeQN && ns.getParent() instanceof PhpNamespace) {
-                                    final String nsFQN  = ((PhpNamespace) ns.getParent()).getFQN() + '\\';
+                                if (this.useRelativeQN) {
+                                    final String nsFQN = ns.getFQN() + '\\';
                                     if (classForReplacement.startsWith(nsFQN)) {
                                         classForReplacement = classForReplacement.replace(nsFQN, "");
                                         useRelativeQN       = true;

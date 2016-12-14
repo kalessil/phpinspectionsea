@@ -1,7 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -45,7 +48,7 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
                 if (resolved instanceof Field) {
                     final Field constant = (Field) resolved;
                     if (constant.isConstant() && constant.getFQN().equals("\\DateTime.ISO8601")) {
-                        holder.registerProblem(constantReference, message, ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(constantReference, message, ProblemHighlightType.GENERIC_ERROR, new TheLocalFix());
                     }
                 }
             }
@@ -53,9 +56,36 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
             public void visitPhpConstantReference(ConstantReference reference) {
                 final String constantName = reference.getName();
                 if (!StringUtil.isEmpty(constantName) && constantName.equals("DATE_ISO8601")) {
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new TheLocalFix());
                 }
             }
         };
+    }
+
+    static private class TheLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use suggested replacement";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            PsiElement target = descriptor.getPsiElement();
+            if (target instanceof ConstantReference) {
+                ((ConstantReference) target).handleElementRename("DATE_ATOM");
+                return;
+            }
+
+            if (target instanceof ClassConstantReference){
+                ((ClassConstantReference) target).handleElementRename("ATOM");
+            }
+        }
     }
 }

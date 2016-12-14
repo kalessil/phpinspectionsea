@@ -18,6 +18,7 @@ import com.jetbrains.php.lang.psi.elements.Finally;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.Try;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ClassConstantCanBeUsedInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
@@ -25,18 +26,23 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpDoc.ThrowsResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpExceptions.CollectPossibleThrowsUtil;
+import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.util.*;
 
 public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection {
     /* TODO: add settings for FQNs which doesn't need to be reported */
+    // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
+    public boolean REPORT_NON_THROWN_EXCEPTIONS = false;
 
     private static final String messagePattern           = "Throws a non-annotated/unhandled exception: '%c%'";
+    private static final String messagePatternUnthrown   = "Following exceptions annotated, but not thrown: '%c%'";
     private static final String messageFinallyExceptions = "Exceptions management inside finally has variety of side-effects in certain PHP versions";
 
     @NotNull
@@ -106,21 +112,40 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 HashSet<PsiElement> processedRegistry = new HashSet<>();
                 HashMap<PhpClass, HashSet<PsiElement>> throwsExceptions =
                         CollectPossibleThrowsUtil.collectNestedAndWorkflowExceptions(method, processedRegistry, holder);
-//holder.registerProblem(objMethodName, "Processed: " + processedRegistry.size(), ProblemHighlightType.WEAK_WARNING);
                 processedRegistry.clear();
 
 
-                /* exclude annotated exceptions */
+                /* exclude annotated exceptions, identify which has not been thrown */
+                final Set<PhpClass> annotatedButNotThrownExceptions = new HashSet<>();
+                annotatedButNotThrownExceptions.addAll(annotatedExceptions);
                 for (PhpClass annotated: annotatedExceptions) {
                     if (throwsExceptions.containsKey(annotated)) {
+                        /* release bundled expressions */
                         throwsExceptions.get(annotated).clear();
                         throwsExceptions.remove(annotated);
+                        /* actualize un-thrown exceptions registry */
+                        annotatedButNotThrownExceptions.remove(annotated);
                     }
                 }
 
-                /* do reporting now */
+
+                /* do reporting now: exceptions annotated, but not thrown */
+                if (REPORT_NON_THROWN_EXCEPTIONS && annotatedButNotThrownExceptions.size() > 0) {
+                    List<String> toReport = new ArrayList<>();
+                    for (PhpClass notThrown : annotatedButNotThrownExceptions) {
+                        toReport.add(notThrown.getFQN());
+                    }
+
+                    final String message = messagePatternUnthrown.replace("%c%", String.join(", ", toReport));
+                    holder.registerProblem(objMethodName, message, ProblemHighlightType.WEAK_WARNING);
+
+                    toReport.clear();
+                }
+                annotatedButNotThrownExceptions.clear();
+
+
+                /* do reporting now: exceptions thrown but not annotated */
                 if (throwsExceptions.size() > 0) {
-//holder.registerProblem(objMethodName, "Throws: " + throwsExceptions.keySet().toString(), ProblemHighlightType.WEAK_WARNING);
                     /* deeper analysis needed */
                     HashMap<PhpClass, HashSet<PsiElement>> unhandledExceptions = new HashMap<>();
                     if (annotatedExceptions.size() > 0) {
@@ -259,4 +284,32 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
             this.method = null;
         }
     }
+
+    public JComponent createOptionsPanel() {
+        return (new ExceptionsAnnotatingAndHandlingInspector.OptionsPanel()).getComponent();
+    }
+
+    public class OptionsPanel {
+        final private JPanel optionsPanel;
+
+        final private JCheckBox importClassesAutomatically;
+
+        public OptionsPanel() {
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
+
+            importClassesAutomatically = new JCheckBox("Report non-thrown exceptions", REPORT_NON_THROWN_EXCEPTIONS);
+            importClassesAutomatically.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    REPORT_NON_THROWN_EXCEPTIONS = importClassesAutomatically.isSelected();
+                }
+            });
+            optionsPanel.add(importClassesAutomatically, "wrap");
+        }
+
+        public JPanel getComponent() {
+            return optionsPanel;
+        }
+    }
+
 }

@@ -358,6 +358,10 @@ Bug and regressions fixes (support us by donating via <a href="https://www.paypa
         shortName="SuspiciousAssignmentsInspection"               displayName="Suspicious assignments"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SuspiciousAssignmentsInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="DateTimeConstantsUsageInspection"              displayName="DateTime constants usage validity"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.DateTimeConstantsUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

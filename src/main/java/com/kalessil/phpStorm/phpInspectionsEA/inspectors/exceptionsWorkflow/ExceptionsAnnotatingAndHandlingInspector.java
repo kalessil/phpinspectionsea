@@ -1,12 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptionsWorkflow;
 
-
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
@@ -22,6 +20,8 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.Try;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpDoc.ThrowsResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpExceptions.CollectPossibleThrowsUtil;
@@ -36,8 +36,8 @@ import java.util.Map;
 public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection {
     /* TODO: add settings for FQNs which doesn't need to be reported */
 
-    private static final String strProblemDescription       = "Throws a non-annotated/unhandled exception: '%c%'";
-    private static final String strProblemFinallyExceptions = "Exceptions management inside finally has variety of side-effects in certain PHP versions";
+    private static final String messagePattern           = "Throws a non-annotated/unhandled exception: '%c%'";
+    private static final String messageFinallyExceptions = "Exceptions management inside finally has variety of side-effects in certain PHP versions";
 
     @NotNull
     public String getShortName() {
@@ -64,7 +64,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     for (HashSet<PsiElement> pool : exceptions.values()) {
                         for (PsiElement expression : pool) {
                             if (!reportedExpressions.contains(expression)) {
-                                holder.registerProblem(expression, strProblemFinallyExceptions, ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(expression, messageFinallyExceptions, ProblemHighlightType.GENERIC_ERROR);
                                 reportedExpressions.add(expression);
                             }
                         }
@@ -78,7 +78,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 if (processedRegistry.size() > 0) {
                     for (PsiElement statement : processedRegistry) {
                         if (statement instanceof Try) {
-                            holder.registerProblem(statement.getFirstChild(), strProblemFinallyExceptions, ProblemHighlightType.GENERIC_ERROR);
+                            holder.registerProblem(statement.getFirstChild(), messageFinallyExceptions, ProblemHighlightType.GENERIC_ERROR);
                         }
                     }
                     processedRegistry.clear();
@@ -86,28 +86,16 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
             }
 
             public void visitPhpMethod(Method method) {
-                String strMethodName     = method.getName();
-                PsiElement objMethodName = method.getNameIdentifier();
-                if (
-                    StringUtil.isEmpty(strMethodName) || null == objMethodName ||
-                    strMethodName.equals("__toString") // __toString has magic methods validation, must not raise exceptions
-                ) {
+                final PhpClass clazz = method.getContainingClass();
+                if (null == clazz || FileSystemUtil.isTestClass(clazz)) {
                     return;
                 }
 
-                PhpClass clazz = method.getContainingClass();
-                if (null == clazz) {
+                // __toString has magic methods validation, must not raise exceptions
+                final PsiElement objMethodName = NamedElementUtil.getNameIdentifier(method);
+                if (null == objMethodName || method.getName().equals("__toString")) {
                     return;
                 }
-                final String strClassFQN = clazz.getFQN();
-                /* skip un-explorable and test classes */
-                if (
-                    StringUtil.isEmpty(strClassFQN)  || strClassFQN.endsWith("Test") ||
-                    strClassFQN.contains("\\Tests\\") || strClassFQN.contains("\\Test\\")
-                ) {
-                    return;
-                }
-
 
                 /* collect announced cases */
                 final HashSet<PhpClass> annotatedExceptions = new HashSet<>();
@@ -173,7 +161,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
                         for (Map.Entry<PhpClass, HashSet<PsiElement>> unhandledExceptionsPair : unhandledExceptions.entrySet()) {
                             final String thrown  = unhandledExceptionsPair.getKey().getFQN();
-                            final String message = strProblemDescription.replace("%c%", thrown);
+                            final String message = messagePattern.replace("%c%", thrown);
 
                             final HashSet<PsiElement> blamedExpressions = unhandledExceptionsPair.getValue();
                             for (PsiElement blame : blamedExpressions) {

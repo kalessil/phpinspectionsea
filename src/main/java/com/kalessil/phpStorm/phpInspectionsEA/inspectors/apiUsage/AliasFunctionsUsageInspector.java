@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -51,8 +52,14 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final String functionName = reference.getName();
                 if (!StringUtil.isEmpty(functionName) && mapping.containsKey(functionName)) {
-                    final String suggestedName = mapping.get(functionName);
+                    /* avoid complaining to imported functions */
+                    final PsiElement function = reference.resolve();
+                    if (function instanceof Function && !((Function) function).getFQN().equals('\\' + functionName)) {
+                        return;
+                    }
 
+                    /* fire message */
+                    final String suggestedName = mapping.get(functionName);
                     final String message = messagePattern
                             .replace("%a%", functionName)
                             .replace("%f%", suggestedName);

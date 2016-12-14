@@ -23,6 +23,7 @@ import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
+import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -41,6 +42,8 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
     @SuppressWarnings("WeakerAccess")
     public boolean IMPORT_CLASSES_ON_QF = true;
+    @SuppressWarnings("WeakerAccess")
+    public boolean USE_RELATIVE_QF = true;
 
     private static final String messagePattern = "Perhaps this can be replaced with %c%::class";
 
@@ -109,7 +112,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         /* check resolved items */
                         if (1 == classes.size() && classes.iterator().next().getFQN().equals(fqnToLookup)) {
                             final String message = messagePattern.replace("%c%", normalizedContents);
-                            holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF));
+                            holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF));
                         }
                     }
                     namesToLookup.clear();
@@ -120,7 +123,8 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
     static private class TheLocalFix implements LocalQuickFix {
         final String fqn;
-        boolean importClasses;
+        final boolean importClasses;
+        final boolean useRelativeQN;
 
         @NotNull
         @Override
@@ -134,11 +138,12 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
             return getName();
         }
 
-        TheLocalFix(@NotNull String fqn, boolean importClasses) {
+        TheLocalFix(@NotNull String fqn, boolean importClasses, boolean useRelativeQN) {
             super();
 
             this.fqn           = fqn;
             this.importClasses = importClasses;
+            this.useRelativeQN = useRelativeQN;
         }
 
         @Override
@@ -149,7 +154,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                 String className = classForReplacement.substring(1 + classForReplacement.lastIndexOf('\\'));
 
                 synchronized (target.getContainingFile()) {
-                    final PsiElement file         = target.getContainingFile();
+                    final PhpFile file            = (PhpFile) target.getContainingFile();
                     boolean isImportedAlready     = false;
                     boolean isImportNameCollision = false;
                     PsiElement importMarker       = null;
@@ -187,23 +192,28 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                             boolean insertBefore  = false;
                             boolean useRelativeQN = false;
 
-                            /* try searching class, and identifying if relative FQ usage possible */
-                            PhpClass clazz = PsiTreeUtil.findChildOfType(file, PhpClass.class);
-                            if (null != clazz && !clazz.isAnonymous()) {
-                                final String classFQN = clazz.getFQN();
-                                final String classNs  = classFQN.substring(0, 1 + classFQN.lastIndexOf('\\'));
-                                if (classNs.length() > 1 && classForReplacement.startsWith(classNs)) {
-                                    classForReplacement = classForReplacement.replace(classNs, "");
-                                    useRelativeQN       = true;
+                            /* identify marker/use relative QNs */
+                            PhpNamespaceReference ns = PsiTreeUtil.findChildOfType(file, PhpNamespaceReference.class);
+                            if (null != ns) {
+                                /* NS-ed file */
+                                if (null == importMarker && ns.getNextPsiSibling() instanceof GroupStatement) {
+                                    importMarker = ns.getNextPsiSibling().getFirstPsiChild();
+                                    insertBefore = true;
                                 }
-                            }
 
-                            /* no marker: no imports yet added, so NS declaration will be the marker */
-                            if (null == importMarker) {
-                                if (null != clazz && !clazz.isAnonymous()) {
-                                    importMarker = clazz.getPrevPsiSibling() instanceof PhpDocComment ? clazz.getPrevPsiSibling() : clazz;
+                                if (this.useRelativeQN) {
+                                    final String nsFQN  = ((PhpNamespace) ns.getParent()).getFQN() + '\\';
+                                    if (classForReplacement.startsWith(nsFQN)) {
+                                        classForReplacement = classForReplacement.replace(nsFQN, "");
+                                        useRelativeQN       = true;
+                                    }
                                 }
-                                insertBefore = true;
+                            } else {
+                                /* regular files, no NS */
+                                if (file.getFirstPsiChild() instanceof GroupStatement) {
+                                    importMarker = file.getFirstPsiChild().getFirstPsiChild();
+                                    insertBefore = true;
+                                }
                             }
 
                             /* inject new import after the marker, if relative QN are not possible */

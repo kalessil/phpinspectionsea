@@ -205,7 +205,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                                     insertBefore = true;
                                 }
 
-                                if (this.useRelativeQN) {
+                                if (this.useRelativeQN && ns.getParent() instanceof PhpNamespace) {
                                     final String nsFQN  = ((PhpNamespace) ns.getParent()).getFQN() + '\\';
                                     if (classForReplacement.startsWith(nsFQN)) {
                                         classForReplacement = classForReplacement.replace(nsFQN, "");

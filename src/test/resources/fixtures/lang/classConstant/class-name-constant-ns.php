@@ -27,6 +27,8 @@ class Action {
         $x  = '';
         $x .= '\stdClass';
 
+        $isExists = class_exists('\stdClass');
+
         return [
             '\stdClass' . $x,
             "\\stdClass{$x}",

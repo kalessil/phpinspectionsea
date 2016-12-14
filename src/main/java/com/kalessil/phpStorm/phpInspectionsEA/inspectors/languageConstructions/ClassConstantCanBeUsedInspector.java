@@ -75,12 +75,22 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                 }
 
                 /* Skip certain contexts processing and strings with inline injections */
-                final PsiElement parent = expression.getParent();
+                PsiElement parent = expression.getParent();
                 if (
                     parent instanceof BinaryExpression || parent instanceof SelfAssignmentExpression ||
                     null != expression.getFirstPsiChild()
                 ) {
                     return;
+                }
+                /* skip class_exists(<QN>) calls */
+                if (parent instanceof ParameterList) {
+                    parent = parent.getParent();
+                    if (parent instanceof FunctionReference) {
+                        final String functionName = ((FunctionReference) parent).getName();
+                        if (!StringUtils.isEmpty(functionName) && functionName.equals("class_exists")) {
+                            return;
+                        }
+                    }
                 }
 
                 /* Process if has no inline statements and at least 3 chars long (foo, bar and etc. are not a case) */

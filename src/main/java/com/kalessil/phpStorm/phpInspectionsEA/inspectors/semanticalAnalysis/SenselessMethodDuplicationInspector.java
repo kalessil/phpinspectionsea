@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -70,30 +71,39 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 }
 
                 /* iterate and compare expressions */
-                PsiElement ownExpression    = body.getFirstPsiChild();
-                PsiElement parentExpression = parentBody.getFirstPsiChild();
+                PhpPsiElement ownExpression    = body.getFirstPsiChild();
+                PhpPsiElement parentExpression = parentBody.getFirstPsiChild();
                 for (int index = 0; index <= countExpressions; ++index) {
                     /* skip doc-blocks */
                     while (ownExpression instanceof PhpDocComment) {
-                        ownExpression = ((PhpDocComment) ownExpression).getNextPsiSibling();
+                        ownExpression = ownExpression.getNextPsiSibling();
                     }
                     while (parentExpression instanceof PhpDocComment) {
-                        parentExpression = ((PhpDocComment) parentExpression).getNextPsiSibling();
+                        parentExpression = parentExpression.getNextPsiSibling();
                     }
                     if (null == ownExpression || null == parentExpression) {
                         break;
                     }
 
+                    /* process comparing 2 nodes */
                     if (!PsiEquivalenceUtil.areElementsEquivalent(ownExpression, parentExpression)) {
-                        final String message = messagePattern.replace("%s%", method.getName());
-                        holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING);
+                        boolean mismatched = true;
+                        /* PsiEquivalenceUtil.areElementsEquivalent is not handling assignments properly */
+                        /* FIXME: ugly workaround */
+                        if (ownExpression.getTextLength() == parentExpression.getTextLength()) {
+                            mismatched = !ownExpression.getText().equals(parentExpression.getText());
+                        }
 
-                        break;
+                        if (mismatched) {
+                            return;
+                        }
                     }
-
-                    ownExpression    = ownExpression.getNextSibling();
-                    parentExpression = parentExpression.getNextSibling();
+                    ownExpression    = ownExpression.getNextPsiSibling();
+                    parentExpression = parentExpression.getNextPsiSibling();
                 }
+
+                final String message = messagePattern.replace("%s%", method.getName());
+                holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING);
             }
         };
     }

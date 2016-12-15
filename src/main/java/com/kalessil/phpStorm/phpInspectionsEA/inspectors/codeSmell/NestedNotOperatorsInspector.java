@@ -138,7 +138,7 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement value      = this.value.getElement();
+            final PsiElement value = this.value.getElement();
             if (null != value) {
                 UnaryExpression replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "(bool) null");
                 //noinspection ConstantConditions I'm sure that NPE will not happen as we have hardcoded expression

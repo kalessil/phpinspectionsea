@@ -5,15 +5,14 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class ReferencingObjectsInspector extends BasePhpInspection {
@@ -82,11 +81,13 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
     }
 
     private static class InstantiationLocalFix implements LocalQuickFix {
-        private PsiElement assignOperator;
+        final private SmartPsiElementPointer<PsiElement> assignOperator;
 
         InstantiationLocalFix(@NotNull PsiElement assignOperator) {
             super();
-            this.assignOperator = assignOperator;
+            final SmartPointerManager factory = SmartPointerManager.getInstance(assignOperator.getProject());
+
+            this.assignOperator = factory.createSmartPsiElementPointer(assignOperator, assignOperator.getContainingFile());;
         }
 
         @NotNull
@@ -103,21 +104,23 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            LeafPsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "=");
-            //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here
-            this.assignOperator.replace(replacement);
-
-            /* release a tree node reference */
-            this.assignOperator = null;
+            final PsiElement assignOperator = this.assignOperator.getElement();
+            if (null != assignOperator) {
+                LeafPsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "=");
+                //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here
+                assignOperator.replace(replacement);
+            }
         }
     }
 
     private static class ParameterLocalFix implements LocalQuickFix {
-        private Parameter parameter;
+        final private SmartPsiElementPointer<Parameter> parameter;
 
         ParameterLocalFix(@NotNull Parameter parameter) {
             super();
-            this.parameter = parameter;
+            final SmartPointerManager factory = SmartPointerManager.getInstance(parameter.getProject());
+
+            this.parameter = factory.createSmartPsiElementPointer(parameter, parameter.getContainingFile());;
         }
 
         @NotNull
@@ -134,7 +137,8 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement nameNode =  this.parameter.getNameIdentifier();
+            final Parameter parameter = this.parameter.getElement();
+            final PsiElement nameNode = NamedElementUtil.getNameIdentifier(parameter);
             if (null != nameNode) {
                 PsiElement previous = nameNode.getPrevSibling();
                 if (previous instanceof PsiWhiteSpace) {
@@ -144,9 +148,6 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
 
                 previous.delete();
             }
-
-            /* release a tree node reference */
-            this.parameter = null;
         }
     }
 }

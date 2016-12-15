@@ -29,8 +29,6 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        // See http://php.net/manual/en/class.datetime.php#datetime.constants.cookie
-        // https://bugs.php.net/bug.php?id=70115
         return "DateTimeConstantsUsageInspection";
     }
 

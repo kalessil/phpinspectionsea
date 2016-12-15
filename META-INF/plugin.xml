@@ -608,6 +608,10 @@ Bug and regressions fixes (support us by donating via <a href="https://www.paypa
         shortName="EmptyClassInspection"                            displayName="Empty class"
         groupName="Architecture"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.EmptyClassInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="OverridingDeprecatedMethodInspection"            displayName="Overriding deprecated methods"
+        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OverridingDeprecatedMethodInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

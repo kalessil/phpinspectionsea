@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
-    private static final String messagePattern = "%m% overrides/implements a deprecated method. Consider refactoring or deprecate it as well.";
+    private static final String messagePattern = "'%m%' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.";
 
     @NotNull
     public String getShortName() {
@@ -45,19 +45,28 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                     return;
                 }
 
+                final String searchMethodName = method.getName();
+
+                /* search for deprecated parent methods */
                 final PhpClass parent     = clazz.getSuperClass();
-                final Method parentMethod = null == parent ? null : parent.findMethodByName(method.getName());
+                final Method parentMethod = null == parent ? null : parent.findMethodByName(searchMethodName);
                 if (null != parentMethod && parentMethod.isDeprecated()) {
-                    final String message = messagePattern.replace("%m%", method.getName());
+                    final String message = messagePattern.replace("%m%", searchMethodName);
                     holder.registerProblem(methodName, message, ProblemHighlightType.LIKE_DEPRECATED);
 
                     return;
                 }
 
+                /* search for deprecated interface methods */
+                for (PhpClass iface : clazz.getImplementedInterfaces()) {
+                    final Method ifaceMethod = iface.findMethodByName(searchMethodName);
+                    if (null != ifaceMethod && ifaceMethod.isDeprecated()) {
+                        final String message = messagePattern.replace("%m%", searchMethodName);
+                        holder.registerProblem(methodName, message, ProblemHighlightType.LIKE_DEPRECATED);
 
-                /* 2: if super class has no method, lookup interfaces; */
-                /* 2: lookup all interfaces for a deprecated method */
-
+                        return;
+                    }
+                }
             }
         };
     }

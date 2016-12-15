@@ -7,7 +7,7 @@
     }
     /** @deprecated */
     class DeprecatedClass implements DeprecatedInterface {
-        public function deprecatedInInterface() {} // <- reported
+        public function <warning descr="'deprecatedInInterface' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInInterface</warning> () {}
     }
 
     class DeprecatedMethod extends DeprecatedClass {
@@ -16,7 +16,7 @@
     }
 
     class MyClass extends DeprecatedMethod {
-        public function <warning descr="deprecatedInClass overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInClass</warning> () {}
+        public function <warning descr="'deprecatedInClass' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInClass</warning> () {}
     }
 
 

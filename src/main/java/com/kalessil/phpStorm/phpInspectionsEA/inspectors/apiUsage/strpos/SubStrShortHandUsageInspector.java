@@ -9,6 +9,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
@@ -102,11 +104,13 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
     }
 
     private static class Drop3rdParameterLocalFix implements LocalQuickFix {
-        private FunctionReference call;
+        final private SmartPsiElementPointer<FunctionReference> call;
 
         Drop3rdParameterLocalFix(@NotNull FunctionReference call){
             super();
-            this.call = call;
+            final SmartPointerManager factory = SmartPointerManager.getInstance(call.getProject());
+
+            this.call = factory.createSmartPsiElementPointer(call, call.getContainingFile());
         }
 
         @NotNull
@@ -123,26 +127,32 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement[] params           = this.call.getParameters();
-            final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, "pattern(null, null)");
-            final PsiElement[] replaceParams    = replacement.getParameters();
-            replaceParams[0].replace(params[0]);
-            replaceParams[1].replace(params[1]);
+            final FunctionReference call = this.call.getElement();
+            if (null != call) {
+                final PsiElement[] params           = call.getParameters();
+                final String pattern                = 3 == params.length ? "pattern(null, null)" : "pattern(null, null, null, null)";
+                final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, pattern);
+                final PsiElement[] replaceParams    = replacement.getParameters();
+                replaceParams[0].replace(params[0]);
+                replaceParams[1].replace(params[1]);
+                if (3 != params.length) {
+                    replaceParams[3].replace(params[3]);
+                }
 
-            //noinspection ConstantConditions I'm really sure NPE will not happen due to hardcoded expression
-            call.getParameterList().replace(replacement.getParameterList());
-
-            /* release a tree node reference */
-            this.call = null;
+                //noinspection ConstantConditions I'm really sure NPE will not happen due to hardcoded expression
+                call.getParameterList().replace(replacement.getParameterList());
+            }
         }
     }
 
     private static class Simplify3rdParameterLocalFix implements LocalQuickFix {
-        private BinaryExpression subject;
+        final private SmartPsiElementPointer<BinaryExpression> subject;
 
         Simplify3rdParameterLocalFix(@NotNull BinaryExpression subject){
             super();
-            this.subject = subject;
+            final SmartPointerManager factory = SmartPointerManager.getInstance(subject.getProject());
+
+            this.subject = factory.createSmartPsiElementPointer(subject, subject.getContainingFile());
         }
 
         @NotNull
@@ -159,15 +169,11 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            /* deletion of space after operation didn't work as for Mar 2016 */
-
-            final PsiElement dropCandidate = this.subject.getLeftOperand();
+            final BinaryExpression subject = this.subject.getElement();
+            final PsiElement dropCandidate = null == subject ? null : subject.getLeftOperand();
             if (null != dropCandidate) {
                 dropCandidate.delete();
             }
-
-            /* release a tree node reference */
-            this.subject = null;
         }
     }
 }

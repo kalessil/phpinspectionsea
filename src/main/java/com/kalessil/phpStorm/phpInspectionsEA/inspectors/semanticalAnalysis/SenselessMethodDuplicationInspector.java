@@ -89,7 +89,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                     if (!PsiEquivalenceUtil.areElementsEquivalent(ownExpression, parentExpression)) {
                         boolean mismatched = true;
                         /* PsiEquivalenceUtil.areElementsEquivalent is not handling assignments properly */
-                        /* FIXME: ugly workaround */
+                        /* FIXME: ugly workaround / https://youtrack.jetbrains.com/issue/WI-34368 */
                         if (ownExpression.getTextLength() == parentExpression.getTextLength()) {
                             mismatched = !ownExpression.getText().equals(parentExpression.getText());
                         }

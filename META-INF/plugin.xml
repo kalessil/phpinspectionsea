@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.2.1</version>
+  <version>2.2.2</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -53,20 +53,21 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Bug and regressions fixes (support us by donating via <a href="https://www.paypal.me/VReznichenko">PayPal</a>)<br/>
+Improvements and new inspections (support us by donating via <a href="https://www.paypal.me/VReznichenko">PayPal</a>)<br/>
 <br/>
-- Array and string offset validity: fixed regressions in PS 2016.3.1<br/>
-- Class overrides a field of a parent class: fixed regressions<br/>
-- 'declare(strict_types=1)' is missing: dropped<br/>
-- Fixed component name collision exception<br/>
+- Alias functions usage: resolved false-positives (imported functions)<br/>
+- Exceptions handling and annotating: report non-thrown exceptions (needs activation in settings)<br/>
+- Incorrect dispatching $this into closures: dropped (PS 2016.3.1 handles it)<br/>
+- Long inheritance chain: resolved false-positives (test classes)<br/>
+- Magic methods validity: report non-magic methods started with __<br/>
+- Unnecessary parentheses: resolved false-positive (lambda invocation)<br/>
+- 'substr(...)' could be replaced with 'strpos(...)': new patterns<br/>
 <br/>
-- Addition operator used on arrays: resolved false-positives (adding inline arrays)<br/>
-- PDO api usage: resolved false-positives (execute with parameters)<br/>
-- Non-optimal if conditions: resolved false-positives (interconnected statements)<br/>
-- 'substr(...)' short-hand usage: new patterns<br/>
-- 'in_array(...)' misused: new patterns<br/>
-- Phar-incompatible 'realpath()' usage: new patterns<br/>
-- Exploiting unserialize: new patterns<br/>
+- Suspicious assignments: implemented<br/>
+- DateTime constants usage validity: implemented<br/>
+- Overriding deprecated methods: implemented<br/>
+- Child method is exactly the same: implemented<br/>
+- ::class can be used: implemented (thank you Toon Verwerft)<br/>
 <br/>
 <hr/>
   ]]></change-notes>

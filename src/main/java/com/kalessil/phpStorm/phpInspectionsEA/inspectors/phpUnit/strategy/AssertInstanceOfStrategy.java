@@ -79,7 +79,7 @@ public class AssertInstanceOfStrategy {
                     } else {
                         final String fqn = ((ClassReference) this.classIdentity).getFQN();
                         if (!StringUtil.isEmpty(fqn)) {
-                            final String pattern = "'" + fqn.replaceAll("\\\\", "\\\\\\\\") + "'"; // <- I hate Java escaping
+                            final String pattern = "'" + fqn.replaceAll("\\\\", "\\\\\\\\") + "'";
                             this.classIdentity = PhpPsiElementFactory.createFromText(project, StringLiteralExpression.class, pattern);
                         }
                     }

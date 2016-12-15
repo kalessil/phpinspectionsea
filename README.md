@@ -53,7 +53,8 @@ Inspections Lists (Unused)
 | Unused               | UselessUnsetInspection                          | Useless unset                                       | no        | yes | no   |
 | Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | yes |
 | Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a |
-| Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes       | yes | n/a  |
+| Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes       | yes | no   |
+| Unused               | SenselessMethodDuplicationInspectio             | Child method is exactly the same                    | n/a       | yes | n/a  |
 
 Inspections Lists (Compatibility)
 ---
@@ -123,6 +124,7 @@ Inspections Lists (Architecture)
 | Architecture         | LongInheritanceChainInspection                  | Long inheritance chain                              | n/a       | yes | n/a  |
 | Architecture         | PropertyCanBeStaticInspection                   | Property could be static                            | n/a       | yes | n/a  |
 | Architecture         | EmptyClassInspection                            | Empty class                                         | n/a       | yes | n/a  |
+| Architecture         | OverridingDeprecatedMethodInspection            | Overriding deprecated methods                       | n/a       | yes | n/a  |
 
 Inspections Lists (Probable bugs)
 ---
@@ -149,6 +151,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | ClassReImplementsParentInterfaceInspection      | Class implements interfaces multiple times                | yes       | yes | no   |
 | Probable bugs        | PregQuoteUsageInspection                        | Proper preg_quote() usage                                 | n/a       | yes | n/a  |
 | Probable bugs        | SuspiciousAssignmentsInspection                 | Suspicious assignments                                    | n/a       | yes | n/a  |
+| Probable bugs        | DateTimeConstantsUsageInspection                | DateTime constants usage validity                         | yes       | yes | no   |
 
 Inspections Lists (Security)
 ---

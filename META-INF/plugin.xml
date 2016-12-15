@@ -462,6 +462,10 @@ Bug and regressions fixes (support us by donating via <a href="https://www.paypa
         shortName="SenselessProxyMethodInspection"                displayName="Senseless proxy function"
         groupName="Unused"                                        enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SenselessProxyMethodInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="SenselessMethodDuplicationInspection"          displayName="Child method is exactly the same"
+        groupName="Unused"                                        enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SenselessMethodDuplicationInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

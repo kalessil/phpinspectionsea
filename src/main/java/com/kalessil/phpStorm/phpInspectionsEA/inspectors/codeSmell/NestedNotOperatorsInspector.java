@@ -7,6 +7,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
@@ -80,11 +82,13 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
     }
 
     private static class UseSingleNotLocalFix implements LocalQuickFix {
-        PsiElement value;
+        final SmartPsiElementPointer<PsiElement> value;
 
         UseSingleNotLocalFix(@NotNull PsiElement value) {
             super();
-            this.value = value;
+            final SmartPointerManager factory = SmartPointerManager.getInstance(value.getProject());
+
+            this.value = factory.createSmartPsiElementPointer(value, value.getContainingFile());
         }
 
         @NotNull
@@ -102,22 +106,22 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof UnaryExpression) {
+            final PsiElement value      = this.value.getElement();
+            if (null != value && expression instanceof UnaryExpression) {
                 //noinspection ConstantConditions I'm sure that NPE will not happen as inspection reports only finished structures
-                ((UnaryExpression) expression).getValue().replace(this.value);
+                ((UnaryExpression) expression).getValue().replace(value);
             }
-
-            /* Release node reference */
-            this.value = null;
         }
     }
 
     private static class UseCastingLocalFix implements LocalQuickFix {
-        PsiElement value;
+        final SmartPsiElementPointer<PsiElement> value;
 
         UseCastingLocalFix(@NotNull PsiElement value) {
             super();
-            this.value = value;
+            final SmartPointerManager factory = SmartPointerManager.getInstance(value.getProject());
+
+            this.value = factory.createSmartPsiElementPointer(value, value.getContainingFile());
         }
 
         @NotNull
@@ -134,14 +138,13 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            UnaryExpression replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "(bool) null");
-            //noinspection ConstantConditions I'm sure that NPE will not happen as we have hardcoded expression
-            replacement.getValue().replace(this.value);
-
-            descriptor.getPsiElement().replace(replacement);
-
-            /* Release node reference */
-            this.value = null;
+            final PsiElement value      = this.value.getElement();
+            if (null != value) {
+                UnaryExpression replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "(bool) null");
+                //noinspection ConstantConditions I'm sure that NPE will not happen as we have hardcoded expression
+                replacement.getValue().replace(value);
+                descriptor.getPsiElement().replace(replacement);
+            }
         }
     }
 }

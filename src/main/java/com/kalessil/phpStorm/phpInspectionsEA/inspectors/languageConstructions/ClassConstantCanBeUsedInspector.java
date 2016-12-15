@@ -82,16 +82,6 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                 ) {
                     return;
                 }
-                /* skip class_exists(<QN>) calls */
-                if (parent instanceof ParameterList) {
-                    parent = parent.getParent();
-                    if (parent instanceof FunctionReference) {
-                        final String functionName = ((FunctionReference) parent).getName();
-                        if (!StringUtils.isEmpty(functionName) && functionName.equals("class_exists")) {
-                            return;
-                        }
-                    }
-                }
 
                 /* Process if has no inline statements and at least 3 chars long (foo, bar and etc. are not a case) */
                 final String contents = expression.getContents();

@@ -9,6 +9,8 @@ use \stdClass as stdClassAlias;
 /** @depends("Prerequisites") */
 class Action {
     public function patterns() {
+        $isExists = class_exists(<weak_warning descr="Perhaps this can be replaced with \stdClass::class">'\stdClass'</weak_warning>);
+
         $dependencies = [
             'PrerequisitesAlias',
             'stdClassAlias',
@@ -26,8 +28,6 @@ class Action {
     public function falsePositives() {
         $x  = '';
         $x .= '\stdClass';
-
-        $isExists = class_exists('\stdClass');
 
         return [
             '\stdClass' . $x,

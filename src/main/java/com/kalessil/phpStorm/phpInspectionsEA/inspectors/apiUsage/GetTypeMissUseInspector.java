@@ -8,6 +8,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
@@ -114,13 +116,15 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
 
     private static class TheLocalFix implements LocalQuickFix {
         final private String suggestedName;
-        final private PsiElement param;
         final private boolean isInverted;
+        final private SmartPsiElementPointer<PsiElement> param;
 
         TheLocalFix(@NotNull String suggestedName, @NotNull PsiElement param, boolean isInverted) {
             super();
+            final SmartPointerManager factory = SmartPointerManager.getInstance(param.getProject());
+
             this.suggestedName = suggestedName;
-            this.param         = param;
+            this.param         = factory.createSmartPsiElementPointer(param, param.getContainingFile());
             this.isInverted    = isInverted;
         }
 
@@ -139,7 +143,8 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof BinaryExpression) {
+            final PsiElement param      = this.param.getElement();
+            if (null != param && expression instanceof BinaryExpression) {
                 final String pattern =
                         (isInverted ? "!" : "") +
                         (suggestedName + "(%p%)".replace("%p%", param.getText()));

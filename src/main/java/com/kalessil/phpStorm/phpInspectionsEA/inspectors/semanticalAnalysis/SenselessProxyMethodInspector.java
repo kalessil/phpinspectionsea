@@ -16,6 +16,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class SenselessProxyMethodInspector extends BasePhpInspection {
@@ -31,17 +33,19 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
+                if (clazz.isInterface() || clazz.isTrait() || FileSystemUtil.isTestClass(clazz)) {
+                    return;
+                }
+
                 for (Method objMethod : clazz.getOwnMethods()) {
-                    final String methodName = objMethod.getName();
-                    if (StringUtil.isEmpty(methodName) || null == objMethod.getNameIdentifier()) {
+                    final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(objMethod);
+                    final String methodName         = objMethod.getName();
+                    if (null == methodNameNode || objMethod.isAbstract() || StringUtil.isEmpty(methodName)) {
                         continue;
                     }
 
+                    /* we expect the method to have just one expression - parent invocation */
                     final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(objMethod);
-                    /*
-                        skip processing methods without body (interfaces, abstract and etc.) or
-                        contains not expected amount of expressions
-                     */
                     if (null == body || 1 != ExpressionSemanticUtil.countExpressionsInGroup(body)) {
                         continue;
                     }
@@ -55,7 +59,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
 
                         if (
                             referenceVariable.equals("parent") &&
-                            !StringUtil.isEmpty(referenceName) &&  referenceName.equals(methodName)
+                            !StringUtil.isEmpty(referenceName) && referenceName.equals(methodName)
                         ) {
                             final Parameter[] methodParameters = objMethod.getParameters();
 
@@ -114,7 +118,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                             /* decide if need to report any issues */
                             if (isDispatchingWithoutModifications && !isChangingSignature) {
                                 final String message = messagePattern.replace("%s%", objMethod.getName());
-                                holder.registerProblem(objMethod.getNameIdentifier(), message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                                holder.registerProblem(methodNameNode, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                             }
                         }
                     }

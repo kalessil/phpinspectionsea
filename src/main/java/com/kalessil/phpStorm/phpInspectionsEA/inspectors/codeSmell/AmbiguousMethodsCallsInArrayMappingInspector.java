@@ -38,7 +38,7 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
 
             private void isStatementMatchesInspection(@NotNull AssignmentExpression assignment) {
                 PsiElement value    = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
-                PsiElement variable = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getVariable());
+                PsiElement variable = assignment.getVariable();
                 if (!(value instanceof FunctionReference) || !(variable instanceof ArrayAccessExpression)) {
                     return;
                 }
@@ -47,13 +47,15 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
                 while (container instanceof ArrayAccessExpression) {
                     final ArrayAccessExpression arrayAccess = (ArrayAccessExpression) container;
                     final ArrayIndex indexContainer         = arrayAccess.getIndex();
-                    final PsiElement index                  = null == indexContainer ? null : indexContainer.getValue();
+
+                    PsiElement index = null == indexContainer ? null : indexContainer.getValue();
+                    index            = ExpressionSemanticUtil.getExpressionTroughParenthesis(index);
                     if (index instanceof FunctionReference && PsiEquivalenceUtil.areElementsEquivalent(index, value)) {
                         holder.registerProblem(value, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         break;
                     }
 
-                    container = ExpressionSemanticUtil.getExpressionTroughParenthesis(arrayAccess.getValue());
+                    container = arrayAccess.getValue();
                 }
             }
         };

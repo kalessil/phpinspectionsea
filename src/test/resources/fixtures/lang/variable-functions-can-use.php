@@ -19,8 +19,8 @@
     <weak_warning descr="'ClassVFChild::sum(1, 2, 3)' should be used instead">call_user_func</weak_warning> (array('ClassVFChild', 'sum'), 1, 2, 3);
 
     /* Case, replace with -> call_user_func(..., 1, 2, 3) */
-    <weak_warning descr="'call_user_func('ClassVFChild::sum', 1, 2, 3)' should be used instead">call_user_func_array</weak_warning> ('ClassVFChild::sum', array(1, 2, 3));
-    <weak_warning descr="'call_user_func(array('ClassVFChild', 'sum'), 1, 2, 3)' should be used instead">call_user_func_array</weak_warning> (array('ClassVFChild', 'sum'), array(1, 2, 3));
+    <weak_warning descr="'call_user_func('ClassVFChild::sum', 1, 2, 3)' should be used instead (enables further analysis)">call_user_func_array</weak_warning> ('ClassVFChild::sum', array(1, 2, 3));
+    <weak_warning descr="'call_user_func(array('ClassVFChild', 'sum'), 1, 2, 3)' should be used instead (enables further analysis)">call_user_func_array</weak_warning> (array('ClassVFChild', 'sum'), array(1, 2, 3));
 
     <weak_warning descr="'abs(-1)' should be used instead">call_user_func</weak_warning> ('abs', -1);
     <weak_warning descr="'ClassVFChild::sum(1, 2, 3)' should be used instead">call_user_func</weak_warning> ('ClassVFChild::sum', 1, 2, 3);

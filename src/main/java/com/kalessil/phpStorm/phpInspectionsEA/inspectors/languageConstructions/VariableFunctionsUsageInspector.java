@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class VariableFunctionsUsageInspector extends BasePhpInspection {
+    private static final String patternInlineArgs = "'call_user_func(%c%, %p%)' should be used instead (enables further analysis)";
+
     @NotNull
     public String getShortName() {
         return "VariableFunctionsUsageInspection";
@@ -45,7 +47,22 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                 /* only `call_user_func_array(..., array(...))` needs to be checked */
                 if (2 == parameters.length && function.equals("call_user_func_array")) {
                     if (parameters[1] instanceof ArrayCreationExpression) {
-                        holder.registerProblem(reference, "'call_user_func(..., $param1, ...)' should be used instead", ProblemHighlightType.WEAK_WARNING);
+                        final List<String> parametersUsed = new ArrayList<>();
+                        for (PsiElement item : parameters[1].getChildren()) {
+                            if (item instanceof PhpPsiElement) {
+                                final PhpPsiElement itemValue = ((PhpPsiElement) item).getFirstPsiChild();
+                                if (null != itemValue) {
+                                    parametersUsed.add(itemValue.getText());
+                                }
+                            }
+                        }
+
+                        final String message = patternInlineArgs
+                                .replace("%c%", parameters[0].getText())
+                                .replace("%p%", String.join(", ", parametersUsed));
+                        parametersUsed.clear();
+
+                        holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
                     }
                     return;
                 }

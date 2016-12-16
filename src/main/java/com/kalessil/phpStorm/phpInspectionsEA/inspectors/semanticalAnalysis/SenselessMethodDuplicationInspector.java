@@ -52,7 +52,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                     return;
                 }
                 /* process only real classes and methods */
-                if (clazz.isTrait() || clazz.isInterface() || method.isAbstract()) {
+                if (method.isDeprecated() || clazz.isTrait() || clazz.isInterface() || method.isAbstract()) {
                     return;
                 }
 

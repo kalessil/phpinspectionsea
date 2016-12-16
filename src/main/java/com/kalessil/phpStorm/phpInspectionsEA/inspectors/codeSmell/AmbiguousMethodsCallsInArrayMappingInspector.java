@@ -12,7 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Duplicated method calls should be moved to local variable";
+    private static final String message = "Duplicated method calls should be moved to local variable";
 
     @NotNull
     public String getShortName() {
@@ -23,49 +23,37 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            /**
-             * @param foreach statement to inspect
-             */
             public void visitPhpForeach(ForeachStatement foreach) {
-                /* check if group statement used */
-                GroupStatement objGroupStatement = ExpressionSemanticUtil.getGroupStatement(foreach);
-                if (objGroupStatement == null) {
-                    return;
-                }
-
-                for (PsiElement objStatement : objGroupStatement.getStatements()) {
-                    if (objStatement.getFirstChild() instanceof AssignmentExpression) {
-                        this.isStatementMatchesInspection((AssignmentExpression) objStatement.getFirstChild());
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(foreach);
+                if (null != body) {
+                    /* do net search with utils, as we can have nested loops */
+                    for (PsiElement expression : body.getStatements()) {
+                        final PsiElement assignCandidate = expression.getFirstChild();
+                        if (assignCandidate instanceof AssignmentExpression) {
+                            this.isStatementMatchesInspection((AssignmentExpression) assignCandidate);
+                        }
                     }
                 }
             }
 
-            /**
-             * @param objAssignment to inspect
-             */
-            private void isStatementMatchesInspection(AssignmentExpression objAssignment) {
-                if (
-                    !(objAssignment.getValue() instanceof FunctionReference) ||
-                    !(objAssignment.getVariable() instanceof ArrayAccessExpression)
-                ) {
+            private void isStatementMatchesInspection(@NotNull AssignmentExpression assignment) {
+                final PsiElement value    = assignment.getValue();
+                final PsiElement variable = assignment.getVariable();
+                if (!(value instanceof FunctionReference) || !(variable instanceof ArrayAccessExpression)) {
                     return;
                 }
 
-                FunctionReference objValueExpression = (FunctionReference) objAssignment.getValue();
-
-                PhpPsiElement objContainer = objAssignment.getVariable();
-                /* TODO: iterator for array access expression */
-                while (objContainer instanceof ArrayAccessExpression) {
-                    ArrayIndex objIndex = ((ArrayAccessExpression) objContainer).getIndex();
-                    if (objIndex != null && objIndex.getValue() instanceof FunctionReference) {
-                        FunctionReference objIndexExpression = (FunctionReference) objIndex.getValue();
-                        if (PsiEquivalenceUtil.areElementsEquivalent(objIndexExpression, objValueExpression)) {
-                            holder.registerProblem(objValueExpression, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                            break;
-                        }
+                PhpPsiElement container = (PhpPsiElement) variable;
+                while (container instanceof ArrayAccessExpression) {
+                    final ArrayAccessExpression arrayAccess = (ArrayAccessExpression) container;
+                    final ArrayIndex indexContainer         = arrayAccess.getIndex();
+                    final PsiElement index                  = null == indexContainer ? null : indexContainer.getValue();
+                    if (index instanceof FunctionReference && PsiEquivalenceUtil.areElementsEquivalent(index, value)) {
+                        holder.registerProblem(value, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        break;
                     }
 
-                    objContainer = ((ArrayAccessExpression) objContainer).getValue();
+                    container = arrayAccess.getValue();
                 }
             }
         };

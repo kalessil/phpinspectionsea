@@ -5,9 +5,6 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.config.PhpLanguageFeature;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -20,6 +17,7 @@ import java.util.List;
 
 public class VariableFunctionsUsageInspector extends BasePhpInspection {
     private static final String patternInlineArgs = "'call_user_func(%c%, %p%)' should be used instead (enables further analysis)";
+    private static final String patternReplace    = "'%f%%o%%s%(%p%)' should be used instead";
 
     @NotNull
     public String getShortName() {
@@ -67,72 +65,89 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                     return;
                 }
 
+
                 /* TODO: `callReturningCallable()(...)` syntax not yet supported, re-evaluate */
-                if (function.equals("call_user_func") && !(parameters[0] instanceof FunctionReference)) {
-                    /* if not string without injection and not variable -> use ()/{} for arguments */
-                    /* if 2nd part is :: and not parent::*, take only it for replacement */
-
-                    if (parameters[0] instanceof ArrayCreationExpression) {
-                        final ArrayCreationExpression callable = (ArrayCreationExpression) parameters[0];
-
-                        /* get array values */
-                        final List<PhpPsiElement> values = new ArrayList<>();
-                        PhpPsiElement value              = callable.getFirstPsiChild();
-                        while (null != value) {
-                            values.add(value.getFirstPsiChild());
-                            value = value.getNextPsiSibling();
+                if (function.equals("call_user_func")) {
+                    /* collect callable parts */
+                    final PsiElement firstParam          = parameters[0];
+                    final List<PsiElement> callableParts = new ArrayList<>();
+                    if (firstParam instanceof ArrayCreationExpression) {
+                        /* extract parts */
+                        PhpPsiElement firstPart  = ((ArrayCreationExpression) firstParam).getFirstPsiChild();
+                        firstPart                = null == firstPart ? null : firstPart.getFirstPsiChild();
+                        PhpPsiElement secondPart = null == firstPart ? null : firstPart.getNextPsiSibling();
+                        secondPart               = null == secondPart ? null : secondPart.getFirstPsiChild();
+                        if (null == firstPart || null == secondPart) {
+                            return;
                         }
 
-                        /* ensure we have 2 values array and first is not a callable reference */
-                        if (
-                            2 == values.size()
-                            && null != values.get(0) && null != values.get(1)
-                            && !(values.get(0) instanceof FunctionReference)
-                        ) {
-                            final List<String> parametersToSuggest = new ArrayList<>();
-                            for (PsiElement parameter : Arrays.copyOfRange(parameters, 1, parameters.length)) {
-                                parametersToSuggest.add(parameter.getText());
-                            }
-
-                            final boolean isFirstString  = values.get(0) instanceof StringLiteralExpression;
-                            final boolean isSecondString = values.get(1) instanceof StringLiteralExpression;
-                            /* some non-trivial magic eg `parent::call()` is not available via var functions */
-                            if (isSecondString && ((StringLiteralExpression) values.get(1)).getContents().contains("::")) {
-                                return;
-                            }
-
-                            /* as usually personalization of messages is overcomplicated */
-                            final String message = "'%o%->{%m%}(%p%)' should be used instead"
-                                .replace("%p%", String.join(", ", parametersToSuggest))
-                                .replace(
-                                    isFirstString  ? "%o%->" : "%o%",
-                                    isFirstString  ? ((StringLiteralExpression) values.get(0)).getContents() + "::" : values.get(0).getText()
-                                )
-                                .replace(
-                                    isSecondString ? "{%m%}" : "%m%",
-                                    isSecondString ? ((StringLiteralExpression) values.get(1)).getContents()        : values.get(1).getText()
-                                );
-                            parametersToSuggest.clear();
-
-                            holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
-                        }
+                        callableParts.add(firstPart);
+                        callableParts.add(secondPart);
                     } else {
-                        final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                        if (phpVersion.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
-                            /* in PHP7+ it's absolutely safe to use variable functions */
-                            final List<String> parametersToSuggest = new ArrayList<>();
-                            for (PsiElement parameter : Arrays.copyOfRange(parameters, 1, parameters.length)) {
-                                parametersToSuggest.add(parameter.getText());
+                        callableParts.add(firstParam);
+                    }
+
+
+                    /* extract parts into local variables for further processing */
+                    PsiElement firstPart  = callableParts.size() > 0 ? callableParts.get(0) : null;
+                    PsiElement secondPart = callableParts.size() > 1 ? callableParts.get(1) : null;
+                    callableParts.clear();
+
+
+                    /* check second part: in some cases it overrides the first one completely */
+                    String secondAsString = null;
+                    if (null != secondPart) {
+                        secondAsString = "{" + secondPart.getText() + "}";
+                        if (secondPart instanceof StringLiteralExpression) {
+                            final StringLiteralExpression secondPartExpression = (StringLiteralExpression) secondPart;
+                            if (null == secondPartExpression.getFirstPsiChild()) {
+                                final String content = secondPartExpression.getContents();
+                                secondAsString       = content;
+
+                                if (-1 != content.indexOf(':')) {
+                                    /* don't touch relative invocation at all */
+                                    if (content.startsWith("parent::")) {
+                                        return;
+                                    }
+                                    firstPart      = secondPart;
+                                    secondPart     = null;
+                                    secondAsString = null;
+                                }
                             }
-
-                            final String message = "'%c%(%p%)' should be used instead"
-                                    .replace("%c%", parameters[0].getText())
-                                    .replace("%p%", String.join(", ", parametersToSuggest));
-                            parametersToSuggest.clear();
-
-                            holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
                         }
                     }
+
+                    /* The first part should be a variable or string literal without injections */
+                    String firstAsString = null;
+                    if (null != firstParam) {
+                        if (firstPart instanceof StringLiteralExpression) {
+                            final StringLiteralExpression firstPartExpression = (StringLiteralExpression) firstPart;
+                            if (null == firstPartExpression.getFirstPsiChild()) {
+                                firstAsString = firstPartExpression.getContents();
+                            }
+                        }
+                        if (firstPart instanceof Variable) {
+                            firstAsString = firstPart.getText();
+                        }
+                    }
+                    if (null == firstAsString) {
+                        return;
+                    }
+
+
+                    final List<String> parametersToSuggest = new ArrayList<>();
+                    for (PsiElement parameter : Arrays.copyOfRange(parameters, 1, parameters.length)) {
+                        parametersToSuggest.add(parameter.getText());
+                    }
+                    final String message = patternReplace
+                            .replace("%o%%s%", null == secondPart ? "" : "%o%%s%")
+                            .replace("%o%", firstPart instanceof Variable ? "->" : "::")
+                            .replace("%s%", null == secondPart            ? ""   : secondAsString)
+                            .replace("%f%", firstAsString)
+                            .replace("%p%", String.join(", ", parametersToSuggest));
+                    parametersToSuggest.clear();
+
+                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
                 }
             }
         };

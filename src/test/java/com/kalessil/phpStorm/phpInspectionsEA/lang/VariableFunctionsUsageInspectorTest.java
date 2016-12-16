@@ -10,14 +10,14 @@ final public class VariableFunctionsUsageInspectorTest extends CodeInsightFixtur
 
     public void testIfFindsAllPatternsPhp5() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP530);
-        myFixture.configureByFile("fixtures/lang/variable-functions.php");
+        myFixture.configureByFile("fixtures/lang/variable-functions-can-use.php");
         myFixture.enableInspections(VariableFunctionsUsageInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 
     public void testIfFindsAllPatternsPhp7() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP700);
-        myFixture.configureByFile("fixtures/lang/variable-functions.php");
+        myFixture.configureByFile("fixtures/lang/variable-functions-can-use.php");
         myFixture.enableInspections(VariableFunctionsUsageInspector.class);
         myFixture.testHighlighting(true, false, true);
     }

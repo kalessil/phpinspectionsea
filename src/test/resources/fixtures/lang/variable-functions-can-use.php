@@ -14,20 +14,20 @@
     $object = new ClassVFChild();
 
     /* cases with different context */
-    $x  = call_user_func (array('ClassVFChild', 'sum'), 1, 2, 3);          // 'ClassVFChild::sum(1, 2, 3)' should be used instead
-    $x .= call_user_func (array('ClassVFChild', 'sum'), 1, 2, 3);          // 'ClassVFChild::sum(1, 2, 3)' should be used instead
-    call_user_func (array('ClassVFChild', 'sum'), 1, 2, 3);                // 'ClassVFChild::sum(1, 2, 3)' should be used instead
+    $x  = <weak_warning descr="'ClassVFChild::sum(1, 2, 3)' should be used instead">call_user_func</weak_warning> (array('ClassVFChild', 'sum'), 1, 2, 3);
+    $x .= <weak_warning descr="'ClassVFChild::sum(1, 2, 3)' should be used instead">call_user_func</weak_warning> (array('ClassVFChild', 'sum'), 1, 2, 3);
+    <weak_warning descr="'ClassVFChild::sum(1, 2, 3)' should be used instead">call_user_func</weak_warning> (array('ClassVFChild', 'sum'), 1, 2, 3);
 
     /* Case, replace with -> call_user_func(..., 1, 2, 3) */
-    call_user_func_array ('ClassVFChild::sum',          array(1, 2, 3));   // 'call_user_func('ClassVFChild::sum', 1, 2, 3)' should be used instead
-    call_user_func_array (array('ClassVFChild', 'sum'), array(1, 2, 3));   // 'call_user_func(array('ClassVFChild', 'sum'), 1, 2, 3)' should be used instead
+    <weak_warning descr="'call_user_func('ClassVFChild::sum', 1, 2, 3)' should be used instead">call_user_func_array</weak_warning> ('ClassVFChild::sum', array(1, 2, 3));
+    <weak_warning descr="'call_user_func(array('ClassVFChild', 'sum'), 1, 2, 3)' should be used instead">call_user_func_array</weak_warning> (array('ClassVFChild', 'sum'), array(1, 2, 3));
 
-    call_user_func ('abs', -1);                                            // 'abs(-1)' should be used instead
-    call_user_func ('ClassVFChild::sum', 1, 2, 3);                         // 'ClassVFChild::sum(1, 2, 3)' should be used instead
-    call_user_func (array('ClassVFChild', 'sum'), 1, 2, 3);                // 'ClassVFChild::sum(1, 2, 3)' should be used instead
-    call_user_func (array('ClassVFChild', 'ClassVFParent::sum'), 1, 2, 3); // 'ClassVFParent::sum(1, 2, 3)' should be used instead
-    call_user_func (array($object, 'sum'), 1, 2, 3);                       // '$object->sum(1, 2, 3)' should be used instead
-    call_user_func (array($object, 'ClassVFParent::sum'), 1, 2, 3);        // 'ClassVFParent::sum(1, 2, 3)' should be used instead
+    <weak_warning descr="'abs(-1)' should be used instead">call_user_func</weak_warning> ('abs', -1);
+    <weak_warning descr="'ClassVFChild::sum(1, 2, 3)' should be used instead">call_user_func</weak_warning> ('ClassVFChild::sum', 1, 2, 3);
+    <weak_warning descr="'ClassVFChild::sum(1, 2, 3)' should be used instead">call_user_func</weak_warning> (array('ClassVFChild', 'sum'), 1, 2, 3);
+    <weak_warning descr="'ClassVFParent::sum(1, 2, 3)' should be used instead">call_user_func</weak_warning> (array('ClassVFChild', 'ClassVFParent::sum'), 1, 2, 3);
+    <weak_warning descr="'$object->sum(1, 2, 3)' should be used instead">call_user_func</weak_warning> (array($object, 'sum'), 1, 2, 3);
+    <weak_warning descr="'ClassVFParent::sum(1, 2, 3)' should be used instead">call_user_func</weak_warning> (array($object, 'ClassVFParent::sum'), 1, 2, 3);
 
     /* false-positives: context and limitations */
     echo call_user_func ('...');

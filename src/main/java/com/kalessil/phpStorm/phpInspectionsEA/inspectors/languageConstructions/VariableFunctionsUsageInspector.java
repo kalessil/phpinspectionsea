@@ -67,11 +67,10 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (function.equals("call_user_func")) {
-                    /* TODO: `callReturningCallable()(...)` syntax not yet supported, re-evaluate */
-                    if (parameters[0] instanceof FunctionReference) {
-                        return;
-                    }
+                /* TODO: `callReturningCallable()(...)` syntax not yet supported, re-evaluate */
+                if (function.equals("call_user_func") && !(parameters[0] instanceof FunctionReference)) {
+                    /* if not string without injection and not variable -> use ()/{} for arguments */
+                    /* if 2nd part is :: and not parent::*, take only it for replacement */
 
                     if (parameters[0] instanceof ArrayCreationExpression) {
                         final ArrayCreationExpression callable = (ArrayCreationExpression) parameters[0];

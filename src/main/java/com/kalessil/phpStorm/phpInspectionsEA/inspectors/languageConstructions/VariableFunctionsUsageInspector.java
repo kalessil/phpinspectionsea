@@ -29,12 +29,6 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                /* process `call()>;<` and '... = call()' expressions only */
-                final PsiElement parent = reference.getParent();
-                if (!(parent instanceof StatementImpl) && !(parent instanceof AssignmentExpression)) {
-                    return;
-                }
-
                 /* general requirements for calls */
                 final String function         = reference.getName();
                 final PsiElement[] parameters = reference.getParameters();
@@ -74,9 +68,11 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                     if (firstParam instanceof ArrayCreationExpression) {
                         /* extract parts */
                         PhpPsiElement firstPart  = ((ArrayCreationExpression) firstParam).getFirstPsiChild();
-                        firstPart                = null == firstPart ? null : firstPart.getFirstPsiChild();
                         PhpPsiElement secondPart = null == firstPart ? null : firstPart.getNextPsiSibling();
-                        secondPart               = null == secondPart ? null : secondPart.getFirstPsiChild();
+
+                        /* now expression themselves */
+                        firstPart  = null == firstPart  ? null : firstPart.getFirstPsiChild();
+                        secondPart = null == secondPart ? null : secondPart.getFirstPsiChild();
                         if (null == firstPart || null == secondPart) {
                             return;
                         }

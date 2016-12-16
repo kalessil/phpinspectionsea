@@ -17,8 +17,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.List;
 
 public class VariableFunctionsUsageInspector extends BasePhpInspection {
     @NotNull
@@ -62,8 +63,8 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                         final ArrayCreationExpression callable = (ArrayCreationExpression) parameters[0];
 
                         /* get array values */
-                        final LinkedList<PhpPsiElement> values = new LinkedList<>();
-                        PhpPsiElement value                    = callable.getFirstPsiChild();
+                        final List<PhpPsiElement> values = new ArrayList<>();
+                        PhpPsiElement value              = callable.getFirstPsiChild();
                         while (null != value) {
                             values.add(value.getFirstPsiChild());
                             value = value.getNextPsiSibling();
@@ -75,7 +76,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                             && null != values.get(0) && null != values.get(1)
                             && !(values.get(0) instanceof FunctionReference)
                         ) {
-                            final LinkedList<String> parametersToSuggest = new LinkedList<>();
+                            final List<String> parametersToSuggest = new ArrayList<>();
                             for (PsiElement parameter : Arrays.copyOfRange(parameters, 1, parameters.length)) {
                                 parametersToSuggest.add(parameter.getText());
                             }
@@ -106,7 +107,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                         final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                         if (phpVersion.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
                             /* in PHP7+ it's absolutely safe to use variable functions */
-                            final LinkedList<String> parametersToSuggest = new LinkedList<>();
+                            final List<String> parametersToSuggest = new ArrayList<>();
                             for (PsiElement parameter : Arrays.copyOfRange(parameters, 1, parameters.length)) {
                                 parametersToSuggest.add(parameter.getText());
                             }

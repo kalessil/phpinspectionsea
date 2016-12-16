@@ -93,7 +93,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                     /* check second part: in some cases it overrides the first one completely */
                     String secondAsString = null;
                     if (null != secondPart) {
-                        secondAsString = "{" + secondPart.getText() + "}";
+                        secondAsString = secondPart instanceof Variable ? secondPart.getText() : "{" + secondPart.getText() + "}";
                         if (secondPart instanceof StringLiteralExpression) {
                             final StringLiteralExpression secondPartExpression = (StringLiteralExpression) secondPart;
                             if (null == secondPartExpression.getFirstPsiChild()) {

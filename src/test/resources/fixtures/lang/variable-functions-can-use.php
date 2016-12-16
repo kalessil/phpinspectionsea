@@ -33,6 +33,7 @@
 
     /* first is string without injections or variable */
     <weak_warning descr="'$object->{\"sum{$i}\"}(1, 2, 3)' should be used instead">call_user_func</weak_warning> (array($object, "sum{$i}"), 1, 2, 3);
+    <weak_warning descr="'$object->$i(1, 2, 3)' should be used instead">call_user_func</weak_warning> (array($object, $i), 1, 2, 3);
 
     /* false-positives: callback analysis limitations */
     call_user_func ("$class::sum", 1, 2, 3);

@@ -8,10 +8,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -32,8 +29,9 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                /* process `call()>;<` expressions only */
-                if (!(reference.getParent() instanceof StatementImpl)) {
+                /* process `call()>;<` and '... = call()' expressions only */
+                final PsiElement parent = reference.getParent();
+                if (!(parent instanceof StatementImpl) && !(parent instanceof AssignmentExpression)) {
                     return;
                 }
 
@@ -47,14 +45,13 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                 /* only `call_user_func_array(..., array(...))` needs to be checked */
                 if (2 == parameters.length && function.equals("call_user_func_array")) {
                     if (parameters[1] instanceof ArrayCreationExpression) {
-                        holder.registerProblem(reference, "'call_user_func(...)' should be used instead", ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(reference, "'call_user_func(..., $param1, ...)' should be used instead", ProblemHighlightType.WEAK_WARNING);
                     }
-
                     return;
                 }
 
                 if (function.equals("call_user_func")) {
-                    /* `callReturningCallable()(...)` is not possible -> syntax error */
+                    /* TODO: `callReturningCallable()(...)` syntax not yet supported, re-evaluate */
                     if (parameters[0] instanceof FunctionReference) {
                         return;
                     }

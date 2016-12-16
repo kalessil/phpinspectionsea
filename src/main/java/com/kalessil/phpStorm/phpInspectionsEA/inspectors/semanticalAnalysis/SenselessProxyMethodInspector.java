@@ -39,8 +39,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
 
                 for (Method objMethod : clazz.getOwnMethods()) {
                     final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(objMethod);
-                    final String methodName         = objMethod.getName();
-                    if (null == methodNameNode || objMethod.isAbstract() || StringUtil.isEmpty(methodName)) {
+                    if (null == methodNameNode || objMethod.isAbstract()) {
                         continue;
                     }
 
@@ -59,7 +58,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
 
                         if (
                             referenceVariable.equals("parent") &&
-                            !StringUtil.isEmpty(referenceName) && referenceName.equals(methodName)
+                            !StringUtil.isEmpty(referenceName) && referenceName.equals(objMethod.getName())
                         ) {
                             final Parameter[] methodParameters = objMethod.getParameters();
 

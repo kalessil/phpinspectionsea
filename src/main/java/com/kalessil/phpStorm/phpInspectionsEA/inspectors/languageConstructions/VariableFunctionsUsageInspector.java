@@ -178,9 +178,11 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
-                PsiElement replacement = PhpPsiElementFactory.createFromText(expression.getProject(), FunctionReference.class, this.replacement);
+                /* wrapping into () needed because $callback(...) target replacement breaks */
+                ParenthesizedExpression replacement = PhpPsiElementFactory.createFromText(
+                        expression.getProject(), ParenthesizedExpression.class, "(" +this.replacement + ")");
                 if (null != replacement) {
-                    expression.replace(replacement);
+                    expression.replace(replacement.getArgument());
                 }
             }
         }

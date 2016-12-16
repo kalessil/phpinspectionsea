@@ -37,13 +37,13 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
             }
 
             private void isStatementMatchesInspection(@NotNull AssignmentExpression assignment) {
-                final PsiElement value    = assignment.getValue();
-                final PsiElement variable = assignment.getVariable();
+                PsiElement value    = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
+                PsiElement variable = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getVariable());
                 if (!(value instanceof FunctionReference) || !(variable instanceof ArrayAccessExpression)) {
                     return;
                 }
 
-                PhpPsiElement container = (PhpPsiElement) variable;
+                PsiElement container = variable;
                 while (container instanceof ArrayAccessExpression) {
                     final ArrayAccessExpression arrayAccess = (ArrayAccessExpression) container;
                     final ArrayIndex indexContainer         = arrayAccess.getIndex();
@@ -53,7 +53,7 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
                         break;
                     }
 
-                    container = arrayAccess.getValue();
+                    container = ExpressionSemanticUtil.getExpressionTroughParenthesis(arrayAccess.getValue());
                 }
             }
         };

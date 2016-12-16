@@ -71,6 +71,8 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
                         }
                     }
                 }
+                valCalls.clear();
+                varCalls.clear();
             }
         };
     }

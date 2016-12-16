@@ -26,7 +26,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUt
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpDoc.ThrowsResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpExceptions.CollectPossibleThrowsUtil;
 import net.miginfocom.swing.MigLayout;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -272,7 +271,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     newCommentLines.add(line);
                 }
 
-                final String newCommentText = StringUtils.join(newCommentLines, "\n");
+                final String newCommentText = String.join("\n", newCommentLines);
                 newCommentLines.clear();
 
                 //noinspection ConstantConditions I' sure NPE will not happen as we get valid structure for input

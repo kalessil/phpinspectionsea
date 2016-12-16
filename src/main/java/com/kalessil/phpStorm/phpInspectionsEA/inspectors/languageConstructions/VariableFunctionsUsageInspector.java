@@ -89,7 +89,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
 
                             /* as usually personalization of messages is overcomplicated */
                             final String message = "'%o%->{%m%}(%p%)' should be used instead"
-                                .replace("%p%", StringUtil.join(parametersToSuggest, ", "))
+                                .replace("%p%", String.join(", ", parametersToSuggest))
                                 .replace(
                                     isFirstString  ? "%o%->" : "%o%",
                                     isFirstString  ? ((StringLiteralExpression) values.get(0)).getContents() + "::" : values.get(0).getText()
@@ -113,7 +113,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
 
                             final String message = "'%c%(%p%)' should be used instead"
                                     .replace("%c%", parameters[0].getText())
-                                    .replace("%p%", StringUtil.join(parametersToSuggest, ", "));
+                                    .replace("%p%", String.join(", ", parametersToSuggest));
                             parametersToSuggest.clear();
 
                             holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);

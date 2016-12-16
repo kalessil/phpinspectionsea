@@ -5,11 +5,14 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspection {
     private static final String message = "Duplicated method calls should be moved to local variable";
@@ -37,25 +40,36 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
             }
 
             private void isStatementMatchesInspection(@NotNull AssignmentExpression assignment) {
-                PsiElement value    = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
-                PsiElement variable = assignment.getVariable();
-                if (!(value instanceof FunctionReference) || !(variable instanceof ArrayAccessExpression)) {
+                /* verify basic structure */
+                final PsiElement value    = assignment.getValue();
+                final PsiElement variable = assignment.getVariable();
+                if (null == value || !(variable instanceof ArrayAccessExpression)) {
                     return;
                 }
 
-                PsiElement container = variable;
-                while (container instanceof ArrayAccessExpression) {
-                    final ArrayAccessExpression arrayAccess = (ArrayAccessExpression) container;
-                    final ArrayIndex indexContainer         = arrayAccess.getIndex();
-
-                    PsiElement index = null == indexContainer ? null : indexContainer.getValue();
-                    index            = ExpressionSemanticUtil.getExpressionTroughParenthesis(index);
-                    if (index instanceof FunctionReference && PsiEquivalenceUtil.areElementsEquivalent(index, value)) {
-                        holder.registerProblem(value, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                        break;
+                /* verify if both parts contains calls */
+                final Collection<PsiElement> varCalls = PsiTreeUtil.findChildrenOfType(variable, FunctionReference.class);
+                if (0 == varCalls.size()) {
+                    return;
+                }
+                final Collection<PsiElement> valCalls = PsiTreeUtil.findChildrenOfType(value, FunctionReference.class);
+                if (0 == valCalls.size()) {
+                    if (value instanceof FunctionReference) {
+                        valCalls.add(value);
+                    } else {
+                        return;
                     }
+                }
 
-                    container = arrayAccess.getValue();
+                /* iterate over calls in the value, match them with calls in the variable */
+                for (PsiElement inValue : valCalls) {
+                    for (PsiElement inVariable : varCalls) {
+                        if (PsiEquivalenceUtil.areElementsEquivalent(inValue, inVariable)) {
+                            /* report an issue and continue with outer loop */
+                            holder.registerProblem(inValue, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            break;
+                        }
+                    }
                 }
             }
         };

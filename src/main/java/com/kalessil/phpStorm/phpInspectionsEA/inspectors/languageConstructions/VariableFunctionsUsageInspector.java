@@ -1,12 +1,15 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +20,7 @@ import java.util.List;
 
 public class VariableFunctionsUsageInspector extends BasePhpInspection {
     private static final String patternInlineArgs = "'call_user_func(%c%, %p%)' should be used instead (enables further analysis)";
-    private static final String patternReplace    = "'%f%%o%%s%(%p%)' should be used instead";
+    private static final String patternReplace    = "'%e' should be used instead";
 
     @NotNull
     public String getShortName() {
@@ -61,6 +64,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
 
 
                 /* TODO: `callReturningCallable()(...)` syntax not yet supported, re-evaluate */
+                /* TODO: search is_callable in the scope or report probable bugs */
                 if (function.equals("call_user_func")) {
                     /* collect callable parts */
                     final PsiElement firstParam          = parameters[0];
@@ -135,7 +139,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                     for (PsiElement parameter : Arrays.copyOfRange(parameters, 1, parameters.length)) {
                         parametersToSuggest.add(parameter.getText());
                     }
-                    final String message = patternReplace
+                    final String expression = "%f%%o%%s%(%p%)"
                             .replace("%o%%s%", null == secondPart ? "" : "%o%%s%")
                             .replace("%o%", firstPart instanceof Variable ? "->" : "::")
                             .replace("%s%", null == secondPart            ? ""   : secondAsString)
@@ -143,10 +147,44 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                             .replace("%p%", String.join(", ", parametersToSuggest));
                     parametersToSuggest.clear();
 
-                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
+                    final String message = patternReplace.replace("%e%", expression);
+                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(expression));
                 }
             }
         };
     }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        final private String replacement;
+
+        TheLocalFix(@NotNull String replacement) {
+            super();
+            this.replacement = replacement;
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use suggested replacement";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression instanceof FunctionReference) {
+                PsiElement replacement = PhpPsiElementFactory.createFromText(expression.getProject(), FunctionReference.class, this.replacement);
+                if (null != replacement) {
+                    expression.replace(replacement);
+                }
+            }
+        }
+    }
+
 }
 

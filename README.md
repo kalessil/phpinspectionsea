@@ -186,7 +186,7 @@ Inspections Lists (Performance)
 | Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused"                                                                  | yes       | yes | no  |
 | Performance          | FileFunctionMissUseInspection                   | 'file(...)' misused                                                                         | yes       | yes | no  |
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                              | n/a |
-| Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                    | no        | yes | no  |
+| Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                    | yes       | yes | no  |
 | Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                              | yes       | yes | no  |
 | Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | no        | yes | no  |
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes       | yes | no  |

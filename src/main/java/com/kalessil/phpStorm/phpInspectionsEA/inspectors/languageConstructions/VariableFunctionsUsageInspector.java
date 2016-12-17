@@ -8,6 +8,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -132,6 +134,15 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                     }
                     if (null == firstAsString) {
                         return;
+                    }
+
+
+                    /* $func(...) is not working for arrays in PHP below 5.4 */
+                    if (null == secondPart && firstPart instanceof Variable) {
+                        PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                        if (PhpLanguageLevel.PHP530 == php) {
+                            return;
+                        }
                     }
 
 

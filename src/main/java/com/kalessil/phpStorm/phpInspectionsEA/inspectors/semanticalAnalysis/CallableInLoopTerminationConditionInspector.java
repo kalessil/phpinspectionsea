@@ -9,10 +9,11 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class CallableInLoopTerminationConditionInspector extends BasePhpInspection {
-    private static final String strProblemPattern = "'for (%existingInit%%newInit%; %newCheck%; ...)' should be used for better performance";
+    private static final String strProblemPattern     = "'for (%existingInit%%newInit%; %newCheck%; ...)' should be used for better performance";
     private static final String strProblemDescription = "Callable result should be stored outside of the loop for better performance";
 
     @NotNull
@@ -25,15 +26,15 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @NotNull
-            private String generateMessage(For expression, BinaryExpression problematicExpression) {
+            private String generateMessage(@NotNull For expression, @NotNull BinaryExpression problematicExpression) {
                 /* extract part of expression we need to report */
                 PsiElement referenceCandidate = problematicExpression.getRightOperand();
-                PsiElement variableCandidate = problematicExpression.getLeftOperand();
+                PsiElement variableCandidate  = problematicExpression.getLeftOperand();
                 boolean leftToRight = true;
                 if (!(referenceCandidate instanceof FunctionReference)) {
                     referenceCandidate = problematicExpression.getLeftOperand();
-                    variableCandidate = problematicExpression.getRightOperand();
-                    leftToRight = false;
+                    variableCandidate  = problematicExpression.getRightOperand();
+                    leftToRight        = false;
                 }
 
                 /* check if we can customize message at all */
@@ -62,21 +63,19 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
             }
 
             public void visitPhpFor(For expression) {
-                PhpPsiElement[] arrConditions = expression.getConditionalExpressions();
-                if (arrConditions.length != 1 || !(arrConditions[0] instanceof BinaryExpression)) {
+                /* TODO: re-evaluate searching in tree for catching more cases */
+                final PhpPsiElement[] conditions = expression.getConditionalExpressions();
+                if (1 != conditions.length || !(conditions[0] instanceof BinaryExpression)) {
                     return;
                 }
 
-                BinaryExpression objCondition = (BinaryExpression) arrConditions[0];
-
-                final PsiElement objRightOperand = objCondition.getRightOperand();
-                final PsiElement objLeftOperand  = objCondition.getLeftOperand();
+                final BinaryExpression condition = (BinaryExpression) conditions[0];
                 if (
-                    objRightOperand instanceof FunctionReferenceImpl ||
-                    objLeftOperand instanceof FunctionReferenceImpl
+                    OpenapiTypesUtil.isFunctionReference(condition.getRightOperand()) ||
+                    OpenapiTypesUtil.isFunctionReference(condition.getLeftOperand())
                 ) {
-                    String message = generateMessage(expression, objCondition);
-                    holder.registerProblem(objCondition, message, ProblemHighlightType.GENERIC_ERROR);
+                    final String message = generateMessage(expression, condition);
+                    holder.registerProblem(condition, message, ProblemHighlightType.GENERIC_ERROR);
                 }
             }
         };

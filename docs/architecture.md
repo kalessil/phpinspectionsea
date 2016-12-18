@@ -1,5 +1,19 @@
 # Architecture
 
+## Class overrides a field of a parent class
+
+In general the case is about naming collision, nevertheless in context of inheritance better to re-check reported case.
+
+Reported cases and possible alternatives:
+
+* Parent's property is private, children has any visibility (suggested declaring as protected);
+    * rename property;
+    * make it protected (try avoiding this, as the field become accessible);
+    * add setters/getters to keep it private;
+* Children declares same access level as parent's property (suggests using constructor for initialization);
+    * rename property;
+    * move initialization into constructor;
+
 ## Long inheritance chain
 
 In OOP, inheritance is one of basic principals which allows to design and build well-structured components. As any 

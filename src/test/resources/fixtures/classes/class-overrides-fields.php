@@ -4,6 +4,7 @@
 class ClassOverridesField1 {
     private   $privateFrom1;
     protected $protectedFrom1;
+    protected $weakened;
 
     static protected $staticFrom1;
     const CLAZZ = __CLASS__;
@@ -18,15 +19,16 @@ class ClassOverridesField2 extends ClassOverridesField1 {
 /** @property $privateFrom2 */
 class ClassOverridesField extends ClassOverridesField2 {
     /* this suggested to be re-initialized in constructor */
-    <weak_warning descr="Field 'protectedFrom1' is already defined in \ClassOverridesField1. Consider initializing it in a constructor or making static.">protected $protectedFrom1;</weak_warning>
-    <weak_warning descr="Field 'protectedFrom2' is already defined in \ClassOverridesField2. Consider initializing it in a constructor or making static.">protected $protectedFrom2;</weak_warning>
+    <weak_warning descr="Field 'protectedFrom1' is already defined in \ClassOverridesField1, check our online documentation for options.">protected $protectedFrom1;</weak_warning>
+    <weak_warning descr="Field 'protectedFrom2' is already defined in \ClassOverridesField2, check our online documentation for options.">protected $protectedFrom2;</weak_warning>
 
-    /* this suggested to be re-initialized in constructor + to check if protected can be applied */
-    <weak_warning descr="Field 'privateFrom1' is already defined in \ClassOverridesField1. Consider initializing it in a constructor or making static."><weak_warning descr="Likely needs to be protected (also in the parent class).">private $privateFrom1;</weak_warning></weak_warning>
+    /* this suggested to check if protected can be applied */
+    <weak_warning descr="Likely needs to be protected (already defined in \ClassOverridesField1).">private $privateFrom1;</weak_warning>
 
     /* and this is not reported */
-    static protected $staticFrom1;
-    const CLAZZ = __CLASS__;
+    public $weakened;               // access level weakened
+    static protected $staticFrom1;  // static fields are not checked
+    const CLAZZ = __CLASS__;        // constants are not checked
 }
 
 

@@ -7,13 +7,19 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpModifier;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
+import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -25,8 +31,12 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection {
-    private static final String patternShadows            = "Field '%p%' is already defined in %c%. Consider initializing it in a constructor or making static.";
-    private static final String messageProtectedCandidate = "Likely needs to be protected (also in the parent class).";
+    // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
+    public boolean REPORT_PRIVATE_REDEFINITION = true;
+
+    private static final String patternShadows            = "Field '%p%' is already defined in %c%, check our online documentation for options.";
+    private static final String patternProtectedCandidate = "Likely needs to be protected (already defined in %c%).";
 
     @NotNull
     public String getShortName() {
@@ -55,8 +65,9 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
                 }
 
 
-                final String ownFieldName       = ownField.getName();
-                final PsiElement ownFieldParent = ownField.getParent();
+                final PhpModifier.Access ownFieldAccess  = ownField.getModifier().getAccess();
+                final String ownFieldName                = ownField.getName();
+                final PsiElement ownFieldParent          = ownField.getParent();
                 for (PhpClass parentClass : InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true)) {
                     /* ensure class and super are explorable */
                     final String superClassFQN = parentClass.getFQN();
@@ -69,17 +80,51 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
                             continue;
                         }
 
-                        /* private -> protected for enabling constructor-approach */
+                        /* re-defining private fields with the same name is pretty suspicious itself */
                         if (superclassField.getModifier().isPrivate()) {
-                            holder.registerProblem(ownFieldParent, messageProtectedCandidate, ProblemHighlightType.WEAK_WARNING);
+                            if (REPORT_PRIVATE_REDEFINITION) {
+                                final String message = patternProtectedCandidate.replace("%c%", superClassFQN);
+                                holder.registerProblem(ownFieldParent, message, ProblemHighlightType.WEAK_WARNING);
+                            }
+                            continue;
                         }
 
-                        /* fire common warning */
-                        final String message = patternShadows.replace("%p%", ownFieldName).replace("%c%", superClassFQN);
-                        holder.registerProblem(ownFieldParent, message, ProblemHighlightType.WEAK_WARNING);
+                        /* report only cases when access level is not changed */
+                        if (!ownFieldAccess.isWeakerThan(superclassField.getModifier().getAccess())) {
+                            /* fire common warning */
+                            final String message = patternShadows.replace("%p%", ownFieldName).replace("%c%", superClassFQN);
+                            holder.registerProblem(ownFieldParent, message, ProblemHighlightType.WEAK_WARNING);
+                        }
                     }
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return (new ClassOverridesFieldOfSuperClassInspector.OptionsPanel()).getComponent();
+    }
+
+    public class OptionsPanel {
+        final private JPanel optionsPanel;
+
+        final private JCheckBox reportPrivateRedefinition;
+
+        public OptionsPanel() {
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
+
+            reportPrivateRedefinition = new JCheckBox("Report re-defining private fields", REPORT_PRIVATE_REDEFINITION);
+            reportPrivateRedefinition.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    REPORT_PRIVATE_REDEFINITION = reportPrivateRedefinition.isSelected();
+                }
+            });
+            optionsPanel.add(reportPrivateRedefinition, "wrap");
+        }
+
+        public JPanel getComponent() {
+            return optionsPanel;
+        }
     }
 }

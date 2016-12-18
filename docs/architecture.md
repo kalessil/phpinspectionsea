@@ -7,12 +7,12 @@ In general the case is about naming collision, nevertheless in context of inheri
 Reported cases and possible alternatives:
 
 * Parent's property is private, children has any visibility (suggested declaring as protected);
-    * rename property;
-    * make it protected (try avoiding this, as the field become accessible);
-    * add setters/getters to keep it private;
-* Children declares same access level as parent's property (suggests using constructor for initialization);
-    * rename property;
-    * move initialization into constructor;
+    * rename the property;
+    * make it protected (try avoiding this, as the field become accessible to all children);
+    * add and use setters/getters to keep it private;
+* Children declares same access level as parent's property (suggested using initialization in a constructor);
+    * rename the property;
+    * move initialization into a constructor;
 
 ## Long inheritance chain
 

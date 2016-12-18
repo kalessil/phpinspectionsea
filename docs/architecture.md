@@ -6,7 +6,7 @@ In general the case is about naming collision, nevertheless in context of inheri
 
 Reported cases and possible alternatives:
 
-* Parent's property is private, children has any visibility (suggested declaring as protected);
+* Parent's property is private, children have any visibility (suggested declaring as protected);
     * rename the property;
     * make it protected (try avoiding this, as the field become accessible to all children);
     * add and use setters/getters to keep it private;

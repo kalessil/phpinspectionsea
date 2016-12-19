@@ -7,8 +7,8 @@ Acknowledgments
 ![YourKit](https://www.yourkit.com/images/yklogo.png) YourKit supports us with their full-featured 
 [Java Profiler](https://www.yourkit.com/java/profiler/), innovative and intelligent tools for profiling Java applications.
 
-![JetBrains](https://resources.jetbrains.com/assets/media/open-graph/jetbrains_250x250.png) JetBrains supports us with 
-their awesome IDEs.
+<img src="https://resources.jetbrains.com/assets/media/open-graph/jetbrains_250x250.png" alt="JetBrains" height="50"> 
+JetBrains supports us with their awesome IDEs.
 
 Inspections Lists (Type compatibility)
 ---

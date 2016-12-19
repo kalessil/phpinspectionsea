@@ -4,12 +4,12 @@ Some facts about this project: https://www.openhub.net/p/phpinspectionsea
 
 Acknowledgments
 ---
-<img src="https://www.yourkit.com/images/yklogo.png" alt="YourKit" height="25">
-YourKit supports us with their full-featured [Java Profiler](https://www.yourkit.com/java/profiler/), innovative and 
-intelligent tools for profiling Java applications.
+<img src="https://www.yourkit.com/images/yklogo.png" alt="YourKit" height="20"> YourKit supports us with their 
+full-featured [Java Profiler](https://www.yourkit.com/java/profiler/), innovative and intelligent tools for profiling 
+Java applications.
 
-<img src="https://resources.jetbrains.com/assets/media/open-graph/jetbrains_250x250.png" alt="JetBrains" height="25"> 
-JetBrains supports us with their awesome IDEs.
+<img src="https://resources.jetbrains.com/assets/media/open-graph/jetbrains_250x250.png" alt="JetBrains" height="20"> JetBrains 
+supports us with their awesome IDEs.
 
 Inspections Lists (Type compatibility)
 ---

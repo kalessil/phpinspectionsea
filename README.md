@@ -2,6 +2,14 @@ Php Inspections (EA Extended) is a Static Code Analysis tool for PHP, distribute
 
 Some facts about this project: https://www.openhub.net/p/phpinspectionsea
 
+Acknowledgments
+---
+![YourKit](https://www.yourkit.com/images/yklogo.png) YourKit supports us with their full-featured 
+[Java Profiler](https://www.yourkit.com/java/profiler/), innovative and intelligent tools for profiling Java applications.
+
+![JetBrains](https://resources.jetbrains.com/assets/media/open-graph/jetbrains_250x250.png) JetBrains supports us with 
+their awesome IDEs.
+
 Inspections Lists (Type compatibility)
 ---
 | Group                | Short Name                                      | Full Name                                           | Quick fix | UTs | QFTs |
@@ -177,7 +185,7 @@ Inspections Lists (Performance)
 | Performance          | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' should not be used to check if string is empty                                | n/a |
 | Performance          | ArrayCastingEquivalentInspection                | Could be replaced with '(array) ...'                                                        | n/a |
 | Performance          | CountOnPropelCollectionInspection               | 'count(...)' calls on Propel collection                                                     | n/a |
-| Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                               | n/a |
+| Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                               | n/a       | yes | n/a |
 | Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                            | n/a |
 | Performance          | StrStrUsedAsStrPosInspection                    | 'strstr(...)/stristr(...)' could be replaced with 'strpos(...)/stripos(...)'                | no        | yes | no  | 
 | Performance          | AlterInForeachInspection                        | Slow alter in foreach                                                                       | n/a       | yes | n/a |

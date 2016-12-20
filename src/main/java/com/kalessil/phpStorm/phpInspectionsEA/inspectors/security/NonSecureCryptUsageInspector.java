@@ -66,6 +66,7 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
 
                 /* Case 2: using $2a$; use $2y$ instead - http://php.net/security/crypt_blowfish.php*/
                 if (saltValue.startsWith("$2a$")) {
+                    // TODO: ... add a QF here ...
                     holder.registerProblem(reference, messageInsecureSalt, ProblemHighlightType.GENERIC_ERROR);
                     return;
                 }
@@ -75,7 +76,8 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
                 if (isBlowfish) {
                     PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                     if (php.compareTo(PhpLanguageLevel.PHP550) >= 0) {
-                        holder.registerProblem(reference, messagePasswordHash, ProblemHighlightType.GENERIC_ERROR);
+                        // TODO: ... add a QF here ...
+                        holder.registerProblem(reference, messagePasswordHash, ProblemHighlightType.WEAK_WARNING);
                     }
                 }
             }

@@ -39,7 +39,7 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
             }
 
             private void inspectCaseIdentity(@NotNull FunctionReference reference, boolean useCache) {
-                /* Don't use StringUtil as the inspection is slowest one already */
+                /* StringUtil is not used due to performance optimization */
                 final String usedName = reference.getName();
                 if (null == usedName || 0 == usedName.length() || (useCache && cache.containsKey(usedName))) {
                     return;

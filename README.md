@@ -176,6 +176,7 @@ Inspections Lists (Security)
 | Security             | UnserializeExploitsInspection                      | Exploiting unserialize                                    | n/a       | yes | n/a  |
 | Security             | PotentialMalwareInspection                         | Basic malware patterns                                    | n/a       | yes | n/a  |
 | Security             | CryptographicallySecureRandomnessInspection        | Cryptographically secure randomness                       | n/a       | yes | n/a  |
+| Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage                               | n/a       | yes | n/a  |
 | Security             | CryptographicallySecureAlgorithms                  | Cryptographically secure algorithms                       | n/a |
 
 Inspections Lists (Performance)

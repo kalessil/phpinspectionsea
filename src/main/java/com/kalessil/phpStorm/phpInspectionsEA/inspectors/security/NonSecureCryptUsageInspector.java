@@ -25,9 +25,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class NonSecureCryptUsageInspector extends BasePhpInspection {
-    private static final String messageWeakSalt     = "A weak hash generated, consider providing '$2y$' (Blowfish) as the second argument.";
-    private static final String messageInsecureSalt = "'$2y$' should be used in preference to insecure '$2a$'.";
-    private static final String messagePasswordHash = "Use of password_hash(..., PASSWORD_BCRYPT) is encouraged in this case (uses $2y$ salt).";
+    private static final String messageWeakSalt     = "A weak hash generated, consider providing '$2y$<cost and salt>' (Blowfish) as the second argument.";
+    private static final String messageInsecureSalt = "'$2y$<cost and salt>' should be used in preference to insecure '$2a$<cost and salt>'.";
+    private static final String messagePasswordHash = "Use of password_hash(..., PASSWORD_BCRYPT) is encouraged in this case (uses $2y$ with cost of 10).";
 
     @NotNull
     public String getShortName() {
@@ -60,12 +60,12 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
                 /* try resolving 2nd parameter, skip if failed, it contains injections or length is not as expected */
                 final StringLiteralExpression salt = ExpressionSemanticUtil.resolveAsStringLiteral(params[1]);
                 final String saltValue             = null == salt ? null : salt.getContents();
-                if (null == saltValue || 4 != saltValue.length() || null != salt.getFirstPsiChild()) {
+                if (null == saltValue || saltValue.length() < 4 || null != salt.getFirstPsiChild()) {
                     return;
                 }
 
                 /* Case 2: using $2a$; use $2y$ instead - http://php.net/security/crypt_blowfish.php*/
-                if (saltValue.equals("$2a$")) {
+                if (saltValue.startsWith("$2a$")) {
                     holder.registerProblem(reference, messageInsecureSalt, ProblemHighlightType.GENERIC_ERROR);
                     return;
                 }

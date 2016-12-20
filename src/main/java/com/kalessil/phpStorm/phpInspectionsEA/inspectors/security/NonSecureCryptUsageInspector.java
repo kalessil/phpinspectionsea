@@ -71,11 +71,10 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
                 }
 
                 /* Case 3: -> password_hash(PASSWORD_BCRYPT) in PHP 5.5+ */
-                final boolean isBlowfish = saltValue.equals("$2y$") || saltValue.equals("$2x$");
+                final boolean isBlowfish = saltValue.startsWith("$2y$") || saltValue.startsWith("$2x$");
                 if (isBlowfish) {
                     PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                     if (php.compareTo(PhpLanguageLevel.PHP550) >= 0) {
-                        // if salt is $2y$, provide a quick-fix
                         holder.registerProblem(reference, messagePasswordHash, ProblemHighlightType.GENERIC_ERROR);
                     }
                 }

@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Method;
@@ -15,6 +16,7 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
 import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,9 +41,12 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            /* Static fields will be simply not resolved properly, so we can not do checking for them */
-
             public void visitPhpMethodReference(MethodReference reference) {
+                final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
+                if (null == operator || PhpTokenTypes.ARROW != operator.getNode().getElementType()) {
+                    return;
+                }
+
                 final PsiReference objReference = reference.getReference();
                 final String methodName         = reference.getName();
                 if (null != objReference && !StringUtil.isEmpty(methodName)) {
@@ -63,12 +68,6 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                         /* check first pattern $this->static */
                         final PsiElement thisCandidate = reference.getFirstChild();
                         if (thisCandidate.getText().equals("$this")) {
-                            /* find operator for quick-fix */
-                            PsiElement operator = thisCandidate.getNextSibling();
-                            if (operator instanceof PsiWhiteSpace) {
-                                operator = operator.getNextSibling();
-                            }
-
                             final String message = messageThisUsed.replace("%m%", methodName);
                             holder.registerProblem(thisCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(thisCandidate, operator));
 
@@ -78,20 +77,9 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                         /* check second pattern <expression>->static */
                         final PsiElement objectExpression = reference.getFirstPsiChild();
                         if (null != objectExpression && !(objectExpression instanceof FunctionReference)) {
-                            /* check operator */
-                            PsiElement operator = objectExpression.getNextSibling();
-                            if (operator instanceof PsiWhiteSpace) {
-                                operator = operator.getNextSibling();
-                            }
-                            if (null == operator) {
-                                return;
-                            }
-
-                            if (operator.getText().replaceAll("\\s+","").equals("->")) {
-                                /* info: no local fix, people shall check this code */
-                                final String message = messageExpressionUsed.replace("%m%", reference.getName());
-                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                            }
+                            /* info: no local fix, people shall check this code */
+                            final String message = messageExpressionUsed.replace("%m%", reference.getName());
+                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         }
                     }
                 }

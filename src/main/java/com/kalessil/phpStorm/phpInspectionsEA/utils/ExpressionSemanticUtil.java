@@ -288,27 +288,27 @@ final public class ExpressionSemanticUtil {
     }
 
     @Nullable
-    public static StringLiteralExpression resolveAsStringLiteral(@Nullable PsiElement obj) {
-        if (null == obj) {
+    public static StringLiteralExpression resolveAsStringLiteral(@Nullable PsiElement expression) {
+        if (null == expression) {
             return null;
         }
-        obj = ExpressionSemanticUtil.getExpressionTroughParenthesis(obj);
+        expression = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression);
 
-        if (obj instanceof StringLiteralExpression) {
-            return (StringLiteralExpression) obj;
+        if (expression instanceof StringLiteralExpression) {
+            return (StringLiteralExpression) expression;
         }
 
-        if (obj instanceof FieldReference || obj instanceof ClassConstantReference) {
-            Field fieldOrConstant = (Field) ((MemberReference) obj).resolve();
+        if (expression instanceof FieldReference || expression instanceof ClassConstantReference) {
+            Field fieldOrConstant = (Field) ((MemberReference) expression).resolve();
             if (null != fieldOrConstant && fieldOrConstant.getDefaultValue() instanceof StringLiteralExpression) {
                 return (StringLiteralExpression) fieldOrConstant.getDefaultValue();
             }
         }
 
-        if (obj instanceof Variable) {
-            String variable = ((Variable) obj).getName();
+        if (expression instanceof Variable) {
+            String variable = ((Variable) expression).getName();
             if (!StringUtil.isEmpty(variable)) {
-                Function scope = ExpressionSemanticUtil.getScope(obj);
+                Function scope = ExpressionSemanticUtil.getScope(expression);
                 if (null != scope) {
                     HashSet<AssignmentExpression> matched = new HashSet<>();
 

@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.Function;
@@ -15,9 +14,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Name provided in this call should be %n% (case mismatch)";
-    private final LocalQuickFix quickFix = new CallableReferenceNameMismatchQuickFix();
+    private static final Map<String, String> cache = new ConcurrentHashMap<>();
+    private static final String messagePattern = "Name provided in this call should be %n% (case mismatch)";
 
     @NotNull
     public String getShortName() {
@@ -29,25 +31,33 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethodReference(MethodReference reference) {
-                inspectCaseIdentity(reference);
+                inspectCaseIdentity(reference, false);
             }
             public void visitPhpFunctionCall(FunctionReference reference) {
-                inspectCaseIdentity(reference);
+                /* invoke caching as (assumption) in 99% of case functions are global */
+                inspectCaseIdentity(reference, true);
             }
 
-            private void inspectCaseIdentity(FunctionReference reference) {
-                String strNameGiven = reference.getName();
-                if (!StringUtil.isEmpty(strNameGiven)) {
-                    /* resolve callable */
-                    PsiElement callable = reference.resolve();
-                    if (callable instanceof Function) {
-                        String strNameDefined = ((Function) callable).getName();
-                        /* ensure case is matches */
-                        if (!StringUtil.isEmpty(strNameDefined) && !strNameDefined.equals(strNameGiven)) {
-                            /* report issues found */
-                            String strMessage = strProblemDescription.replace("%n%", strNameDefined);
-                            holder.registerProblem(reference, strMessage, ProblemHighlightType.WEAK_WARNING, quickFix);
-                        }
+            private void inspectCaseIdentity(@NotNull FunctionReference reference, boolean useCache) {
+                /* Don't use StringUtil as the inspection is slowest one already */
+                final String usedName = reference.getName();
+                if (null == usedName || 0 == usedName.length() || (useCache && cache.containsKey(usedName))) {
+                    return;
+                }
+
+                /* resolve callable and ensure the case matches */
+                final PsiElement resolved = reference.resolve();
+                if (resolved instanceof Function) {
+                    final Function function = (Function) resolved;
+                    final String realName   = function.getName();
+                    if (useCache && function.getFQN().equals('\\' + realName)) {
+                        cache.putIfAbsent(realName, realName);
+                    }
+
+                    if (!realName.equals(usedName)) {
+                        /* report issues found */
+                        final String message = messagePattern.replace("%n%", realName);
+                        holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new CallableReferenceNameMismatchQuickFix());
                     }
                 }
             }

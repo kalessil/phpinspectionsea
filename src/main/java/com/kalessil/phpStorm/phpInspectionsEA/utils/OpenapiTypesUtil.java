@@ -18,7 +18,10 @@ final public class OpenapiTypesUtil {
 
     /* Filters self-assignments */
     static public boolean isAssignment(@Nullable PsiElement expression) {
-        return expression instanceof AssignmentExpression && !(expression instanceof SelfAssignmentExpression);
+        return
+            expression instanceof AssignmentExpression &&
+            !(expression instanceof SelfAssignmentExpression) &&
+            !(expression instanceof MultiassignmentExpression);
     }
 
     /* Filters method references */

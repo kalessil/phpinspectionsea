@@ -6,6 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -38,8 +39,8 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                     return;
                 }
 
-                // promote using [], TODO: use PhpTokenTypes.op*
-                if (bracketNode.getText().equals("}")) {
+                /* promote using [] instead of {} */
+                if (PhpTokenTypes.chRBRACE == bracketNode.getNode().getElementType()) {
                     holder.registerProblem(expression, messageUseSquareBrackets, ProblemHighlightType.WEAK_WARNING);
                     return;
                 }

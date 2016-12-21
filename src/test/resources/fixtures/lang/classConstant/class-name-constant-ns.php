@@ -30,6 +30,8 @@ class Action {
         $x .= '\stdClass';
 
         return [
+            'stdclass',
+            'stdclassalias',
             '\stdClass' . $x,
             "\\stdClass{$x}",
             $x === '\stdClass',

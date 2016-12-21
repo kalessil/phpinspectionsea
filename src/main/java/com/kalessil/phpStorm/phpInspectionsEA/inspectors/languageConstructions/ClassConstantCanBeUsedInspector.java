@@ -66,6 +66,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+        /* 9% -> */
         return new BasePhpElementVisitor() {
             public void visitPhpStringLiteralExpression(StringLiteralExpression expression) {
                 /* ensure selected language level supports the ::class feature*/
@@ -90,6 +91,11 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     if (!regexMatcher.matches() || ExpressionSemanticUtil.getBlockScope(expression) instanceof PhpDocComment) {
                         return;
                     }
+                    /* do not process lowercase-only strings */
+                    if (-1 == contents.indexOf('\\') && contents.toLowerCase().equals(contents)) {
+                        return;
+                    }
+
                     String normalizedContents = contents.replaceAll("\\\\\\\\", "\\\\");
 
                     /* TODO: handle __NAMESPACE__.'\Class' */
@@ -116,7 +122,10 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         /* check resolved items */
                         if (1 == classes.size() && classes.iterator().next().getFQN().equals(fqnToLookup)) {
                             final String message = messagePattern.replace("%c%", normalizedContents);
-                            holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF));
+                            holder.registerProblem(
+                                expression, message, ProblemHighlightType.WEAK_WARNING,
+                                new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF)
+                            );
                         }
                     }
                     namesToLookup.clear();

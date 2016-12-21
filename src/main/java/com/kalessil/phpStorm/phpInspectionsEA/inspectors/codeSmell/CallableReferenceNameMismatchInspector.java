@@ -34,7 +34,7 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
                 inspectCaseIdentity(reference, false);
             }
             public void visitPhpFunctionCall(FunctionReference reference) {
-                /* invoke caching as (assumption) in 99% of case functions are global */
+                /* invoke caching as (assumption) in 99% of case functions are global; assumption was right ;) */
                 inspectCaseIdentity(reference, true);
             }
 

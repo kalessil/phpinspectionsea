@@ -47,40 +47,41 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                     return;
                 }
 
-                final PsiReference objReference = reference.getReference();
+                final PsiReference psiReference = reference.getReference();
                 final String methodName         = reference.getName();
-                if (null != objReference && !StringUtil.isEmpty(methodName)) {
-                    final PsiElement objResolvedRef = objReference.resolve();
-                    /* resolved method is static but called with $ this*/
-                    if (objResolvedRef instanceof Method) {
-                        final Method method  = (Method) objResolvedRef;
-                        final PhpClass clazz = method.getContainingClass();
-                        /* non-static methods and contract interfaces must not be reported */
-                        if (null == clazz || clazz.isInterface() || !method.isStatic() || method.isAbstract()) {
-                            return;
-                        }
+                if (null == psiReference || null == methodName) {
+                    return;
+                }
 
-                        /* PHP Unit's official docs saying to use $this, follow the guidance */
-                        if (RESPECT_PHPUNIT_STANDARDS && clazz.getFQN().startsWith("\\PHPUnit_Framework_")) {
-                            return;
-                        }
+                final PsiElement resolved = psiReference.resolve();
+                if (resolved instanceof Method) {
+                    final Method method  = (Method) resolved;
+                    final PhpClass clazz = method.getContainingClass();
+                    /* non-static methods and contract interfaces must not be reported */
+                    if (null == clazz || clazz.isInterface() || !method.isStatic() || method.isAbstract()) {
+                        return;
+                    }
 
-                        /* check first pattern $this->static */
-                        final PsiElement thisCandidate = reference.getFirstChild();
-                        if (thisCandidate.getText().equals("$this")) {
-                            final String message = messageThisUsed.replace("%m%", methodName);
-                            holder.registerProblem(thisCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(thisCandidate, operator));
+                    /* PHP Unit's official docs saying to use $this, follow the guidance */
+                    if (RESPECT_PHPUNIT_STANDARDS && clazz.getFQN().startsWith("\\PHPUnit_Framework_")) {
+                        return;
+                    }
 
-                            return;
-                        }
+                    /* Case 1: $this->static */
+                    final PsiElement thisCandidate = reference.getFirstChild();
+                    if (thisCandidate.getText().equals("$this")) {
+                        final String message = messageThisUsed.replace("%m%", methodName);
+                        holder.registerProblem(thisCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(thisCandidate, operator));
 
-                        /* check second pattern <expression>->static */
-                        final PsiElement objectExpression = reference.getFirstPsiChild();
-                        if (null != objectExpression && !(objectExpression instanceof FunctionReference)) {
-                            /* info: no local fix, people shall check this code */
-                            final String message = messageExpressionUsed.replace("%m%", reference.getName());
-                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                        }
+                        return;
+                    }
+
+                    /* Case 2: <expression>->static */
+                    final PsiElement objectExpression = reference.getFirstPsiChild();
+                    if (null != objectExpression && !(objectExpression instanceof FunctionReference)) {
+                        /* info: no local fix, people shall check this code */
+                        final String message = messageExpressionUsed.replace("%m%", reference.getName());
+                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                 }
             }

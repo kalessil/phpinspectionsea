@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
@@ -42,17 +41,27 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethodReference(MethodReference reference) {
+                /* Basic structure validation */
                 final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
                 if (null == operator || PhpTokenTypes.ARROW != operator.getNode().getElementType()) {
                     return;
                 }
-
                 final PsiReference psiReference = reference.getReference();
                 final String methodName         = reference.getName();
                 if (null == psiReference || null == methodName) {
                     return;
                 }
 
+                /* check contexts: $this->, <expression>-> ; placed here due to performance optimization */
+                final PsiElement thisCandidate    = reference.getFirstChild();
+                final boolean contextOfThis       = thisCandidate.getText().equals("$this");
+                final PsiElement objectExpression = contextOfThis ? null : reference.getFirstPsiChild();
+                final boolean contextOfExpression = null != objectExpression && !(objectExpression instanceof FunctionReference);
+                if (!contextOfThis && !contextOfExpression) {
+                    return;
+                }
+
+                /* now analyze: contexts are valid  */
                 final PsiElement resolved = psiReference.resolve();
                 if (resolved instanceof Method) {
                     final Method method  = (Method) resolved;
@@ -67,22 +76,17 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                         return;
                     }
 
-                    /* Case 1: $this->static */
-                    final PsiElement thisCandidate = reference.getFirstChild();
-                    if (thisCandidate.getText().equals("$this")) {
+                    /* Case 1: $this-><static method>() */
+                    if (contextOfThis) {
                         final String message = messageThisUsed.replace("%m%", methodName);
                         holder.registerProblem(thisCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(thisCandidate, operator));
 
                         return;
                     }
 
-                    /* Case 2: <expression>->static */
-                    final PsiElement objectExpression = reference.getFirstPsiChild();
-                    if (null != objectExpression && !(objectExpression instanceof FunctionReference)) {
-                        /* info: no local fix, people shall check this code */
-                        final String message = messageExpressionUsed.replace("%m%", reference.getName());
-                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                    }
+                    /* Case 2: <expression>-><static method>(); no chained calls; no QF - needs looking into cases */
+                    final String message = messageExpressionUsed.replace("%m%", reference.getName());
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }
         };

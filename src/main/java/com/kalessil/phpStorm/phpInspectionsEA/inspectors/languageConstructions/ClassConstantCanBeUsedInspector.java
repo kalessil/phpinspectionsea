@@ -39,7 +39,6 @@ import javax.swing.event.ChangeListener;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
@@ -69,13 +68,14 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpStringLiteralExpression(StringLiteralExpression expression) {
                 /* ensure selected language level supports the ::class feature*/
-                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                final Project project             = expression.getProject();
+                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
                 if (!phpVersion.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST)) {
                     return;
                 }
 
-                /* Skip certain contexts processing and strings with inline injections */
-                PsiElement parent = expression.getParent();
+                /* skip certain contexts processing and strings with inline injections */
+                final PsiElement parent = expression.getParent();
                 if (
                     parent instanceof BinaryExpression || parent instanceof SelfAssignmentExpression ||
                     null != expression.getFirstPsiChild()
@@ -83,43 +83,41 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* Process if has no inline statements and at least 3 chars long (foo, bar and etc. are not a case) */
+                /* process if has no inline statements and at least 3 chars long (foo, bar and etc. are not a case) */
                 final String contents = expression.getContents();
                 if (contents.length() > 3) {
-                    final Matcher regexMatcher = classNameRegex.matcher(contents);
-                    if (!regexMatcher.matches() || ExpressionSemanticUtil.getBlockScope(expression) instanceof PhpDocComment) {
+                    if (
+                        !classNameRegex.matcher(contents).matches() ||
+                        (-1 == contents.indexOf('\\') && contents.toLowerCase().equals(contents)) ||
+                        ExpressionSemanticUtil.getBlockScope(expression) instanceof PhpDocComment
+                    ) {
                         return;
                     }
-                    /* do not process lowercase-only strings */
-                    if (-1 == contents.indexOf('\\') && contents.toLowerCase().equals(contents)) {
-                        return;
-                    }
-
                     String normalizedContents = contents.replaceAll("\\\\\\\\", "\\\\");
 
                     /* TODO: handle __NAMESPACE__.'\Class' */
-                    final boolean isFull = normalizedContents.charAt(0) == '\\';
                     Set<String> namesToLookup = new HashSet<>();
-                    if (isFull) {
+                    if (normalizedContents.charAt(0) == '\\') {
+                        /* absolute path, starting with '\\' */
                         namesToLookup.add(normalizedContents);
                     } else {
+                        /* others, needed '\\' prefixing */
                         normalizedContents = '\\' + normalizedContents;
                         namesToLookup.add(normalizedContents);
                     }
 
                     /* if we could find an appropriate candidate and resolved the class => report (case must match) */
                     if (1 == namesToLookup.size()) {
-                        String fqnToLookup = namesToLookup.iterator().next();
-                        PhpIndex index     = PhpIndex.getInstance(expression.getProject());
-
                         /* try searching interfaces and classes for the given FQN */
+                        final String fqnToLookup     = namesToLookup.iterator().next();
+                        final PhpIndex index         = PhpIndex.getInstance(project);
                         Collection<PhpClass> classes = index.getClassesByFQN(fqnToLookup);
                         if (0 == classes.size()) {
                             classes = index.getInterfacesByFQN(fqnToLookup);
                         }
 
                         /* check resolved items */
-                        if (1 == classes.size() && classes.iterator().next().getFQN().equals(fqnToLookup)) {
+                        if (1 == classes.size() && (classes.iterator().next()).getFQN().equals(fqnToLookup)) {
                             final String message = messagePattern.replace("%c%", normalizedContents);
                             holder.registerProblem(
                                 expression, message, ProblemHighlightType.WEAK_WARNING,

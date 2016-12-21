@@ -9,7 +9,10 @@ import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import org.jetbrains.annotations.Nullable;
 
 final public class OpenapiPsiSearchUtil {
-    /* finds '::' or '->' node in a method reference and return returns corresponding type */
+    /*
+        finds '::' or '->' node in a method reference and returns it;
+        we are aware of getReferenceType method, but we need operator itself for QF-ing
+    */
     @Nullable
     public static PsiElement findResolutionOperator(@Nullable MethodReference reference) {
         if (null != reference) {

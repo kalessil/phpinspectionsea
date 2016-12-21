@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Include;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
@@ -58,8 +59,8 @@ public class UsingInclusionOnceReturnValueInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             PsiElement target = descriptor.getPsiElement();
             if (target instanceof Include) {
-                final boolean isInclude = target.getFirstChild().getText().equals("include_once");
-                final String pattern    = isInclude ? "include ''" : "require ''";
+                boolean isInclude = PhpTokenTypes.kwINCLUDE_ONCE == target.getFirstChild().getNode().getElementType();
+                String pattern    = isInclude ? "include ''" : "require ''";
 
                 PhpPsiElement replacement = PhpPsiElementFactory.createPhpPsiFromText(project, Include.class, pattern);
                 //noinspection ConstantConditions pattern hardcoded and arg is checked - safe

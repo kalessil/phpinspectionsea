@@ -34,7 +34,7 @@ import java.util.Set;
  */
 
 public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
-    private static final String messagePattern = "Variable can be static: property or 'static $%v% = [...]' (one-time compile-time initialization).";
+    private static final String messagePattern = "Variable can be static: property or 'static $%v% = [...]' (compile-time initialization).";
 
     @NotNull
     public String getShortName() {

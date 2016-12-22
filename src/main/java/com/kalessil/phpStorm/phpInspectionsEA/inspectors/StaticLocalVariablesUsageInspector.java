@@ -3,8 +3,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
@@ -108,6 +110,18 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                     /* un-set is a modification */
                     if (parent instanceof PhpUnset) {
                         return true;
+                    }
+
+                    /* when dispatched into lambda by reference, expect it's modification */
+                    if (parent instanceof PhpUseList) {
+                        PsiElement previous = expression.getPrevSibling();
+                        while (previous instanceof PsiWhiteSpace) {
+                            previous = previous.getPrevSibling();
+                        }
+                        if (null != previous && PhpTokenTypes.opBIT_AND == previous.getNode().getElementType()) {
+                            return true;
+                        }
+                        continue;
                     }
 
                     /* assignment can modify the variable */

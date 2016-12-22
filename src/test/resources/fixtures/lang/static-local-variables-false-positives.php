@@ -41,5 +41,8 @@ class SLVFalsePositives {
         $referenced = [''];
         $x = & $referenced;
         echo $x;
+
+        $usedInLambda = [''];
+        $lambda = function () use (&$usedInLambda) {};
     }
 }

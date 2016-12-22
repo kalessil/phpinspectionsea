@@ -15,3 +15,8 @@ function listUnpack () {
 
     return $a + $b;
 }
+
+function arrayAssemble () {
+    $filters = ['is_email_compatible' => 1];
+    return ['widget_filters' => $filters];
+}

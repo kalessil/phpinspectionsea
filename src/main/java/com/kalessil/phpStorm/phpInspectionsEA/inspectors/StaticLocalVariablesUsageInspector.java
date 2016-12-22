@@ -27,6 +27,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -195,11 +196,51 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                         /* is used in a function call? */
                         if (parent instanceof ParameterList) {
                             PsiElement grandParent = parent.getParent();
-                            PsiElement call        = grandParent instanceof FunctionReference ? grandParent : null;
-                            PsiElement nevv        = grandParent instanceof NewExpression ? grandParent : null;
-                            /* TODO: dispatched as parameter by reference */
+                            Function callable      = null;
+
+                            /* try resolving constructor */
+                            PsiElement nevv = grandParent instanceof NewExpression ? grandParent : null;
+                            final ClassReference ref  = null == nevv ? null : ((NewExpression) nevv).getClassReference();
+                            final PsiElement newClass = null == ref ? null : ref.resolve();
+                            if (newClass instanceof PhpClass) {
+                                callable = ((PhpClass) newClass).getConstructor();
+                            }
+
+                            /* resolve function/method reference */
+                            PsiElement call           = grandParent instanceof FunctionReference ? grandParent : null;
+                            final PsiElement function = null == call ? null : ((FunctionReference) call).resolve();
+                            if (function instanceof Function) {
+                                callable = (Function) function;
+                            }
+
+                            if (null != callable) {
+                                final Parameter[] params = callable.getParameters();
+
+                                int usedParamIndex = 0;
+                                for (PsiElement usedParam : ((ParameterList) parent).getParameters()) {
+                                    /* variadic or extra parameters */
+                                    if (usedParamIndex > params.length) {
+                                        break;
+                                    }
+
+                                    /* when param is reference, verify if we passing the value in */
+                                    if (
+                                        params[usedParamIndex].isPassByRef() &&
+                                        PsiEquivalenceUtil.areElementsEquivalent(usedParam, valueToCompareWith)
+                                    ) {
+                                        isModified = true;
+                                    }
+
+                                    ++usedParamIndex;
+                                }
+                                if (isModified) {
+                                    break;
+                                }
+                            }
+
                             continue;
                         }
+
                         if (parent instanceof ForeachStatement) {
                             /* TODO: array modification via reference values */
                             continue;

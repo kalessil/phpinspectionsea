@@ -243,7 +243,7 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
 
                     if (!isModified) {
                         final String message = messagePattern.replace("%v%", variableName);
-                        holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(variable, message, ProblemHighlightType.WEAK_WARNING);
                     }
                 }
             }

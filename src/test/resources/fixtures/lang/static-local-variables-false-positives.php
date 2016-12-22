@@ -28,6 +28,10 @@ class SLVFalsePositives {
         static $SLV = [''];
         return $SLV;
 
+        $duplicates = [''];
+        $duplicates = [''];
+        return $duplicates;
+
         $overridden = [''];
         $overridden = $x;
         return $overridden;

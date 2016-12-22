@@ -57,34 +57,8 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                 final List<Variable> candidates = this.findCandidateExpressions(body);
 
                 /* Filtering step 2: only unique variables from candidates which are not parameters */
-                final List<Variable> filteredCandidates = new ArrayList<>();
-                final Set<String> paramsNames           = new HashSet<>();
-                for (Parameter param : method.getParameters()) {
-                    paramsNames.add(param.getName());
-                }
-                final boolean hasParams = paramsNames.size() > 0;
-
-                for (Variable variable : candidates) {
-                    if (hasParams && paramsNames.contains(variable.getName())) {
-                        continue;
-                    }
-
-                    boolean isDuplicated = false;
-                    for (Variable possibleDuplicate : candidates) {
-                        if (variable != possibleDuplicate && PsiEquivalenceUtil.areElementsEquivalent(variable, possibleDuplicate)) {
-                            isDuplicated = true;
-                            break;
-                        }
-                    }
-                    if (isDuplicated) {
-                        continue;
-                    }
-
-                    filteredCandidates.add(variable);
-                }
-                paramsNames.clear();
+                final List<Variable> filteredCandidates = this.filterDuplicatesAndParameters(candidates, method);
                 candidates.clear();
-
 
                 /* Analysis itself (sub-routine): variable is used in read context, no dispatching by reference */
                 final PhpEntryPointInstruction start = method.getControlFlow().getEntryPoint();
@@ -254,6 +228,39 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                 found.clear();
 
                 return candidates;
+            }
+
+            @NotNull
+            private List<Variable> filterDuplicatesAndParameters(@NotNull List<Variable> candidates, @NotNull Method method) {
+                final List<Variable> filteredCandidates = new ArrayList<>();
+
+                final Set<String> paramsNames = new HashSet<>();
+                for (Parameter param : method.getParameters()) {
+                    paramsNames.add(param.getName());
+                }
+                final boolean hasParams = paramsNames.size() > 0;
+
+                for (Variable variable : candidates) {
+                    if (hasParams && paramsNames.contains(variable.getName())) {
+                        continue;
+                    }
+
+                    boolean isDuplicated = false;
+                    for (Variable possibleDuplicate : candidates) {
+                        if (variable != possibleDuplicate && PsiEquivalenceUtil.areElementsEquivalent(variable, possibleDuplicate)) {
+                            isDuplicated = true;
+                            break;
+                        }
+                    }
+                    if (isDuplicated) {
+                        continue;
+                    }
+
+                    filteredCandidates.add(variable);
+                }
+                paramsNames.clear();
+
+                return filteredCandidates;
             }
         };
     }

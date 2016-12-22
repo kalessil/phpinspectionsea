@@ -1,14 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors;
 
-/*
- * This file is part of the Php Inspections (EA Extended) package.
- *
- * (c) Vladimir Reznichenko <kalessil@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -27,15 +18,23 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
-    private static final String messagePattern = "'static $%v% = [...]' can be used here";
+    private static final String messagePattern = "Variable can be static: property or 'static $%v% = [...]' (one-time compile-time initialization).";
 
     @NotNull
     public String getShortName() {
@@ -219,7 +218,7 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                                 int usedParamIndex = 0;
                                 for (PsiElement usedParam : ((ParameterList) parent).getParameters()) {
                                     /* variadic or extra parameters */
-                                    if (usedParamIndex > params.length) {
+                                    if (0 == params.length || usedParamIndex > params.length) {
                                         break;
                                     }
 

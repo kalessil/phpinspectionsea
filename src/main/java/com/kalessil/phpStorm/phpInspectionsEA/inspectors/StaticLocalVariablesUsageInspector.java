@@ -192,7 +192,7 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                             continue;
                         }
 
-                        /* is used in a function call? */
+                        /* variable can be dispatched into method/function/constructor by reference */
                         if (parent instanceof ParameterList) {
                             PsiElement grandParent = parent.getParent();
                             Function callable      = null;

@@ -154,25 +154,29 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                             callable = (Function) function;
                         }
 
-                        if (null != callable) {
-                            final Parameter[] params = callable.getParameters();
-                            int usedParamIndex       = 0;
-                            for (PsiElement usedParam : ((ParameterList) parent).getParameters()) {
-                                /* variadic or extra parameters */
-                                if (0 == params.length || usedParamIndex > params.length) {
-                                    break;
-                                }
+                        /* if not resolved, everything can happen incl. referenced parameter */
+                        if (null == callable) {
+                            return true;
+                        }
 
-                                /* when param is reference, verify if we passing the value in */
-                                if (
-                                    params[usedParamIndex].isPassByRef() &&
-                                    PsiEquivalenceUtil.areElementsEquivalent(usedParam, valueToCompareWith)
-                                ) {
-                                    return true;
-                                }
-
-                                ++usedParamIndex;
+                        /* when resolved, inspect parameters and check if the value dispatched by ref */
+                        final Parameter[] params = callable.getParameters();
+                        int usedParamIndex       = 0;
+                        for (PsiElement usedParam : ((ParameterList) parent).getParameters()) {
+                            /* variadic or extra parameters */
+                            if (0 == params.length || usedParamIndex > params.length) {
+                                break;
                             }
+
+                            /* when param is reference, verify if we passing the value in */
+                            if (
+                                params[usedParamIndex].isPassByRef() &&
+                                PsiEquivalenceUtil.areElementsEquivalent(usedParam, valueToCompareWith)
+                            ) {
+                                return true;
+                            }
+
+                            ++usedParamIndex;
                         }
                         // continue;
                     }

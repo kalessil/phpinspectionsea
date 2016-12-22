@@ -1,10 +1,8 @@
 <?php
 
-class SLVRefClass {
-    public function __construct(& $param) {}
-}
-
 class SLVFalsePositives {
+   public function __construct(& $param) {}
+
    public function params ($param) {
         $param = [''];
         return $param;
@@ -15,7 +13,7 @@ class SLVFalsePositives {
         echo $this->ref($passedByRef);
 
         $construct = [''];
-        $obj = new SLVRefClass($construct);
+        $obj = new SLVFalsePositives($construct);
     }
 
     public function func ($x) {

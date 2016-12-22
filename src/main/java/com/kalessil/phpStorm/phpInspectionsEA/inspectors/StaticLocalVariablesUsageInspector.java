@@ -229,6 +229,7 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                                         PsiEquivalenceUtil.areElementsEquivalent(usedParam, valueToCompareWith)
                                     ) {
                                         isModified = true;
+                                        break;
                                     }
 
                                     ++usedParamIndex;
@@ -237,13 +238,7 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                                     break;
                                 }
                             }
-
-                            continue;
-                        }
-
-                        if (parent instanceof ForeachStatement) {
-                            /* TODO: array modification via reference values */
-                            continue;
+                            // continue;
                         }
                     }
 

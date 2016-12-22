@@ -19,6 +19,7 @@ import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.PhpPsiElementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -128,28 +129,69 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                 for (Variable variable : filteredCandidates) {
                     final String variableName = variable.getName();
                     uses = PhpControlFlowUtil.getFollowingVariableAccessInstructions(start, variableName, false);
-                    if (uses.length > 1) { // definition + at least 1 usage expected
+                    if (uses.length < 2) { // definition + at least 1 usage expected
                         continue;
                     }
 
                     boolean isModified = false;
                     for (PhpAccessVariableInstruction instruction : uses) {
                         final PhpPsiElement expression = instruction.getAnchor();
-                        final PsiElement parent        = expression.getParent();
-                        if (variable != expression && parent instanceof AssignmentExpression) {
-                            if (expression == ((AssignmentExpression) parent).getValue()) {
-                                continue;
-                            }
-
-                            isModified = true;
+                        if (expression == variable) { // we started with it already
+                            continue;
                         }
 
-                        /* TODO: array access, array_* functions */
+                        /* get reasonable parent and container for modification checks */
+                        PsiElement valueToCompareWith = expression;
+                        PsiElement parent             = expression.getParent();
+                        while (
+                            parent instanceof ArrayAccessExpression || parent instanceof ArrayCreationExpression || parent instanceof ArrayHashElement ||
+                            (parent instanceof PhpPsiElementImpl &&
+                                    (parent.getParent() instanceof ArrayCreationExpression || parent.getParent() instanceof ArrayHashElement)
+                            )
+                        ) {
+                            valueToCompareWith = parent;
+                            parent             = parent.getParent();
+                        }
+
+                        /* is unset ? */
+                        if (parent instanceof PhpUnset) {
+                            isModified = true;
+                            continue; // => break;
+                        }
+                        /* is reassigned ? */
+                        if (parent instanceof AssignmentExpression) {
+                            /* TODO: assignment by reference in both sides */
+                            if (valueToCompareWith != ((AssignmentExpression) parent).getValue()) {
+                                isModified = true;
+                                // => break;
+                            }
+                            continue;
+                        }
+                        /* is used in a function call? */
+                        if (parent instanceof ParameterList && parent.getParent() instanceof FunctionReference) {
+                            /* TODO: dispatched as parameter by reference */
+                            continue;
+                        }
+                        if (parent instanceof ForeachStatement) {
+                            /* TODO: array modification via reference values */
+                            continue;
+                        }
+
+
+                        // evaluating contexts, skipped to catch all constructions
+                        if (
+                            parent instanceof PhpIsset || parent instanceof PhpEmpty || parent instanceof PhpReturn ||
+                            parent instanceof If || parent instanceof ElseIf ||
+                            parent instanceof BinaryExpression || parent instanceof TernaryExpression || parent instanceof UnaryExpression
+                        ) {
+                            continue;
+                        }
+holder.registerProblem(expression, "not analysed, parent is " + parent.getClass().getCanonicalName(), ProblemHighlightType.LIKE_DEPRECATED);
                     }
 
                     if (!isModified) {
-                        final String message = messagePattern.replace("%v%", variableName);
-                        holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+//                        final String message = messagePattern.replace("%v%", variableName);
+//                        holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                 }
             }

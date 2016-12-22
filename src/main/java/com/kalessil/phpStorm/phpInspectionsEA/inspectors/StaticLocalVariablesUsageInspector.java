@@ -128,7 +128,7 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                 for (Variable variable : filteredCandidates) {
                     final String variableName = variable.getName();
                     uses = PhpControlFlowUtil.getFollowingVariableAccessInstructions(start, variableName, false);
-                    if (uses.length < 2) { // definition + at least 1 usage expected
+                    if (uses.length > 1) { // definition + at least 1 usage expected
                         continue;
                     }
 

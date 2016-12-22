@@ -19,10 +19,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -57,42 +54,7 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                 }
 
                 /* Filtering step 1: variables assigned with array without dynamic parts */
-                final List<Variable> candidates = new ArrayList<>();
-                for (AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
-                    /* check if a variable has been assigned a non-empty array and not yet static */
-                    final PhpPsiElement variable = expression.getVariable();
-                    final PhpPsiElement value    = expression.getValue();
-                    if (
-                        !(variable instanceof Variable) || !(value instanceof ArrayCreationExpression) ||
-                        null == value.getFirstPsiChild() ||                     // an empty array
-                        expression.getParent() instanceof PhpStaticStatement || // already static
-                        !OpenapiTypesUtil.isAssignment(expression)              // filter openapi classes
-                    ) {
-                        continue;
-                    }
-
-                    /* analyze injections, ensure that only static content used */
-                    boolean canBeStatic = true;
-                    for (PhpReference injection : PsiTreeUtil.findChildrenOfType(value, PhpReference.class)) {
-                        if (
-                            injection instanceof ConstantReference ||
-                            injection instanceof ClassConstantReference ||
-                            injection instanceof ArrayCreationExpression    // un-expected, but as it is
-                        ) {
-                            continue;
-                        }
-
-                        canBeStatic = false;
-                        break;
-                    }
-                    if (!canBeStatic) {
-                        continue;
-                    }
-
-                    /* store a variable, uniqueness is not checked here */
-                    candidates.add((Variable) variable);
-                }
-
+                final List<Variable> candidates = this.findCandidateExpressions(body);
 
                 /* Filtering step 2: only unique variables from candidates which are not parameters */
                 final List<Variable> filteredCandidates = new ArrayList<>();
@@ -246,6 +208,52 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                         holder.registerProblem(variable, message, ProblemHighlightType.WEAK_WARNING);
                     }
                 }
+            }
+
+            @NotNull
+            private List<Variable> findCandidateExpressions(@NotNull GroupStatement body) {
+                final List<Variable> candidates = new ArrayList<>();
+
+                Collection<AssignmentExpression> found = PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class);
+                for (AssignmentExpression expression : found) {
+                    /* check if a variable has been assigned a non-empty array and not yet static */
+                    final PhpPsiElement variable = expression.getVariable();
+                    final PhpPsiElement value    = expression.getValue();
+                    if (
+                        !(variable instanceof Variable) || !(value instanceof ArrayCreationExpression) ||
+                        null == value.getFirstPsiChild() ||                     // an empty array
+                        expression.getParent() instanceof PhpStaticStatement || // already static
+                        !OpenapiTypesUtil.isAssignment(expression)              // filter openapi classes
+                    ) {
+                        continue;
+                    }
+
+                    /* analyze injections, ensure that only static content used */
+                    boolean canBeStatic = true;
+                    Collection<PhpReference> injected = PsiTreeUtil.findChildrenOfType(value, PhpReference.class);
+                    for (PhpReference injection : injected) {
+                        if (
+                            injection instanceof ConstantReference ||
+                            injection instanceof ClassConstantReference ||
+                            injection instanceof ArrayCreationExpression    // un-expected, but as it is
+                        ) {
+                            continue;
+                        }
+
+                        canBeStatic = false;
+                        break;
+                    }
+                    injected.clear();
+                    if (!canBeStatic) {
+                        continue;
+                    }
+
+                    /* store a variable, uniqueness is not checked here */
+                    candidates.add((Variable) variable);
+                }
+                found.clear();
+
+                return candidates;
             }
         };
     }

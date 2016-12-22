@@ -9,8 +9,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors;
  * file that was distributed with this source code.
  */
 
+import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -22,7 +24,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class StaticLocalVariableInspector extends BasePhpInspection {
 
@@ -78,13 +82,39 @@ public class StaticLocalVariableInspector extends BasePhpInspection {
 
                     /* store a variable, uniqueness is not checked here */
                     candidates.add((Variable) variable);
-holder.registerProblem(variable, "static candidate", ProblemHighlightType.LIKE_DEPRECATED);
                 }
+
+
+                /* Filtering step 2: only unique variables from candidates which are not parameters */
+                final List<Variable> filteredCandidates = new ArrayList<>();
+                final Set<String> paramsNames           = new HashSet<>();
+                for (Parameter param : method.getParameters()) {
+                    paramsNames.add(param.getName());
+                }
+                for (Variable variable : candidates) {
+                    if (paramsNames.contains(variable.getName())) {
+                        continue;
+                    }
+
+                    boolean isDuplicated = false;
+                    for (Variable possibleDuplicate : candidates) {
+                        if (variable != possibleDuplicate && PsiEquivalenceUtil.areElementsEquivalent(variable, possibleDuplicate)) {
+                            isDuplicated = true;
+                            break;
+                        }
+                    }
+                    if (isDuplicated) {
+                        continue;
+                    }
+
+                    filteredCandidates.add(variable);
+                }
+                paramsNames.clear();
+                candidates.clear();
+
+
+                /* Analysis itself (sub-routine): variable is used in read context, no dispatching by reference */
             }
-
-            /* Filtering step 2: only unique variables from candidates which are not parameters and not in use-list */
-
-            /* Analysis itself (sub-routine): variable is used in read context, no dispatching by reference */
         };
     }
 }

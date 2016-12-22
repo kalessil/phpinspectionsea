@@ -53,135 +53,132 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* Filtering step 1: variables assigned with array without dynamic parts */
+                /* filtering step 1: variables assigned with array without dynamic parts */
                 final List<Variable> candidates = this.findCandidateExpressions(body);
 
-                /* Filtering step 2: only unique variables from candidates which are not parameters */
+                /* filtering step 2: only unique variables from candidates which are not parameters */
                 final List<Variable> filteredCandidates = this.filterDuplicatesAndParameters(candidates, method);
                 candidates.clear();
 
-                /* Analysis itself (sub-routine): variable is used in read context, no dispatching by reference */
+                /* analysis itself: variable is used in read context, without modification opportunities */
                 final PhpEntryPointInstruction start = method.getControlFlow().getEntryPoint();
-                PhpAccessVariableInstruction[] uses;
                 for (Variable variable : filteredCandidates) {
-                    final String variableName = variable.getName();
-                    uses = PhpControlFlowUtil.getFollowingVariableAccessInstructions(start, variableName, false);
-                    if (uses.length < 2) { // definition + at least 1 usage expected
+                    if (this.canBeModified(variable, start)) {
                         continue;
                     }
 
-                    boolean isModified = false;
-                    for (PhpAccessVariableInstruction instruction : uses) {
-                        /* do not process variables, which we already identified */
-                        final PhpPsiElement expression = instruction.getAnchor();
-                        if (expression == variable) {
-                            continue;
-                        }
+                    final String message = messagePattern.replace("%v%", variable.getName());
+                    holder.registerProblem(variable, message, ProblemHighlightType.WEAK_WARNING);
+                }
+                filteredCandidates.clear();
+            }
 
-                        /* get reasonable parent and container for modification checks */
-                        PsiElement valueToCompareWith = expression;
-                        PsiElement parent             = expression.getParent();
-                        while (
-                            /* TODO: make this nice */
-                            parent instanceof ArrayAccessExpression || parent instanceof ArrayCreationExpression || parent instanceof ArrayHashElement ||
-                            (parent instanceof PhpPsiElementImpl &&
-                                    (parent.getParent() instanceof ArrayCreationExpression || parent.getParent() instanceof ArrayHashElement)
-                            )
-                        ) {
-                            valueToCompareWith = parent;
-                            parent             = parent.getParent();
-                        }
+            private boolean canBeModified(@NotNull Variable variable, @NotNull PhpEntryPointInstruction start) {
+                final PhpAccessVariableInstruction[] uses =
+                        PhpControlFlowUtil.getFollowingVariableAccessInstructions(start, variable.getName(), false);
+                /* definition + at least 1 usage required for invoking the analysis */
+                if (uses.length < 2) {
+                    return false;
+                }
 
-                        /* un-set is a modification */
-                        if (parent instanceof PhpUnset) {
-                            isModified = true;
-                            break;
-                        }
-
-                        /* assignment can modify the variable */
-                        if (parent instanceof AssignmentExpression) {
-                            final AssignmentExpression assign    = (AssignmentExpression) parent;
-                            final PhpPsiElement assignedValue    = assign.getValue();
-                            final PhpPsiElement assignedVariable = assign.getVariable();
-                            if (null == assignedVariable || null == assignedValue) {
-                                continue;
-                            }
-
-                            /* assign by reference will be treated as modifiable */
-                            PsiElement refCandidate = assignedVariable.getNextSibling();
-                            while (refCandidate != assignedValue) {
-                                if (PhpTokenTypes.opBIT_AND == refCandidate.getNode().getElementType()) {
-                                    isModified = true;
-                                    break;
-                                }
-                                refCandidate = refCandidate.getNextSibling();
-                            }
-                            if (isModified) {
-                                break;
-                            }
-
-                            /* case when we are writing into the variable */
-                            if (valueToCompareWith != assignedValue) {
-                                isModified = true;
-                                break;
-                            }
-                            continue;
-                        }
-
-                        /* variable can be dispatched into method/function/constructor by reference */
-                        if (parent instanceof ParameterList) {
-                            PsiElement grandParent = parent.getParent();
-                            Function callable      = null;
-
-                            /* try resolving constructor */
-                            PsiElement nevv = grandParent instanceof NewExpression ? grandParent : null;
-                            final ClassReference ref  = null == nevv ? null : ((NewExpression) nevv).getClassReference();
-                            final PsiElement newClass = null == ref ? null : ref.resolve();
-                            if (newClass instanceof PhpClass) {
-                                callable = ((PhpClass) newClass).getConstructor();
-                            }
-
-                            /* resolve function/method reference */
-                            PsiElement call           = grandParent instanceof FunctionReference ? grandParent : null;
-                            final PsiElement function = null == call ? null : ((FunctionReference) call).resolve();
-                            if (function instanceof Function) {
-                                callable = (Function) function;
-                            }
-
-                            if (null != callable) {
-                                final Parameter[] params = callable.getParameters();
-
-                                int usedParamIndex = 0;
-                                for (PsiElement usedParam : ((ParameterList) parent).getParameters()) {
-                                    /* variadic or extra parameters */
-                                    if (0 == params.length || usedParamIndex > params.length) {
-                                        break;
-                                    }
-
-                                    /* when param is reference, verify if we passing the value in */
-                                    if (
-                                        params[usedParamIndex].isPassByRef() &&
-                                        PsiEquivalenceUtil.areElementsEquivalent(usedParam, valueToCompareWith)
-                                    ) {
-                                        isModified = true;
-                                        break;
-                                    }
-
-                                    ++usedParamIndex;
-                                }
-                                if (isModified) {
-                                    break;
-                                }
-                            }
-                            // continue;
-                        }
+                for (PhpAccessVariableInstruction instruction : uses) {
+                    /* do not process variables, which we already identified */
+                    final PhpPsiElement expression = instruction.getAnchor();
+                    if (expression == variable) {
+                        continue;
                     }
 
-                    if (!isModified) {
-                        final String message = messagePattern.replace("%v%", variableName);
-                        holder.registerProblem(variable, message, ProblemHighlightType.WEAK_WARNING);
+                    /* get reasonable parent and container for modification checks */
+                    PsiElement valueToCompareWith = expression;
+                    PsiElement parent             = expression.getParent();
+                    while (
+                        parent instanceof ArrayAccessExpression ||
+                        parent instanceof ArrayCreationExpression || parent instanceof ArrayHashElement ||
+                        (parent instanceof PhpPsiElementImpl && (
+                            parent.getParent() instanceof ArrayCreationExpression ||
+                            parent.getParent() instanceof ArrayHashElement
+                            )
+                        )
+                    ) {
+                        valueToCompareWith = parent;
+                        parent             = parent.getParent();
+                    }
+
+                    /* un-set is a modification */
+                    if (parent instanceof PhpUnset) {
+                        return true;
+                    }
+
+                    /* assignment can modify the variable */
+                    if (parent instanceof AssignmentExpression) {
+                        final AssignmentExpression assign    = (AssignmentExpression) parent;
+                        final PhpPsiElement assignedValue    = assign.getValue();
+                        final PhpPsiElement assignedVariable = assign.getVariable();
+                        if (null == assignedVariable || null == assignedValue) {
+                            continue;
+                        }
+
+                        /* assign by reference will be treated as modifiable */
+                        PsiElement refCandidate = assignedVariable.getNextSibling();
+                        while (refCandidate != assignedValue) {
+                            if (PhpTokenTypes.opBIT_AND == refCandidate.getNode().getElementType()) {
+                                return true;
+                            }
+                            refCandidate = refCandidate.getNextSibling();
+                        }
+
+                        /* case when we are writing into the variable */
+                        if (valueToCompareWith != assignedValue) {
+                            return true;
+                        }
+                        continue;
+                    }
+
+                    /* variable can be dispatched into method/function/constructor by reference */
+                    if (parent instanceof ParameterList) {
+                        PsiElement grandParent = parent.getParent();
+                        Function callable      = null;
+
+                        /* try resolving constructor */
+                        PsiElement nevv           = grandParent instanceof NewExpression ? grandParent : null;
+                        final ClassReference ref  = null == nevv ? null : ((NewExpression) nevv).getClassReference();
+                        final PsiElement newClass = null == ref ? null : ref.resolve();
+                        if (newClass instanceof PhpClass) {
+                            callable = ((PhpClass) newClass).getConstructor();
+                        }
+
+                        /* resolve function/method reference */
+                        PsiElement call           = grandParent instanceof FunctionReference ? grandParent : null;
+                        final PsiElement function = null == call ? null : ((FunctionReference) call).resolve();
+                        if (function instanceof Function) {
+                            callable = (Function) function;
+                        }
+
+                        if (null != callable) {
+                            final Parameter[] params = callable.getParameters();
+                            int usedParamIndex       = 0;
+                            for (PsiElement usedParam : ((ParameterList) parent).getParameters()) {
+                                /* variadic or extra parameters */
+                                if (0 == params.length || usedParamIndex > params.length) {
+                                    break;
+                                }
+
+                                /* when param is reference, verify if we passing the value in */
+                                if (
+                                    params[usedParamIndex].isPassByRef() &&
+                                    PsiEquivalenceUtil.areElementsEquivalent(usedParam, valueToCompareWith)
+                                ) {
+                                    return true;
+                                }
+
+                                ++usedParamIndex;
+                            }
+                        }
+                        // continue;
                     }
                 }
+
+                return false;
             }
 
             @NotNull

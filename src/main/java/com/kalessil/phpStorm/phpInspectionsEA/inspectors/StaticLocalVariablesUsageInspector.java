@@ -18,6 +18,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.PhpPsiElementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -135,8 +136,9 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
 
                     boolean isModified = false;
                     for (PhpAccessVariableInstruction instruction : uses) {
+                        /* do not process variables, which we already identified */
                         final PhpPsiElement expression = instruction.getAnchor();
-                        if (expression == variable) { // we started with it already
+                        if (expression == variable) {
                             continue;
                         }
 
@@ -144,6 +146,7 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                         PsiElement valueToCompareWith = expression;
                         PsiElement parent             = expression.getParent();
                         while (
+                            /* TODO: make this nice */
                             parent instanceof ArrayAccessExpression || parent instanceof ArrayCreationExpression || parent instanceof ArrayHashElement ||
                             (parent instanceof PhpPsiElementImpl &&
                                     (parent.getParent() instanceof ArrayCreationExpression || parent.getParent() instanceof ArrayHashElement)
@@ -153,22 +156,47 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                             parent             = parent.getParent();
                         }
 
-                        /* is unset ? */
+                        /* un-set is a modification */
                         if (parent instanceof PhpUnset) {
                             isModified = true;
-                            continue; // => break;
+                            break;
                         }
-                        /* is reassigned ? */
+
+                        /* assignment can modify the variable */
                         if (parent instanceof AssignmentExpression) {
-                            /* TODO: assignment by reference in both sides */
-                            if (valueToCompareWith != ((AssignmentExpression) parent).getValue()) {
+                            final AssignmentExpression assign    = (AssignmentExpression) parent;
+                            final PhpPsiElement assignedValue    = assign.getValue();
+                            final PhpPsiElement assignedVariable = assign.getVariable();
+                            if (null == assignedVariable || null == assignedValue) {
+                                continue;
+                            }
+
+                            /* assign by reference will be treated as modifiable */
+                            PsiElement refCandidate = assignedVariable.getNextSibling();
+                            while (refCandidate != assignedValue) {
+                                if (PhpTokenTypes.opBIT_AND == refCandidate.getNode().getElementType()) {
+                                    isModified = true;
+                                    break;
+                                }
+                                refCandidate = refCandidate.getNextSibling();
+                            }
+                            if (isModified) {
+                                break;
+                            }
+
+                            /* case when we are writing into the variable */
+                            if (valueToCompareWith != assignedValue) {
                                 isModified = true;
-                                // => break;
+                                break;
                             }
                             continue;
                         }
+
                         /* is used in a function call? */
-                        if (parent instanceof ParameterList && parent.getParent() instanceof FunctionReference) {
+                        if (parent instanceof ParameterList) {
+                            PsiElement grandParent = parent.getParent();
+                            PsiElement call        = grandParent instanceof FunctionReference ? grandParent : null;
+                            PsiElement nevv        = grandParent instanceof NewExpression ? grandParent : null;
                             /* TODO: dispatched as parameter by reference */
                             continue;
                         }
@@ -176,22 +204,11 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                             /* TODO: array modification via reference values */
                             continue;
                         }
-
-
-                        // evaluating contexts, skipped to catch all constructions
-                        if (
-                            parent instanceof PhpIsset || parent instanceof PhpEmpty || parent instanceof PhpReturn ||
-                            parent instanceof If || parent instanceof ElseIf ||
-                            parent instanceof BinaryExpression || parent instanceof TernaryExpression || parent instanceof UnaryExpression
-                        ) {
-                            continue;
-                        }
-holder.registerProblem(expression, "not analysed, parent is " + parent.getClass().getCanonicalName(), ProblemHighlightType.LIKE_DEPRECATED);
                     }
 
                     if (!isModified) {
-//                        final String message = messagePattern.replace("%v%", variableName);
-//                        holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        final String message = messagePattern.replace("%v%", variableName);
+                        holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                 }
             }

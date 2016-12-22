@@ -10,9 +10,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors;
  */
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -53,12 +51,14 @@ public class StaticLocalVariableInspector extends BasePhpInspection {
                 /* Filtering step 1: variables assigned with array without dynamic parts */
                 final List<Variable> candidates = new ArrayList<>();
                 for (AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
-                    /* check if a variable has been assigned a non-empty array */
+                    /* check if a variable has been assigned a non-empty array and not yet static */
                     final PhpPsiElement variable = expression.getVariable();
                     final PhpPsiElement value    = expression.getValue();
                     if (
                         !(variable instanceof Variable) || !(value instanceof ArrayCreationExpression) ||
-                        !OpenapiTypesUtil.isAssignment(expression) || null == value.getFirstPsiChild()
+                        null == value.getFirstPsiChild() ||                     // an empty array
+                        expression.getParent() instanceof PhpStaticStatement || // already static
+                        !OpenapiTypesUtil.isAssignment(expression)              // filter openapi classes
                     ) {
                         continue;
                     }
@@ -67,8 +67,9 @@ public class StaticLocalVariableInspector extends BasePhpInspection {
                     boolean canBeStatic = true;
                     for (PhpReference injection : PsiTreeUtil.findChildrenOfType(value, PhpReference.class)) {
                         if (
-                            injection instanceof ConstantReference || injection instanceof ClassConstantReference ||
-                            injection instanceof ArrayCreationExpression
+                            injection instanceof ConstantReference ||
+                            injection instanceof ClassConstantReference ||
+                            injection instanceof ArrayCreationExpression    // un-expected, but as it is
                         ) {
                             continue;
                         }

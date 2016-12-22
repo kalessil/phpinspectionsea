@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
@@ -121,8 +122,12 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                         /* assign by reference will be treated as modifiable */
                         PsiElement refCandidate = assignedVariable.getNextSibling();
                         while (refCandidate != assignedValue) {
-                            if (PhpTokenTypes.opBIT_AND == refCandidate.getNode().getElementType()) {
-                                return true;
+                            final IElementType type = refCandidate.getNode().getElementType();
+                            if (PhpTokenTypes.opASGN == type) {
+                                final String operator = refCandidate.getText().replaceAll("\\s", "");
+                                if (operator.equals("=&")) {
+                                    return true;
+                                }
                             }
                             refCandidate = refCandidate.getNextSibling();
                         }

@@ -12,7 +12,7 @@ class SLVFalsePositives {
 
     private function ref (&$ref) {
         $passedByRef = [''];
-        return $this->ref($passedByRef);
+        echo $this->ref($passedByRef);
 
         $construct = [''];
         $obj = new SLVRefClass($construct);
@@ -20,28 +20,28 @@ class SLVFalsePositives {
 
     public function func ($x) {
         $empty = [];
-        return $empty;
+        echo $empty;
 
         $withInjections = [$x];
-        return $withInjections;
+        echo $withInjections;
 
         static $SLV = [''];
-        return $SLV;
+        echo $SLV;
 
         $duplicates = [''];
         $duplicates = [''];
-        return $duplicates;
+        echo $duplicates;
 
         $overridden = [''];
         $overridden = $x;
-        return $overridden;
+        echo $overridden;
 
         $unset = [''];
         unset($unset[0], $unset[0]);
-        return $overridden;
+        echo $overridden;
 
         $referenced = [''];
-        $x = &$referenced;
-        return $x;
+        $x = & $referenced;
+        echo $x;
     }
 }

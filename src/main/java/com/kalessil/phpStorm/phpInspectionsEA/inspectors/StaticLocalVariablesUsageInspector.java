@@ -98,8 +98,10 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                 for (Parameter param : method.getParameters()) {
                     paramsNames.add(param.getName());
                 }
+                final boolean hasParams = paramsNames.size() > 0;
+
                 for (Variable variable : candidates) {
-                    if (paramsNames.contains(variable.getName())) {
+                    if (hasParams && paramsNames.contains(variable.getName())) {
                         continue;
                     }
 

@@ -10,9 +10,14 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors;
  */
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
+import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
+import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -26,11 +31,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class StaticLocalVariableInspector extends BasePhpInspection {
+public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
+    private static final String messagePattern = "'static $%v% = [...]' can be used here";
 
     @NotNull
     public String getShortName() {
-        return "StaticLocalVariableInspection";
+        return "StaticLocalVariablesUsageInspection";
     }
 
     @Override
@@ -115,6 +121,35 @@ public class StaticLocalVariableInspector extends BasePhpInspection {
 
 
                 /* Analysis itself (sub-routine): variable is used in read context, no dispatching by reference */
+                final PhpEntryPointInstruction start = method.getControlFlow().getEntryPoint();
+                PhpAccessVariableInstruction[] uses;
+                for (Variable variable : filteredCandidates) {
+                    final String variableName = variable.getName();
+                    uses = PhpControlFlowUtil.getFollowingVariableAccessInstructions(start, variableName, false);
+                    if (uses.length < 2) { // definition + at least 1 usage expected
+                        continue;
+                    }
+
+                    boolean isModified = false;
+                    for (PhpAccessVariableInstruction instruction : uses) {
+                        final PhpPsiElement expression = instruction.getAnchor();
+                        final PsiElement parent        = expression.getParent();
+                        if (variable != expression && parent instanceof AssignmentExpression) {
+                            if (expression == ((AssignmentExpression) parent).getValue()) {
+                                continue;
+                            }
+
+                            isModified = true;
+                        }
+
+                        /* TODO: array access, array_* functions */
+                    }
+
+                    if (!isModified) {
+                        final String message = messagePattern.replace("%v%", variableName);
+                        holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    }
+                }
             }
         };
     }

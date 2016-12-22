@@ -159,6 +159,10 @@ Improvements and new inspections (support us by donating via <a href="https://ww
         shortName="StrtotimeUsageInspection"                      displayName="'strtotime(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrtotimeUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="StaticLocalVariablesUsageInspection"           displayName="Static local variables usage"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.StaticLocalVariablesUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

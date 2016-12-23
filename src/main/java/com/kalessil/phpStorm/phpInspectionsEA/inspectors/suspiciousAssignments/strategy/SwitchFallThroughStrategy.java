@@ -111,6 +111,7 @@ final public class SwitchFallThroughStrategy {
                 last instanceof PhpReturn ||
                 last instanceof PhpContinue ||
                 last instanceof PhpThrow ||
+                (last instanceof Statement && last.getFirstChild() instanceof PhpExit) ||
                 last instanceof PhpGoto
             ) {
                 written.clear();

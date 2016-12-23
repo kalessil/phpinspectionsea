@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.S
 
 final public class SuspiciousAssignmentsInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.configureByFile("fixtures/pitfalls/suspicious-assignments.php");
+        myFixture.configureByFile("fixtures/pitfalls/suspicious-assignments-switch.php");
         myFixture.enableInspections(SuspiciousAssignmentsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }

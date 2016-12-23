@@ -183,7 +183,7 @@ public class StaticLocalVariablesUsageInspector extends BasePhpInspection {
                         int usedParamIndex       = 0;
                         for (PsiElement usedParam : ((ParameterList) parent).getParameters()) {
                             /* variadic or extra parameters */
-                            if (0 == params.length || usedParamIndex > params.length) {
+                            if (0 == params.length || usedParamIndex >= params.length) {
                                 break;
                             }
 

@@ -12,8 +12,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 final public class SwitchFallThroughStrategy {
-    private static final String message = "Overrides value from a preceding case (perhaps break is missing there)";
+    private static final String message = "Overrides value from a preceding case (perhaps a 'break' is missing there)";
 
     static public void apply(@NotNull final PhpSwitch switchStatement, @NotNull final ProblemsHolder holder) {
         final List<PsiElement> written = new ArrayList<>();
@@ -52,6 +61,7 @@ final public class SwitchFallThroughStrategy {
                 if (OpenapiTypesUtil.isAssignment(expression)) {
                     final PsiElement variable = ((AssignmentExpression) expression).getVariable();
                     if (null != variable) {
+                        /* do not process []= operations */
                         if (variable instanceof ArrayAccessExpression) {
                             final ArrayIndex index = ((ArrayAccessExpression) variable).getIndex();
                             if (null == index || null == index.getValue()) {

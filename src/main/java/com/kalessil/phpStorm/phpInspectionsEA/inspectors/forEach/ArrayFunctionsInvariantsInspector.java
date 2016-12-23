@@ -12,8 +12,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class ArrayFunctionsInvariantsInspector extends BasePhpInspection {
-    private static final String strUseArrayFill    = "'array_fill(...)' should be used instead";
-    private static final String strUseArrayReplace = "'array_replace(...)' should be used instead";
+    private static final String messageArrayFill    = "'array_fill(...)' should be used instead";
+    private static final String messageArrayReplace = "'array_replace(...)' should be used instead";
 
     @NotNull
     public String getShortName() {
@@ -53,9 +53,9 @@ public class ArrayFunctionsInvariantsInspector extends BasePhpInspection {
                     if (isArrayReplaceInvariant(assign, key, value)) {
                         // TODO: same, but array_flip
                         // TODO: resolve source type, report only arrays
-                        holder.registerProblem(foreach.getFirstChild(), strUseArrayReplace, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(foreach.getFirstChild(), messageArrayReplace, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     } else if (isArrayFillInvariant(assign, key, value)) {
-                        holder.registerProblem(foreach.getFirstChild(), strUseArrayFill, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(foreach.getFirstChild(), messageArrayFill, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
 
                 }

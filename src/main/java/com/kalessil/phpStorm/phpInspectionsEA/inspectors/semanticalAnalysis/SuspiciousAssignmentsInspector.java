@@ -108,7 +108,13 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
 
                     /* once break/return met, clean the written expressions out */
                     final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
-                    if (last instanceof PhpBreak || last instanceof PhpReturn || last instanceof PhpGoto) {
+                    if (
+                        last instanceof PhpBreak ||
+                        last instanceof PhpReturn ||
+                        last instanceof PhpContinue ||
+                        last instanceof PhpThrow ||
+                        last instanceof PhpGoto
+                    ) {
                         written.clear();
                         // continue;
                     }

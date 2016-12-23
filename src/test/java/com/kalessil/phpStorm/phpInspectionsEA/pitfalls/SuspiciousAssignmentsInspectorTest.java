@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.pitfalls;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SuspiciousAssignmentsInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.SuspiciousAssignmentsInspector;
 
 final public class SuspiciousAssignmentsInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

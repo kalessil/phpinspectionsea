@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;

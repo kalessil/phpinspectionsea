@@ -362,7 +362,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SuspiciousAssignmentsInspection"               displayName="Suspicious assignments"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SuspiciousAssignmentsInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.SuspiciousAssignmentsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DateTimeConstantsUsageInspection"              displayName="DateTime constants usage validity"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"

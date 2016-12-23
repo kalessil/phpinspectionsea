@@ -27,4 +27,10 @@ final public class NotOptimalRegularExpressionsInspectorTest extends CodeInsight
         myFixture.enableInspections(NotOptimalRegularExpressionsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
+
+    public void testMissingUnicodeModifier() {
+        myFixture.configureByFile("fixtures/regularExpressions/missing-u-modifier.php");
+        myFixture.enableInspections(NotOptimalRegularExpressionsInspector.class);
+        myFixture.testHighlighting(true, false, true);
+    }
 }

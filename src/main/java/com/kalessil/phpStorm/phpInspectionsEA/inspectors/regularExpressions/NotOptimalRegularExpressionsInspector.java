@@ -22,6 +22,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,7 +33,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
         return "NotOptimalRegularExpressionsInspection";
     }
 
-    private static final HashSet<String> functions = new HashSet<>();
+    private static final Set<String> functions = new HashSet<>();
     static {
         functions.add("preg_filter");
         functions.add("preg_grep");
@@ -159,9 +160,12 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 QuantifierCompoundsQuantifierCheckStrategy.apply(regex, target, holder);
 
                 /*
-                 * Probably bugs: nested tags check without /s
+                 * Probably bugs:
+                 *  - nested tags check without /s
+                 *  - unicode characters without /u
                  */
                 MissingDotAllCheckStrategy.apply(modifiers, regex, target, holder);
+                MissingUnicodeModifierStrategy.apply(modifiers, regex, target, holder);
             }
         };
     }

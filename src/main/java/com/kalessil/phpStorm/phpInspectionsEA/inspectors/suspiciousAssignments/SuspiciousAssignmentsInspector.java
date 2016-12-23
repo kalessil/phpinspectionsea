@@ -2,7 +2,8 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments;
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.PhpSwitch;
+import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy.SelfAssignmentStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy.SwitchFallThroughStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;

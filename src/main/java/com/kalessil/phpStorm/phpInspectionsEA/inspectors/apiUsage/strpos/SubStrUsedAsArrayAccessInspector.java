@@ -11,13 +11,14 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%c%[%i%]' might be used instead (invalid index accesses might show up)";
+    private static final String messagePattern = "'%e%' might be used instead (invalid index accesses might show up)";
 
     @NotNull
     public String getShortName() {
@@ -30,27 +31,33 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /* check if it's the target function */
-                final String function     = reference.getName();
+                final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
                 if (
-                    params.length < 3 || StringUtil.isEmpty(function) ||
-                    (!function.equals("substr") && !function.equals("mb_substr"))
+                    params.length < 3 || StringUtil.isEmpty(functionName) ||
+                    (!functionName.equals("substr") && !functionName.equals("mb_substr"))
                 ) {
                     return;
                 }
 
-                if (params[2] instanceof PhpExpressionImpl && params[2].getText().replaceAll("\\s+","").equals("1")) {
-                    final String message = messagePattern
-                        .replace("%c%", params[0].getText())
+                if (params[2] instanceof PhpExpressionImpl && params[2].getText().replaceAll("\\s+", "").equals("1")) {
+                    final boolean isNegativeOffset = params[1].getText().replaceAll("\\s+", "").startsWith("-");
+                    final String expression        = (isNegativeOffset ? "%c%[%f%(%c%) %i%]" : "%c%[%i%]")
+                        .replace("%f%", functionName.equals("mb_substr") ? "mb_strlen" : "strlen")
+                        .replace("%c%", params[0].getText()).replace("%c%", params[0].getText())
                         .replace("%i%", params[1].getText())
                     ;
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
+
+                    final String message = messagePattern.replace("%e%", expression);
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(expression));
                 }
             }
         };
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        final private String expression;
+
         @NotNull
         @Override
         public String getName() {
@@ -63,20 +70,19 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
             return getName();
         }
 
+        public TheLocalFix(@NotNull String expression) {
+            super();
+            this.expression = expression;
+        }
+
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
-                final PsiElement[] params = ((FunctionReference) expression).getParameters();
-                final PsiElement pattern  = PhpPsiElementFactory.createFromText(project, ArrayAccessExpression.class, "$x[$y]");
-
-                final ArrayAccessExpression replacement = (ArrayAccessExpression) pattern;
-                //noinspection ConstantConditions I'm sure that NPE will not happen - pattern is hardcoded
-                replacement.getValue().replace(params[0].copy());
-                //noinspection ConstantConditions I'm sure that NPE will not happen - pattern is hardcoded
-                replacement.getIndex().getValue().replace(params[1].copy());
-
-                expression.replace(replacement);
+                ParenthesizedExpression replacement = PhpPsiElementFactory.createFromText(project, ParenthesizedExpression.class, "(" + this.expression + ")");
+                if (null != replacement) {
+                    expression.replace(replacement.getArgument());
+                }
             }
         }
     }

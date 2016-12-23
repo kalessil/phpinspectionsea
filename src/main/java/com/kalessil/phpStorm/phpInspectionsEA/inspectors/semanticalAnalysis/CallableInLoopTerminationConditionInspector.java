@@ -6,15 +6,14 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class CallableInLoopTerminationConditionInspector extends BasePhpInspection {
-    private static final String strProblemPattern     = "'for (%existingInit%%newInit%; %newCheck%; ...)' should be used for better performance";
-    private static final String strProblemDescription = "Callable result should be stored outside of the loop for better performance";
+    private static final String messagePattern  = "'for (%existingInit%%newInit%; %newCheck%; ...)' should be used for better performance";
+    private static final String messageExternal = "Callable result should be stored outside of the loop for better performance";
 
     @NotNull
     public String getShortName() {
@@ -40,7 +39,7 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
                 /* check if we can customize message at all */
                 PsiElement operation = problematicExpression.getOperation();
                 if (null == operation || null == variableCandidate || null == referenceCandidate) {
-                    return strProblemDescription;
+                    return messageExternal;
                 }
 
                 /* try extracting variable name from variable candidate */
@@ -52,7 +51,7 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
 
                 /* generate message */
                 final boolean hasInit = expression.getInitialExpressions().length > 0;
-                return strProblemPattern
+                return messagePattern
                         .replace("%existingInit%", hasInit ? "..., " : "")
                         .replace("%newInit%", "$" + variableName + " = " + referenceCandidate.getText())
                         .replace("%newCheck%",

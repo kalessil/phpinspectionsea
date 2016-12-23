@@ -21,4 +21,10 @@ final public class NotOptimalRegularExpressionsInspectorTest extends CodeInsight
         myFixture.enableInspections(NotOptimalRegularExpressionsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
+
+    public void testSenselessIgnoreCaseModifier() {
+        myFixture.configureByFile("fixtures/regularExpressions/senseless-i-modifier.php");
+        myFixture.enableInspections(NotOptimalRegularExpressionsInspector.class);
+        myFixture.testHighlighting(true, false, true);
+    }
 }

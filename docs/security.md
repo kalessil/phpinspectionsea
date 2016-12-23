@@ -1,7 +1,7 @@
 # Exploiting unserialize
 
 > When Php Inspection (EA Extended) reports the rule violations, ensure that it not belongs to any of dev-tools 
-> (profilers, caching behaviour in dev-environment and etc.). Dev-tools should not go to productions and normally 
+> (profilers, dev-environment specific caching and etc.). Dev-tools should not go to production and normally 
 > do not have any security guarantee.
 
 The vulnerability allows to remotely execute code or perform code/SQL injection by 

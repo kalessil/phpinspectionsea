@@ -7,12 +7,12 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
 public class UselessIgnoreCaseModifierCheckStrategy {
-    private static final String strProblemDescription = "'i' modifier is ambiguous here (no a-z in given pattern)";
+    private static final String message = "'i' modifier is ambiguous here (no alphabet characters in given pattern)";
 
     static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
-        if (!StringUtil.isEmpty(modifiers) && !StringUtil.isEmpty(pattern) && modifiers.indexOf('i') >= 0) {
-            if (!pattern.matches(".*[a-zA-Z].*")) {
-                holder.registerProblem(target, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+        if (!StringUtil.isEmpty(modifiers) && !StringUtil.isEmpty(pattern)) {
+            if (-1 != modifiers.indexOf('i') && !pattern.matches(".*\\p{L}.*")) {
+                holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING);
             }
         }
     }

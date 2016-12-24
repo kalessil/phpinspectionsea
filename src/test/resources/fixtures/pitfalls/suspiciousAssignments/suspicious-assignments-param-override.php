@@ -13,3 +13,12 @@
 
         echo $param1, $param2;
     }
+
+    function falsePositivesParameter($param1, &$param2) {
+        if ($param2) {
+            $param1 = $param2;
+        }
+
+        $param1 = '';
+        $param2 = '';
+    }

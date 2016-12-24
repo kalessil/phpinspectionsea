@@ -11,10 +11,12 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class NestedNotOperatorsInspector extends BasePhpInspection {
@@ -38,7 +40,7 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
                 }
 
                 /* process only deepest not-operator: get contained expression */
-                final PhpPsiElement value = expr.getValue();
+                final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(expr.getValue());
                 if (null == value) {
                     return;
                 }
@@ -54,7 +56,12 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
                 PsiElement target = null;
                 int nestingLevel  = 1;
                 PsiElement parent = expr.getParent();
-                while (parent instanceof UnaryExpression) {
+                while (parent instanceof UnaryExpression || parent instanceof ParenthesizedExpression) {
+                    if (parent instanceof ParenthesizedExpression) {
+                        parent = parent.getParent();
+                        continue;
+                    }
+
                     expr     = (UnaryExpression) parent;
                     operator = expr.getOperation();
 

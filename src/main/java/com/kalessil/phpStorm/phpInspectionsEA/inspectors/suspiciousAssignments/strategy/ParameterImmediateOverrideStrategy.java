@@ -64,7 +64,7 @@ final public class ParameterImmediateOverrideStrategy {
                 final Collection<Variable> vars = PsiTreeUtil.findChildrenOfType(parent, Variable.class);
                 for (Variable variable : vars){
                     nameHits += parameterName.equals(variable.getName()) ? 1 : 0;
-                    if (nameHits >= 2) {
+                    if (nameHits > 1) {
                         break;
                     }
                 }

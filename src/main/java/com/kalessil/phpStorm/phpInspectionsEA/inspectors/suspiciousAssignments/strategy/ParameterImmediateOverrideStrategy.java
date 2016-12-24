@@ -9,6 +9,7 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableI
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,6 +33,13 @@ final public class ParameterImmediateOverrideStrategy {
         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
         if (null == body || 0 == params.length || 0 == ExpressionSemanticUtil.countExpressionsInGroup(body)) {
             return;
+        }
+        /* ignore test classes */
+        if (function instanceof Method) {
+            final PhpClass clazz = ((Method) function).getContainingClass();
+            if (null != clazz && FileSystemUtil.isTestClass(clazz)) {
+                return;
+            }
         }
 
         final PhpEntryPointInstruction start = function.getControlFlow().getEntryPoint();

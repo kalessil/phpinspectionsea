@@ -16,14 +16,19 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.psi.elements.ConcatenationExpression;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class NonSecureCryptUsageInspector extends BasePhpInspection {
     private static final String messageWeakSalt     = "A weak hash generated, consider providing '$2y$<cost and salt>' (Blowfish) as the second argument.";
@@ -84,13 +89,35 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
 
             @Nullable
             private String resolveSalt(@NotNull PsiElement expression) {
-                final StringLiteralExpression salt = ExpressionSemanticUtil.resolveAsStringLiteral(expression);
-                final String saltValue             = null == salt ? null : salt.getContents();
-                if (null == saltValue || saltValue.length() < 4 || null != salt.getFirstPsiChild()) {
+                /* collect possible value for further analysis */
+                final Set<PsiElement> processed  = new HashSet<>();
+                final Set<PsiElement> discovered = PossibleValuesDiscoveryUtil.discover(expression, processed);
+                if (discovered.size() != 1) {
+                    processed.clear();
+                    discovered.clear();
+
                     return null;
                 }
 
-                return saltValue;
+                /* simplify workflow by handling one expression */
+                final PsiElement saltExpression = discovered.iterator().next();
+                discovered.clear();
+
+                /* case 1: concatenation */
+                if (saltExpression instanceof ConcatenationExpression) {
+                    // Collections.reverse(listOfInts);
+
+                    return null;
+                }
+
+                /* case 2: string literal (inlined vars are not resolved) or nothing (rare case, more demo-like) */
+                final StringLiteralExpression salt = ExpressionSemanticUtil.resolveAsStringLiteral(saltExpression);
+                final String providedSaltValue     = null == salt ? null : salt.getContents();
+                if (null == providedSaltValue || providedSaltValue.length() < 4) {
+                    return null;
+                }
+
+                return providedSaltValue;
             }
         };
     }

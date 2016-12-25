@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -20,7 +21,7 @@ import java.util.HashSet;
 
 public class PossibleValuesDiscoveryUtil {
     @NotNull
-    static public HashSet<PsiElement> discover(@NotNull PsiElement expression, @NotNull HashSet<PsiElement> processed) {
+    static public HashSet<PsiElement> discover(@NotNull PsiElement expression, @NotNull Set<PsiElement> processed) {
         /* un-wrap parenthesises to avoid false-positives */
         expression = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression);
 
@@ -61,7 +62,7 @@ public class PossibleValuesDiscoveryUtil {
     }
 
     static private void handleVariable(
-            @NotNull Variable variable, @NotNull HashSet<PsiElement> result, @NotNull HashSet<PsiElement> processed
+            @NotNull Variable variable, @NotNull HashSet<PsiElement> result, @NotNull Set<PsiElement> processed
     ) {
         final String variableName = variable.getName();
         final Function callable   = StringUtil.isEmpty(variableName) ? null : ExpressionSemanticUtil.getScope(variable);
@@ -101,7 +102,7 @@ public class PossibleValuesDiscoveryUtil {
     }
 
     static private void handleClassConstantReference(
-            @NotNull ClassConstantReference reference, @NotNull HashSet<PsiElement> result, @NotNull HashSet<PsiElement> processed
+            @NotNull ClassConstantReference reference, @NotNull HashSet<PsiElement> result, @NotNull Set<PsiElement> processed
     ) {
         final String constantName          = reference.getName();
         final PsiElement resolvedReference = StringUtil.isEmpty(constantName) ? null : reference.resolve();
@@ -114,7 +115,7 @@ public class PossibleValuesDiscoveryUtil {
     }
 
     static private void handleClassFieldReference(
-            @NotNull FieldReference reference, @NotNull HashSet<PsiElement> result, @NotNull HashSet<PsiElement> processed
+            @NotNull FieldReference reference, @NotNull HashSet<PsiElement> result, @NotNull Set<PsiElement> processed
     ) {
         final String fieldName             = reference.getName();
         final PsiElement resolvedReference = StringUtil.isEmpty(fieldName) ? null : reference.resolve();
@@ -158,7 +159,7 @@ public class PossibleValuesDiscoveryUtil {
     }
 
     static private void handleTernary(
-            @NotNull TernaryExpression ternary, @NotNull HashSet<PsiElement> result, @NotNull HashSet<PsiElement> processed
+            @NotNull TernaryExpression ternary, @NotNull HashSet<PsiElement> result, @NotNull Set<PsiElement> processed
     ) {
         final PsiElement trueVariant  = ternary.getTrueVariant();
         final PsiElement falseVariant = ternary.getFalseVariant();

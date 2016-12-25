@@ -27,7 +27,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class NonSecureCryptUsageInspector extends BasePhpInspection {
@@ -65,7 +67,7 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
 
                 /* try resolving 2nd parameter, skip if failed, it contains injections or length is not as expected */
                 final String saltValue = this.resolveSalt(params[1]);
-                if (null == saltValue) {
+                if (null == saltValue || saltValue.length() < 4) {
                     return;
                 }
 
@@ -100,24 +102,30 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
                 }
 
                 /* simplify workflow by handling one expression */
-                final PsiElement saltExpression = discovered.iterator().next();
+                final PsiElement saltExpression       = discovered.iterator().next();
+                final StringBuilder resolvedSaltValue = new StringBuilder();
                 discovered.clear();
+                processed.clear();
 
-                /* case 1: concatenation */
-                if (saltExpression instanceof ConcatenationExpression) {
-                    // Collections.reverse(listOfInts);
+                /*  resolve string literals and concatenations */
+                PsiElement current = saltExpression;
+                while (current instanceof ConcatenationExpression) {
+                    final ConcatenationExpression concat = (ConcatenationExpression) current;
+                    final PsiElement right               = ExpressionSemanticUtil.getExpressionTroughParenthesis(concat.getRightOperand());
 
-                    return null;
+                    StringLiteralExpression part = ExpressionSemanticUtil.resolveAsStringLiteral(right);
+                    resolvedSaltValue.insert(0, null == part ? "<?>" : part.getContents());
+
+                    current = ExpressionSemanticUtil.getExpressionTroughParenthesis(concat.getLeftOperand());
                 }
 
-                /* case 2: string literal (inlined vars are not resolved) or nothing (rare case, more demo-like) */
-                final StringLiteralExpression salt = ExpressionSemanticUtil.resolveAsStringLiteral(saltExpression);
-                final String providedSaltValue     = null == salt ? null : salt.getContents();
-                if (null == providedSaltValue || providedSaltValue.length() < 4) {
-                    return null;
+                /* don't forget to add the last element */
+                if (null != current) {
+                    final StringLiteralExpression lastPart = ExpressionSemanticUtil.resolveAsStringLiteral(current);
+                    resolvedSaltValue.insert(0, null == lastPart ? "<?>" : lastPart.getContents());
                 }
 
-                return providedSaltValue;
+                return resolvedSaltValue.toString();
             }
         };
     }

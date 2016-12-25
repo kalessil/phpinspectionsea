@@ -5,8 +5,13 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
+import com.jetbrains.php.lang.psi.elements.Function;
+import com.jetbrains.php.lang.psi.elements.Method;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -70,6 +75,15 @@ public class CryptographicallySecureAlgorithmsInspector extends BasePhpInspectio
             public void visitPhpConstantReference(ConstantReference reference) {
                 final String name = reference.getName();
                 if (!StringUtil.isEmpty(name) && constants.containsKey(name)) {
+                    /* ignore test classes */
+                    final Function scope = ExpressionSemanticUtil.getScope(reference);
+                    if (scope instanceof Method) {
+                        final PhpClass clazz = ((Method) scope).getContainingClass();
+                        if (null != clazz && FileSystemUtil.isTestClass(clazz)) {
+                            return;
+                        }
+                    }
+
                     holder.registerProblem(reference, constants.get(name), ProblemHighlightType.GENERIC_ERROR);
                 }
             }

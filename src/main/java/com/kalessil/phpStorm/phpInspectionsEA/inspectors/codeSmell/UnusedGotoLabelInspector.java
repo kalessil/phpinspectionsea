@@ -76,6 +76,7 @@ public class UnusedGotoLabelInspector extends BasePhpInspection {
                 /* report unused labels */
                 if (existingLabels.size() > 0) {
                     for (PhpGotoLabel label : existingLabels.values()) {
+                        // TODO: marks as unused instead, see https://youtrack.jetbrains.com/issue/WI-34508
                         holder.registerProblem(label, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
                     }
                     existingLabels.clear();

@@ -5,9 +5,14 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.Method;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -35,6 +40,15 @@ public class NonSecureExtractUsageInspector extends BasePhpInspection {
                 final String function     = reference.getName();
                 final PsiElement[] params = reference.getParameters();
                 if (1 == params.length && !StringUtil.isEmpty(function) && function.equals("extract")) {
+                    /* ignore test classes */
+                    final Function scope = ExpressionSemanticUtil.getScope(reference);
+                    if (scope instanceof Method) {
+                        final PhpClass clazz = ((Method) scope).getContainingClass();
+                        if (null != clazz && FileSystemUtil.isTestClass(clazz)) {
+                            return;
+                        }
+                    }
+
                     holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
                 }
             }

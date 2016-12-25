@@ -32,66 +32,61 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     @Nullable
     public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
         /* verify file name and it's validity */
-        if (!file.getName().equals("composer.json")) {
-            return null;
-        }
         final PsiElement config = file.getFirstChild();
-        if(!(config instanceof JsonObject)) {
+        if (!file.getName().equals("composer.json") || !(config instanceof JsonObject)) {
             return null;
         }
 
-        ProblemsHolder holder = new ProblemsHolder(manager, file, isOnTheFly);
+        /* find "require" section */
+        @Nullable JsonProperty requireProperty = null;
         for (PsiElement option : config.getChildren()) {
-            @Nullable JsonProperty requireProperty = null;
-
-            /* find "require" property */
             if (option instanceof JsonProperty) {
                 final String propertyName = ((JsonProperty) option).getName();
                 if (!StringUtil.isEmpty(propertyName) && propertyName.equals("require")) {
                     requireProperty = (JsonProperty) option;
+                    break;
                 }
             }
+        }
 
-            /* inspect packages, break afterwards */
-            if (null != requireProperty) {
-                if (requireProperty.getValue() instanceof JsonObject) {
-                    int packagesCount = 0;
+        /* inspect packages, they should be by other owner */
+        if (null != requireProperty) {
+            if (requireProperty.getValue() instanceof JsonObject) {
+                final ProblemsHolder holder = new ProblemsHolder(manager, file, isOnTheFly);
+                int packagesCount           = 0;
 
-                    for (PsiElement component : requireProperty.getValue().getChildren()) {
-                        /* we expect certain structure for package definition */
-                        if (!(component instanceof JsonProperty)) {
-                            continue;
-                        }
-                        /* the package is there already, terminate inspection */
-                        final JsonProperty componentEntry = (JsonProperty) component;
-                        final String componentName        = componentEntry.getName();
+                for (PsiElement component : requireProperty.getValue().getChildren()) {
+                    /* we expect certain structure for package definition */
+                    if (!(component instanceof JsonProperty)) {
+                        continue;
+                    }
+                    /* the package is there already, terminate inspection */
+                    final JsonProperty componentEntry = (JsonProperty) component;
+                    final String componentName        = componentEntry.getName();
 
-                        /* if advisories already there, verify usage of dev-master */
-                        if (componentName.equals("roave/security-advisories")) {
-                            if (componentEntry.getValue() instanceof JsonStringLiteral) {
-                                final JsonStringLiteral version = (JsonStringLiteral) componentEntry.getValue();
-                                if (!version.getText().equals("\"dev-master\"")) {
-                                    holder.registerProblem(version, useMaster, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                                    return holder.getResultsArray();
-                                }
+                    /* if advisories already there, verify usage of dev-master */
+                    if (componentName.equals("roave/security-advisories")) {
+                        if (componentEntry.getValue() instanceof JsonStringLiteral) {
+                            final JsonStringLiteral version = (JsonStringLiteral) componentEntry.getValue();
+                            if (!version.getText().equals("\"dev-master\"")) {
+                                holder.registerProblem(version, useMaster, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                return holder.getResultsArray();
                             }
-
-                            return null;
                         }
 
-                        if (-1 != componentName.indexOf('/')) {
-                            ++packagesCount;
-                        }
+                        return null;
                     }
 
-                    /* fire error message if we have any packages. If no packages, nothing to worry about. */
-                    if (packagesCount > 0) {
-                        holder.registerProblem(requireProperty.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                        return holder.getResultsArray();
+                    if (-1 != componentName.indexOf('/')) {
+                        ++packagesCount;
                     }
                 }
 
-                break;
+                /* fire error message if we have any packages. If no packages, nothing to worry about. */
+                if (packagesCount > 0) {
+                    holder.registerProblem(requireProperty.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    return holder.getResultsArray();
+                }
             }
         }
 

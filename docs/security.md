@@ -139,6 +139,6 @@ One of ways is using a Components Firewall (https://github.com/Roave/SecurityAdv
 your composer.json file. The firewall declares vulnerable components as conflicting and not allows to install them via 
 Composer.
 
-Php Inspection (EA Extended) suggest adding the firewall only if third-party components being used: e.g. if 
+Php Inspection (EA Extended) suggests adding the firewall only if third-party components being used: e.g. if 
 composer.json declares "name" property as "your-company/product" all non-dev packages not starting with "your-company/" 
 are considered as third-party.

@@ -475,6 +475,10 @@ Improvements and new inspections (support us by donating via <a href="https://ww
         shortName="SenselessMethodDuplicationInspection"          displayName="Child method is exactly the same"
         groupName="Unused"                                        enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SenselessMethodDuplicationInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="UnusedGotoLabelInspection"                     displayName="Unused goto labels"
+        groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnusedGotoLabelInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

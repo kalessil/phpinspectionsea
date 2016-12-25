@@ -125,7 +125,7 @@ curl_setopt($curlHandler, CURLOPT_SSL_VERIFYPEER, $debug ? 0 : 1);
 curl_setopt($curlHandler, CURLOPT_SSL_VERIFYHOST, 2);
 curl_setopt($curlHandler, CURLOPT_SSL_VERIFYPEER, 1);
 
-/* use one of those options: a CA certificate or folder containing multiple certificates */
+/* use one of those options: a CA certificate or a directory containing multiple certificates */
 curl_setopt($curlHandler, CURLOPT_CAINFO,  '<path>/ca.crt');
 curl_setopt($curlHandler, CURLOPT_CAPATH , '<path>/');
 ```
@@ -133,7 +133,7 @@ curl_setopt($curlHandler, CURLOPT_CAPATH , '<path>/');
 # Security advisories
 
 Security Advisories is a Vulnerability Database from SensioLabs (https://security.sensiolabs.org/database), which can 
-be integrated with you workflows in several ways.
+be integrated with your workflows in several ways.
 
 One of ways is using a Components Firewall (https://github.com/Roave/SecurityAdvisories), by adding just one line into 
 your composer.json file. The firewall declares vulnerable components as conflicting and not allows to install them via 

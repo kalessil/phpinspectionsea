@@ -1,9 +1,8 @@
 {
-  "name":        "",
+  "name":        "kalessil/whatever",
   "description": "",
   "license":     "",
-  <warning descr="Please add roave/security-advisories:dev-master as a firewall for vulnerable components">"require"</warning>:
-  {
-    "psr/log": "^1.0"
+  <warning descr="Please add roave/security-advisories:dev-master as a firewall for vulnerable components">"require"</warning>: {
+    "kalessil-team/something-else": "*"
   }
 }

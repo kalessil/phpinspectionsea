@@ -1,8 +1,9 @@
 {
-  "name":        "",
+  "name":        "kalessil/whatever",
   "description": "",
   "license":     "",
-  "require":     {
-      "php": "^7.0"
+  "require": {
+      "php":                     "*",
+      "kalessil/something-else": "*"
   }
 }

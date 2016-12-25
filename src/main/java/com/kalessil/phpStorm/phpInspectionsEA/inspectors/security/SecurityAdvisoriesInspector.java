@@ -38,7 +38,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
             return null;
         }
 
-        /* find "require" section */
+        /* find "require" and "name" sections */
         @Nullable JsonProperty requireProperty = null;
         @Nullable String ownPackagePrefix      = null;
         for (PsiElement option : config.getChildren()) {
@@ -93,11 +93,12 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                 }
 
                 if (-1 != componentName.indexOf('/')) {
+                    /* count packages by other authors */
                     if (null == ownPackagePrefix || !componentName.startsWith(ownPackagePrefix)) {
                         ++packagesCount;
                     }
 
-                    /* fire error message if we have any packages. If no packages, nothing to worry about. */
+                    /* fire error message if we have any of 3rd-party packages */
                     if (packagesCount > 0) {
                         holder.registerProblem(requireProperty.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         return holder.getResultsArray();

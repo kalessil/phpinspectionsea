@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 final public class ExpressionSemanticUtil {
     /**
@@ -310,7 +311,7 @@ final public class ExpressionSemanticUtil {
             if (!StringUtil.isEmpty(variable)) {
                 Function scope = ExpressionSemanticUtil.getScope(expression);
                 if (null != scope) {
-                    HashSet<AssignmentExpression> matched = new HashSet<>();
+                    final Set<AssignmentExpression> matched = new HashSet<>();
 
                     Collection<AssignmentExpression> assignments = PsiTreeUtil.findChildrenOfType(scope, AssignmentExpression.class);
                     /* collect self-assignments as well */
@@ -337,7 +338,6 @@ final public class ExpressionSemanticUtil {
 
         return null;
     }
-
 
     /* TODO: get BO type */
 }

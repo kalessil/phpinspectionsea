@@ -141,4 +141,4 @@ Composer.
 
 Php Inspection (EA Extended) suggests adding the firewall only if third-party components being used: e.g. if 
 composer.json declares "name" property as "your-company/product" all non-dev packages not starting with "your-company/" 
-are considered as third-party.
+are considered third-party.

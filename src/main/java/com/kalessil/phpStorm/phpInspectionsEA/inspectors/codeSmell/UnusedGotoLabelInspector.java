@@ -9,8 +9,12 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
  * file that was distributed with this source code.
  */
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -72,11 +76,33 @@ public class UnusedGotoLabelInspector extends BasePhpInspection {
                 /* report unused labels */
                 if (existingLabels.size() > 0) {
                     for (PhpGotoLabel label : existingLabels.values()) {
-                        holder.registerProblem(label, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                        holder.registerProblem(label, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
                     }
                     existingLabels.clear();
                 }
             }
         };
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Remove unused label";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement target = descriptor.getPsiElement();
+            if (target instanceof PhpGotoLabel) {
+                target.delete();
+            }
+        }
     }
 }

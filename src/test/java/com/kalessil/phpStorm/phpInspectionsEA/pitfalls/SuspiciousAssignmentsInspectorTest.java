@@ -19,4 +19,9 @@ final public class SuspiciousAssignmentsInspectorTest extends CodeInsightFixture
         myFixture.enableInspections(SuspiciousAssignmentsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
+    public void testSuspiciousFormattingPatterns() {
+        myFixture.configureByFile("fixtures/pitfalls/suspiciousAssignments/suspicious-assignments-formatting.php");
+        myFixture.enableInspections(SuspiciousAssignmentsInspector.class);
+        myFixture.testHighlighting(true, false, true);
+    }
 }

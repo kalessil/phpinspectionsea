@@ -24,7 +24,7 @@ import java.util.List;
 final public class SwitchFallThroughStrategy {
     private static final String message = "Overrides value from a preceding case (perhaps a 'break' is missing there)";
 
-    static public void apply(@NotNull final PhpSwitch switchStatement, @NotNull final ProblemsHolder holder) {
+    static public void apply(@NotNull PhpSwitch switchStatement, @NotNull ProblemsHolder holder) {
         final List<PsiElement> written = new ArrayList<>();
         for (PhpCase oneCase : switchStatement.getAllCases()) {
             final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(oneCase);

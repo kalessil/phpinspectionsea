@@ -2,12 +2,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments;
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.PhpSwitch;
-import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy.ParameterImmediateOverrideStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy.SelfAssignmentStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy.SuspiciousOperatorFormattingStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy.SwitchFallThroughStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -46,6 +44,10 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
 
             public void visitPhpFunction(Function function) {
                 ParameterImmediateOverrideStrategy.apply(function, holder);
+            }
+
+            public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
+                SuspiciousOperatorFormattingStrategy.apply(assignmentExpression, holder);
             }
         };
     }

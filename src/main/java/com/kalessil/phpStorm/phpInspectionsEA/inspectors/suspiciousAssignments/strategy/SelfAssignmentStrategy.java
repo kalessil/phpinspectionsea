@@ -40,7 +40,7 @@ final public class SelfAssignmentStrategy {
         mapping.put(PhpTokenTypes.opSHIFT_RIGHT_ASGN, PhpTokenTypes.opSHIFT_RIGHT);
     }
 
-    static public void apply(@NotNull final SelfAssignmentExpression expression, @NotNull final ProblemsHolder holder) {
+    static public void apply(@NotNull SelfAssignmentExpression expression, @NotNull ProblemsHolder holder) {
         /* verify self-assignment operator */
         final IElementType assignOperator = expression.getOperationType();
         if (!mapping.containsKey(assignOperator)) {

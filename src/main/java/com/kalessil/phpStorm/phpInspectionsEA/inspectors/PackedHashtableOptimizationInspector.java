@@ -46,9 +46,9 @@ final public class PackedHashtableOptimizationInspector extends BasePhpInspectio
                 if (phpVersion.compareTo(PhpLanguageLevel.PHP700) < 0) {
                     return;
                 }
-                /* requires at least 2 children */
+                /* requires at least 3 children - let array togrow enough */
                 final PsiElement[] children = expression.getChildren();
-                if (children.length < 2) {
+                if (children.length < 3) {
                     return;
                 }
                 /* ignore test classes */
@@ -111,6 +111,12 @@ final public class PackedHashtableOptimizationInspector extends BasePhpInspectio
                     if (index instanceof StringLiteralExpression) {
                         hasStringIndexes = true;
                         numericIndex     = ((StringLiteralExpression) index).getContents();
+
+                        /* '01' and etc cases can not be converted */
+                        if (numericIndex.length() > 1 && '0' == numericIndex.charAt(0)) {
+                            indexes.clear();
+                            return;
+                        }
                     } else {
                         numericIndex = index.getText().replaceAll("\\s+", "");
                     }

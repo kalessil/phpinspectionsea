@@ -10,8 +10,8 @@
 
     /* false-positives */
     array();
-    array('index' => $x, 1 => $y);
-    array('00' => $x, 1 => $y);
-    array(0 => $x, 1 => $y);
-    array(0 => $x, $i => $y);
-    array($i => $x, $i => $y);
+    array('index' => $x, 1 => $y, 2 => $z);
+    array('00' => $x, 1 => $y, 2 => $z);
+    array(0 => $x, 1 => $y, 2 => $z);
+    array(0 => $x, $i => $y, 2 => $z);
+    array($i => $x, $i => $y, 2 => $z);

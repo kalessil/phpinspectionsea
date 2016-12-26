@@ -61,4 +61,4 @@ Forgotten debug statements can disclosure sensitive information, make serious im
 application in production environment (e.g. headers already sent warning).
 
 Due to this we recommended to check carefully all reported cases. If you discovered a false-positive or a new case, 
-don't hesitate sharing with us.
+don't hesitate [sharing with us](https://github.com/kalessil/phpinspectionsea/issues).

@@ -55,10 +55,10 @@ scenarios.
 
 # Forgotten debug statements
 
-> Note: you can register own debug methods in the inspections' settings (e.g. \My\Class::debug).
+> Note: you can register own debug methods in the inspections' settings (e.g. \My\Class::debug_method or \debug_function).
 
-Forgotten debug statement may disclosure sensitive information, make impact to performance or break application in 
-production environment (e.g. headers already sent warning).
+Forgotten debug statements can disclosure sensitive information, make serious impact to performance or break 
+application in production environment (e.g. headers already sent warning).
 
 Due to this we recommended to check carefully all reported cases. If you discovered a false-positive or a new case, 
 don't hesitate sharing with us.

@@ -163,7 +163,10 @@ Improvements and new inspections (support us by donating via <a href="https://ww
         shortName="StaticLocalVariablesUsageInspection"           displayName="Static local variables usage"
         groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.StaticLocalVariablesUsageInspector"/>
-
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="PackedHashtableOptimizationInspection"         displayName="Packed hashtable optimizations"
+        groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.PackedHashtableOptimizationInspector"/>
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="IsEmptyFunctionUsageInspection"                displayName="'empty(...)' usage"

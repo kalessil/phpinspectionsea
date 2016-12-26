@@ -52,3 +52,13 @@ scenarios.
     $result = $userConfiguration + $defaults;
     // => ['host' => '127.0.0.0', 'port' => '8888']
 ```
+
+# Forgotten debug statements
+
+> Note: you can register own debug methods in the inspections' settings (e.g. \My\Class::debug).
+
+Forgotten debug statement may disclosure sensitive information, make impact to performance or break application in 
+production environment (e.g. headers already sent warning).
+
+Due to this we recommended to check carefully all reported cases. If you discovered a false-positive or a new case, 
+don't hesitate sharing with us.

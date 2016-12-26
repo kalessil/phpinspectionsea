@@ -27,9 +27,8 @@ import java.util.List;
  * file that was distributed with this source code.
  */
 final public class PackedHashtableOptimizationInspector extends BasePhpInspection {
-    // see http://jpauli.github.io/2016/04/08/hashtables.html#packed-hashtable-optimization
-    // array(0 => $x, '1' => $y)
-    // array('0' => '', '1' => null, '2' => null, '3' => '', '4' => null)
+    private static final String messageReorder        = "Reordering element by increasing keys would enable packed hashtable optimizations here";
+    private static final String messageUseNumericKeys = "Using integer keys would enable packed hashtable optimizations here";
 
     @NotNull
     public String getShortName() {
@@ -40,7 +39,7 @@ final public class PackedHashtableOptimizationInspector extends BasePhpInspectio
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            /* TODO: loop with decreasing index: index used as a key in write context */
+            /* TODO: docs, http://jpauli.github.io/2016/04/08/hashtables.html#packed-hashtable-optimization */
 
             public void visitPhpArrayCreationExpression(ArrayCreationExpression expression) {
                 /* requires PHP7 */
@@ -48,11 +47,16 @@ final public class PackedHashtableOptimizationInspector extends BasePhpInspectio
                 if (phpVersion.compareTo(PhpLanguageLevel.PHP700) < 0) {
                     return;
                 }
+                /* requires at least 2 children */
+                final PsiElement[] children = expression.getChildren();
+                if (children.length < 2) {
+                    return;
+                }
 
                 /* step 1: collect indexes and verify array structure */
                 boolean isTarget                  = true;
                 final List<PhpPsiElement> indexes = new ArrayList<>();
-                for (PsiElement pairCandidate : expression.getChildren()) {
+                for (PsiElement pairCandidate : children) {
                     /* inspect only associative arrays */
                     if (!(pairCandidate instanceof ArrayHashElement)) {
                         isTarget = false;
@@ -61,7 +65,7 @@ final public class PackedHashtableOptimizationInspector extends BasePhpInspectio
 
                     /* ensure key is available */
                     final ArrayHashElement pair = (ArrayHashElement) pairCandidate;
-                    final PhpPsiElement key     = null == pair.getKey() ? null : pair.getKey().getFirstPsiChild();
+                    final PhpPsiElement key     = pair.getKey();
                     if (null == key) {
                         isTarget = false;
                         break;
@@ -120,12 +124,10 @@ final public class PackedHashtableOptimizationInspector extends BasePhpInspectio
 
                 /* report if criteria are met */
                 if (!hasIncreasingIndexes) {
-                    final String message = "Reordering element by increasing key would enable packed hashtable optimizations here";
-                    holder.registerProblem(expression.getFirstChild(), message, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(expression.getFirstChild(), messageReorder, ProblemHighlightType.WEAK_WARNING);
                 }
                 if (hasIncreasingIndexes && hasStringIndexes) {
-                    final String message = "Using integer keys would enable packed hashtable optimizations here";
-                    holder.registerProblem(expression.getFirstChild(), message, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(expression.getFirstChild(), messageUseNumericKeys, ProblemHighlightType.WEAK_WARNING);
                 }
             }
         };

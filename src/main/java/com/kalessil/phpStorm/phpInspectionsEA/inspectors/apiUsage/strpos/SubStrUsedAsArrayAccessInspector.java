@@ -8,6 +8,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
@@ -40,6 +42,14 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
                 }
 
                 if (params[2] instanceof PhpExpressionImpl && params[2].getText().replaceAll("\\s+", "").equals("1")) {
+                    /* PHP 5.3 is not supporting `call()[index]` constructs */
+                    if (params[0] instanceof FunctionReference) {
+                        PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                        if (php == PhpLanguageLevel.PHP530) {
+                            return;
+                        }
+                    }
+
                     final boolean isNegativeOffset = params[1].getText().replaceAll("\\s+", "").startsWith("-");
                     final String expression        = (isNegativeOffset ? "%c%[%f%(%c%) %i%]" : "%c%[%i%]")
                         .replace("%f%", functionName.equals("mb_substr") ? "mb_strlen" : "strlen")

@@ -25,6 +25,7 @@ import java.util.List;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 final public class PackedHashtableOptimizationInspector extends BasePhpInspection {
     private static final String messageReorder        = "Reordering keys in natural ascending order would enable array optimizations here";
     private static final String messageUseNumericKeys = "Using integer keys would enable array optimizations here";

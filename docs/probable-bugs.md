@@ -68,4 +68,4 @@ don't hesitate [sharing with us](https://github.com/kalessil/phpinspectionsea/is
 The most common used separators in PHP are `/@#~`, which are not escaped by default (by default escaped `.\+*?[^]$(){}=!<>|:-`).
 Though Php Inspections (EA Extended) reports all cases when preg_quote() call doesn't have the second argument.
 
-Ignoring this PHP specific can lead to introducing not only bugs, but also [vulnerabilities](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5734).
+Ignoring this PHP specific can lead to introducing bugs and even [vulnerabilities](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5734).

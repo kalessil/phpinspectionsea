@@ -26,8 +26,8 @@ import java.util.List;
  * file that was distributed with this source code.
  */
 final public class PackedHashtableOptimizationInspector extends BasePhpInspection {
-    private static final String messageReorder        = "Reordering element by increasing keys would enable packed hashtable optimizations here";
-    private static final String messageUseNumericKeys = "Using integer keys would enable packed hashtable optimizations here";
+    private static final String messageReorder        = "Reordering keys in natural ascending order would enable array optimizations here";
+    private static final String messageUseNumericKeys = "Using integer keys would enable array optimizations here";
 
     @NotNull
     public String getShortName() {

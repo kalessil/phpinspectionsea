@@ -12,8 +12,8 @@ From performance point of view the technique is a micro-optimization with follow
 
 # Packed hashtable optimizations
 
-> Note: please reference this [article](https://blog.blackfire.io/php-7-performance-improvements-packed-arrays.html)for
-> more technical details and real-life examples
+> Note: please reference this [article](https://blog.blackfire.io/php-7-performance-improvements-packed-arrays.html) 
+> for more technical details and real-life examples
 
 PHP7 introduced significant improvements in performance and memory usage. One of improvements was an optimization of 
 internals for associative arrays. To be more specific if an array has only integer keys organized in natural 

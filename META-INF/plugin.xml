@@ -169,7 +169,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.PackedHashtableOptimizationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="CascadingDirnameCallsInspection"               displayName="Cascading dirname() calls"
-        groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.CascadingDirnameCallsInspector"/>
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

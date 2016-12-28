@@ -31,6 +31,7 @@ import java.util.List;
  */
 
 public class CascadingDirnameCallsInspector extends BasePhpInspection {
+    private static final String messagePattern = "'%e%' can be used instead (reduces amount of calls)";
 
     @NotNull
     public String getShortName() {
@@ -78,6 +79,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                 final List<PsiElement> levels = new ArrayList<>();
 
                 FunctionReference current     = reference;
+                //noinspection ConstantConditions - due to better readability
                 while (current instanceof FunctionReference) {
                     final String currentName = current.getName();
                     if (StringUtil.isEmpty(currentName) || !currentName.equals("dirname")) {
@@ -101,7 +103,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                 }
 
                 /* if we have 1+ nested call (top-level one is not considered) */
-                if (null != argument && (directoryLevel > 1 || levels.size() > 0)) {
+                if (null != argument) {
                     final List<String> reported = new ArrayList<>();
                     for (PsiElement levelEntry : levels) {
                         try {
@@ -112,6 +114,12 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                     }
                     levels.clear();
 
+                    /* do not report cases with one level extraction */
+                    if (1 == directoryLevel && 0 == reported.size()){
+                        reported.clear();
+                        return;
+                    }
+
                     /* generate the replacement expression */
                     reported.add(0, String.valueOf(directoryLevel));
                     final String replacement = "dirname(%a%, %l%)"
@@ -119,7 +127,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                             .replace("%l%", String.join(" + ", reported));
                     reported.clear();
 
-                    final String message = "'%e%' can be used instead".replace("%e%", replacement);
+                    final String message = messagePattern.replace("%e%", replacement);
                     holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(replacement));
                 }
             }

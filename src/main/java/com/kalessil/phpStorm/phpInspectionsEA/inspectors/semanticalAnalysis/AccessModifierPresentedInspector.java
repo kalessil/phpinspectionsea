@@ -4,13 +4,14 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpModifierList;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,64 +43,29 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
 
                 /* inspect methods */
                 for (Method method : clazz.getOwnMethods()) {
-                    if (!method.getAccess().isPublic()) {
+                    final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
+                    if (null == methodName || !method.getAccess().isPublic()) {
                         continue;
                     }
 
-                    /* find modifiers list */
-                    String modifiers = null;
-                    for (PsiElement child : method.getChildren()) {
-                        if (child instanceof PhpModifierList) {
-                            modifiers = child.getText();
-                            break;
-                        }
-                    }
-
-                    final PsiElement methodNameNode = method.getNameIdentifier();
-                    if (null != modifiers && null != methodNameNode && !(methodNameNode instanceof PsiErrorElement)) {
-                        /* scan modifiers defined */
-                        /* TODO: use field.getModifier() */
-                        final boolean hasAccessModifiers =
-                                modifiers.contains("public") ||
-                                modifiers.contains("protected") ||
-                                modifiers.contains("private");
-
-                        /* scan modifiers defined */
-                        if (!hasAccessModifiers) {
-                            final String message = messagePattern.replace("%s%", method.getName());
-                            holder.registerProblem(methodNameNode, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                        }
+                    PhpModifierList modifiers = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
+                    if (null != modifiers && !modifiers.getText().contains("public")) {
+                        final String message = messagePattern.replace("%s%", method.getName());
+                        holder.registerProblem(methodName, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                 }
 
                 /* inspect fields */
                 for (Field field : clazz.getOwnFields()) {
-                    if (field.isConstant()) {
+                    final PsiElement fieldName = NamedElementUtil.getNameIdentifier(field);
+                    if (null == fieldName || field.isConstant() || !field.getModifier().isPublic()) {
                         continue;
                     }
 
-                    /* find modifiers list */
-                    String modifiers = null;
-                    for (PsiElement child : field.getParent().getChildren()) {
-                        if (child instanceof PhpModifierList) {
-                            modifiers = child.getText();
-                            break;
-                        }
-                    }
-
-                    if (null != modifiers && null != field.getNameIdentifier()) {
-                        /* scan modifiers defined */
-                        /* TODO: use field.getModifier() */
-                        final boolean hasAccessModifiers =
-                                modifiers.contains("public") ||
-                                modifiers.contains("protected") ||
-                                modifiers.contains("private");
-
-                        /* report issues */
-                        if (!hasAccessModifiers) {
-                            final String message = messagePattern.replace("%s%", field.getName());
-                            holder.registerProblem(field.getNameIdentifier(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                        }
+                    PhpModifierList modifiers = PsiTreeUtil.findChildOfType(field.getParent(), PhpModifierList.class);
+                    if (null != modifiers && !modifiers.getText().contains("public")) {
+                        final String message = messagePattern.replace("%s%", field.getName());
+                        holder.registerProblem(fieldName, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                 }
             }

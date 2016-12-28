@@ -6,7 +6,11 @@ class classAM1
     var    <error descr="'member' should be declared with access modifier.">$member</error>;
     function <error descr="'defaultVisibilityMethod' should be declared with access modifier.">defaultVisibilityMethod</error> () {}
 
-    public $publicProperty;
+    const     A_CONSTANT = '';
+    public    $publicProperty;
+    protected $protectedProperty;
+    private   $privateProperty;
+
     public function publicVisibilityMethod()       {}
     protected function protectedVisibilityMethod() {}
     private function privateVisibilityMethod()     {}

@@ -69,9 +69,9 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
 
 
                 int directoryLevel            = 0;
-                int nestingLevel              = 0;
                 PsiElement argument           = null;
                 final List<PsiElement> levels = new ArrayList<>();
+
                 FunctionReference current     = reference;
                 while (current instanceof FunctionReference) {
                     final String currentName = current.getName();
@@ -96,10 +96,25 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                 }
 
                 /* if we have 1+ nested call (top-level one is not considered) */
-                if (null != argument && directoryLevel + levels.size() > 1) {
-                    final String message = "'dirname(%a%, %l%)' can be used instead"
+                if (null != argument && (directoryLevel > 1 || levels.size() > 0)) {
+                    final List<String> reported = new ArrayList<>();
+                    for (PsiElement levelEntry : levels) {
+                        try {
+                            directoryLevel += Integer.valueOf(levelEntry.getText());
+                        } catch (NumberFormatException fail) {
+                            reported.add(levelEntry.getText());
+                        }
+                    }
+                    levels.clear();
+
+                    /* generate the replacement expression */
+                    reported.add(0, String.valueOf(directoryLevel));
+                    final String replacement = "dirname(%a%, %l%)"
                             .replace("%a%", argument.getText())
-                            .replace("%l%", directoryLevel + " + <tbd>");
+                            .replace("%l%", String.join(" + ", reported));
+                    reported.clear();
+
+                    final String message = "'%e%' can be used instead".replace("%e%", replacement);
                     holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }

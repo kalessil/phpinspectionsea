@@ -79,7 +79,8 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
 
                     if (1 == currentParams.length) {
                         ++directoryLevel;
-                    } else {
+                    }
+                    if (2 == currentParams.length) {
                         levels.add(currentParams[1]);
                     }
 
@@ -88,7 +89,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                         !(currentParams[0] instanceof FunctionReference) ||
                         StringUtil.isEmpty(currentName) || !currentName.equals("dirname")
                     ) {
-                        argument = currentParams.length > 0 ?currentParams[0] : null;
+                        argument = currentParams.length > 0 ? currentParams[0] : null;
                         break;
                     }
 
@@ -99,7 +100,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                 /* if we have 1+ nested call (top-level one is not considered) */
                 if (nestingLevel > 0 && null != argument) {
                     final String message = "'dirname(%a%, %l%)' can be used instead"
-                            .replace("%s%", argument.getText())
+                            .replace("%a%", argument.getText())
                             .replace("%l%", directoryLevel + " + <tbd>");
                     holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }

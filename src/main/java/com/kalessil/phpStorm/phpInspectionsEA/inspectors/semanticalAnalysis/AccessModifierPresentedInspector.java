@@ -1,14 +1,18 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.psi.elements.Field;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpModifierList;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
@@ -51,7 +55,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                     PhpModifierList modifiers = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
                     if (null != modifiers && !modifiers.getText().contains("public")) {
                         final String message = messagePattern.replace("%s%", method.getName());
-                        holder.registerProblem(methodName, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(methodName, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(modifiers));
                     }
                 }
 
@@ -65,7 +69,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                     PhpModifierList modifiers = PsiTreeUtil.findChildOfType(field.getParent(), PhpModifierList.class);
                     if (null != modifiers && !modifiers.getText().contains("public")) {
                         final String message = messagePattern.replace("%s%", field.getName());
-                        holder.registerProblem(fieldName, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(fieldName, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(modifiers));
                     }
                 }
             }
@@ -96,6 +100,46 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
 
         JPanel getComponent() {
             return optionsPanel;
+        }
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        final private SmartPsiElementPointer<PsiElement> modifiers;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Declare public";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        TheLocalFix(@NotNull PsiElement modifiers) {
+            super();
+            SmartPointerManager manager =  SmartPointerManager.getInstance(modifiers.getProject());
+
+            this.modifiers = manager.createSmartPsiElementPointer(modifiers);
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement modifiers = this.modifiers.getElement();
+            if (null != modifiers) {
+                final String access  = modifiers.getText().replace("var", "").trim();
+                final String pattern = "public %m% function x(){}"
+                        .replace("%m% ", 0 == access.length() ? "%m%" : "%m% ")
+                        .replace("%m%", access);
+
+                final Method container       = PhpPsiElementFactory.createMethod(project, pattern);
+                PhpModifierList newModifiers = PsiTreeUtil.findChildOfType(container, PhpModifierList.class);
+                if (null != newModifiers) {
+                    modifiers.replace(newModifiers);
+                }
+            }
         }
     }
 }

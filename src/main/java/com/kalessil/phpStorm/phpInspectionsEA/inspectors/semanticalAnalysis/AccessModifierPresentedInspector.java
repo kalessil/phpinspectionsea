@@ -23,7 +23,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
     @SuppressWarnings("WeakerAccess")
     public boolean ANALYZE_INTERFACES = true;
 
-    private static final String messagePattern = "%s% should be declared with access modifier.";
+    private static final String messagePattern = "'%s%' should be declared with access modifier.";
 
     @NotNull
     public String getShortName() {

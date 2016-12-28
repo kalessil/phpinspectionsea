@@ -128,7 +128,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                     reported.clear();
 
                     final String message = messagePattern.replace("%e%", replacement);
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(replacement));
+                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(replacement));
                 }
             }
         };

@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
     private static final Map<String, String> cache = new ConcurrentHashMap<>();
-    private static final String messagePattern = "Name provided in this call should be %n% (case mismatch)";
+    private static final String messagePattern = "Name provided in this call should be '%n%' (case mismatch)";
 
     @NotNull
     public String getShortName() {
@@ -34,7 +34,7 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
                 inspectCaseIdentity(reference, false);
             }
             public void visitPhpFunctionCall(FunctionReference reference) {
-                /* invoke caching as (assumption) in 99% of case functions are global; assumption was right ;) */
+                /* invoke caching as (assumption) in 99% of cases functions are global; assumption was right ;) */
                 inspectCaseIdentity(reference, true);
             }
 
@@ -50,6 +50,8 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
                 if (resolved instanceof Function) {
                     final Function function = (Function) resolved;
                     final String realName   = function.getName();
+
+                    /* cache root NS functions if caching was requested */
                     if (useCache && function.getFQN().equals('\\' + realName)) {
                         cache.putIfAbsent(realName, realName);
                     }

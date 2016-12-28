@@ -104,6 +104,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
 
                 /* if we have 1+ nested call (top-level one is not considered) */
                 if (null != argument) {
+                    /* process extracted level expressions: numbers to sum-up, expressions to stay */
                     final List<String> reported = new ArrayList<>();
                     for (PsiElement levelEntry : levels) {
                         try {

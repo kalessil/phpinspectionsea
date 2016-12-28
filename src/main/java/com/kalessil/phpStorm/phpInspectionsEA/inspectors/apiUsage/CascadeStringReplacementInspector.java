@@ -7,7 +7,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -29,6 +28,8 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
+            /* TODO: support mb_* function */
+
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
                 /* try getting function reference, indicating pattern match */
                 final FunctionReference functionCall = getStrReplaceReference(assignmentExpression);
@@ -67,7 +68,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
 
 
                     /* === nested calls check === */
-                    if (3 == params.length && params[2] instanceof FunctionReferenceImpl) {
+                    if (3 == params.length && params[2] instanceof FunctionReference) {
                         /* ensure 3rd argument is nested call of str_replace */
                         final String functionName = ((FunctionReference) params[2]).getName();
                         if (!StringUtil.isEmpty(functionName) && functionName.equals("str_replace")) {
@@ -108,7 +109,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
     private FunctionReference getStrReplaceReference(AssignmentExpression assignment) {
         final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
         /* ensure function and not method reference */
-        if (value instanceof FunctionReferenceImpl) {
+        if (value instanceof FunctionReference) {
             final String functionName = ((FunctionReference) value).getName();
             /* is target function */
             if (!StringUtil.isEmpty(functionName) && functionName.equals("str_replace")) {

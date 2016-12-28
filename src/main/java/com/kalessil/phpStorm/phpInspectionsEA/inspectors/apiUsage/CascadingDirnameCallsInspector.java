@@ -1,14 +1,19 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParameterList;
+import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -115,9 +120,41 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                     reported.clear();
 
                     final String message = "'%e%' can be used instead".replace("%e%", replacement);
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(replacement));
                 }
             }
         };
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        final private String expression;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use suggested replacement";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        public TheLocalFix(@NotNull String expression) {
+            super();
+            this.expression = expression;
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression instanceof FunctionReference) {
+                ParenthesizedExpression replacement = PhpPsiElementFactory.createFromText(project, ParenthesizedExpression.class, "(" + this.expression + ")");
+                if (null != replacement) {
+                    expression.replace(replacement.getArgument());
+                }
+            }
+        }
     }
 }

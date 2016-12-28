@@ -74,31 +74,29 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                 final List<PsiElement> levels = new ArrayList<>();
                 FunctionReference current     = reference;
                 while (current instanceof FunctionReference) {
-                    final String currentName         = current.getName();
-                    final PsiElement[] currentParams = current.getParameters();
-
-                    if (1 == currentParams.length) {
-                        ++directoryLevel;
-                    }
-                    if (2 == currentParams.length) {
-                        levels.add(currentParams[1]);
-                    }
-
-                    if (
-                        (1 != currentParams.length && 2 != currentParams.length) ||
-                        !(currentParams[0] instanceof FunctionReference) ||
-                        StringUtil.isEmpty(currentName) || !currentName.equals("dirname")
-                    ) {
-                        argument = currentParams.length > 0 ? currentParams[0] : null;
+                    final String currentName = current.getName();
+                    if (StringUtil.isEmpty(currentName) || !currentName.equals("dirname")) {
                         break;
                     }
 
+                    final PsiElement[] currentParams = current.getParameters();
+                    if (1 == currentParams.length) {
+                        argument = currentParams[0];
+                        ++directoryLevel;
+                    }
+                    if (2 == currentParams.length) {
+                        argument = currentParams[0];
+                        levels.add(currentParams[1]);
+                    }
+
+                    if (!(currentParams[0] instanceof FunctionReference)) {
+                        break;
+                    }
                     current = (FunctionReference) currentParams[0];
-                    ++nestingLevel;
                 }
 
                 /* if we have 1+ nested call (top-level one is not considered) */
-                if (nestingLevel > 0 && null != argument) {
+                if (null != argument && directoryLevel + levels.size() > 1) {
                     final String message = "'dirname(%a%, %l%)' can be used instead"
                             .replace("%a%", argument.getText())
                             .replace("%l%", directoryLevel + " + <tbd>");

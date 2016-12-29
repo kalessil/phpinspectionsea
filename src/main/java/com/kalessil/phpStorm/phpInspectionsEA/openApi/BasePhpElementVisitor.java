@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.openApi;
 
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.PhpEval;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
@@ -15,6 +16,11 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
             return;
         }
 
+        if (element instanceof PhpDocTag) {
+            visitPhpDocTag((PhpDocTag) element);
+            return;
+        }
+
         this.visitElement(element);
     }
 
@@ -22,4 +28,7 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
         this.visitElement(eval);
     }
 
+    public void visitPhpDocTag(@NotNull PhpDocTag tag) {
+        this.visitElement(tag);
+    }
 }

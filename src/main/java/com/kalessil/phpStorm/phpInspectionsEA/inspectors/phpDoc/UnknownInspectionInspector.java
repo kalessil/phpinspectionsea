@@ -6,6 +6,7 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.IdeaPluginDescriptorImpl;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.extensions.PluginId;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.containers.MultiMap;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
@@ -79,8 +80,11 @@ public class UnknownInspectionInspector extends BasePhpInspection {
 
                 /* report unknown inspections: we also might be not aware of other plugins */
                 if (reported.size() > 0) {
-                    final String message = "Unknown inspection: %i%".replace("%i%", String.join(", ", reported));
-                    holder.registerProblem(tag, message, ProblemHighlightType.WEAK_WARNING);
+                    final PsiElement target = tag.getFirstChild();
+                    if (null != target) {
+                        final String message = "Unknown inspection: %i%".replace("%i%", String.join(", ", reported));
+                        holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING);
+                    }
 
                     reported.clear();
                 }

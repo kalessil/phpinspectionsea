@@ -29,7 +29,7 @@ Inspections Lists (Control flow)
 | Control flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                                                | no        | yes | no   |
 | Control flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                                              | no        | yes | no   |
 | Control flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                                              | yes       | yes | no   |
-| Control flow         | DefaultValueInElseBranchInspection              | Default value is hidden in else branch                                            | no        | yes | no   |
+| Control flow         | DefaultValueInElseBranchInspection              | Default value is hidden in else branch                                            | n/a       | yes | n/a  |
 | Control flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                                         | n/a |
 | Control flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                                                          | n/a |
 | Control flow         | ThrowRawExceptionInspection                     | General '\Exception' is thrown                                                    | no  |
@@ -42,7 +42,7 @@ Inspections Lists (Control flow)
 | Control flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                                                     | n/a       | yes | n/a  |
 | Control flow         | GetTypeMissUseInspection                        | 'gettype(...)' could be replaced with 'is_*(...)'                                 | yes       | yes | no   |
 | Control flow         | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)'                          | yes       | yes | no   |
-| Control flow         | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                | n/a       | yes | n/a  |
+| Control flow         | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                | yes       | yes | no   |
 | Control flow         | StrTrUsageAsStrReplaceInspection                | 'strtr(...)' could be replaced with 'str_replace(...)'                            | no        | yes | no   |
 | Control flow         | SubStrUsedAsStrPosInspection                    | 'substr(...)' could be replaced with 'strpos(...)'                                | no        | yes | no   |
 | Control flow         | StrNcmpUsedAsStrPosInspection                   | 'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)' | no        | yes | no   |

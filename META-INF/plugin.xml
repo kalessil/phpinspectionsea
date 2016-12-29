@@ -84,7 +84,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.AmbiguousMethodsCallsInArrayMappingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="StrlenInEmptyStringCheckContextInspection"     displayName="'strlen(...)' should not be used to check if string is empty"
+        shortName="StrlenInEmptyStringCheckContextInspection"     displayName="'(mb_)strlen(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.StrlenInEmptyStringCheckContextInspection"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -104,7 +104,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SlowArrayOperationsInLoopInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="StrStrUsedAsStrPosInspection"                  displayName="'strstr(...)/stristr(...)' could be replaced with 'strpos(...)/stripos(...)'"
+        shortName="StrStrUsedAsStrPosInspection"                  displayName="'str(i)str(...)' could be replaced with 'str(i)pos(...)'"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.StrStrUsedAsStrPosInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

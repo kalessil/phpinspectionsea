@@ -34,7 +34,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /* check if it's the target function */
                 final String strFunctionName = reference.getName();
-                if (StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("strlen")) {
+                if (StringUtil.isEmpty(strFunctionName) || (!strFunctionName.equals("strlen") && !strFunctionName.equals("mb_strlen"))) {
                     return;
                 }
 
@@ -53,10 +53,10 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                         }
                         /* second operand shall be a number */
                         if (secondOperand instanceof  PhpExpression && PhpElementTypes.NUMBER == secondOperand.getNode().getElementType()) {
-                            String strNumber = secondOperand.getText();
+                            final String strNumber = secondOperand.getText();
 
                             /* check cases when comparing with 1 */
-                            IElementType operationType = objOperation.getNode().getElementType();
+                            final IElementType operationType = objOperation.getNode().getElementType();
                             if (operationType == PhpTokenTypes.opLESS || operationType == PhpTokenTypes.opGREATER_OR_EQUAL) {
                                 /* comparison with 1 supported currently in NON-yoda style TODO: yoda style support */
                                 isMatchedPattern = strNumber.equals("1") && objParent.getLeftOperand() == reference;

@@ -2,9 +2,9 @@
 
 class classAM1
 {
-    public static $static;
-    public $member;
-    public function defaultVisibilityMethod () {}
+    static <error descr="'static' should be declared with access modifier.">$static</error>;
+    var    <error descr="'member' should be declared with access modifier.">$member</error>;
+    function <error descr="'defaultVisibilityMethod' should be declared with access modifier.">defaultVisibilityMethod</error> () {}
 
     const     A_CONSTANT = '';
     public    $publicProperty;
@@ -18,17 +18,17 @@ class classAM1
 
 abstract class classAM2
 {
-    public static function defaultVisibilityStaticMethod () {}
-    public final function defaultVisibilityFinalMethod ()  {}
-    public abstract function defaultVisibilityAbstractMethod ();
+    static   function <error descr="'defaultVisibilityStaticMethod' should be declared with access modifier.">defaultVisibilityStaticMethod</error> () {}
+    final    function <error descr="'defaultVisibilityFinalMethod' should be declared with access modifier.">defaultVisibilityFinalMethod</error> ()  {}
+    abstract function <error descr="'defaultVisibilityAbstractMethod' should be declared with access modifier.">defaultVisibilityAbstractMethod</error> ();
 }
 
 interface interfaceAM1
 {
-    public function defaultVisibilityMethod ();
+    function <error descr="'defaultVisibilityMethod' should be declared with access modifier.">defaultVisibilityMethod</error> ();
 }
 
 trait traitAM1
 {
-    public function defaultVisibilityMethod () {}
+    function <error descr="'defaultVisibilityMethod' should be declared with access modifier.">defaultVisibilityMethod</error> () {}
 }

@@ -93,6 +93,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
 
         for (IdeaPluginDescriptor plugin : PluginManager.getPlugins()) {
             /* check plugins' dependencies and extensions */
+            /* we have to rely on impl-class, see https://youtrack.jetbrains.com/issue/WI-34555 */
             final MultiMap<String, Element> extensions = ((IdeaPluginDescriptorImpl) plugin).getExtensions();
             if (null == extensions || !ArrayUtils.contains(plugin.getDependentPluginIds(), phpSupport)) {
                 continue;

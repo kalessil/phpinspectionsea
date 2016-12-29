@@ -12,14 +12,12 @@ import com.intellij.util.containers.MultiMap;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import org.apache.commons.lang.ArrayUtils;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -31,17 +29,15 @@ import java.util.Set;
  */
 
 public class UnknownInspectionInspector extends BasePhpInspection {
-    final private static Set<String> inspectionsNames = new HashSet<>();
+    final private static Set<String> inspectionsNames;
     private static int minInspectionNameLength;
     static {
-        collectInspections("com.jetbrains.php", inspectionsNames);
-        collectInspections("com.kalessil.phpStorm.phpInspectionsEA", inspectionsNames);
-        collectInspections("fr.adrienbrault.idea.symfony2plugin", inspectionsNames);
+        inspectionsNames = collectKnownInspections();
 
         /* shortest length is a threshold for separating inspections and comments mixed in */
         minInspectionNameLength = Integer.MAX_VALUE;
         for (String shortName : inspectionsNames) {
-            int nameLength = shortName.length();
+            final int nameLength = shortName.length();
             if (nameLength < minInspectionNameLength) {
                 minInspectionNameLength = nameLength;
             }
@@ -91,29 +87,32 @@ public class UnknownInspectionInspector extends BasePhpInspection {
         };
     }
 
-    private static void collectInspections(@NotNull String id, @NotNull Set<String> inspectionsNames) {
-        /* check plugin and its' extensions accessibility */
-        final IdeaPluginDescriptor plugin = PluginManager.getPlugin(PluginId.getId(id));
-        if (!(plugin instanceof IdeaPluginDescriptorImpl)) {
-            return;
-        }
-        final MultiMap<String, Element> extensions = ((IdeaPluginDescriptorImpl) plugin).getExtensions();
-        if (null == extensions) {
-            return;
-        }
+    private static Set<String> collectKnownInspections() {
+        final Set<String> names   = new HashSet<>();
+        final PluginId phpSupport = PluginId.getId("com.jetbrains.php");
 
-        /* extract inspections; short names */
-        for (Element node : extensions.values()) {
-            final String nodeName = node.getName();
-            if (null == nodeName || !nodeName.equals("localInspection")) {
+        for (IdeaPluginDescriptor plugin : PluginManager.getPlugins()) {
+            /* check plugins' dependencies and extensions */
+            final MultiMap<String, Element> extensions = ((IdeaPluginDescriptorImpl) plugin).getExtensions();
+            if (null == extensions || !ArrayUtils.contains(plugin.getDependentPluginIds(), phpSupport)) {
                 continue;
             }
 
-            final Attribute name   = node.getAttribute("shortName");
-            final String shortName = null == name ? null : name.getValue();
-            if (null != shortName && shortName.length() > 0) {
-                inspectionsNames.add(shortName);
+            /* extract inspections; short names */
+            for (Element node : extensions.values()) {
+                final String nodeName = node.getName();
+                if (null == nodeName || !nodeName.equals("localInspection")) {
+                    continue;
+                }
+
+                final Attribute name   = node.getAttribute("shortName");
+                final String shortName = null == name ? null : name.getValue();
+                if (null != shortName && shortName.length() > 0) {
+                    names.add(shortName);
+                }
             }
         }
+
+        return names;
     }
 }

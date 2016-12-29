@@ -36,6 +36,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
     static {
         collectInspections("com.jetbrains.php", inspectionsNames);
         collectInspections("com.kalessil.phpStorm.phpInspectionsEA", inspectionsNames);
+        collectInspections("fr.adrienbrault.idea.symfony2plugin", inspectionsNames);
 
         /* shortest length is a threshold for separating inspections and comments mixed in */
         minInspectionNameLength = Integer.MAX_VALUE;

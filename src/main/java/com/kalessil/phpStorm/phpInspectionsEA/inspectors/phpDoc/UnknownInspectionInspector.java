@@ -30,7 +30,6 @@ import java.util.Set;
  */
 
 public class UnknownInspectionInspector extends BasePhpInspection {
-
     @NotNull
     public String getShortName() {
         return "UnknownInspectionInspection";
@@ -80,7 +79,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
 
                 /* report unknown inspections: we also might be not aware of other plugins */
                 if (reported.size() > 0) {
-                    final String message = "Unknown inspections: %i%".replace("%s%", String.join(", ", reported));
+                    final String message = "Unknown inspection: %i%".replace("%i%", String.join(", ", reported));
                     holder.registerProblem(tag, message, ProblemHighlightType.WEAK_WARNING);
 
                     reported.clear();
@@ -100,22 +99,15 @@ public class UnknownInspectionInspector extends BasePhpInspection {
 
                 /* extract inspections; short names */
                 for (Element node : extensions.values()) {
-                    final Attribute extNs = node.getAttribute("defaultExtensionNs");
-                    if (null == extNs || !extNs.getValue().equals("com.intellij")) {
+                    final String nodeName = node.getName();
+                    if (null == nodeName || !nodeName.equals("localInspection")) {
                         continue;
                     }
 
-                    final List<Element> inspections = node.getChildren("localInspection");
-                    if (null == inspections || 0 == inspections.size()) {
-                        continue;
-                    }
-
-                    for (Element inspection : inspections) {
-                        final Attribute name   = inspection.getAttribute("shortName");
-                        final String shortName = null == name ? null : name.getValue();
-                        if (null != shortName && shortName.length() > 0) {
-                            inspectionsNames.add(shortName);
-                        }
+                    final Attribute name   = node.getAttribute("shortName");
+                    final String shortName = null == name ? null : name.getValue();
+                    if (null != shortName && shortName.length() > 0) {
+                        inspectionsNames.add(shortName);
                     }
                 }
             }

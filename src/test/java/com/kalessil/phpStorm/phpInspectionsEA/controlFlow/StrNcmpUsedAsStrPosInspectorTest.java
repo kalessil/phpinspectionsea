@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.controlFlow;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.StrNcmpUsedAsStrPosInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrNcmpUsedAsStrPosInspector;
 
 final public class StrNcmpUsedAsStrPosInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

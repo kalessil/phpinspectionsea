@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrtotimeUsageInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.StrtotimeUsageInspector;
 
 final public class StrtotimeUsageInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

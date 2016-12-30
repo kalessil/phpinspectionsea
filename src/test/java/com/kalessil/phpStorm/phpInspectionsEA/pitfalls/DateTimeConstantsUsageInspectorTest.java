@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.pitfalls;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.DateTimeConstantsUsageInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.DateTimeConstantsUsageInspector;
 
 final public class DateTimeConstantsUsageInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

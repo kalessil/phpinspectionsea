@@ -106,11 +106,11 @@ Improvements and new inspections (support us by donating via <a href="https://ww
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="StrStrUsedAsStrPosInspection"                  displayName="'str(i)str(...)' could be replaced with 'str(i)pos(...)'"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.StrStrUsedAsStrPosInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrStrUsedAsStrPosInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="CaseInsensitiveStringFunctionsMissUseInspection" displayName="'stristr(...)/stripos(...)/strripos(...)' could be replaced with 'strstr(...)/strpos()/strrpos()'"
         groupName="Performance"                                     enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.CaseInsensitiveStringFunctionsMissUseInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.CaseInsensitiveStringFunctionsMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="AlterInForeachInspection"                      displayName="Slow alter in foreach"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
@@ -122,7 +122,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="CascadeStringReplacementInspection"            displayName="Cascading 'str_replace(...)' calls"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.CascadeStringReplacementInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.CascadeStringReplacementInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="InArrayMissUseInspection"                      displayName="'in_array(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="ERROR"
@@ -150,15 +150,15 @@ Improvements and new inspections (support us by donating via <a href="https://ww
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SubStrShortHandUsageInspection"                displayName="'substr(...)' short-hand usage"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.SubStrShortHandUsageInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.SubStrShortHandUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SubStrUsedAsArrayAccessInspection"             displayName="'substr(...)' used as index-based access"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.SubStrUsedAsArrayAccessInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.SubStrUsedAsArrayAccessInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="StrtotimeUsageInspection"                      displayName="'strtotime(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrtotimeUsageInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.StrtotimeUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="StaticLocalVariablesUsageInspection"           displayName="Static local variables usage"
         groupName="Performance"                                   enabledByDefault="false" level="WEAK WARNING"
@@ -265,15 +265,15 @@ Improvements and new inspections (support us by donating via <a href="https://ww
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="StrTrUsageAsStrReplaceInspection"              displayName="'strtr(...)' could be replaced with 'str_replace(...)'"
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
-         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrTrUsageAsStrReplaceInspector"/>
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrTrUsageAsStrReplaceInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="SubStrUsedAsStrPosInspection"                  displayName="'substr(...)' could be replaced with 'strpos(...)'"
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
-         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.SubStrUsedAsStrPosInspector"/>
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.SubStrUsedAsStrPosInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="StrNcmpUsedAsStrPosInspection"                 displayName="'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)'"
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
-         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.StrNcmpUsedAsStrPosInspector"/>
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrNcmpUsedAsStrPosInspector"/>
 
 
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -353,7 +353,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DateIntervalSpecificationInspection"           displayName="Date interval specification validity"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.DateIntervalSpecificationInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.DateIntervalSpecificationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ClassReImplementsParentInterfaceInspection"    displayName="Class implements interfaces multiple times"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
@@ -369,7 +369,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DateTimeConstantsUsageInspection"              displayName="DateTime constants usage validity"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.DateTimeConstantsUsageInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.DateTimeConstantsUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -593,7 +593,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="CascadingDirnameCallsInspection"               displayName="Cascading dirname() calls"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.CascadingDirnameCallsInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.CascadingDirnameCallsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -649,7 +649,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MktimeUsageInspection"                           displayName="'gmmktime()'/'mktime()' usage"
         groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.MktimeUsageInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.MktimeUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="FopenBinaryUnsafeUsageInspection"                displayName="Binary-unsafe 'fopen(...)' usage"
         groupName="Compatibility"                                   enabledByDefault="true" level="ERROR"

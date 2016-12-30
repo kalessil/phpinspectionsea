@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.CascadeStringReplacementInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.CascadeStringReplacementInspector;
 
 final public class CascadeStringReplacementInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.CaseInsensitiveStringFunctionsMissUseInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.CaseInsensitiveStringFunctionsMissUseInspector;
 
 final public class CaseInsensitiveStringFunctionsMissUseInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

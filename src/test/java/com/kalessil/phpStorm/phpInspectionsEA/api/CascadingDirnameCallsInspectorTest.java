@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.api;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.CascadingDirnameCallsInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.CascadingDirnameCallsInspector;
 
 final public class CascadingDirnameCallsInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

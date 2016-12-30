@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.lang;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strpos.SubStrUsedAsArrayAccessInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.SubStrUsedAsArrayAccessInspector;
 
 final public class SubStrUsedAsArrayAccessInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

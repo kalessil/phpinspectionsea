@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.controlFlow;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.StrTrUsageAsStrReplaceInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrTrUsageAsStrReplaceInspector;
 
 final public class StrTrUsageAsStrReplaceInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

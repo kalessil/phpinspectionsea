@@ -2,6 +2,10 @@ Php Inspections (EA Extended) is a Static Code Analysis tool for PHP, distribute
 
 Some facts about this project: https://www.openhub.net/p/phpinspectionsea
 
+[![Version](http://phpstorm.espend.de/badge/7622/version)](https://plugins.jetbrains.com/plugin/7622)
+[![Downloads](http://phpstorm.espend.de/badge/7622/downloads)](https://plugins.jetbrains.com/plugin/7622)
+[![Downloads last month](http://phpstorm.espend.de/badge/7622/last-month)](https://plugins.jetbrains.com/plugin/7622)
+
 Acknowledgments
 ---
 <img src="https://www.yourkit.com/images/yklogo.png" alt="YourKit" height="20"> YourKit supports us with their 

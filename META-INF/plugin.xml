@@ -140,6 +140,10 @@ Improvements and new inspections (support us by donating via <a href="https://ww
         groupName="Performance"                                   enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FileFunctionMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="FilePutContentsMissUseInspection"              displayName="'file_put_contents(...)' misused"
+        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FilePutContentsMissUseInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="NotOptimalRegularExpressionsInspection"        displayName="Non-optimal regular expression"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.NotOptimalRegularExpressionsInspector"/>

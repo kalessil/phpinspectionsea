@@ -2,7 +2,7 @@
 
 > Note: the inspection is deactivated by default.
 
-> Note: the inspection will not brings less benefit for PHP 5.6+ due to non-editable array optimizations.
+> Note: the inspection brings less benefit for PHP 5.6+ due to non-editable array optimizations.
 
 Static variables, defined in a function/method are not used widely and in nutshell representing static property visible 
 only inside the function/method. As for any static variable, it is stored in memory until script is executed.

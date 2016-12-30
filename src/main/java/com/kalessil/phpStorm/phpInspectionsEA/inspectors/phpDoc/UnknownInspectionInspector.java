@@ -73,7 +73,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
                     }
                 }
 
-                /* report unknown inspections: we also might be not aware of other plugins */
+                /* report unknown inspections; if inspections provided by not loaded plugin they are reported */
                 if (reported.size() > 0) {
                     final PsiElement target = tag.getFirstChild();
                     if (null != target) {

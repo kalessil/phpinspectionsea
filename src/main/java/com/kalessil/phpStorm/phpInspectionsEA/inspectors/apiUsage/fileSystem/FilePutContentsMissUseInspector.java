@@ -5,7 +5,9 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -39,9 +41,18 @@ public class FilePutContentsMissUseInspector extends BasePhpInspection {
                     return;
                 }
 
+                /* inner call can be silenced, un-wrap it */
+                PsiElement innerCandidate = params[1];
+                if (innerCandidate instanceof UnaryExpression) {
+                    final PsiElement operator = ((UnaryExpression) innerCandidate).getOperation();
+                    if (null != operator && PhpTokenTypes.opSILENCE == operator.getNode().getElementType()) {
+                        innerCandidate = ((UnaryExpression) innerCandidate).getValue();
+                    }
+                }
+
                 /* analyze the call */
-                if (params[1] instanceof FunctionReference) {
-                    final FunctionReference innerReference = (FunctionReference) params[1];
+                if (innerCandidate instanceof FunctionReference) {
+                    final FunctionReference innerReference = (FunctionReference) innerCandidate;
                     final String innerName                 = innerReference.getName();
                     final PsiElement[] innerParams         = innerReference.getParameters();
                     /* check if matches the target pattern */

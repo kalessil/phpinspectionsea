@@ -5,6 +5,7 @@ Some facts about this project: https://www.openhub.net/p/phpinspectionsea
 [![Version](http://phpstorm.espend.de/badge/7622/version)](https://plugins.jetbrains.com/plugin/7622)
 [![Downloads](http://phpstorm.espend.de/badge/7622/downloads)](https://plugins.jetbrains.com/plugin/7622)
 [![Downloads last month](http://phpstorm.espend.de/badge/7622/last-month)](https://plugins.jetbrains.com/plugin/7622)
+[![Donate to this project using Paypal](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/VReznichenko)
 
 Acknowledgments
 ---

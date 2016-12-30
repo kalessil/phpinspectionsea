@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.pitfalls;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RealpathInSteamContextInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.RealpathInSteamContextInspector;
 
 final public class RealpathInSteamContextInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

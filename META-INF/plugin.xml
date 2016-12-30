@@ -102,7 +102,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SlowArrayOperationsInLoopInspection"           displayName="Slow array function used in loop"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SlowArrayOperationsInLoopInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.SlowArrayOperationsInLoopInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="StrStrUsedAsStrPosInspection"                  displayName="'str(i)str(...)' could be replaced with 'str(i)pos(...)'"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
@@ -126,19 +126,19 @@ Improvements and new inspections (support us by donating via <a href="https://ww
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="InArrayMissUseInspection"                      displayName="'in_array(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.InArrayMissUseInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.InArrayMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="LowPerformanceArrayUniqueUsageInspection"      displayName="'array_unique(...)' low performing usage"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.LowPerformanceArrayUniqueUsageInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.LowPerformanceArrayUniqueUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ArrayPushMissUseInspection"                    displayName="'array_push(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ArrayPushMissUseInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayPushMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="FileFunctionMissUseInspection"                 displayName="'file(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.FileFunctionMissUseInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FileFunctionMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="NotOptimalRegularExpressionsInspection"        displayName="Non-optimal regular expression"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
@@ -179,7 +179,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="TypeUnsafeArraySearchInspection"               displayName="'in_array(...)', 'array_search()' type unsafe usage"
         groupName="Type compatibility"                            enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.TypeUnsafeArraySearchInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.TypeUnsafeArraySearchInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ArrayTypeOfParameterByDefaultValueInspection"  displayName="Parameter could be declared as array"
         groupName="Type compatibility"                            enabledByDefault="true" level="WARNING"
@@ -257,7 +257,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="ArraySearchUsedAsInArrayInspection"            displayName="'array_search(...)' could be replaced by 'in_array(...)'"
          groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
-         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ArraySearchUsedAsInArrayInspector"/>
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArraySearchUsedAsInArrayInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="SequentialUnSetCallsInspection"                displayName="'unset(...)' calls could be merged"
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
@@ -317,7 +317,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="RealpathInSteamContextInspection"              displayName="Phar-incompatible 'realpath()' usage"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RealpathInSteamContextInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.RealpathInSteamContextInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="OffsetOperationsInspection"                    displayName="Array and string offset validity"
         groupName="Probable bugs"                                 enabledByDefault="false" level="ERROR"
@@ -569,7 +569,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="dirnameCallOnFileConstantInspection"           displayName="__DIR__ can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.DirnameCallOnFileConstantInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.DirnameCallOnFileConstantInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="IsNullFunctionUsageInspection"                 displayName="'null === ...' can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
@@ -653,7 +653,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="FopenBinaryUnsafeUsageInspection"                displayName="Binary-unsafe 'fopen(...)' usage"
         groupName="Compatibility"                                   enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.FopenBinaryUnsafeUsageInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FopenBinaryUnsafeUsageInspector"/>
 
     <!--localInspection language="PHP" groupPath="PHP"
         shortName="StrictArgumentsInspection"                       displayName="Type compatibility: check types of call arguments"

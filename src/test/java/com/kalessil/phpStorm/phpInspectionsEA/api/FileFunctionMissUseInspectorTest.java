@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.FileFunctionMissUseInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FileFunctionMissUseInspector;
 
 final public class FileFunctionMissUseInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

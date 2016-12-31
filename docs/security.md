@@ -20,7 +20,7 @@ Since PHP 7.0.0 the unserialize function has second parameter $options, which al
 implicitly specify which classes can be unserialized.
 
 ```php
-    /* gracefull approach wit supporting older versions of PHP */ 
+    /* graceful approach with supporting older versions of PHP */ 
     if (PHP_VERSION_ID >= 70000) {
         /* to forbid classes unserializing at all use this: array('allowed_classes' => false) */
         $unserializedData = unserialize($serializedData, array('allowed_classes' => ['Class1', 'Class2']));

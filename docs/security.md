@@ -19,6 +19,16 @@ Unfortunately it is not suitable for performance-optimized components.
 Since PHP 7.0.0 the unserialize function has second parameter $options, which allows to 
 implicitly specify which classes can be unserialized.
 
+```php
+    /* gracefull approach wit supporting older versions of PHP */ 
+    if (PHP_VERSION_ID >= 70000) {
+        /* to forbid classes unserializing at all use this: array('allowed_classes' => false) */
+        $unserializedData = unserialize($serializedData, array('allowed_classes' => ['Class1', 'Class2']));
+    } else {
+        $unserializedData = unserialize($serializedData);
+    }
+```
+
 ## Hooking into unserialize callback
 
 This technique allows to hook into class-loading during unserialize, making it possible to prevent new classes loading.

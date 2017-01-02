@@ -17,8 +17,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
-    private static final String messageUseBinaryMode         = "The mode is not binary-safe ('b' is missing)";
-    private static final String messageReplaceWithBinaryMode = "The mode is not binary-safe (replace 't' with 'b')";
+    private static final String messageUseBinaryMode         = "The mode is not binary-safe ('b' is missing).";
+    private static final String messageReplaceWithBinaryMode = "The mode is not binary-safe (replace 't' with 'b').";
 
     @NotNull
     public String getShortName() {
@@ -60,7 +60,7 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Make it binary-safe";
+            return "Make mode binary-safe";
         }
 
         @NotNull

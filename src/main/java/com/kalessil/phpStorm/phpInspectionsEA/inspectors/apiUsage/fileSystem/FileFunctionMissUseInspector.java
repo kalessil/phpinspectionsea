@@ -21,7 +21,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class FileFunctionMissUseInspector extends BasePhpInspection {
-    private static final String messagePattern = "'file_get_contents(%p%)' would consume less cpu and memory resources here";
+    private static final String messagePattern = "'file_get_contents(%p%)' would consume less cpu and memory resources here.";
 
     @NotNull
     public String getShortName() {

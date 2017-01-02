@@ -12,8 +12,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class CallableInLoopTerminationConditionInspector extends BasePhpInspection {
-    private static final String messagePattern  = "'for (%existingInit%%newInit%; %newCheck%; ...)' should be used for better performance";
-    private static final String messageExternal = "Callable result should be stored outside of the loop for better performance";
+    private static final String messagePattern  = "'for (%existingInit%%newInit%; %newCheck%; ...)' should be used for better performance.";
+    private static final String messageExternal = "Callable result should be stored outside of the loop for better performance.";
 
     @NotNull
     public String getShortName() {

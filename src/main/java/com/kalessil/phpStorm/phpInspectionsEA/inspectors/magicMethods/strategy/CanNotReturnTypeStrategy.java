@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import java.util.Collection;
 
 public class CanNotReturnTypeStrategy {
-    private static final String strProblemDescription = "%m% cannot return a value";
+    private static final String strProblemDescription = "%m% cannot return a value.";
 
     static public void apply(final Method method, final ProblemsHolder holder) {
         Collection<PhpReturn> returnStatements = PsiTreeUtil.findChildrenOfType(method, PhpReturn.class);

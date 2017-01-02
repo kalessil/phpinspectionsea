@@ -28,7 +28,7 @@ import java.util.List;
 
 
 public class OneTimeUseVariablesInspector extends BasePhpInspection {
-    private static final String messagePattern = "Variable $%v% is redundant";
+    private static final String messagePattern = "Variable $%v% is redundant.";
 
     @NotNull
     public String getShortName() {

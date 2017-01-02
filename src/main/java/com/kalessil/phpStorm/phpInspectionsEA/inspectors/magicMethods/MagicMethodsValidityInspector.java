@@ -17,8 +17,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class MagicMethodsValidityInspector extends BasePhpInspection {
-    private static final String messageUseSplAutoloading = "A common recommendation is to use spl_autoload_register(...) instead";
-    private static final String messageNotMagic          = "Only magic methods should start with '__'";
+    private static final String messageUseSplAutoloading = "Prefer 'spl_autoload_register(...)' instead.";
+    private static final String messageNotMagic          = "Only magic methods should start with '__'.";
 
     private static final PhpType arrayType         = new PhpType();
     private static final PhpType stringType        = new PhpType();

@@ -26,8 +26,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MultiAssignmentUsageInspector extends BasePhpInspection {
-    private static final String messagePattern      = "Perhaps 'list(...) = %a%' can be used instead (check similar statements)";
-    private static final String messageImplicitList = "foreach (... as list(...)) is possible";
+    private static final String messagePattern      = "Perhaps 'list(...) = %a%' can be used instead (check similar statements).";
+    private static final String messageImplicitList = "foreach (... as list(...)) could be used instead.";
 
     @NotNull
     public String getShortName() {

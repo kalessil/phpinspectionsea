@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class UselessMultiLineModifierStrategy {
-    private static final String strProblemDescription = "'m' modifier is ambiguous here (no ^ or $ in given pattern)";
+    private static final String strProblemDescription = "'m' modifier is ambiguous here (no ^ or $ in given pattern).";
 
     static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
         if (!StringUtil.isEmpty(modifiers) && !StringUtil.isEmpty(pattern) && modifiers.indexOf('m') >= 0) {

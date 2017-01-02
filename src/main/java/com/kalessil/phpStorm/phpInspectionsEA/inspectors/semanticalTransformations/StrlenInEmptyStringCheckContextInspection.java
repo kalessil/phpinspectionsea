@@ -18,9 +18,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ClassInStringContex
 import org.jetbrains.annotations.NotNull;
 
 public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection {
-    private static final String strProblemDescription                      = "Can be replaced by comparing with empty string";
-    private static final String strProblemDescriptionObjectUsed            = "Can be replaced with ''' == $...' construction";
-    private static final String strProblemDescriptionMissingToStringMethod = "%class% miss __toString() implementation";
+    private static final String strProblemDescription                      = "Can be replaced by comparing with empty string.";
+    private static final String strProblemDescriptionObjectUsed            = "Can be replaced with ''' == $...' construction.";
+    private static final String strProblemDescriptionMissingToStringMethod = "%class% miss __toString() implementation.";
 
     @NotNull
     public String getShortName() {
@@ -51,7 +51,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                         if (secondOperand == reference) {
                             secondOperand = objParent.getRightOperand();
                         }
-                        /* second operand shall be a number */
+                        /* second operand should be a number */
                         if (secondOperand instanceof  PhpExpression && PhpElementTypes.NUMBER == secondOperand.getNode().getElementType()) {
                             final String strNumber = secondOperand.getText();
 

@@ -15,9 +15,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class InArrayMissUseInspector extends BasePhpInspection {
-    private static final String messageStrictComparison   = "'%v% === %e%' should be used instead";
-    private static final String messageTolerateComparison = "'%v% == %e%' should be used instead";
-    private static final String messageKeyExists  = "This looks like array_key_exists(...) call equivalent (ensure the needle being of string/integer type).";
+    private static final String messageStrictComparison   = "'%v% === %e%' should be used instead.";
+    private static final String messageTolerateComparison = "'%v% == %e%' should be used instead.";
+    private static final String messageKeyExists  = "This looks equivalent to a array_key_exists(...) call. It is safe to refactor for type-safe code when the indexes are integers/strings only."; // NOTE-TR: It cannot be anything else...
 
     @NotNull
     public String getShortName() {

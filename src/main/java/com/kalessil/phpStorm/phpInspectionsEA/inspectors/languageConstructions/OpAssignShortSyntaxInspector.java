@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class OpAssignShortSyntaxInspector extends BasePhpInspection {
-    private static final String messagePattern = "Can be safely refactored as '%r%'";
+    private static final String messagePattern = "Can be safely refactored as '%r%'.";
 
     @NotNull
     public String getShortName() {

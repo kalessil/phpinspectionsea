@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class ThrowRawExceptionInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "One of SPL exceptions shall be thrown - \\Exception is too general";
+    private static final String strProblemDescription = "\\Exception is too general. Consider throwing one of SPL exceptions instead.";
 
     @NotNull
     public String getShortName() {

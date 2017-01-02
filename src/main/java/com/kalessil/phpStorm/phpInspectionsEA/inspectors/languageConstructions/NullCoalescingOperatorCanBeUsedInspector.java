@@ -24,7 +24,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection {
-    private static final String messageUseOperator = "' ... ?? ...' construction shall be used instead";
+    private static final String messageUseOperator = "' ... ?? ...' construction should be used instead.";
 
     @NotNull
     public String getShortName() {
@@ -135,7 +135,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
         @NotNull
         @Override
         public String getName() {
-            return "Use ?? instead";
+            return "Use ?? instead.";
         }
 
         @NotNull

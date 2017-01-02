@@ -22,7 +22,7 @@ import java.util.LinkedList;
 
 public class OnlyWritesOnParameterInspector extends BasePhpInspection {
     private static final String strProblemDescription = "Parameter/variable is overridden, but is never used or appears " +
-            "outside of the scope";
+            "outside of the scope.";
 
     @NotNull
     public String getShortName() {

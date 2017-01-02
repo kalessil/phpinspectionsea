@@ -17,10 +17,10 @@ import java.util.regex.Pattern;
 
 public class CountOnPropelCollectionInspector extends BasePhpInspection {
     private static final String strProblemDescriptionFkCollection = "This type of count, in some cases, should be replaced " +
-            "with constructing query object and operating on it (if collection is not used)";
-    private static final String strProblemDescriptionSearchCollection = "This type of count can be performed on query object";
+            "with constructing query object and operating on it (if collection is not used).";
+    private static final String strProblemDescriptionSearchCollection = "This type of count can be performed on query object.";
     private static final String strProblemDescriptionPropelCollection = "This type of count should be checked manually, " +
-            "collection is possibly the result of a query and count can be performed on that query";
+            "collection is possibly the result of a query and count can be performed on that query.";
 
     @NotNull
     public String getShortName() {

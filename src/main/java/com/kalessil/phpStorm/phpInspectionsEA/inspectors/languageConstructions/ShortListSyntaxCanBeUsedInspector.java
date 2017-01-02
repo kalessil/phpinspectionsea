@@ -26,8 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
-    private static final String messageForeach = "'foreach (... as [...])' can be used here";
-    private static final String messageAssign  = "'[...] = ...' can be used here";
+    private static final String messageForeach = "'foreach (... as [...])' can be used here.";
+    private static final String messageAssign  = "'[...] = ...' can be used here.";
 
     @NotNull
     public String getShortName() {
@@ -86,7 +86,7 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use [...] instead";
+            return "Use [...] instead.";
         }
 
         @NotNull

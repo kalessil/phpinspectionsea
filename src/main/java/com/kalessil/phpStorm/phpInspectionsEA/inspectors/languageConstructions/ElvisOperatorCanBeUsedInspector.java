@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "' ... ?: ...' construction shall be used instead";
+    private static final String strProblemDescription = "' ... ?: ...' construction should be used instead.";
 
     @NotNull
     public String getShortName() {
@@ -59,7 +59,7 @@ public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use ?: instead";
+            return "Use ?: instead.";
         }
 
         @NotNull

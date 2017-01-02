@@ -21,8 +21,8 @@ import org.jetbrains.annotations.Nullable;
  */
 
 public class SecurityAdvisoriesInspector extends LocalInspectionTool {
-    private static final String message   = "Please add roave/security-advisories:dev-master as a firewall for vulnerable components";
-    private static final String useMaster = "Please use dev-master instead";
+    private static final String message   = "Please add roave/security-advisories:dev-master as a firewall for vulnerable components.";
+    private static final String useMaster = "Please use dev-master instead.";
 
     @NotNull
     public String getShortName() {

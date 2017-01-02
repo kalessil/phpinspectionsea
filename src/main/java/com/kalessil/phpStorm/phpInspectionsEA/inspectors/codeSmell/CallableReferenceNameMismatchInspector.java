@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
     private static final Map<String, String> cache = new ConcurrentHashMap<>();
-    private static final String messagePattern = "Name provided in this call should be '%n%' (case mismatch)";
+    private static final String messagePattern = "Name provided in this call should be '%n%' (case mismatch).";
 
     @NotNull
     public String getShortName() {

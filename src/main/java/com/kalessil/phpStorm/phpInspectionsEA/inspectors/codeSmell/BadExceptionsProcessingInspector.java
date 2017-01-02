@@ -10,8 +10,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class BadExceptionsProcessingInspector extends BasePhpInspection {    
-    private static final String strProblemDedicateLogic = "Consider moving non-related statements outside the try-block or refactoring try-body into a function/method.";
+public class BadExceptionsProcessingInspector extends BasePhpInspection {
+    private static final String strProblemDedicateLogic = "Consider moving non-related statements outside the try-block or refactoring the try-body into a function/method.";
 
     @NotNull
     public String getShortName() {

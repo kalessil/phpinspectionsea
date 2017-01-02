@@ -31,7 +31,7 @@ import java.util.List;
  */
 
 public class CascadingDirnameCallsInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%e%' can be used instead (reduces amount of calls)";
+    private static final String messagePattern = "'%e%' can be used instead (reduces amount of calls).";
 
     @NotNull
     public String getShortName() {

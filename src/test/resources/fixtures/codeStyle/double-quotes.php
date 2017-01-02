@@ -1,6 +1,6 @@
 <?php
 
-    echo <weak_warning descr="Safely use single quotes instead">"123"</weak_warning>;
+    echo <weak_warning descr="Safely use single quotes instead.">"123"</weak_warning>;
 
     echo '123';
     echo "$a";

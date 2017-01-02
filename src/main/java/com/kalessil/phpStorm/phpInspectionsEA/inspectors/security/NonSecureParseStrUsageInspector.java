@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class NonSecureParseStrUsageInspector  extends BasePhpInspection {
-    private static final String message = "Please provide second parameter to not influence globals";
+    private static final String message = "Please provide second parameter to not influence globals.";
 
     @NotNull
     public String getShortName() {

@@ -39,8 +39,8 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
     @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_USING_STRING_CASTING = false;
 
-    private static final String message              = "Implicit magic method calls shall be avoided as these methods are used by PHP internals.";
-    private static final String patternStringCasting = "Please use (string) %o% instead";
+    private static final String message              = "Implicit magic method calls should be avoided as these methods are used by PHP internals.";
+    private static final String patternStringCasting = "Please use (string) %o% instead.";
 
     private static final Set<String> methods = new HashSet<>();
     static {

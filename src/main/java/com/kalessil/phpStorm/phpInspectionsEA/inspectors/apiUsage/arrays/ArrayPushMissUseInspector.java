@@ -21,7 +21,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class ArrayPushMissUseInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "'%t%[] = ...' should be used instead (2x faster)";
+    private static final String strProblemDescription = "'%t%[] = ...' should be used instead (2x faster).";
 
     @NotNull
     public String getShortName() {

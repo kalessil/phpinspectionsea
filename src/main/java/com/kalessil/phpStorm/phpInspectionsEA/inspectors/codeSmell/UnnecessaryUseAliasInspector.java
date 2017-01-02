@@ -14,7 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class UnnecessaryUseAliasInspector extends BasePhpInspection {
-    private static final String messagePattern = "' as %a%' is redundant here";
+    private static final String messagePattern = "' as %a%' is redundant here.";
 
     @NotNull
     public String getShortName() {

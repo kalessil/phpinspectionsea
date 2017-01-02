@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class RealpathInSteamContextInspector extends BasePhpInspection {
-    private static final String message = "realpath() working differently in stream context (e.g. for phar://...), consider using dirname() instead";
+    private static final String message = "'realpath()' works differently in a stream context (e.g., for phar://...). Consider using 'dirname()' instead.";
 
     @NotNull
     public String getShortName() {

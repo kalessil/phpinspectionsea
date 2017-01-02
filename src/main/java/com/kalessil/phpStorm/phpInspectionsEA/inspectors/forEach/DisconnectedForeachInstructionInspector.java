@@ -31,8 +31,8 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
     @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_USING_CLONE = true;
 
-    private static final String strProblemDescription = "This statement seems to be disconnected from parent foreach";
-    private static final String strProblemUseClone    = "Objects should be created outside of a loop and cloned instead";
+    private static final String strProblemDescription = "This statement seems to be disconnected from its parent foreach.";
+    private static final String strProblemUseClone    = "Objects should be created outside of a loop and cloned instead.";
 
     @NotNull
     public String getShortName() {

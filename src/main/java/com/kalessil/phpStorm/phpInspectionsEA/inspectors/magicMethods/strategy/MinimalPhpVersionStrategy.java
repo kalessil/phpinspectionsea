@@ -7,7 +7,7 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.Method;
 
 public class MinimalPhpVersionStrategy {
-    private static final String strProblemDescription = "%m% is introduced only in version %v%, hence it's unused";
+    private static final String strProblemDescription = "%m% is introduced only in version %v%, hence it's unused.";
 
     static public void apply(final Method method, final ProblemsHolder holder, final PhpLanguageLevel neededVersion) {
         if (null != method.getNameIdentifier()) {

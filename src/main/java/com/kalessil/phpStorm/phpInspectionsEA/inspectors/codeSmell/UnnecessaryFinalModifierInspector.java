@@ -24,7 +24,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class UnnecessaryFinalModifierInspector extends BasePhpInspection {
-    private static final String message = "Unnecessary final modifier (class is already final)";
+    private static final String message = "Unnecessary final modifier (class is already final).";
 
     @NotNull
     public String getShortName() {

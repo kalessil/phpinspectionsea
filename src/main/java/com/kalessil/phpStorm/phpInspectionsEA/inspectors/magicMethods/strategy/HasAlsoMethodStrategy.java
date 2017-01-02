@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 
 public class HasAlsoMethodStrategy {
-    private static final String strProblemDescription = "%m% should have pair method %p%";
+    private static final String strProblemDescription = "%m% should have pair method %p%.";
 
     static public void apply(final Method method, final String pair, final ProblemsHolder holder) {
         final String methodName = method.getName();

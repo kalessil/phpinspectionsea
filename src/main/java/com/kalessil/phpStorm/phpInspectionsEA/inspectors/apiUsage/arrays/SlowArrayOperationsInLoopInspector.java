@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 
 public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "'%s%(...)' is used in loop - resources greedy construction. Check inspection description for a solution.";
+    private static final String strProblemDescription = "'%s%(...)' is used in a loop and is a resources greedy construction.";
 
     @NotNull
     public String getShortName() {

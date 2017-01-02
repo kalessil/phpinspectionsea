@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class UselessDotAllModifierCheckStrategy {
-    private static final String strProblemDescription = "'s' modifier is ambiguous here (no . in given pattern)";
+    private static final String strProblemDescription = "'s' modifier is ambiguous here (no . in given pattern).";
 
     static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
         if (!StringUtil.isEmpty(modifiers) && !StringUtil.isEmpty(pattern) && modifiers.indexOf('s') >= 0) {

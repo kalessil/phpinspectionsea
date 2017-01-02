@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public class MustReturnSpecifiedTypeStrategy {
-    private static final String strProblemDescription = "%m% must return %t%";
+    private static final String strProblemDescription = "%m% must return %t%.";
 
     static public void apply(final PhpType allowedTypes, final Method method, final ProblemsHolder holder) {
         Collection<PhpReturn> returnStatements = PsiTreeUtil.findChildrenOfType(method, PhpReturn.class);

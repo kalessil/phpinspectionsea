@@ -16,7 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
-    private static final String message = "__DIR__ should be used instead";
+    private static final String message = "__DIR__ should be used instead.";
 
     @NotNull
     public String getShortName() {

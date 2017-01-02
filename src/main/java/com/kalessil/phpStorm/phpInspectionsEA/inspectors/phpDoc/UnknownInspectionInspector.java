@@ -29,6 +29,8 @@ import java.util.*;
  */
 
 public class UnknownInspectionInspector extends BasePhpInspection {
+    private static final String message = "Unknown inspection: %i%.";
+
     final private static Set<String> inspectionsNames;
     private static int minInspectionNameLength;
     static {
@@ -77,8 +79,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
                 if (reported.size() > 0) {
                     final PsiElement target = tag.getFirstChild();
                     if (null != target) {
-                        final String message = "Unknown inspection: %i%".replace("%i%", String.join(", ", reported));
-                        holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(target, message.replace("%i%", String.join(", ", reported)), ProblemHighlightType.WEAK_WARNING);
                     }
 
                     reported.clear();

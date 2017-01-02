@@ -28,8 +28,8 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
     @SuppressWarnings("WeakerAccess")
     public boolean RESPECT_PHPUNIT_STANDARDS = true;
 
-    private static final String messageThisUsed       = "'static::%m%(...)' should be used instead";
-    private static final String messageExpressionUsed = "'...::%m%(...)' should be used instead";
+    private static final String messageThisUsed       = "'static::%m%(...)' should be used instead.";
+    private static final String messageExpressionUsed = "'...::%m%(...)' should be used instead.";
 
     @NotNull
     public String getShortName() {

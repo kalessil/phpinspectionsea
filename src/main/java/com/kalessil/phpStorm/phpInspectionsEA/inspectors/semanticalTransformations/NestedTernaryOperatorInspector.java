@@ -18,9 +18,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 
 public class NestedTernaryOperatorInspector extends BasePhpInspection {
-    private static final String messageNested            = "Nested ternary operator should not be used (maintainability issues)";
-    private static final String messagePriorities        = "This may not work as expected (wrap condition into '()' to specify intention)";
-    private static final String messageVariantsIdentical = "True and false variants are identical, most probably this is a bug";
+    private static final String messageNested            = "Nested ternary operator should not be used (maintainability issues).";
+    private static final String messagePriorities        = "This may not work as expected (wrap condition into '()' to specify intention).";
+    private static final String messageVariantsIdentical = "True and false variants are identical, most probably this is a bug.";
 
     private static final HashSet<IElementType> safeOperations = new HashSet<>();
     static {

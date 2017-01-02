@@ -28,7 +28,7 @@ import java.util.Map;
  */
 
 public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%f%(...)' should be used instead (the pattern does not contain alphabet characters)";
+    private static final String messagePattern = "'%f%(...)' should be used instead (the pattern does not contain alphabet characters).";
 
     @NotNull
     public String getShortName() {

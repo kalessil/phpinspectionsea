@@ -39,9 +39,9 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
     @SuppressWarnings("WeakerAccess")
     public boolean REPORT_NON_THROWN_EXCEPTIONS = false;
 
-    private static final String messagePattern           = "Throws a non-annotated/unhandled exception: '%c%'";
-    private static final String messagePatternUnthrown   = "Following exceptions annotated, but not thrown: '%c%'";
-    private static final String messageFinallyExceptions = "Exceptions management inside finally has variety of side-effects in certain PHP versions";
+    private static final String messagePattern           = "Throws a non-annotated/unhandled exception: '%c%'.";
+    private static final String messagePatternUnthrown   = "Following exceptions annotated, but not thrown: '%c%'.";
+    private static final String messageFinallyExceptions = "Exceptions management inside finally has a variety of side-effects in certain PHP versions.";
 
     @NotNull
     public String getShortName() {

@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
-    private static final String messageSingletonConstructor = "Singleton constructor should be protected";
-    private static final String messageUtilNotFinal         = "Utility class should be final (breaks backward compatibility)";
-    private static final String messageUtilNaming           = "Utility class's name should end with 'Util'";
+    private static final String messageSingletonConstructor = "Singleton constructor should be protected.";
+    private static final String messageUtilNotFinal         = "Utility class should be final (breaks backward compatibility).";
+    private static final String messageUtilNaming           = "Utility class's name should end with 'Util'.";
 
     @NotNull
     public String getShortName() {

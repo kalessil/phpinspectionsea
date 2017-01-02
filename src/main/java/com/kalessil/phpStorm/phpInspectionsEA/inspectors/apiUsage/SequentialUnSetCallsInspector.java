@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class SequentialUnSetCallsInspector extends BasePhpInspection {
-    private static final String message = "Can be safely replaced with 'unset(..., ...[, ...])' construction";
+    private static final String message = "Can be safely replaced with 'unset(..., ...[, ...])' construction.";
 
     @NotNull
     public String getShortName() {

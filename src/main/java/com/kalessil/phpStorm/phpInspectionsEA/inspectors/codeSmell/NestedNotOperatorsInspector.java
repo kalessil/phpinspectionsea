@@ -19,8 +19,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class NestedNotOperatorsInspector extends BasePhpInspection {
-    private static final String messageUseBoolCasting = "Can be replaced with (bool)%e%";
-    private static final String messageUseSingleNot   = "Can be replaced with !%e%";
+    private static final String messageUseBoolCasting = "Can be replaced with (bool)%e%.";
+    private static final String messageUseSingleNot   = "Can be replaced with !%e%.";
 
     @NotNull
     public String getShortName() {
@@ -100,7 +100,7 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use single not operator";
+            return "Use a single not operator";
         }
 
         @NotNull

@@ -27,9 +27,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInspection {
-    private static final String strProblemNoSense = "Makes no sense, because it's always true according to annotations";
-    private static final String strProblemCheckViolatesDefinition = "Makes no sense, because this type is not defined in annotations";
-    private static final String strProblemAssignmentViolatesDefinition = "New value type (%s%) is not in annotated types";
+    private static final String strProblemNoSense = "Makes no sense, because it's always true according to annotations.";
+    private static final String strProblemCheckViolatesDefinition = "Makes no sense, because this type is not defined in annotations.";
+    private static final String strProblemAssignmentViolatesDefinition = "New value type (%s%) is not in annotated types.";
 
     @NotNull
     public String getShortName() {

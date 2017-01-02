@@ -1,12 +1,12 @@
 <?php
 
     /* direct and inverted patterns */
-    echo isset($x[0]) ? <weak_warning descr="' ... ?? ...' construction shall be used instead">$x[0]</weak_warning> : null;
-    echo !isset($x[0]) ? null : <weak_warning descr="' ... ?? ...' construction shall be used instead">$x[0]</weak_warning>;
+    echo isset($x[0]) ? <weak_warning descr="' ... ?? ...' construction should be used instead.">$x[0]</weak_warning> : null;
+    echo !isset($x[0]) ? null : <weak_warning descr="' ... ?? ...' construction should be used instead.">$x[0]</weak_warning>;
 
     /* alternative pattern */
-    echo array_key_exists(0, $x) ? <weak_warning descr="' ... ?? ...' construction shall be used instead">$x[0]</weak_warning> : null;
-    echo !array_key_exists(0, $x) ? null : <weak_warning descr="' ... ?? ...' construction shall be used instead">$x[0]</weak_warning>;
+    echo array_key_exists(0, $x) ? <weak_warning descr="' ... ?? ...' construction should be used instead.">$x[0]</weak_warning> : null;
+    echo !array_key_exists(0, $x) ? null : <weak_warning descr="' ... ?? ...' construction should be used instead.">$x[0]</weak_warning>;
 
     /* false-positives */
     echo array_key_exists(0, $x) ? $x[0] : 'default';

@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
-    private static final String messagePattern = "'(%s) ...' construction shall be used instead (up to 6x times faster)";
+    private static final String messagePattern = "'(%s) ...' construction should be used instead (up to 6x times faster).";
 
     @NotNull
     public String getShortName() {

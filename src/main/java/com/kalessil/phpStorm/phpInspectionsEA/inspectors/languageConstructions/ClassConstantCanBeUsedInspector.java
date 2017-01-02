@@ -49,7 +49,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     @SuppressWarnings("WeakerAccess")
     public boolean USE_RELATIVE_QF = true;
 
-    private static final String messagePattern = "Perhaps this can be replaced with %c%::class";
+    private static final String messagePattern = "Perhaps this can be replaced with %c%::class.";
 
     @SuppressWarnings("CanBeFinal")
     static private Pattern classNameRegex = null;
@@ -142,7 +142,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use ::class instead";
+            return "Use ::class instead.";
         }
 
         @NotNull

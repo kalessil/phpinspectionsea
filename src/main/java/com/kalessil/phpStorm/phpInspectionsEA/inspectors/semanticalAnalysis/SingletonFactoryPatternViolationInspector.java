@@ -12,8 +12,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SingletonFactoryPatternViolationInspector extends BasePhpInspection {
-    private static final String strProblemDescription             = "Ensure that one of public getInstance/create* methods are defined";
-    private static final String strProblemConstructorNotProtected = "Singleton constructor should be protected";
+    private static final String strProblemDescription             = "Ensure that one of public getInstance/create* methods are defined.";
+    private static final String strProblemConstructorNotProtected = "Singleton constructor should be protected.";
 
     @NotNull
     public String getShortName() {

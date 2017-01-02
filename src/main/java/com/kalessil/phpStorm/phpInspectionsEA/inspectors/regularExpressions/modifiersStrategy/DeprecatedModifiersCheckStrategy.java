@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
 public class DeprecatedModifiersCheckStrategy {
-    private static final String strProblemDescription = "'e' modifier is deprecated, please use 'preg_replace_callback()' instead";
+    private static final String strProblemDescription = "'e' modifier is deprecated, please use 'preg_replace_callback()' instead.";
 
     static public void apply(final String modifiers, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
         if (!StringUtil.isEmpty(modifiers) && modifiers.indexOf('e') >= 0) {

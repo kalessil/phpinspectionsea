@@ -9,8 +9,8 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class AmbiguousAnythingTrimCheckStrategy {
-    private static final String strProblemLeading  = "Leading .* can be removed";
-    private static final String strProblemTrailing = "Trailing .* can be removed";
+    private static final String strProblemLeading  = "Leading .* can be removed.";
+    private static final String strProblemTrailing = "Trailing .* can be removed.";
 
     static public void apply(
             final String functionName, @NotNull final FunctionReference reference,

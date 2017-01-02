@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ShortClassDefinitionStrategy {
-    private static final String messagePattern = "'%p%' can be replaced with '%r%' (%h%)";
+    private static final String messagePattern = "'%p%' can be replaced with '%r%' (%h%).";
 
     private static final HashMap<String, String> mapping = new HashMap<>();
     static {

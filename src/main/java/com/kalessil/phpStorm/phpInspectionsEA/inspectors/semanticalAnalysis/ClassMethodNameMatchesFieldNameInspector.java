@@ -17,7 +17,7 @@ import java.util.HashSet;
 
 public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection {
     private static final String strProblemDescription = "There is a field with the same name, please give the method another name like is*, get*, set* and etc.";
-    private static final String strProblemNotAnalyzed = "There is a field with the same name, but it's type can not be resolved";
+    private static final String strProblemNotAnalyzed = "There is a field with the same name, but it's type can not be resolved.";
 
     @NotNull
     public String getShortName() {

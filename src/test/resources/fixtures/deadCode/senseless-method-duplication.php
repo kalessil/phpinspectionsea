@@ -22,7 +22,7 @@
 
     class ClassDuplicates extends ClassTransitive {
 
-        protected function <weak_warning descr="'method' method can be dropped, as it identical to parent's one">method</weak_warning> () {
+        protected function <weak_warning descr="'method' method can be dropped, as it identical to parent's one.">method</weak_warning> () {
             // PsiEquivalenceUtil.areElementsEquivalent is not matching those assignments properly
             // We had to place ugly workaround there
             $x = [];

@@ -10,7 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class PropertyCanBeStaticInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "This property initialization seems to be quite 'heavy', probably it should be defined as static";
+    private static final String strProblemDescription = "This property initialization seems to be quite 'heavy', probably it should be defined as static.";
 
     @NotNull
     public String getShortName() {
@@ -37,7 +37,7 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
                     }
 
 
-                    /* skip static and public variables - they shall not be changed via constructor */
+                    /* skip static and public variables - they should not be changed via constructor */
                     final PhpModifier modifier = field.getModifier();
                     if (
                         modifier.isStatic() || modifier.isPublic() ||

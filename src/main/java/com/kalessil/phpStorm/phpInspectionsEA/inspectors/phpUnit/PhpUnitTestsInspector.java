@@ -31,6 +31,11 @@ import java.util.Collection;
 
 
 public class PhpUnitTestsInspector extends BasePhpInspection {
+    private final static String messageDepends = "@depends referencing to a non-existing entity.";
+    private final static String messageCovers = "@covers referencing to a non-existing entity";
+    private final static String messageTest = "@test is ambiguous because method name starts with 'test'.";
+
+
     // configuration flags automatically saved by IDE
     @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_TO_USE_ASSERTSAME = false;
@@ -70,7 +75,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         final PhpDocRef methodNeeded = (PhpDocRef) tag.getFirstPsiChild();
                         /* if resolved properly, it will have 1 reference */
                         if (1 != methodNeeded.getReferences().length) {
-                            holder.registerProblem(objMethodName, "@depends referencing to a non-existing entity", ProblemHighlightType.GENERIC_ERROR);
+                            holder.registerProblem(objMethodName, messageDepends, ProblemHighlightType.GENERIC_ERROR);
                             continue;
                         }
                     }
@@ -81,14 +86,13 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
                         /* if resolved properly, it will will have references */
                         if (referencesToExpect != referenceNeeded.getReferences().length) {
-                            holder.registerProblem(objMethodName, "@covers referencing to a non-existing entity", ProblemHighlightType.GENERIC_ERROR);
+                            holder.registerProblem(objMethodName, messageCovers, ProblemHighlightType.GENERIC_ERROR);
                             continue;
                         }
                     }
 
                     if (isMethodNamedAsTest && tagName.equals("@test")) {
-                        final String message = "@test is ambiguous because method name starts with 'test'";
-                        holder.registerProblem(tag.getFirstChild(), message, ProblemHighlightType.LIKE_DEPRECATED, new AmbiguousTestAnnotationLocalFix());
+                        holder.registerProblem(tag.getFirstChild(), messageTest, ProblemHighlightType.LIKE_DEPRECATED, new AmbiguousTestAnnotationLocalFix());
                     }
                 }
                 tags.clear();

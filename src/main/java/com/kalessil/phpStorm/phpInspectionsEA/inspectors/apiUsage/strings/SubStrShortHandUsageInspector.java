@@ -31,8 +31,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class SubStrShortHandUsageInspector extends BasePhpInspection {
-    private static final String patternSimplifyLength = "Normally '%l%' can be dropped, so '-%r%' is only left (range bugs can popup, see a bug-report #271 on Bitbucket)";
-    private static final String patternDropLength     = "'%l%' can be safely dropped";
+    private static final String patternSimplifyLength = "Normally '%l%' can be dropped, so '-%r%' is only left (range bugs can popup, see a bug-report #271 on Bitbucket).";
+    private static final String patternDropLength     = "'%l%' can be safely dropped.";
 
     @NotNull
     public String getShortName() {

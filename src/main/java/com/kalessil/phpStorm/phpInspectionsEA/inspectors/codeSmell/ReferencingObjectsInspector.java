@@ -16,8 +16,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class ReferencingObjectsInspector extends BasePhpInspection {
-    private static final String messageParameter  = "Objects are always passed by reference; please correct '& $%p%'";
-    private static final String messageAssignment = "Objects are always passed by reference; please correct '= & new '";
+    private static final String messageParameter  = "Objects are always passed by reference; please correct '& $%p%'.";
+    private static final String messageAssignment = "Objects are always passed by reference; please correct '= & new '.";
 
     private static final PhpType php7Types = new PhpType();
     static {

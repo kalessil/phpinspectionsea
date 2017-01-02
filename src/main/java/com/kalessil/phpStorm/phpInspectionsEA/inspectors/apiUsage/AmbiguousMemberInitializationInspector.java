@@ -15,7 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Null assignment can be safely removed. Define null in annotations if it's important";
+    private static final String strProblemDescription = "Null assignment can be safely removed. Define null in annotations if it's important.";
 
     @NotNull
     public String getShortName() {

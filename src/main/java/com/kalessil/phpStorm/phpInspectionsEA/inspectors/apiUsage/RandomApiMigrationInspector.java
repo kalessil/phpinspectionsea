@@ -37,7 +37,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
     @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_USING_RANDOM_INT = true;
 
-    private static final String messagePattern = "'%o%(...)' has recommended replacement '%n%(...)', consider migrating";
+    private static final String messagePattern = "'%o%(...)' has recommended replacement '%n%(...)', consider migrating.";
 
     @NotNull
     public String getShortName() {

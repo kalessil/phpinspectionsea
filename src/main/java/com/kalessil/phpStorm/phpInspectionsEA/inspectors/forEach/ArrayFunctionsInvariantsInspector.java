@@ -12,8 +12,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class ArrayFunctionsInvariantsInspector extends BasePhpInspection {
-    private static final String messageArrayFill    = "'array_fill(...)' should be used instead";
-    private static final String messageArrayReplace = "'array_replace(...)' should be used instead";
+    private static final String messageArrayFill    = "'array_fill(...)' should be used instead.";
+    private static final String messageArrayReplace = "'array_replace(...)' should be used instead.";
 
     @NotNull
     public String getShortName() {

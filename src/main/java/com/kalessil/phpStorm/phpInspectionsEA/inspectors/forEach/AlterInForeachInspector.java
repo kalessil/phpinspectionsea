@@ -25,10 +25,10 @@ public class AlterInForeachInspector extends BasePhpInspection {
     @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_USING_VALUE_BY_REF = false;
 
-    private static final String strProblemDescription     = "Can be refactored as '$%c% = ...' if $%v% is defined as reference (ensure that array supplied). Suppress if causes memory mismatches.";
-    private static final String strProblemUnsafeReference = "This variable must be unset just after foreach to prevent possible side-effects";
-    private static final String strProblemKeyReference    = "Provokes PHP Fatal error (key element cannot be a reference)";
-    private static final String strProblemAmbiguousUnset  = "Unsetting $%v% is not needed because it's not a reference";
+    private static final String strProblemDescription     = "Can be refactored as '$%c% = ...' if $%v% is defined as a reference (ensure that array supplied). Suppress if causes memory mismatches.";
+    private static final String strProblemUnsafeReference = "This variable must be unset just after foreach to prevent possible side-effects.";
+    private static final String strProblemKeyReference    = "Provokes a PHP Fatal error (key element cannot be a reference).";
+    private static final String strProblemAmbiguousUnset  = "Unsetting $%v% is not needed because it's not a reference.";
 
     @NotNull
     public String getShortName() {

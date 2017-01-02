@@ -16,7 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class UnnecessarySemicolonInspector extends BasePhpInspection {
-    private static final String message = "Unnecessary semicolon";
+    private static final String message = "Unnecessary semicolon.";
 
     @NotNull
     public String getShortName() {

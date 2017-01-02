@@ -13,7 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class StrTrUsageAsStrReplaceInspector extends BasePhpInspection {
-    private static final String messagePattern = "This construct behaves as str_replace(%p%, ...), consider refactoring (improves maintainability)";
+    private static final String messagePattern = "This construct behaves as str_replace(%p%, ...), consider refactoring (improves maintainability).";
 
     @NotNull
     public String getShortName() {

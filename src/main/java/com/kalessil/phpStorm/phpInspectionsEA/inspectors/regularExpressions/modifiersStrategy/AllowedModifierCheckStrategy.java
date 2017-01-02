@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
 public class AllowedModifierCheckStrategy {
-    private static final String strProblemDescription = "Unknown modifier '%m%'";
+    private static final String strProblemDescription = "Unknown modifier '%m%'.";
 
     static public void apply(final String modifiers, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
         if (!StringUtil.isEmpty(modifiers)) {

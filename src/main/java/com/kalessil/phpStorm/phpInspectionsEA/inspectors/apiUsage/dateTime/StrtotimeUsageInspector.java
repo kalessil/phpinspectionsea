@@ -17,8 +17,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class StrtotimeUsageInspector extends BasePhpInspection {
-    private static final String messageUseTime  = "'time()' can be used instead (2x faster)";
-    private static final String messageDropTime = "'time()' is a default valued already, safely drop it";
+    private static final String messageUseTime  = "'time()' should be used instead (2x faster).";
+    private static final String messageDropTime = "'time()' is default valued already, it can safely be removed.";
 
     @NotNull
     public String getShortName() {

@@ -31,13 +31,13 @@ import java.util.Collection;
  */
 
 public class CryptographicallySecureRandomnessInspector extends BasePhpInspection {
-    private static final String messageUseRandomBytes                = "Consider using cryptographically secure random_bytes() instead";
-    private static final String messageVerifyBytes                   = "The IV generated can be false, please add necessary checks";
-    private static final String messageOpenssl2ndArgumentNotDefined  = "Use 2nd parameter for determining if the algorithm used was cryptographically strong";
-    private static final String messageMcrypt2ndArgumentNotDefined   = "Please provide 2nd parameter implicitly as default value has changed between PHP versions";
+    private static final String messageUseRandomBytes                = "Consider using cryptographically secure random_bytes() instead.";
+    private static final String messageVerifyBytes                   = "The IV generated can be false, please add necessary checks.";
+    private static final String messageOpenssl2ndArgumentNotDefined  = "Use 2nd parameter for determining if the algorithm used was cryptographically strong.";
+    private static final String messageMcrypt2ndArgumentNotDefined   = "Please provide 2nd parameter implicitly as default value has changed between PHP versions.";
 
-    private static final String messageOpenssl2ndArgumentNotVerified = "$crypto_strong can be false, please add necessary checks";
-    private static final String messageMcrypt2ndArgumentNotSecure    = "It's better to use MCRYPT_DEV_RANDOM here (may block until more entropy is available)";
+    private static final String messageOpenssl2ndArgumentNotVerified = "$crypto_strong can be false, please add necessary checks.";
+    private static final String messageMcrypt2ndArgumentNotSecure    = "It's better to use MCRYPT_DEV_RANDOM here (may block until more entropy is available).";
 
     @NotNull
     public String getShortName() {

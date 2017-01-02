@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class DefaultValueInElseBranchInspector extends BasePhpInspection {
-    private static final String message = "Assignment in this branch shall be moved before if";
+    private static final String message = "Assignment in this branch should be moved before the if.";
 
     @NotNull
     public String getShortName() {

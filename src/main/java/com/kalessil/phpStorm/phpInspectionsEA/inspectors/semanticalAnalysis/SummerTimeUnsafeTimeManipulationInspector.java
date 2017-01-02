@@ -13,7 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection {
-    private static final String message = "Consider using \\DateTime for DST safe date/time manipulation";
+    private static final String message = "Consider using \\DateTime for DST safe date/time manipulation.";
 
     @NotNull
     public String getShortName() {

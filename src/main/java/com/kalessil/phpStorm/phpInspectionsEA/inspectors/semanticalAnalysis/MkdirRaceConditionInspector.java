@@ -18,8 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class MkdirRaceConditionInspector extends BasePhpInspection {
-    private static final String strProblemMkdirDirectCall  = "Following construct shall be used: 'if (!@mkdir(...) && !is_dir(...)) { throw ...; }'";
-    private static final String strProblemMkdirInCondition = "Condition needs to be corrected (invert if needed): '!@mkdir(...) && !is_dir(...)'";
+    private static final String strProblemMkdirDirectCall  = "Following construct should be used: 'if (!@mkdir(...) && !is_dir(...)) { throw ...; }'.";
+    private static final String strProblemMkdirInCondition = "Condition needs to be corrected (invert if needed): '!@mkdir(...) && !is_dir(...)'.";
 
     @NotNull
     public String getShortName() {

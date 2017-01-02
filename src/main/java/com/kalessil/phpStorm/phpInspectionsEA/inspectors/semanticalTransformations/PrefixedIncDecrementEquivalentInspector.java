@@ -22,8 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 
 public class PrefixedIncDecrementEquivalentInspector extends BasePhpInspection {
-    private static final String patternIncrementEquivalent = "Can be safely replaced with '++%s%'";
-    private static final String patternDecrementEquivalent = "Can be safely replaced with '--%s%'";
+    private static final String patternIncrementEquivalent = "Can be safely replaced with '++%s%'.";
+    private static final String patternDecrementEquivalent = "Can be safely replaced with '--%s%'.";
 
     @NotNull
     public String getShortName() {

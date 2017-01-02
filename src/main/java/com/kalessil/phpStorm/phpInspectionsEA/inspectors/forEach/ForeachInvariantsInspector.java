@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class ForeachInvariantsInspector extends BasePhpInspection {
-    private static final String strForBehavesAsForeach   = "Foreach can probably be used instead (easier to read and support; ensure a string is not iterated)";
-    private static final String strEachBehavesAsForeach  = "Foreach should be used instead (8x faster)";
+    private static final String strForBehavesAsForeach   = "Foreach can probably be used instead (easier to read and support; ensure a string is not iterated).";
+    private static final String strEachBehavesAsForeach  = "Foreach should be used instead (8x faster).";
 
     @NotNull
     public String getShortName() {

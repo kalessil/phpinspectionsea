@@ -29,10 +29,10 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     public boolean SUGGEST_TO_USE_NULL_COMPARISON = true;
 
     // static messages for triggered messages
-    private static final String messageUseArrayKeyExists    = "Probably 'array_key_exists(...)' construction should be used for better data *structure* control";
-    private static final String messageUseNullComparison    = "Probably it can be 'null === %s%' construction used instead";
-    private static final String messageUseNotNullComparison = "Probably it can be 'null !== %s%' construction used instead";
-    private static final String messageConcatenationInIndex = "Concatenation is used as an index, should be moved to a variable";
+    private static final String messageUseArrayKeyExists    = "'array_key_exists(...)' construction should be used for better data *structure* control.";
+    private static final String messageUseNullComparison    = "'null === %s%' construction should be used instead.";
+    private static final String messageUseNotNullComparison = "'null !== %s%' construction should be used instead.";
+    private static final String messageConcatenationInIndex = "Concatenation is used in an index, it should be moved to a variable.";
 
     @NotNull
     public String getShortName() {
@@ -45,7 +45,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpIsset(PhpIsset issetExpression) {
                 /*
-                 * if no parameters, we shall not check;
+                 * if no parameters, we don't check;
                  * if multiple parameters, perhaps if-inspection fulfilled and isset's were merged
                  *
                  * TODO: still needs analysis regarding concatenations in indexes
@@ -166,7 +166,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                         break;
                     }
 
-                    // assume class has what's needed, OffsetOperationsInspector shall report if not
+                    // assume class has what is needed, OffsetOperationsInspector should report if not
                     supportsOffsets = true;
                 }
                 containerTypes.clear();

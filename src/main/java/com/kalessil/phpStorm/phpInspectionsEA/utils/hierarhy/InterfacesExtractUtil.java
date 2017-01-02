@@ -22,7 +22,7 @@ final public class InterfacesExtractUtil {
 
     private static void processClass(PhpClass objClass, HashSet<PhpClass> processedItems, boolean withClasses) {
         if (objClass.isInterface()) {
-            throw new InvalidParameterException("Interface shall not be provided");
+            throw new InvalidParameterException("Interface should not be provided");
         }
 
         if (withClasses) {
@@ -42,7 +42,7 @@ final public class InterfacesExtractUtil {
 
     private static void processInterface(PhpClass objClass, HashSet<PhpClass> processedItems, boolean withClasses) {
         if (!objClass.isInterface()) {
-            throw new InvalidParameterException("Class shall not be provided");
+            throw new InvalidParameterException("Class should not be provided");
         }
 
         if (processedItems.add(objClass)) {

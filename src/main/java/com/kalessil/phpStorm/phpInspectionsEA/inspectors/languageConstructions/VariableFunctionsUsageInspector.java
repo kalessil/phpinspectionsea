@@ -21,8 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class VariableFunctionsUsageInspector extends BasePhpInspection {
-    private static final String patternInlineArgs = "'call_user_func(%c%, %p%)' should be used instead (enables further analysis)";
-    private static final String patternReplace    = "'%e%' should be used instead";
+    private static final String patternInlineArgs = "'call_user_func(%c%, %p%)' should be used instead (enables further analysis).";
+    private static final String patternReplace    = "'%e%' should be used instead.";
 
     @NotNull
     public String getShortName() {

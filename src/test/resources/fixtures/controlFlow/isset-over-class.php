@@ -9,5 +9,5 @@
 
     class ClassWithPublicProperty { public $property; }
     $object = new ClassWithPublicProperty();
-    $x = isset(<weak_warning descr="Probably it can be 'null !== $object->property' construction used instead">$object->property</weak_warning>);
-    $y = !isset(<weak_warning descr="Probably it can be 'null === $object->property' construction used instead">$object->property</weak_warning>);
+    $x = isset(<weak_warning descr="'null !== $object->property' construction should be used instead.">$object->property</weak_warning>);
+    $y = !isset(<weak_warning descr="'null === $object->property' construction should be used instead.">$object->property</weak_warning>);

@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspection {
-    private static final String message = "Duplicated method calls should be moved to local variable";
+    private static final String message = "Duplicated method calls should be moved to a local variable.";
 
     @NotNull
     public String getShortName() {

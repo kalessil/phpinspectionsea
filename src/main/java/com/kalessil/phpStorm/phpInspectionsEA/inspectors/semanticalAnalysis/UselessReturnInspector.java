@@ -11,8 +11,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class UselessReturnInspector extends BasePhpInspection {
-    private static final String strProblemUseless   = "Senseless statement: safely remove it";
-    private static final String strProblemConfusing = "Confusing statement: shall be re-factored";
+    private static final String strProblemUseless   = "Senseless statement: safely remove it.";
+    private static final String strProblemConfusing = "Confusing statement: should be re-factored.";
 
     @NotNull
     public String getShortName() {

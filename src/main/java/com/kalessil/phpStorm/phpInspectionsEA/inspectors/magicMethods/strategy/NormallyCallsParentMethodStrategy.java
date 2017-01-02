@@ -11,7 +11,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import java.util.Collection;
 
 public class NormallyCallsParentMethodStrategy {
-    private static final String strProblemDescription = "%m% is probably missing %c%::%m% call";
+    private static final String strProblemDescription = "%m% is probably missing %c%::%m% call.";
 
     static public void apply(final Method method, final ProblemsHolder holder) {
         final String strMethodName = method.getName();

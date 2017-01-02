@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class NonSecureUniqidUsageInspector extends BasePhpInspection {
-    private static final String message = "Please provide both prefix and more entropy parameters";
+    private static final String message = "Please provide both prefix and more entropy parameters.";
 
     @NotNull
     public String getShortName() {

@@ -15,7 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class SenselessTernaryOperatorInspector extends BasePhpInspection {
-    private static final String patternUseOperands = "Can be replaced with '%o%'";
+    private static final String patternUseOperands = "Can be replaced with '%o%'.";
 
     @NotNull
     public String getShortName() {

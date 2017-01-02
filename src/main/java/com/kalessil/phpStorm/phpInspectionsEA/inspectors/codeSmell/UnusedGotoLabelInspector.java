@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class UnusedGotoLabelInspector extends BasePhpInspection {
-    private static final String message = "The label is not used";
+    private static final String message = "The label is not used.";
 
     @NotNull
     public String getShortName() {

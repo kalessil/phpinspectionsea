@@ -32,7 +32,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
     public int MAX_METHOD_SIZE = 20;
     /* TODO: configurable via drop-down; clean code: 20 lines/method; PMD: 50; Checkstyle: 100 */
 
-    private static final String messagePattern = "'%s%' method can be dropped, as it identical to parent's one";
+    private static final String messagePattern = "'%s%' method can be dropped, as it identical to parent's one.";
 
     @NotNull
     public String getShortName() {

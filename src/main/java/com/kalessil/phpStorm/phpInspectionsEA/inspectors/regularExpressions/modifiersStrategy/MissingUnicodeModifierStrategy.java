@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Pattern;
 
 public class MissingUnicodeModifierStrategy {
-    private static final String message = "/u modifier is missing (unicode characters found)";
+    private static final String message = "/u modifier is missing (unicode characters found).";
 
     @SuppressWarnings("CanBeFinal")
     static private Pattern unicodeContentPattern = null;

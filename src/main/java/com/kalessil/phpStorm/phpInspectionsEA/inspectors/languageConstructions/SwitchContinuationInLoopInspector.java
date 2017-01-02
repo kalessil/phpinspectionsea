@@ -15,7 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SwitchContinuationInLoopInspector extends BasePhpInspection {
-    private static final String message = "In PHP continue inside switch behaves as break. Use 'continue 2;' for continuation of an external loop.";
+    private static final String message = "In PHP, 'continue' inside a 'switch' behaves as 'break'. Use 'continue 2;' to continue the external loop.";
 
     @NotNull
     public String getShortName() {
@@ -40,7 +40,7 @@ public class SwitchContinuationInLoopInspector extends BasePhpInspection {
                         return;
                     }
 
-                    /* check if shall operate on loop-switch-continue analysis */
+                    /* check if should operate on loop-switch-continue analysis */
                     if (!isSwitch && objParent instanceof PhpSwitch) {
                         isSwitch = true;
                     }

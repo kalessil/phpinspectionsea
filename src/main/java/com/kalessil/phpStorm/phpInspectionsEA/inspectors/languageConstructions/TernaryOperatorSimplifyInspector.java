@@ -13,7 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
-    private static final String message = "Positive and negative variants can be skipped: the condition already returns a boolean";
+    private static final String message = "Positive and negative variants can be skipped: the condition already returns a boolean.";
 
     @NotNull
     public String getShortName() {

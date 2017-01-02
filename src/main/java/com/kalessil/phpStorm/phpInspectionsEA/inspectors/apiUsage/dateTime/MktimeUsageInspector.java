@@ -15,8 +15,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class MktimeUsageInspector extends BasePhpInspection {
-    private static final String messageUseTime             = "You shall use time() function instead (current usage produces a runtime warning)";
-    private static final String messageParameterDeprecated = "Parameter 'is_dst' is deprecated and removed in PHP 7";
+    private static final String messageUseTime             = "You should use time() function instead (current usage produces a runtime warning).";
+    private static final String messageParameterDeprecated = "Parameter 'is_dst' is deprecated and removed in PHP 7.";
 
     @NotNull
     public String getShortName() {

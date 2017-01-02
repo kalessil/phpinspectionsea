@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class AliasFunctionsUsageInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%a%(...)' is an alias function. Use '%f%(...)' instead";
+    private static final String messagePattern = "'%a%(...)' is an alias function. Use '%f%(...)' instead.";
 
     @NotNull
     public String getShortName() {

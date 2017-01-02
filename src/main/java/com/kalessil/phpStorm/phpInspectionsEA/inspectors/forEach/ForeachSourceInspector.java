@@ -20,10 +20,10 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public class ForeachSourceInspector extends BasePhpInspection {
-    final private String patternNotRecognized = "Expressions' type was not recognized, please check type hints";
-    final private String patternMixedTypes    = "Expressions' type contains '%t%', please specify possible types instead (best practices)";
-    final private String patternScalar        = "Can not iterate '%t%' (re-check type hints)";
-    final private String patternObject        = "Can not iterate '%t%' (must implement one of Iterator interfaces)";
+    final private String patternNotRecognized = "Expressions' type was not recognized, please check type hints.";
+    final private String patternMixedTypes    = "Expressions' type contains '%t%', please specify possible types instead (best practices).";
+    final private String patternScalar        = "Can not iterate '%t%' (re-check type hints).";
+    final private String patternObject        = "Can not iterate '%t%' (must implement one of Iterator interfaces).";
 
     @NotNull
     public String getShortName() {

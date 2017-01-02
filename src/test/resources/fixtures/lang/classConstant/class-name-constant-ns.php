@@ -9,19 +9,19 @@ use \stdClass as stdClassAlias;
 /** @depends("Prerequisites") */
 class Action {
     public function patterns() {
-        $isExists = class_exists(<weak_warning descr="Perhaps this can be replaced with \stdClass::class">'\stdClass'</weak_warning>);
+        $isExists = class_exists(<weak_warning descr="Perhaps this can be replaced with \stdClass::class.">'\stdClass'</weak_warning>);
 
         $dependencies = [
             'PrerequisitesAlias',
             'stdClassAlias',
             'Prerequisites',
 
-            <weak_warning descr="Perhaps this can be replaced with \stdClass::class">'\stdClass'</weak_warning>,
-            <weak_warning descr="Perhaps this can be replaced with \stdClass::class">'stdClass'</weak_warning>,
-            <weak_warning descr="Perhaps this can be replaced with \PhpInspections\EAExtended\Prerequisites::class">'\PhpInspections\EAExtended\Prerequisites'</weak_warning>,
-            <weak_warning descr="Perhaps this can be replaced with \PhpInspections\EAExtended\Prerequisites::class">'PhpInspections\EAExtended\Prerequisites'</weak_warning>,
-            <weak_warning descr="Perhaps this can be replaced with \PhpInspections\EAExtended\Prerequisites::class">"\\PhpInspections\\EAExtended\\Prerequisites"</weak_warning>,
-            <weak_warning descr="Perhaps this can be replaced with \PhpInspections\EAExtended\Prerequisites::class">"PhpInspections\\EAExtended\\Prerequisites"</weak_warning>,
+            <weak_warning descr="Perhaps this can be replaced with \stdClass::class.">'\stdClass'</weak_warning>,
+            <weak_warning descr="Perhaps this can be replaced with \stdClass::class.">'stdClass'</weak_warning>,
+            <weak_warning descr="Perhaps this can be replaced with \PhpInspections\EAExtended\Prerequisites::class.">'\PhpInspections\EAExtended\Prerequisites'</weak_warning>,
+            <weak_warning descr="Perhaps this can be replaced with \PhpInspections\EAExtended\Prerequisites::class.">'PhpInspections\EAExtended\Prerequisites'</weak_warning>,
+            <weak_warning descr="Perhaps this can be replaced with \PhpInspections\EAExtended\Prerequisites::class.">"\\PhpInspections\\EAExtended\\Prerequisites"</weak_warning>,
+            <weak_warning descr="Perhaps this can be replaced with \PhpInspections\EAExtended\Prerequisites::class.">"PhpInspections\\EAExtended\\Prerequisites"</weak_warning>,
         ];
     }
 

@@ -18,7 +18,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class UsingInclusionOnceReturnValueInspector extends BasePhpInspection {
-    private static final String message = "Only first call returns proper result. Repetitive calls returning 'true'.";
+    private static final String message = "Only the first call returns the proper/expected result. Subsequent calls will return 'true'.";
 
     @NotNull
     public String getShortName() {
@@ -46,7 +46,7 @@ public class UsingInclusionOnceReturnValueInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use include/require instead";
+            return "Use include/require instead.";
         }
 
         @NotNull

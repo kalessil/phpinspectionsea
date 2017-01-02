@@ -17,7 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%i% %o% %f%(%s%, %p%%e%)' can be used instead (improves maintainability)";
+    private static final String messagePattern = "'%i% %o% %f%(%s%, %p%%e%)' can be used instead (improves maintainability).";
 
     @NotNull
     public String getShortName() {

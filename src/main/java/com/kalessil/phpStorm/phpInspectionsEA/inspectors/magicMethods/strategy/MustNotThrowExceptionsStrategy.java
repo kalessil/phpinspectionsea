@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class MustNotThrowExceptionsStrategy {
-    private static final String messagePattern = "%m%: exceptions must not be raised (%c% thrown)";
+    private static final String messagePattern = "%m%: exceptions must not be raised (%c% thrown).";
 
     static public void apply(final Method method, final ProblemsHolder holder) {
         if (null == method.getNameIdentifier()) {

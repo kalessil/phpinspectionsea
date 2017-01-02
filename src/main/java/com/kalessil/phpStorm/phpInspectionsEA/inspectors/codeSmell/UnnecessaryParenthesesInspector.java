@@ -16,6 +16,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class UnnecessaryParenthesesInspector extends BasePhpInspection {
+    private static final String strProblemDescription = "Unnecessary parentheses.";
+
     @NotNull
     public String getShortName() {
         return "UnnecessaryParenthesesInspection";
@@ -96,7 +98,7 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     return;
                 }
 
-                holder.registerProblem(expression, "Unnecessary parentheses", ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
             }
         };
     }

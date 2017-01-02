@@ -12,8 +12,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class LowPerformanceArrayUniqueUsageInspector extends BasePhpInspection {
-    private static final String strProblemUseArrayKeysWithCountValues = "array_keys(array_count_values(<expression>)) will be more performing (but provide comments)";
-    private static final String strProblemUseCountWithCountValues     = "count(array_count_values(<expression>)) will be more performing (but provide comments)";
+    private static final String strProblemUseArrayKeysWithCountValues = "'array_keys(array_count_values(...))' would be more efficient (make sure to leave a comment to explain the intent).";
+    private static final String strProblemUseCountWithCountValues     = "'count(array_count_values(...))' would be more efficient (make sure to leave a comment to explain the intent).";
 
     @NotNull
     public String getShortName() {

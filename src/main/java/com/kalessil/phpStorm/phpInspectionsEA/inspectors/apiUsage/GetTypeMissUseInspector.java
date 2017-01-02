@@ -25,8 +25,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class GetTypeMissUseInspector extends BasePhpInspection {
-    private static final String messagePattern     = "'%i%%f%(%p%)' construction would be more compact and easier to read";
-    private static final String messageInvalidType = "'%t%' is not a value returned by gettype(...)";
+    private static final String messagePattern     = "'%i%%f%(%p%)' construction is more compact and easier to read.";
+    private static final String messageInvalidType = "'%t%' is not a value returned by 'gettype(...)'.";
 
     @NotNull
     public String getShortName() {

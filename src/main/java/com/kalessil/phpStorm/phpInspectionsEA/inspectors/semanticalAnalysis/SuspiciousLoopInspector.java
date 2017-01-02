@@ -15,8 +15,8 @@ import java.util.HashSet;
 
 public class SuspiciousLoopInspector extends BasePhpInspection {
     private static final String messageMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
-    private static final String patternOverridesLoopVars  = "Variable '$%v%' is introduced in a outer loop and overridden here";
-    private static final String patternOverridesParameter = "Variable '$%v%' is introduced as a %t% parameter and overridden here";
+    private static final String patternOverridesLoopVars  = "Variable '$%v%' is introduced in a outer loop and overridden here.";
+    private static final String patternOverridesParameter = "Variable '$%v%' is introduced as a %t% parameter and overridden here.";
 
     @NotNull
     public String getShortName() {

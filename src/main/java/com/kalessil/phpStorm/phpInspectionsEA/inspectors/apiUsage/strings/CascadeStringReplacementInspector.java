@@ -15,9 +15,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 
 public class CascadeStringReplacementInspector extends BasePhpInspection {
-    private static final String messageNesting      = "This str_replace(...) call can be merged with parent one";
-    private static final String messageCascading    = "This str_replace(...) call can be merged with previous one";
-    private static final String messageReplacements = "Can be replaced with the string duplicated in array";
+    private static final String messageNesting      = "This str_replace(...) call can be merged with its parent.";
+    private static final String messageCascading    = "This str_replace(...) call can be merged with the previous.";
+    private static final String messageReplacements = "Can be replaced with the string duplicated in array.";
 
     @NotNull
     public String getShortName() {
@@ -46,7 +46,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
 
 
                     /* === cascade calls check === */
-                    /* previous assignment shall be inspected, probably we can merge this one into it */
+                    /* previous assignment should be inspected, probably we can merge this one into it */
                     if (
                         null != previous && previous.getFirstChild() instanceof AssignmentExpression &&
                         null != getStrReplaceReference((AssignmentExpression) previous.getFirstChild())

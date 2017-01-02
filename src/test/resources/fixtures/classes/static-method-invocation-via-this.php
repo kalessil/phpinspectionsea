@@ -4,11 +4,11 @@ class staticObjectsKeeper {
     public static function callMethod() {}
 
     public static function y() {
-        <warning descr="'static::callMethod(...)' should be used instead"><error descr="$this is not accessible in static context">$this</error></warning>->callMethod();
+        <error descr="$this is not accessible in static context"><warning descr="'static::callMethod(...)' should be used instead.">$this</warning></error>->callMethod();
     }
 
     public function z() {
-        <warning descr="'static::callMethod(...)' should be used instead">$this</warning>->callMethod();
+        <warning descr="'static::callMethod(...)' should be used instead.">$this</warning>->callMethod();
     }
 
     public function p() {
@@ -17,4 +17,4 @@ class staticObjectsKeeper {
 }
 
 $o = new staticObjectsKeeper();
-$o-><warning descr="'...::y(...)' should be used instead">y</warning>();
+$o-><warning descr="'...::y(...)' should be used instead.">y</warning>();

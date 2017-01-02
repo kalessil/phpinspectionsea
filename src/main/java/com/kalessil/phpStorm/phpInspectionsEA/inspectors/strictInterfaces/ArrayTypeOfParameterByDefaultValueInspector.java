@@ -17,7 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspection {
-    private static final String messagePattern = "Parameter $%p% can be declared as 'array $%p%'";
+    private static final String messagePattern = "Parameter $%p% can be declared as 'array $%p%'.";
 
     @NotNull
     public String getShortName() {

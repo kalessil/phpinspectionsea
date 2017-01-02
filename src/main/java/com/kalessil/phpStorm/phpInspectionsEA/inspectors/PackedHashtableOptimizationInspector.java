@@ -27,8 +27,8 @@ import java.util.List;
  */
 
 final public class PackedHashtableOptimizationInspector extends BasePhpInspection {
-    private static final String messageReorder        = "Reordering keys in natural ascending order would enable array optimizations here";
-    private static final String messageUseNumericKeys = "Using integer keys would enable array optimizations here";
+    private static final String messageReorder        = "Reordering keys in natural ascending order would enable array optimizations here.";
+    private static final String messageUseNumericKeys = "Using integer keys would enable array optimizations here.";
 
     @NotNull
     public String getShortName() {

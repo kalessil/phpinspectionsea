@@ -13,15 +13,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PlainApiUseCheckStrategy {
-    private static final String strProblemStartTreatCase     = "'0 === strpos(\"...\", \"%t%\")' can be used instead";
-    private static final String strProblemStartIgnoreCase    = "'0 === stripos(\"...\", \"%t%\")' can be used instead";
-    private static final String strProblemContainsTreatCase  = "'false !== strpos(\"...\", \"%t%\")' can be used instead";
-    private static final String strProblemContainsIgnoreCase = "'false !== stripos(\"...\", \"%t%\")' can be used instead";
-    private static final String strProblemReplaceTreatCase   = "'str_replace(\"%t%\", ...)' can be used instead";
-    private static final String strProblemReplaceIgnoreCase  = "'str_ireplace(\"%t%\", ...)' can be used instead";
-    private static final String strProblemCtypeCanBeUsed     = "'%r%((string) %p%)' can be used instead";
-    private static final String strProblemExplodeCanBeUsed   = "'explode(\"...\", %s%%l%)' can be used instead";
-    private static final String strProblemTrimsCanBeUsed     = "'%f%(%s%, \"...\")' can be used instead";
+    private static final String strProblemStartTreatCase     = "'0 === strpos(\"...\", \"%t%\")' can be used instead.";
+    private static final String strProblemStartIgnoreCase    = "'0 === stripos(\"...\", \"%t%\")' can be used instead.";
+    private static final String strProblemContainsTreatCase  = "'false !== strpos(\"...\", \"%t%\")' can be used instead.";
+    private static final String strProblemContainsIgnoreCase = "'false !== stripos(\"...\", \"%t%\")' can be used instead.";
+    private static final String strProblemReplaceTreatCase   = "'str_replace(\"%t%\", ...)' can be used instead.";
+    private static final String strProblemReplaceIgnoreCase  = "'str_ireplace(\"%t%\", ...)' can be used instead.";
+    private static final String strProblemCtypeCanBeUsed     = "'%r%((string) %p%)' can be used instead.";
+    private static final String strProblemExplodeCanBeUsed   = "'explode(\"...\", %s%%l%)' can be used instead.";
+    private static final String strProblemTrimsCanBeUsed     = "'%f%(%s%, \"...\")' can be used instead.";
 
     @SuppressWarnings("CanBeFinal")
     static private Pattern regexTextSearch = null;

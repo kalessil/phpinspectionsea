@@ -22,7 +22,7 @@ import java.util.List;
  */
 
 final public class SwitchFallThroughStrategy {
-    private static final String message = "Overrides value from a preceding case (perhaps a 'break' is missing there)";
+    private static final String message = "Overrides value from a preceding case (perhaps a 'break' is missing there).";
 
     static public void apply(@NotNull PhpSwitch switchStatement, @NotNull ProblemsHolder holder) {
         final List<PsiElement> written = new ArrayList<>();

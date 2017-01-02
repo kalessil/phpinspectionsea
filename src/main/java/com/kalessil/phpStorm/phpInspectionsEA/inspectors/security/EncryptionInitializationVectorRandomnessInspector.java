@@ -27,7 +27,7 @@ import java.util.List;
  */
 
 public class EncryptionInitializationVectorRandomnessInspector extends BasePhpInspection {
-    private static final String messagePattern = "%f%() should be used for IV, but found: %e%";
+    private static final String messagePattern = "%f%() should be used for IV, but found: %e%.";
 
     @NotNull
     private static final HashSet<String> secureFunctions = new HashSet<>();

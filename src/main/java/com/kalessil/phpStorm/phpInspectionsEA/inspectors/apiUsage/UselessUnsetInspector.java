@@ -18,7 +18,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class UselessUnsetInspector extends BasePhpInspection {
-    private static final String message = "Only local copy/reference will be unset. Probably this unset can be removed.";
+    private static final String message = "Only local copy/reference will be unset. This unset can probably be removed.";
 
     @NotNull
     public String getShortName() {

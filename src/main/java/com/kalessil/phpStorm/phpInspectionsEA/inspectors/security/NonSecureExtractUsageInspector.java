@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class NonSecureExtractUsageInspector extends BasePhpInspection {
-    private static final String message = "Please provide second parameter to clearly state intended behaviour";
+    private static final String message = "Please provide second parameter to clearly state intended behaviour.";
 
     @NotNull
     public String getShortName() {

@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
 public class UselessIgnoreCaseModifierCheckStrategy {
-    private static final String message = "'i' modifier is ambiguous here (no alphabet characters in given pattern)";
+    private static final String message = "'i' modifier is ambiguous here (no alphabet characters in given pattern).";
 
     static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
         if (!StringUtil.isEmpty(modifiers) && !StringUtil.isEmpty(pattern)) {

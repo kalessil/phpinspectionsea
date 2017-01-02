@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
-    private static final String message = "Third parameter shall be provided to clarify if types safety important in this context";
+    private static final String message = "Third parameter should be provided to clarify if types safety important in this context.";
 
     @NotNull
     public String getShortName() {

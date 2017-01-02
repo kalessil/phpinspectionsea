@@ -18,8 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspection {
-    private static final String strProblemScopeResolutionUsed = "'$this->%m%(...)' should be used instead";
-    private static final String strProblemExpressionUsed      = "'...->%m%(...)' should be used instead";
+    private static final String strProblemScopeResolutionUsed = "'$this->%m%(...)' should be used instead.";
+    private static final String strProblemExpressionUsed      = "'...->%m%(...)' should be used instead.";
 
     @NotNull
     public String getShortName() {

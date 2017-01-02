@@ -23,7 +23,7 @@ import java.util.Collection;
 
 public class InconsistentQueryBuildInspector extends BasePhpInspection {
     private static final String strProblemDescription = "'ksort(%a%, SORT_STRING)' should be used instead, " +
-            "so http_build_query() produces result independent from key types";
+            "so http_build_query() produces result independent from key types.";
 
     @NotNull
     public String getShortName() {

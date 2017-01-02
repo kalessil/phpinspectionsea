@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 final public class AndOrWordsUsageStrategy {
-    private final static String messagePattern = "'%o%' should be used instead (best practices)";
+    private final static String messagePattern = "'%o%' should be used instead (best practices).";
 
     static public void apply(PsiElement condition, @NotNull ProblemsHolder holder) {
         final Collection<BinaryExpression> expressions = PsiTreeUtil.findChildrenOfType(condition, BinaryExpression.class);

@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GreedyCharactersSetCheckStrategy {
-    private static final String messagePattern = "[%e%] is 'greedy'. Please remove %c% as it's a subset of %p%";
+    private static final String messagePattern = "[%e%] is 'greedy'. Please remove %c% as it's a subset of %p%.";
 
     @SuppressWarnings("CanBeFinal")
     static private Pattern regexGreedyCharacterSet = null;

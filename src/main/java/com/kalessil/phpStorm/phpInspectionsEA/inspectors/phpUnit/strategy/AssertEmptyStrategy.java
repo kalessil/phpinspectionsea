@@ -14,7 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class AssertEmptyStrategy {
-    private final static String message = "assertEmpty should be used instead";
+    private final static String message = "assertEmpty should be used instead.";
 
     static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();

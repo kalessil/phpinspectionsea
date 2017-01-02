@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class FilePutContentsMissUseInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%e%' would consume less cpu and memory resources here";
+    private static final String messagePattern = "'%e%' would consume less cpu and memory resources here.";
 
     @NotNull
     public String getShortName() {

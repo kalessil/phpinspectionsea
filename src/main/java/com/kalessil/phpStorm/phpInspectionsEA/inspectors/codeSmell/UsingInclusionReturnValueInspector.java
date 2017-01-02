@@ -12,7 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class UsingInclusionReturnValueInspector  extends BasePhpInspection {
-    private static final String message = "Operating on this return mechanism considered a bad practice. OOP can be used instead.";
+    private static final String message = "Operating on this return mechanism is considered a bad practice. OOP can be used instead.";
 
     @NotNull
     public String getShortName() {

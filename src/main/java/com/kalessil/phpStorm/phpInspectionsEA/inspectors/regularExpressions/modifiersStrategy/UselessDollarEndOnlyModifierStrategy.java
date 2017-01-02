@@ -8,8 +8,8 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class UselessDollarEndOnlyModifierStrategy {
-    private static final String strProblemDescription = "'D' modifier is ambiguous here (no $ in given pattern)";
-    private static final String strProblemIgnored     = "'D' modifier will be ignored because of 'm'";
+    private static final String strProblemDescription = "'D' modifier is ambiguous here (no $ in given pattern).";
+    private static final String strProblemIgnored     = "'D' modifier will be ignored because of 'm'.";
 
     static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
         if (!StringUtil.isEmpty(modifiers) && !StringUtil.isEmpty(pattern) && modifiers.indexOf('D') >= 0) {

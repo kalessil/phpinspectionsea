@@ -15,7 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
-    private static final String messagePattern = "If and following return can be replaced with 'return %c%'";
+    private static final String messagePattern = "An if-return construct can be replaced with 'return %c%'.";
 
     @NotNull
     public String getShortName() {

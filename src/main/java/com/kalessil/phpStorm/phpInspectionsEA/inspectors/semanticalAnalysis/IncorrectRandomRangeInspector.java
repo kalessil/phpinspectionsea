@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 
 public class IncorrectRandomRangeInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "The range is not defined properly";
+    private static final String strProblemDescription = "The range is not defined properly.";
 
     private static final HashSet<String> functions = new HashSet<>();
     static {

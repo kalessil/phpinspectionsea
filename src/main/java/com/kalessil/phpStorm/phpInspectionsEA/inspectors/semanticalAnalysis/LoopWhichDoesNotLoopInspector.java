@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "This loop does not loop";
+    private static final String strProblemDescription = "This loop does not loop.";
 
     @NotNull
     public String getShortName() {

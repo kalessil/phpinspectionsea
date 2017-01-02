@@ -18,7 +18,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
-    private static final String message = "Safely use single quotes instead";
+    private static final String message = "Safely use single quotes instead.";
 
     @NotNull
     public String getShortName() {

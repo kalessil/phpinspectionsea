@@ -6,7 +6,7 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.Parameter;
 
 public class CanNotTakeArgumentsByReferenceStrategy {
-    private static final String strProblemDescription = "%m% cannot accept arguments by reference";
+    private static final String strProblemDescription = "%m% cannot accept arguments by reference.";
 
     static public void apply(final Method method, final ProblemsHolder holder) {
         for (Parameter parameter : method.getParameters()) {

@@ -22,8 +22,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
-    private static final String messageUseInArray        = "'in_array(...)' shall be used instead (clearer intention)";
-    private static final String messageComparingWithTrue = "This makes no sense, as array_search(...) never returns true";
+    private static final String messageUseInArray        = "'in_array(...)' should be used instead (clearer intention).";
+    private static final String messageComparingWithTrue = "This makes no sense, as array_search(...) never returns true.";
 
     @NotNull
     public String getShortName() {

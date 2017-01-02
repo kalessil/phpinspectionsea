@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String messagePattern = "'false %o% %f%(%s%, %p%)' should be used instead (saves memory)";
+    private static final String messagePattern = "'false %o% %f%(%s%, %p%)' should be used instead (saves memory).";
 
     @NotNull
     public String getShortName() {

@@ -25,7 +25,7 @@ import java.util.Collection;
  */
 
 final public class ParameterImmediateOverrideStrategy {
-    private static final String message = "The parameter is overridden immediately (original value is lost)";
+    private static final String message = "The parameter is overridden immediately (original value is lost).";
 
     static public void apply(@NotNull Function function, @NotNull ProblemsHolder holder) {
         /* general requirements for a function */

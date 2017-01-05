@@ -1,10 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -21,10 +24,10 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
         return "TypeUnsafeArraySearchInspection";
     }
 
-    private static final Set<String> functionsSet = new HashSet<>();
+    private static final Set<String> functions = new HashSet<>();
     static {
-        functionsSet.add("array_search");
-        functionsSet.add("in_array");
+        functions.add("array_search");
+        functions.add("in_array");
     }
 
     @Override
@@ -34,12 +37,44 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if (params.length != 2 || StringUtil.isEmpty(functionName) || !functionsSet.contains(functionName)) {
+                if (params.length != 2 || null == functionName || !functions.contains(functionName)) {
                     return;
                 }
 
-                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
+                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
             }
         };
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Add true as the third argument";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression instanceof FunctionReference) {
+                final FunctionReference replacement
+                    = PhpPsiElementFactory.createFromText(project, FunctionReference.class, "f(null, null, true)");
+                if (null != replacement) {
+                    final PsiElement[] replacementParams = replacement.getParameters();
+                    final PsiElement[] originalParams    = ((FunctionReference) expression).getParameters();
+
+                    replacementParams[0].replace(originalParams[0]);
+                    replacementParams[1].replace(originalParams[1]);
+                    //noinspection ConstantConditions - we are dealng with finished structures here
+                    ((FunctionReference) expression).getParameterList().replace(replacement.getParameterList());
+                }
+            }
+        }
     }
 }

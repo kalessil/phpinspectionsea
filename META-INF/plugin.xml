@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.2.2</version>
+  <version>2.3.0</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -53,21 +53,29 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Improvements and new inspections (support us by donating via <a href="https://www.paypal.me/VReznichenko">PayPal</a>)<br/>
+Major English and performance improvements, bug-fixes and new inspections<br/>
 <br/>
-- Alias functions usage: resolved false-positives (imported functions)<br/>
-- Exceptions handling and annotating: report non-thrown exceptions (needs activation in settings)<br/>
-- Incorrect dispatching $this into closures: dropped (PS 2016.3.1 handles it)<br/>
-- Long inheritance chain: resolved false-positives (test classes)<br/>
-- Magic methods validity: report non-magic methods started with __<br/>
-- Unnecessary parentheses: resolved false-positive (lambda invocation)<br/>
-- 'substr(...)' could be replaced with 'strpos(...)': new patterns<br/>
+- English improvements, thank you <a href="https://github.com/tomzx">tomzx</a><br/>
+- Performance improvements, thank you <a href="https://www.yourkit.com/java/profiler/">YourKit</a><br/>
 <br/>
-- Suspicious assignments: implemented<br/>
-- DateTime constants usage validity: implemented<br/>
-- Overriding deprecated methods: implemented<br/>
-- Child method is exactly the same: implemented<br/>
-- ::class can be used: implemented (thank you Toon Verwerft)<br/>
+- Access modifiers shall be defined: QF implemented<br/>
+- Class overrides a field of a parent class: added an option (report private fields)<br/>
+- Nested not operators usage: new patterns<br/>
+- Non-optimal regular expression: new patterns, resolved false-positives (cyrillic characters)<br/>
+- Security advisories for Composer packages: resolved false-positives (using packages by the same author only)<br/>
+- Suspicious assignments: new patterns, resolved false-positives (continue, throw)<br/>
+- 'in_array(...)', 'array_search()' type unsafe usage: QF implemented<br/>
+- '(mb_)substr(...)' used as index-based access: resolved false-positives (PHP 5.3 compatibility, negative offsets)<br/>
+- 'unset(...)' calls could be merged: implemented QF<br/>
+<br/>
+- 'file_put_contents(...)' misused: implemented<br/>
+- Unknown inspection suppression: implemented<br/>
+- Cascading dirname() calls: implemented<br/>
+- Static local variables usage: implemented (needs activation)<br/>
+- Packed hashtable optimizations: implemented<br/>
+- Unused goto labels: implemented<br/>
+- Insecure 'crypt(...)' usage: implemented<br/>
+- Variable functions usage: re-implemented, added QF<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -156,7 +164,7 @@ Improvements and new inspections (support us by donating via <a href="https://ww
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.SubStrShortHandUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="SubStrUsedAsArrayAccessInspection"             displayName="'substr(...)' used as index-based access"
+        shortName="SubStrUsedAsArrayAccessInspection"             displayName="'(mb_)substr(...)' used as index-based access"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.SubStrUsedAsArrayAccessInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

@@ -34,8 +34,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -273,19 +271,11 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
             optionsPanel.setLayout(new MigLayout());
 
             importClassesAutomatically = new JCheckBox("Import classes automatically", IMPORT_CLASSES_ON_QF);
-            importClassesAutomatically.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    IMPORT_CLASSES_ON_QF = importClassesAutomatically.isSelected();
-                }
-            });
+            importClassesAutomatically.addChangeListener(e -> IMPORT_CLASSES_ON_QF = importClassesAutomatically.isSelected());
             optionsPanel.add(importClassesAutomatically, "wrap");
 
             useRelativeQNs = new JCheckBox("Use relative QN where possible", USE_RELATIVE_QF);
-            useRelativeQNs.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    USE_RELATIVE_QF = useRelativeQNs.isSelected();
-                }
-            });
+            useRelativeQNs.addChangeListener(e -> USE_RELATIVE_QF = useRelativeQNs.isSelected());
             optionsPanel.add(useRelativeQNs, "wrap");
         }
 

@@ -20,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -314,11 +312,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
             optionsPanel.setLayout(new MigLayout());
 
             suggestUsingRandomInt = new JCheckBox("Suggest using clone", SUGGEST_USING_CLONE);
-            suggestUsingRandomInt.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    SUGGEST_USING_CLONE = suggestUsingRandomInt.isSelected();
-                }
-            });
+            suggestUsingRandomInt.addChangeListener(e -> SUGGEST_USING_CLONE = suggestUsingRandomInt.isSelected());
             optionsPanel.add(suggestUsingRandomInt, "wrap");
         }
 

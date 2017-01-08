@@ -17,8 +17,6 @@ import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class AlterInForeachInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
@@ -230,11 +228,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
             optionsPanel.setLayout(new MigLayout());
 
             suggestUsingValueByRef = new JCheckBox("Suggest using value by reference", SUGGEST_USING_VALUE_BY_REF);
-            suggestUsingValueByRef.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    SUGGEST_USING_VALUE_BY_REF = suggestUsingValueByRef.isSelected();
-                }
-            });
+            suggestUsingValueByRef.addChangeListener(e -> SUGGEST_USING_VALUE_BY_REF = suggestUsingValueByRef.isSelected());
             optionsPanel.add(suggestUsingValueByRef, "wrap");
         }
 

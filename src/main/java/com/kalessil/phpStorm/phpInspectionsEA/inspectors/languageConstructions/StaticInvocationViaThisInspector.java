@@ -20,8 +20,6 @@ import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class StaticInvocationViaThisInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
@@ -147,11 +145,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
             optionsPanel.setLayout(new MigLayout());
 
             respectPhpunitStandards = new JCheckBox("Follow PHPUnit standards", RESPECT_PHPUNIT_STANDARDS);
-            respectPhpunitStandards.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    RESPECT_PHPUNIT_STANDARDS = respectPhpunitStandards.isSelected();
-                }
-            });
+            respectPhpunitStandards.addChangeListener(e -> RESPECT_PHPUNIT_STANDARDS = respectPhpunitStandards.isSelected());
             optionsPanel.add(respectPhpunitStandards, "wrap");
         }
 

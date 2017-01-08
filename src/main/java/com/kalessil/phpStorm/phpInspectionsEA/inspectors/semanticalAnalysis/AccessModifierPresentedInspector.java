@@ -22,8 +22,6 @@ import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class AccessModifierPresentedInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
@@ -92,11 +90,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
             optionsPanel.setLayout(new MigLayout());
 
             analyzeInterfaces = new JCheckBox("Analyze interfaces", ANALYZE_INTERFACES);
-            analyzeInterfaces.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    ANALYZE_INTERFACES = analyzeInterfaces.isSelected();
-                }
-            });
+            analyzeInterfaces.addChangeListener(e -> ANALYZE_INTERFACES = analyzeInterfaces.isSelected());
             optionsPanel.add(analyzeInterfaces, "wrap");
         }
 

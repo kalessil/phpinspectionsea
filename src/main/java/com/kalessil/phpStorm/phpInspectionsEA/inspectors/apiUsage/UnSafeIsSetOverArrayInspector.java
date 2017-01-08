@@ -17,8 +17,6 @@ import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.util.HashSet;
 
 public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
@@ -191,19 +189,11 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
             optionsPanel.setLayout(new MigLayout());
 
             suggestToUseArrayKeyExists = new JCheckBox("Suggest to use array_key_exists()", SUGGEST_TO_USE_ARRAY_KEY_EXISTS);
-            suggestToUseArrayKeyExists.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    SUGGEST_TO_USE_ARRAY_KEY_EXISTS = suggestToUseArrayKeyExists.isSelected();
-                }
-            });
+            suggestToUseArrayKeyExists.addChangeListener(e -> SUGGEST_TO_USE_ARRAY_KEY_EXISTS = suggestToUseArrayKeyExists.isSelected());
             optionsPanel.add(suggestToUseArrayKeyExists, "wrap");
 
             suggestToUseNullComparison = new JCheckBox("Suggest to use null-comparison", SUGGEST_TO_USE_NULL_COMPARISON);
-            suggestToUseNullComparison.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    SUGGEST_TO_USE_NULL_COMPARISON = suggestToUseNullComparison.isSelected();
-                }
-            });
+            suggestToUseNullComparison.addChangeListener(e -> SUGGEST_TO_USE_NULL_COMPARISON = suggestToUseNullComparison.isSelected());
             optionsPanel.add(suggestToUseNullComparison, "wrap");
         }
 

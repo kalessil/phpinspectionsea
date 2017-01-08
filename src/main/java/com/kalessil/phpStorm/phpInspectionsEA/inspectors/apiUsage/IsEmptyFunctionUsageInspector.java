@@ -19,8 +19,6 @@ import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.util.HashSet;
 
 public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
@@ -128,27 +126,15 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
             optionsPanel.setLayout(new MigLayout());
 
             reportEmptyUsage = new JCheckBox("Report empty() usage", REPORT_EMPTY_USAGE);
-            reportEmptyUsage.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    REPORT_EMPTY_USAGE = reportEmptyUsage.isSelected();
-                }
-            });
+            reportEmptyUsage.addChangeListener(e -> REPORT_EMPTY_USAGE = reportEmptyUsage.isSelected());
             optionsPanel.add(reportEmptyUsage, "wrap");
 
             suggestToUseCountComparison = new JCheckBox("Suggest to use count()-comparison", SUGGEST_TO_USE_COUNT_CHECK);
-            suggestToUseCountComparison.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    SUGGEST_TO_USE_COUNT_CHECK = suggestToUseCountComparison.isSelected();
-                }
-            });
+            suggestToUseCountComparison.addChangeListener(e -> SUGGEST_TO_USE_COUNT_CHECK = suggestToUseCountComparison.isSelected());
             optionsPanel.add(suggestToUseCountComparison, "wrap");
 
             suggestToUseNullComparison = new JCheckBox("Suggest to use null-comparison", SUGGEST_TO_USE_NULL_COMPARISON);
-            suggestToUseNullComparison.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    SUGGEST_TO_USE_NULL_COMPARISON = suggestToUseNullComparison.isSelected();
-                }
-            });
+            suggestToUseNullComparison.addChangeListener(e -> SUGGEST_TO_USE_NULL_COMPARISON = suggestToUseNullComparison.isSelected());
             optionsPanel.add(suggestToUseNullComparison, "wrap");
         }
 

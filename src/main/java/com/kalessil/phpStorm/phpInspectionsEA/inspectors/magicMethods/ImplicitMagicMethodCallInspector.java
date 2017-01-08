@@ -20,8 +20,6 @@ import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -155,11 +153,7 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
             optionsPanel.setLayout(new MigLayout());
 
             suggestUsingStringCasting = new JCheckBox("Suggest using (string)...", SUGGEST_USING_STRING_CASTING);
-            suggestUsingStringCasting.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    SUGGEST_USING_STRING_CASTING = suggestUsingStringCasting.isSelected();
-                }
-            });
+            suggestUsingStringCasting.addChangeListener(e -> SUGGEST_USING_STRING_CASTING = suggestUsingStringCasting.isSelected());
             optionsPanel.add(suggestUsingStringCasting, "wrap");
         }
 

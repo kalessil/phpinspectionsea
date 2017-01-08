@@ -23,8 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -591,11 +589,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             optionsPanel.setLayout(new MigLayout());
 
             reportLiteralOperators = new JCheckBox("Report literal and/or operators", REPORT_LITERAL_OPERATORS);
-            reportLiteralOperators.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    REPORT_LITERAL_OPERATORS = reportLiteralOperators.isSelected();
-                }
-            });
+            reportLiteralOperators.addChangeListener(e -> REPORT_LITERAL_OPERATORS = reportLiteralOperators.isSelected());
             optionsPanel.add(reportLiteralOperators, "wrap");
         }
 

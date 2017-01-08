@@ -18,8 +18,6 @@ import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -115,11 +113,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
             optionsPanel.setLayout(new MigLayout());
 
             reportPrivateRedefinition = new JCheckBox("Report re-defining private fields", REPORT_PRIVATE_REDEFINITION);
-            reportPrivateRedefinition.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    REPORT_PRIVATE_REDEFINITION = reportPrivateRedefinition.isSelected();
-                }
-            });
+            reportPrivateRedefinition.addChangeListener(e -> REPORT_PRIVATE_REDEFINITION = reportPrivateRedefinition.isSelected());
             optionsPanel.add(reportPrivateRedefinition, "wrap");
         }
 

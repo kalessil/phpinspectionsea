@@ -25,8 +25,6 @@ import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.util.Collection;
 
 
@@ -167,11 +165,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
             optionsPanel.setLayout(new MigLayout());
 
             suggestToUseAssertSame = new JCheckBox("Suggest to use assertSame", SUGGEST_TO_USE_ASSERTSAME);
-            suggestToUseAssertSame.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    SUGGEST_TO_USE_ASSERTSAME = suggestToUseAssertSame.isSelected();
-                }
-            });
+            suggestToUseAssertSame.addChangeListener(e -> SUGGEST_TO_USE_ASSERTSAME = suggestToUseAssertSame.isSelected());
             optionsPanel.add(suggestToUseAssertSame, "wrap");
         }
 

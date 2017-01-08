@@ -29,8 +29,6 @@ import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.util.*;
 
 public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection {
@@ -297,11 +295,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
             optionsPanel.setLayout(new MigLayout());
 
             importClassesAutomatically = new JCheckBox("Report non-thrown exceptions", REPORT_NON_THROWN_EXCEPTIONS);
-            importClassesAutomatically.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    REPORT_NON_THROWN_EXCEPTIONS = importClassesAutomatically.isSelected();
-                }
-            });
+            importClassesAutomatically.addChangeListener(e -> REPORT_NON_THROWN_EXCEPTIONS = importClassesAutomatically.isSelected());
             optionsPanel.add(importClassesAutomatically, "wrap");
         }
 

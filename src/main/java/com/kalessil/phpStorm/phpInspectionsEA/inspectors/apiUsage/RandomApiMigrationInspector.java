@@ -18,8 +18,6 @@ import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -111,11 +109,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
             optionsPanel.setLayout(new MigLayout());
 
             suggestUsingRandomInt = new JCheckBox("Suggest using random_int", SUGGEST_USING_RANDOM_INT);
-            suggestUsingRandomInt.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    SUGGEST_USING_RANDOM_INT = suggestUsingRandomInt.isSelected();
-                }
-            });
+            suggestUsingRandomInt.addChangeListener(e -> SUGGEST_USING_RANDOM_INT = suggestUsingRandomInt.isSelected());
             optionsPanel.add(suggestUsingRandomInt, "wrap");
         }
 

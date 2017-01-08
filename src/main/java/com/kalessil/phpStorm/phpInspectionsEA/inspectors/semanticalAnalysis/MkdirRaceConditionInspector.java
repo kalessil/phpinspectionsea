@@ -13,6 +13,8 @@ import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -31,9 +33,18 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                String functionName = reference.getName();
-                if (!reference.getContainingFile().isValid() || StringUtil.isEmpty(functionName) || !functionName.equals("mkdir")) {
+                final String functionName = reference.getName();
+                if (StringUtil.isEmpty(functionName) || !functionName.equals("mkdir")) {
                     return;
+                }
+
+                /* ignore test classes */
+                final Function scope = ExpressionSemanticUtil.getScope(reference);
+                if (scope instanceof Method) {
+                    final PhpClass clazz = ((Method) scope).getContainingClass();
+                    if (null != clazz && FileSystemUtil.isTestClass(clazz)) {
+                        return;
+                    }
                 }
 
                 /* ind out expression where the call is contained - quite big set of variations */

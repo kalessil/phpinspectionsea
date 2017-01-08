@@ -1,8 +1,8 @@
 === Pre-requisits ===
 
-- Java 8 SDK SE (not JRE)
+- Java 8 **SDK** SE
 - Intllij Idea Untimate (for running Unit Tests)
-- PhpStorm (for PHP-related SDK)
+- PhpStorm 2016.2.1 (for PHP-related SDK)
 
 === Checking out project ===
 

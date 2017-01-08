@@ -23,6 +23,6 @@ class CParent2 extends AParent2
 class ClassImplementsSameInterfaceTwice
     implements
         IParent2,
-        <error descr="Class cannot implement previously implemented interface"><error descr="\IParent2 is already announced. Duplicate announcements causing Fatal error.">IParent2</error></error>
+        <error descr="\IParent2 is already announced. Duplicate announcements causing Fatal error.">IParent2</error>
 {
 }

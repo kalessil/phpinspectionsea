@@ -189,9 +189,9 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private SmartPsiElementPointer<PsiElement> assignment;
-        private SmartPsiElementPointer<PsiElement> value;
-        private SmartPsiElementPointer<Variable> variable;
+        private final SmartPsiElementPointer<PsiElement> assignment;
+        private final SmartPsiElementPointer<PsiElement> value;
+        private final SmartPsiElementPointer<Variable> variable;
 
         TheLocalFix(@NotNull PsiElement assignment, @NotNull Variable variable, @NotNull PsiElement value) {
             super();

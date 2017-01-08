@@ -38,7 +38,7 @@ public class AssertNotNullStrategy {
 
     private static class TheLocalFix implements LocalQuickFix {
         @NotNull
-        private SmartPsiElementPointer<PsiElement> value;
+        private final SmartPsiElementPointer<PsiElement> value;
 
         TheLocalFix(@NotNull PsiElement value) {
             super();

@@ -42,8 +42,8 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
         return "RandomApiMigrationInspection";
     }
 
-    private static Map<String, String> mappingMt   = new HashMap<>();
-    private static Map<String, String> mappingEdge = new HashMap<>();
+    private static final Map<String, String> mappingMt   = new HashMap<>();
+    private static final Map<String, String> mappingEdge = new HashMap<>();
     static {
         mappingMt.put("srand",        "mt_srand");
         mappingMt.put("getrandmax",   "mt_getrandmax");

@@ -25,7 +25,7 @@ import java.util.Map;
 final public class SelfAssignmentStrategy {
     private static final String message = "Related operation being applied to the same variable (probably merging issues).";
 
-    static private Map<IElementType, IElementType> mapping = new HashMap<>();
+    static private final Map<IElementType, IElementType> mapping = new HashMap<>();
     static {
         mapping.put(PhpTokenTypes.opPLUS_ASGN,        PhpTokenTypes.opPLUS);
         mapping.put(PhpTokenTypes.opMINUS_ASGN,       PhpTokenTypes.opMINUS);

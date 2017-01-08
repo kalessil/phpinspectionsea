@@ -83,9 +83,9 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
 
     private static class TheLocalFix implements LocalQuickFix {
         @Nullable
-        private SmartPsiElementPointer<PsiElement> object;
+        private final SmartPsiElementPointer<PsiElement> object;
         @NotNull
-        private SmartPsiElementPointer<PsiElement> operator;
+        private final SmartPsiElementPointer<PsiElement> operator;
 
         TheLocalFix(@NotNull PsiElement operator, @Nullable PsiElement object) {
             super();

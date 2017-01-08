@@ -124,7 +124,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
     }
 
     static private class TheLocalFix implements LocalQuickFix {
-        private boolean isInverted;
+        private final boolean isInverted;
 
         public TheLocalFix(boolean isInverted) {
             super();

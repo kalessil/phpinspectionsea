@@ -26,7 +26,7 @@ import java.util.Map;
 final public class SuspiciousOperatorFormattingStrategy {
     private static final String messagePattern = "Probably '%o%' operator should be used here (or proper formatting applied).";
 
-    private static Map<IElementType, String> mapping = new HashMap<>();
+    private static final Map<IElementType, String> mapping = new HashMap<>();
     static {
         mapping.put(PhpTokenTypes.opPLUS,  "+=");
         mapping.put(PhpTokenTypes.opMINUS, "-=");

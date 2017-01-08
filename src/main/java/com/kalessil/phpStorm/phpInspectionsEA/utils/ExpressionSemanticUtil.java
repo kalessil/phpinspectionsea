@@ -300,24 +300,25 @@ final public class ExpressionSemanticUtil {
         }
 
         if (expression instanceof FieldReference || expression instanceof ClassConstantReference) {
-            Field fieldOrConstant = (Field) ((MemberReference) expression).resolve();
+            final Field fieldOrConstant = (Field) ((MemberReference) expression).resolve();
             if (null != fieldOrConstant && fieldOrConstant.getDefaultValue() instanceof StringLiteralExpression) {
                 return (StringLiteralExpression) fieldOrConstant.getDefaultValue();
             }
         }
 
         if (expression instanceof Variable) {
-            String variable = ((Variable) expression).getName();
+            final String variable = ((Variable) expression).getName();
             if (!StringUtil.isEmpty(variable)) {
-                Function scope = ExpressionSemanticUtil.getScope(expression);
+                final Function scope = ExpressionSemanticUtil.getScope(expression);
                 if (null != scope) {
                     final Set<AssignmentExpression> matched = new HashSet<>();
 
-                    Collection<AssignmentExpression> assignments = PsiTreeUtil.findChildrenOfType(scope, AssignmentExpression.class);
+                    Collection<AssignmentExpression> assignments
+                            = PsiTreeUtil.findChildrenOfType(scope, AssignmentExpression.class);
                     /* collect self-assignments as well */
                     for (AssignmentExpression assignment : assignments) {
                         if (assignment.getVariable() instanceof Variable && assignment.getValue() instanceof StringLiteralExpression) {
-                            String name = assignment.getVariable().getName();
+                            final String name = assignment.getVariable().getName();
                             if (!StringUtil.isEmpty(name) && name.equals(variable)) {
                                 matched.add(assignment);
                             }

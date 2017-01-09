@@ -1,13 +1,13 @@
+[![Version](http://phpstorm.espend.de/badge/7622/version)](https://plugins.jetbrains.com/plugin/7622)
+[![Downloads](http://phpstorm.espend.de/badge/7622/downloads)](https://plugins.jetbrains.com/plugin/7622)
+[![Downloads last month](http://phpstorm.espend.de/badge/7622/last-month)](https://plugins.jetbrains.com/plugin/7622)
+[![Donate to this project using Paypal](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/VReznichenko)
+
 Php Inspections (EA Extended) 
 ---
 A Static Code Analysis tool for PHP distributed as a PhpStorm/IdeaUltimate plugin. 
 
 Adds new inspections for PHP code, e.g. security-related, probable bugs, language level migration and more.
-
-[![Version](http://phpstorm.espend.de/badge/7622/version)](https://plugins.jetbrains.com/plugin/7622)
-[![Downloads](http://phpstorm.espend.de/badge/7622/downloads)](https://plugins.jetbrains.com/plugin/7622)
-[![Downloads last month](http://phpstorm.espend.de/badge/7622/last-month)](https://plugins.jetbrains.com/plugin/7622)
-[![Donate to this project using Paypal](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/VReznichenko)
 
 Installation and getting started
 ---

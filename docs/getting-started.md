@@ -5,7 +5,15 @@
 To get maximum benefit from using the plugin, we should agree on following:
 * organizing code in classes/functions;
 * using curly brackets for control statements (if/else, loops and etc.);
-* using Composer would be great, as security checks can be applied to thrird party components; 
+* using Composer would be great, as security checks can be applied to thrird party components;
+
+## Installation
+
+Regular installation process includes 2 steps:
+- Navigate to *File -> Settings -> Plugins* and click *Browse Repositories*. New window will popup will listing available plugins. 
+- Type *Php Inspections (EA Extended)* into top search field and install it. Click *OK* buttons on both open windows.
+
+After installation IDE will suggest restarting, do so to get plugin loaded.
 
 ## Initial configuration
 
@@ -18,7 +26,7 @@ If you just started using the analyzer, it worth following those steps:
 You can activate disabled inspections later in IDE settings. Also some inspections have own settings 
 and perhaps you would want to review them before deactivating anything.
 
-## Fixing issues
+## Automatic fixes for found issues
 
 Most of inspections has so called Quick-Fixes fixing the reported issues. They are applicable in 2 ways:
 * from inspection results (button with action title)

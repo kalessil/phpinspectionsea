@@ -6,7 +6,6 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
@@ -37,88 +36,84 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                     return;
                 }
 
-                for (Method objMethod : clazz.getOwnMethods()) {
-                    final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(objMethod);
-                    if (null == methodNameNode || objMethod.isAbstract()) {
+                for (Method method : clazz.getOwnMethods()) {
+                    final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
+                    if (null == methodNameNode || method.isAbstract()) {
                         continue;
                     }
 
                     /* we expect the method to have just one expression - parent invocation */
-                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(objMethod);
+                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
                     if (null == body || 1 != ExpressionSemanticUtil.countExpressionsInGroup(body)) {
                         continue;
                     }
-
                     final PsiElement lastStatement = ExpressionSemanticUtil.getLastStatement(body);
-                    if (null != lastStatement && lastStatement.getFirstChild() instanceof MethodReference) {
-                        final MethodReference reference = (MethodReference) lastStatement.getFirstChild();
+                    if (null == lastStatement || !(lastStatement.getFirstChild() instanceof MethodReference)) {
+                        continue;
+                    }
 
-                        final String referenceVariable = reference.getFirstChild().getText().trim();
-                        final String referenceName = reference.getName();
+                    final MethodReference reference = (MethodReference) lastStatement.getFirstChild();
+                    final String referenceVariable  = reference.getFirstChild().getText().trim();
+                    final String referenceName      = reference.getName();
+                    if (null != referenceName && referenceVariable.equals("parent") && referenceName.equals(method.getName())) {
+                        final Parameter[] methodParameters = method.getParameters();
 
-                        if (
-                            referenceVariable.equals("parent") &&
-                            !StringUtil.isEmpty(referenceName) && referenceName.equals(objMethod.getName())
-                        ) {
-                            final Parameter[] methodParameters = objMethod.getParameters();
-
-                            /* ensure no transformations/reordering happens when dispatching parameters */
-                            final PsiElement[] givenParams            = reference.getParameters();
-                            boolean isDispatchingWithoutModifications = (givenParams.length == methodParameters.length);
-                            if (isDispatchingWithoutModifications) {
-                                /* ensure parameters re-dispatched in the same order and state */
-                                for (int index = 0; index < givenParams.length; ++index) {
-                                    if (
-                                        !(givenParams[index] instanceof Variable) ||
-                                        !((Variable) givenParams[index]).getName().equals(methodParameters[index].getName())
-                                    ) {
-                                        isDispatchingWithoutModifications = false;
-                                        break;
-                                    }
+                        /* ensure no transformations/reordering happens when dispatching parameters */
+                        final PsiElement[] givenParams            = reference.getParameters();
+                        boolean isDispatchingWithoutModifications = (givenParams.length == methodParameters.length);
+                        if (isDispatchingWithoutModifications) {
+                            /* ensure parameters re-dispatched in the same order and state */
+                            for (int index = 0; index < givenParams.length; ++index) {
+                                if (
+                                    !(givenParams[index] instanceof Variable) ||
+                                    !((Variable) givenParams[index]).getName().equals(methodParameters[index].getName())
+                                ) {
+                                    isDispatchingWithoutModifications = false;
+                                    break;
                                 }
                             }
+                        }
 
-                            /* ensure no signature changes took place */
-                            boolean isChangingSignature          = false;
-                            final PsiReference referenceToMethod = reference.getReference();
-                            if (null != referenceToMethod && isDispatchingWithoutModifications) {
-                                final PsiElement referenceResolved = referenceToMethod.resolve();
-                                if (referenceResolved instanceof Method) {
-                                    final Method nestedMethod          = (Method) referenceResolved;
-                                    final Parameter[] parentParameters = nestedMethod.getParameters();
+                        /* ensure no signature changes took place */
+                        boolean isChangingSignature          = false;
+                        final PsiReference referenceToMethod = reference.getReference();
+                        if (null != referenceToMethod && isDispatchingWithoutModifications) {
+                            final PsiElement referenceResolved = referenceToMethod.resolve();
+                            if (referenceResolved instanceof Method) {
+                                final Method nestedMethod          = (Method) referenceResolved;
+                                final Parameter[] parentParameters = nestedMethod.getParameters();
 
-                                    /* verify amount of parameters, visibility, static, abstract, final */
-                                    if (
-                                        parentParameters.length   == methodParameters.length &&
-                                        nestedMethod.isAbstract() == objMethod.isAbstract() &&
-                                        nestedMethod.isStatic()   == objMethod.isStatic() &&
-                                        nestedMethod.isFinal()    == objMethod.isFinal() &&
-                                        nestedMethod.getAccess().equals(objMethod.getAccess())
-                                    ) {
-                                        /* when has parameters, ensure the defined order is not changed as well */
-                                        if (methodParameters.length > 0) {
-                                            for (int index = 0; index < parentParameters.length; ++index) {
-                                                if (!PsiEquivalenceUtil.areElementsEquivalent(parentParameters[index], methodParameters[index])) {
-                                                    isChangingSignature = true;
-                                                    break;
-                                                }
+                                /* verify amount of parameters, visibility, static, abstract, final */
+                                if (
+                                    parentParameters.length   == methodParameters.length &&
+                                    nestedMethod.isAbstract() == method.isAbstract() &&
+                                    nestedMethod.isStatic()   == method.isStatic() &&
+                                    nestedMethod.isFinal()    == method.isFinal() &&
+                                    nestedMethod.getAccess().equals(method.getAccess())
+                                ) {
+                                    /* when has parameters, ensure the defined order is not changed as well */
+                                    if (methodParameters.length > 0) {
+                                        for (int index = 0; index < parentParameters.length; ++index) {
+                                            if (!PsiEquivalenceUtil.areElementsEquivalent(parentParameters[index], methodParameters[index])) {
+                                                isChangingSignature = true;
+                                                break;
                                             }
                                         }
-                                    } else {
-                                        /* okay obviously changed */
-                                        isChangingSignature = true;
                                     }
                                 } else {
-                                    /* we couldn't resolve parent, so we have no right to report anything */
+                                    /* okay obviously changed */
                                     isChangingSignature = true;
                                 }
+                            } else {
+                                /* we couldn't resolve parent, so we can't report anything */
+                                isChangingSignature = true;
                             }
+                        }
 
-                            /* decide if need to report any issues */
-                            if (isDispatchingWithoutModifications && !isChangingSignature) {
-                                final String message = messagePattern.replace("%s%", objMethod.getName());
-                                holder.registerProblem(methodNameNode, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
-                            }
+                        /* decide if need to report any issues */
+                        if (isDispatchingWithoutModifications && !isChangingSignature) {
+                            final String message = messagePattern.replace("%s%", method.getName());
+                            holder.registerProblem(methodNameNode, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                         }
                     }
                 }

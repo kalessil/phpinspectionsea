@@ -7,6 +7,10 @@ Some facts about this project: https://www.openhub.net/p/phpinspectionsea
 [![Downloads last month](http://phpstorm.espend.de/badge/7622/last-month)](https://plugins.jetbrains.com/plugin/7622)
 [![Donate to this project using Paypal](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/VReznichenko)
 
+Installation and getting started
+---
+Please follow this [documentation link](docs/getting-started.md).
+
 Acknowledgments
 ---
 <img src="https://www.yourkit.com/images/yklogo.png" alt="YourKit" height="20"> YourKit supports us with their 

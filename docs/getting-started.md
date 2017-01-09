@@ -10,8 +10,8 @@ To get maximum benefit from using the plugin, we should agree on following:
 ## Installation
 
 Regular installation process includes 2 steps:
-- Navigate to *File -> Settings -> Plugins* and click *Browse Repositories*. New window will popup will listing available plugins. 
-- Type *Php Inspections (EA Extended)* into top search field and install it. Click *OK* buttons on both open windows.
+- Navigate to *File -> Settings -> Plugins* and click *Browse Repositories*. New window will popup listing available plugins. 
+- Type *Php Inspections (EA Extended)* into the top search field and install the plugin. Click *OK* buttons on both open windows.
 
 After installation IDE will suggest restarting, do so to get plugin loaded.
 

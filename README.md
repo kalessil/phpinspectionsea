@@ -1,6 +1,7 @@
 Php Inspections (EA Extended) 
 ---
 A Static Code Analysis tool for PHP distributed as a PhpStorm/IdeaUltimate plugin. 
+
 Adds new inspections for PHP code, e.g. security-related, probable bugs, language level migration and more.
 
 [![Version](http://phpstorm.espend.de/badge/7622/version)](https://plugins.jetbrains.com/plugin/7622)

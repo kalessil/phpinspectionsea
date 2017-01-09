@@ -5,7 +5,7 @@
 To get maximum benefit from using the plugin, we should agree on following:
 * organizing code in classes/functions;
 * using curly brackets for control statements (if/else, loops and etc.);
-* using Composer would be great, as security checks can be applied to thrird party components;
+* using Composer would be great, as security checks can be applied to third party components;
 
 ## Installation
 

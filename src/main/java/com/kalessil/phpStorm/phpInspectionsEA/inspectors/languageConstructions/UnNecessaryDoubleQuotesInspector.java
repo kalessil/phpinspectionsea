@@ -30,20 +30,23 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpStringLiteralExpression(StringLiteralExpression expression) {
-                String valueWithQuotes = expression.getText();
-                if (
-                    valueWithQuotes.charAt(0) != '"' ||
-                    valueWithQuotes.indexOf('$') > 0 ||
-                    valueWithQuotes.indexOf('\\') > 0 ||
-                    valueWithQuotes.indexOf('\'') > 0
-                ) {
+                /* skip processing single-quoted and strings with injections */
+                if (expression.isSingleQuote() || null != expression.getFirstPsiChild()) {
+                    return;
+                }
+                /* annotation is doc-blocks must not be analyzed */
+                if (ExpressionSemanticUtil.getBlockScope(expression) instanceof PhpDocComment) {
                     return;
                 }
 
-                /* annotation is doc-blocks must not be analyzed */
-                if (!(ExpressionSemanticUtil.getBlockScope(expression) instanceof PhpDocComment)) {
-                    holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                /* literals with escape sequences must not be analyzed */
+                /* note: don't use PhpStringUtil.unescapeText as it simply strips escape sequences */
+                final String contents = expression.getContents().replaceAll("\\\\\\$", "\\$").replaceAll("\\\\\"", "\"");
+                if (0 == contents.length() || contents.indexOf('\'') > 0 || contents.contains("\\")) {
+                    return;
                 }
+
+                holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
             }
         };
     }
@@ -63,13 +66,13 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            PsiElement target = descriptor.getPsiElement();
-            if (target instanceof StringLiteralExpression) {
-                String unescaped      = PhpStringUtil.unescapeText(((StringLiteralExpression) target).getContents(), true);
-                String textExpression = '\'' + PhpStringUtil.escapeText(unescaped, true, '\n', '\t') + '\'';
+            final PsiElement literal = descriptor.getPsiElement();
+            if (literal instanceof StringLiteralExpression) {
+                String unescaped      = PhpStringUtil.unescapeText(((StringLiteralExpression) literal).getContents(), false);
+                String textExpression = "'" + PhpStringUtil.escapeText(unescaped, true) + "'";
 
                 PhpPsiElement replacement = PhpPsiElementFactory.createPhpPsiFromText(project, StringLiteralExpression.class, textExpression);
-                target.replace(replacement);
+                literal.replace(replacement);
             }
         }
     }

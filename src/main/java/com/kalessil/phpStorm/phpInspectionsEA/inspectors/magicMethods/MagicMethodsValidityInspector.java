@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.lang.psi.elements.Method;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -48,9 +49,10 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
+                final PhpClass clazz    = method.getContainingClass();
                 final String methodName = method.getName();
                 final PsiElement nameId = method.getNameIdentifier();
-                if (null == nameId || StringUtil.isEmpty(methodName) || !methodName.startsWith("__")) {
+                if (null == clazz || null == nameId || StringUtil.isEmpty(methodName) || !methodName.startsWith("__")) {
                     return;
                 }
 
@@ -106,10 +108,10 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                 }
 
                 if (methodName.equals("__callStatic")) {
+                    MustBeStaticStrategy.apply(method, holder);
                     MustBePublicStrategy.apply(method, holder);
                     CanNotTakeArgumentsByReferenceStrategy.apply(method, holder);
                     TakesExactAmountOfArgumentsStrategy.apply(2, method, holder);
-                    MustBeStaticStrategy.apply(method, holder);
 
                     return;
                 }
@@ -130,6 +132,15 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                     MustBePublicStrategy.apply(method, holder);
                     MustReturnSpecifiedTypeStrategy.apply(arrayOrNullType, method, holder);
                     MinimalPhpVersionStrategy.apply(method, holder, PhpLanguageLevel.PHP560);
+
+                    return;
+                }
+
+                if (methodName.equals("__set_state")) {
+                    MustBeStaticStrategy.apply(method, holder);
+                    MustBePublicStrategy.apply(method, holder);
+                    TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
+                    MustReturnSpecifiedTypeStrategy.apply((new PhpType()).add(clazz.getFQN()), method, holder);
 
                     return;
                 }

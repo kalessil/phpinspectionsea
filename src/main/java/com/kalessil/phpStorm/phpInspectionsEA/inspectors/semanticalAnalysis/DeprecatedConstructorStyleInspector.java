@@ -14,6 +14,7 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class DeprecatedConstructorStyleInspector extends BasePhpInspection {
@@ -29,19 +30,16 @@ public class DeprecatedConstructorStyleInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
-                final PhpClass clazz    = method.getContainingClass();
-                final String methodName = method.getName();
-                if (
-                    null == clazz || clazz.isTrait() || clazz.isInterface() ||
-                    StringUtil.isEmpty(methodName) || null == method.getNameIdentifier()
-                ) {
+                final PhpClass clazz      = method.getContainingClass();
+                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
+                if (null == clazz || null == nameNode || clazz.isTrait() || clazz.isInterface()) {
                     return;
                 }
 
                 final String className = clazz.getName();
-                if (methodName.equals(className) && null == clazz.findOwnMethodByName("__construct")) {
+                if (className.equals(method.getName()) && null == clazz.findOwnMethodByName("__construct")) {
                     final String message = messagePattern.replace("%s%", className);
-                    holder.registerProblem(method.getNameIdentifier(), message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
+                    holder.registerProblem(nameNode, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
                 }
             }
         };

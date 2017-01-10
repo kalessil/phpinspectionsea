@@ -14,6 +14,7 @@ import com.jetbrains.php.lang.psi.elements.ImplementsList;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -34,8 +35,8 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
                 /* skip classes which we cannot report */
-                final PsiElement classNameNode = clazz.getNameIdentifier();
-                if (null == classNameNode) {
+                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
+                if (null == nameNode) {
                     return;
                 }
 

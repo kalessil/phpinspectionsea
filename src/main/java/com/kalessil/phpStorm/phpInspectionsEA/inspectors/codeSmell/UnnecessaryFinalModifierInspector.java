@@ -21,6 +21,7 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class UnnecessaryFinalModifierInspector extends BasePhpInspection {
@@ -36,14 +37,13 @@ public class UnnecessaryFinalModifierInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
-                final PhpClass clazz = method.getContainingClass();
-                if (null != clazz && clazz.isFinal() && method.isFinal()) {
-                    if (null == method.getNameIdentifier() || 0 == method.getNameIdentifier().getTextLength()) {
-                        return;
-                    }
-
-                    holder.registerProblem(method.getNameIdentifier(), message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                final PhpClass clazz      = method.getContainingClass();
+                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
+                if (null == clazz || null == nameNode || !clazz.isFinal() || !method.isFinal()) {
+                    return;
                 }
+
+                holder.registerProblem(nameNode, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
             }
         };
     }

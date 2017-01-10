@@ -4,6 +4,11 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.SecurityAdvisoriesInspector;
 
 final public class SecurityAdvisoriesInspectorTest extends CodeInsightFixtureTestCase {
+    public void testHasAdvisory() {
+        myFixture.configureByFile("fixtures/securityAdvisories/hasAdvisories/composer.json");
+        myFixture.enableInspections(SecurityAdvisoriesInspector.class);
+        myFixture.testHighlighting(true, false, true);
+    }
     public void testNotNeededAdvisory() {
         myFixture.configureByFile("fixtures/securityAdvisories/needsNoAdvisories/composer.json");
         myFixture.enableInspections(SecurityAdvisoriesInspector.class);

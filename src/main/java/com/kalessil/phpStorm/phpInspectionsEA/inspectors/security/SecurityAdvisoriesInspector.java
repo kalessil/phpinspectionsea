@@ -80,6 +80,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                 /* if advisories already there, verify usage of dev-master */
                 final JsonProperty componentEntry = (JsonProperty) component;
                 final String componentName        = componentEntry.getName();
+
                 if (componentName.equals("roave/security-advisories")) {
                     if (componentEntry.getValue() instanceof JsonStringLiteral) {
                         final JsonStringLiteral version = (JsonStringLiteral) componentEntry.getValue();
@@ -97,13 +98,13 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                     if (null == ownPackagePrefix || !componentName.startsWith(ownPackagePrefix)) {
                         ++packagesCount;
                     }
-
-                    /* fire error message if we have any of 3rd-party packages */
-                    if (packagesCount > 0) {
-                        holder.registerProblem(requireProperty.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                        return holder.getResultsArray();
-                    }
                 }
+            }
+
+            /* fire error message if we have any of 3rd-party packages */
+            if (packagesCount > 0) {
+                holder.registerProblem(requireProperty.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                return holder.getResultsArray();
             }
         }
 

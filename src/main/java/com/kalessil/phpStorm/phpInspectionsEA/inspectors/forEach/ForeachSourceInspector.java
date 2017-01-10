@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.ForeachStatement;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -36,7 +37,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpForeach(ForeachStatement foreach) {
                 final PsiElement container = ExpressionSemanticUtil.getExpressionTroughParenthesis(foreach.getArray());
-                if (null != container) {
+                if (container instanceof PhpTypedElement) {
                     this.analyseContainer(container);
                 }
             }

@@ -14,6 +14,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspection {
@@ -37,18 +38,18 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
             }
 
             private void inspectCallable (Function callable) {
-                final PsiElement nameNode = callable.getNameIdentifier();
-                if (null == nameNode || 0 == nameNode.getTextLength()) {
+                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(callable);
+                if (null == nameNode) {
                     return;
                 }
 
                 if (callable instanceof Method) {
-                    final PhpClass clazz    = ((Method) callable).getContainingClass();
-                    final String methodName = callable.getName();
-                    if (null != clazz && !clazz.isInterface() && !StringUtil.isEmpty(methodName)) {
-                        /* ensure not reporting children classes, only parent definitions */
+                    /* the method can be as it is due to inheritance; skip reporting the case; */
+                    final PhpClass clazz = ((Method) callable).getContainingClass();
+                    if (null != clazz && !clazz.isInterface()) {
+                        final String methodName = callable.getName();
                         for (PhpClass parent : clazz.getSupers()) {
-                            if (null != parent.findMethodByName(methodName)) {
+                            if (null != parent && null != parent.findMethodByName(methodName)) {
                                 return;
                             }
                         }

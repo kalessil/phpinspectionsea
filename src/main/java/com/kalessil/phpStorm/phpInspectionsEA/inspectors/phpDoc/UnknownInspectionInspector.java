@@ -5,6 +5,9 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.IdeaPluginDescriptorImpl;
 import com.intellij.ide.plugins.PluginManager;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -34,19 +37,29 @@ import java.util.Set;
 public class UnknownInspectionInspector extends BasePhpInspection {
     private static final String message = "Unknown inspection: %i%.";
 
-    final private static Set<String> inspectionsNames;
-    private static int minInspectionNameLength;
-    static {
-        inspectionsNames = collectKnownInspections();
+    private static Set<String> inspectionsNames = null;
+    private static int minInspectionNameLength  = Integer.MAX_VALUE;
 
-        /* shortest length is a threshold for separating inspections and comments mixed in */
-        minInspectionNameLength = Integer.MAX_VALUE;
-        for (String shortName : inspectionsNames) {
-            final int nameLength = shortName.length();
-            if (nameLength < minInspectionNameLength) {
-                minInspectionNameLength = nameLength;
+    @NotNull
+    public Set<String> getInspectionsNames() {
+        if (null == inspectionsNames) {
+            synchronized (UnknownInspectionInspector.class) {
+                if (null != inspectionsNames) {
+                    return inspectionsNames;
+                }
+
+                final Set<String> inspections = collectKnownInspections();
+                for (String shortName : inspections) {
+                    final int nameLength = shortName.length();
+                    if (nameLength < minInspectionNameLength) {
+                        minInspectionNameLength = nameLength;
+                    }
+                }
+                inspectionsNames = inspections;
             }
         }
+
+        return inspectionsNames;
     }
 
     @NotNull
@@ -71,9 +84,10 @@ public class UnknownInspectionInspector extends BasePhpInspection {
                 }
 
                 /* check if all suppressed inspections are known */
-                final List<String> reported = new ArrayList<>();
+                final List<String> reported   = new ArrayList<>();
+                final Set<String> inspections = getInspectionsNames();
                 for (String suppression : suppressed) {
-                    if (suppression.length() >= minInspectionNameLength && !inspectionsNames.contains(suppression)) {
+                    if (suppression.length() >= minInspectionNameLength && !inspections.contains(suppression)) {
                         reported.add(suppression);
                     }
                 }
@@ -99,11 +113,13 @@ public class UnknownInspectionInspector extends BasePhpInspection {
             /* check plugins' dependencies and extensions */
             /* we have to rely on impl-class, see https://youtrack.jetbrains.com/issue/WI-34555 */
             final MultiMap<String, Element> extensions = ((IdeaPluginDescriptorImpl) plugin).getExtensions();
-            if (null == extensions || !ArrayUtils.contains(plugin.getDependentPluginIds(), phpSupport)) {
+            final boolean isPhpPlugin                  = plugin.getPluginId().equals(phpSupport);
+            if (null == extensions || (!ArrayUtils.contains(plugin.getDependentPluginIds(), phpSupport)) && !isPhpPlugin) {
                 continue;
             }
 
             /* extract inspections; short names */
+            int inspectionsRegistered = 0;
             for (Element node : extensions.values()) {
                 final String nodeName = node.getName();
                 if (null == nodeName || !nodeName.equals("localInspection")) {
@@ -114,8 +130,12 @@ public class UnknownInspectionInspector extends BasePhpInspection {
                 final String shortName = null == name ? null : name.getValue();
                 if (null != shortName && shortName.length() > 0) {
                     names.add(shortName);
+                    ++inspectionsRegistered;
                 }
             }
+
+            final String debug = plugin.getPluginId().getIdString() + ": " + inspectionsRegistered;
+            Notifications.Bus.notify(new Notification("-", "-", debug, NotificationType.INFORMATION));
         }
 
         return names;

@@ -7,5 +7,5 @@
     /** <weak_warning descr="Unknown inspection: UsingInclusionReturnValueInspectXXX.">@noinspection</weak_warning> UsingInclusionReturnValueInspectXXX - some comments */
 
     /* false-positives */
-    /*  @noinspection UnknownInspectionInspection */
-    /** @noinspection UnknownInspectionInspection */
+    /*  @noinspection UnknownInspectionInspection PhpMissingParentCallCommonInspection */
+    /** @noinspection UnknownInspectionInspection PhpMissingParentCallCommonInspection */

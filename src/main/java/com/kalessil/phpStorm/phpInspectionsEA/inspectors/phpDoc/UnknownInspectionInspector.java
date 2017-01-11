@@ -37,29 +37,19 @@ import java.util.Set;
 public class UnknownInspectionInspector extends BasePhpInspection {
     private static final String message = "Unknown inspection: %i%.";
 
-    private static Set<String> inspectionsNames = null;
-    private static int minInspectionNameLength  = Integer.MAX_VALUE;
+    final private static Set<String> inspectionsNames;
+    private static int minInspectionNameLength;
+    static {
+        inspectionsNames = collectKnownInspections();
 
-    @NotNull
-    public Set<String> getInspectionsNames() {
-        if (null == inspectionsNames) {
-            synchronized (UnknownInspectionInspector.class) {
-                if (null != inspectionsNames) {
-                    return inspectionsNames;
-                }
-
-                final Set<String> inspections = collectKnownInspections();
-                for (String shortName : inspections) {
-                    final int nameLength = shortName.length();
-                    if (nameLength < minInspectionNameLength) {
-                        minInspectionNameLength = nameLength;
-                    }
-                }
-                inspectionsNames = inspections;
+        /* shortest length is a threshold for separating inspections and comments mixed in */
+        minInspectionNameLength = Integer.MAX_VALUE;
+        for (String shortName : inspectionsNames) {
+            final int nameLength = shortName.length();
+            if (nameLength < minInspectionNameLength) {
+                minInspectionNameLength = nameLength;
             }
         }
-
-        return inspectionsNames;
     }
 
     @NotNull
@@ -84,10 +74,9 @@ public class UnknownInspectionInspector extends BasePhpInspection {
                 }
 
                 /* check if all suppressed inspections are known */
-                final List<String> reported   = new ArrayList<>();
-                final Set<String> inspections = getInspectionsNames();
+                final List<String> reported = new ArrayList<>();
                 for (String suppression : suppressed) {
-                    if (suppression.length() >= minInspectionNameLength && !inspections.contains(suppression)) {
+                    if (suppression.length() >= minInspectionNameLength && !inspectionsNames.contains(suppression)) {
                         reported.add(suppression);
                     }
                 }
@@ -119,7 +108,6 @@ public class UnknownInspectionInspector extends BasePhpInspection {
             }
 
             /* extract inspections; short names */
-            int inspectionsRegistered = 0;
             for (Element node : extensions.values()) {
                 final String nodeName = node.getName();
                 if (null == nodeName || !nodeName.equals("localInspection")) {
@@ -130,12 +118,8 @@ public class UnknownInspectionInspector extends BasePhpInspection {
                 final String shortName = null == name ? null : name.getValue();
                 if (null != shortName && shortName.length() > 0) {
                     names.add(shortName);
-                    ++inspectionsRegistered;
                 }
             }
-
-            final String debug = plugin.getPluginId().getIdString() + ": " + inspectionsRegistered;
-            Notifications.Bus.notify(new Notification("-", "-", debug, NotificationType.INFORMATION));
         }
 
         return names;

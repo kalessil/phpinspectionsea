@@ -17,3 +17,9 @@
     foreach ($boolOrArray as $value) {
         is_int($value);
     }
+
+    /* general pattern: generators and transitively iterators */
+    /* @var $generator \Generator */
+    foreach ($generator as $value) {
+        is_int($value);
+    }

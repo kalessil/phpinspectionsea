@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class EmptyClassInspector extends BasePhpInspection {
@@ -23,22 +24,17 @@ public class EmptyClassInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
-                final String className = clazz.getName();
-                /* skip un-explorable and exception classes */
-                if (StringUtil.isEmpty(className) || className.endsWith("Exception")) {
-                    return;
-                }
-
                 /* require class with name which can be targeted by warning */
-                final PsiElement psiClassName = clazz.getNameIdentifier();
-                if (null == psiClassName || clazz.isInterface() || clazz.isTrait()) {
+                final String className    = clazz.getName();
+                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
+                if (null == nameNode || clazz.isInterface() || clazz.isTrait() || className.endsWith("Exception")) {
                     return;
                 }
 
                 /* check if class is empty, take into account used traits */
                 final boolean isEmpty = (0 == clazz.getOwnFields().length + clazz.getOwnMethods().length);
                 if (isEmpty && !clazz.isDeprecated() && 0 == clazz.getTraits().length) {
-                    holder.registerProblem(psiClassName, message, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(nameNode, message, ProblemHighlightType.WEAK_WARNING);
                 }
             }
         };

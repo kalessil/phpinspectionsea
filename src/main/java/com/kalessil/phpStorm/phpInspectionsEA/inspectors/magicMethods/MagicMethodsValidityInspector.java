@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -49,10 +50,10 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
-                final PhpClass clazz    = method.getContainingClass();
-                final String methodName = method.getName();
-                final PsiElement nameId = method.getNameIdentifier();
-                if (null == clazz || null == nameId || StringUtil.isEmpty(methodName) || !methodName.startsWith("__")) {
+                final PhpClass clazz      = method.getContainingClass();
+                final String methodName   = method.getName();
+                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
+                if (null == clazz || null == nameNode || !methodName.startsWith("__")) {
                     return;
                 }
 
@@ -171,14 +172,14 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                 }
 
                 if (methodName.equals("__autoload")) {
-                    holder.registerProblem(nameId, messageUseSplAutoloading, ProblemHighlightType.LIKE_DEPRECATED);
+                    holder.registerProblem(nameNode, messageUseSplAutoloading, ProblemHighlightType.LIKE_DEPRECATED);
                     TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
 
                     return;
                 }
 
                 if (!knownNonMagic.contains(methodName)) {
-                    holder.registerProblem(nameId, messageNotMagic, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(nameNode, messageNotMagic, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }
         };

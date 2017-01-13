@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
                 final Method constructor  = clazz.getOwnConstructor();
-                final PsiElement nameNode = clazz.getNameIdentifier();
+                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
                 if (null == constructor || null == nameNode || !constructor.getAccess().isPrivate()) {
                     return;
                 }

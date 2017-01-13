@@ -41,11 +41,10 @@ final public class UseSuggestedReplacementFixer implements LocalQuickFix {
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
         final PsiElement expression = descriptor.getPsiElement();
         if (null != expression) {
+            final String pattern = "(" + this.expression + ")";
             final ParenthesizedExpression replacement
-                = PhpPsiElementFactory.createFromText(project, ParenthesizedExpression.class, "(" + this.expression + ")");
-            if (null != replacement) {
-                expression.replace(replacement.getArgument());
-            }
+                    = PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, pattern);
+            expression.replace(replacement.getArgument());
         }
     }
 }

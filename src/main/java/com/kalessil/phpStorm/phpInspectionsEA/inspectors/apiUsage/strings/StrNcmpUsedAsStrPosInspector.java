@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class StrNcmpUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String messagePattern = "'0 %o% %f%(%s%, %p%)' can be used instead (improves maintainability).";
+    private static final String messagePattern = "'%r%' can be used instead (improves maintainability).";
 
     @NotNull
     public String getShortName() {
@@ -62,13 +62,13 @@ public class StrNcmpUsedAsStrPosInspector extends BasePhpInspection {
 
                             /* verify if operand is a boolean and report an issue */
                             if (secondOperand instanceof PhpExpressionImpl && secondOperand.getText().equals("0")) {
-                                final String operator = operation.getText();
-                                final String message  = messagePattern
-                                        .replace("%o%", operator.length() == 2 ? operator + "=": operator)
-                                        .replace("%f%", mapping.get(functionName))
-                                        .replace("%s%", params[0].getText())
+                                final String operator    = operation.getText();
+                                final String replacement = "0 %o% %f%(%s%, %p%)"
                                         .replace("%p%", params[1].getText())
-                                ;
+                                        .replace("%s%", params[0].getText())
+                                        .replace("%f%", mapping.get(functionName))
+                                        .replace("%o%", operator.length() == 2 ? operator + "=": operator);
+                                final String message     = messagePattern.replace("%r%", replacement);
                                 holder.registerProblem(parent, message, ProblemHighlightType.WEAK_WARNING);
 
                                 return;
@@ -79,12 +79,12 @@ public class StrNcmpUsedAsStrPosInspector extends BasePhpInspection {
 
                 /* checks NON-implicit boolean comparison patterns */
                 if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
-                    final String message = messagePattern
-                            .replace("%o%", reference.getParent() instanceof UnaryExpression ? "===": "!==")
-                            .replace("%f%", mapping.get(functionName))
-                            .replace("%s%", params[0].getText())
-                            .replace("%p%", params[1].getText())
-                    ;
+                    final String replacement = "0 %o% %f%(%s%, %p%)"
+                        .replace("%p%", params[1].getText())
+                        .replace("%s%", params[0].getText())
+                        .replace("%f%", mapping.get(functionName))
+                        .replace("%o%", reference.getParent() instanceof UnaryExpression ? "===": "!==");
+                    final String message     = messagePattern.replace("%r%", replacement);
                     holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
 
                     //return;

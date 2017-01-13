@@ -66,10 +66,9 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
                             PsiEquivalenceUtil.areElementsEquivalent(variable, leftOperand)
                         ) {
                             final String replacement = "%v% %o%= %e%"
-                                    .replace("%v%", leftOperand.getText())
-                                    .replace("%o%", operator.getText())
-                                    .replace("%e%", rightOperand.getText());
-
+                                .replace("%e%", rightOperand.getText())
+                                .replace("%o%", operator.getText())
+                                .replace("%v%", leftOperand.getText());
                             final String message = messagePattern.replace("%r%", replacement);
                             holder.registerProblem(assignmentExpression, message, ProblemHighlightType.WEAK_WARNING,
                                     new TheLocalFix(replacement));

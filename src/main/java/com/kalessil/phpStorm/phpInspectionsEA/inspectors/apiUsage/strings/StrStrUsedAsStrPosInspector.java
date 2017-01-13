@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String messagePattern = "'false %o% %f%(%s%, %p%)' should be used instead (saves memory).";
+    private static final String messagePattern = "'%r%' should be used instead (saves memory).";
 
     @NotNull
     public String getShortName() {
@@ -62,13 +62,13 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
 
                             /* verify if operand is a boolean and report an issue */
                             if (PhpLanguageUtil.isBoolean(secondOperand)) {
-                                final String operator = operation.getText();
-                                final String message = messagePattern
-                                        .replace("%o%", operator.length() == 2 ? operator + "=": operator)
-                                        .replace("%f%", mapping.get(strFunctionName))
-                                        .replace("%s%", params[0].getText())
-                                        .replace("%p%", params[1].getText())
-                                ;
+                                final String operator    = operation.getText();
+                                final String replacement = "false %o% %f%(%s%, %p%)"
+                                    .replace("%p%", params[1].getText())
+                                    .replace("%s%", params[0].getText())
+                                    .replace("%f%", mapping.get(strFunctionName))
+                                    .replace("%o%", operator.length() == 2 ? operator + "=": operator);
+                                final String message     = messagePattern.replace("%r%", replacement);
                                 holder.registerProblem(parent, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
 
                                 return;
@@ -79,12 +79,12 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
 
                 /* checks NON-implicit boolean comparison patternS */
                 if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
-                    final String message = messagePattern
-                            .replace("%o%", reference.getParent() instanceof UnaryExpression ? "===": "!==")
-                            .replace("%f%", mapping.get(strFunctionName))
-                            .replace("%s%", params[0].getText())
-                            .replace("%p%", params[1].getText())
-                    ;
+                    final String replacement = "false %o% %f%(%s%, %p%)"
+                        .replace("%p%", params[1].getText())
+                        .replace("%s%", params[0].getText())
+                        .replace("%f%", mapping.get(strFunctionName))
+                        .replace("%o%", reference.getParent() instanceof UnaryExpression ? "===": "!==");
+                    final String message     = messagePattern.replace("%r%", replacement);
                     holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
 
                     //return;

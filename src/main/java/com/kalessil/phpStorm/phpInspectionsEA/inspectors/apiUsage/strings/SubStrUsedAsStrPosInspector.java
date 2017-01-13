@@ -17,7 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%i% %o% %f%(%s%, %p%%e%)' can be used instead (improves maintainability).";
+    private static final String messagePattern = "'%r%' can be used instead (improves maintainability).";
 
     @NotNull
     public String getShortName() {
@@ -89,13 +89,14 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                                 final String operator      = operation.getText();
                                 final boolean isMbFunction = functionName.equals("mb_substr");
                                 final boolean hasEncoding  = isMbFunction && 4 == params.length;
-                                final String message = messagePattern
-                                        .replace("%f%", (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"))
-                                        .replace("%i%", index)
-                                        .replace("%o%", operator.length() == 2 ? (operator + "=") : operator)
-                                        .replace("%s%", params[0].getText())
-                                        .replace("%p%", secondOperand.getText())
-                                        .replace("%e%", hasEncoding ? (", " + params[3].getText()) : "");
+                                final String replacement   = "%i% %o% %f%(%s%, %p%%e%)"
+                                    .replace("%e%", hasEncoding ? (", " + params[3].getText()) : "")
+                                    .replace("%p%", secondOperand.getText())
+                                    .replace("%s%", params[0].getText())
+                                    .replace("%f%", (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"))
+                                    .replace("%o%", operator.length() == 2 ? (operator + "=") : operator)
+                                    .replace("%i%", index);
+                                final String message       = messagePattern.replace("%r%", replacement);
                                 holder.registerProblem(parentExpression, message, ProblemHighlightType.WEAK_WARNING);
 
                                 // return;

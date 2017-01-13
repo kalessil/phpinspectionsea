@@ -66,7 +66,7 @@ Inspections Lists (Confusing constructs)
 | Group                | Short Name                                      | Full Name                                           | Quick fix | UTs | QFTs |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
 | Confusing constructs | SenselessTernaryOperatorInspection              | Suspicious ternary operator                         | n/a       | yes | n/a  |
-| Confusing constructs | ClassMethodNameMatchesFieldNameInspection       | Method name matches existing field name             | n/a |
+| Confusing constructs | ClassMethodNameMatchesFieldNameInspection       | Method name matches existing field name             | n/a       | yes | n/a  |
 | Confusing constructs | NestedTernaryOperatorInspection                 | Nested ternary operator                             | no        | yes | no   |
 | Confusing constructs | UselessReturnInspection                         | Useless return                                      | n/a |
 | Confusing constructs | ParameterByRefWithDefaultInspection             | Parameter passed by reference has default value     | n/a       | yes | n/a  |

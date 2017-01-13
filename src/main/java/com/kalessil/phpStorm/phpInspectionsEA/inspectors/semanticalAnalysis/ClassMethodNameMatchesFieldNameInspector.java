@@ -46,7 +46,7 @@ public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection 
                     final HashSet<String> resolvedTypes = new HashSet<>();
                     TypeFromPlatformResolverUtil.resolveExpressionType(field, resolvedTypes);
                     if (resolvedTypes.size() > 0) {
-                        if (resolvedTypes.contains(Types.strCallable) || resolvedTypes.contains("\\Closure")) {
+                        if (resolvedTypes.contains(Types.strCallable)) {
                             holder.registerProblem(nameNode, messageMatches, ProblemHighlightType.WEAK_WARNING);
                         }
 

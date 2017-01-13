@@ -21,6 +21,7 @@ import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,8 +55,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 }
 
                 final String strMethodName     = method.getName();
-                final PsiElement objMethodName = method.getNameIdentifier();
-                if ( null == objMethodName || StringUtil.isEmpty(strMethodName)) {
+                final PsiElement objMethodName = NamedElementUtil.getNameIdentifier(method);
+                if (null == objMethodName || StringUtil.isEmpty(strMethodName)) {
                     return;
                 }
                 final boolean isMethodNamedAsTest = strMethodName.startsWith("test");

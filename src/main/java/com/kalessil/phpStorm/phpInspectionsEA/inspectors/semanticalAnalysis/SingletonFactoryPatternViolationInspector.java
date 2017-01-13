@@ -3,12 +3,14 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpModifier;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class SingletonFactoryPatternViolationInspector extends BasePhpInspection {
@@ -25,8 +27,9 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
-                final Method constructor = clazz.getOwnConstructor();
-                if (null == constructor || null == clazz.getNameIdentifier()) {
+                final Method constructor  = clazz.getOwnConstructor();
+                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
+                if (null == constructor || null == nameNode) {
                     return;
                 }
                 final PhpModifier.Access constructorAccessModifiers = constructor.getAccess();
@@ -36,7 +39,7 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
                 if (hasGetInstance) {
                     if (constructorAccessModifiers.isPublic()){
                         /* private ones already covered with other inspections */
-                        holder.registerProblem(clazz.getNameIdentifier(), strProblemConstructorNotProtected, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(nameNode, strProblemConstructorNotProtected, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
 
                     return;
@@ -53,7 +56,7 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
                     }
                 }
 
-                holder.registerProblem(clazz.getNameIdentifier(), strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(nameNode, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

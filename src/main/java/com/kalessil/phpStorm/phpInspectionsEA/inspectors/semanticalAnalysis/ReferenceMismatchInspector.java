@@ -18,6 +18,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -320,11 +321,11 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                         PsiElement callable = reference.resolve();
                         if (callable instanceof Function) {
                             /* ensure name discoverable */
-                            Function function         = (Function) callable;
-                            PsiElement nameIdentifier = function.getNameIdentifier();
-                            if (null != nameIdentifier) {
+                            final Function function   = (Function) callable;
+                            final PsiElement nameNode = NamedElementUtil.getNameIdentifier(function);
+                            if (null != nameNode) {
                                 /* is defined like returning reference */
-                                PsiElement prevElement = nameIdentifier.getPrevSibling();
+                                PsiElement prevElement = nameNode.getPrevSibling();
                                 if (prevElement instanceof PsiWhiteSpace) {
                                     prevElement = prevElement.getPrevSibling();
                                 }

@@ -20,6 +20,9 @@ function checkClasses(ClassWithToString $c1, ClassWithoutToString $c2) {
 }
 
 function checkUseCases($strToTest) {
+    if (mb_strlen($strToTest))  { return; }
+    if (!mb_strlen($strToTest)) { return; }
+
     if (strlen($strToTest))  { return; }
     if (!strlen($strToTest)) { return; }
 

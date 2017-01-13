@@ -26,11 +26,12 @@ public class NonGreedyTransformCheckStrategy {
         if (!StringUtil.isEmpty(pattern) && pattern.indexOf('?') >= 0) {
             Matcher regexMatcher = regexNonGreedyPattern.matcher(pattern);
             if (regexMatcher.find()) {
-                String strError = strProblemDescription
-                        .replace("%p%", regexMatcher.group(0))
-                        .replace("%c%", regexMatcher.group(2))
-                        .replace("%m%", regexMatcher.group(1));
-                holder.registerProblem(target, strError, ProblemHighlightType.WEAK_WARNING);
+                String message = strProblemDescription
+                    .replace("%c%", regexMatcher.group(2))
+                    .replace("%m%", regexMatcher.group(1))
+                    .replace("%c%", regexMatcher.group(2))
+                    .replace("%p%", regexMatcher.group(0));
+                holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING);
             }
         }
     }

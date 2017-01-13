@@ -105,9 +105,9 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
                 final String suggestedName = mapping.get(typeString);
                 final boolean isInverted   = PhpTokenTypes.opNOT_EQUAL == operator || PhpTokenTypes.opNOT_IDENTICAL == operator;
                 final String message = messagePattern
-                        .replace("%i%", isInverted ? "!" : "")
                         .replace("%p%", params[0].getText())
-                        .replace("%f%", suggestedName);
+                        .replace("%f%", suggestedName)
+                        .replace("%i%", isInverted ? "!" : "");
                 holder.registerProblem(parent, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                         new TheLocalFix(suggestedName, params[0], isInverted));
             }

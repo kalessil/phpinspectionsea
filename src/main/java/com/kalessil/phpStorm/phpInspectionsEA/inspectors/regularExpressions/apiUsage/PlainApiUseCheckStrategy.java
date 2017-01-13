@@ -133,8 +133,8 @@ public class PlainApiUseCheckStrategy {
                 (regexSingleCharSet.matcher(patternAdapted).find() || !regexHasRegexAttributes.matcher(patternAdapted).find())
             ) {
                 final String message = strProblemExplodeCanBeUsed
-                        .replace("%s%", params[1].getText())
-                        .replace("%l%", params.length > 2 ? ", " + params[2].getText() : "");
+                        .replace("%l%", params.length > 2 ? ", " + params[2].getText() : "")
+                        .replace("%s%", params[1].getText());
                 holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         }

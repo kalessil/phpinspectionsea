@@ -52,13 +52,13 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
                 /* generate message */
                 final boolean hasInit = expression.getInitialExpressions().length > 0;
                 return messagePattern
-                        .replace("%existingInit%", hasInit ? "..., " : "")
-                        .replace("%newInit%", "$" + variableName + " = " + referenceCandidate.getText())
-                        .replace("%newCheck%",
-                            leftToRight
-                                ? variableCandidate.getText() + " " + operation.getText() + " " + "$" + variableName
-                                : "$" + variableName + " " + operation.getText() + " " + variableCandidate.getText()
-                        );
+                    .replace("%newCheck%",
+                        leftToRight
+                            ? variableCandidate.getText() + " " + operation.getText() + " " + "$" + variableName
+                            : "$" + variableName + " " + operation.getText() + " " + variableCandidate.getText()
+                    )
+                    .replace("%newInit%", "$" + variableName + " = " + referenceCandidate.getText())
+                    .replace("%existingInit%", hasInit ? "..., " : "");
             }
 
             public void visitPhpFor(For expression) {

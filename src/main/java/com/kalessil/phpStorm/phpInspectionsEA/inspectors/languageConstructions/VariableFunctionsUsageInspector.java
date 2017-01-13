@@ -151,11 +151,11 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                         parametersToSuggest.add(parameter.getText());
                     }
                     final String expression = "%f%%o%%s%(%p%)"
-                            .replace("%o%%s%", null == secondPart ? "" : "%o%%s%")
-                            .replace("%o%", firstPart instanceof Variable ? "->" : "::")
-                            .replace("%s%", null == secondPart            ? ""   : secondAsString)
-                            .replace("%f%", firstAsString)
-                            .replace("%p%", String.join(", ", parametersToSuggest));
+                        .replace("%o%%s%", null == secondPart ? "" : "%o%%s%")
+                        .replace("%p%", String.join(", ", parametersToSuggest))
+                        .replace("%s%", null == secondPart            ? ""   : secondAsString)
+                        .replace("%o%", firstPart instanceof Variable ? "->" : "::")
+                        .replace("%f%", firstAsString);
                     parametersToSuggest.clear();
 
                     final String message = patternReplace.replace("%e%", expression);

@@ -8,6 +8,7 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -18,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
-    private static final String messagePattern = "%r% should be used instead";
+    private static final String messagePattern = "'%r%' should be used instead";
 
     private final static Map<IElementType, String> oppositeOperators = new HashMap<>();
     static {
@@ -65,7 +66,9 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                     final boolean useParenthesises = !oppositeOperators.containsKey(operator);
                     final boolean isInverted       = PhpLanguageUtil.isFalse(trueVariant);
                     if (useParenthesises) {
-                        suggestedExpression = ((isInverted ? "!" : "(bool)") + "(%e%)").replace("%e%", binary.getText());
+                        final boolean isLogical  = PhpTokenTypes.opAND == operator || PhpTokenTypes.opOR == operator;
+                        final String boolCasting = isLogical ? "" : "(bool)";
+                        suggestedExpression      = ((isInverted ? "!" : boolCasting) + "(%e%)").replace("%e%", binary.getText());
                     } else {
                         if (isInverted) {
                             final PsiElement left  = binary.getLeftOperand();
@@ -84,7 +87,7 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                     }
 
                     final String message = messagePattern.replace("%r%", suggestedExpression);
-                    holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new UseSuggestedReplacementFixer(suggestedExpression));
                 }
             }
         };

@@ -14,7 +14,7 @@ Inspections Lists (Control flow)
 | Group                | Short Name                                      | Full Name                                                                         | Quick fix | UTs | QFTs |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------------------------------------- | --------: | --: | ---: |
 | Control flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                                                | no        | yes | no   |
-| Control flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                                              | no        | yes | no   |
+| Control flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                                              | yes       | yes | no   |
 | Control flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                                              | yes       | yes | no   |
 | Control flow         | DefaultValueInElseBranchInspection              | Default value is hidden in else branch                                            | n/a       | yes | n/a  |
 | Control flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                                         | n/a |

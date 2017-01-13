@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class PropertyCanBeStaticInspector extends BasePhpInspection {
@@ -27,8 +28,8 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
 
                 for (Field field : clazz.getOwnFields()) {
                     /* if we can report field at all */
-                    final PsiElement fieldName = field.getNameIdentifier();
-                    if (null == fieldName) {
+                    final PsiElement nameNode = NamedElementUtil.getNameIdentifier(field);
+                    if (null == nameNode) {
                         continue;
                     }
                     /* do not process overriding, there is an inspection for this */
@@ -57,7 +58,7 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
                         }
 
                         if (intArrayOrStringCount == 3) {
-                            holder.registerProblem(fieldName, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                            holder.registerProblem(nameNode, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
                             break;
                         }
                     }
@@ -71,7 +72,7 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
                                 }
 
                                 if (intArrayOrStringCount == 3) {
-                                    holder.registerProblem(fieldName, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                                    holder.registerProblem(nameNode, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
                                     break;
                                 }
                             }

@@ -46,7 +46,8 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
             }
 
             private void inspectCallable (@NotNull Function callable) {
-                if (null == callable.getNameIdentifier()) {
+                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(callable);
+                if (null == nameNode) {
                     return;
                 }
 

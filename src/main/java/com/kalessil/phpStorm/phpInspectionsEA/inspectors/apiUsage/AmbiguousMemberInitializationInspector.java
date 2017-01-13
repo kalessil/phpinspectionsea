@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
@@ -57,9 +58,9 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
             final ConstantReference nullValue = (ConstantReference) descriptor.getPsiElement();
             final Field field                 = (Field) nullValue.getParent();
 
-            final PsiElement fieldName = field.getNameIdentifier();
-            if (null != fieldName) {
-                field.deleteChildRange(fieldName.getNextSibling(), nullValue);
+            final PsiElement nameNode = NamedElementUtil.getNameIdentifier(field);
+            if (null != nameNode) {
+                field.deleteChildRange(nameNode.getNextSibling(), nullValue);
             }
         }
     }

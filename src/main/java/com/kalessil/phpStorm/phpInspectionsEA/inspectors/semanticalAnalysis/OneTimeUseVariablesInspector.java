@@ -20,6 +20,7 @@ import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -117,10 +118,11 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             public void visitPhpReturn(PhpReturn returnStatement) {
                 /* if function returning reference, do not inspect returns */
-                final Function callable = ExpressionSemanticUtil.getScope(returnStatement);
-                if (null != callable && null != callable.getNameIdentifier()) {
+                final Function callable   = ExpressionSemanticUtil.getScope(returnStatement);
+                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(callable);
+                if (null != callable && null != nameNode) {
                     /* is defined like returning reference */
-                    PsiElement referenceCandidate = callable.getNameIdentifier().getPrevSibling();
+                    PsiElement referenceCandidate = nameNode.getPrevSibling();
                     if (referenceCandidate instanceof PsiWhiteSpace) {
                         referenceCandidate = referenceCandidate.getPrevSibling();
                     }

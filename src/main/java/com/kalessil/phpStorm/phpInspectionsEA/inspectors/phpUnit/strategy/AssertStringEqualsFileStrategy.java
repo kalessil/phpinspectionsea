@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy;
 
 import org.jetbrains.annotations.NotNull;
 
-final public class AssertStringEqualsFileStrategy extends BaseFunctionReferenceStrategy {
+final public class AssertStringEqualsFileStrategy extends BaseSameEqualsFunctionReferenceStrategy {
     @Override
     @NotNull
     protected String getRecommendedAssertionName() {

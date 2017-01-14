@@ -14,4 +14,9 @@ final public class AssertStringEqualsFileStrategy extends BaseSameEqualsFunction
     protected String getTargetFunctionName() {
         return "file_get_contents";
     }
+
+    @Override
+    protected boolean isTargetFunctionProcessesGivenValue() {
+        return true;
+    }
 }

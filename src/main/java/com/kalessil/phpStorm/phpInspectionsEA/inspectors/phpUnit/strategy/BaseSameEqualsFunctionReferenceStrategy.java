@@ -21,7 +21,9 @@ abstract class BaseSameEqualsFunctionReferenceStrategy {
     @NotNull
     abstract protected String getTargetFunctionName();
 
-    public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
+    abstract protected boolean isTargetFunctionProcessesGivenValue();
+
+    final public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
         if (params.length < 2 || (!function.equals("assertSame") && !function.equals("assertEquals"))) {
             return false;
@@ -44,9 +46,13 @@ abstract class BaseSameEqualsFunctionReferenceStrategy {
         if ((isTargetFirst && !isTargetSecond) || (!isTargetFirst && isTargetSecond)) {
             final String replacement = getRecommendedAssertionName();
             final String message     = replacement + " should be used instead.";
+
+            final PsiElement processedValue = ((FunctionReference) (isTargetSecond ? params[1] : params[0])).getParameters()[0];
+            final PsiElement otherValue     = isTargetSecond ? params[0] : params[1];
+            final boolean isProcessedFirst  = isTargetFunctionProcessesGivenValue();
             final TheLocalFix fixer  = new TheLocalFix(
-                ((FunctionReference) (isTargetSecond ? params[1] : params[0])).getParameters()[0],
-                isTargetSecond ? params[0] : params[1],
+                isProcessedFirst ? processedValue : otherValue,
+                isProcessedFirst ? otherValue     : processedValue,
                 replacement
             );
 

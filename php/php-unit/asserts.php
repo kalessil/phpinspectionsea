@@ -30,14 +30,6 @@ class TestCase
 
     public function test()
     {
-        $this->assertEquals(0, count([])); // <- reported assertCount
-        $this->assertEquals(count([]), 0); // <- reported assertCount
-        $this->assertSame(0, count([]));   // <- reported assertCount
-        $this->assertSame(count([]), 0);   // <- reported assertCount
-
-        $this->assertNotEquals(count([]), 0); // <- reported assertNotCount
-        $this->assertNotSame(count([]), 0);   // <- reported assertNotCount
-
         $this->assertEquals(2, 1);            // <- reported, assertSame    IF strict options set
         $this->assertNotEquals(2, 1);         // <- reported, assertnotSame IF strict options set
 
@@ -72,10 +64,5 @@ class TestCase
 
         $this->assertTrue(file_exists($x), '');  // <- reported assertFileExists
         $this->assertFalse(file_exists($x), ''); // <- reported assertFileNotExists
-
-        $this->assertEquals(0, count([]), ''); // <- reported assertCount
-        $this->assertEquals(count([]), 0, ''); // <- reported assertCount
-        $this->assertSame(0, count([]), '');   // <- reported assertCount
-        $this->assertSame(count([]), 0, '');   // <- reported assertCount
     }
 }

@@ -141,7 +141,9 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     AssertNotInstanceOfStrategy.apply(methodName, reference, holder) ||
 
                     AssertFileExistsStrategy.apply(methodName, reference, holder)    ||
-                    AssertFileNotExistsStrategy.apply(methodName, reference, holder)
+                    AssertFileNotExistsStrategy.apply(methodName, reference, holder) ||
+
+                    (new AssertStringEqualsFileStrategy().apply(methodName, reference, holder))
 
                     // TODO: assertInternalType, assertNotInternalType
                 ) {

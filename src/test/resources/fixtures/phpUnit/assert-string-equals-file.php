@@ -3,19 +3,19 @@
 class TestAssertStringEqualsFile {
     public function test()
     {
-        $this-><weak_warning descr="assertStringEqualsFile should be used instead.">assertSame</weak_warning> (file_get_contents(''), 'string');
-        $this-><weak_warning descr="assertStringEqualsFile should be used instead.">assertEquals</weak_warning> (file_get_contents(''), 'string');
+        <weak_warning descr="assertStringEqualsFile should be used instead.">$this->assertSame (file_get_contents(''), 'string')</weak_warning>;
+        <weak_warning descr="assertStringEqualsFile should be used instead.">$this->assertEquals (file_get_contents(''), 'string')</weak_warning>;
 
-        $this-><weak_warning descr="assertStringEqualsFile should be used instead.">assertSame</weak_warning> ('string', file_get_contents(''));
-        $this-><weak_warning descr="assertStringEqualsFile should be used instead.">assertEquals</weak_warning> ('string', file_get_contents(''));
+        <weak_warning descr="assertStringEqualsFile should be used instead.">$this->assertSame ('string', file_get_contents(''))</weak_warning>;
+        <weak_warning descr="assertStringEqualsFile should be used instead.">$this->assertEquals ('string', file_get_contents(''))</weak_warning>;
     }
 
     public function testWithMessages()
     {
-        $this-><weak_warning descr="assertStringEqualsFile should be used instead.">assertSame</weak_warning> (file_get_contents(''), '', 'message');
-        $this-><weak_warning descr="assertStringEqualsFile should be used instead.">assertEquals</weak_warning> (file_get_contents(''), '', 'message');
+        <weak_warning descr="assertStringEqualsFile should be used instead.">$this->assertSame (file_get_contents(''), '', 'message')</weak_warning>;
+        <weak_warning descr="assertStringEqualsFile should be used instead.">$this->assertEquals (file_get_contents(''), '', 'message')</weak_warning>;
 
-        $this-><weak_warning descr="assertStringEqualsFile should be used instead.">assertSame</weak_warning> ('', file_get_contents(''), 'message');
-        $this-><weak_warning descr="assertStringEqualsFile should be used instead.">assertEquals</weak_warning> ('', file_get_contents(''), 'message');
+        <weak_warning descr="assertStringEqualsFile should be used instead.">$this->assertSame ('', file_get_contents(''), 'message')</weak_warning>;
+        <weak_warning descr="assertStringEqualsFile should be used instead.">$this->assertEquals ('', file_get_contents(''), 'message')</weak_warning>;
     }
 }

@@ -19,6 +19,13 @@ final public class PhpUnitTestsInspectorTest extends CodeInsightFixtureTestCase 
         myFixture.enableInspections(PhpUnitTestsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
+
+    public void testIfFindsAssertCountPatterns() {
+        myFixture.configureByFile("fixtures/phpUnit/assert-count-not-count.php");
+        myFixture.enableInspections(PhpUnitTestsInspector.class);
+        myFixture.testHighlighting(true, false, true);
+    }
+
     public void testIfFindsAssertStringEqualsFilePatterns() {
         myFixture.configureByFile("fixtures/phpUnit/assert-string-equals-file.php");
         myFixture.enableInspections(PhpUnitTestsInspector.class);

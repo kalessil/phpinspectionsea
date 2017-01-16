@@ -572,6 +572,10 @@ Major English and performance improvements, bug-fixes and new inspections<br/>
         shortName="ShortOpenTagUsageInspection"                   displayName="PHP short open tag usage"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ShortOpenTagUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ComparisonOperandsOrderInspection"             displayName="Yoda/regular conditions style usage"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ComparisonOperandsOrderInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

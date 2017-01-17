@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
@@ -67,11 +68,11 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
                 final boolean isLeftConstant =
                     left instanceof StringLiteralExpression ||
                     left instanceof ConstantReference ||
-                    PhpTokenTypes.tsNUMBERS.contains(left.getNode().getElementType());
+                    PhpElementTypes.NUMBER == left.getNode().getElementType();
                 final boolean isRightConstant =
                     right instanceof StringLiteralExpression ||
                     right instanceof ConstantReference ||
-                    PhpTokenTypes.tsNUMBERS.contains(right.getNode().getElementType());
+                    PhpElementTypes.NUMBER == right.getNode().getElementType();
                 if (isLeftConstant == isRightConstant) {
                     return;
                 }

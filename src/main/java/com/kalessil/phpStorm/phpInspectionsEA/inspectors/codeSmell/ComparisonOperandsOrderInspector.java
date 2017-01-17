@@ -72,15 +72,15 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
                     right instanceof StringLiteralExpression ||
                     right instanceof ConstantReference ||
                     PhpTokenTypes.tsNUMBERS.contains(right.getNode().getElementType());
-                if (isLeftConstant && isRightConstant) {
+                if (isLeftConstant == isRightConstant) {
                     return;
                 }
 
-                if (PREFER_YODA_STYLE && !isLeftConstant) {
+                if (PREFER_YODA_STYLE && isRightConstant) {
                     holder.registerProblem(expression, messageUseYoda, ProblemHighlightType.WEAK_WARNING);
                     return;
                 }
-                if (PREFER_REGULAR_STYLE && !isRightConstant) {
+                if (PREFER_REGULAR_STYLE && isLeftConstant) {
                     holder.registerProblem(expression, messageUseRegular, ProblemHighlightType.WEAK_WARNING);
                 }
             }

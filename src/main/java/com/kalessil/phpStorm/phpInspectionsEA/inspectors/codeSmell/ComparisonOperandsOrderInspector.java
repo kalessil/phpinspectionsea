@@ -1,15 +1,16 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.ConstantReference;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import net.miginfocom.swing.MigLayout;
@@ -78,11 +79,11 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
                 }
 
                 if (PREFER_YODA_STYLE && isRightConstant) {
-                    holder.registerProblem(expression, messageUseYoda, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(expression, messageUseYoda, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                     return;
                 }
                 if (PREFER_REGULAR_STYLE && isLeftConstant) {
-                    holder.registerProblem(expression, messageUseRegular, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(expression, messageUseRegular, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                 }
             }
         };
@@ -133,4 +134,34 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
         }
     }
 
+    private static class TheLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Reorder arguments";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement target = descriptor.getPsiElement();
+            if (target instanceof BinaryExpression) {
+                final BinaryExpression expression = (BinaryExpression) target;
+                final PsiElement left             = expression.getLeftOperand();
+                final PsiElement right            = expression.getRightOperand();
+                if (null == left || null == right) {
+                    return;
+                }
+
+                final PsiElement leftCopy = left.copy();
+                left.replace(right);
+                right.replace(leftCopy);
+            }
+        }
+    }
 }

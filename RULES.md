@@ -47,7 +47,7 @@ Inspections Lists (Unused)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
 | Unused               | OnlyWritesOnParameterInspection                 | Parameter/variable is not used                      | n/a |
 | Unused               | UselessUnsetInspection                          | Useless unset                                       | no        | yes | no   |
-| Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | yes |
+| Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | yes       | yes | no   |
 | Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a |
 | Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes       | yes | no   |
 | Unused               | SenselessMethodDuplicationInspectio             | Child method is exactly the same                    | n/a       | yes | n/a  |

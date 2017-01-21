@@ -69,3 +69,10 @@ The most common used separators in PHP are `/@#~`, which are not escaped by defa
 Though Php Inspections (EA Extended) reports all cases when preg_quote() call doesn't have the second argument.
 
 Ignoring this PHP specific can lead to introducing bugs and even [vulnerabilities](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5734).
+
+# 'compact()' arguments existence
+
+> Note: the inspection only checks if variables are defined anywhere in the scope without taking into account data flow.
+
+PHP is not warning if a 'compact()' was called referencing non-existent variable. A typo or refactoring might cost 
+long debugging in this case.

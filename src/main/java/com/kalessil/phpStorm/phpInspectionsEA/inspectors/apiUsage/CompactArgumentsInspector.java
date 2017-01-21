@@ -48,7 +48,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
 
                     final StringLiteralExpression expression = (StringLiteralExpression) compactParameter;
                     final String name                        = expression.getContents();
-                    if (!StringUtil.isEmpty(name) && !PhpRefactoringUtil.containsLocalVariables(expression)) {
+                    if (name.length() > 0 && null == expression.getFirstPsiChild()) {
                         variablesCompacted.add(name);
                     }
                 }

@@ -7,16 +7,16 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.ConstantReference;
-import com.jetbrains.php.lang.psi.elements.Field;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Null assignment can be safely removed. Define null in annotations if it's important.";
+    private static final String message = "Null assignment can be safely removed. Define null in annotations if it's important.";
 
     @NotNull
     public String getShortName() {
@@ -28,13 +28,21 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpField(Field field) {
-                if (field.isConstant()) {
-                    return;
-                }
+                final PsiElement defaultValue = field.getDefaultValue();
+                if (!field.isConstant() && PhpLanguageUtil.isNull(defaultValue)) {
+                    /* if parent has non-private field, check its' defaults (terminate if non-null defaults) */
+                    final PhpClass clazz       = field.getContainingClass();
+                    final PhpClass parentClazz = null == clazz ? null : clazz.getSuperClass();
+                    final Field parentField    = null == parentClazz ? null : parentClazz.findFieldByName(field.getName(), false);
+                    if (null != parentField && !parentField.isConstant() && !parentField.getModifier().isPrivate()) {
+                        final PsiElement parentDefaultValue = parentField.getDefaultValue();
+                        if (parentDefaultValue instanceof PhpPsiElement && !PhpLanguageUtil.isNull(parentDefaultValue)) {
+                            return;
+                        }
+                    }
 
-                final PsiElement objDefaultValue = field.getDefaultValue();
-                if (objDefaultValue instanceof ConstantReference && PhpType.NULL == ((ConstantReference) objDefaultValue).getType()) {
-                    holder.registerProblem(objDefaultValue, strProblemDescription, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new TheLocalFix());
+                    /* fire a warning */
+                    holder.registerProblem(defaultValue, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new TheLocalFix());
                 }
             }
         };

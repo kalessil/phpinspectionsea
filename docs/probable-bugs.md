@@ -72,7 +72,5 @@ Ignoring this PHP specific can lead to introducing bugs and even [vulnerabilitie
 
 # 'compact()' arguments existence
 
-> Note: the inspection only checks if variables are defined anywhere in the scope without taking into account data flow.
-
 PHP is not warning if a 'compact()' was called referencing non-existent variable. A typo or refactoring might cost 
 long debugging in this case.

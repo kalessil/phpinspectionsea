@@ -60,9 +60,15 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                     for (Parameter scopeParameter : scope.getParameters()) {
                         variablesDeclared.add(scopeParameter.getName());
                     }
-                    /* local variables can be compacted */
-                    for (Variable scopeVariable : PsiTreeUtil.findChildrenOfType(scope, Variable.class)) {
-                        variablesDeclared.add(scopeVariable.getName());
+                    /* local variables can be compacted, just ensure the order is correct */
+                    //noinspection unchecked - want to keep the code clean from castings
+                    for (PhpReference entry : PsiTreeUtil.findChildrenOfAnyType(scope, Variable.class, FunctionReference.class)) {
+                        if (entry instanceof Variable) {
+                            variablesDeclared.add(entry.getName());
+                        }
+                        if (entry == reference) {
+                            break;
+                        }
                     }
 
                     /* analyze and report suspicious parameters, release refs afterwards */

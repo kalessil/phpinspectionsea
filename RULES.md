@@ -50,7 +50,8 @@ Inspections Lists (Unused)
 | Unused               | AmbiguousMemberInitializationInspection         | Ambiguous class property initialization             | yes       | yes | no   |
 | Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a |
 | Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes       | yes | no   |
-| Unused               | SenselessMethodDuplicationInspectio             | Child method is exactly the same                    | n/a       | yes | n/a  |
+| Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | n/a       | yes | n/a  |
+| Unused               | UnusedGotoLabelInspection                       | Unused goto labels                                  | yes       | yes | no   |
 
 Inspections Lists (Compatibility)
 ---
@@ -92,7 +93,9 @@ Inspections Lists (Code style)
 | Code style           | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                  | yes       | yes | no   |
 | Code style           | UnnecessaryFinalModifierInspection              | Unnecessary final modifiers                         | yes       | yes | no   |
 | Code style           | UsingInclusionReturnValueInspection             | Usage of inclusion return value                     | n/a       | yes | n/a  |
-| Code style           | ShortOpenTagUsageInspection                     | PHP short open tag usage                            | yes       | yes | n/a  |
+| Code style           | ShortOpenTagUsageInspection                     | PHP short open tag usage                            | yes       | yes | no   |
+| Code style           | ComparisonOperandsOrderInspection               | Yoda/regular conditions style usage                 | yes       | yes | no   |
+| Code style           | UnknownInspectionInspection                     | Unknown inspection suppression                      | n/a       | yes | n/a  |
 
 Inspections Lists (Language level migration)
 ---
@@ -107,6 +110,7 @@ Inspections Lists (Language level migration)
 | Language level migration | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | yes       | yes | no   |
 | Language level migration | AliasFunctionsUsageInspection                   | Alias functions usage                               | yes       | yes | no   |
 | Language level migration | ClassConstantCanBeUsedInspection                | ::class can be used                                 | yes       | yes | no   |
+| Language level migration | CascadingDirnameCallsInspection                 | Cascading dirname() calls                           | yes       | yes | no   |
 
 Inspections Lists (Architecture)
 ---
@@ -149,6 +153,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | PregQuoteUsageInspection                        | Proper preg_quote() usage                                 | n/a       | yes | n/a  |
 | Probable bugs        | SuspiciousAssignmentsInspection                 | Suspicious assignments                                    | n/a       | yes | n/a  |
 | Probable bugs        | DateTimeConstantsUsageInspection                | DateTime constants usage validity                         | yes       | yes | no   |
+| Probable bugs        | SuspiciousReturnInspection                      | Suspicious returns                                        | n/a       | yes | n/a  |
 
 Inspections Lists (Security)
 ---
@@ -191,3 +196,6 @@ Inspections Lists (Performance)
 | Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes       | yes | no  |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | n/a       | yes | n/a |
 | Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                    | yes       | yes | no  |
+| Performance          | FilePutContentsMissUseInspection                | 'file_put_contents(...)' misused                                                            | yes       | yes | no  |
+| Performance          | PackedHashtableOptimizationInspection           | Packed hashtable optimizations                                                              | n/a       | yes | n/a |
+| Performance          | StaticLocalVariablesUsageInspection             | Static local variables usage                                                                | n/a       | yes | n/a |

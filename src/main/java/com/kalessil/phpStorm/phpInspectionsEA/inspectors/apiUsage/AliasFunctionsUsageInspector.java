@@ -43,6 +43,7 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         mapping.put("pos",                  "current");
         mapping.put("show_source",          "highlight_file");
         mapping.put("strchr",               "strstr");
+        mapping.put("set_file_buffer",      "stream_set_write_buffer");
     }
 
     @Override

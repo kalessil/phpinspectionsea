@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.0</version>
+  <version>2.3.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -53,29 +53,21 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Major English and performance improvements, bug-fixes and new inspections<br/>
+Bug-fixes and a few new inspections<br/>
 <br/>
-- English improvements, thank you <a href="https://github.com/tomzx">tomzx</a><br/>
-- Performance improvements, thank you <a href="https://www.yourkit.com/java/profiler/">YourKit</a><br/>
+- PhpUnit: bugs and best practices: new patterns<br/>
+- Alias functions usage: new patterns<br/>
+- Magic methods validity: new patterns<br/>
+- Ternary operator could be simplified: QF added<br/>
+- 'compact(...)' variables existence: bug-fix (control flow wasn't considered)<br/>
+- Ambiguous class property initialization: resolved false-positives (inheritance)<br/>
+- Security advisories: resolved false-positives (advisories were not recognized)<br/>
+- Unknown inspection suppression: resolved false-positives (PS's inspections)<br/>
+- Foreach source to iterate over: fixed cast exceptions<br/>
 <br/>
-- Access modifiers shall be defined: QF implemented<br/>
-- Class overrides a field of a parent class: added an option (report private fields)<br/>
-- Nested not operators usage: new patterns<br/>
-- Non-optimal regular expression: new patterns, resolved false-positives (cyrillic characters)<br/>
-- Security advisories for Composer packages: resolved false-positives (using packages by the same author only)<br/>
-- Suspicious assignments: new patterns, resolved false-positives (continue, throw)<br/>
-- 'in_array(...)', 'array_search()' type unsafe usage: QF implemented<br/>
-- '(mb_)substr(...)' used as index-based access: resolved false-positives (PHP 5.3 compatibility, negative offsets)<br/>
-- 'unset(...)' calls could be merged: implemented QF<br/>
-<br/>
-- 'file_put_contents(...)' misused: implemented<br/>
-- Unknown inspection suppression: implemented<br/>
-- Cascading dirname() calls: implemented<br/>
-- Static local variables usage: implemented (needs activation)<br/>
-- Packed hashtable optimizations: implemented<br/>
-- Unused goto labels: implemented<br/>
-- Insecure 'crypt(...)' usage: implemented<br/>
-- Variable functions usage: re-implemented, added QF<br/>
+- Yoda/regular conditions style usage: implemented<br/>
+- PHP short open tag usage: implemented<br/>
+- Suspicious returns: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>

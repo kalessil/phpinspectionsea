@@ -55,19 +55,19 @@ with a laptop.
   <change-notes><![CDATA[
 Bug-fixes and a few new inspections<br/>
 <br/>
-- PhpUnit: bugs and best practices: new patterns<br/>
 - Alias functions usage: new patterns<br/>
-- Magic methods validity: new patterns<br/>
-- Ternary operator could be simplified: QF added<br/>
-- 'compact(...)' variables existence: bug-fix (control flow wasn't considered)<br/>
 - Ambiguous class property initialization: resolved false-positives (inheritance)<br/>
-- Security advisories: resolved false-positives (advisories were not recognized)<br/>
-- Unknown inspection suppression: resolved false-positives (PS's inspections)<br/>
 - Foreach source to iterate over: fixed cast exceptions<br/>
+- Magic methods validity: new patterns<br/>
+- PhpUnit: bugs and best practices: new patterns<br/>
+- Security advisories: resolved false-positives (advisories were not recognized)<br/>
+- Ternary operator could be simplified: QF added<br/>
+- Unknown inspection suppression: resolved false-positives (PS's inspections)<br/>
+- 'compact(...)' variables existence: bug-fix (control flow wasn't considered)<br/>
 <br/>
-- Yoda/regular conditions style usage: implemented<br/>
 - PHP short open tag usage: implemented<br/>
 - Suspicious returns: implemented<br/>
+- Yoda/regular conditions style usage: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>

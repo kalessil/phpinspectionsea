@@ -26,10 +26,8 @@ public class DateIntervalSpecificationInspector extends BasePhpInspection {
         return "DateIntervalSpecificationInspection";
     }
 
-    @SuppressWarnings("CanBeFinal")
-    static private Pattern regexDateTimeAlike = null;
-    @SuppressWarnings("CanBeFinal")
-    static private Pattern regexRegular = null;
+    final static private Pattern regexDateTimeAlike;
+    final static private Pattern regexRegular;
     static {
         regexDateTimeAlike = Pattern.compile("^P\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$");
         regexRegular       = Pattern.compile("^P((\\d+Y)?(\\d+M)?(\\d+D)?(\\d+W)?)?(T(\\d+H)?(\\d+M)?(\\d+S)?)?$");

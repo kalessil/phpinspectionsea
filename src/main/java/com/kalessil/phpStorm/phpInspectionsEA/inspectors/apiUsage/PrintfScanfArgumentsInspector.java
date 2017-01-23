@@ -36,8 +36,7 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
         functions.put("fscanf",  1);
     }
 
-    @SuppressWarnings("CanBeFinal")
-    static private Pattern regexPlaceHolders = null;
+    final static private Pattern regexPlaceHolders;
     static {
         // raw regex: %((\d+)\$)?[+-]?(?:[ 0]|\\?'.)?-?\d*(?:\.\d+)?[sducoxXbgGeEfF]
         regexPlaceHolders = Pattern.compile("%((\\d+)\\$)?[+-]?(?:[ 0]|\\\\?'.)?-?\\d*(?:\\.\\d+)?[sducoxXbgGeEfF]");

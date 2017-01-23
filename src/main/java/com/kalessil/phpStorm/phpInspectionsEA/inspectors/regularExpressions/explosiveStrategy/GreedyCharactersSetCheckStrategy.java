@@ -12,8 +12,7 @@ import java.util.regex.Pattern;
 public class GreedyCharactersSetCheckStrategy {
     private static final String messagePattern = "[%e%] is 'greedy'. Please remove %c% as it's a subset of %p%.";
 
-    @SuppressWarnings("CanBeFinal")
-    static private Pattern regexGreedyCharacterSet = null;
+    final static private Pattern regexGreedyCharacterSet;
     static {
         // Original regex: \[([^\[\]]+)\]
         regexGreedyCharacterSet = Pattern.compile("\\[([^\\[\\]]+)\\]");

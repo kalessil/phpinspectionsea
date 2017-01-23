@@ -49,8 +49,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
     private static final String messagePattern = "Perhaps this can be replaced with %c%::class.";
 
-    @SuppressWarnings("CanBeFinal")
-    static private Pattern classNameRegex = null;
+    final static private Pattern classNameRegex;
     static {
         // Original regex: (\\(\\)?)?([a-zA-z0-9_]+\\(\\)?)?([a-zA-z0-9_]+)
         classNameRegex = Pattern.compile("(\\\\(\\\\)?)?([a-zA-z0-9_]+\\\\(\\\\)?)?([a-zA-z0-9_]+)");

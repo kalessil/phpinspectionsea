@@ -23,35 +23,30 @@ public class PlainApiUseCheckStrategy {
     private static final String strProblemExplodeCanBeUsed   = "'explode(\"...\", %s%%l%)' can be used instead.";
     private static final String strProblemTrimsCanBeUsed     = "'%f%(%s%, \"...\")' can be used instead.";
 
-    @SuppressWarnings("CanBeFinal")
-    static private Pattern regexTextSearch = null;
+    final static private Pattern regexTextSearch;
     static {
         regexTextSearch = Pattern.compile("^(\\^?)([\\w-]+)$");
     }
 
-    @SuppressWarnings("CanBeFinal")
-    static private Pattern regexHasRegexAttributes = null;
+    final static private Pattern regexHasRegexAttributes;
     static {
         // 	([^\\][\^\$\.\*\+\?\\\[\]\(\)\{\}\!\|\-])|([^\\]?\\[dDhHsSvVwW])
         regexHasRegexAttributes = Pattern.compile("([^\\\\][\\^\\$\\.\\*\\+\\?\\\\\\[\\]\\(\\)\\{\\}\\!\\|\\-])|([^\\\\]?\\\\[dDhHsSvVwW])");
     }
 
-    @SuppressWarnings("CanBeFinal")
-    static private Pattern regexSingleCharSet = null;
+    final static private Pattern regexSingleCharSet;
     static {
         // 	^(\[[^\.]{1}\]|[^\.]{1})$
         regexSingleCharSet = Pattern.compile("^(\\[[^\\.]{1}\\]|[^\\.]{1})$");
     }
 
-    @SuppressWarnings("CanBeFinal")
-    static private Pattern trimPatterns = null;
+    final static private Pattern trimPatterns;
     static {
         // 	^((\^[^\.][\+\*])|([^\.][\+\*]\$)|(\^[^\.][\+\*]\|[^\.][\+\*]\$))$
         trimPatterns = Pattern.compile("^((\\^[^\\.][\\+\\*])|([^\\.][\\+\\*]\\$)|(\\^[^\\.][\\+\\*]\\|[^\\.][\\+\\*]\\$))$");
     }
 
-    @SuppressWarnings("CanBeFinal")
-    static private HashMap<String, String> ctypePatterns = null;
+    final static private HashMap<String, String> ctypePatterns;
     static {
         ctypePatterns = new HashMap<>();
 

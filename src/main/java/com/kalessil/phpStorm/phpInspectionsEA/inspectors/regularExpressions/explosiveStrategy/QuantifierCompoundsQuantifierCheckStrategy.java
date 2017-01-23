@@ -26,8 +26,7 @@ import java.util.regex.Pattern;
 public class QuantifierCompoundsQuantifierCheckStrategy {
     private static final String messagePattern = "(...%i%...)%o% might be exploited (ReDoS, Regular Expression Denial of Service).";
 
-    @SuppressWarnings("CanBeFinal")
-    static private Pattern regexMarker = null;
+    final static private Pattern regexMarker;
     static {
         // Original regex: [^\+\*]([\+\*]|\{\d\,\}|\{\d{2,}\}|\{\d,\d{2,}\})([^\+\)]|$)
         regexMarker = Pattern.compile("[^\\+\\*]([\\+\\*]|\\{\\d\\,\\}|\\{\\d{2,}\\}|\\{\\d,\\d{2,}\\})([^\\+\\)]|$)");

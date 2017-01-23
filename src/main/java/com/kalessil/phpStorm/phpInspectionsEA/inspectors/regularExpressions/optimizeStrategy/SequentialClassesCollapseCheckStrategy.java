@@ -12,8 +12,7 @@ import java.util.regex.Pattern;
 public class SequentialClassesCollapseCheckStrategy {
     private static final String strProblemDescription = "'%p%' can be replaced with '%r%{...}'.";
 
-    @SuppressWarnings("CanBeFinal")
-    static private Pattern regexRepeatedClasses = null;
+    final static private Pattern regexRepeatedClasses;
     static {
         regexRepeatedClasses = Pattern.compile("((\\[([^\\]]+)\\])(\\*|\\+|\\?|\\{[^\\}]+\\})?\\2(\\*|\\+|\\?|\\{[^\\}]+\\})?)+");
     }

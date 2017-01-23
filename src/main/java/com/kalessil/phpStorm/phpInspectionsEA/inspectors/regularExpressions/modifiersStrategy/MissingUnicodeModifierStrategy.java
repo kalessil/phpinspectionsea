@@ -11,8 +11,7 @@ import java.util.regex.Pattern;
 public class MissingUnicodeModifierStrategy {
     private static final String message = "/u modifier is missing (unicode characters found).";
 
-    @SuppressWarnings("CanBeFinal")
-    static private Pattern unicodeContentPattern = null;
+    final static private Pattern unicodeContentPattern;
     static {
         // Original regex: .*[^\u0000-\u007F]+.*
         unicodeContentPattern = Pattern.compile(".*[^\\u0000-\\u007F]+.*");

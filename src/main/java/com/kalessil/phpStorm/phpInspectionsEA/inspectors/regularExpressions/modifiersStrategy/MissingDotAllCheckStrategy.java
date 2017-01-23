@@ -12,8 +12,7 @@ import java.util.regex.Pattern;
 public class MissingDotAllCheckStrategy {
     private static final String strProblemDescription = "/s modifier is probably missing (nested tags are not recognized).";
 
-    @SuppressWarnings("CanBeFinal")
-    static private Pattern regexTagContentPattern = null;
+    final static private Pattern regexTagContentPattern;
     static {
         regexTagContentPattern = Pattern.compile(".*>\\.(\\*|\\+)\\?<.*");
     }

@@ -44,10 +44,8 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
         functions.add("preg_split");
     }
 
-    @SuppressWarnings("CanBeFinal")
-    static private Pattern regexWithModifiers = null;
-    @SuppressWarnings("CanBeFinal")
-    static private Pattern regexWithModifiersCurvy = null;
+    final static private Pattern regexWithModifiers;
+    final static private Pattern regexWithModifiersCurvy;
     static {
         regexWithModifiers      = Pattern.compile("^([^\\{])(.*)\\1([a-zA-Z]+)?$");
         regexWithModifiersCurvy = Pattern.compile("^\\{(.*)\\}([a-zA-Z]+)?$");

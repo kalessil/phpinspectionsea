@@ -52,7 +52,7 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                 final PhpClass clazz      = method.getContainingClass();
                 final String methodName   = method.getName();
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
-                if (null == clazz || null == nameNode || !methodName.startsWith("__")) {
+                if (null == clazz || null == nameNode || method.isAbstract() || !methodName.startsWith("__")) {
                     return;
                 }
 

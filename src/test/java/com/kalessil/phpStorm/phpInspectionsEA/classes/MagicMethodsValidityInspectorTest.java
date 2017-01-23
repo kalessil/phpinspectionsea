@@ -14,5 +14,11 @@ final public class MagicMethodsValidityInspectorTest extends CodeInsightFixtureT
         myFixture.enableInspections(MagicMethodsValidityInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
+
+    public void testAbstractMethods() {
+        myFixture.configureByFile("fixtures/classes/magic-methods-abstract.php");
+        myFixture.enableInspections(MagicMethodsValidityInspector.class);
+        myFixture.testHighlighting(true, false, true);
+    }
 }
 

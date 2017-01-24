@@ -44,10 +44,13 @@ abstract class BaseSameEqualsFunctionReferenceStrategy {
 
         /* fire assertCount warning when needed */
         if ((isTargetFirst && !isTargetSecond) || (!isTargetFirst && isTargetSecond)) {
-            final String replacement = getRecommendedAssertionName();
-            final String message     = replacement + " should be used instead.";
+            final PsiElement[] processedParams = ((FunctionReference) (isTargetSecond ? params[1] : params[0])).getParameters();
+            if (0 == processedParams.length) {
+                return false;
+            }
 
-            final PsiElement processedValue = ((FunctionReference) (isTargetSecond ? params[1] : params[0])).getParameters()[0];
+            final String replacement        = getRecommendedAssertionName();
+            final PsiElement processedValue = processedParams[0];
             final PsiElement otherValue     = isTargetSecond ? params[0] : params[1];
             final boolean isProcessedFirst  = isTargetFunctionProcessesGivenValue();
             final TheLocalFix fixer  = new TheLocalFix(
@@ -56,6 +59,7 @@ abstract class BaseSameEqualsFunctionReferenceStrategy {
                 replacement
             );
 
+            final String message = replacement + " should be used instead.";
             holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, fixer);
 
             return true;

@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.1</version>
+  <version>2.3.1.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -53,21 +53,11 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Bug-fixes and a few new inspections<br/>
+Hot-fix release (fixes IDE exceptions caused by the plugin)<br/>
 <br/>
-- Alias functions usage: new patterns<br/>
-- Ambiguous class property initialization: resolved false-positives (inheritance)<br/>
-- Foreach source to iterate over: fixed cast exceptions<br/>
-- Magic methods validity: new patterns<br/>
-- PhpUnit: bugs and best practices: new patterns<br/>
-- Security advisories: resolved false-positives (advisories were not recognized)<br/>
-- Ternary operator could be simplified: QF added<br/>
-- Unknown inspection suppression: resolved false-positives (PS's inspections)<br/>
-- 'compact(...)' variables existence: bug-fix (control flow wasn't considered)<br/>
-<br/>
-- PHP short open tag usage: implemented<br/>
-- Suspicious returns: implemented<br/>
-- Yoda/regular conditions style usage: implemented<br/>
+- PhpUnit: bugs and best practices: fixed OOB exceptions<br/>
+- Non-optimal regular expression: resolved false-positives (preg_quote unknown modifiers)<br/>
+- Magic methods validity: resolved false-positives (abstract methods)<br/>
 <br/>
 <hr/>
   ]]></change-notes>

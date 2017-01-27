@@ -48,10 +48,10 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
                 }
 
                 if (modeText.indexOf('t') != -1) {
-                    holder.registerProblem(params[1], messageReplaceWithBinaryMode, ProblemHighlightType.GENERIC_ERROR, new FopenBinaryUnsafeUsageInspector.TheLocalFix());
+                    holder.registerProblem(params[1], messageReplaceWithBinaryMode, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new FopenBinaryUnsafeUsageInspector.TheLocalFix());
                     return;
                 }
-                holder.registerProblem(params[1], messageUseBinaryMode, ProblemHighlightType.GENERIC_ERROR, new FopenBinaryUnsafeUsageInspector.TheLocalFix());
+                holder.registerProblem(params[1], messageUseBinaryMode, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new FopenBinaryUnsafeUsageInspector.TheLocalFix());
             }
         };
     }

@@ -9,3 +9,7 @@
     echo "{$a}";
     echo "'\'";
     echo "\n\r\t\v\e\f\000\x00\u{00}\\";
+
+    $a = <<<'NOWDOC'
+test
+NOWDOC;

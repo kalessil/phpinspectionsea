@@ -58,6 +58,9 @@ public class SuspiciousReturnInspector extends BasePhpInspection {
                     }
                 }
             }
+
+            // TODO: $x = 0 == '';
+            // TODO: if-return-return, when returned values are the same
         };
     }
 }

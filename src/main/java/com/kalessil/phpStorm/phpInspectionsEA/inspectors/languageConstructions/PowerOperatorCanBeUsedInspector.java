@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -48,7 +49,10 @@ public class PowerOperatorCanBeUsedInspector extends BasePhpInspection {
                 }
 
                 /* report and suggest QF-ing */
-                final String expression = "%b% ** %p%".replace("%p%", params[1].getText()).replace("%b%", params[0].getText());
+                final String expression =
+                        (reference.getParent() instanceof BinaryExpression ? "(%b% ** %p%)" : "%b% ** %p%")
+                        .replace("%p%", params[1].getText())
+                        .replace("%b%", params[0].getText());
                 final String message = messagePattern.replace("%e%", expression);
                 holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new UseSuggestedReplacementFixer(expression));
             }

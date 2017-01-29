@@ -601,6 +601,10 @@ Hot-fix release (fixes IDE exceptions caused by the plugin)<br/>
         shortName="CascadingDirnameCallsInspection"               displayName="Cascading dirname() calls"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.CascadingDirnameCallsInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="PowerOperatorCanBeUsedInspection"              displayName="Power operator can be used"
+        groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.PowerOperatorCanBeUsedInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

@@ -111,6 +111,7 @@ Inspections Lists (Language level migration)
 | Language level migration | AliasFunctionsUsageInspection                   | Alias functions usage                               | yes       | yes | no   |
 | Language level migration | ClassConstantCanBeUsedInspection                | ::class can be used                                 | yes       | yes | no   |
 | Language level migration | CascadingDirnameCallsInspection                 | Cascading dirname() calls                           | yes       | yes | no   |
+| Language level migration | PowerOperatorCanBeUsedInspection                | Power operator can be used                          | yes       | yes | no   |
 
 Inspections Lists (Architecture)
 ---

@@ -38,36 +38,13 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                /* makes sense only with PHP7+ opcache */
-                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
-                if (phpVersion.compareTo(PhpLanguageLevel.PHP700) < 0) {
-                    return;
-                }
-
-                /* constructs structure expectations */
-                final String functionName = reference.getName();
-                if (null == functionName || !reference.getImmediateNamespaceName().isEmpty()) {
-                    return;
-                }
-                final PhpNamespace ns = PsiTreeUtil.findChildOfType(reference.getContainingFile(), PhpNamespace.class);
-                if (null == ns) {
-                    return;
-                }
-
-                /* resolve the reference, report if it's from the root NS */
-                final PsiElement function = reference.resolve();
-                if (function instanceof Function) {
-                    final String functionFqn = ((Function) function).getFQN();
-                    if (functionFqn.length() != 1 + functionName.length() || !functionFqn.equals("\\" + functionName)) {
-                        return;
-                    }
-
-                    final String message = messagePattern.replace("%t%", functionName + "(...)");
-                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
-                }
+                analyze(reference);
+            }
+            public void visitPhpConstantReference(ConstantReference reference) {
+                analyze(reference);
             }
 
-            public void visitPhpConstantReference(ConstantReference reference) {
+            private void analyze(PhpReference reference) {
                 /* makes sense only with PHP7+ opcache */
                 final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
                 if (phpVersion.compareTo(PhpLanguageLevel.PHP700) < 0) {
@@ -75,8 +52,8 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 }
 
                 /* constructs structure expectations */
-                final String constantName = reference.getName();
-                if (null == constantName || !reference.getImmediateNamespaceName().isEmpty()) {
+                final String referenceName = reference.getName();
+                if (null == referenceName || !reference.getImmediateNamespaceName().isEmpty()) {
                     return;
                 }
                 final PhpNamespace ns = PsiTreeUtil.findChildOfType(reference.getContainingFile(), PhpNamespace.class);
@@ -85,14 +62,15 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 }
 
                 /* resolve the constant, report if it's from the root NS */
-                final PsiElement constant = reference.resolve();
-                if (constant instanceof Constant) {
-                    final String constantFqn = ((Constant) constant).getFQN();
-                    if (constantFqn.length() != 1 + constantName.length() || !constantFqn.equals("\\" + constantName)) {
+                final PsiElement resolved = reference.resolve();
+                final boolean isFunction  = resolved instanceof Function;
+                if (resolved instanceof Constant || isFunction) {
+                    final String fqn = ((PhpNamedElement) resolved).getFQN();
+                    if (fqn.length() != 1 + referenceName.length() || !fqn.equals("\\" + referenceName)) {
                         return;
                     }
 
-                    final String message = messagePattern.replace("%t%", constantName);
+                    final String message = messagePattern.replace("%t%", referenceName + (isFunction ? "(...)" : ""));
                     holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                 }
             }

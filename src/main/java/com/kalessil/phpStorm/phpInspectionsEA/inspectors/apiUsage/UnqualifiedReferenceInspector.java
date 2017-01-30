@@ -47,7 +47,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
             private void analyze(PhpReference reference) {
                 /* makes sense only with PHP7+ opcache */
                 final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
-                if (phpVersion.compareTo(PhpLanguageLevel.PHP700) < 0) {
+                if (!phpVersion.isAtLeast(PhpLanguageLevel.PHP700)) {
                     return;
                 }
 
@@ -61,10 +61,10 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* resolve the constant, report if it's from the root NS */
+                /* resolve the constant/function, report if it's from the root NS */
                 final PsiElement resolved = reference.resolve();
                 final boolean isFunction  = resolved instanceof Function;
-                if (resolved instanceof Constant || isFunction) {
+                if (isFunction || resolved instanceof Constant) {
                     final String fqn = ((PhpNamedElement) resolved).getFQN();
                     if (fqn.length() != 1 + referenceName.length() || !fqn.equals("\\" + referenceName)) {
                         return;
@@ -94,9 +94,9 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
             if (target instanceof FunctionReference || target instanceof ConstantReference) {
-                final PsiElement ns       = PhpPsiElementFactory.createNamespaceReference(project, "\\", false);
+                final PsiElement rootNs   = PhpPsiElementFactory.createNamespaceReference(project, "\\", false);
                 final PsiElement nameNode = target.getFirstChild();
-                nameNode.getParent().addBefore(ns, nameNode);
+                nameNode.getParent().addBefore(rootNs, nameNode);
             }
         }
     }

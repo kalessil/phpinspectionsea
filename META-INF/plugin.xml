@@ -162,6 +162,10 @@ Hot-fix release (fixes IDE exceptions caused by the plugin)<br/>
         shortName="PackedHashtableOptimizationInspection"         displayName="Packed hashtable optimizations"
         groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.PackedHashtableOptimizationInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="UnqualifiedFunctionReferenceInspection"        displayName="Unqualified function reference"
+        groupName="Performance"                                   enabledByDefault="false" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnqualifiedFunctionReferenceInspector"/>
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="IsEmptyFunctionUsageInspection"                displayName="'empty(...)' usage"

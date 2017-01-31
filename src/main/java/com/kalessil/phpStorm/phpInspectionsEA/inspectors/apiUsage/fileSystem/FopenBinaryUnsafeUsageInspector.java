@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -48,10 +47,10 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
                 }
 
                 if (modeText.indexOf('t') != -1) {
-                    holder.registerProblem(params[1], messageReplaceWithBinaryMode, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new FopenBinaryUnsafeUsageInspector.TheLocalFix());
+                    holder.registerProblem(params[1], messageReplaceWithBinaryMode, new FopenBinaryUnsafeUsageInspector.TheLocalFix());
                     return;
                 }
-                holder.registerProblem(params[1], messageUseBinaryMode, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new FopenBinaryUnsafeUsageInspector.TheLocalFix());
+                holder.registerProblem(params[1], messageUseBinaryMode, new FopenBinaryUnsafeUsageInspector.TheLocalFix());
             }
         };
     }

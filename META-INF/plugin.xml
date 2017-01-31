@@ -667,7 +667,7 @@ Hot-fix release (fixes IDE exceptions caused by the plugin)<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.MktimeUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="FopenBinaryUnsafeUsageInspection"                displayName="Binary-unsafe 'fopen(...)' usage"
-        groupName="Compatibility"                                   enabledByDefault="true" level="ERROR"
+        groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FopenBinaryUnsafeUsageInspector"/>
 
     <!--localInspection language="PHP" groupPath="PHP"

@@ -51,7 +51,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                     final String message = patternNoOffsetSupport
                             .replace("%t%", allowedIndexTypes.toString())
                             .replace("%c%", expression.getValue().getText());
-                    holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(expression, message);
 
                     allowedIndexTypes.clear();
                     return;
@@ -77,7 +77,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                                 final String message = patternInvalidIndex
                                         .replace("%p%", possibleIndexTypes.toString())
                                         .replace("%a%", allowedIndexTypes.toString());
-                                holder.registerProblem(indexValue, message, ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(indexValue, message);
                             }
                         }
                         possibleIndexTypes.clear();

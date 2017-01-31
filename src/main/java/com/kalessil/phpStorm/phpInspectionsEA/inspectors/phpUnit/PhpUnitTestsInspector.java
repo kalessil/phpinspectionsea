@@ -30,14 +30,13 @@ import java.util.Collection;
 
 
 public class PhpUnitTestsInspector extends BasePhpInspection {
-    private final static String messageDepends = "@depends referencing to a non-existing entity.";
-    private final static String messageCovers = "@covers referencing to a non-existing entity";
-    private final static String messageTest = "@test is ambiguous because method name starts with 'test'.";
-
-
     // configuration flags automatically saved by IDE
     @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_TO_USE_ASSERTSAME = false;
+
+    private final static String messageDepends = "@depends referencing to a non-existing entity.";
+    private final static String messageCovers  = "@covers referencing to a non-existing entity";
+    private final static String messageTest    = "@test is ambiguous because method name starts with 'test'.";
 
     @NotNull
     public String getShortName() {

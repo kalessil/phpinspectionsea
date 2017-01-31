@@ -12,6 +12,7 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 abstract class BaseSameEqualsFunctionReferenceStrategy {
@@ -32,12 +33,12 @@ abstract class BaseSameEqualsFunctionReferenceStrategy {
 
         /* analyze parameters which makes the call equal to a higher level assert function */
         boolean isTargetFirst = false;
-        if (params[0] instanceof FunctionReference) {
+        if (OpenapiTypesUtil.isFunctionReference(params[0])) {
             final String referenceName = ((FunctionReference) params[0]).getName();
             isTargetFirst = !StringUtil.isEmpty(referenceName) && referenceName.equals(functionName);
         }
         boolean isTargetSecond = false;
-        if (params[1] instanceof FunctionReference) {
+        if (OpenapiTypesUtil.isFunctionReference(params[1])) {
             final String referenceName = ((FunctionReference) params[1]).getName();
             isTargetSecond = !StringUtil.isEmpty(referenceName) && referenceName.equals(functionName);
         }

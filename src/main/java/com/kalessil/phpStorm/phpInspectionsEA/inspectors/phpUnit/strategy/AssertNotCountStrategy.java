@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class AssertNotCountStrategy {
@@ -21,12 +21,12 @@ public class AssertNotCountStrategy {
         if (params.length > 1 && (function.equals("assertNotSame") || function.equals("assertNotEquals"))) {
             /* analyze parameters which makes the call equal to assertNotCount */
             boolean isFirstCount = false;
-            if (params[0] instanceof FunctionReferenceImpl) {
+            if (OpenapiTypesUtil.isFunctionReference(params[0])) {
                 final String referenceName = ((FunctionReference) params[0]).getName();
                 isFirstCount = !StringUtil.isEmpty(referenceName) && referenceName.equals("count");
             }
             boolean isSecondCount = false;
-            if (params[1] instanceof FunctionReferenceImpl) {
+            if (OpenapiTypesUtil.isFunctionReference(params[1])) {
                 final String referenceName = ((FunctionReference) params[1]).getName();
                 isSecondCount = !StringUtil.isEmpty(referenceName) && referenceName.equals("count");
             }

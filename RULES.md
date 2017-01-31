@@ -96,6 +96,7 @@ Inspections Lists (Code style)
 | Code style           | ShortOpenTagUsageInspection                     | PHP short open tag usage                            | yes       | yes | no   |
 | Code style           | ComparisonOperandsOrderInspection               | Yoda/regular conditions style usage                 | yes       | yes | no   |
 | Code style           | UnknownInspectionInspection                     | Unknown inspection suppression                      | n/a       | yes | n/a  |
+| Code style           | ParameterDefaultValueIsNotNullInspection        | Non-null parameters default value                   | n/a       | yes | n/a  |
 
 Inspections Lists (Language level migration)
 ---

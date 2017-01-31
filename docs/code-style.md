@@ -13,11 +13,11 @@ The aim is to improve code usability, by moving handling default logic into body
     
     /* code refactoring step 1 (triggered by the inspection) */
     function calculateRadial($radius, $pi = null, $multiplier = null) {
-        return $radius * ( $pi ?? M_PI ) * ( $multiplier ?? 1 );
+        return $radius * ($pi ?? M_PI) * ($multiplier ?? 1);
     }
     
     /* code refactoring step 2 (further hardening, perhaps the plugin will assist here in future) */
     function calculateRadial(float $radius, ?float $pi, ?float $multiplier): float {
-        return $radius * ( $pi ?? M_PI ) * ( $multiplier ?? 1 );
+        return $radius * ($pi ?? M_PI) * ($multiplier ?? 1);
     }
 ```

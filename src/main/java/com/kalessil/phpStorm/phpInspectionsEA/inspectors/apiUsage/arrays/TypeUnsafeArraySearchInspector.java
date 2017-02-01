@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -37,8 +38,23 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if (params.length != 2 || null == functionName || !functions.contains(functionName)) {
+                if (2 != params.length || null == functionName || !functions.contains(functionName)) {
                     return;
+                }
+
+                /* invoke types inspection: perhaps they are correct */
+                if (params[0] instanceof PhpTypedElement && params[1] instanceof PhpTypedElement) {
+                    final Set<String> needleType    = ((PhpTypedElement) params[0]).getType().filterUnknown().getTypes();
+                    final Set<String> containerType = ((PhpTypedElement) params[1]).getType().filterUnknown().getTypes();
+                    if (1 == needleType.size() && 1 == containerType.size()) {
+                        String neededType = needleType.iterator().next();
+                        if (!neededType.isEmpty()) {
+                            neededType = ('\\' != neededType.charAt(0) ? '\\' + neededType : neededType) + "[]";
+                            if (neededType.equals(containerType.iterator().next())) {
+                                return;
+                            }
+                        }
+                    }
                 }
 
                 holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());

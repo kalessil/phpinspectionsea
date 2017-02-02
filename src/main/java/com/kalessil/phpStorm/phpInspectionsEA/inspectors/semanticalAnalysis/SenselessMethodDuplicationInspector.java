@@ -103,13 +103,14 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 }
 
 
-                /* methods seems to be identical: resolve used classes to avoid use-statements magic */
-                Collection<String> collection = getUsedReferences(body);
+                /* methods seems to be identical: resolve used classes to avoid ns/imports magic */
+                final Collection<String> collection = getUsedReferences(body);
                 if (!collection.containsAll(getUsedReferences(parentBody))) {
                     collection.clear();
                     return;
                 }
                 collection.clear();
+
 
                 final String message = messagePattern.replace("%s%", method.getName());
                 holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING);

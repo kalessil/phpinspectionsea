@@ -373,6 +373,10 @@ Hot-fix release (fixes IDE exceptions caused by the plugin)<br/>
         shortName="SuspiciousReturnInspection"                    displayName="Suspicious returns"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SuspiciousReturnInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="SuspiciousInstanceOfInspection"                displayName="Suspicious instanceof"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.SuspiciousInstanceOfInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

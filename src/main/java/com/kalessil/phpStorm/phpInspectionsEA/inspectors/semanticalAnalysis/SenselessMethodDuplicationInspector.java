@@ -5,17 +5,17 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
-import com.jetbrains.php.lang.psi.elements.GroupStatement;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -102,8 +102,37 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                     parentExpression = parentExpression.getNextPsiSibling();
                 }
 
+
+                /* methods seems to be identical: resolve used classes to avoid use-statements magic */
+                Collection<String> collection = getUsedReferences(body);
+                if (!collection.containsAll(getUsedReferences(parentBody))) {
+                    collection.clear();
+                    return;
+                }
+                collection.clear();
+
                 final String message = messagePattern.replace("%s%", method.getName());
                 holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING);
+            }
+
+            private Collection<String> getUsedReferences(@NotNull GroupStatement body) {
+                final Collection<PhpReference> references = PsiTreeUtil.findChildrenOfAnyType(
+                        body, ClassReference.class, ConstantReference.class, FunctionReference.class);
+
+                final Set<String> fqns = new HashSet<>(references.size());
+                for (PhpReference reference : references) {
+                    if (reference instanceof MethodReference) {
+                        continue;
+                    }
+
+                    final PsiElement entry = reference.resolve();
+                    if (entry instanceof PhpNamedElement) {
+                        fqns.add(((PhpNamedElement) entry).getFQN());
+                    }
+                }
+                references.clear();
+
+                return fqns;
             }
         };
     }

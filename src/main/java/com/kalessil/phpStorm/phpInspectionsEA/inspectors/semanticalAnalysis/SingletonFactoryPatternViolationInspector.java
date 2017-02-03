@@ -27,6 +27,10 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
+                /* general class structure/type expectations */
+                if (clazz.isTrait() || clazz.isInterface()) {
+                    return;
+                }
                 final Method constructor  = clazz.getOwnConstructor();
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
                 if (null == constructor || null == nameNode) {

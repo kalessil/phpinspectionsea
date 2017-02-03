@@ -13,3 +13,7 @@
     echo isset($x[0], $s[1]) ? $x[0] : 'default';
     echo isset($x[0]) ? $x[0]->x : 'default';
     echo isset($x[0], $x[0]) ? $x[0] : 'default';
+
+    /* false-positives: refactoring causes errors */
+    echo isset(stdClass::$test) ? stdClass::$test : 'test';
+    echo isset($classname::$test) ? $classname::$test : 'test';

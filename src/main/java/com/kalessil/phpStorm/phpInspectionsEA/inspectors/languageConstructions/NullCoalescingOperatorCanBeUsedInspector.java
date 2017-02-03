@@ -20,6 +20,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -69,6 +70,12 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(isset.getVariables()[0]);
                     if (null == condition) {
                         return;
+                    }
+                    if (condition instanceof FieldReference) {
+                        final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator((MemberReference) condition);
+                        if (null != operator && PhpTokenTypes.SCOPE_RESOLUTION == operator.getNode().getElementType()) {
+                            return;
+                        }
                     }
 
                     /* inspection itself */

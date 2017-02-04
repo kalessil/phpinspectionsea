@@ -8,7 +8,6 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +40,7 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                 /* do not process un-reportable, test classes and interfaces - we are searching real tech. debt here */
                 final PhpClass clazz        = method.getContainingClass();
                 final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
-                if (null == methodName || null == clazz|| FileSystemUtil.isTestClass(clazz) || clazz.isInterface()) {
+                if (null == methodName || null == clazz || clazz.isInterface()) {
                     return;
                 }
 

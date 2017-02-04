@@ -11,11 +11,12 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -48,7 +49,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 final PhpClass clazz        = method.getContainingClass();
                 final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
                 final GroupStatement body   = ExpressionSemanticUtil.getGroupStatement(method);
-                if (null == methodName || null == body || null == clazz|| FileSystemUtil.isTestClass(clazz)) {
+                if (null == methodName || null == body || null == clazz) {
                     return;
                 }
                 /* process only real classes and methods */

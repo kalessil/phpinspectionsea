@@ -110,7 +110,6 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                 break;
                             }
                         }
-                        references.clear();
 
                         final boolean methodNeeded = referenceNeeded.getText().contains("::");
                         if ((methodNeeded && !hasMethodReference) || (!methodNeeded && hasClassReference)) {

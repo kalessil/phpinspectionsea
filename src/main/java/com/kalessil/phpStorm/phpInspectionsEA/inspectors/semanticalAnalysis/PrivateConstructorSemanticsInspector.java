@@ -55,15 +55,16 @@ public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
                 if (null == ownMethods || ownMethods.length == 1) {
                     return;
                 }
-                for (Method objMethod : ownMethods) {
-                    final String methodName = objMethod.getName();
-                    if (!objMethod.isStatic() && !methodName.equals("__construct")) {
+                for (Method method : ownMethods) {
+                    final String methodName = method.getName();
+                    final boolean isStatic  = method.isStatic();
+                    if (!isStatic && !methodName.equals("__construct")) {
                         // non static method and it's not constructor - terminate inspection
                         return;
                     }
 
                     /* class has factory methods mixed in */
-                    if (objMethod.isStatic() && (methodName.startsWith("create") || methodName.startsWith("from"))) {
+                    if (isStatic && (methodName.startsWith("create") || methodName.startsWith("from") || methodName.startsWith("valueOf"))) {
                         return;
                     }
                 }

@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -26,7 +27,10 @@ import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -87,11 +91,29 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     }
 
                     if (tagName.equals("@covers") && tag.getFirstPsiChild() instanceof PhpDocRef) {
-                        final PhpDocRef referenceNeeded = (PhpDocRef) tag.getFirstPsiChild();
-                        final int referencesToExpect    = referenceNeeded.getText().contains("::") ? 2 : 1;
+                        final PhpDocRef referenceNeeded     = (PhpDocRef) tag.getFirstPsiChild();
+                        final List<PsiReference> references = Arrays.asList(referenceNeeded.getReferences());
+                        Collections.reverse(references);
 
-                        /* if resolved properly, it will will have references */
-                        if (referencesToExpect != referenceNeeded.getReferences().length) {
+                        /* resolve references, populate information about provided entries */
+                        boolean hasMethodReference = false;
+                        boolean hasClassReference  = false;
+                        for (PsiReference ref : references) {
+                            final PsiElement resolved = ref.resolve();
+                            if (resolved instanceof PhpClass) {
+                                hasClassReference = true;
+                                break;
+                            }
+                            if (resolved instanceof Method) {
+                                hasMethodReference = true;
+                                hasClassReference  = true;
+                                break;
+                            }
+                        }
+                        references.clear();
+
+                        final boolean methodNeeded = referenceNeeded.getText().contains("::");
+                        if ((methodNeeded && !hasMethodReference) || (!methodNeeded && hasClassReference)) {
                             holder.registerProblem(objMethodName, messageCovers, ProblemHighlightType.GENERIC_ERROR);
                             continue;
                         }

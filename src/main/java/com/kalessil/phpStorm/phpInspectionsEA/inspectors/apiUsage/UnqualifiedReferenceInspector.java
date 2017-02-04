@@ -16,6 +16,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -27,6 +30,16 @@ import org.jetbrains.annotations.NotNull;
 
 public class UnqualifiedReferenceInspector extends BasePhpInspection {
     private static final String messagePattern = "Using '\\%t%' would enable some of opcache optimizations";
+
+    private static Set<String> falsePositives = new HashSet<>();
+    static {
+        falsePositives.add("true");
+        falsePositives.add("TRUE");
+        falsePositives.add("false");
+        falsePositives.add("FALSE");
+        falsePositives.add("null");
+        falsePositives.add("NULL");
+    }
 
     @NotNull
     public String getShortName() {
@@ -58,6 +71,9 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 }
                 final PhpNamespace ns = PsiTreeUtil.findChildOfType(reference.getContainingFile(), PhpNamespace.class);
                 if (null == ns) {
+                    return;
+                }
+                if (reference instanceof ConstantReference && falsePositives.contains(referenceName)) {
                     return;
                 }
 

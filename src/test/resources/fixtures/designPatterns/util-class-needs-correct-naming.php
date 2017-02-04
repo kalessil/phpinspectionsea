@@ -24,11 +24,17 @@ final class EntityHelperValid3
 {
     private function __construct()       {}
     static public function unserialize() {}
+    static public function from()        {} // <- disables the case reporting
+}
+final class EntityHelperValid4
+{
+    private function __construct()       {}
+    static public function unserialize() {}
     static public function valueOf()     {} // <- disables the case reporting
 }
 
 /* false-positives: commonly used factory method as the single static method */
-final class EntityHelperValid4
+final class EntityHelperValid5
 {
     private function __construct()       {}
     static public function valueOf()     {} // <- disables the case reporting

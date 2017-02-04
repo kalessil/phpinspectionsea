@@ -15,7 +15,10 @@ namespace {
         /** @covers MyIterator::offsetUnset */
         public function testOffsetUnset1() {}
 
-        /** @covers \PUT\Covers\Annotation\MyArrayIterator::offsetUnset */
+        /** @covers MyIterator::offsetUnset() */
         public function testOffsetUnset2() {}
+
+        /** @covers \PUT\Covers\Annotation\MyArrayIterator::offsetUnset */
+        public function testOffsetUnset3() {}
     }
 }

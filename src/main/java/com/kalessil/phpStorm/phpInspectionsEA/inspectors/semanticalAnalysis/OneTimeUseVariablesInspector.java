@@ -97,13 +97,17 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                         /* heavy part, find usage inside function/method to analyze multiple writes */
                         final PhpScopeHolder parentScope = ExpressionSemanticUtil.getScope(assign);
                         if (null != parentScope) {
-                            final PhpEntryPointInstruction objEntryPoint = parentScope.getControlFlow().getEntryPoint();
-                            final PhpAccessVariableInstruction[] usages  = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, variableName, false);
+                            final PhpEntryPointInstruction entryPoint   = parentScope.getControlFlow().getEntryPoint();
+                            final PhpAccessVariableInstruction[] usages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(entryPoint, variableName, false);
 
                             int countWrites = 0;
+                            int countReads  = 0;
                             for (PhpAccessVariableInstruction oneCase: usages) {
-                                countWrites += oneCase.getAccess().isWrite() ? 1 : 0;
-                                if (countWrites > 1) {
+                                final boolean isWrite = oneCase.getAccess().isWrite();
+
+                                countWrites += isWrite ? 1 : 0;
+                                countReads  += isWrite ? 0 : 1;
+                                if (countWrites > 1 || countReads > 1) {
                                     return;
                                 }
                             }

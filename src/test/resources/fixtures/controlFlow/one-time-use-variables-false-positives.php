@@ -15,12 +15,18 @@ $lambda = function () use (&$x, &$y) {
     return $x;
 };
 
-function x (&$x, $y) {
+function parameterByReference (&$x, $y) {
     $x = $y;
     return $x;
 }
 
-function y ($x, $y) {
+function selfAssignment ($x, $y) {
     $x += $y;
     return $x;
+}
+
+function falsePositiveFromSymfonyProfiler() {
+    $values = [];
+    list($one,) = $values;
+    return isset($values[6]) ? $values[6] : null;
 }

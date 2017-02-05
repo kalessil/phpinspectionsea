@@ -66,6 +66,7 @@ New inspections and less false-positives<br/>
 - Child method is exactly the same: resolved false-positives (NS/imports being verified now)<br/>
 - Class violates singleton/factory pattern definition: resolved false-positives (traits, interfaces)<br/>
 - Null coalescing operator can be used: resolved false-positives (isset on static members)<br/>
+- One-time use variables: resolved false-positives (multiple reads)<br/>
 - PhpUnit: bugs and best practices: resolved false-positives (methods references)<br/>
 - Private constructor semantics: resolved false-positives (new factory methods names)<br/>
 - Unnecessary double quotes: resolved false-positives (here-docs)<br/>

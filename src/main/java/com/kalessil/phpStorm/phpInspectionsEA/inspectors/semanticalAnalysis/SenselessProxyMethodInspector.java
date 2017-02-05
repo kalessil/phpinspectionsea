@@ -108,11 +108,8 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                                 /* analyze if parameters definition has been changed (only ignore naming changes) */
                                 if (methodParameters.length > 0) {
                                     for (int index = 0; index < parentParameters.length; ++index) {
-                                        /* by-reference declaration changes */
-                                        if (parentParameters[index].isPassByRef() != methodParameters[index].isPassByRef()) {
-                                            isChangingSignature = true;
-                                            break;
-                                        }
+                                        /* by-reference declaration changes: not allowed by PHP, hence not checked */
+                                        /* type definition changes: not allowed by PHP, hence not checked */
 
                                         /* default values changes */
                                         final PsiElement parentDefault = parentParameters[index].getDefaultValue();
@@ -122,14 +119,6 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                                             break;
                                         }
                                         if (null != methodDefault && !PsiEquivalenceUtil.areElementsEquivalent(parentDefault, methodDefault)) {
-                                            isChangingSignature = true;
-                                            break;
-                                        }
-
-                                        /* type definition changes */
-                                        final PhpType parentType = parentParameters[index].getDeclaredType();
-                                        final PhpType methodType = methodParameters[index].getDeclaredType();
-                                        if (!parentType.equals(methodType)) {
                                             isChangingSignature = true;
                                             break;
                                         }

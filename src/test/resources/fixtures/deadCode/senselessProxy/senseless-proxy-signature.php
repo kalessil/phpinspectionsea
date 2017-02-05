@@ -10,12 +10,6 @@ class SPSParent {
     public function method3($a = 1) {
         return $a;
     }
-    public function method4(&$a) {
-        return $a;
-    }
-    public function method5(stdClass $a) {
-        return $a;
-    }
 }
 
 class SPSChild extends SPSParent {
@@ -27,11 +21,5 @@ class SPSChild extends SPSParent {
     }
     public function method3($a = []) {   // default value modified
         parent::method2($a);
-    }
-    public function method4($a) {        // by reference behaviour modified
-        parent::method3($a);
-    }
-    public function method5(array $a) {  // type modified
-        parent::method3($a);
     }
 }

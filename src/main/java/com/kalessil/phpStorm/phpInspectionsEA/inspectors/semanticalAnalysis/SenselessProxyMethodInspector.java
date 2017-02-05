@@ -12,6 +12,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -37,7 +38,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
 
                 for (Method method : clazz.getOwnMethods()) {
                     final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
-                    if (null == methodNameNode || method.isAbstract()) {
+                    if (null == methodNameNode || method.isAbstract() || method.getAccess().isPrivate()) {
                         continue;
                     }
 
@@ -50,6 +51,8 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                     if (null == lastStatement || !(lastStatement.getFirstChild() instanceof MethodReference)) {
                         continue;
                     }
+                    /* TODO: return -||- */
+
                     final MethodReference reference = (MethodReference) lastStatement.getFirstChild();
                     final String referenceVariable  = reference.getFirstChild().getText().trim();
                     final String referenceName      = reference.getName();
@@ -95,7 +98,28 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                                 /* when has parameters, ensure the defined order is not changed as well */
                                 if (methodParameters.length > 0) {
                                     for (int index = 0; index < parentParameters.length; ++index) {
-                                        if (!PsiEquivalenceUtil.areElementsEquivalent(parentParameters[index], methodParameters[index])) {
+                                        /* by-reference declaration changes */
+                                        if (parentParameters[index].isPassByRef() != methodParameters[index].isPassByRef()) {
+                                            isChangingSignature = true;
+                                            break;
+                                        }
+
+                                        /* default values changes */
+                                        final PsiElement parentDefault = parentParameters[index].getDefaultValue();
+                                        final PsiElement methodDefault = methodParameters[index].getDefaultValue();
+                                        if ((null == parentDefault || null == methodDefault) && parentDefault != methodDefault) {
+                                            isChangingSignature = true;
+                                            break;
+                                        }
+                                        if (null != methodDefault && !PsiEquivalenceUtil.areElementsEquivalent(parentDefault, methodDefault)) {
+                                            isChangingSignature = true;
+                                            break;
+                                        }
+
+                                        /* type definition changes */
+                                        final PhpType parentType = parentParameters[index].getDeclaredType();
+                                        final PhpType methodType = methodParameters[index].getDeclaredType();
+                                        if (!parentType.equals(methodType)) {
                                             isChangingSignature = true;
                                             break;
                                         }

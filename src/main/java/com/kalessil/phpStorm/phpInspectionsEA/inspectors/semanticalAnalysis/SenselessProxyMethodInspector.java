@@ -48,12 +48,22 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                         continue;
                     }
                     final PsiElement lastStatement = ExpressionSemanticUtil.getLastStatement(body);
-                    if (null == lastStatement || !(lastStatement.getFirstChild() instanceof MethodReference)) {
+                    if (null == lastStatement) {
                         continue;
                     }
-                    /* TODO: return -||- */
 
-                    final MethodReference reference = (MethodReference) lastStatement.getFirstChild();
+                    /* parent invocation can be both direct or via return */
+                    PsiElement parentReferenceCandidate = null;
+                    if (lastStatement instanceof PhpReturn) {
+                        parentReferenceCandidate = ExpressionSemanticUtil.getReturnValue((PhpReturn) lastStatement);
+                    } else {
+                        parentReferenceCandidate = lastStatement.getFirstChild();
+                    }
+                    if (!(parentReferenceCandidate instanceof MethodReference)) {
+                        continue;
+                    }
+
+                    final MethodReference reference = (MethodReference) parentReferenceCandidate;
                     final String referenceVariable  = reference.getFirstChild().getText().trim();
                     final String referenceName      = reference.getName();
                     if (null == referenceName || !referenceVariable.equals("parent") || !referenceName.equals(method.getName())) {
@@ -95,7 +105,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                                 nestedMethod.isFinal()    == method.isFinal() &&
                                 nestedMethod.getAccess().equals(method.getAccess())
                             ) {
-                                /* when has parameters, ensure the defined order is not changed as well */
+                                /* analyze if parameters definition has been changed (only ignore naming changes) */
                                 if (methodParameters.length > 0) {
                                     for (int index = 0; index < parentParameters.length; ++index) {
                                         /* by-reference declaration changes */

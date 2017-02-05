@@ -54,11 +54,22 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Hot-fix release (fixes IDE exceptions caused by the plugin)<br/>
+New inspections and less false-positives<br/>
 <br/>
-- PhpUnit: bugs and best practices: fixed OOB exceptions<br/>
-- Non-optimal regular expression: resolved false-positives (preg_quote unknown modifiers)<br/>
-- Magic methods validity: resolved false-positives (abstract methods)<br/>
+- Non-null parameters default value: implemented (disabled by default)<br/>
+- PHP_SAPI constant can be used: implemented<br/>
+- Power operator can be used: implemented<br/>
+- Senseless proxy function: new patterns<br/>
+- Suspicious instanceof: implemented<br/>
+- Unqualified function/constant reference: implemented (disabled by default)<br/>
+<br/>
+- Child method is exactly the same: resolved false-positives (NS/imports being verified now)<br/>
+- Class violates singleton/factory pattern definition: resolved false-positives (traits, interfaces)<br/>
+- Null coalescing operator can be used: resolved false-positives (isset on static members)<br/>
+- PhpUnit: bugs and best practices: resolved false-positives (methods references)<br/>
+- Private constructor semantics: resolved false-positives (new factory methods names)<br/>
+- Unnecessary double quotes: resolved false-positives (here-docs)<br/>
+- 'in_array(...)', 'array_search()' type unsafe usage: resolved false-positives (types being verified now)<br/>
 <br/>
 <hr/>
   ]]></change-notes>

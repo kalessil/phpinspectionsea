@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ComparisonOperandsOrderInspector;
 
-public class ComparisonOperandsOrderInspectorTest extends CodeInsightFixtureTestCase {
+final public class ComparisonOperandsOrderInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsYodaPatterns() {
         ComparisonOperandsOrderInspector inspector = new ComparisonOperandsOrderInspector();
         inspector.CONFIGURED                       = true;

@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.security;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.CryptographicallySecureAlgorithmsInspector;
 
-public class CryptographicallySecureAlgorithmsInspectorTest extends CodeInsightFixtureTestCase {
+final public class CryptographicallySecureAlgorithmsInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         // TODO: Missing fixture file
 //        myFixture.configureByFile("fixtures/security/--.php");

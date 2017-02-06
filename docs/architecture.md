@@ -38,3 +38,12 @@ Since none of those options is pleasant, this workflow might be helpful:
 * Deprecate child methods by adding @deprecated to the method's annotation
 * Analyze discovered usages and plan to refactor
 
+# Class violates singleton/factory pattern definition
+
+> Note: singleton pattern is recognized by searching for the method getInstance in the class. In case of false-positives 
+> consider giving the method correct name (create, getEntityInstance, getBuiltEntity and etc.)
+
+The inspection searches for typical patterns violations:
+- Factory: the constructor is protected, but create*/from* methods are not defined;
+- Singleton: getInstance method is exists and public, but the constructor is not protected; 
+

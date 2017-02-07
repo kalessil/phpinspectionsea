@@ -143,7 +143,8 @@ curl_setopt($curlHandler, CURLOPT_CAPATH , '<path>/');
 # Security advisories
 
 > Note: if the composer.lock is coming with you project, adding roave/security-advisories brings 0 deployment risks.
-> Best practices: consider adding `composer update` into your CI/CD get informed about security issues early.
+
+> Best practices: consider adding `composer update` into your CI/CD to get informed about security issues early.
 
 Security Advisories is a Vulnerability Database from SensioLabs (https://security.sensiolabs.org/database), which can 
 be integrated with your workflows in several ways.

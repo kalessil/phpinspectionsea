@@ -11,3 +11,7 @@
 
     $obj = new class1();
     <weak_warning descr="Name provided in this call should be 'calmmethod' (case mismatch).">$obj->calmMethod()</weak_warning>;
+
+    /* false-positives: functions aliasing */
+    use function \trim as trimm;
+    echo trimm('  ');

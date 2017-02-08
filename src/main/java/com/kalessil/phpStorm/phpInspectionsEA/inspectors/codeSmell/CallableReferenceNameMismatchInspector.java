@@ -56,7 +56,7 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
                         cache.putIfAbsent(realName, realName);
                     }
 
-                    if (!realName.equals(usedName)) {
+                    if (!realName.equals(usedName) && realName.equalsIgnoreCase(usedName)) {
                         /* report issues found */
                         final String message = messagePattern.replace("%n%", realName);
                         holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new CallableReferenceNameMismatchQuickFix());

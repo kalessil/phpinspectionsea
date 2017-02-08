@@ -15,9 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
-    private static final String messageSingletonConstructor = "Singleton constructor should be protected.";
-    private static final String messageUtilNotFinal         = "Utility class should be final (breaks backward compatibility).";
-    private static final String messageUtilNaming           = "Utility class's name should end with 'Util'.";
+    private static final String messageUtilNotFinal = "Utility class should be final (breaks backward compatibility).";
+    private static final String messageUtilNaming   = "Utility class's name should end with 'Util'.";
 
     @NotNull
     public String getShortName() {
@@ -35,8 +34,8 @@ public class PrivateConstructorSemanticsInspector extends BasePhpInspection {
                     return;
                 }
 
+                /* singletons constructors are normally private (we allow also protected), hence sto analysis */
                 if (null != clazz.findOwnMethodByName("getInstance")) {
-                    holder.registerProblem(nameNode, messageSingletonConstructor, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
 

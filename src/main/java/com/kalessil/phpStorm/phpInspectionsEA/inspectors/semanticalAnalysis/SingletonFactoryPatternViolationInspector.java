@@ -14,8 +14,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class SingletonFactoryPatternViolationInspector extends BasePhpInspection {
-    private static final String strProblemDescription             = "Ensure that one of public getInstance/create* methods are defined.";
-    private static final String strProblemConstructorNotProtected = "Singleton constructor should be protected.";
+    private static final String messageFactoryOrSingleton   = "Ensure that one of public getInstance/create* methods are defined.";
+    private static final String messageSingletonConstructor = "Singleton constructor should not be public (normally it's private).";
 
     @NotNull
     public String getShortName() {
@@ -43,13 +43,13 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
                 if (hasGetInstance) {
                     if (constructorAccessModifiers.isPublic()){
                         /* private ones already covered with other inspections */
-                        holder.registerProblem(nameNode, strProblemConstructorNotProtected, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(nameNode, messageSingletonConstructor, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
 
                     return;
                 }
 
-                /* ignore private / public constructors in factories */
+                /* ignore private in factories; private once covered by other inspection */
                 if (!constructorAccessModifiers.isProtected()) {
                     return;
                 }
@@ -60,7 +60,7 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
                     }
                 }
 
-                holder.registerProblem(nameNode, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(nameNode, messageFactoryOrSingleton, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

@@ -27,11 +27,4 @@ final public class PrivateConstructorSemanticsInspectorTest extends CodeInsightF
         myFixture.enableInspections(PrivateConstructorSemanticsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
-
-    public void testIncorrectSingletonConstructorVisibility () {
-        myFixture.configureByFile("fixtures/designPatterns/singleton-constructor-needs-be-protected.php");
-        myFixture.enableInspections(PrivateConstructorSemanticsInspector.class);
-        myFixture.testHighlighting(true, false, true);
-    }
-
 }

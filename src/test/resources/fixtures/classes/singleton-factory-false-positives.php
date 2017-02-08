@@ -7,3 +7,14 @@ trait SFPVTrait {
 interface SFPVInterface {
     function __construct();
 }
+
+
+/* false-positives: singletons with private/protected constructor */
+class SingletonWithPrivateConstructor {
+    private function __construct()       {}
+    public static function getInstance() {}
+}
+class SingletonWithProtectedConstructor {
+    protected function __construct()     {}
+    public static function getInstance() {}
+}

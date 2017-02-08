@@ -27,7 +27,7 @@ import java.util.List;
 public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
     @SuppressWarnings("WeakerAccess")
-    public boolean SUGGEST_USING_CLONE = true;
+    public boolean SUGGEST_USING_CLONE = false;
 
     private static final String strProblemDescription = "This statement seems to be disconnected from its parent foreach.";
     private static final String strProblemUseClone    = "Objects should be created outside of a loop and cloned instead.";

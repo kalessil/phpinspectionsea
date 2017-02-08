@@ -14,7 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class SingletonFactoryPatternViolationInspector extends BasePhpInspection {
-    private static final String messageFactoryOrSingleton   = "Ensure that one of public getInstance/create* methods are defined.";
+    private static final String messageFactoryOrSingleton   = "Ensure that one of public getInstance/create*/from* methods are defined.";
     private static final String messageSingletonConstructor = "Singleton constructor should not be public (normally it's private).";
 
     @NotNull

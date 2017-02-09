@@ -5,10 +5,22 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitTestsIns
 
 final public class PhpUnitTestsInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsCoversAnnotationPatterns() {
+        PhpUnitTestsInspector inspector = new PhpUnitTestsInspector();
+        inspector.WORKAROUND_COVERS_REFERENCES = false;
+
         myFixture.configureByFile("fixtures/phpUnit/covers-annotation.php");
-        myFixture.enableInspections(PhpUnitTestsInspector.class);
+        myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }
+    public void testIfFindsCoversAnnotationPatternsResolveRefsByOwn() {
+        PhpUnitTestsInspector inspector = new PhpUnitTestsInspector();
+        inspector.WORKAROUND_COVERS_REFERENCES = true;
+
+        myFixture.configureByFile("fixtures/phpUnit/covers-annotation.php");
+        myFixture.enableInspections(inspector);
+        myFixture.testHighlighting(true, false, true);
+    }
+
     public void testIfFindsTestAnnotationPatterns() {
         myFixture.configureByFile("fixtures/phpUnit/test-annotation.php");
         myFixture.enableInspections(PhpUnitTestsInspector.class);

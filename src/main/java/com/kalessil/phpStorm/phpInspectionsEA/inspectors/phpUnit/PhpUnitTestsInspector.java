@@ -12,6 +12,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
@@ -24,10 +25,7 @@ import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -42,6 +40,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
     @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_TO_USE_ASSERTSAME = false;
+    @SuppressWarnings("WeakerAccess")
+    public boolean WORKAROUND_COVERS_REFERENCES = false;
 
     private final static String messageDepends = "@depends referencing to a non-existing entity.";
     private final static String messageCovers  = "@covers referencing to a non-existing entity";
@@ -89,6 +89,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
                     if (tagName.equals("@covers") && tag.getFirstPsiChild() instanceof PhpDocRef) {
                         final PhpDocRef referenceNeeded     = (PhpDocRef) tag.getFirstPsiChild();
+                        final String referenceText          = referenceNeeded.getText();
                         final List<PsiReference> references = Arrays.asList(referenceNeeded.getReferences());
                         Collections.reverse(references);
 
@@ -96,7 +97,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         boolean hasCallableReference = false;
                         boolean hasClassReference    = false;
 
-                        if (references.size() > 0) {
+                        final boolean callableNeeded = referenceText.contains("::") && !referenceText.contains("::<");
+                        if (references.size() > 0 && !WORKAROUND_COVERS_REFERENCES) {
                             for (PsiReference ref : references) {
                                 final PsiElement resolved = ref.resolve();
                                 if (resolved instanceof PhpClass) {
@@ -110,12 +112,34 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                 }
                             }
                         } else {
+                            /* only try resolving method references - the general case */
+                            if (!callableNeeded || referenceText.startsWith("::")) {
+                                return;
+                            }
 
+                            final PhpIndex index    = PhpIndex.getInstance(method.getProject());
+                            final String[] refParts = referenceText.replace("()", "").trim().split("::");
+
+                            /* find classes: aliases, FQNs, non-FQNs */
+                            Collection<PhpClass> classes = new ArrayList<>(index.getAnyByFQN(refParts[0]));
+                            for (PhpUse used : index.getUseAliasesByName(refParts[0])) {
+                                final PhpReference importedReference = used.getTargetReference();
+                                final PsiElement importedClass       = null == importedReference ? null : importedReference.resolve();
+                                if (importedClass instanceof PhpClass) {
+                                    classes.add((PhpClass) importedClass);
+                                }
+                            }
+                            /* check if any of found has the method */
+                            for (PhpClass foundClazz : classes) {
+                                if (null != foundClazz.findMethodByName(refParts[1])) {
+                                    classes.clear();
+                                    return;
+                                }
+                            }
+                            classes.clear();
                         }
 
-                        final String referenceText = referenceNeeded.getText();
-                        final boolean methodNeeded = referenceText.contains("::") && !referenceText.contains("::<");
-                        if ((methodNeeded && !hasCallableReference) || (!methodNeeded && hasClassReference)) {
+                        if ((callableNeeded && !hasCallableReference) || (!callableNeeded && hasClassReference)) {
                             holder.registerProblem(objMethodName, messageCovers, ProblemHighlightType.GENERIC_ERROR);
                             continue;
                         }

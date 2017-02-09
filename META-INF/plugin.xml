@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.1.1</version>
+  <version>2.3.2</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -56,18 +56,21 @@ with a laptop.
   <change-notes><![CDATA[
 New inspections and less false-positives<br/>
 <br/>
+- Class violates singleton/factory pattern definition: optionally suggest overriding __clone<br/>
 - Non-null parameters default value: implemented (disabled by default)<br/>
 - PHP_SAPI constant can be used: implemented<br/>
 - Power operator can be used: implemented<br/>
 - Senseless proxy function: new patterns<br/>
+- Statement could be decoupled from foreach: deactivate "Suggest using clone" by default<br/>
 - Suspicious instanceof: implemented<br/>
 - Unqualified function/constant reference: implemented (disabled by default)<br/>
 <br/>
+- Callable name case mismatched in a call: resolved false-positives (aliased functions)<br/>
 - Child method is exactly the same: resolved false-positives (NS/imports being verified now)<br/>
-- Class violates singleton/factory pattern definition: resolved false-positives (traits, interfaces)<br/>
+- Class violates singleton/factory pattern definition: resolved false-positives (traits, interfaces, private constructors)<br/>
 - Null coalescing operator can be used: resolved false-positives (isset on static members)<br/>
 - One-time use variables: resolved false-positives (multiple reads)<br/>
-- PhpUnit: bugs and best practices: resolved false-positives (methods references)<br/>
+- PhpUnit: bugs and best practices: resolved false-positives (methods references, @covers, IDE internals)<br/>
 - Private constructor semantics: resolved false-positives (new factory methods names)<br/>
 - Unnecessary double quotes: resolved false-positives (here-docs)<br/>
 - 'in_array(...)', 'array_search()' type unsafe usage: resolved false-positives (types being verified now)<br/>

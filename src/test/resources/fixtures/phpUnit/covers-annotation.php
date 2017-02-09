@@ -15,10 +15,16 @@ namespace {
         /** @covers MyIterator::offsetUnset */
         public function testOffsetUnset1() {}
 
-        /** @covers MyIterator::offsetUnset() */
+        /**
+          * Description here
+          * @covers MyIterator::offsetUnset()
+          */
         public function testOffsetUnset2() {}
 
+        /** @covers MyIterator::offsetUnzet */
+        public function <error descr="@covers referencing to a non-existing entity">testOffsetUnset3</error>() {}
+
         /** @covers \PUT\Covers\Annotation\MyArrayIterator::offsetUnset */
-        public function testOffsetUnset3() {}
+        public function testOffsetUnset4() {}
     }
 }

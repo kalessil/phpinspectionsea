@@ -11,9 +11,17 @@ import com.jetbrains.php.lang.psi.elements.PhpModifier;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+
 public class SingletonFactoryPatternViolationInspector extends BasePhpInspection {
+    // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
+    public boolean SUGGEST_OVERRIDING_CLONE = false;
+
+    private static final String messageClone                = "Singleton should also override __clone to prevent copying the instance";
     private static final String messageFactoryOrSingleton   = "Ensure that one of public getInstance/create*/from* methods are defined.";
     private static final String messageSingletonConstructor = "Singleton constructor should not be public (normally it's private).";
 
@@ -41,6 +49,10 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
                 final Method getInstance     = clazz.findOwnMethodByName("getInstance");
                 final boolean hasGetInstance = (null != getInstance && getInstance.getAccess().isPublic());
                 if (hasGetInstance) {
+                    if (SUGGEST_OVERRIDING_CLONE && null == clazz.findOwnMethodByName("__clone")) {
+                        holder.registerProblem(nameNode, messageClone, ProblemHighlightType.WEAK_WARNING);
+                    }
+
                     if (constructorAccessModifiers.isPublic()){
                         /* private ones already covered with other inspections */
                         holder.registerProblem(nameNode, messageSingletonConstructor, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
@@ -63,5 +75,28 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
                 holder.registerProblem(nameNode, messageFactoryOrSingleton, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return (new OptionsPanel()).getComponent();
+    }
+
+    public class OptionsPanel {
+        final private JPanel optionsPanel;
+
+        final private JCheckBox suggestOverridingClone;
+
+        public OptionsPanel() {
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
+
+            suggestOverridingClone = new JCheckBox("Suggest overriding __clone", SUGGEST_OVERRIDING_CLONE);
+            suggestOverridingClone.addChangeListener(e -> SUGGEST_OVERRIDING_CLONE = suggestOverridingClone.isSelected());
+            optionsPanel.add(suggestOverridingClone, "wrap");
+        }
+
+        public JPanel getComponent() {
+            return optionsPanel;
+        }
     }
 }

@@ -41,4 +41,4 @@ Since none of these consequences are positive, the following workflow might be h
 
 The inspection searches for typical patterns violations:
 - Factory: the constructor is protected, but create*/from* methods are not defined
-- Singleton: the `getInstance` method exists and is public, but the constructor is not protected
+- Singleton: the `getInstance` method exists and is public, but the constructor is public

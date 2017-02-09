@@ -15,10 +15,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -96,23 +93,29 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         Collections.reverse(references);
 
                         /* resolve references, populate information about provided entries */
-                        boolean hasMethodReference = false;
-                        boolean hasClassReference  = false;
-                        for (PsiReference ref : references) {
-                            final PsiElement resolved = ref.resolve();
-                            if (resolved instanceof PhpClass) {
-                                hasClassReference = true;
-                                break;
+                        boolean hasCallableReference = false;
+                        boolean hasClassReference    = false;
+
+                        if (references.size() > 0) {
+                            for (PsiReference ref : references) {
+                                final PsiElement resolved = ref.resolve();
+                                if (resolved instanceof PhpClass) {
+                                    hasClassReference = true;
+                                    break;
+                                }
+                                if (resolved instanceof Function) {
+                                    hasCallableReference = true;
+                                    hasClassReference  = resolved instanceof Method;
+                                    break;
+                                }
                             }
-                            if (resolved instanceof Method) {
-                                hasMethodReference = true;
-                                hasClassReference  = true;
-                                break;
-                            }
+                        } else {
+
                         }
 
-                        final boolean methodNeeded = referenceNeeded.getText().contains("::");
-                        if ((methodNeeded && !hasMethodReference) || (!methodNeeded && hasClassReference)) {
+                        final String referenceText = referenceNeeded.getText();
+                        final boolean methodNeeded = referenceText.contains("::") && !referenceText.contains("::<");
+                        if ((methodNeeded && !hasCallableReference) || (!methodNeeded && hasClassReference)) {
                             holder.registerProblem(objMethodName, messageCovers, ProblemHighlightType.GENERIC_ERROR);
                             continue;
                         }

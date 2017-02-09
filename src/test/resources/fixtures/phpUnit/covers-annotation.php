@@ -26,5 +26,8 @@ namespace {
 
         /** @covers \PUT\Covers\Annotation\MyArrayIterator::offsetUnset */
         public function testOffsetUnset4() {}
+
+        /** @covers ::trim */
+        public function testOffsetUnset5() {}
     }
 }

@@ -28,7 +28,7 @@ import java.util.HashSet;
  */
 
 public class ExplodeMissUseInspector extends BasePhpInspection {
-    private static final String message = "Consider refactoring with substr_count() instead.";
+    private static final String message = "Consider refactoring with substr_count() instead (consumes less cpu and memory resources).";
 
     @NotNull
     public String getShortName() {

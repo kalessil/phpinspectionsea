@@ -181,6 +181,10 @@ New inspections and less false-positives<br/>
         shortName="UnqualifiedReferenceInspection"                displayName="Unqualified function/constant reference"
         groupName="Performance"                                   enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnqualifiedReferenceInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ExplodeMissUseInspection"                      displayName="'explode()' misused"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ExplodeMissUseInspector"/>
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="IsEmptyFunctionUsageInspection"                displayName="'empty(...)' usage"

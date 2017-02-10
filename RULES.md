@@ -113,7 +113,7 @@ Inspections Lists (Language level migration)
 | Language level migration | ClassConstantCanBeUsedInspection                | ::class can be used                                 | yes       | yes | no   |
 | Language level migration | CascadingDirnameCallsInspection                 | Cascading dirname() calls                           | yes       | yes | no   |
 | Language level migration | PowerOperatorCanBeUsedInspection                | Power operator can be used                          | yes       | yes | no   |
-| Language level migration | PhpSapiConstantCanBeUsedInspection              | PHP_SAPI constant can be used                       | yes       | yes | no   |
+| Language level migration | ConstantCanBeUsedInspection                     | A constant can be used                              | yes       | yes | no   |
 
 Inspections Lists (Architecture)
 ---

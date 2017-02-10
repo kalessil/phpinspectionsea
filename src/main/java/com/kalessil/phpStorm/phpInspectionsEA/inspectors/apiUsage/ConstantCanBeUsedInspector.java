@@ -9,6 +9,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -18,12 +21,19 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class PhpSapiConstantCanBeUsedInspector extends BasePhpInspection {
-    private static final String message = "PHP_SAPI constant should be used instead.";
+public class ConstantCanBeUsedInspector extends BasePhpInspection {
+    private static final String messagePattern = "%c% constant should be used instead.";
+
+    static private final Map<String, String> functions = new HashMap<>();
+    static {
+        functions.put("phpversion", "PHP_VERSION");
+        functions.put("php_sapi_name", "PHP_SAPI");
+        functions.put("pi", "M_PI");
+    }
 
     @NotNull
     public String getShortName() {
-        return "PhpSapiConstantCanBeUsedInspection";
+        return "ConstantCanBeUsedInspection";
     }
 
     @Override
@@ -32,11 +42,14 @@ public class PhpSapiConstantCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (null == functionName || !functionName.equals("php_sapi_name")) {
+                if (null == functionName || 0 != reference.getParameters().length || !functions.containsKey(functionName)) {
                     return;
                 }
 
-                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseSuggestedReplacementFixer("PHP_SAPI"));
+                final String constant = functions.get(functionName);
+
+                final String message = messagePattern.replace("%c%", constant);
+                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseSuggestedReplacementFixer(constant));
             }
         };
     }

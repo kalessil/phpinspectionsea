@@ -605,9 +605,9 @@ New inspections and less false-positives<br/>
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.DirnameCallOnFileConstantInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="PhpSapiConstantCanBeUsedInspection"            displayName="PHP_SAPI constant can be used"
+        shortName="ConstantCanBeUsedInspection"                   displayName="A constant can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PhpSapiConstantCanBeUsedInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ConstantCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="IsNullFunctionUsageInspection"                 displayName="'null === ...' can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"

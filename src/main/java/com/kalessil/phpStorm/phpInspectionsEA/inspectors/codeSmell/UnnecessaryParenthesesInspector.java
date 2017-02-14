@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -83,11 +82,12 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     knowsLegalCases = null != operator && PhpTokenTypes.kwCLONE == operator.getNode().getElementType();
                 }
 
-                /* (...->property)(...), (...->method())(...), (function(){})(...): allow callable invocation */
+                /* (...->property)(...), (...->method())(...), (function(){})(...): allow callable/__invoke calls */
                 if (
-                    !knowsLegalCases && parent instanceof FunctionReferenceImpl &&
+                    !knowsLegalCases && OpenapiTypesUtil.isFunctionReference(parent) &&
                     (
                         argument instanceof FieldReference || argument instanceof MethodReference ||
+                        argument instanceof UnaryExpression || argument instanceof NewExpression ||
                         OpenapiTypesUtil.isLambda(argument)
                     )
                 ) {

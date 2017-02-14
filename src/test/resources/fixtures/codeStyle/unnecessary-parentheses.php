@@ -15,6 +15,11 @@
     ($x->callableProperty)();
     ($x->getCallableProperty())();
 
+    /* __invoke */
+    (new stdClass())();
+    (new self)();
+    (clone $stdClass)();
+
     $mixedIncludeReturn = (include __DIR__ . '/foo.php');
 
     (function(){})();

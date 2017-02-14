@@ -70,8 +70,11 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                     }
 
                     /* PHP Unit's official docs saying to use $this, follow the guidance */
-                    if (RESPECT_PHPUNIT_STANDARDS && clazz.getFQN().startsWith("\\PHPUnit_Framework_")) {
-                        return;
+                    if (RESPECT_PHPUNIT_STANDARDS) {
+                        final String classFqn = clazz.getFQN();
+                        if (classFqn.startsWith("\\PHPUnit_Framework_") || classFqn.startsWith("\\PHPUnit\\Framework\\")) {
+                            return;
+                        }
                     }
 
                     /* Case 1: $this-><static method>() */

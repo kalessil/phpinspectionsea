@@ -24,6 +24,7 @@ final public class TypeFromSignatureResolvingUtil {
         if (StringUtil.isEmpty(strSignatureToResolve) || processedSignatures.contains(strSignatureToResolve)) {
             return;
         }
+        processedSignatures.add(strSignatureToResolve);
 
         /* re-dispatch poly-variants to single-variant processing */
         if (strSignatureToResolve.contains("|")) {

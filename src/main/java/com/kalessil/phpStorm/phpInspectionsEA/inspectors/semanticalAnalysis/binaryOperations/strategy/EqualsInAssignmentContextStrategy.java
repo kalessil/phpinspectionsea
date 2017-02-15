@@ -28,7 +28,8 @@ final public class EqualsInAssignmentContextStrategy {
         }
 
         /* analysis itself */
-        if (expression.getParent() instanceof StatementImpl) {
+        final PsiElement parent = expression.getParent();
+        if (null != parent && StatementImpl.class == parent.getClass()) {
             holder.registerProblem(operation, message, ProblemHighlightType.GENERIC_ERROR);
             return true;
         }

@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.deadCode;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SenselessMethodDuplicationInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.SenselessMethodDuplicationInspector;
 
 final public class SenselessMethodDuplicationInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

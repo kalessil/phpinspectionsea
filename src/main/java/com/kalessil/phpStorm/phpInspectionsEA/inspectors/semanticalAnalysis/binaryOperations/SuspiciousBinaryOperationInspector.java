@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -22,12 +22,12 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class SuspiciousInstanceOfInspector extends BasePhpInspection {
-    private static final String message = "instanceof against traits returns 'false'.";
+public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
+    private static final String messageInstanceOf = "instanceof against traits returns 'false'.";
 
     @NotNull
     public String getShortName() {
-        return "SuspiciousInstanceOfInspection";
+        return "SuspiciousBinaryOperationInspection";
     }
 
     @Override
@@ -61,7 +61,7 @@ public class SuspiciousInstanceOfInspector extends BasePhpInspection {
 
                 /* analysis itself */
                 if (resolved instanceof PhpClass && ((PhpClass) resolved).isTrait()) {
-                    holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(expression, messageInstanceOf, ProblemHighlightType.GENERIC_ERROR);
                 }
             }
         };

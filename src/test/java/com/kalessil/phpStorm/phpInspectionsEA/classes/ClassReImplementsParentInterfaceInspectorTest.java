@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.classes;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ClassReImplementsParentInterfaceInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassReImplementsParentInterfaceInspector;
 
 final public class ClassReImplementsParentInterfaceInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

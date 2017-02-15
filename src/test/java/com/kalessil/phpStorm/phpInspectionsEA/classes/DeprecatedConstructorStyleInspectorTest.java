@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.classes;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.DeprecatedConstructorStyleInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.DeprecatedConstructorStyleInspector;
 
 final public class DeprecatedConstructorStyleInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.designPatterns;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.PrivateConstructorSemanticsInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.PrivateConstructorSemanticsInspector;
 
 final public class PrivateConstructorSemanticsInspectorTest extends CodeInsightFixtureTestCase {
     public void testValidEntityWithOwnFactoryMethodCreate () {

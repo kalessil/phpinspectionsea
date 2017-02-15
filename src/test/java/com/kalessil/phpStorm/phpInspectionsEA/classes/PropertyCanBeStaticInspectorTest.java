@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.classes;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.PropertyCanBeStaticInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.PropertyCanBeStaticInspector;
 
 final public class PropertyCanBeStaticInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

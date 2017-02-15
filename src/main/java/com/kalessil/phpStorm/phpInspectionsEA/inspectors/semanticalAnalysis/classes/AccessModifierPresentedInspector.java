@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;

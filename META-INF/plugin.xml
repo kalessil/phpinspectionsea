@@ -375,7 +375,7 @@ New inspections and less false-positives<br/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ClassReImplementsParentInterfaceInspection"    displayName="Class implements interfaces multiple times"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ClassReImplementsParentInterfaceInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassReImplementsParentInterfaceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="PregQuoteUsageInspection"                      displayName="Proper preg_quote() usage"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
@@ -393,9 +393,9 @@ New inspections and less false-positives<br/>
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SuspiciousReturnInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="SuspiciousInstanceOfInspection"                displayName="Suspicious instanceof"
+        shortName="SuspiciousBinaryOperationInspection"           displayName="Suspicious binary operations"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.SuspiciousInstanceOfInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.SuspiciousBinaryOperationInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -461,7 +461,7 @@ New inspections and less false-positives<br/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ClassMethodNameMatchesFieldNameInspection"     displayName="Method name matches existing field name"
         groupName="Confusing constructs"                          enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ClassMethodNameMatchesFieldNameInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassMethodNameMatchesFieldNameInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="NestedTernaryOperatorInspection"               displayName="Nested ternary operator"
         groupName="Confusing constructs"                          enabledByDefault="true" level="WARNING"
@@ -495,15 +495,15 @@ New inspections and less false-positives<br/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnusedConstructorDependenciesInspection"       displayName="Unused constructor dependencies"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UnusedConstructorDependenciesInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.UnusedConstructorDependenciesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SenselessProxyMethodInspection"                displayName="Senseless proxy function"
         groupName="Unused"                                        enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SenselessProxyMethodInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.SenselessProxyMethodInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SenselessMethodDuplicationInspection"          displayName="Child method is exactly the same"
         groupName="Unused"                                        enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SenselessMethodDuplicationInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.SenselessMethodDuplicationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnusedGotoLabelInspection"                     displayName="Unused goto labels"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
@@ -525,7 +525,7 @@ New inspections and less false-positives<br/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="AccessModifierPresentedInspection"             displayName="Access modifiers shall be defined"
         groupName="Code Style"                                    enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.AccessModifierPresentedInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.AccessModifierPresentedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="PrefixedIncDecrementEquivalentInspection"      displayName="Prefixed increment/decrement equivalent"
         groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
@@ -623,7 +623,7 @@ New inspections and less false-positives<br/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DeprecatedConstructorStyleInspection"          displayName="Deprecated constructor style"
         groupName="Language level migration"                      enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.DeprecatedConstructorStyleInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.DeprecatedConstructorStyleInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="AliasFunctionsUsageInspection"                 displayName="Alias functions usage"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
@@ -657,31 +657,31 @@ New inspections and less false-positives<br/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ClassOverridesFieldOfSuperClassInspection"       displayName="Class overrides a field of a parent class"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ClassOverridesFieldOfSuperClassInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassOverridesFieldOfSuperClassInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SingletonFactoryPatternViolationInspection"      displayName="Class violates singleton/factory pattern definition"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SingletonFactoryPatternViolationInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.SingletonFactoryPatternViolationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="PrivateConstructorSemanticsInspection"           displayName="Private constructor semantics"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.PrivateConstructorSemanticsInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.PrivateConstructorSemanticsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="LongInheritanceChainInspection"                  displayName="Long inheritance chain"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.LongInheritanceChainInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.LongInheritanceChainInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="PropertyCanBeStaticInspection"                   displayName="Property could be static"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.PropertyCanBeStaticInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.PropertyCanBeStaticInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="EmptyClassInspection"                            displayName="Empty class"
         groupName="Architecture"                                    enabledByDefault="false" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.EmptyClassInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.EmptyClassInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="OverridingDeprecatedMethodInspection"            displayName="Overriding deprecated methods"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OverridingDeprecatedMethodInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.OverridingDeprecatedMethodInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

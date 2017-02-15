@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.classes;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ClassMethodNameMatchesFieldNameInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassMethodNameMatchesFieldNameInspector;
 
 final public class ClassMethodNameMatchesFieldNameInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

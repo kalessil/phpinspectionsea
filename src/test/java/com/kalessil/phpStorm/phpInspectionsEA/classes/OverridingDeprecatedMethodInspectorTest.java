@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.classes;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OverridingDeprecatedMethodInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.OverridingDeprecatedMethodInspector;
 
 final public class OverridingDeprecatedMethodInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsInconsistentGetsSetsPatterns() {

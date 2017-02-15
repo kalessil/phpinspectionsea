@@ -1,12 +1,12 @@
 package com.kalessil.phpStorm.phpInspectionsEA.pitfalls;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.SuspiciousInstanceOfInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.SuspiciousBinaryOperationInspector;
 
-final public class SuspiciousInstanceOfInspectorTest extends CodeInsightFixtureTestCase {
+final public class SuspiciousBinaryOperationInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/pitfalls/instanceof-against-traits.php");
-        myFixture.enableInspections(SuspiciousInstanceOfInspector.class);
+        myFixture.enableInspections(SuspiciousBinaryOperationInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

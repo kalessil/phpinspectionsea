@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.bina
 
 final public class SuspiciousBinaryOperationInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.configureByFile("fixtures/pitfalls/instanceof-against-traits.php");
+        myFixture.configureByFile("fixtures/pitfalls/suspicious-binary-operations.php");
         myFixture.enableInspections(SuspiciousBinaryOperationInspector.class);
         myFixture.testHighlighting(true, false, true);
     }

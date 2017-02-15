@@ -9,32 +9,37 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 final public class TypeFromPsiResolvingUtil {
 
     /** adds type, handling | and #, invoking signatures resolving */
-    private static void storeAsTypeWithSignaturesImport(String strTypeToImport, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> objTypesSet) {
-        if (strTypeToImport.contains("|")) {
-            for (String strOneType : strTypeToImport.split("\\|")) {
-                storeAsTypeWithSignaturesImport(Types.getType(strOneType), objScope, objIndex, objTypesSet);
+    private static void storeAsTypeWithSignaturesImport(String typeToImport, @Nullable Function scope, @NotNull PhpIndex index, @NotNull Set<String> typesSet) {
+        if (typeToImport.contains("|")) {
+            for (String oneType : typeToImport.split("\\|")) {
+                storeAsTypeWithSignaturesImport(Types.getType(oneType), scope, index, typesSet);
             }
             return;
         }
 
-        if (StringUtil.isEmpty(strTypeToImport) || strTypeToImport.equals("?")) {
+        if (StringUtil.isEmpty(typeToImport) || typeToImport.equals("?")) {
             return;
         }
 
-        if (strTypeToImport.contains("#")) {
-            TypeFromSignatureResolvingUtil.resolveSignature(strTypeToImport, objScope, objIndex, objTypesSet);
+        if (typeToImport.contains("#")) {
+            Set<String> processedSignatures = new HashSet<>();
+            TypeFromSignatureResolvingUtil.resolveSignature(typeToImport, scope, index, typesSet, processedSignatures);
+            processedSignatures.clear();
+
             return;
         }
 
-        objTypesSet.add(Types.getType(strTypeToImport));
+        typesSet.add(Types.getType(typeToImport));
     }
 
     /** high-level resolving logic */

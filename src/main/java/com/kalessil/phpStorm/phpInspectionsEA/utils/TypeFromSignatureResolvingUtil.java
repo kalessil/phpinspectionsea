@@ -3,24 +3,32 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 final public class TypeFromSignatureResolvingUtil {
 
-    static public void resolveSignature (String strSignatureToResolve, @Nullable Function objScope, PhpIndex objIndex, HashSet<String> extractedTypesSet) {
-        /* do nothing with empty signatures */
-        if (StringUtil.isEmpty(strSignatureToResolve)) {
+    static public void resolveSignature (
+            @Nullable String strSignatureToResolve,
+            @Nullable Function objScope,
+            @NotNull PhpIndex objIndex,
+            @NotNull Set<String> extractedTypesSet,
+            @NotNull Set<String> processedSignatures
+    ) {
+        /* do nothing with empty signatures and already processed signatures */
+        if (StringUtil.isEmpty(strSignatureToResolve) || processedSignatures.contains(strSignatureToResolve)) {
             return;
         }
 
         /* re-dispatch poly-variants to single-variant processing */
         if (strSignatureToResolve.contains("|")) {
             for (String strOneVariantFromSplitToResolve : strSignatureToResolve.split("\\|")) {
-                resolveSignature(strOneVariantFromSplitToResolve, objScope, objIndex, extractedTypesSet);
+                resolveSignature(strOneVariantFromSplitToResolve, objScope, objIndex, extractedTypesSet, processedSignatures);
             }
             return;
         }
@@ -53,7 +61,7 @@ final public class TypeFromSignatureResolvingUtil {
                  * IDE for some reason resolved type including self-reference of this function
                  */
                 String strTypeWithoutLoop = objFunction.getType().toString().replace("#F" + strFunctionName, "");
-                resolveSignature(strTypeWithoutLoop, objScope, objIndex, extractedTypesSet);
+                resolveSignature(strTypeWithoutLoop, objScope, objIndex, extractedTypesSet, processedSignatures);
             }
             objFunctionsCollection.clear();
 
@@ -66,7 +74,7 @@ final public class TypeFromSignatureResolvingUtil {
             if (null != objScope) {
                 for (Parameter objParam : objScope.getParameters()) {
                     if (objParam.getName().equals(strParameterOrVariableName)) {
-                        resolveSignature(objParam.getType().toString(), objScope, objIndex, extractedTypesSet);
+                        resolveSignature(objParam.getType().toString(), objScope, objIndex, extractedTypesSet, processedSignatures);
                         return;
                     }
                 }
@@ -174,14 +182,14 @@ final public class TypeFromSignatureResolvingUtil {
             if (null != typesOfSlotSet && typesOfSlotSet.size() > 0) {
                 /* store resolved types by re-running resolving */
                 for (String strType : typesOfSlotSet) {
-                    resolveSignature(strType, objScope, objIndex, extractedTypesSet);
+                    resolveSignature(strType, objScope, objIndex, extractedTypesSet, processedSignatures);
                 }
                 typesOfSlotSet.clear();
             }
         }
     }
 
-    static public HashSet<String> resolveSlot(String strClass, String strSlot, PhpIndex objIndex, char type) {
+    private static HashSet<String> resolveSlot(String strClass, String strSlot, PhpIndex objIndex, char type) {
         HashSet<String> resolvedTypesSet = new HashSet<>();
 
         /* try resolving an object interface */

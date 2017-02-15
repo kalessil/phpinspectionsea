@@ -21,10 +21,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromSignatureResolvingUt
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.*;
 
 public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInspection {
     private static final String strProblemNoSense = "Makes no sense, because it's always true according to annotations.";
@@ -69,8 +66,9 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                     /* resolve types for parameter */
                     HashSet<String> objParameterTypesResolved = new HashSet<>();
-                    TypeFromSignatureResolvingUtil.resolveSignature(strParameterType, (Function) objScopeHolder, objIndex, objParameterTypesResolved);
-
+                    Set<String> processedSignatures           = new HashSet<>();
+                    TypeFromSignatureResolvingUtil.resolveSignature(strParameterType, (Function) objScopeHolder, objIndex, objParameterTypesResolved, processedSignatures);
+                    processedSignatures.clear();
 
                     PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, strParameterName, false);
                     if (arrUsages.length == 0) {

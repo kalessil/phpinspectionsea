@@ -24,13 +24,22 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
     @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_USING_CLONE = false;
 
-    private static final String strProblemDescription = "This statement seems to be disconnected from its parent foreach.";
-    private static final String strProblemUseClone    = "Objects should be created outside of a loop and cloned instead.";
+    private static final String messageDisconnected = "This statement seems to be disconnected from its parent foreach.";
+    private static final String messageUseClone     = "Objects should be created outside of a loop and cloned instead.";
 
     @NotNull
     public String getShortName() {
@@ -116,12 +125,17 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
                                     /* secure exceptions with '<?= ?>' constructions, false-positives with html */
                                     if (PhpPsiElementImpl.class != oneInstruction.getClass() && oneInstruction.getTextLength() > 0) {
-                                        holder.registerProblem(reportingTarget, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                                        /* inner looping termination/continuation should be taken into account */
+                                        final PsiElement loopInterrupter =
+                                            PsiTreeUtil.findChildOfAnyType(oneInstruction, true, PhpBreak.class, PhpContinue.class, PhpThrow.class, PhpReturn.class);
+                                        if (null == loopInterrupter) {
+                                            holder.registerProblem(reportingTarget, messageDisconnected, ProblemHighlightType.WEAK_WARNING);
+                                        }
                                     }
                                 }
 
                                 if (SUGGEST_USING_CLONE && (ExpressionType.DOM_ELEMENT_CREATE == target || ExpressionType.NEW == target)) {
-                                    holder.registerProblem(oneInstruction, strProblemUseClone, ProblemHighlightType.WEAK_WARNING);
+                                    holder.registerProblem(oneInstruction, messageUseClone, ProblemHighlightType.WEAK_WARNING);
                                 }
                             }
 

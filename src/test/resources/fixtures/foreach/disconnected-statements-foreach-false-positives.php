@@ -73,13 +73,21 @@ foreach ($files as & $file8) {
 $count = 0;
 foreach ($files as & $file9) {
     if (++$count > 0) {
-        break;
+        $file9->save();
     }
 }
 
 /* loop with unpacking array into multiple variables */
 foreach ([[], [], []] as list($a, $b, $c)) {
     if ($b === $count) {
-        break;
+        $c->save();
     }
+}
+
+/* false-positives: inner break, continue, throw, return statements */
+foreach ($files as $file10) {
+    if ($false1) { break; }
+    if ($false2) { continue; }
+    if ($false3) { return; }
+    if ($false4) { throw $exception; }
 }

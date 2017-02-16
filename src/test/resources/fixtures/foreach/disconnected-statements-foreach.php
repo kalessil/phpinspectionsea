@@ -27,11 +27,10 @@
             case 0:
             case 1:
             default:
-                break;
         }
 
         <weak_warning descr="This statement seems to be disconnected from its parent foreach.">try</weak_warning> {
-            throw new \RuntimeException('');
+            $callback();
         } catch (\Exception $e) {
             echo $e->getMessage();
         }

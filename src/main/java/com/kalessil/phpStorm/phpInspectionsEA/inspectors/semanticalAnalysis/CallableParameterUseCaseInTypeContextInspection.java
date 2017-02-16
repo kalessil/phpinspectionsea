@@ -66,9 +66,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                     /* resolve types for parameter */
                     HashSet<String> objParameterTypesResolved = new HashSet<>();
-                    Set<String> processedSignatures           = new HashSet<>();
-                    TypeFromSignatureResolvingUtil.resolveSignature(strParameterType, (Function) objScopeHolder, objIndex, objParameterTypesResolved, processedSignatures);
-                    processedSignatures.clear();
+                    TypeFromSignatureResolvingUtil.resolveSignature(strParameterType, (Function) objScopeHolder, objIndex, objParameterTypesResolved);
 
                     PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, strParameterName, false);
                     if (arrUsages.length == 0) {

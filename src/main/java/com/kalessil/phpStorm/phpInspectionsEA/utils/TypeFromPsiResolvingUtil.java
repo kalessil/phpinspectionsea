@@ -32,10 +32,7 @@ final public class TypeFromPsiResolvingUtil {
         }
 
         if (typeToImport.contains("#")) {
-            Set<String> processedSignatures = new HashSet<>();
-            TypeFromSignatureResolvingUtil.resolveSignature(typeToImport, scope, index, typesSet, processedSignatures);
-            processedSignatures.clear();
-
+            TypeFromSignatureResolvingUtil.resolveSignature(typeToImport, scope, index, typesSet);
             return;
         }
 

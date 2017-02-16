@@ -14,6 +14,17 @@ import java.util.Set;
 final public class TypeFromSignatureResolvingUtil {
 
     static public void resolveSignature (
+            @Nullable String signatureToResolve,
+            @Nullable Function scope,
+            @NotNull PhpIndex projectIndex,
+            @NotNull Set<String> extractedTypes
+    ) {
+        Set<String> processedSignatures = new HashSet<>();
+        resolveSignature(signatureToResolve, scope, projectIndex, extractedTypes, processedSignatures);
+        processedSignatures.clear();
+    }
+
+    static private void resolveSignature (
             @Nullable String strSignatureToResolve,
             @Nullable Function objScope,
             @NotNull PhpIndex objIndex,

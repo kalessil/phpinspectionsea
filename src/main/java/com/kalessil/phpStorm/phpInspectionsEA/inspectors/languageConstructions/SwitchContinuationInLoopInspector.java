@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class SwitchContinuationInLoopInspector extends BasePhpInspection {
@@ -46,7 +47,7 @@ public class SwitchContinuationInLoopInspector extends BasePhpInspection {
                     }
 
                     /* when met a loop, complete analysis */
-                    if (objParent instanceof For || objParent instanceof ForeachStatement || objParent instanceof While) {
+                    if (OpenapiTypesUtil.isLoop(objParent)) {
                         if (isSwitch) {
                             holder.registerProblem(continueStatement, message, ProblemHighlightType.GENERIC_ERROR, new UseContinue2LocalFix());
                         }

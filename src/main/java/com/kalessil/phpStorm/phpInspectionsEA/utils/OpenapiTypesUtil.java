@@ -28,4 +28,10 @@ final public class OpenapiTypesUtil {
     static public boolean isFunctionReference(@Nullable PsiElement expression) {
         return expression instanceof FunctionReference && !(expression instanceof MethodReference);
     }
+
+    /* Simplification detecting loops; interface already available in EAPs */
+    static public boolean isLoop(@Nullable PsiElement expression) {
+        return null != expression &&
+            (expression instanceof ForeachStatement || expression instanceof For || expression instanceof While || expression instanceof DoWhile);
+    }
 }

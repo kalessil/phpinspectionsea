@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "This loop does not loop.";
+    private static final String message = "This loop does not loop.";
 
     @NotNull
     public String getShortName() {
@@ -36,6 +36,9 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
             public void visitPhpWhile(While whileStatement) {
                 this.inspectBody(whileStatement);
             }
+            public void visitPhpDoWhile(DoWhile doWhileStatement) {
+                this.inspectBody(doWhileStatement);
+            }
 
             private void inspectBody(PhpPsiElement loop) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
@@ -54,7 +57,7 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* detect continue statements */
+                /* detect continue statements, which makes the loop looping */
                 final Collection<PhpContinue> continues = PsiTreeUtil.findChildrenOfType(body, PhpContinue.class);
                 for (PhpContinue expression : continues) {
                     int nestingLevel  = 0;
@@ -76,6 +79,7 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
 
                                 /* matched continue for the current loop */
                                 if (continueLevel == nestingLevel) {
+                                    continues.clear();
                                     return;
                                 }
                             }
@@ -83,10 +87,10 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
 
                         parent = parent.getParent();
                     }
-
                 }
+                continues.clear();
 
-                holder.registerProblem(loop.getFirstChild(), strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(loop.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
         };
     }

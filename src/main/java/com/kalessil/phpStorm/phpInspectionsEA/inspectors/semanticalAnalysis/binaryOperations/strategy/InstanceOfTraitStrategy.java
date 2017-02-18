@@ -10,6 +10,9 @@ import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -22,6 +25,13 @@ import org.jetbrains.annotations.NotNull;
 final public class InstanceOfTraitStrategy {
     private static final String message = "instanceof against traits returns 'false'.";
 
+    private static final Set<String> lateBindingSymbols = new HashSet<>();
+    static {
+        lateBindingSymbols.add("self");
+        lateBindingSymbols.add("static");
+        lateBindingSymbols.add("$this");
+    }
+
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         /* general structure expectations */
         final PsiElement operation = expression.getOperation();
@@ -30,6 +40,10 @@ final public class InstanceOfTraitStrategy {
         }
         final PsiElement right = expression.getRightOperand();
         if (!(right instanceof ClassReference) && !(right instanceof ClassConstantReference)) {
+            return false;
+        }
+        /* $this, self, static are referencing to host classes, skip the case */
+        if (lateBindingSymbols.contains(right.getText())) {
             return false;
         }
 

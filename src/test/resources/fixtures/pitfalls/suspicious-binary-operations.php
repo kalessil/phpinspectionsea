@@ -6,6 +6,13 @@ $x = <error descr="instanceof against traits returns 'false'.">$z instanceof IOA
 $x = <error descr="instanceof against traits returns 'false'.">$z instanceof IOAT_Trait::class</error>;
 $x = <error descr="instanceof against traits returns 'false'.">$z instanceof \IOAT_Trait</error>;
 
+/* false-positive: instanceof in trait and late binding */
+trait IOAT_InTrait {
+    public function a(){ return $this instanceof self;   }
+    public function b(){ return $this instanceof static; }
+    public function c(){ return $this instanceof $this;  }
+}
+
 /* a typo: comparison instead of assignment */
 $a <error descr="It seems that '=' should be here.">==</error> $b;
 

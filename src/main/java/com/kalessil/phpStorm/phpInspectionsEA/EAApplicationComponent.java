@@ -23,9 +23,9 @@ public class EAApplicationComponent implements ApplicationComponent {
             return;
         }
 
-        EASettings settings = EASettings.getInstance();
-        updated = !plugin.getVersion().equals(settings.getVersion());
-        if (updated) {
+        final EASettings settings = EASettings.getInstance();
+        this.updated              = !plugin.getVersion().equals(settings.getVersion());
+        if (this.updated) {
             settings.setVersion(plugin.getVersion());
         }
     }
@@ -41,11 +41,11 @@ public class EAApplicationComponent implements ApplicationComponent {
     }
 
     boolean isUpdated() {
-        return updated;
+        return this.updated;
     }
 
     boolean isUpdateNotificationShown() {
-        return updateNotificationShown;
+        return this.updateNotificationShown;
     }
 
     void setUpdateNotificationShown(boolean shown) {

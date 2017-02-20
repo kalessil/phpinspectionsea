@@ -27,9 +27,16 @@ public class EASettings implements PersistentStateComponent<Element> {
     @Override
     public Element getState() {
         final Element element = new Element("EASettings");
-        element.setAttribute("version", this.version);
-        element.setAttribute("versionOldest", this.versionOldest);
-        element.setAttribute("uuid", this.uuid);
+
+        if (null != this.versionOldest) {
+            element.setAttribute("version", this.version);
+        }
+        if (null != this.versionOldest) {
+            element.setAttribute("versionOldest", this.versionOldest);
+        }
+        if (null != this.uuid) {
+            element.setAttribute("uuid", this.uuid);
+        }
 
         return element;
     }

@@ -5,6 +5,7 @@ import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.extensions.PluginId;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.analytics.AnalyticsUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class EAApplicationComponent implements ApplicationComponent {
@@ -26,8 +27,13 @@ public class EAApplicationComponent implements ApplicationComponent {
         final EASettings settings = EASettings.getInstance();
         this.updated              = !plugin.getVersion().equals(settings.getVersion());
         if (this.updated) {
+            if (null == settings.getVersion()) {
+                AnalyticsUtil.registerPluginEvent(settings, "install", plugin.getVersion());
+            }
             settings.setVersion(plugin.getVersion());
         }
+
+        AnalyticsUtil.registerPluginEvent(settings, "run", settings.getOldestVersion());
     }
 
     @Override

@@ -48,12 +48,20 @@ public class EASettings implements PersistentStateComponent<Element> {
         this.uuid              = (null == uuidValue ? UUID.randomUUID().toString() : uuidValue);
     }
 
+    public void setVersion(@NotNull String version) {
+        this.version       = version;
+        this.versionOldest = (null == this.versionOldest ? version : this.versionOldest);
+    }
+
     public String getVersion() {
         return this.version;
     }
 
-    public void setVersion(@NotNull String version) {
-        this.version       = version;
-        this.versionOldest = (null == this.versionOldest ? version : this.versionOldest);
+    public String getUuid() {
+        return this.uuid;
+    }
+
+    public String getOldestVersion() {
+        return this.versionOldest;
     }
 }

@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.3-dev</version>
+  <version>2.3.3</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -54,20 +54,21 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-New inspections and less false-positives<br/>
+Bug-fix release, fixed a new bunch of false-positives<br/>
 <br/>
-- A constant can be used: new patterns<br/>
-- Suspicious binary operations: implemented<br/>
-- 'explode()' misused: implemented<br/>
-<br/>
-- Fixed infinite inspection appearing in very rare cases;
+- Fixed infinite inspection appearing in very rare cases<br/>
 - Foreach source to iterate over: resolved false-positives (ø)<br/>
+- Loop which does not loop: resolved false-positives (nested continuations not recognized)<br/>
 - Senseless proxy function: resolved false-positives (compatible types override)<br/>
 - Statement could be decoupled from foreach: resolved false-positives (inner break/continue/throw/return)<br/>
 - Static methods invocation via '->': resolved false-positives (PhpUnit v6)<br/>
 - Unnecessary double quotes: resolved false-positives (single quotes are not recognized in some cases)<br/>
 - Unnecessary parentheses: resolved false-positives (__invoke contexts)<br/>
 <br/>
+<br/>
+- A constant can be used: new patterns<br/>
+- Suspicious binary operations: implemented<br/>
+- 'explode()' misused: implemented<br/>
 <hr/>
   ]]></change-notes>
 

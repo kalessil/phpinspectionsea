@@ -8,12 +8,16 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 @State(
     name = "EASettings",
     storages = @Storage(id = "other", file = "$APP_CONFIG$/ea_extended.xml")
 )
 public class EASettings implements PersistentStateComponent<Element> {
+    private String versionOldest;
     private String version;
+    private String uuid;
 
     public static EASettings getInstance() {
         return ServiceManager.getService(EASettings.class);
@@ -23,22 +27,33 @@ public class EASettings implements PersistentStateComponent<Element> {
     @Override
     public Element getState() {
         final Element element = new Element("EASettings");
-        element.setAttribute("version", version);
+        element.setAttribute("version", this.version);
+        element.setAttribute("versionOldest", this.versionOldest);
+        element.setAttribute("uuid", this.uuid);
 
         return element;
     }
 
     @Override
     public void loadState(Element element) {
-        String value = element.getAttributeValue("version");
-        if (value != null) version = value;
+        final String versionValue = element.getAttributeValue("version");
+        if (versionValue != null) {
+            this.version = versionValue;
+        }
+
+        final String versionOldestValue = element.getAttributeValue("versionOldest");
+        this.versionOldest              = (null == versionOldestValue ? versionValue : versionOldestValue);
+
+        final String uuidValue = element.getAttributeValue("uuid");
+        this.uuid              = (null == uuidValue ? UUID.randomUUID().toString() : uuidValue);
     }
 
     public String getVersion() {
-        return version;
+        return this.version;
     }
 
     public void setVersion(@NotNull String version) {
-        this.version = version;
+        this.version       = version;
+        this.versionOldest = (null == this.versionOldest ? version : this.versionOldest);
     }
 }

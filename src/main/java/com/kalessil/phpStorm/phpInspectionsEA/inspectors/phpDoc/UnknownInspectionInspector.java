@@ -38,6 +38,8 @@ public class UnknownInspectionInspector extends BasePhpInspection {
     private static int minInspectionNameLength;
     static {
         inspectionsNames = collectKnownInspections();
+        /* spell checker is a nameless plugin with no deps, hence hardcoding it's inspections */
+        inspectionsNames.add("SpellCheckingInspection");
 
         /* shortest length is a threshold for separating inspections and comments mixed in */
         minInspectionNameLength = Integer.MAX_VALUE;

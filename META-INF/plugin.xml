@@ -584,6 +584,11 @@ Bug-fix release, fixed a new bunch of false-positives<br/>
         shortName="ParameterDefaultValueIsNotNullInspection"      displayName="Non-null parameters default value"
         groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ParameterDefaultValueIsNotNullInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="DisallowWritingIntoStaticPropertiesInspection" displayName="Disallow writing into static properties"
+        groupName="Code Style" enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DisallowWritingIntoStaticPropertiesInspector"/>
+
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -694,12 +699,6 @@ Bug-fix release, fixed a new bunch of false-positives<br/>
         shortName="FopenBinaryUnsafeUsageInspection"                displayName="Binary-unsafe 'fopen(...)' usage"
         groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FopenBinaryUnsafeUsageInspector"/>
-
-
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="DisallowWritingIntoStaticPropertiesInspection" displayName="Disallow writing into static properties"
-        groupName="Code Style" enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DisallowWritingIntoStaticPropertiesInspector"/>
 
 
 

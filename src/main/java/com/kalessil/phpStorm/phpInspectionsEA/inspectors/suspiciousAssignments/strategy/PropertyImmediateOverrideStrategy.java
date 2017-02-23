@@ -35,10 +35,11 @@ final public class PropertyImmediateOverrideStrategy {
             return;
         }
 
-        /* collect properties with default values; stop inspection if none found */
+        /* collect private properties with default values; stop inspection if none found */
+        /* protected/public properties init in __construct can be bypassed, so defaults might have sense */
         final Set<String> propertiesToCheck = new HashSet<>();
         for (Field field : clazz.getOwnFields()) {
-            if (field.isConstant() || field.getModifier().isStatic()) {
+            if (field.isConstant() || field.getModifier().isStatic() || !field.getModifier().isPrivate()) {
                 continue;
             }
 

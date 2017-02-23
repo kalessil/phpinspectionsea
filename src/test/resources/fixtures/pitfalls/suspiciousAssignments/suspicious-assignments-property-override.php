@@ -2,6 +2,8 @@
 
 class ImmediateOverridePropsClass {
 
+    protected $legalOverride0 = [];
+
     private $legalOverride1;
     private $legalOverride2 = null;
 
@@ -12,6 +14,8 @@ class ImmediateOverridePropsClass {
     private $suspiciousOverride = [];
 
     public function __construct($x) {
+        $this->legalOverride0 = [];
+
         $this->legalOverride1 = [];
         $this->legalOverride2 = [];
 

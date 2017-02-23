@@ -23,3 +23,34 @@ ascending order, then it will consume less memory and work a little bit faster w
 
 Php Inspections (EA Extended) checks array creation constructs and gives hints if found ways for enabling the 
 optimizations.
+
+# Slow array function used in loop
+
+> Note: you might want to check benchmarks first - [one](https://gist.github.com/Ocramius/8399625), [two](https://github.com/kalessil/phpinspectionsea/issues/138#issuecomment-279457133)
+
+Synopsys: merging arrays in a loop causes high CPU usage and takes pretty much time for execution.
+
+Let's start with an example demonstrating the case:
+```php
+    $options = [];
+    foreach ($configurationSources as $source) {
+        /* more logic here */
+        
+        $options = array_merge($options, $source->getOptions());
+    }
+```
+
+In order to reduce execution time we can modify the code and perform the merge operation only once:
+```php
+    $options = [];
+    foreach ($configurationSources as $source) {
+        /* more logic here */
+        
+        $options []= $source->getOptions(); // <- yes, we'll use a little bit more memory
+    }
+    /* PHP below 5.6 */
+    $options = call_user_func_array('array_merge', $options);
+    
+    /* PHP 5.6+: more friendly to refactoring as less magic involved */
+    $options = array_merge(...$options);
+```

@@ -15,6 +15,7 @@ Reported cases and possible alternatives:
 * Children declare the same visibility as their parent's property (suggested using initialization in a constructor)
     * rename the property
     * move property initialization into the constructor
+    * use @property annotation to re-define type-hints
 
 ## Long inheritance chain
 

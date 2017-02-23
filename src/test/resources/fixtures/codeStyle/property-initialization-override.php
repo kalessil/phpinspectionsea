@@ -10,6 +10,7 @@ class ImmediateOverridePropsClass {
     private $suspiciousOverride1
         = <weak_warning descr="The assignment can be safely removed as the constructor overrides it.">[]</weak_warning>;
     private $suspiciousOverride2 = [];
+    private $suspiciousOverride3;
 
     public function __construct($x) {
         $this->override0 = [];
@@ -23,6 +24,7 @@ class ImmediateOverridePropsClass {
 
         $this->suspiciousOverride1 = [[]];
         <weak_warning descr="Written value is same as default one, consider removing this assignment.">$this->suspiciousOverride2 = [];</weak_warning>
+        <weak_warning descr="Written value is same as default one, consider removing this assignment.">$this->suspiciousOverride3 = null;</weak_warning>
     }
 
     /* false-positive: override is not in the constructor */

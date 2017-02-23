@@ -87,6 +87,8 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
                     final PsiElement defaultValue = field.getDefaultValue();
                     if (defaultValue instanceof PhpPsiElement && !PhpLanguageUtil.isNull(defaultValue)) {
                         propertiesToCheck.put(field.getName(), defaultValue);
+                    } else {
+                        propertiesToCheck.put(field.getName(), null);
                     }
                 }
                 if (propertiesToCheck.isEmpty()) {
@@ -111,12 +113,18 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
                         final PsiElement fieldDefault = propertiesToCheck.get(overriddenProperty);
 
                         /* Pattern: written and default values are identical */
-                        if (PsiEquivalenceUtil.areElementsEquivalent(value, fieldDefault)) {
+                        if (
+                            (null == fieldDefault && PhpLanguageUtil.isNull(value)) ||
+                            (null != fieldDefault && PsiEquivalenceUtil.areElementsEquivalent(value, fieldDefault))
+                        ) {
                             holder.registerProblem(expression, messageSenselessWrite, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                             continue;
                         }
+                        if (null == fieldDefault) {
+                            continue;
+                        }
 
-                        /* false-positives: ensure the property is not evolved into generating new value */
+                        /* false-positive: property is involved into generating new value */
                         boolean isPropertyReused = false;
                         for (FieldReference candidate : PsiTreeUtil.findChildrenOfType(value, FieldReference.class)) {
                             if (!PsiEquivalenceUtil.areElementsEquivalent(container, candidate)) {

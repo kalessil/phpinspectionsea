@@ -12,7 +12,7 @@ final public class AmbiguousMemberInitializationInspectorTest extends CodeInsigh
     }
     public void testPropertyOverridePatterns() {
         myFixture.configureByFile("fixtures/codeStyle/property-initialization-override.php");
-        myFixture.enableInspections(SuspiciousAssignmentsInspector.class);
+        myFixture.enableInspections(AmbiguousMemberInitializationInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

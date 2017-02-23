@@ -1,0 +1,33 @@
+<?php
+
+class ImmediateOverridePropsClass {
+
+    protected $override0 = [];  // <- non-private, makes sense as the constructor can be bypassed
+    private $override1   = [];  // <- reused in the constructor initialization
+    private $override2;         // <- properly initialized in the constructor
+    private $override3 = [];    // <- override is on 2nd instructions level
+
+    private $suspiciousOverride1
+        = <weak_warning descr="The assignment can be safely removed as the constructor overrides it.">[]</weak_warning>;
+    private $suspiciousOverride2 = [];
+
+    public function __construct($x) {
+        $this->override0 = [];
+        $this->override1 = [] + $this->override1;
+
+        $this->override2 = [];
+
+        if ($x) {
+            $this->override3 = [];
+        }
+
+        $this->suspiciousOverride1 = [[]];
+        <weak_warning descr="Written value is same as default one, consider removing this assignment.">$this->suspiciousOverride2 = [];</weak_warning>
+    }
+
+    /* false-positive: override is not in the constructor */
+    private $override4 = [];
+    public function method() {
+        $this->override4 = [];
+    }
+}

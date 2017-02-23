@@ -37,7 +37,6 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
 
             public void visitPhpMethod(Method method) {
                 ParameterImmediateOverrideStrategy.apply(method, holder);
-                PropertyImmediateOverrideStrategy.apply(method, holder);
             }
 
             public void visitPhpFunction(Function function) {

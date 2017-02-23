@@ -136,7 +136,7 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
                         }
 
                         if (!isPropertyReused) {
-                            holder.registerProblem(fieldDefault, messageDefaultOverride, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new DropFieldDefaultValueFix());
+                            holder.registerProblem(fieldDefault, messageDefaultOverride, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DropFieldDefaultValueFix());
                         }
                     }
                 }

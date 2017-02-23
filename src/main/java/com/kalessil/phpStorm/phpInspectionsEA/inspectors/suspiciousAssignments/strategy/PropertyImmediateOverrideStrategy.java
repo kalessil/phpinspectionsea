@@ -1,8 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy;
 
+import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -60,14 +62,28 @@ final public class PropertyImmediateOverrideStrategy {
                 continue;
             }
 
-            final PsiElement container = ((AssignmentExpression) assignmentCandidate).getVariable();
+            final AssignmentExpression assignment = (AssignmentExpression) assignmentCandidate;
+            final PsiElement container            = assignment.getVariable();
             if (container instanceof FieldReference && container.getFirstChild().getText().equals("$this")) {
                 final String overriddenProperty = ((FieldReference) container).getName();
                 if (null == overriddenProperty || !propertiesToCheck.contains(overriddenProperty)) {
                     continue;
                 }
 
-                holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                /* false-positives: ensure the property is not evolved into generating new value */
+                boolean isPropertyReused = false;
+                for (FieldReference candidate : PsiTreeUtil.findChildrenOfType(assignment.getValue(), FieldReference.class)) {
+                    if (!PsiEquivalenceUtil.areElementsEquivalent(container, candidate)) {
+                        continue;
+                    }
+
+                    isPropertyReused = true;
+                    break;
+                }
+
+                if (!isPropertyReused) {
+                    holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                }
             }
         }
         propertiesToCheck.clear();

@@ -3,10 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy.ParameterImmediateOverrideStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy.SelfAssignmentStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy.SuspiciousOperatorFormattingStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy.SwitchFallThroughStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +37,7 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
 
             public void visitPhpMethod(Method method) {
                 ParameterImmediateOverrideStrategy.apply(method, holder);
+                PropertyImmediateOverrideStrategy.apply(method, holder);
             }
 
             public void visitPhpFunction(Function function) {

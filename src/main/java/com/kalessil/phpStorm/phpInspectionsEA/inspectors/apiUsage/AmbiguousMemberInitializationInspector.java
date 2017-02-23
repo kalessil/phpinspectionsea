@@ -31,6 +31,12 @@ import java.util.Map;
  */
 
 public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
+    // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
+    public boolean REPORT_NULL_DEFAULTS = true;
+    @SuppressWarnings("WeakerAccess")
+    public boolean REPORT_INIT_FLAWS = true;
+
     private static final String messageDefaultValue    = "Null assignment can be safely removed. Define null in annotations if it's important.";
     private static final String messageDefaultOverride = "The assignment can be safely removed as the constructor overrides it.";
     private static final String messageSenselessWrite  = "Written value is same as default one, consider removing this assignment.";
@@ -45,6 +51,12 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpField(Field field) {
+                /* configuration-based toggle */
+                if (!REPORT_NULL_DEFAULTS) {
+                    return;
+                }
+
+                /* general construct requirements */
                 final PsiElement defaultValue = field.getDefaultValue();
                 if (field.isConstant() || !PhpLanguageUtil.isNull(defaultValue)) {
                     return;
@@ -66,6 +78,11 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
             }
 
             public void visitPhpMethod(Method method) {
+                /* configuration-based toggle */
+                if (!REPORT_INIT_FLAWS) {
+                    return;
+                }
+
                 /* process only constructors with non-empty body */
                 final PhpClass clazz = method.getContainingClass();
                 if (null == clazz || clazz.isInterface() || clazz.isTrait() || !method.getName().equals("__construct")) {

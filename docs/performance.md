@@ -30,7 +30,7 @@ optimizations.
 
 Synopsys: merging arrays in a loop causes high CPU usage and takes pretty much time for execution.
 
-Let's start with an example demontrating the case:
+Let's start with an example demonstrating the case:
 ```php
     $options = [];
     foreach ($configurationSources as $source) {

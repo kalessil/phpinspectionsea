@@ -39,6 +39,16 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
         falsePositives.add("FALSE");
         falsePositives.add("null");
         falsePositives.add("NULL");
+
+        falsePositives.add("class");
+        falsePositives.add("__LINE__");
+        falsePositives.add("__FILE__");
+        falsePositives.add("__DIR__");
+        falsePositives.add("__FUNCTION__");
+        falsePositives.add("__CLASS__");
+        falsePositives.add("__TRAIT__");
+        falsePositives.add("__METHOD__");
+        falsePositives.add("__NAMESPACE__");
     }
 
     @NotNull

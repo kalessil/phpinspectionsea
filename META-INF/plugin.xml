@@ -479,9 +479,9 @@ Bug-fix release, fixed a new bunch of false-positives<br/>
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OnlyWritesOnParameterInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="AmbiguousMemberInitializationInspection"       displayName="Ambiguous class property initialization"
+        shortName="PropertyInitializationFlawsInspection"         displayName="Class property initialization flaws"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.AmbiguousMemberInitializationInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PropertyInitializationFlawsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UselessUnsetInspection"                        displayName="Useless unset"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"

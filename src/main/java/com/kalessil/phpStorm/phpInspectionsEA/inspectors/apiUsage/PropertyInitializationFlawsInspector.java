@@ -16,8 +16,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,10 +32,10 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
+public class PropertyInitializationFlawsInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
     @SuppressWarnings("WeakerAccess")
-    public boolean REPORT_NULL_DEFAULTS = true;
+    public boolean REPORT_DEFAULTS_FLAWS = false;
     @SuppressWarnings("WeakerAccess")
     public boolean REPORT_INIT_FLAWS = true;
 
@@ -43,7 +45,7 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return "AmbiguousMemberInitializationInspection";
+        return "PropertyInitializationFlawsInspection";
     }
 
     @Override
@@ -52,7 +54,7 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpField(Field field) {
                 /* configuration-based toggle */
-                if (!REPORT_NULL_DEFAULTS) {
+                if (!REPORT_DEFAULTS_FLAWS) {
                     return;
                 }
 
@@ -152,7 +154,7 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
                             break;
                         }
 
-                        if (!isPropertyReused) {
+                        if (!isPropertyReused && REPORT_DEFAULTS_FLAWS) {
                             holder.registerProblem(fieldDefault, messageDefaultOverride, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DropFieldDefaultValueFix());
                         }
                     }
@@ -160,6 +162,34 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
                 propertiesToCheck.clear();
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return (new PropertyInitializationFlawsInspector.OptionsPanel()).getComponent();
+    }
+
+    public class OptionsPanel {
+        final private JPanel optionsPanel;
+
+        final private JCheckBox reportDefaultsFlaws;
+        final private JCheckBox reportInitFlaws;
+
+        public OptionsPanel() {
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
+
+            reportDefaultsFlaws = new JCheckBox("Check default values", REPORT_DEFAULTS_FLAWS);
+            reportDefaultsFlaws.addChangeListener(e -> REPORT_DEFAULTS_FLAWS = reportDefaultsFlaws.isSelected());
+            optionsPanel.add(reportDefaultsFlaws, "wrap");
+
+            reportInitFlaws = new JCheckBox("Check constructor", REPORT_INIT_FLAWS);
+            reportInitFlaws.addChangeListener(e -> REPORT_INIT_FLAWS = reportInitFlaws.isSelected());
+            optionsPanel.add(reportInitFlaws, "wrap");
+        }
+
+        public JPanel getComponent() {
+            return optionsPanel;
+        }
     }
 
     private static class DropFieldDefaultValueFix implements LocalQuickFix {
@@ -177,12 +207,12 @@ public class AmbiguousMemberInitializationInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final ConstantReference nullValue = (ConstantReference) descriptor.getPsiElement();
-            final Field field                 = (Field) nullValue.getParent();
+            final PsiElement defaultValue = descriptor.getPsiElement();
+            final Field field             = (Field) defaultValue.getParent();
 
             final PsiElement nameNode = NamedElementUtil.getNameIdentifier(field);
             if (null != nameNode) {
-                field.deleteChildRange(nameNode.getNextSibling(), nullValue);
+                field.deleteChildRange(nameNode.getNextSibling(), defaultValue);
             }
         }
     }

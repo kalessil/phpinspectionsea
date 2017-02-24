@@ -21,7 +21,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromSignatureResolvingUt
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInspection {
     private static final String strProblemNoSense = "Makes no sense, because it's always true according to annotations.";

@@ -1,12 +1,18 @@
 <?php
 
-    /* direct and inverted patterns */
-    echo isset($x[0]) ? <weak_warning descr="' ... ?? ...' construction should be used instead.">$x[0]</weak_warning> : null;
-    echo !isset($x[0]) ? null : <weak_warning descr="' ... ?? ...' construction should be used instead.">$x[0]</weak_warning>;
+    /* pattern: isset */
+    echo <weak_warning descr="'$x[0] ?? null' construction should be used instead.">isset($x[0]) ? $x[0] : null</weak_warning>;
+    echo <weak_warning descr="'$x[0] ?? null' construction should be used instead.">!isset($x[0]) ? null : $x[0]</weak_warning>;
 
-    /* alternative pattern */
-    echo array_key_exists(0, $x) ? <weak_warning descr="' ... ?? ...' construction should be used instead.">$x[0]</weak_warning> : null;
-    echo !array_key_exists(0, $x) ? null : <weak_warning descr="' ... ?? ...' construction should be used instead.">$x[0]</weak_warning>;
+    /* pattern: null comparision */
+    echo <weak_warning descr="'$x[0] ?? 'alternative'' construction should be used instead.">$x[0] !== null ? $x[0] : 'alternative'</weak_warning>;
+    echo <weak_warning descr="'$x[0] ?? 'alternative'' construction should be used instead.">null !== $x[0] ? $x[0] : 'alternative'</weak_warning>;
+    echo <weak_warning descr="'$x[0] ?? 'alternative'' construction should be used instead.">$x[0] === null ? 'alternative' : $x[0]</weak_warning>;
+    echo <weak_warning descr="'$x[0] ?? 'alternative'' construction should be used instead.">null === $x[0] ? 'alternative' : $x[0]</weak_warning>;
+
+    /* pattern: array_key_exists with alternative null */
+    echo <weak_warning descr="'$x[0] ?? null' construction should be used instead.">array_key_exists(0, $x) ? $x[0] : null</weak_warning>;
+    echo <weak_warning descr="'$x[0] ?? null' construction should be used instead.">!array_key_exists(0, $x) ? null : $x[0]</weak_warning>;
 
     /* false-positives */
     echo array_key_exists(0, $x) ? $x[0] : 'default';

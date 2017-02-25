@@ -4,6 +4,8 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -11,12 +13,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class SuspiciousLoopInspector extends BasePhpInspection {
     private static final String messageMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
     private static final String patternOverridesLoopVars  = "Variable '$%v%' is introduced in a outer loop and overridden here.";
     private static final String patternOverridesParameter = "Variable '$%v%' is introduced as a %t% parameter and overridden here.";
+    private static final String messageLoopBoundaries     = "Conditions and repeated operations are not complimentary, please check what's going on here.";
 
     @NotNull
     public String getShortName() {
@@ -33,12 +38,60 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
             public void visitPhpFor(For forStatement) {
                 this.inspectConditions(forStatement);
                 this.inspectVariables(forStatement);
+                this.inspectBoundariesCorrectness(forStatement);
             }
 
             private void inspectConditions(For forStatement) {
                 if (forStatement.getConditionalExpressions().length > 1) {
                     holder.registerProblem(forStatement.getFirstChild(), messageMultipleConditions, ProblemHighlightType.GENERIC_ERROR);
                 }
+            }
+
+            private void inspectBoundariesCorrectness(For forStatement) {
+                /* currently supported simple for-loops: one condition and one repeated operation */
+                final PsiElement[] repeated   = forStatement.getRepeatedExpressions();
+                final PsiElement[] conditions = forStatement.getConditionalExpressions();
+                if (1 != repeated.length || 1 != conditions.length) {
+                    return;
+                }
+
+                /* based on the condition, populate expected operations */
+                final List<IElementType> expectedRepeatedOperator = new ArrayList<>();
+                if (conditions[0] instanceof BinaryExpression) {
+                    final IElementType checkOperator = ((BinaryExpression) conditions[0]).getOperationType();
+                    if (checkOperator == PhpTokenTypes.opGREATER || checkOperator == PhpTokenTypes.opGREATER_OR_EQUAL) {
+                        expectedRepeatedOperator.add(PhpTokenTypes.opDECREMENT);
+                        expectedRepeatedOperator.add(PhpTokenTypes.opMINUS);
+                        expectedRepeatedOperator.add(PhpTokenTypes.opMINUS_ASGN);
+                    }
+                    if (checkOperator == PhpTokenTypes.opLESS || checkOperator == PhpTokenTypes.opLESS_OR_EQUAL) {
+                        expectedRepeatedOperator.add(PhpTokenTypes.opINCREMENT);
+                        expectedRepeatedOperator.add(PhpTokenTypes.opPLUS);
+                        expectedRepeatedOperator.add(PhpTokenTypes.opPLUS_ASGN);
+                    }
+                }
+                if (expectedRepeatedOperator.isEmpty()) {
+                    return;
+                }
+
+                final IElementType repeatedOperator;
+                if (repeated[0] instanceof UnaryExpression) {
+                    PsiElement operation = ((UnaryExpression) repeated[0]).getOperation();
+                    repeatedOperator     = null == operation ? null : operation.getNode().getElementType();
+                } else if (repeated[0] instanceof SelfAssignmentExpression) {
+                    repeatedOperator = ((SelfAssignmentExpression) repeated[0]).getOperationType();
+                } else if (repeated[0] instanceof AssignmentExpression) {
+                    PsiElement value = ((AssignmentExpression) repeated[0]).getValue();
+                    repeatedOperator = value instanceof BinaryExpression ? ((BinaryExpression) value).getOperationType() : null;
+                } else {
+                    repeatedOperator = null;
+                }
+                if (null == repeatedOperator || expectedRepeatedOperator.contains(repeatedOperator)) {
+                    expectedRepeatedOperator.clear();
+                    return;
+                }
+
+                holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundaries, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
 
             private void inspectVariables(PhpPsiElement loop) {

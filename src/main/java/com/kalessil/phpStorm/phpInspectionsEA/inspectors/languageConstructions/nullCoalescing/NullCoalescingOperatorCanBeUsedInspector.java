@@ -44,7 +44,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 final String replacementNc = GenerateAlternativeFromNullComparisonStrategy.generate(expression);
                 if (null != replacementNc) {
                     final String message = messageUseOperator.replace("%e%", replacementNc);
-                    holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new UseSuggestedReplacementFixer(replacementIsset));
+                    holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new UseSuggestedReplacementFixer(replacementNc));
 
                     return;
                 }

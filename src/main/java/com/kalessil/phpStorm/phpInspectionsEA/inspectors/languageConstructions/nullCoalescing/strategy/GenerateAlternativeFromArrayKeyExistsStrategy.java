@@ -24,7 +24,7 @@ final public class GenerateAlternativeFromArrayKeyExistsStrategy {
     static public String generate(@NotNull TernaryExpression expression) {
         /* handle inverted cases */
         PsiElement callCandidate = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
-        boolean isInverted      = false;
+        boolean isInverted       = false;
         if (callCandidate instanceof UnaryExpression) {
             final PsiElement operator = ((UnaryExpression) callCandidate).getOperation();
             if (null != operator && PhpTokenTypes.opNOT == operator.getNode().getElementType()) {

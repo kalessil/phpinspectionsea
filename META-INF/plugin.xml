@@ -593,7 +593,7 @@ Bug-fix release, fixed a new bunch of false-positives<br/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="NullCoalescingOperatorCanBeUsedInspection"     displayName="Null coalescing operator can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.NullCoalescingOperatorCanBeUsedInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.NullCoalescingOperatorCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="TypesCastingWithFunctionsInspection"           displayName="Type casting can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="ERROR"

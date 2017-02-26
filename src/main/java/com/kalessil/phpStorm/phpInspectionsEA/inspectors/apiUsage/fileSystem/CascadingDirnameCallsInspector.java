@@ -101,6 +101,11 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                     }
                     current = (FunctionReference) currentParams[0];
                 }
+                /* if no nested dirname calls, stop analysis */
+                if (current == reference) {
+                    levels.clear();
+                    return;
+                }
 
                 /* if we have 1+ nested call (top-level one is not considered) */
                 if (null != argument) {

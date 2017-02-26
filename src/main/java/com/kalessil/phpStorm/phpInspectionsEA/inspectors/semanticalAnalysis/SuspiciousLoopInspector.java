@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -13,15 +14,21 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class SuspiciousLoopInspector extends BasePhpInspection {
     private static final String messageMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
     private static final String patternOverridesLoopVars  = "Variable '$%v%' is introduced in a outer loop and overridden here.";
     private static final String patternOverridesParameter = "Variable '$%v%' is introduced as a %t% parameter and overridden here.";
     private static final String messageLoopBoundaries     = "Conditions and repeated operations are not complimentary, please check what's going on here.";
+
+    private static final Map<IElementType, IElementType> operationsInversion = new HashMap<>();
+    static {
+        operationsInversion.put(PhpTokenTypes.opGREATER,          PhpTokenTypes.opLESS_OR_EQUAL);
+        operationsInversion.put(PhpTokenTypes.opGREATER_OR_EQUAL, PhpTokenTypes.opLESS);
+        operationsInversion.put(PhpTokenTypes.opLESS,             PhpTokenTypes.opGREATER_OR_EQUAL);
+        operationsInversion.put(PhpTokenTypes.opLESS_OR_EQUAL,    PhpTokenTypes.opGREATER);
+    }
 
     @NotNull
     public String getShortName() {
@@ -58,7 +65,17 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                 /* based on the condition, populate expected operations */
                 final List<IElementType> expectedRepeatedOperator = new ArrayList<>();
                 if (conditions[0] instanceof BinaryExpression) {
-                    final IElementType checkOperator = ((BinaryExpression) conditions[0]).getOperationType();
+                    IElementType checkOperator = ((BinaryExpression) conditions[0]).getOperationType();
+
+                    /* false-positives: joda conditions applied, invert the operator */
+                    final PsiElement left = ((BinaryExpression) conditions[0]).getLeftOperand();
+                    if (null != left) {
+                        final IElementType leftType = left.getNode().getElementType();
+                        if (PhpElementTypes.NUMBER == leftType && operationsInversion.containsKey(checkOperator)) {
+                            checkOperator = operationsInversion.get(checkOperator);
+                        }
+                    }
+
                     if (checkOperator == PhpTokenTypes.opGREATER || checkOperator == PhpTokenTypes.opGREATER_OR_EQUAL) {
                         expectedRepeatedOperator.add(PhpTokenTypes.opDECREMENT);
                         expectedRepeatedOperator.add(PhpTokenTypes.opMINUS);

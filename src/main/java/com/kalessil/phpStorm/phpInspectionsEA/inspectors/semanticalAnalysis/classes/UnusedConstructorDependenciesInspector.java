@@ -14,9 +14,16 @@ import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
     private static final String message = "Property is used only in constructor, perhaps we are dealing with dead code here.";
@@ -53,8 +60,8 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
             /**
              * Extracts private fields references from method as field name => reference objects, so we could use name as glue.
              */
-            private HashMap<String, LinkedList<FieldReference>> getFieldReferences(@NotNull Method method, @NotNull HashMap<String, Field> privateFields) {
-                final HashMap<String, LinkedList<FieldReference>> filteredReferences = new HashMap<>();
+            private HashMap<String, List<FieldReference>> getFieldReferences(@NotNull Method method, @NotNull HashMap<String, Field> privateFields) {
+                final HashMap<String, List<FieldReference>> filteredReferences = new HashMap<>();
                 /* not all methods needs to be analyzed */
                 if (method.isAbstract() || method.isStatic()) {
                     return filteredReferences;
@@ -77,7 +84,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
 
                         /* bingo, store newly found reference */
                         if (!filteredReferences.containsKey(fieldName)) {
-                            filteredReferences.put(fieldName, new LinkedList<>());
+                            filteredReferences.put(fieldName, new ArrayList<>());
                         }
                         filteredReferences.get(fieldName).add(ref);
                     }
@@ -91,8 +98,8 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
             /**
              * Orchestrates extraction of references from methods
              */
-            private HashMap<String, LinkedList<FieldReference>> getMethodsFieldReferences(@NotNull Method constructor, @NotNull HashMap<String, Field> privateFields) {
-                final HashMap<String, LinkedList<FieldReference>> filteredReferences = new HashMap<>();
+            private HashMap<String, List<FieldReference>> getMethodsFieldReferences(@NotNull Method constructor, @NotNull HashMap<String, Field> privateFields) {
+                final HashMap<String, List<FieldReference>> filteredReferences = new HashMap<>();
 
                 //noinspection ConstantConditions as this checked in visitPhpMethod
                 for (Method method : constructor.getContainingClass().getOwnMethods()) {
@@ -100,12 +107,12 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    final HashMap<String, LinkedList<FieldReference>> methodsReferences = getFieldReferences(method, privateFields);
+                    final HashMap<String, List<FieldReference>> methodsReferences = getFieldReferences(method, privateFields);
                     if (methodsReferences.size() > 0) {
                         /* merge method's scan results into common container */
                         for (String fieldName : methodsReferences.keySet()) {
                             if (!filteredReferences.containsKey(fieldName)) {
-                                filteredReferences.put(fieldName, new LinkedList<>());
+                                filteredReferences.put(fieldName, new ArrayList<>());
                             }
                             filteredReferences
                                     .get(fieldName)
@@ -113,7 +120,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                         }
 
                         /* release references found in the method as they in common container now */
-                        for (LinkedList<FieldReference> references : methodsReferences.values()) {
+                        for (List<FieldReference> references : methodsReferences.values()) {
                             references.clear();
                         }
                         methodsReferences.clear();
@@ -145,10 +152,10 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                 }
 
                 /* === intensive part : extract references === */
-                final HashMap<String, LinkedList<FieldReference>> constructorsReferences = getFieldReferences(constructor, clazzPrivateFields);
+                final HashMap<String, List<FieldReference>> constructorsReferences = getFieldReferences(constructor, clazzPrivateFields);
                 if (constructorsReferences.size() > 0) {
                     /* constructor's references being identified */
-                    final HashMap<String, LinkedList<FieldReference>> otherReferences = getMethodsFieldReferences(constructor, clazzPrivateFields);
+                    final HashMap<String, List<FieldReference>> otherReferences = getMethodsFieldReferences(constructor, clazzPrivateFields);
                     if (otherReferences.size() > 0) {
                         /* methods's references being identified, time to re-visit constructor's references */
                         for (String fieldName : constructorsReferences.keySet()) {
@@ -164,14 +171,14 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                         }
 
                         /* release references found in the methods */
-                        for (LinkedList<FieldReference> references : otherReferences.values()) {
+                        for (List<FieldReference> references : otherReferences.values()) {
                             references.clear();
                         }
                         otherReferences.clear();
                     }
 
                     /* release references found in the constructor */
-                    for (LinkedList<FieldReference> references : constructorsReferences.values()) {
+                    for (List<FieldReference> references : constructorsReferences.values()) {
                         references.clear();
                     }
                     constructorsReferences.clear();

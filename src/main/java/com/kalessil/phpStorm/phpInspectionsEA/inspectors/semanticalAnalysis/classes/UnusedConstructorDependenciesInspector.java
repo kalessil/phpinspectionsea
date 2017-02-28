@@ -156,26 +156,24 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                 if (constructorsReferences.size() > 0) {
                     /* constructor's references being identified */
                     final HashMap<String, List<FieldReference>> otherReferences = getMethodsFieldReferences(constructor, clazzPrivateFields);
-                    if (otherReferences.size() > 0) {
-                        /* methods's references being identified, time to re-visit constructor's references */
-                        for (String fieldName : constructorsReferences.keySet()) {
-                            /* field is used, we do nothing more */
-                            if (otherReferences.containsKey(fieldName)) {
-                                continue;
-                            }
-
-                            /* report directly expressions in constructor, PS will cover unused fields detection */
-                            for (FieldReference reference : constructorsReferences.get(fieldName)) {
-                                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
-                            }
+                    /* methods's references being identified, time to re-visit constructor's references */
+                    for (String fieldName : constructorsReferences.keySet()) {
+                        /* field is used, we do nothing more */
+                        if (otherReferences.containsKey(fieldName)) {
+                            continue;
                         }
 
-                        /* release references found in the methods */
-                        for (List<FieldReference> references : otherReferences.values()) {
-                            references.clear();
+                        /* report directly expressions in constructor, PS will cover unused fields detection */
+                        for (FieldReference reference : constructorsReferences.get(fieldName)) {
+                            holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
                         }
-                        otherReferences.clear();
                     }
+
+                    /* release references found in the methods */
+                    for (List<FieldReference> references : otherReferences.values()) {
+                        references.clear();
+                    }
+                    otherReferences.clear();
 
                     /* release references found in the constructor */
                     for (List<FieldReference> references : constructorsReferences.values()) {

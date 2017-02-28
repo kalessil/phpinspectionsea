@@ -101,8 +101,16 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
             private HashMap<String, List<FieldReference>> getMethodsFieldReferences(@NotNull Method constructor, @NotNull HashMap<String, Field> privateFields) {
                 final HashMap<String, List<FieldReference>> filteredReferences = new HashMap<>();
 
+                /* collect methods to inspect, incl. once from traits */
+                final List<Method> methodsToCheck = new ArrayList<>();
                 //noinspection ConstantConditions as this checked in visitPhpMethod
-                for (Method method : constructor.getContainingClass().getOwnMethods()) {
+                Collections.addAll(methodsToCheck, constructor.getContainingClass().getOwnMethods());
+                for (PhpClass trait : constructor.getContainingClass().getTraits()) {
+                    Collections.addAll(methodsToCheck, trait.getOwnMethods());
+                }
+
+                /* find references */
+                for (Method method : methodsToCheck) {
                     if (method == constructor || method.isAbstract() || method.isStatic()) {
                         continue;
                     }
@@ -126,6 +134,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                         methodsReferences.clear();
                     }
                 }
+                methodsToCheck.clear();
 
                 return filteredReferences;
             }

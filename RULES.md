@@ -186,7 +186,7 @@ Inspections Lists (Performance)
 | Performance          | CountOnPropelCollectionInspection               | 'count(...)' calls on Propel collection                                                     | n/a |
 | Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                               | n/a       | yes | n/a |
 | Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                            | n/a |
-| Performance          | StrStrUsedAsStrPosInspection                    | 'str(i)str(...)' could be replaced with 'str(i)pos(...)'                                    | no        | yes | no  | 
+| Performance          | StrStrUsedAsStrPosInspection                    | 'str(i)str(...)' could be replaced with 'str(i)pos(...)'                                    | yes       | yes | no  | 
 | Performance          | AlterInForeachInspection                        | Slow alter in foreach                                                                       | n/a       | yes | n/a |
 | Performance          | ForeachOnArrayComponentsInspection              | 'array_keys(...)/array_values(...)' used as foreach array                                   | n/a |
 | Performance          | LowPerformanceArrayUniqueUsageInspection        | 'array_unique()' low performing usage                                                       | n/a |
@@ -198,10 +198,10 @@ Inspections Lists (Performance)
 | Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | no        | yes | no  |
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes       | yes | no  |
 | Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes       | yes | no  |
-| Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | n/a       | yes | n/a |
+| Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | no        | yes | no  |
 | Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                    | yes       | yes | no  |
 | Performance          | FilePutContentsMissUseInspection                | 'file_put_contents(...)' misused                                                            | yes       | yes | no  |
 | Performance          | PackedHashtableOptimizationInspection           | Packed hashtable optimizations                                                              | n/a       | yes | n/a |
 | Performance          | StaticLocalVariablesUsageInspection             | Static local variables usage                                                                | n/a       | yes | n/a |
 | Performance          | UnqualifiedReferenceInspection                  | Unqualified function/constant reference                                                     | yes       | yes | no  |
-| Performance          | ExplodeMissUseInspection                        | 'explode()' misused                                                                         | n/a       | yes | n/a |
+| Performance          | ExplodeMissUseInspection                        | 'explode()' misused                                                                         | no        | yes | no  |

@@ -3,7 +3,7 @@
 [![Downloads last month](http://phpstorm.espend.de/badge/7622/last-month)](https://plugins.jetbrains.com/plugin/7622)
 [![Donate to this project using Paypal](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/VReznichenko)
 
-Php Inspections (EA Extended) 
+Php Inspections (EA Extended); [our crowdfunding campaign](https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security/x/16148880#/) needs your support!
 ---
 A Static Code Analysis tool for PHP distributed as a PhpStorm/IdeaUltimate [plugin](plugins.jetbrains.com/plugin/7622?pr=phpStorm). 
 

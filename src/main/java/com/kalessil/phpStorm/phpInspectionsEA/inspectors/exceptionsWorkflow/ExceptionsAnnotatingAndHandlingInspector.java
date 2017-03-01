@@ -89,7 +89,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
             public void visitPhpMethod(Method method) {
                 final PhpClass clazz = method.getContainingClass();
-                if (null == clazz || FileSystemUtil.isTestClass(clazz)) {
+                if (null == clazz || method.isAbstract() || FileSystemUtil.isTestClass(clazz)) {
                     return;
                 }
 

@@ -23,3 +23,6 @@
     foreach ($generator as $value) {
         is_int($value);
     }
+
+    /* ensures not reporting stub-functions */
+    foreach (array_rand([]) as $random) {}

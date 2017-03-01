@@ -586,7 +586,7 @@ Bug-fix release, fixed a new bunch of false-positives<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ParameterDefaultValueIsNotNullInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DisallowWritingIntoStaticPropertiesInspection" displayName="Disallow writing into static properties"
-        groupName="Code Style" enabledByDefault="true" level="WARNING"
+        groupName="Code Style" enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DisallowWritingIntoStaticPropertiesInspector"/>
 
 

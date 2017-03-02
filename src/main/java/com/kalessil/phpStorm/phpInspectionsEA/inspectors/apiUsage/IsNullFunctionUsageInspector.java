@@ -68,9 +68,9 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                         target = expression;
 
                         final IElementType operation = expression.getOperationType();
-                        if (operation == PhpTokenTypes.opEQUAL || operation == PhpTokenTypes.opIDENTICAL) {
+                        if (PhpTokenTypes.opEQUAL == operation || PhpTokenTypes.opIDENTICAL == operation) {
                             checksIsNull = PhpLanguageUtil.isTrue(secondOperand);
-                        } else if (operation == PhpTokenTypes.opNOT_EQUAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
+                        } else if (PhpTokenTypes.opNOT_EQUAL == operation || PhpTokenTypes.opNOT_IDENTICAL == operation) {
                             checksIsNull = !PhpLanguageUtil.isTrue(secondOperand);
                         } else {
                             return;

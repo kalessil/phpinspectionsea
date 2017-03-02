@@ -394,6 +394,10 @@ Bug-fix release, fixed a new bunch of false-positives<br/>
         shortName="NotThrownExceptionInspection"                  displayName="Incomplete throw statements"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptions.NotThrownExceptionInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="TraitsPropertiesConflictsInspection"           displayName="Traits properties conflicts resolution"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TraitsPropertiesConflictsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

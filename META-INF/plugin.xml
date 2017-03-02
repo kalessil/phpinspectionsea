@@ -241,7 +241,7 @@ Bug-fix release, fixed a new bunch of false-positives<br/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ExceptionsAnnotatingAndHandlingInspection"      displayName="Exceptions handling and annotating"
         groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptionsWorkflow.ExceptionsAnnotatingAndHandlingInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptions.ExceptionsAnnotatingAndHandlingInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DegradedSwitchInspection"                       displayName="Switch-case could be simplified"
         groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
@@ -390,6 +390,10 @@ Bug-fix release, fixed a new bunch of false-positives<br/>
         shortName="SuspiciousBinaryOperationInspection"           displayName="Suspicious binary operations"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.SuspiciousBinaryOperationInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="NotThrownExceptionInspection"                  displayName="Incomplete throw statements"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptions.NotThrownExceptionInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

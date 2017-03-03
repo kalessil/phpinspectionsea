@@ -13,6 +13,10 @@ trait IOAT_InTrait {
     public function c(){ return $this instanceof $this;  }
 }
 
+/* a bug: left and right operands are identical */
+$a = <error descr="Left and right operands are identical.">$x == ($x)</error>;
+$a = <error descr="Left and right operands are identical.">$x == $x</error>;
+
 /* a typo: comparison instead of assignment */
 $a <error descr="It seems that '=' should be here.">==</error> $b;
 

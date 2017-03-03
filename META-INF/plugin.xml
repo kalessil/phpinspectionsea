@@ -286,6 +286,10 @@ Bug-fix release, fixed a new bunch of false-positives<br/>
          shortName="StrNcmpUsedAsStrPosInspection"                 displayName="'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)'"
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrNcmpUsedAsStrPosInspector"/>
+      <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="UnnecessaryElseInspection"                     displayName="Detect unnecessary else keywords"
+         groupName="Control Flow"                                  enabledByDefault="false" level="WEAK WARNING"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnnecessaryElseInspector"/>
 
 
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -590,8 +594,8 @@ Bug-fix release, fixed a new bunch of false-positives<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DisallowWritingIntoStaticPropertiesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnnecessaryElseInspection"                     displayName="Detect unnecessary else keywords"
-        groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessaryElseInspector"/>
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnnecessaryElseInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

@@ -56,3 +56,20 @@ if(true){
 }<weak_warning descr="Keyword else can be safely removed.">else</weak_warning>{
     echo "Test";
 }
+
+foreach([1,2,3] as $b){
+    if (1 > 4) {
+        continue;
+    }  <weak_warning descr="Keyword else can be safely removed.">else</weak_warning> {
+        echo 123;
+    }
+
+}
+foreach([1,2,3] as $b){
+    if (1 > 4) {
+        break;
+    }  <weak_warning descr="Keyword else can be safely removed.">elseif</weak_warning>(1>$b) {
+        echo 123;
+    }
+
+}

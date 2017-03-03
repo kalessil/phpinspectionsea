@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -65,7 +65,7 @@ public class UnnecessaryElseInspector extends BasePhpInspection {
                 }
 
                 // @todo According to the next statement elseif or else we can provide different fixers
-                if (lastChildElement instanceof PhpReturn || lastChildElement instanceof PhpThrow) {
+                if (lastChildElement instanceof PhpReturn || lastChildElement instanceof PhpThrow || lastChildElement instanceof PhpContinue || lastChildElement instanceof PhpBreak) {
                     // return keyword before Else
 
                     LocalQuickFix fixer = hasBraces(elseStatement) ? new UnnecessaryElseFixer() : null;

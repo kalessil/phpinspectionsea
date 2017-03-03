@@ -8,11 +8,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.ClassReference;
-import com.jetbrains.php.lang.psi.elements.NewExpression;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpThrow;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
@@ -29,12 +27,13 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class NotThrownExceptionInspector extends BasePhpInspection {
-    private static final String message = "It's probably intended to throw an exception here.";
+public class IncompleteThrowStatementsInspector extends BasePhpInspection {
+    private static final String messageThrow   = "It's probably intended to throw an exception here.";
+    private static final String messageSprintf = "It's probably intended to use sprintf here.";
 
     @NotNull
     public String getShortName() {
-        return "NotThrownExceptionInspection";
+        return "IncompleteThrowStatementsInspection";
     }
 
     @Override
@@ -44,26 +43,51 @@ public class NotThrownExceptionInspector extends BasePhpInspection {
             public void visitPhpNewExpression(NewExpression expression) {
                 final PsiElement parent = expression.getParent();
                 final ClassReference argument = expression.getClassReference();
-                if (null == argument || null == parent || parent.getClass() != StatementImpl.class) {
+                if (null == argument || null == parent) {
                     return;
                 }
 
-                final PsiElement reference = argument.resolve();
-                if (reference instanceof PhpClass) {
-                    final Set<PhpClass> inheritanceChain = InterfacesExtractUtil.getCrawlCompleteInheritanceTree((PhpClass) reference, true);
-                    for (PhpClass clazz : inheritanceChain) {
-                        if (clazz.getFQN().equals("\\Exception")) {
-                            holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
-                            break;
-                        }
+                /* pattern '... new Exception('...%s...'[, ...]);'*/
+                final PsiElement[] params = expression.getParameters();
+                if (params.length > 0 && params[0] instanceof StringLiteralExpression) {
+                    boolean containsPlaceholders = ((StringLiteralExpression) params[0]).getContents().contains("%s");
+                    if (containsPlaceholders) {
+                        final String replacement = "sprintf(" + params[0].getText() + ", )";
+                        holder.registerProblem(params[0], messageSprintf, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new AddMissingSprintfFix(replacement));
                     }
-                    inheritanceChain.clear();
+                }
+
+                /* pattern 'new Exception(...);'*/
+                if (parent.getClass() == StatementImpl.class) {
+                    final PsiElement reference = argument.resolve();
+                    if (reference instanceof PhpClass) {
+                        final Set<PhpClass> inheritanceChain = InterfacesExtractUtil.getCrawlCompleteInheritanceTree((PhpClass) reference, true);
+                        for (PhpClass clazz : inheritanceChain) {
+                            if (clazz.getFQN().equals("\\Exception")) {
+                                holder.registerProblem(expression, messageThrow, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new AddMissingThrowFix());
+                                break;
+                            }
+                        }
+                        inheritanceChain.clear();
+                    }
                 }
             }
         };
     }
 
-    class TheLocalFix implements LocalQuickFix {
+    private class AddMissingSprintfFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Wrap with sprintf(...)";
+        }
+
+        public AddMissingSprintfFix(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private class AddMissingThrowFix implements LocalQuickFix {
         @NotNull
         @Override
         public String getName() {

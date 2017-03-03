@@ -391,9 +391,9 @@ Bug-fix release, fixed a new bunch of false-positives<br/>
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.SuspiciousBinaryOperationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="NotThrownExceptionInspection"                  displayName="Incomplete throw statements"
+        shortName="IncompleteThrowStatementsInspection"           displayName="Incomplete throw statements"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptions.NotThrownExceptionInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptions.IncompleteThrowStatementsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="TraitsPropertiesConflictsInspection"           displayName="Traits properties conflicts resolution"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"

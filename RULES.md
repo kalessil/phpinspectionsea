@@ -158,7 +158,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | DateTimeConstantsUsageInspection                | DateTime constants usage validity                         | yes       | yes | no   |
 | Probable bugs        | SuspiciousReturnInspection                      | Suspicious returns                                        | n/a       | yes | n/a  |
 | Probable bugs        | SuspiciousBinaryOperationInspection             | Suspicious binary operations                              | n/a       | yes | n/a  |
-| Probable bugs        | NotThrownExceptionInspection                    | Incomplete throw statements                               | yes       | yes | no   |
+| Probable bugs        | IncompleteThrowStatementsInspection             | Incomplete throw statements                               | yes       | yes | no   |
 
 Inspections Lists (Security)
 ---

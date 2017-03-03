@@ -19,8 +19,10 @@ class BasePropertiesExample {
     protected $baseDifferent2 = true;
 }
 class PropertiesExample extends BasePropertiesExample {
-    use PropertiesTraitForBase1; // Warning: $baseSame; Strict Standards => report in the use
-    use PropertiesTraitForBase2; // Error: $baseDifferent2; Fatal error => report in the use
+    use
+        <weak_warning descr="'PropertiesExample' and 'PropertiesTraitForBase1' define the same property ($baseSame).">PropertiesTraitForBase1</weak_warning>,
+        <error descr="'PropertiesExample' and 'PropertiesTraitForBase2' define the same property ($baseDifferent2).">PropertiesTraitForBase2</error>
+    ;
 
     use PropertiesTrait;
     public <weak_warning descr="'PropertiesExample' and 'PropertiesTrait' define the same property ($same).">$same</weak_warning>

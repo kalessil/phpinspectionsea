@@ -82,7 +82,7 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
             return "Wrap with sprintf(...)";
         }
 
-        public AddMissingSprintfFix(@NotNull String expression) {
+        AddMissingSprintfFix(@NotNull String expression) {
             super(expression);
         }
     }

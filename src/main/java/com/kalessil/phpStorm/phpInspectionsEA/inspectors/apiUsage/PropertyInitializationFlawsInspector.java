@@ -35,7 +35,7 @@ import java.util.Map;
 public class PropertyInitializationFlawsInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
     @SuppressWarnings("WeakerAccess")
-    public boolean REPORT_DEFAULTS_FLAWS = false;
+    public boolean REPORT_DEFAULTS_FLAWS = true;
     @SuppressWarnings("WeakerAccess")
     public boolean REPORT_INIT_FLAWS = true;
 

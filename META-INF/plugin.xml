@@ -588,7 +588,10 @@ Bug-fix release, fixed a new bunch of false-positives<br/>
         shortName="DisallowWritingIntoStaticPropertiesInspection" displayName="Disallow writing into static properties"
         groupName="Code Style" enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DisallowWritingIntoStaticPropertiesInspector"/>
-
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="UnnecessaryElseInspection"                     displayName="Detect unnecessary else keywords"
+        groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessaryElseInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

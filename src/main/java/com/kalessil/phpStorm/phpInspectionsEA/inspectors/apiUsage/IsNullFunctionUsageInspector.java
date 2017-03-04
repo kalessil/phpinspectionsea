@@ -81,8 +81,20 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                 /* report the issue */
                 final String replacement = (checksIsNull ? "null === " : "null !== ") + params[0].getText();
                 final String message     = messagePattern.replace("%e%", replacement);
-                holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING, new UseSuggestedReplacementFixer(replacement));
+                holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING, new CompareToNullFix(replacement));
             }
         };
+    }
+
+    class CompareToNullFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use null comparison instead";
+        }
+
+        CompareToNullFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

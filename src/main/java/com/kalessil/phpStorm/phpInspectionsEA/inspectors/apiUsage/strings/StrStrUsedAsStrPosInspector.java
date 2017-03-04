@@ -70,7 +70,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                                     .replace("%f%", mapping.get(strFunctionName))
                                     .replace("%o%", operator.length() == 2 ? operator + "=": operator);
                                 final String message     = messagePattern.replace("%e%", replacement);
-                                holder.registerProblem(parent, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseSuggestedReplacementFixer(replacement));
+                                holder.registerProblem(parent, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseStrposFix(replacement));
 
                                 return;
                             }
@@ -89,11 +89,23 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                         .replace("%f%", mapping.get(strFunctionName))
                         .replace("%o%", reference.getParent() instanceof UnaryExpression ? "===": "!==");
                     final String message     = messagePattern.replace("%e%", replacement);
-                    holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseSuggestedReplacementFixer(replacement));
+                    holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseStrposFix(replacement));
 
                     //return;
                 }
             }
         };
+    }
+
+    class UseStrposFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use str[i]pos() instead";
+        }
+
+        UseStrposFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

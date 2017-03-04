@@ -97,7 +97,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
         };
     }
 
-    class UseStrposFix extends UseSuggestedReplacementFixer {
+    private class UseStrposFix extends UseSuggestedReplacementFixer {
         @NotNull
         @Override
         public String getName() {

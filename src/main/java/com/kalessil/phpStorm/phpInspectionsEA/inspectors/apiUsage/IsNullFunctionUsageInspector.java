@@ -86,7 +86,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
         };
     }
 
-    class CompareToNullFix extends UseSuggestedReplacementFixer {
+    private class CompareToNullFix extends UseSuggestedReplacementFixer {
         @NotNull
         @Override
         public String getName() {

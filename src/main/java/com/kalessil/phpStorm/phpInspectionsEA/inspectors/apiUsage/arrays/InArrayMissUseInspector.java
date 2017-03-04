@@ -50,7 +50,7 @@ public class InArrayMissUseInspector extends BasePhpInspection {
                             .replace("%a%", subcallParams[0].getText())
                             .replace("%k%", params[0].getText());
                         final String message     = patternKeyExists.replace("%e%", replacement);
-                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseSuggestedReplacementFixer(replacement));
+                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseArrayKeyExistsFix(replacement));
 
                         return;
                     }
@@ -109,11 +109,35 @@ public class InArrayMissUseInspector extends BasePhpInspection {
                                 .replace("%o%", (checkExists ? "==" : "!=") + (isStrict ? "=" : ""))
                                 .replace("%l%", lastItem.getText());
                         final String message     = patternComparison.replace("%e%", replacement);
-                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseSuggestedReplacementFixer(replacement));
+                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseComparisonFix(replacement));
                         // return;
                     }
                 }
             }
         };
+    }
+
+    private class UseArrayKeyExistsFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use array_key_exists() instead";
+        }
+
+        UseArrayKeyExistsFix(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private class UseComparisonFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Compare elements instead";
+        }
+
+        UseComparisonFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

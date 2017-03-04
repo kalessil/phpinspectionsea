@@ -70,8 +70,8 @@ abstract class BaseSameEqualsFunctionReferenceStrategy {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private SmartPsiElementPointer<PsiElement> expected;
-        private SmartPsiElementPointer<PsiElement> provided;
+        final private SmartPsiElementPointer<PsiElement> expected;
+        final private SmartPsiElementPointer<PsiElement> provided;
         final private String replacement;
 
         TheLocalFix(@NotNull PsiElement expected, @NotNull PsiElement provided, @NotNull String replacement) {

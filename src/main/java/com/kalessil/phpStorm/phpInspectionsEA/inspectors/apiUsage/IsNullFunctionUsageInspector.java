@@ -65,7 +65,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                     }
 
                     if (PhpLanguageUtil.isBoolean(secondOperand)) {
-                        target = expression;
+                        target = parent;
 
                         final IElementType operation = expression.getOperationType();
                         if (PhpTokenTypes.opEQUAL == operation || PhpTokenTypes.opIDENTICAL == operation) {
@@ -73,7 +73,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                         } else if (PhpTokenTypes.opNOT_EQUAL == operation || PhpTokenTypes.opNOT_IDENTICAL == operation) {
                             checksIsNull = !PhpLanguageUtil.isTrue(secondOperand);
                         } else {
-                            return;
+                            target = reference;
                         }
                     }
                 }

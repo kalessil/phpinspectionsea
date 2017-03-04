@@ -8,13 +8,14 @@ $x = <error descr="instanceof against traits returns 'false'.">$z instanceof \IO
 
 /* false-positive: instanceof in trait and late binding */
 trait IOAT_InTrait {
-    public function a(){ return $this instanceof self;   }
-    public function b(){ return $this instanceof static; }
-    public function c(){ return $this instanceof $this;  }
+    public function a($x){ return $x instanceof self;   }
+    public function b($x){ return $x instanceof static; }
+    public function c($x){ return $x instanceof $this;  }
 }
 
 /* a bug: left and right operands are identical */
 $a = <error descr="Left and right operands are identical.">$x == ($x)</error>;
+$a = <error descr="Left and right operands are identical.">($x) == $x</error>;
 $a = <error descr="Left and right operands are identical.">$x == $x</error>;
 
 /* a typo: comparison instead of assignment */

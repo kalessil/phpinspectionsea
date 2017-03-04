@@ -57,7 +57,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                     }
                 }
                 if (parent instanceof BinaryExpression) {
-                    /* extract expression parts */
+                    /* extract isnulls' expression parts */
                     final BinaryExpression expression = (BinaryExpression) parent;
                     PsiElement secondOperand          = expression.getLeftOperand();
                     if (reference == secondOperand) {
@@ -65,12 +65,12 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                     }
 
                     if (PhpLanguageUtil.isBoolean(secondOperand)) {
-                        target = parent;
-
                         final IElementType operation = expression.getOperationType();
                         if (PhpTokenTypes.opEQUAL == operation || PhpTokenTypes.opIDENTICAL == operation) {
+                            target       = parent;
                             checksIsNull = PhpLanguageUtil.isTrue(secondOperand);
                         } else if (PhpTokenTypes.opNOT_EQUAL == operation || PhpTokenTypes.opNOT_IDENTICAL == operation) {
+                            target       = parent;
                             checksIsNull = !PhpLanguageUtil.isTrue(secondOperand);
                         } else {
                             target = reference;

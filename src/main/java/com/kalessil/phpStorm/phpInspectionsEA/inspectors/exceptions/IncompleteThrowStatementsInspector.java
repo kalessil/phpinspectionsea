@@ -41,36 +41,42 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpNewExpression(NewExpression expression) {
-                final PsiElement parent = expression.getParent();
+                final PsiElement parent       = expression.getParent();
                 final ClassReference argument = expression.getClassReference();
                 if (null == argument || null == parent) {
                     return;
                 }
 
-                /* pattern '... new Exception('...%s...'[, ...]);'*/
+                /* pattern '... new Exception('...%s...'[, ...]);' */
                 final PsiElement[] params = expression.getParameters();
                 if (params.length > 0 && params[0] instanceof StringLiteralExpression) {
                     boolean containsPlaceholders = ((StringLiteralExpression) params[0]).getContents().contains("%s");
-                    if (containsPlaceholders) {
+                    if (containsPlaceholders && isExceptionClass(argument)) {
                         final String replacement = "sprintf(" + params[0].getText() + ", )";
                         holder.registerProblem(params[0], messageSprintf, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new AddMissingSprintfFix(replacement));
                     }
                 }
 
-                /* pattern 'new Exception(...);'*/
-                if (parent.getClass() == StatementImpl.class) {
-                    final PsiElement reference = argument.resolve();
-                    if (reference instanceof PhpClass) {
-                        final Set<PhpClass> inheritanceChain = InterfacesExtractUtil.getCrawlCompleteInheritanceTree((PhpClass) reference, true);
-                        for (PhpClass clazz : inheritanceChain) {
-                            if (clazz.getFQN().equals("\\Exception")) {
-                                holder.registerProblem(expression, messageThrow, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new AddMissingThrowFix());
-                                break;
-                            }
-                        }
-                        inheritanceChain.clear();
-                    }
+                /* pattern 'new Exception(...);' */
+                if (parent.getClass() == StatementImpl.class && isExceptionClass(argument)) {
+                    holder.registerProblem(expression, messageThrow, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new AddMissingThrowFix());
                 }
+            }
+
+            private boolean isExceptionClass(@NotNull ClassReference reference) {
+                final PsiElement resolved = reference.resolve();
+                if (resolved instanceof PhpClass) {
+                    final Set<PhpClass> inheritanceChain = InterfacesExtractUtil.getCrawlCompleteInheritanceTree((PhpClass) resolved, true);
+                    for (PhpClass clazz : inheritanceChain) {
+                        if (clazz.getFQN().equals("\\Exception")) {
+                            inheritanceChain.clear();
+                            return true;
+                        }
+                    }
+                    inheritanceChain.clear();
+                }
+
+                return false;
             }
         };
     }

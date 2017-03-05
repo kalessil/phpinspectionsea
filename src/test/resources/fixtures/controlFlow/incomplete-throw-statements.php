@@ -8,3 +8,4 @@ throw new MyException(<error descr="It's probably intended to use sprintf here."
 
 class MyStdClass extends stdClass {}
 new MyStdClass();
+new MyStdClass('%s');

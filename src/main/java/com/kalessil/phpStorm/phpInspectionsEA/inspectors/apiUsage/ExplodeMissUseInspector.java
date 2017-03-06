@@ -36,7 +36,7 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
     private static final Map<String, String> semanticMapping = new HashMap<>();
     static {
         semanticMapping.put("count",   "substr_count(%s%, %f%) + 1");
-        semanticMapping.put("current", "strstr(%s%, %f%, true)");
+        // semanticMapping.put("current", "strstr(%s%, %f%, true)"); if fragment missing, strstr changes behaviour
     }
 
     @NotNull

@@ -9,6 +9,7 @@ import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Variable;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -16,7 +17,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -28,14 +31,20 @@ import java.util.HashSet;
  */
 
 public class ExplodeMissUseInspector extends BasePhpInspection {
-    private static final String message = "Consider refactoring with substr_count() instead (consumes less cpu and memory resources).";
+    private static final String messagePattern = "Consider using '%e%' instead (consumes less cpu and memory resources).";
+
+    private static final Map<String, String> semanticMapping = new HashMap<>();
+    static {
+        semanticMapping.put("count",   "substr_count(%s%, %f%) + 1");
+        semanticMapping.put("current", "strstr(%s%, %f%, true)");
+    }
 
     @NotNull
     public String getShortName() {
         return "ExplodeMissUseInspection";
     }
 
-        @Override
+    @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
@@ -43,7 +52,7 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                 /* general structure expectations */
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if (null == functionName || 1 != params.length || !functionName.equals("count")) {
+                if (null == functionName || 1 != params.length || !semanticMapping.containsKey(functionName)) {
                     return;
                 }
 
@@ -60,7 +69,8 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                     if (OpenapiTypesUtil.isFunctionReference(value)) {
                         /* inner call must be explode() */
                         final String innerFunctionName = ((FunctionReference) value).getName();
-                        if (null == innerFunctionName || !innerFunctionName.equals("explode")) {
+                        final PsiElement[] innerParams = ((FunctionReference) value).getParameters();
+                        if (null == innerFunctionName || 2 != innerParams.length || !innerFunctionName.equals("explode")) {
                             return;
                         }
 
@@ -79,7 +89,15 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                             }
                         }
 
-                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        final String replacement = semanticMapping.get(functionName)
+                                .replace("%f%", innerParams[0].getText())
+                                .replace("%s%", innerParams[1].getText());
+                        final String message = messagePattern.replace("%e%", replacement);
+                        if (params[0] == value) {
+                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseSuggestedReplacementFixer(replacement));
+                        } else {
+                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        }
                     }
                 }
                 values.clear();

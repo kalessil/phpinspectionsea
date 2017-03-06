@@ -9,9 +9,6 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * (c) Funivan <alotofall@gmail.com>
- */
 public class UnnecessaryElseFixer implements LocalQuickFix {
 
     @NotNull
@@ -68,10 +65,8 @@ public class UnnecessaryElseFixer implements LocalQuickFix {
         if (expression instanceof ElseIf) {
             Statement anIf = PhpPsiElementFactory.createStatement(project, "if");
             element.replace(anIf);
-            return;
         }
 
-        //@todo check if we should fire exception. This lines should be never executed
     }
 
 }

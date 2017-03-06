@@ -1,7 +1,15 @@
 <html>
 <body>
-@todo add description
-<!-- tooltip end -->
-Text after this comment will not be shown in tooltips.
+Find useless <b>else</b> keywords that can be removed without any code break.<br>
+<pre>
+function getStep(int $id){
+  if ($id > 4) {
+    return 1;
+  } else {
+    return 5;
+  }
+}
+</pre>
+In this case <b>else</b> keyword can be safely removed.
 </body>
 </html>

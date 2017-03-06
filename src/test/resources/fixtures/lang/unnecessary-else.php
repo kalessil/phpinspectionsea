@@ -44,9 +44,9 @@ if(true){
 
 if (1 > 4) {
     die(1);
-} <weak_warning descr="Keyword else can be safely removed.">elseif</weak_warning> (1 > 5) {
+} elseif (1 > 5) {
     return 2;
-} <weak_warning descr="Keyword else can be safely removed.">elseif</weak_warning> (1 > 5) {
+} elseif (1 > 5) {
     return 3;
 }
 
@@ -68,7 +68,7 @@ foreach([1,2,3] as $b){
 foreach([1,2,3] as $b){
     if (1 > 4) {
         break;
-    }  <weak_warning descr="Keyword else can be safely removed.">elseif</weak_warning>(1>$b) {
+    }  elseif(1>$b) {
         echo 123;
     }
 

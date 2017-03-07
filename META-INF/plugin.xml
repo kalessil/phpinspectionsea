@@ -294,6 +294,10 @@ This release brings new QFs, probable bugs inspections and fixes a new bunch of 
          shortName="StrNcmpUsedAsStrPosInspection"                 displayName="'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)'"
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrNcmpUsedAsStrPosInspector"/>
+  <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="StringNormalizationInspection"                 displayName="String normalization flaws"
+         groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StringNormalizationInspector"/>
 
 
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

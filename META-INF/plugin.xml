@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.3</version>
+  <version>2.3.4</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -54,21 +54,29 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Bug-fix release, fixed a new bunch of false-positives<br/>
-<br/>
-- Fixed infinite inspection appearing in very rare cases<br/>
-- Foreach source to iterate over: resolved false-positives (ø)<br/>
-- Loop which does not loop: resolved false-positives (nested continuations not recognized)<br/>
-- Senseless proxy function: resolved false-positives (compatible types override)<br/>
-- Statement could be decoupled from foreach: resolved false-positives (inner break/continue/throw/return)<br/>
-- Static methods invocation via '->': resolved false-positives (PhpUnit v6)<br/>
-- Unnecessary double quotes: resolved false-positives (single quotes are not recognized in some cases)<br/>
-- Unnecessary parentheses: resolved false-positives (__invoke contexts)<br/>
+Our <a href="https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security/x/16148880#/">crowdfunding campaign</a> needs your support!
+This release brings new QFs, probable bugs inspections and fixes a new bunch of false-positives.
 <br/>
 <br/>
-- A constant can be used: new patterns<br/>
-- Suspicious binary operations: implemented<br/>
-- 'explode()' misused: implemented<br/>
+- Cascading dirname() calls: resolved false-positives (already fixed calls reported)<br/>
+- Exceptions handling and annotating: resolved false-positives (abstract methods)<br/>
+- Foreach source to iterate over: resolved false-positives (mixed return types of inlined core functions)<br/>
+- Unqualified function/constant reference: resolved false-positives (magic constants)<br/>
+- Unknown inspection suppression: resolved false-positive (SpellCheckingInspection)<br/>
+- Unused constructor dependencies: resolved false-positives (multiple cases)<br/>
+<br/>
+- Ambiguous class property initialization: dropped<br/>
+- Null coalescing operator can be used: new patterns<br/>
+- Suspicious binary operations: new patterns<br/>
+- Suspicious loop: new patterns<br/>
+- 'in_array(...)' misused: implemented QF<br/>
+- 'null === ...' can be used: re-implemented QF<br/>
+- 'str(i)str(...)' could be replaced with 'str(i)pos(...)': implemented QF<br/>
+<br/>
+- Class property initialization flaws: implemented<br/>
+- Disallow writing into static properties: implemented (needs activation, thank you @funivan)<br/>
+- Incomplete throw statements: implemented<br/>
+- Traits properties conflicts resolution: implemented<br/>
 <hr/>
   ]]></change-notes>
 
@@ -241,7 +249,7 @@ Bug-fix release, fixed a new bunch of false-positives<br/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ExceptionsAnnotatingAndHandlingInspection"      displayName="Exceptions handling and annotating"
         groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptionsWorkflow.ExceptionsAnnotatingAndHandlingInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptions.ExceptionsAnnotatingAndHandlingInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DegradedSwitchInspection"                       displayName="Switch-case could be simplified"
         groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
@@ -290,6 +298,10 @@ Bug-fix release, fixed a new bunch of false-positives<br/>
          shortName="UnnecessaryElseInspection"                     displayName="Detect unnecessary else keywords"
          groupName="Control Flow"                                  enabledByDefault="false" level="WEAK WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnnecessaryElseInspector"/>
+  <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="StringNormalizationInspection"                 displayName="String normalization flaws"
+         groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StringNormalizationInspector"/>
 
 
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -394,6 +406,14 @@ Bug-fix release, fixed a new bunch of false-positives<br/>
         shortName="SuspiciousBinaryOperationInspection"           displayName="Suspicious binary operations"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.SuspiciousBinaryOperationInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="IncompleteThrowStatementsInspection"           displayName="Incomplete throw statements"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptions.IncompleteThrowStatementsInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="TraitsPropertiesConflictsInspection"           displayName="Traits properties conflicts resolution"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TraitsPropertiesConflictsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

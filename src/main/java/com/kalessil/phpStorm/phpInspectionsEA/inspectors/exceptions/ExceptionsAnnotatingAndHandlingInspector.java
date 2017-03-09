@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptionsWorkflow;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptions;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -89,7 +89,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
             public void visitPhpMethod(Method method) {
                 final PhpClass clazz = method.getContainingClass();
-                if (null == clazz || FileSystemUtil.isTestClass(clazz)) {
+                if (null == clazz || method.isAbstract() || FileSystemUtil.isTestClass(clazz)) {
                     return;
                 }
 

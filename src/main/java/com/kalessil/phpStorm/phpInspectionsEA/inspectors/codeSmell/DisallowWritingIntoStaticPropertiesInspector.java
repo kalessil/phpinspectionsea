@@ -117,9 +117,7 @@ public class DisallowWritingIntoStaticPropertiesInspector extends BasePhpInspect
             allowWriteFromSourceClassC = new JCheckBox("Allow write from the source class", ALLOW_WRITE_FROM_SOURCE_CLASS);
 
 
-            allowWriteFromSourceClassC.addChangeListener(e -> {
-                ALLOW_WRITE_FROM_SOURCE_CLASS = allowWriteFromSourceClassC.isSelected();
-            });
+            allowWriteFromSourceClassC.addChangeListener(e -> ALLOW_WRITE_FROM_SOURCE_CLASS = allowWriteFromSourceClassC.isSelected());
             optionsPanel.add(allowWriteFromSourceClassC, "wrap");
 
         }

@@ -31,7 +31,7 @@ import java.util.Set;
 public class UnqualifiedReferenceInspector extends BasePhpInspection {
     private static final String messagePattern = "Using '\\%t%' would enable some of opcache optimizations";
 
-    private static Set<String> falsePositives = new HashSet<>();
+    final private static Set<String> falsePositives = new HashSet<>();
     static {
         falsePositives.add("true");
         falsePositives.add("TRUE");
@@ -40,7 +40,6 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
         falsePositives.add("null");
         falsePositives.add("NULL");
 
-        falsePositives.add("class");
         falsePositives.add("__LINE__");
         falsePositives.add("__FILE__");
         falsePositives.add("__DIR__");

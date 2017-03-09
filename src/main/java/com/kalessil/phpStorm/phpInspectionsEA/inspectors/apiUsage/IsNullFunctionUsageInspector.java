@@ -57,7 +57,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                     }
                 }
                 if (parent instanceof BinaryExpression) {
-                    /* extract expression parts */
+                    /* extract isnulls' expression parts */
                     final BinaryExpression expression = (BinaryExpression) parent;
                     PsiElement secondOperand          = expression.getLeftOperand();
                     if (reference == secondOperand) {
@@ -65,15 +65,15 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                     }
 
                     if (PhpLanguageUtil.isBoolean(secondOperand)) {
-                        target = expression;
-
                         final IElementType operation = expression.getOperationType();
-                        if (operation == PhpTokenTypes.opEQUAL || operation == PhpTokenTypes.opIDENTICAL) {
+                        if (PhpTokenTypes.opEQUAL == operation || PhpTokenTypes.opIDENTICAL == operation) {
+                            target       = parent;
                             checksIsNull = PhpLanguageUtil.isTrue(secondOperand);
-                        } else if (operation == PhpTokenTypes.opNOT_EQUAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
+                        } else if (PhpTokenTypes.opNOT_EQUAL == operation || PhpTokenTypes.opNOT_IDENTICAL == operation) {
+                            target       = parent;
                             checksIsNull = !PhpLanguageUtil.isTrue(secondOperand);
                         } else {
-                            return;
+                            target = reference;
                         }
                     }
                 }
@@ -81,8 +81,20 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                 /* report the issue */
                 final String replacement = (checksIsNull ? "null === " : "null !== ") + params[0].getText();
                 final String message     = messagePattern.replace("%e%", replacement);
-                holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING, new UseSuggestedReplacementFixer(replacement));
+                holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING, new CompareToNullFix(replacement));
             }
         };
+    }
+
+    private class CompareToNullFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use null comparison instead";
+        }
+
+        CompareToNullFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

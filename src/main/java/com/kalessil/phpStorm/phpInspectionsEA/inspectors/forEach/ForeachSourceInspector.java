@@ -6,14 +6,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.ForeachStatement;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,8 +50,18 @@ public class ForeachSourceInspector extends BasePhpInspection {
 
                 /* gracefully request to specify exact types which can appear (mixed, object) */
                 if (types.contains(Types.strMixed)) {
-                    final String message = patternMixedTypes.replace("%t%", Types.strMixed);
-                    holder.registerProblem(container, message, ProblemHighlightType.WEAK_WARNING);
+                    /* false-positive: mixed definitions from stub functions */
+                    boolean isStubFunction = false;
+                    if (OpenapiTypesUtil.isFunctionReference(container)) {
+                        final PsiElement function = ((FunctionReference) container).resolve();
+                        final String filePath     = null == function ? null : function.getContainingFile().getVirtualFile().getCanonicalPath();
+                        isStubFunction            = null != filePath && filePath.contains(".jar!") && filePath.contains("/stubs/");
+                    }
+
+                    if (!isStubFunction) {
+                        final String message = patternMixedTypes.replace("%t%", Types.strMixed);
+                        holder.registerProblem(container, message, ProblemHighlightType.WEAK_WARNING);
+                    }
 
                     types.remove(Types.strMixed);
                 }

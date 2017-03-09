@@ -34,7 +34,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     public boolean REPORT_LITERAL_OPERATORS = true;
 
     private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
-    private static final String strProblemDescriptionConditionPartsIdentical   = "Probable bug: left and right operands are identical.";
 
     private static final String strProblemDescriptionInstanceOfAmbiguous     = "This condition is ambiguous and can be safely removed.";
     private static final String messageOrdering                              = "This condition execution costs less than the previous one.";
@@ -90,7 +89,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
 
                     this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
-                    this.inspectConditionsForIdenticalOperands(objConditionsFromStatement);
                     IssetAndNullComparisonStrategy.apply(objConditionsFromStatement, holder);
 
                     objConditionsFromStatement.clear();
@@ -112,7 +110,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
 
                         this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
-                        this.inspectConditionsForIdenticalOperands(objConditionsFromStatement);
 
                         objConditionsFromStatement.clear();
 
@@ -128,24 +125,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 /* TODO: Inversion should be un-boxed to get expression. */
 
                 objAllConditions.clear();
-            }
-
-            private void inspectConditionsForIdenticalOperands(@NotNull LinkedList<PsiElement> objBranchConditions) {
-                for (PsiElement objCondition : objBranchConditions) {
-                    if (!(objCondition instanceof BinaryExpression)) {
-                        continue;
-                    }
-
-                    BinaryExpression expression = (BinaryExpression) objCondition;
-                    PsiElement left = expression.getLeftOperand();
-                    PsiElement right = expression.getRightOperand();
-                    if (
-                        null != left && null != right &&
-                        PsiEquivalenceUtil.areElementsEquivalent(left, right)
-                    ) {
-                        holder.registerProblem(objCondition, strProblemDescriptionConditionPartsIdentical, ProblemHighlightType.GENERIC_ERROR);
-                    }
-                }
             }
 
             private void inspectConditionsForMissingParenthesis(@NotNull LinkedList<PsiElement> objBranchConditions) {

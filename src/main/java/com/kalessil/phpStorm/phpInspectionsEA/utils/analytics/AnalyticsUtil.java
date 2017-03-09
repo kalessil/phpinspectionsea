@@ -9,9 +9,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils.analytics;
  * file that was distributed with this source code.
  */
 
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.kalessil.phpStorm.phpInspectionsEA.EASettings;
 import org.apache.http.client.fluent.Request;
 import org.jetbrains.annotations.NotNull;

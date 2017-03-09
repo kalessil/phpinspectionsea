@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy.EqualsInAssignmentContextStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy.GreaterOrEqualInHashElementStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy.IdenticalOperandsStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy.InstanceOfTraitStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -33,7 +34,8 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
                 if (
                     InstanceOfTraitStrategy.apply(expression, holder) ||
                     EqualsInAssignmentContextStrategy.apply(expression, holder) ||
-                    GreaterOrEqualInHashElementStrategy.apply(expression, holder)
+                    GreaterOrEqualInHashElementStrategy.apply(expression, holder) ||
+                    IdenticalOperandsStrategy.apply(expression, holder)
                 ) {
                     return;
                 }

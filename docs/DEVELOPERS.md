@@ -11,6 +11,10 @@
 --> Provide url, e.g. https://github.com/<your_github_account>/phpinspectionsea.git
 --> IDE will suggest to open a folder after checking source code out
 
+=== Known issues ===
+
+- Responsibilities are not separated: inspections are also generating replacements and containing inner QF classes.
+
 === Configuring project ===
 
 - In IDE: File -> Project Structure

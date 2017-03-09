@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-final public class UseSuggestedReplacementFixer implements LocalQuickFix {
+public class UseSuggestedReplacementFixer implements LocalQuickFix {
     final private String expression;
 
     @NotNull

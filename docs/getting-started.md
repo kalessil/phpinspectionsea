@@ -22,6 +22,7 @@ If you just started using the analyzer, it worth following those steps:
 * Exclude all third-party components (e.g. vendor folder);
 * Click "Ok" and wait for analysis completion;
 * Review reported issues and decide if you want to deactivate some of them;
+* It also worth reviewing entries reported in the "Probable Bugs" group at first place;
 
 You can activate disabled inspections later in IDE settings. Also some inspections have own settings 
 and perhaps you would want to review them before deactivating anything.

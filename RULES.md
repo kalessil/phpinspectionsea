@@ -158,6 +158,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | DateTimeConstantsUsageInspection                | DateTime constants usage validity                         | yes       | yes | no   |
 | Probable bugs        | SuspiciousReturnInspection                      | Suspicious returns                                        | n/a       | yes | n/a  |
 | Probable bugs        | SuspiciousBinaryOperationInspection             | Suspicious binary operations                              | n/a       | yes | n/a  |
+| Probable bugs        | IncompleteThrowStatementsInspection             | Incomplete throw statements                               | yes       | yes | no   |
 
 Inspections Lists (Security)
 ---
@@ -195,7 +196,7 @@ Inspections Lists (Performance)
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                              | n/a |
 | Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                    | yes       | yes | no  |
 | Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                              | yes       | yes | no  |
-| Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | no        | yes | no  |
+| Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | yes       | yes | no  |
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes       | yes | no  |
 | Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes       | yes | no  |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | no        | yes | no  |

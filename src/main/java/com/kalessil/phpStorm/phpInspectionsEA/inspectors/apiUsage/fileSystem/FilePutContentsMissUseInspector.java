@@ -15,6 +15,7 @@ import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -56,7 +57,7 @@ public class FilePutContentsMissUseInspector extends BasePhpInspection {
                 }
 
                 /* analyze the call */
-                if (innerCandidate instanceof FunctionReference) {
+                if (OpenapiTypesUtil.isFunctionReference(innerCandidate)) {
                     final FunctionReference innerReference = (FunctionReference) innerCandidate;
                     final String innerName                 = innerReference.getName();
                     final PsiElement[] innerParams         = innerReference.getParameters();

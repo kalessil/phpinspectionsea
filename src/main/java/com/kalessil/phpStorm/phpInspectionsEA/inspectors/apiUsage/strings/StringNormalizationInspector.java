@@ -19,11 +19,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 public class StringNormalizationInspector extends BasePhpInspection {
+    private static final String patternInvertedNesting   = "'%i%(%o%(...)...)' should be used instead.";
+    private static final String patternSenselessNesting  = "'%i%(...)' makes no sense here.";
 
     @NotNull
     public String getShortName() {
@@ -70,14 +71,17 @@ public class StringNormalizationInspector extends BasePhpInspection {
                 }
 
                 if (lengthManipulation.contains(functionName) && caseManipulation.contains(innerFunctionName)) {
-                    holder.registerProblem(reference, "invert nesting", ProblemHighlightType.WEAK_WARNING);
+                    final String message = patternInvertedNesting
+                            .replace("%o%", functionName)
+                            .replace("%i%", innerFunctionName);
+                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
                     return;
                 }
 
                 if (caseManipulation.contains(functionName) && caseManipulation.contains(innerFunctionName)) {
-                    holder.registerProblem(reference, "senseless nesting", ProblemHighlightType.WEAK_WARNING);
+                    final String message = patternSenselessNesting.replace("%i%", innerFunctionName);
+                    holder.registerProblem(innerCall, message, ProblemHighlightType.WEAK_WARNING);
                 }
-
             }
         };
     }

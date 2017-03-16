@@ -43,5 +43,8 @@ class aClass {
 
         /* variadic variables */
         printf('%d %d %d', ...$i);
+
+        /* sscanf/fscanf special formats */
+        sscanf($arg, $pattern5, $arg);
     }
 }

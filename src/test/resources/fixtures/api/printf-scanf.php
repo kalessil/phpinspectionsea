@@ -7,6 +7,7 @@ class aClass {
 
     public function check($arg, $handle) {
         $pattern4 = '%%%%%%%d%d';
+        $pattern5 = '[%[^]]]';
 
         /* all function reported */
         echo <error descr="Amount of expected parameters is 3.">printf</error> ($pattern4, $arg);
@@ -28,14 +29,19 @@ class aClass {
 
         /* false-positives */
         echo sprintf($pattern4, $arg, $arg);
+        echo sprintf($pattern4, $arg, $arg);
         echo sprintf('%d', $arg);
         echo sprintf('%1$d %1$d', $arg);
         echo sprintf("%% %1$'.-9d %1$'.-9d %s", $arg);
         echo sprintf('%% %1$\'.-9d %1$\'.-9d %s', $arg);
+
         /* sscanf/fscanf without containers returning array */
         list($first, $second) = sscanf($arg, $pattern4);
         $values               = sscanf($arg, $pattern4);
         list($first, $second) = fscanf($handle, $pattern4);
         $values               = fscanf($handle, $pattern4);
+
+        /* variadic variables */
+        printf('%d %d %d', ...$i);
     }
 }

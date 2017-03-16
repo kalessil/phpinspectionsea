@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
@@ -111,6 +112,11 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
                             ) {
                                 return;
                             }
+                        }
+
+                        final PsiElement variadic = params[params.length - 1].getPrevSibling();
+                        if (null != variadic && PhpTokenTypes.opVARIADIC == variadic.getNode().getElementType()) {
+                            return;
                         }
 
                         final String message = messageParameters.replace("%c%", String.valueOf(countParsingExpectedParameters));

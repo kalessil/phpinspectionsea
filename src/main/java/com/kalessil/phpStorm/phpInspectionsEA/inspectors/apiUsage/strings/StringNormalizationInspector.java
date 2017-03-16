@@ -31,14 +31,17 @@ public class StringNormalizationInspector extends BasePhpInspection {
         return "StringNormalizationInspection";
     }
 
-    private static final Set<String> lengthManipulation = new HashSet<>();
-    private static final Set<String> caseManipulation   = new HashSet<>();
+    private static final Set<String> lengthManipulation    = new HashSet<>();
+    private static final Set<String> caseManipulation      = new HashSet<>();
+    private static final Set<String> innerCaseManipulation = new HashSet<>();
     static {
-        caseManipulation.add("strtolower");
-        caseManipulation.add("strtoupper");
-        caseManipulation.add("mb_convert_case");
-        caseManipulation.add("mb_strtolower");
-        caseManipulation.add("mb_strtoupper");
+        innerCaseManipulation.add("strtolower");
+        innerCaseManipulation.add("strtoupper");
+        innerCaseManipulation.add("mb_convert_case");
+        innerCaseManipulation.add("mb_strtolower");
+        innerCaseManipulation.add("mb_strtoupper");
+
+        caseManipulation.addAll(innerCaseManipulation);
         caseManipulation.add("ucfirst");
         caseManipulation.add("lcfirst");
         caseManipulation.add("ucwords");
@@ -78,7 +81,10 @@ public class StringNormalizationInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (caseManipulation.contains(functionName) && caseManipulation.contains(innerFunctionName)) {
+                if (
+                    caseManipulation.contains(functionName) && caseManipulation.contains(innerFunctionName)&&
+                    !innerCaseManipulation.contains(innerFunctionName)
+                ) {
                     final String message = patternSenselessNesting.replace("%i%", innerFunctionName);
                     holder.registerProblem(innerCall, message, ProblemHighlightType.WEAK_WARNING);
                 }

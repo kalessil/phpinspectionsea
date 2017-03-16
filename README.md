@@ -5,7 +5,7 @@
 
 Php Inspections (EA Extended); [our crowdfunding campaign](https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security/x/16148880#/) needs your support!
 ---
-A Static Code Analysis tool for PHP distributed as a PhpStorm/IdeaUltimate [plugin](plugins.jetbrains.com/plugin/7622?pr=phpStorm). 
+A Static Code Analysis tool for PHP distributed as a PhpStorm/IdeaUltimate [plugin](https://plugins.jetbrains.com/plugin/7622?pr=phpStorm). 
 
 Adds new inspections for PHP code, e.g. security-related, probable bugs, language level migration and more.
 

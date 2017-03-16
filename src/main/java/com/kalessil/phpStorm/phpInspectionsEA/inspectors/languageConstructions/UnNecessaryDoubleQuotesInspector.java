@@ -42,7 +42,7 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
                 /* literals with escape sequences must not be analyzed */
                 /* note: don't use PhpStringUtil.unescapeText as it simply strips escape sequences */
                 final String contents = expression.getContents().replaceAll("\\\\\\$", "\\$").replaceAll("\\\\\"", "\"");
-                if (0 == contents.length() || contents.indexOf('\'') >= 0 || contents.contains("\\")) {
+                if (contents.indexOf('\'') >= 0 || contents.contains("\\")) {
                     return;
                 }
 

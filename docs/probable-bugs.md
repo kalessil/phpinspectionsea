@@ -14,7 +14,7 @@ alternative is using dirname() function instead.
     
     /* stream-safe alternatives */
     define ('PROJECT_ROOT', dirname(__DIR__) . '/');
-    require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php');
+    require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 ```
 
 # Addition operator applied to arrays

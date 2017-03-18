@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -79,7 +80,7 @@ public class StringNormalizationInspector extends BasePhpInspection {
                     final String replacement  = innerCall.getText().replace(theString, newInnerCall);
 
                     final String message      = patternInvertedNesting.replace("%e%", replacement);
-                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new NormalizationFix(replacement));
 
                     return;
                 }
@@ -90,9 +91,21 @@ public class StringNormalizationInspector extends BasePhpInspection {
                     }
 
                     final String message = patternSenselessNesting.replace("%i%", innerFunctionName);
-                    holder.registerProblem(innerCall, message, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(innerCall, message, ProblemHighlightType.WEAK_WARNING, new NormalizationFix(innerParams[0].getText()));
                 }
             }
         };
+    }
+
+    private class NormalizationFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Fix the string normalization";
+        }
+
+        NormalizationFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

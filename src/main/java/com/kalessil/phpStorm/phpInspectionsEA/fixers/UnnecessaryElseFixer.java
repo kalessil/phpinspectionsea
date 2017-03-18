@@ -27,46 +27,46 @@ public class UnnecessaryElseFixer implements LocalQuickFix {
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
         final PsiElement element    = descriptor.getPsiElement();
         final PsiElement expression = null == element ? null : element.getParent();
-        if (null == expression) {
+        final PsiElement newline    = PhpPsiElementFactory.createFromText(project, PsiWhiteSpace.class, "\n");
+        if (null == expression || null == newline) {
             return;
         }
 
         if (expression instanceof Else) {
-            final Else elseStatement = (Else) expression;
+            final Else elseStatement        = (Else) expression;
+            final If parentIfExpression     = (If) expression.getParent();
+            final PsiElement parentIfHolder = parentIfExpression.getParent();
 
             if (elseStatement.getFirstPsiChild() instanceof If) { /* handle 'else if' */
-                final If nestedIfCopy       = (If) elseStatement.getFirstPsiChild().copy();
-                final If parentIfExpression = (If) expression.getParent();
+                final If nestedIfCopy = (If) elseStatement.getFirstPsiChild().copy();
                 elseStatement.delete();
 
-                final PsiElement newline = PhpPsiElementFactory.createFromText(project, PsiWhiteSpace.class, "\n");
-                parentIfExpression.getParent().addAfter(nestedIfCopy, parentIfExpression);
-                if (null != newline) {
-                    parentIfExpression.getParent().addAfter(newline, parentIfExpression);
-                }
+                parentIfHolder.addAfter(nestedIfCopy, parentIfExpression);
+                parentIfHolder.addAfter(newline, parentIfExpression);
+
                 return;
             }
-        }
 
+            if (elseStatement.getFirstPsiChild() instanceof GroupStatement) { /* handle 'else {} ' */
+                final GroupStatement elseBodyCopy = (GroupStatement) elseStatement.getFirstPsiChild().copy();
+                elseStatement.delete();
 
-        // handle `else`: remove braces and else keyword
-        if (expression instanceof Else) {
-            PhpPsiElement statement = ((Else) expression).getStatement();
-            if (statement != null) {
-                PsiElement firstChild = statement.getFirstChild();
-                if (firstChild.getNode().getElementType() == PhpTokenTypes.chLBRACE) {
-                    firstChild.delete();
-
-                    PsiElement lastChild = statement.getLastChild();
-                    if (lastChild.getNode().getElementType() == PhpTokenTypes.chRBRACE) {
-                        lastChild.delete();
+                final PsiElement startBracket = elseBodyCopy.getFirstChild();
+                final PsiElement endBracket   = elseBodyCopy.getLastChild();
+                PsiElement last               = endBracket.getPrevSibling();
+                if (last instanceof PsiWhiteSpace) {
+                    last = last.getPrevSibling();
+                }
+                while (null != last) {
+                    if (last != endBracket && last != startBracket) {
+                        parentIfHolder.addAfter(last, parentIfExpression);
                     }
-
-                    element.delete();
-                    return;
+                    last = last.getPrevSibling();
                 }
 
+                parentIfHolder.addAfter(newline, parentIfExpression);
 
+                return;
             }
         }
 

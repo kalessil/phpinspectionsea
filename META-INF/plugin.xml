@@ -295,6 +295,10 @@ This release brings new QFs, probable bugs inspections and fixes a new bunch of 
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrNcmpUsedAsStrPosInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="UnnecessaryElseInspection"                     displayName="Detect unnecessary else keywords"
+         groupName="Control Flow"                                  enabledByDefault="false" level="WEAK WARNING"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnnecessaryElseInspector"/>
+  <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="StringNormalizationInspection"                 displayName="String normalization flaws"
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StringNormalizationInspector"/>
@@ -608,7 +612,6 @@ This release brings new QFs, probable bugs inspections and fixes a new bunch of 
         shortName="DisallowWritingIntoStaticPropertiesInspection" displayName="Disallow writing into static properties"
         groupName="Code Style" enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DisallowWritingIntoStaticPropertiesInspector"/>
-
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

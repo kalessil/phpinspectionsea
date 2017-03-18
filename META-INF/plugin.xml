@@ -295,7 +295,7 @@ This release brings new QFs, probable bugs inspections and fixes a new bunch of 
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrNcmpUsedAsStrPosInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-         shortName="StringNormalizationInspection"                 displayName="String normalization flaws"
+         shortName="StringNormalizationInspection"                 displayName="Strings normalization"
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StringNormalizationInspector"/>
 

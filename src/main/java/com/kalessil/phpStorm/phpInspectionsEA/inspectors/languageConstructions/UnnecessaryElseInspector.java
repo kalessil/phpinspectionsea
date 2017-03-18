@@ -25,7 +25,7 @@ import java.util.List;
  */
 
 public class UnnecessaryElseInspector extends BasePhpInspection {
-    private static final String message = "Else is not needed here, due to the last statement in previous branch.";
+    private static final String messagePattern = "'%kw%' is not needed here, due to the last statement in previous branch.";
 
     @NotNull
     public String getShortName() {
@@ -62,6 +62,8 @@ public class UnnecessaryElseInspector extends BasePhpInspection {
                     if (isReturnPoint) {
                         final PsiElement target = alternativeBranches.get(0).getFirstChild();
                         /* TODO: QF -> else replace with its' content; elseif -> if */
+
+                        final String message = messagePattern.replace("%kw%", target.getText());
                         holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING/*, new UnnecessaryElseFixer()*/);
                     }
                 }

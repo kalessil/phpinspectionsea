@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UnnecessaryElseFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -64,7 +65,7 @@ public class UnnecessaryElseInspector extends BasePhpInspection {
                         /* TODO: QF -> else replace with its' content; elseif -> if */
 
                         final String message = messagePattern.replace("%kw%", target.getText());
-                        holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING/*, new UnnecessaryElseFixer()*/);
+                        holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING, new UnnecessaryElseFixer());
                     }
                 }
                 alternativeBranches.clear();

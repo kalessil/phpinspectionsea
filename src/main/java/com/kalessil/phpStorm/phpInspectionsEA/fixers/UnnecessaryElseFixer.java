@@ -4,17 +4,17 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 
 public class UnnecessaryElseFixer implements LocalQuickFix {
-
     @NotNull
     @Override
     public String getName() {
-        return "Remove redundant else keyword";
+        return "Split the workflows";
     }
 
     @NotNull
@@ -23,20 +23,29 @@ public class UnnecessaryElseFixer implements LocalQuickFix {
         return getName();
     }
 
-
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-        final PsiElement element = descriptor.getPsiElement();
-
-        if (null == element) {
+        final PsiElement element    = descriptor.getPsiElement();
+        final PsiElement expression = null == element ? null : element.getParent();
+        if (null == expression) {
             return;
         }
-        final PsiElement expression = element.getParent();
 
-        // handle `else if`: Just delete else
-        if (expression instanceof Else && expression.getLastChild() instanceof If) {
-            element.delete();
-            return;
+        if (expression instanceof Else) {
+            final Else elseStatement = (Else) expression;
+
+            if (elseStatement.getFirstPsiChild() instanceof If) { /* handle 'else if' */
+                final If nestedIfCopy       = (If) elseStatement.getFirstPsiChild().copy();
+                final If parentIfExpression = (If) expression.getParent();
+                elseStatement.delete();
+
+                final PsiElement newline = PhpPsiElementFactory.createFromText(project, PsiWhiteSpace.class, "\n");
+                parentIfExpression.getParent().addAfter(nestedIfCopy, parentIfExpression);
+                if (null != newline) {
+                    parentIfExpression.getParent().addAfter(newline, parentIfExpression);
+                }
+                return;
+            }
         }
 
 

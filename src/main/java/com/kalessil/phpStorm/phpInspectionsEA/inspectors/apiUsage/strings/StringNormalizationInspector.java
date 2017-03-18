@@ -1,14 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 
-/*
- * This file is part of the Php Inspections (EA Extended) package.
- *
- * (c) Vladimir Reznichenko <kalessil@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -22,9 +13,18 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class StringNormalizationInspector extends BasePhpInspection {
-    private static final String patternInvertedNesting   = "'%i%(%o%(...)...)' should be used instead.";
-    private static final String patternSenselessNesting  = "'%i%(...)' makes no sense here.";
+    private static final String patternInvertedNesting  = "'%e%' should be used instead.";
+    private static final String patternSenselessNesting = "'%i%(...)' makes no sense here.";
 
     @NotNull
     public String getShortName() {
@@ -74,22 +74,25 @@ public class StringNormalizationInspector extends BasePhpInspection {
                 }
 
                 if (lengthManipulation.contains(functionName) && caseManipulation.contains(innerFunctionName)) {
-                    final String message = patternInvertedNesting
-                            .replace("%o%", functionName)
-                            .replace("%i%", innerFunctionName);
+                    final String theString    = innerParams[0].getText();
+                    final String newInnerCall = reference.getText().replace(params[0].getText(), theString);
+                    final String replacement  = innerCall.getText().replace(theString, newInnerCall);
+
+                    final String message      = patternInvertedNesting.replace("%e%", replacement);
                     holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
+
                     return;
                 }
 
-                if (
-                    caseManipulation.contains(functionName) && caseManipulation.contains(innerFunctionName)&&
-                    !innerCaseManipulation.contains(innerFunctionName)
-                ) {
+                if (caseManipulation.contains(functionName) && caseManipulation.contains(innerFunctionName)) {
+                    if (!functionName.equals(innerFunctionName) && innerCaseManipulation.contains(innerFunctionName)) {
+                        return;
+                    }
+
                     final String message = patternSenselessNesting.replace("%i%", innerFunctionName);
                     holder.registerProblem(innerCall, message, ProblemHighlightType.WEAK_WARNING);
                 }
             }
         };
     }
-
 }

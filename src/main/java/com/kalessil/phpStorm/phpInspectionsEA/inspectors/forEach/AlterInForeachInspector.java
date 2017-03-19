@@ -152,40 +152,40 @@ public class AlterInForeachInspector extends BasePhpInspection {
             }
 
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
-                if (!SUGGEST_USING_VALUE_BY_REF) {
+                if (!SUGGEST_USING_VALUE_BY_REF /*|| ... PHP7 ...*/) {
                     return;
                 }
 
-                final PhpPsiElement objOperand = assignmentExpression.getVariable();
-                if (!(objOperand instanceof ArrayAccessExpression)) {
+                final PhpPsiElement operand = assignmentExpression.getVariable();
+                if (!(operand instanceof ArrayAccessExpression)) {
                     return;
                 }
 
                 /* ensure assignment structure is complete */
-                final ArrayAccessExpression objContainer = (ArrayAccessExpression) objOperand;
+                final ArrayAccessExpression container = (ArrayAccessExpression) operand;
                 if (
-                    null == objContainer.getIndex() ||
-                    null == objContainer.getValue() ||
-                    !(objContainer.getIndex().getValue() instanceof Variable)
+                    null == container.getIndex() ||
+                    null == container.getValue() ||
+                    !(container.getIndex().getValue() instanceof Variable)
                 ) {
                     return;
                 }
 
 
                 /* get parts of assignment */
-                final PhpPsiElement objForeachSourceCandidate = objContainer.getValue();
-                final PhpPsiElement objForeachKeyCandidate    = objContainer.getIndex().getValue();
+                final PhpPsiElement objForeachSourceCandidate = container.getValue();
+                final PhpPsiElement objForeachKeyCandidate    = container.getIndex().getValue();
 
-                PsiElement objParent = assignmentExpression.getParent();
-                while (null != objParent && !(objParent instanceof PhpFile)) {
+                PsiElement parent = assignmentExpression.getParent();
+                while (null != parent && !(parent instanceof PhpFile)) {
                     /* terminate if reached callable */
-                    if (objParent instanceof Function) {
+                    if (parent instanceof Function) {
                         return;
                     }
 
-                    if (objParent instanceof ForeachStatement) {
+                    if (parent instanceof ForeachStatement) {
                         /* get parts of foreach: array, key, value */
-                        final ForeachStatement objForeach = (ForeachStatement) objParent;
+                        final ForeachStatement objForeach = (ForeachStatement) parent;
                         final Variable objForeachValue    = objForeach.getValue();
                         final Variable objForeachKey      = objForeach.getKey();
                         final PsiElement objForeachArray  = objForeach.getArray();
@@ -201,14 +201,14 @@ public class AlterInForeachInspector extends BasePhpInspection {
                                 final String message = strProblemDescription
                                         .replace("%c%", strName)
                                         .replace("%v%", strName);
-                                holder.registerProblem(objOperand, message, ProblemHighlightType.WEAK_WARNING);
+                                holder.registerProblem(operand, message, ProblemHighlightType.WEAK_WARNING);
 
                                 return;
                             }
                         }
                     }
 
-                    objParent = objParent.getParent();
+                    parent = parent.getParent();
                 }
             }
         };

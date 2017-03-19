@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="SPLITTER_PROPORTION" value="0.31170887" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="70f6ee3c-1640-4383-93a7-f5ac3742c16f" name="Default" comment="TypeUnsafeComparisonInspector: resolved false-positive (fixed #19)">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/PhpInspectionsEA.jar" afterPath="" />
+    <list default="true" id="70f6ee3c-1640-4383-93a7-f5ac3742c16f" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/fixers/UnnecessaryElseFixer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/languageConstructions/RedundantElseClauseInspector.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/inspectionDescriptions/RedundantElseClauseInspection.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/lang/RedundantElseClauseInspectorTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/resources/fixtures/controlFlow/unnecessary-else-elseif.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/META-INF/plugin.xml" afterPath="$PROJECT_DIR$/META-INF/plugin.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RULES.md" afterPath="$PROJECT_DIR$/RULES.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/forEach/AlterInForeachInspector.java" afterPath="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/forEach/AlterInForeachInspector.java" />
+    </list>
+    <list id="45d6f181-8148-45ef-bc54-68e08b4886c3" name="Other" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PhpInspectionsEA.iml" afterPath="$PROJECT_DIR$/PhpInspectionsEA.iml" />
     </list>
@@ -10,6 +22,8 @@
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path=".idea/dataSources.local.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <file path="$PROJECT_DIR$/PhpInspectionsEA.iml" ignored="false" />
+    <file path="$PROJECT_DIR$/.idea/workspace.xml" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,7 +32,7 @@
   </component>
   <component name="ChangesViewManager" flattened_view="false" />
   <component name="CreatePatchCommitExecutor">
-    <option name="PATCH_PATH" value="" />
+    <option name="PATCH_PATH" value="D:\Data\Projects\PhpInspectionsEA" />
   </component>
   <component name="DatabaseView">
     <option name="GROUP_SCHEMA" value="true" />
@@ -33,13 +47,46 @@
     <favorites_list name="PhpInspectionsEA" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="PrettyListControl.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/gui/PrettyListControl.java">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="AlterInForeachInspector.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/forEach/AlterInForeachInspector.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="67">
-              <caret line="39" column="45" selection-start-line="39" selection-start-column="45" selection-end-line="39" selection-end-column="45" />
+            <state relative-caret-position="17">
+              <caret line="28" column="4" selection-start-line="28" selection-start-column="4" selection-end-line="28" selection-end-column="121" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RedundantElseClauseInspection.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/inspectionDescriptions/RedundantElseClauseInspection.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="272">
+              <caret line="16" column="145" selection-start-line="16" selection-start-column="145" selection-end-line="16" selection-end-column="145" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="plugin.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="207">
+              <caret line="293" column="80" selection-start-line="293" selection-start-column="80" selection-end-line="293" selection-end-column="80" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RULES.md" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/RULES.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="FIRST">
+              <first_editor relative-caret-position="187">
+                <caret line="34" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
+                <folding />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
@@ -56,6 +103,11 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
   </component>
   <component name="GradleLocalSettings">
     <option name="externalProjectsViewState">
@@ -65,57 +117,57 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/inspectors/languageConstructions/StaticInvocationViaThisInspector.java" />
-        <option value="$PROJECT_DIR$/php/bug-reports/117.php" />
-        <option value="$PROJECT_DIR$/src/inspectionDescriptions/FileFunctionMissUseInspection.html" />
-        <option value="$PROJECT_DIR$/php/control-flow/one-time-use-variables.php" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/fixtures/one-time-use-variables.php" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/fixtures/one-time-use-variables-false-positives.php" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/inspectors/semanticalAnalysis/OneTimeUseVariablesInspector.java" />
-        <option value="$PROJECT_DIR$/php/bug-reports/239.php" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/controlFlow/OneTimeUseVariablesInspectorTest.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/fixtures/ifs/not-optimal-false-positives.php" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/inspectors/semanticalAnalysis/OnlyWritesOnParameterInspector.java" />
-        <option value="$PROJECT_DIR$/php/bug-reports/161.php" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/designPatterns/classes/PropertyCanBeStaticInspectorTest.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/fixtures/classes/property-can-be-static.php" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/classes/PropertyCanBeStaticInspectorTest.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/fixtures/classes/property-can-be-static-false-positives.php" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/inspectors/semanticalAnalysis/PropertyCanBeStaticInspector.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/inspectors/semanticalAnalysis/AccessModifierPresentedInspector.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/inspectors/semanticalAnalysis/ClassOverridesFieldOfSuperClassInspector.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/inspectors/ifs/utils/ExpressionCostEstimateUtil.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/utils/TypeFromPsiResolvingUtil.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/forEach/ForeachSourceInspector.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/exceptionsWorkflow/ExceptionsAnnotatingAndHandlingInspector.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/utils/hierarhy/InterfacesExtractUtil.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/controlFlow/NotThrownExceptionInspectorTest.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/classes/TraitsPropertiesConflictsInspectorTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/exceptions/NotThrownExceptionInspector.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/fixers/UseSuggestedReplacementFixer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/PropertyInitializationFlawsInspector.java" />
+        <option value="$PROJECT_DIR$/src/test/resources/fixtures/classes/traits-properties-conflicts.php" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/languageConstructions/TraitsPropertiesConflictsInspector.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/semanticalAnalysis/binaryOperations/SuspiciousBinaryOperationInspector.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/ifs/NotOptimalIfConditionsInspection.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/semanticalAnalysis/binaryOperations/strategy/IdenticalOperandsStrategy.java" />
+        <option value="$PROJECT_DIR$/src/test/resources/fixtures/pitfalls/suspicious-binary-operations.php" />
+        <option value="$PROJECT_DIR$/src/main/resources/inspectionDescriptions/StrStrUsedAsStrPosInspection.html" />
+        <option value="$PROJECT_DIR$/src/test/resources/fixtures/api/is-null-function.php" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/strings/StrStrUsedAsStrPosInspector.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/IsNullFunctionUsageInspector.java" />
+        <option value="$PROJECT_DIR$/src/test/resources/fixtures/api/in-array-missuse.php" />
         <option value="$PROJECT_DIR$/docs/DEVELOPERS.md" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/arrays/InArrayMissUseInspector.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/codeSmell/DisallowWritingIntoStaticPropertiesInspector.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/inspectionDescriptions/TraitsPropertiesConflictsInspection.html" />
+        <option value="$PROJECT_DIR$/src/main/resources/inspectionDescriptions/IncompleteThrowStatementsInspection.html" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/phpUnit/strategy/BaseSameEqualsFunctionReferenceStrategy.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/UnqualifiedReferenceInspector.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/exceptions/IncompleteThrowStatementsInspector.java" />
+        <option value="$PROJECT_DIR$/src/test/resources/fixtures/controlFlow/not-thrown-exceptions.php" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/forEach/AlterInForeachInspector.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/ExplodeMissUseInspector.java" />
+        <option value="$PROJECT_DIR$/src/test/resources/fixtures/controlFlow/explode-missuse.php" />
+        <option value="$PROJECT_DIR$/src/test/resources/fixtures/api/file_put_contents-missuse.php" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/fileSystem/FilePutContentsMissUseInspector.java" />
+        <option value="$PROJECT_DIR$/src/test/resources/fixtures/codeStyle/double-quotes.php" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/languageConstructions/UnNecessaryDoubleQuotesInspector.java" />
+        <option value="$PROJECT_DIR$/src/test/resources/fixtures/api/printf-scanf.php" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/PrintfScanfArgumentsInspector.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/controlFlow/StringNormalizationInspectorTest.java" />
+        <option value="$PROJECT_DIR$/src/test/resources/fixtures/controlFlow/string-normalization.php" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/strings/StringNormalizationInspector.java" />
+        <option value="$PROJECT_DIR$/src/test/resources/fixtures/lang/unnecessary-elseif.php" />
+        <option value="$PROJECT_DIR$/src/test/resources/fixtures/lang/unnecessary-else.php" />
+        <option value="$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/lang/UnnecessaryElseInspectorTest.java" />
+        <option value="$PROJECT_DIR$/src/test/resources/fixtures/lang/unnecessary-else-elseif.php" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/fixers/UnnecessaryElseFixer.java" />
+        <option value="$PROJECT_DIR$/src/test/resources/fixtures/controlFlow/unnecessary-else-elseif.php" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/languageConstructions/UnnecessaryElseInspector.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/languageConstructions/RedundantElseClauseInspector.java" />
         <option value="$PROJECT_DIR$/META-INF/plugin.xml" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/api/fopen-binary-unsafe.php" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/api/FopenBinaryUnsafeUsageInspectorTest.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/fixtures/fopen-binary-unsafe.php" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/ifs/NotOptimalIfConditionsInspectionTest.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/types/TypeUnsafeComparisonInspectorTest.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/utils/hierarhy/InterfacesExtractUtil.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/inspectors/languageConstructions/TypeUnsafeComparisonInspector.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/fixtures/types/type-unsafe-comparison-false-positives.php" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/utils/strategy/DateTimeComparisonStrategy.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/utils/strategy/ComparableCoreClassesStrategy.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/utils/ExpressionSemanticUtil.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/FopenBinaryUnsafeUsageInspector.java" />
-        <option value="$PROJECT_DIR$/php/alter-in-foreach.php" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/inspectors/forEach/AlterInForeachInspector.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/fixtures/foreach/alter-in-foreach.php" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/inspectors/semanticalAnalysis/MkdirRaceConditionInspector.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/foreach/AlterInForeachInspectorTest.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/foreach/DisconnectedForeachInstructionInspectorTest.java" />
-        <option value="$PROJECT_DIR$/php/slow-alter-in-foreach.php" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/fixtures/foreach/alter-in-foreach-false-positives.php" />
-        <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/fixtures/foreach/disconnected-statements-foreach.php" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/inspectors/ifs/strategy/AndOrWordsUsageStrategy.java" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/tests/fixtures/foreach/disconnected-statements-foreach-false-positives.php" />
-        <option value="$PROJECT_DIR$/src/com/kalessil/phpStorm/phpInspectionsEA/inspectors/forEach/DisconnectedForeachInstructionInspector.java" />
-        <option value="$PROJECT_DIR$/src/test/java/api/FileFunctionMissUseInspectorTest.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/classes/PropertyCanBeStaticInspectorTest.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/gui/PrettyListControl.java" />
+        <option value="$PROJECT_DIR$/RULES.md" />
+        <option value="$PROJECT_DIR$/src/main/resources/inspectionDescriptions/RedundantElseClauseInspection.html" />
       </list>
     </option>
   </component>
@@ -150,33 +202,36 @@
             <id />
           </State>
           <State>
-            <id>Android &gt; Lint &gt; Accessibility</id>
+            <id>Concurrency annotation issuesJava</id>
           </State>
           <State>
-            <id>CDI(Contexts and Dependency Injection) issues</id>
+            <id>General</id>
           </State>
           <State>
-            <id>Control FlowPhp Inspections (EA Extended)PHP</id>
+            <id>Groovy</id>
           </State>
           <State>
-            <id>GeneralJavaScript</id>
+            <id>Java</id>
           </State>
           <State>
-            <id>JavaScript</id>
+            <id>Performance issuesJava</id>
           </State>
           <State>
-            <id>PHP</id>
+            <id>Probable bugsJava</id>
           </State>
           <State>
-            <id>Php Inspections (EA Extended)PHP</id>
+            <id>Properties Files</id>
           </State>
           <State>
-            <id>WebSocket issues</id>
+            <id>Threading issuesGroovy</id>
+          </State>
+          <State>
+            <id>Threading issuesJava</id>
           </State>
         </expanded-state>
         <selected-state>
           <State>
-            <id>DisconnectedForeachInstructionInspection</id>
+            <id>SSBasedInspection</id>
           </State>
         </selected-state>
       </profile-state>
@@ -225,79 +280,21 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PhpInspectionsEA" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PhpInspectionsEA" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PhpInspectionsEA" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PhpInspectionsEA" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PhpInspectionsEA" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PhpInspectionsEA" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="phpInspectionsEA" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="PackagesPane">
         <subPane />
       </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/__187__FilePutContentsMissUseInspector__resolved_false_positives__method_calls_.patch" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -317,6 +314,10 @@
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder2" value="2" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="903" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
+    <property name="GenerateAntBuildDialog.enableUiFormCompile" value="true" />
+    <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
+    <property name="GenerateAntBuildDialog.backupFiles" value="true" />
+    <property name="GenerateAntBuildDialog.outputFileNameProperty" value="phpinspectionsea" />
   </component>
   <component name="PsiViewer.ProjectComponent">
     <option name="HIGHLIGHT" value="false" />
@@ -327,22 +328,50 @@
     <option name="AUTOSCROLL_FROM_SOURCE" value="false" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Data\Projects\PhpInspectionsEA\src\test\resources\fixtures\controlFlow" />
+      <recent name="D:\Data\Projects\PhpInspectionsEA\src\test\resources\fixtures\classes" />
+      <recent name="D:\Data\Projects\PhpInspectionsEA\src\test\resources\fixtures\codeStyle" />
+      <recent name="D:\Data\Projects\PhpInspectionsEA\src\test\resources\fixtures\deadCode\senselessProxy" />
+      <recent name="D:\Data\Projects\PhpInspectionsEA\php" />
+    </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="com.kalessil.phpStorm.phpInspectionsEA" />
       <recent name="com.kalessil.phpStorm.phpInspectionsEA.tests" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Data\Projects\PhpInspectionsEA\src\test\resources\fixtures\lang\classConstant" />
       <recent name="D:\Data\Projects\PhpInspectionsEA\src\com\kalessil\phpStorm\phpInspectionsEA\tests\fixtures\designPatterns" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\Data\Projects\PhpInspectionsEA\src\test\resources" />
-      <recent name="D:\Data\Projects\PhpInspectionsEA\src\test\java" />
-      <recent name="D:\Data\Projects\PhpInspectionsEA\src\main\resources" />
-      <recent name="D:\Data\Projects\PhpInspectionsEA\src\main\java" />
-      <recent name="D:\Data\Projects\PhpInspectionsEA\src\test" />
     </key>
   </component>
   <component name="RunManager" selected="JUnit.Tests">
+    <configuration default="false" name="OffsetOperationsInspectorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.kalessil.phpStorm.phpInspectionsEA.types.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="PhpInspectionsEA" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="ALTERNATIVE_JRE_PATH" value="IntelliJ IDEA IU-162.2228.15" />
+      <option name="PACKAGE_NAME" value="com.kalessil.phpStorm.phpInspectionsEA.types" />
+      <option name="MAIN_CLASS_NAME" value="com.kalessil.phpStorm.phpInspectionsEA.types.OffsetOperationsInspectorTest" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/src/test/resources" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="wholeProject" />
+      </option>
+      <envs />
+      <dir value="$PROJECT_DIR$/tests" />
+      <patterns />
+      <method />
+    </configuration>
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
       <module name="" />
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
@@ -676,13 +705,6 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
-      <TestRunner />
-      <method />
-    </configuration>
-    <configuration default="true" type="PhpLocalRunConfigurationType" factoryName="PHP Console">
-      <method />
-    </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="false" />
@@ -779,7 +801,7 @@
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
-      <option name="ALTERNATIVE_JRE_PATH" value="PhpStorm PS-162.1889.1" />
+      <option name="ALTERNATIVE_JRE_PATH" value="IntelliJ IDEA IU-162.2228.15" />
       <option name="PACKAGE_NAME" value="com.kalessil.phpStorm.phpInspectionsEA" />
       <option name="MAIN_CLASS_NAME" value="" />
       <option name="METHOD_NAME" value="" />
@@ -797,16 +819,26 @@
       <patterns />
       <method />
     </configuration>
-    <list size="1">
+    <list size="2">
       <item index="0" class="java.lang.String" itemvalue="JUnit.Tests" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.OffsetOperationsInspectorTest" />
     </list>
+    <recent_temporary>
+      <list size="1">
+        <item index="0" class="java.lang.String" itemvalue="JUnit.OffsetOperationsInspectorTest" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
   </component>
+  <component name="StructureViewFactory">
+    <option name="ACTIVE_ACTIONS" value=",ALPHA_COMPARATOR" />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="70f6ee3c-1640-4383-93a7-f5ac3742c16f" name="Default" comment="" />
+      <changelist id="45d6f181-8148-45ef-bc54-68e08b4886c3" name="Other" comment="" />
       <created>1456939691628</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -870,451 +902,588 @@
       <workItem from="1478107296818" duration="3734000" />
       <workItem from="1478111301508" duration="7357000" />
       <workItem from="1478152128086" duration="10262000" />
+      <workItem from="1481222747998" duration="5109000" />
+      <workItem from="1481270310545" duration="23732000" />
+      <workItem from="1481314268636" duration="52627000" />
+      <workItem from="1481571630492" duration="5292000" />
+      <workItem from="1481617663898" duration="2632000" />
+      <workItem from="1481643453195" duration="3652000" />
+      <workItem from="1481704077417" duration="5592000" />
+      <workItem from="1481714447422" duration="2093000" />
+      <workItem from="1481720434896" duration="986000" />
+      <workItem from="1481732630393" duration="8052000" />
+      <workItem from="1481747549726" duration="2339000" />
+      <workItem from="1481783098713" duration="8862000" />
+      <workItem from="1481810288537" duration="17499000" />
+      <workItem from="1481836779555" duration="1949000" />
+      <workItem from="1481869936046" duration="18073000" />
+      <workItem from="1481911995457" duration="10043000" />
+      <workItem from="1481925138306" duration="859000" />
+      <workItem from="1481971976770" duration="5744000" />
+      <workItem from="1482068408752" duration="2943000" />
+      <workItem from="1482094029325" duration="3891000" />
+      <workItem from="1482179374875" duration="9261000" />
+      <workItem from="1482248174307" duration="3944000" />
+      <workItem from="1482254631492" duration="5096000" />
+      <workItem from="1482269357096" duration="1251000" />
+      <workItem from="1482310230441" duration="838000" />
+      <workItem from="1482312390006" duration="2574000" />
+      <workItem from="1482315242532" duration="1612000" />
+      <workItem from="1482317507887" duration="983000" />
+      <workItem from="1482319147579" duration="6143000" />
+      <workItem from="1482350275842" duration="20912000" />
+      <workItem from="1482414259819" duration="13247000" />
+      <workItem from="1482432101234" duration="270000" />
+      <workItem from="1482439309093" duration="2179000" />
+      <workItem from="1482477270713" duration="5864000" />
+      <workItem from="1482497373079" duration="1004000" />
+      <workItem from="1482499246636" duration="1506000" />
+      <workItem from="1482502375388" duration="4760000" />
+      <workItem from="1482522782051" duration="6233000" />
+      <workItem from="1482562977672" duration="2855000" />
+      <workItem from="1482566204097" duration="5616000" />
+      <workItem from="1482584654650" duration="1536000" />
+      <workItem from="1482671420396" duration="6159000" />
+      <workItem from="1482679429231" duration="2596000" />
+      <workItem from="1482684089867" duration="1478000" />
+      <workItem from="1482686428888" duration="3494000" />
+      <workItem from="1482694198341" duration="1663000" />
+      <workItem from="1482696836368" duration="2387000" />
+      <workItem from="1482700023004" duration="37000" />
+      <workItem from="1482702417914" duration="3270000" />
+      <workItem from="1482735309324" duration="534000" />
+      <workItem from="1482736111767" duration="34000" />
+      <workItem from="1482744624074" duration="6000000" />
+      <workItem from="1482751909869" duration="769000" />
+      <workItem from="1482754323275" duration="40000" />
+      <workItem from="1482781894123" duration="1917000" />
+      <workItem from="1482827917173" duration="897000" />
+      <workItem from="1482829830180" duration="1647000" />
+      <workItem from="1482847025834" duration="28301000" />
+      <workItem from="1483003767654" duration="18029000" />
+      <workItem from="1483035186822" duration="186000" />
+      <workItem from="1483036971136" duration="3404000" />
+      <workItem from="1483087236687" duration="1959000" />
+      <workItem from="1483101040507" duration="8947000" />
+      <workItem from="1483170768631" duration="2956000" />
+      <workItem from="1483289749579" duration="1629000" />
+      <workItem from="1483298270087" duration="319000" />
+      <workItem from="1483347960142" duration="626000" />
+      <workItem from="1483349877436" duration="622000" />
+      <workItem from="1483363503681" duration="713000" />
+      <workItem from="1483432807573" duration="56000" />
+      <workItem from="1483453618714" duration="681000" />
+      <workItem from="1483455774413" duration="24000" />
+      <workItem from="1483459074293" duration="238000" />
+      <workItem from="1483463169792" duration="616000" />
+      <workItem from="1483467141374" duration="1209000" />
+      <workItem from="1483611205841" duration="92000" />
+      <workItem from="1483638901728" duration="1113000" />
+      <workItem from="1483640221645" duration="3605000" />
+      <workItem from="1483788399173" duration="188000" />
+      <workItem from="1483798560472" duration="608000" />
+      <workItem from="1483799891042" duration="2268000" />
+      <workItem from="1483805006731" duration="167000" />
+      <workItem from="1483809260511" duration="66000" />
+      <workItem from="1483875661593" duration="63000" />
+      <workItem from="1483875791888" duration="66000" />
+      <workItem from="1483875937509" duration="5355000" />
+      <workItem from="1483887691185" duration="20000" />
+      <workItem from="1483969671029" duration="9255000" />
+      <workItem from="1484077127784" duration="9594000" />
+      <workItem from="1484132713527" duration="4061000" />
+      <workItem from="1484150701326" duration="15000" />
+      <workItem from="1484155756902" duration="601000" />
+      <workItem from="1484220258699" duration="649000" />
+      <workItem from="1484240234008" duration="58000" />
+      <workItem from="1484240481276" duration="22000" />
+      <workItem from="1484245088523" duration="5371000" />
+      <workItem from="1484294293369" duration="148000" />
+      <workItem from="1484310572667" duration="610000" />
+      <workItem from="1484313687188" duration="10412000" />
+      <workItem from="1484337851236" duration="2316000" />
+      <workItem from="1484372705951" duration="554000" />
+      <workItem from="1484393646678" duration="3755000" />
+      <workItem from="1484424683194" duration="5012000" />
+      <workItem from="1484480971804" duration="14000" />
+      <workItem from="1484558079320" duration="369000" />
+      <workItem from="1484562547598" duration="11106000" />
+      <workItem from="1485016289025" duration="8306000" />
+      <workItem from="1485026979358" duration="591000" />
+      <workItem from="1485097260632" duration="146000" />
+      <workItem from="1485102963599" duration="5051000" />
+      <workItem from="1485116378356" duration="1355000" />
+      <workItem from="1485198383889" duration="2751000" />
+      <workItem from="1485236270412" duration="2403000" />
+      <workItem from="1485266649966" duration="2457000" />
+      <workItem from="1485423984896" duration="3922000" />
+      <workItem from="1485535694523" duration="2476000" />
+      <workItem from="1485589421828" duration="5218000" />
+      <workItem from="1485690013487" duration="1673000" />
+      <workItem from="1485712223088" duration="21000" />
+      <workItem from="1485776367420" duration="15757000" />
+      <workItem from="1485893834270" duration="6759000" />
+      <workItem from="1486058526202" duration="2600000" />
+      <workItem from="1486065664972" duration="3064000" />
+      <workItem from="1486137047992" duration="9237000" />
+      <workItem from="1486209287986" duration="17751000" />
+      <workItem from="1486307243560" duration="1383000" />
+      <workItem from="1486311363554" duration="1143000" />
+      <workItem from="1486316712689" duration="4829000" />
+      <workItem from="1486409666899" duration="625000" />
+      <workItem from="1486413877757" duration="3526000" />
+      <workItem from="1486498531773" duration="1448000" />
+      <workItem from="1486531119679" duration="15997000" />
+      <workItem from="1486666471308" duration="5063000" />
+      <workItem from="1486743590976" duration="7581000" />
+      <workItem from="1486756939133" duration="2182000" />
+      <workItem from="1486811341399" duration="4104000" />
+      <workItem from="1487082244287" duration="7000" />
+      <workItem from="1487097714252" duration="13678000" />
+      <workItem from="1487348014209" duration="7755000" />
+      <workItem from="1487401740851" duration="3097000" />
+      <workItem from="1487613767653" duration="17338000" />
+      <workItem from="1487764350142" duration="15213000" />
+      <workItem from="1487938440475" duration="24676000" />
+      <workItem from="1488260080884" duration="6856000" />
+      <workItem from="1488310888330" duration="8113000" />
+      <workItem from="1488398727656" duration="3340000" />
+      <workItem from="1488471059945" duration="19637000" />
+      <workItem from="1488573713063" duration="3267000" />
+      <workItem from="1488608101542" duration="10417000" />
+      <workItem from="1488643585257" duration="18237000" />
+      <workItem from="1488952298541" duration="146000" />
+      <workItem from="1489690484183" duration="6309000" />
+      <workItem from="1489838916694" duration="2617000" />
+      <workItem from="1489843132332" duration="30243000" />
     </task>
-    <task id="LOCAL-00032" summary="Updated readme: added current UT/QFT status">
-      <created>1477171018786</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
+    <task id="LOCAL-00512" summary="CascadingDirnameCallsInspector: resolved false-positives (already fixed calls reported)">
+      <created>1488101171794</created>
+      <option name="number" value="00512" />
+      <option name="presentableId" value="LOCAL-00512" />
       <option name="project" value="LOCAL" />
-      <updated>1477171018786</updated>
+      <updated>1488101171794</updated>
     </task>
-    <task id="LOCAL-00033" summary="Resolved &quot;Short name not matched for class&quot; exception (fixed #7)">
-      <created>1477247846513</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
+    <task id="LOCAL-00513" summary="Fresh binary pushed">
+      <created>1488101203460</created>
+      <option name="number" value="00513" />
+      <option name="presentableId" value="LOCAL-00513" />
       <option name="project" value="LOCAL" />
-      <updated>1477247846513</updated>
+      <updated>1488101203460</updated>
     </task>
-    <task id="LOCAL-00034" summary="ForeachInvariantsInspector: test-cases updated">
-      <created>1477387982635</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
+    <task id="LOCAL-00514" summary="Update readme: added indiegogo campaign link">
+      <created>1488260304362</created>
+      <option name="number" value="00514" />
+      <option name="presentableId" value="LOCAL-00514" />
       <option name="project" value="LOCAL" />
-      <updated>1477387982635</updated>
+      <updated>1488260304363</updated>
     </task>
-    <task id="LOCAL-00035" summary="ForgottenDebugOutputInspector: detect phpinfo() usages">
-      <created>1477388408137</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
+    <task id="LOCAL-00515" summary="[#157] UnusedConstructorDependenciesInspector: added test case, build is breaking now">
+      <created>1488305740299</created>
+      <option name="number" value="00515" />
+      <option name="presentableId" value="LOCAL-00515" />
       <option name="project" value="LOCAL" />
-      <updated>1477388408137</updated>
+      <updated>1488305740299</updated>
     </task>
-    <task id="LOCAL-00036" summary="SummerTimeUnsafeTimeManipulationInspector: recognize also usage of 86400, added test cases">
-      <created>1477388938535</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
+    <task id="LOCAL-00516" summary="[#157] UnusedConstructorDependenciesInspector: bug-fix (recognize pattern in no-method classes)">
+      <created>1488306234517</created>
+      <option name="number" value="00516" />
+      <option name="presentableId" value="LOCAL-00516" />
       <option name="project" value="LOCAL" />
-      <updated>1477388938535</updated>
+      <updated>1488306234517</updated>
     </task>
-    <task id="LOCAL-00037" summary="MagicMethodsValidityInspector: minimal php version validation implemented">
-      <created>1477390091881</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
+    <task id="LOCAL-00517" summary="[#157] UnusedConstructorDependenciesInspector: resolved false-positives (properties being used in traits)">
+      <created>1488306688725</created>
+      <option name="number" value="00517" />
+      <option name="presentableId" value="LOCAL-00517" />
       <option name="project" value="LOCAL" />
-      <updated>1477390091881</updated>
+      <updated>1488306688725</updated>
     </task>
-    <task id="LOCAL-00038" summary="FileFunctionMissUseInspector: implemented">
-      <created>1477398071569</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
+    <task id="LOCAL-00518" summary="StrStrUsedAsStrPosInspector: quick-fix implemented">
+      <created>1488313082984</created>
+      <option name="number" value="00518" />
+      <option name="presentableId" value="LOCAL-00518" />
       <option name="project" value="LOCAL" />
-      <updated>1477398071569</updated>
+      <updated>1488313082988</updated>
     </task>
-    <task id="LOCAL-00039" summary="FileFunctionMissUseInspector: QF implemented">
-      <created>1477399837119</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
+    <task id="LOCAL-00519" summary="StrStrUsedAsStrPosInspector: fix tests">
+      <created>1488315621677</created>
+      <option name="number" value="00519" />
+      <option name="presentableId" value="LOCAL-00519" />
       <option name="project" value="LOCAL" />
-      <updated>1477399837119</updated>
+      <updated>1488315621677</updated>
     </task>
-    <task id="LOCAL-00040" summary="FileFunctionMissUseInspector: added UTs">
-      <created>1477417404981</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
+    <task id="LOCAL-00520" summary="IsNullFunctionUsageInspector: re-implement quick-fix">
+      <created>1488316093873</created>
+      <option name="number" value="00520" />
+      <option name="presentableId" value="LOCAL-00520" />
       <option name="project" value="LOCAL" />
-      <updated>1477417404981</updated>
+      <updated>1488316093873</updated>
     </task>
-    <task id="LOCAL-00041" summary="UnnecessaryParenthesesInspector: extended UTs fixtures">
-      <created>1477478361855</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
+    <task id="LOCAL-00521" summary="IsNullFunctionUsageInspector: optimized imports">
+      <created>1488316527653</created>
+      <option name="number" value="00521" />
+      <option name="presentableId" value="LOCAL-00521" />
       <option name="project" value="LOCAL" />
-      <updated>1477478361855</updated>
+      <updated>1488316527653</updated>
     </task>
-    <task id="LOCAL-00042" summary="UnnecessaryParenthesesInspector: resolved a false-positve (new ...)-&gt;prop">
-      <created>1477487691913</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
+    <task id="LOCAL-00522" summary="ExceptionsAnnotatingAndHandlingInspector: resolved false-positives (unused annotations in abstract classes)">
+      <created>1488401780450</created>
+      <option name="number" value="00522" />
+      <option name="presentableId" value="LOCAL-00522" />
       <option name="project" value="LOCAL" />
-      <updated>1477487691913</updated>
+      <updated>1488401780450</updated>
     </task>
-    <task id="LOCAL-00043" summary="UnnecessaryParenthesesInspector: SCA (method is too complex to analyze data flow)">
-      <created>1477487817657</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
+    <task id="LOCAL-00523" summary="[#160] ForeachSourceInspector: resolved false-positives (mixed return types of inlined core functions)">
+      <created>1488401959865</created>
+      <option name="number" value="00523" />
+      <option name="presentableId" value="LOCAL-00523" />
       <option name="project" value="LOCAL" />
-      <updated>1477487817657</updated>
+      <updated>1488401959865</updated>
     </task>
-    <task id="LOCAL-00044" summary="PrivateConstructorSemanticsInspector: added UTs, fixed a false-positive (fixed #305)">
-      <created>1477490597061</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
+    <task id="LOCAL-00524" summary="NotThrownExceptionInspector: implemented">
+      <created>1488479725850</created>
+      <option name="number" value="00524" />
+      <option name="presentableId" value="LOCAL-00524" />
       <option name="project" value="LOCAL" />
-      <updated>1477490597061</updated>
+      <updated>1488479725866</updated>
     </task>
-    <task id="LOCAL-00045" summary="PrivateConstructorSemanticsInspector: aligned variables naming">
-      <created>1477490838752</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
+    <task id="LOCAL-00525" summary="[#158] TraitsPropertiesConflictsInspector: WIP (inheritance-related conflicts TBD)">
+      <created>1488489382993</created>
+      <option name="number" value="00525" />
+      <option name="presentableId" value="LOCAL-00525" />
       <option name="project" value="LOCAL" />
-      <updated>1477490838752</updated>
+      <updated>1488489382993</updated>
     </task>
-    <task id="LOCAL-00046" summary="StaticInvocationViaThisInspector: resolved false positives (fixed #304)">
-      <created>1477491290685</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
+    <task id="LOCAL-00526" summary="IncompleteThrowStatementsInspector: more patterns">
+      <created>1488557521006</created>
+      <option name="number" value="00526" />
+      <option name="presentableId" value="LOCAL-00526" />
       <option name="project" value="LOCAL" />
-      <updated>1477491290685</updated>
+      <updated>1488557521006</updated>
     </task>
-    <task id="LOCAL-00047" summary="StaticInvocationViaThisInspector: SCA (possible memory leaks in QF)">
-      <created>1477492025947</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
+    <task id="LOCAL-00527" summary="PropertyInitializationFlawsInspector: enable all settings by default">
+      <created>1488573867571</created>
+      <option name="number" value="00527" />
+      <option name="presentableId" value="LOCAL-00527" />
       <option name="project" value="LOCAL" />
-      <updated>1477492025947</updated>
+      <updated>1488573867575</updated>
     </task>
-    <task id="LOCAL-00048" summary="StaticInvocationViaThisInspector: added UTs">
-      <created>1477496102988</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
+    <task id="LOCAL-00528" summary="[#158] TraitsPropertiesConflictsInspector: implemented">
+      <created>1488575489525</created>
+      <option name="number" value="00528" />
+      <option name="presentableId" value="LOCAL-00528" />
       <option name="project" value="LOCAL" />
-      <updated>1477496102988</updated>
+      <updated>1488575489525</updated>
     </task>
-    <task id="LOCAL-00049" summary="StaticInvocationViaThisInspector: added option for BC - reporting PHPUnit methods (fixed #6)">
-      <created>1477498158444</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
+    <task id="LOCAL-00529" summary="[#162] SuspiciousBinaryOperationInspector: new patterns (from not optimal if conditions)">
+      <created>1488576478157</created>
+      <option name="number" value="00529" />
+      <option name="presentableId" value="LOCAL-00529" />
       <option name="project" value="LOCAL" />
-      <updated>1477498158444</updated>
+      <updated>1488576478157</updated>
     </task>
-    <task id="LOCAL-00050" summary="Prepared 2.0.1">
-      <created>1477644992666</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
+    <task id="LOCAL-00530" summary="[#162] SuspiciousBinaryOperationInspector: bug-fixes">
+      <created>1488619647668</created>
+      <option name="number" value="00530" />
+      <option name="presentableId" value="LOCAL-00530" />
       <option name="project" value="LOCAL" />
-      <updated>1477644992671</updated>
+      <updated>1488619647668</updated>
     </task>
-    <task id="LOCAL-00051" summary="OneTimeUseVariablesInspector: hook inspecting 'list() = $...' constructs">
-      <created>1477834603195</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
+    <task id="LOCAL-00531" summary="Code grooming: give new fixers more specific action names">
+      <created>1488635646318</created>
+      <option name="number" value="00531" />
+      <option name="presentableId" value="LOCAL-00531" />
       <option name="project" value="LOCAL" />
-      <updated>1477834603195</updated>
+      <updated>1488635646318</updated>
     </task>
-    <task id="LOCAL-00052" summary="OneTimeUseVariablesInspector: implemented 'list() = $...' constructs analyzis (fixed #10)">
-      <created>1477840507485</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
+    <task id="LOCAL-00532" summary="IsNullFunctionUsageInspector: code review, bug-fixes and more tests cases">
+      <created>1488639458980</created>
+      <option name="number" value="00532" />
+      <option name="presentableId" value="LOCAL-00532" />
       <option name="project" value="LOCAL" />
-      <updated>1477840507485</updated>
+      <updated>1488639458980</updated>
     </task>
-    <task id="LOCAL-00053" summary="OneTimeUseVariablesInspector: resolved false-positives">
-      <created>1477859064500</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
+    <task id="LOCAL-00533" summary="Code grooming: SCA for new fixers">
+      <created>1488639651344</created>
+      <option name="number" value="00533" />
+      <option name="presentableId" value="LOCAL-00533" />
       <option name="project" value="LOCAL" />
-      <updated>1477859064516</updated>
+      <updated>1488639651344</updated>
     </task>
-    <task id="LOCAL-00054" summary="OneTimeUseVariablesInspector: added UTs, fixed a regression">
-      <created>1477860869373</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
+    <task id="LOCAL-00534" summary="InArrayMissUseInspector: 1st QF added (-&gt; array_key_exists)">
+      <created>1488641612962</created>
+      <option name="number" value="00534" />
+      <option name="presentableId" value="LOCAL-00534" />
       <option name="project" value="LOCAL" />
-      <updated>1477860869373</updated>
+      <updated>1488641612962</updated>
     </task>
-    <task id="LOCAL-00055" summary="OneTimeUseVariablesInspector: SCA (possible mem. leaks in fixer)">
-      <created>1477861271022</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
+    <task id="LOCAL-00535" summary="InArrayMissUseInspector: fix broken tests">
+      <created>1488641929319</created>
+      <option name="number" value="00535" />
+      <option name="presentableId" value="LOCAL-00535" />
       <option name="project" value="LOCAL" />
-      <updated>1477861271022</updated>
+      <updated>1488641929319</updated>
     </task>
-    <task id="LOCAL-00056" summary="NotOptimalIfConditionsInspection: fixed a false positive ($_* array access and array_key_exists)">
-      <created>1477900653874</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
+    <task id="LOCAL-00536" summary="InArrayMissUseInspector: 2st QF added (-&gt; comparison)">
+      <created>1488643939485</created>
+      <option name="number" value="00536" />
+      <option name="presentableId" value="LOCAL-00536" />
       <option name="project" value="LOCAL" />
-      <updated>1477900653890</updated>
+      <updated>1488643939485</updated>
     </task>
-    <task id="LOCAL-00057" summary="NotOptimalIfConditionsInspection: added UTs (fixed #12, see 5de612)">
-      <created>1477901415199</created>
-      <option name="number" value="00057" />
-      <option name="presentableId" value="LOCAL-00057" />
+    <task id="LOCAL-00537" summary="2.3.4 prepared">
+      <created>1488651628422</created>
+      <option name="number" value="00537" />
+      <option name="presentableId" value="LOCAL-00537" />
       <option name="project" value="LOCAL" />
-      <updated>1477901415199</updated>
+      <updated>1488651628422</updated>
     </task>
-    <task id="LOCAL-00058" summary="Code grooming: refactored handing predefined $_ variables in multiple inspectinos">
-      <created>1477902043356</created>
-      <option name="number" value="00058" />
-      <option name="presentableId" value="LOCAL-00058" />
+    <task id="LOCAL-00538" summary="IncompleteThrowStatementsInspector: resolved false-positives (%s, non-exception classes being reported)">
+      <created>1488749173140</created>
+      <option name="number" value="00538" />
+      <option name="presentableId" value="LOCAL-00538" />
       <option name="project" value="LOCAL" />
-      <updated>1477902043356</updated>
+      <updated>1488749173141</updated>
     </task>
-    <task id="LOCAL-00059" summary="PropertyCanBeStaticInspector: resolved false-positives with overridden properties (fixed #17)">
-      <created>1477930292329</created>
-      <option name="number" value="00059" />
-      <option name="presentableId" value="LOCAL-00059" />
+    <task id="LOCAL-00539" summary="[#169] ExplodeMissUseInspector: new patterns, QF implemented">
+      <created>1488825720834</created>
+      <option name="number" value="00539" />
+      <option name="presentableId" value="LOCAL-00539" />
       <option name="project" value="LOCAL" />
-      <updated>1477930292329</updated>
+      <updated>1488825720834</updated>
     </task>
-    <task id="LOCAL-00060" summary="PropertyCanBeStaticInspector: added UTs">
-      <created>1477930339229</created>
-      <option name="number" value="00060" />
-      <option name="presentableId" value="LOCAL-00060" />
+    <task id="LOCAL-00540" summary="[#169] ExplodeMissUseInspector: strstr changes behaviour, disable current/explode check">
+      <created>1488831850615</created>
+      <option name="number" value="00540" />
+      <option name="presentableId" value="LOCAL-00540" />
       <option name="project" value="LOCAL" />
-      <updated>1477930339229</updated>
+      <updated>1488831850615</updated>
     </task>
-    <task id="LOCAL-00061" summary="NotOptimalIfConditionsInspection: refactor checking public/static field modifiers">
-      <created>1477931076337</created>
-      <option name="number" value="00061" />
-      <option name="presentableId" value="LOCAL-00061" />
+    <task id="LOCAL-00541" summary="[#168] StringNormalizationInspector: prototyping">
+      <created>1488912046719</created>
+      <option name="number" value="00541" />
+      <option name="presentableId" value="LOCAL-00541" />
       <option name="project" value="LOCAL" />
-      <updated>1477931076338</updated>
+      <updated>1488912046719</updated>
     </task>
-    <task id="LOCAL-00062" summary="Code grooming: added TODOs">
-      <created>1477931197496</created>
-      <option name="number" value="00062" />
-      <option name="presentableId" value="LOCAL-00062" />
+    <task id="LOCAL-00542" summary="[#187] FilePutContentsMissUseInspector: resolved false-positives (method calls)">
+      <created>1489690995785</created>
+      <option name="number" value="00542" />
+      <option name="presentableId" value="LOCAL-00542" />
       <option name="project" value="LOCAL" />
-      <updated>1477931197496</updated>
+      <updated>1489690995785</updated>
     </task>
-    <task id="LOCAL-00063" summary="Code grooming: refactored handing predefined $_ variables in multiple inspectinos">
-      <created>1477931700866</created>
-      <option name="number" value="00063" />
-      <option name="presentableId" value="LOCAL-00063" />
+    <task id="LOCAL-00543" summary="[#187] FilePutContentsMissUseInspector: resolved false-positives (method calls)">
+      <created>1489691252923</created>
+      <option name="number" value="00543" />
+      <option name="presentableId" value="LOCAL-00543" />
       <option name="project" value="LOCAL" />
-      <updated>1477931700866</updated>
+      <updated>1489691252923</updated>
     </task>
-    <task id="LOCAL-00064" summary="PropertyCanBeStaticInspector: new binary">
-      <created>1477933557381</created>
-      <option name="number" value="00064" />
-      <option name="presentableId" value="LOCAL-00064" />
+    <task id="LOCAL-00544" summary="[#180] UnNecessaryDoubleQuotesInspector: bug-fix (&quot;&quot; was not reported)">
+      <created>1489691965914</created>
+      <option name="number" value="00544" />
+      <option name="presentableId" value="LOCAL-00544" />
       <option name="project" value="LOCAL" />
-      <updated>1477933557381</updated>
+      <updated>1489691965914</updated>
     </task>
-    <task id="LOCAL-00065" summary="Developers documentation (draft)">
-      <created>1477937058017</created>
-      <option name="number" value="00065" />
-      <option name="presentableId" value="LOCAL-00065" />
+    <task id="LOCAL-00545" summary="[#171] PrintfScanfArgumentsInspector: resolved false-positives (variadic variables)">
+      <created>1489692918638</created>
+      <option name="number" value="00545" />
+      <option name="presentableId" value="LOCAL-00545" />
       <option name="project" value="LOCAL" />
-      <updated>1477937058018</updated>
+      <updated>1489692918638</updated>
     </task>
-    <task id="LOCAL-00066" summary="FopenBinaryUnsafeUsageInspector: implemented, UTs added (fixed #18)">
-      <created>1478032281041</created>
-      <option name="number" value="00066" />
-      <option name="presentableId" value="LOCAL-00066" />
+    <task id="LOCAL-00546" summary="[#171] PrintfScanfArgumentsInspector: resolved false-positives (*scanf %[...] modifiers)">
+      <created>1489693286154</created>
+      <option name="number" value="00546" />
+      <option name="presentableId" value="LOCAL-00546" />
       <option name="project" value="LOCAL" />
-      <updated>1478032281041</updated>
+      <updated>1489693286154</updated>
     </task>
-    <task id="LOCAL-00067" summary="TypeUnsafeComparisonInspector: resolved false-positive (fixed #19)">
-      <created>1478079108984</created>
-      <option name="number" value="00067" />
-      <option name="presentableId" value="LOCAL-00067" />
+    <task id="LOCAL-00547" summary="[#168] StringNormalizationInspector: finished reporting adjustments">
+      <created>1489695083450</created>
+      <option name="number" value="00547" />
+      <option name="presentableId" value="LOCAL-00547" />
       <option name="project" value="LOCAL" />
-      <updated>1478079108984</updated>
+      <updated>1489695083450</updated>
     </task>
-    <task id="LOCAL-00068" summary="TypeUnsafeComparisonInspector: supported all comparable objects (fixed #19)">
-      <created>1478080294066</created>
-      <option name="number" value="00068" />
-      <option name="presentableId" value="LOCAL-00068" />
+    <task id="LOCAL-00548" summary="[#168] StringNormalizationInspector: bug-fixes (wrongly reported cases; behaviour change)">
+      <created>1489695909881</created>
+      <option name="number" value="00548" />
+      <option name="presentableId" value="LOCAL-00548" />
       <option name="project" value="LOCAL" />
-      <updated>1478080294066</updated>
+      <updated>1489695909881</updated>
     </task>
-    <task id="LOCAL-00069" summary="TypeUnsafeComparisonInspector: polished naming">
-      <created>1478080521492</created>
-      <option name="number" value="00069" />
-      <option name="presentableId" value="LOCAL-00069" />
+    <task id="LOCAL-00549" summary="[#168] StringNormalizationInspector: added UTs">
+      <created>1489844241888</created>
+      <option name="number" value="00549" />
+      <option name="presentableId" value="LOCAL-00549" />
       <option name="project" value="LOCAL" />
-      <updated>1478080521492</updated>
+      <updated>1489844241888</updated>
     </task>
-    <task id="LOCAL-00070" summary="TypeUnsafeComparisonInspector: polished naming">
-      <created>1478080827106</created>
-      <option name="number" value="00070" />
-      <option name="presentableId" value="LOCAL-00070" />
+    <task id="LOCAL-00550" summary="[#168] StringNormalizationInspector: added QFes">
+      <created>1489845140786</created>
+      <option name="number" value="00550" />
+      <option name="presentableId" value="LOCAL-00550" />
       <option name="project" value="LOCAL" />
-      <updated>1478080827106</updated>
+      <updated>1489845140786</updated>
     </task>
-    <task id="LOCAL-00071" summary="FopenBinaryUnsafeUsageInspector: implemented QA (related to #18)">
-      <created>1478082006062</created>
-      <option name="number" value="00071" />
-      <option name="presentableId" value="LOCAL-00071" />
+    <task id="LOCAL-00551" summary="[#168] StringNormalizationInspector: updated docs">
+      <created>1489845618674</created>
+      <option name="number" value="00551" />
+      <option name="presentableId" value="LOCAL-00551" />
       <option name="project" value="LOCAL" />
-      <updated>1478082006062</updated>
+      <updated>1489845618674</updated>
     </task>
-    <task id="LOCAL-00072" summary="AlterInForeachInspector: resolved a false positive with doc-block after loop, added UTs (fixed #21)">
-      <created>1478102986246</created>
-      <option name="number" value="00072" />
-      <option name="presentableId" value="LOCAL-00072" />
+    <task id="LOCAL-00552" summary="[#168] StringNormalizationInspector: added more test-cases">
+      <created>1489846293163</created>
+      <option name="number" value="00552" />
+      <option name="presentableId" value="LOCAL-00552" />
       <option name="project" value="LOCAL" />
-      <updated>1478102986246</updated>
+      <updated>1489846293163</updated>
     </task>
-    <task id="LOCAL-00073" summary="AlterInForeachInspector: updated test cases">
-      <created>1478111793693</created>
-      <option name="number" value="00073" />
-      <option name="presentableId" value="LOCAL-00073" />
+    <task id="LOCAL-00553" summary="[#164] UnnecessaryElseInspector: refactoring, behaviour tweaks to reduce amount of initially reported statements">
+      <created>1489855529210</created>
+      <option name="number" value="00553" />
+      <option name="presentableId" value="LOCAL-00553" />
       <option name="project" value="LOCAL" />
-      <updated>1478111793693</updated>
+      <updated>1489855529210</updated>
     </task>
-    <task id="LOCAL-00074" summary="DisconnectedForeachInstructionInspector: resolved a false-positive with self-assignments, add UTs for false-positives (fixed #22)">
-      <created>1478112495856</created>
-      <option name="number" value="00074" />
-      <option name="presentableId" value="LOCAL-00074" />
+    <task id="LOCAL-00554" summary="[#164] UnnecessaryElseInspector: merge test fixtures, enhance message generation">
+      <created>1489863869767</created>
+      <option name="number" value="00554" />
+      <option name="presentableId" value="LOCAL-00554" />
       <option name="project" value="LOCAL" />
-      <updated>1478112495856</updated>
+      <updated>1489863869767</updated>
     </task>
-    <task id="LOCAL-00075" summary="DisconnectedForeachInstructionInspector: added UTs, fixed a bug">
-      <created>1478120500332</created>
-      <option name="number" value="00075" />
-      <option name="presentableId" value="LOCAL-00075" />
+    <task id="LOCAL-00555" summary="[#164] UnnecessaryElseInspector: QF, fixing 'else if' works ('else ...;', 'else {...}', 'elseif ()') are ahead">
+      <created>1489867032445</created>
+      <option name="number" value="00555" />
+      <option name="presentableId" value="LOCAL-00555" />
       <option name="project" value="LOCAL" />
-      <updated>1478120500332</updated>
+      <updated>1489867032445</updated>
     </task>
-    <task id="LOCAL-00076" summary="NotOptimalIfConditionsInspection: detect literal or/and operands independently from case (fixed #24)">
-      <created>1478120768332</created>
-      <option name="number" value="00076" />
-      <option name="presentableId" value="LOCAL-00076" />
+    <task id="LOCAL-00556" summary="[#164] UnnecessaryElseInspector: QF, fixing 'else {...}' works ('else ...;', 'elseif (...) {...}', 'elseif (...) ...;') are ahead">
+      <created>1489871167156</created>
+      <option name="number" value="00556" />
+      <option name="presentableId" value="LOCAL-00556" />
       <option name="project" value="LOCAL" />
-      <updated>1478120768332</updated>
+      <updated>1489871167156</updated>
     </task>
-    <task id="LOCAL-00077" summary="DisconnectedForeachInstructionInspector: extended UTs, fixed newly discovered false-positives">
-      <created>1478169156674</created>
-      <option name="number" value="00077" />
-      <option name="presentableId" value="LOCAL-00077" />
+    <task id="LOCAL-00557" summary="[#164] UnnecessaryElseInspector: QF, fixing 'elseif (...) {...}' works ('else ...;', 'elseif (...) ...;' to be not analyzed)">
+      <created>1489930968869</created>
+      <option name="number" value="00557" />
+      <option name="presentableId" value="LOCAL-00557" />
       <option name="project" value="LOCAL" />
-      <updated>1478169156674</updated>
+      <updated>1489930968869</updated>
     </task>
-    <task id="LOCAL-00078" summary="Project settings updated">
-      <created>1478169168828</created>
-      <option name="number" value="00078" />
-      <option name="presentableId" value="LOCAL-00078" />
+    <task id="LOCAL-00558" summary="[#164] UnnecessaryElseInspector: UTs adjustment, resolved false-positives">
+      <created>1489932174109</created>
+      <option name="number" value="00558" />
+      <option name="presentableId" value="LOCAL-00558" />
       <option name="project" value="LOCAL" />
-      <updated>1478169168828</updated>
+      <updated>1489932174109</updated>
     </task>
-    <task id="LOCAL-00079" summary="Re-structured file system: to exclude tests from packaging">
-      <created>1478171357099</created>
-      <option name="number" value="00079" />
-      <option name="presentableId" value="LOCAL-00079" />
+    <task id="LOCAL-00559" summary="[#164] RedundantElseClauseInspector: finished, enabled by default">
+      <created>1489941116012</created>
+      <option name="number" value="00559" />
+      <option name="presentableId" value="LOCAL-00559" />
       <option name="project" value="LOCAL" />
-      <updated>1478171357099</updated>
+      <updated>1489941116012</updated>
     </task>
-    <task id="LOCAL-00080" summary="Cleaned up refactoring artifacts">
-      <created>1478171537575</created>
-      <option name="number" value="00080" />
-      <option name="presentableId" value="LOCAL-00080" />
+    <task id="LOCAL-00560" summary="[#164] RedundantElseClauseInspector: update description">
+      <created>1489943305372</created>
+      <option name="number" value="00560" />
+      <option name="presentableId" value="LOCAL-00560" />
       <option name="project" value="LOCAL" />
-      <updated>1478171537576</updated>
+      <updated>1489943305373</updated>
     </task>
-    <option name="localTasksCounter" value="81" />
+    <option name="localTasksCounter" value="561" />
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Tests - 2016.11.03 at 11h 14m 21s.xml">
+    <history-entry file="Tests - 2017.03.18 at 17h 43m 07s.xml">
       <configuration name="Tests" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="Tests - 2016.11.03 at 11h 22m 42s.xml">
+    <history-entry file="Tests - 2017.03.18 at 19h 56m 26s.xml">
       <configuration name="Tests" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="Tests - 2016.11.03 at 11h 26m 15s.xml">
+    <history-entry file="Tests - 2017.03.18 at 20h 00m 10s.xml">
       <configuration name="Tests" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="Tests - 2016.11.03 at 11h 30m 32s.xml">
+    <history-entry file="Tests - 2017.03.18 at 20h 02m 08s.xml">
       <configuration name="Tests" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="Tests - 2016.11.03 at 11h 44m 54s.xml">
+    <history-entry file="Tests - 2017.03.18 at 20h 03m 55s.xml">
       <configuration name="Tests" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="Tests - 2016.11.03 at 12h 01m 00s.xml">
+    <history-entry file="Tests - 2017.03.19 at 14h 48m 02s.xml">
       <configuration name="Tests" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="Tests - 2016.11.03 at 12h 02m 19s.xml">
+    <history-entry file="Tests - 2017.03.19 at 14h 49m 15s.xml">
       <configuration name="Tests" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="Tests - 2016.11.03 at 12h 04m 52s.xml">
+    <history-entry file="Tests - 2017.03.19 at 14h 52m 00s.xml">
       <configuration name="Tests" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="Tests - 2016.11.03 at 12h 06m 24s.xml">
+    <history-entry file="Tests - 2017.03.19 at 15h 00m 44s.xml">
       <configuration name="Tests" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="Tests - 2016.11.03 at 12h 12m 54s.xml">
+    <history-entry file="Tests - 2017.03.19 at 17h 32m 28s.xml">
       <configuration name="Tests" configurationId="JUnit" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="108937000" />
+    <option name="totallyTimeSpent" value="899925000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991454" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.71623933" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991454" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6" sideWeight="0.50447" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.51111114" sideWeight="0.51664144" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="PsiViewer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6" sideWeight="0.49553" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5948718" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33162394" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30937973" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4034188" sideWeight="0.48335856" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.765812" sideWeight="0.49016643" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="CheckStyle" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4940171" sideWeight="0.49394855" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30711043" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5606838" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24962178" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5589744" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24962178" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24962178" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5965812" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5641026" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
-    <layout-to-restore>
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6" sideWeight="0.50447" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5965812" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24962178" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24962178" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991454" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="PsiViewer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6" sideWeight="0.49553" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5948718" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33162394" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19213313" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5606838" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
-    </layout-to-restore>
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.php" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -1346,36 +1515,50 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="OneTimeUseVariablesInspector: SCA (possible mem. leaks in fixer)" />
-    <MESSAGE value="NotOptimalIfConditionsInspection: fixed a false positive ($_* array access and array_key_exists)" />
-    <MESSAGE value="NotOptimalIfConditionsInspection: added UTs (fixed #12, see 5de612)" />
-    <MESSAGE value="PropertyCanBeStaticInspector: resolved false-positives with overridden properties (fixed #17)" />
-    <MESSAGE value="PropertyCanBeStaticInspector: added UTs" />
-    <MESSAGE value="NotOptimalIfConditionsInspection: refactor checking public/static field modifiers" />
-    <MESSAGE value="Code grooming: added TODOs" />
-    <MESSAGE value="Code grooming: refactored handing predefined $_ variables in multiple inspectinos" />
-    <MESSAGE value="PropertyCanBeStaticInspector: new binary" />
-    <MESSAGE value="Developers documentation (draft)" />
-    <MESSAGE value="FopenBinaryUnsafeUsageInspector: implemented, UTs added (fixed #18)" />
-    <MESSAGE value="TypeUnsafeComparisonInspector: resolved false-positive (fixed #19)" />
-    <MESSAGE value="TypeUnsafeComparisonInspector: supported all comparable objects (fixed #19)" />
-    <MESSAGE value="TypeUnsafeComparisonInspector: polished naming" />
-    <MESSAGE value="FopenBinaryUnsafeUsageInspector: implemented QA ( related to #18)" />
-    <MESSAGE value="FopenBinaryUnsafeUsageInspector: implemented QA (related to #18)" />
-    <MESSAGE value="AlterInForeachInspector: resolved a false positive with doc-block after loop, added UTs (fixed #21)" />
-    <MESSAGE value="AlterInForeachInspector: updated test cases" />
-    <MESSAGE value="DisconnectedForeachInstructionInspector: resolved a false-positive with self-assignments, add UTs for false-positives (fixed #22)" />
-    <MESSAGE value="DisconnectedForeachInstructionInspector: added UTs, fixed a bug" />
-    <MESSAGE value="NotOptimalIfConditionsInspection: detect literal or/and operands independently from case (fixed #24)" />
-    <MESSAGE value="DisconnectedForeachInstructionInspector: extended UTs, fixed newly discovered false-positives" />
-    <MESSAGE value="Project settings updated" />
-    <MESSAGE value="Re-structured file system: to exclude tests from packaging" />
-    <MESSAGE value="Cleaned up refactoring artifacts" />
-    <option name="LAST_COMMIT_MESSAGE" value="Cleaned up refactoring artifacts" />
+    <MESSAGE value="InArrayMissUseInspector: 2st QF added (-&gt; comparison)" />
+    <MESSAGE value="2.3.4 prepared" />
+    <MESSAGE value="IncompleteThrowStatementsInspector: resolved false-positives (%s, non-exception classes being reported)" />
+    <MESSAGE value="[#169] ExplodeMissUseInspector: new patterns, QF implemented" />
+    <MESSAGE value="[#169] ExplodeMissUseInspector: strstr changes behaviour, disable current/explode check" />
+    <MESSAGE value="[#168] StringNormalizationInspector: prototyping" />
+    <MESSAGE value="[#187] FilePutContentsMissUseInspector: resolved false-positives (method calls)" />
+    <MESSAGE value="[#180] UnNecessaryDoubleQuotesInspector: bug-fix (&quot;&quot; was not reported)" />
+    <MESSAGE value="[#171] PrintfScanfArgumentsInspector: resolved false-positives (variadic variables)" />
+    <MESSAGE value="[#171] PrintfScanfArgumentsInspector: resolved false-positives (*scanf %[...] modifiers)" />
+    <MESSAGE value="[#168] StringNormalizationInspector: finished reporting adjustments" />
+    <MESSAGE value="[#168] StringNormalizationInspector: bug-fixes (wrongly reported cases; behaviour change)" />
+    <MESSAGE value="[#168] StringNormalizationInspector: added UTs" />
+    <MESSAGE value="[#168] StringNormalizationInspector: added QFes" />
+    <MESSAGE value="[#168] StringNormalizationInspector: updated docs" />
+    <MESSAGE value="[#168] StringNormalizationInspector: added more test-cases" />
+    <MESSAGE value="[#164] UnnecessaryElseInspector: refactoring, behaviour tweaks to reduce amount of initially reported statements" />
+    <MESSAGE value="[#164] UnnecessaryElseInspector: merge test fixtures, enhance message generation" />
+    <MESSAGE value="[#164] UnnecessaryElseInspector: QF, fixing 'else if' works ('else ...;', 'else {...}', 'elseif ()') are ahead" />
+    <MESSAGE value="[#164] UnnecessaryElseInspector: QF, fixing 'else {...}' works ('else ...;', 'elseif (...) {...}', 'elseif (...) ...;') are ahead" />
+    <MESSAGE value="[#164] UnnecessaryElseInspector: QF, fixing 'elseif (...) {...}' works ('else ...;', 'elseif (...) ...;' to be not analyzed)" />
+    <MESSAGE value="[#164] UnnecessaryElseInspector: UTs adjustment, resolved false-positives" />
+    <MESSAGE value="[#164] RedundantElseClauseInspector: finished, enabled by default" />
+    <MESSAGE value="[#164] RedundantElseClauseInspector: update description" />
+    <MESSAGE value="Merge branch 'feature-164'&#10;&#10;Conflicts:&#10;&#9;META-INF/plugin.xml&#10;&#9;RULES.md&#10;" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge branch 'feature-164'&#10;&#10;Conflicts:&#10;&#9;META-INF/plugin.xml&#10;&#9;RULES.md&#10;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="2" />
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/languageConstructions/ClassConstantCanBeUsedInspector.java</url>
+          <line>59</line>
+          <properties />
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/languageConstructions/ClassConstantCanBeUsedInspector.java</url>
+          <line>58</line>
+          <properties class="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ClassConstantCanBeUsedInspector" method="getShortName" />
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="12" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1384,180 +1567,309 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$APPLICATION_HOME_DIR$/lib/openapi.jar!/com/intellij/codeInspection/ProblemDescriptor.class">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/codeSmell/DisallowWritingIntoStaticPropertiesInspector.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="19" column="15" selection-start-line="19" selection-start-column="15" selection-end-line="19" selection-end-column="15" />
+        <state relative-caret-position="75">
+          <caret line="119" column="0" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/CaseInsensitiveStringFunctionsMissUseInspector.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="42">
-          <caret line="46" column="59" selection-start-line="46" selection-start-column="59" selection-end-line="46" selection-end-column="59" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/DateIntervalSpecificationInspector.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="58" column="79" selection-start-line="58" selection-start-column="79" selection-end-line="58" selection-end-column="79" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/FileFunctionMissUseInspector.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="65" column="76" selection-start-line="65" selection-start-column="76" selection-end-line="65" selection-end-column="76" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/utils/ExpressionSemanticUtil.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="101">
-          <caret line="294" column="24" selection-start-line="294" selection-start-column="24" selection-end-line="294" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/GetTypeMissUseInspector.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-128">
-          <caret line="87" column="96" selection-start-line="87" selection-start-column="96" selection-end-line="87" selection-end-column="96" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/IsNullFunctionUsageInspector.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="310">
-          <caret line="82" column="100" selection-start-line="82" selection-start-column="50" selection-end-line="82" selection-end-column="100" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/FopenBinaryUnsafeUsageInspector.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="381">
-          <caret line="96" column="41" selection-start-line="96" selection-start-column="41" selection-end-line="96" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/types/TypeUnsafeComparisonInspectorTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="18" column="1" selection-start-line="7" selection-start-column="46" selection-end-line="18" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/controlFlow/IfReturnReturnSimplificationInspectorTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="13" column="38" selection-start-line="13" selection-start-column="16" selection-end-line="13" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/php/alter-in-foreach.php" />
-    <entry file="file://$PROJECT_DIR$/src/test/resources/fixtures/designPatterns/util-class-needs-correct-naming.php">
+    <entry file="file://$PROJECT_DIR$/src/main/resources/inspectionDescriptions/PregQuoteUsageInspection.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
-          <caret line="2" column="12" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="73" />
+          <caret line="2" column="148" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="148" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/lib/idea.jar!/com/intellij/testFramework/fixtures/CodeInsightTestFixture.class">
+    <entry file="file://$PROJECT_DIR$/src/main/resources/inspectionDescriptions/TraitsPropertiesConflictsInspection.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="98" column="9" selection-start-line="98" selection-start-column="9" selection-end-line="98" selection-end-column="9" />
+        <state relative-caret-position="34">
+          <caret line="2" column="19" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/forEach/AlterInForeachInspector.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/languageConstructions/TraitsPropertiesConflictsInspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="22" column="39" selection-start-line="22" selection-start-column="39" selection-end-line="22" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/inspectionDescriptions/IncompleteThrowStatementsInspection.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="99" selection-start-line="2" selection-start-column="99" selection-end-line="2" selection-end-column="99" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/phpUnit/strategy/BaseSameEqualsFunctionReferenceStrategy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="41">
+          <caret line="73" column="14" selection-start-line="73" selection-start-column="14" selection-end-line="73" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/UnqualifiedReferenceInspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="33" column="10" selection-start-line="33" selection-start-column="10" selection-end-line="33" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/semanticalAnalysis/classes/SenselessMethodDuplicationInspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="32" column="15" selection-start-line="32" selection-start-column="15" selection-end-line="32" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/utils/analytics/AnalyticsUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="22" column="25" selection-start-line="22" selection-start-column="25" selection-end-line="22" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/gui/PrettyListControl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="49" column="26" selection-start-line="49" selection-start-column="26" selection-end-line="49" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/controlFlow/IncompleteThrowStatementsInspectorTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="7" column="59" selection-start-line="7" selection-start-column="59" selection-end-line="7" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/exceptions/IncompleteThrowStatementsInspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="29" column="47" selection-start-line="29" selection-start-column="13" selection-end-line="29" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/resources/fixtures/controlFlow/incomplete-throw-statements.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="18" selection-start-line="10" selection-start-column="18" selection-end-line="10" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/fixers/UseSuggestedReplacementFixer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="26" column="5" selection-start-line="22" selection-start-column="4" selection-end-line="26" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/controlFlow/ExplodeMissUseInspectorTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="7" column="65" selection-start-line="7" selection-start-column="65" selection-end-line="7" selection-end-column="65" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/resources/fixtures/controlFlow/explode-missuse.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="19" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/ExplodeMissUseInspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="38" column="114" selection-start-line="38" selection-start-column="114" selection-end-line="38" selection-end-column="114" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/security/CryptographicallySecureAlgorithmsInspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="32">
+          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="26" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/strings/SubStrShortHandUsageInspector.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="185">
-          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+          <caret line="32" column="13" selection-start-line="32" selection-start-column="13" selection-end-line="32" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/strings/CaseInsensitiveStringFunctionsMissUseInspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="68" column="129" selection-start-line="68" selection-start-column="20" selection-end-line="68" selection-end-column="129" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/resources/fixtures/api/file_put_contents-missuse.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/fileSystem/FilePutContentsMissUseInspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="59" column="66" selection-start-line="59" selection-start-column="66" selection-end-line="59" selection-end-column="66" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/resources/fixtures/codeStyle/double-quotes.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="82" selection-start-line="5" selection-start-column="82" selection-end-line="5" selection-end-column="82" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/languageConstructions/UnNecessaryDoubleQuotesInspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="19" column="45" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/PrintfScanfArgumentsInspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="174">
+          <caret line="42" column="102" selection-start-line="42" selection-start-column="102" selection-end-line="42" selection-end-column="102" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/resources/fixtures/api/printf-scanf.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="421">
+          <caret line="47" column="36" selection-start-line="47" selection-start-column="36" selection-end-line="47" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/controlFlow/SequentialUnSetCallsInspectorTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="11" column="1" selection-start-line="5" selection-start-column="53" selection-end-line="11" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/controlFlow/StringNormalizationInspectorTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="52" selection-start-line="7" selection-start-column="52" selection-end-line="7" selection-end-column="52" />
           <folding>
             <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/semanticalAnalysis/MkdirRaceConditionInspector.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/IsNullFunctionUsageInspector.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="112" column="41" selection-start-line="112" selection-start-column="41" selection-end-line="112" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php-openapi.jar!/com/jetbrains/php/lang/psi/elements/PhpPsiElement.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="14" column="18" selection-start-line="14" selection-start-column="18" selection-end-line="14" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_101/src.zip!/java/util/HashMap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="553" column="13" selection-start-line="553" selection-start-column="13" selection-end-line="553" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/lib/openapi.jar!/com/intellij/psi/util/PsiTreeUtil.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="277" column="55" selection-start-line="277" selection-start-column="55" selection-end-line="277" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php.jar!/com/jetbrains/php/lang/psi/elements/impl/AssignmentExpressionImpl.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php.jar!/com/jetbrains/php/lang/psi/elements/impl/SelfAssignmentExpressionImpl.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="19" column="68" selection-start-line="19" selection-start-column="68" selection-end-line="19" selection-end-column="68" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/foreach/AlterInForeachInspectorTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="13" column="0" selection-start-line="13" selection-start-column="0" selection-end-line="20" selection-end-column="5" />
+        <state relative-caret-position="339">
+          <caret line="89" column="8" selection-start-line="89" selection-start-column="8" selection-end-line="97" selection-end-column="9" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$APPLICATION_PLUGINS_DIR$/php/lib/php.jar!/com/jetbrains/php/lang/psi/stubs/data/standard_3.php">
+    <entry file="file://$PROJECT_DIR$/src/test/resources/fixtures/controlFlow/string-normalization.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="438">
-          <caret line="1131" column="9" selection-start-line="1131" selection-start-column="9" selection-end-line="1131" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/php/increment-decrement.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/resources/fixtures/foreach/alter-in-foreach.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="6" column="198" selection-start-line="6" selection-start-column="198" selection-end-line="6" selection-end-column="198" />
+        <state relative-caret-position="336">
+          <caret line="23" column="112" selection-start-line="23" selection-start-column="112" selection-end-line="23" selection-end-column="112" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/php/slow-alter-in-foreach.php" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/apiUsage/strings/StringNormalizationInspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="344">
+          <caret line="80" column="13" selection-start-line="80" selection-start-column="13" selection-end-line="80" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/exceptions/ExceptionsAnnotatingAndHandlingInspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="41" column="25" selection-start-line="41" selection-start-column="4" selection-end-line="41" selection-end-column="25" />
+          <folding>
+            <element signature="e#1875#1908#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/openApi/BasePhpElementVisitor.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
-          <caret line="4" column="61" selection-start-line="4" selection-start-column="61" selection-end-line="4" selection-end-column="61" />
+          <caret line="8" column="57" selection-start-line="8" selection-start-column="57" selection-end-line="8" selection-end-column="57" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php-openapi.jar!/com/jetbrains/php/lang/psi/visitors/PhpElementVisitor.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="194">
+          <caret line="163" column="44" selection-start-line="163" selection-start-column="4" selection-end-line="163" selection-end-column="44" />
+          <folding>
+            <element signature="e#6431#6432#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/ifs/NotOptimalIfConditionsInspection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="63" column="13" selection-start-line="63" selection-start-column="13" selection-end-line="63" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/languageConstructions/MissingOrEmptyGroupStatementInspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="211">
+          <caret line="55" column="96" selection-start-line="55" selection-start-column="16" selection-end-line="55" selection-end-column="96" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/utils/ExpressionSemanticUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="24" column="26" selection-start-line="24" selection-start-column="26" selection-end-line="24" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/resources/fixtures/lang/unnecessary-elseif.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/lang/SwitchContinuationInLoopInspectorTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="6" column="38" selection-start-line="6" selection-start-column="16" selection-end-line="6" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/languageConstructions/ClassConstantCanBeUsedInspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="236" column="40" selection-start-line="236" selection-start-column="40" selection-end-line="236" selection-end-column="77" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php-openapi.jar!/com/jetbrains/php/lang/psi/elements/ElseIf.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="13" column="17" selection-start-line="13" selection-start-column="17" selection-end-line="13" selection-end-column="17" />
           <folding />
         </state>
       </provider>
@@ -1566,208 +1878,89 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="14" column="17" selection-start-line="14" selection-start-column="17" selection-end-line="14" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php-openapi.jar!/com/jetbrains/php/lang/psi/visitors/PhpElementVisitor.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="203" column="29" selection-start-line="203" selection-start-column="29" selection-end-line="203" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php-openapi.jar!/com/jetbrains/php/lang/psi/elements/For.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="13" column="17" selection-start-line="13" selection-start-column="17" selection-end-line="13" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/resources/fixtures/foreach/alter-in-foreach-false-positives.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="20" column="36" selection-start-line="20" selection-start-column="36" selection-end-line="20" selection-end-column="36" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/resources/fixtures/designPatterns/util-class-needs-final.php">
+    <entry file="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php-openapi.jar!/com/jetbrains/php/lang/lexer/PhpTokenTypes.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="85" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="85" />
+        <state relative-caret-position="185">
+          <caret line="106" column="17" selection-start-line="106" selection-start-column="17" selection-end-line="106" selection-end-column="17" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/foreach/DisconnectedForeachInstructionInspectorTest.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/fixers/UnnecessaryElseFixer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="259">
-          <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+        <state relative-caret-position="394">
+          <caret line="68" column="42" selection-start-line="68" selection-start-column="42" selection-end-line="68" selection-end-column="42" />
           <folding>
-            <element signature="imports" expanded="false" />
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/lang/RedundantElseClauseInspectorTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="7" column="73" selection-start-line="7" selection-start-column="73" selection-end-line="7" selection-end-column="73" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/resources/fixtures/controlFlow/unnecessary-else-elseif.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="359">
+          <caret line="24" column="96" selection-start-line="24" selection-start-column="96" selection-end-line="24" selection-end-column="96" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/languageConstructions/RedundantElseClauseInspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="33" column="45" selection-start-line="33" selection-start-column="45" selection-end-line="33" selection-end-column="45" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1322#1323#0" expanded="true" />
+            <element signature="e#1376#1377#0" expanded="true" />
+            <element signature="e#1523#4317#0" expanded="true" />
+            <element signature="e#4316#4317#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/forEach/AlterInForeachInspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="28" column="4" selection-start-line="28" selection-start-column="4" selection-end-line="28" selection-end-column="121" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RULES.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="FIRST">
-          <first_editor relative-caret-position="103">
-            <caret line="36" column="153" selection-start-line="36" selection-start-column="153" selection-end-line="36" selection-end-column="153" />
+          <first_editor relative-caret-position="187">
+            <caret line="34" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
             <folding />
           </first_editor>
           <second_editor />
         </state>
       </provider>
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="167">
-          <caret line="112" column="153" selection-start-line="112" selection-start-column="153" selection-end-line="112" selection-end-column="153" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/lib/openapi.jar!/com/intellij/psi/PsiReference.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="121">
-          <caret line="28" column="15" selection-start-line="28" selection-start-column="15" selection-end-line="28" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/ifs/strategy/AndOrWordsUsageStrategy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="497">
-          <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/ifs/NotOptimalIfConditionsInspection.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="31" column="45" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="45" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php-openapi.jar!/com/jetbrains/php/lang/psi/elements/ClassConstantReference.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="9" column="17" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php.jar!/com/jetbrains/php/lang/psi/elements/impl/StatementWithArgumentImpl.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="17" column="93" selection-start-line="17" selection-start-column="72" selection-end-line="17" selection-end-column="93" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php.jar!/com/jetbrains/php/lang/psi/elements/impl/PhpBreakImpl.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="14" column="79" selection-start-line="14" selection-start-column="71" selection-end-line="14" selection-end-column="79" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php-openapi.jar!/com/jetbrains/php/lang/psi/elements/PhpReturn.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="11" column="26" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php-openapi.jar!/com/jetbrains/php/lang/psi/elements/PhpContinue.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="9" column="28" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php.jar!/com/jetbrains/php/lang/psi/stubs/data/date_c.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="355">
-          <caret line="416" column="32" selection-start-line="416" selection-start-column="20" selection-end-line="416" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/resources/fixtures/foreach/disconnected-statements-foreach-false-positives.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="344">
-          <caret line="58" column="33" selection-start-line="58" selection-start-column="33" selection-end-line="58" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/resources/fixtures/foreach/disconnected-statements-foreach.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="12" column="71" selection-start-line="12" selection-start-column="71" selection-end-line="12" selection-end-column="71" />
-          <folding />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="244" column="102" selection-start-line="244" selection-start-column="98" selection-end-line="244" selection-end-column="102" />
+        <state relative-caret-position="207">
+          <caret line="293" column="80" selection-start-line="293" selection-start-column="80" selection-end-line="293" selection-end-column="80" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/forEach/DisconnectedForeachInstructionInspector.java">
+    <entry file="file://$PROJECT_DIR$/src/main/resources/inspectionDescriptions/RedundantElseClauseInspection.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="313">
-          <caret line="188" column="0" selection-start-line="188" selection-start-column="0" selection-end-line="188" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/PhpInspectionsEAProvider.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="8" selection-start-line="0" selection-start-column="8" selection-end-line="0" selection-end-column="46" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/api/FileFunctionMissUseInspectorTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="9" column="15" selection-start-line="9" selection-start-column="15" selection-end-line="9" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/kalessil/phpStorm/phpInspectionsEA/classes/PropertyCanBeStaticInspectorTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors/semanticalAnalysis/CallableParameterUseCaseInTypeContextInspection.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="200" column="19" selection-start-line="200" selection-start-column="19" selection-end-line="200" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/gui/PrettyListControl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="67">
-          <caret line="39" column="45" selection-start-line="39" selection-start-column="45" selection-end-line="39" selection-end-column="45" />
+        <state relative-caret-position="272">
+          <caret line="16" column="145" selection-start-line="16" selection-start-column="145" selection-end-line="16" selection-end-column="145" />
           <folding />
         </state>
       </provider>
@@ -1812,7 +2005,7 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
-          <last-edited>PhpStorm PS-162.1889.1</last-edited>
+          <last-edited>IntelliJ IDEA IU-162.2228.15</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -1829,7 +2022,6 @@
             <option name="proportions">
               <list>
                 <option value="0.2" />
-                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>

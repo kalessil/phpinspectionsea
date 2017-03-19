@@ -24,15 +24,17 @@ if ($condition) { return; }
 if ($condition) { return; }
     <weak_warning descr="'else' is not needed here, due to the last statement in previous branch.">else</weak_warning> if ($condition) { ; } else { ; }
 
-/* pattern: alternative syntax; QF??? */
+/* false-positives: alternative syntax */
 if ($condition):
     return;
-<weak_warning descr="'else' is not needed here, due to the last statement in previous branch.">else</weak_warning>:
+else:
     ;
 endif;
 
 /* false-positives: structure not as expected */
-if ($condition) { ; }   else { ; }
-if ($condition) {}      else {}
-if ($condition) return; else ;
-if ($condition) ;       else return;
+if ($condition) { ; }       else { ; }
+if ($condition) {}          else {}
+if ($condition) return;     else ;
+if ($condition) ;           else return;
+if ($condition) { return; } else ;
+if ($condition) { return; } elseif ($condition) ;

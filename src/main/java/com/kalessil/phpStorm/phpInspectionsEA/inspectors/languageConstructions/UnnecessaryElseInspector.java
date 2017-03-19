@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UnnecessaryElseFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -44,6 +45,9 @@ public class UnnecessaryElseInspector extends BasePhpInspection {
                 if (null == ifBody || !ExpressionSemanticUtil.hasAlternativeBranches(ifStatement)) {
                     return;
                 }
+                if (PhpTokenTypes.chLBRACE != ifBody.getFirstChild().getNode().getElementType()) {
+                    return;
+                }
 
                 /* collect alternative branches for reporting and QF binding */
                 final List<PhpPsiElement> alternativeBranches = new ArrayList<>();
@@ -53,16 +57,28 @@ public class UnnecessaryElseInspector extends BasePhpInspection {
                     alternativeBranches.add(elseBranch);
                 }
 
+                /* alternative branch expectations */
+                final PhpPsiElement alternative      = alternativeBranches.get(0);
+                final GroupStatement alternativeBody = ExpressionSemanticUtil.getGroupStatement(alternative);
+                if (alternative instanceof ElseIf && null == alternativeBody) {
+                    alternativeBranches.clear();
+                    return;
+                }
+                if (alternative instanceof Else && null == alternativeBody && !(alternative.getFirstPsiChild() instanceof If)) {
+                    alternativeBranches.clear();
+                    return;
+                }
+
                 /* analyze last statement in if and report if matched inspection pattern */
                 final PsiElement lastStatement = ExpressionSemanticUtil.getLastStatement(ifBody);
-                if (null != lastStatement){
+                if (null != lastStatement) {
                     final boolean isExitStatement = lastStatement.getFirstChild() instanceof PhpExit;
                     final boolean isReturnPoint   = isExitStatement ||
                                lastStatement instanceof PhpReturn   || lastStatement instanceof PhpThrow ||
                                lastStatement instanceof PhpContinue || lastStatement instanceof PhpBreak;
 
                     if (isReturnPoint) {
-                        final PsiElement target = alternativeBranches.get(0).getFirstChild();
+                        final PsiElement target = alternative.getFirstChild();
                         final String message    = messagePattern.replace("%kw%", target.getText());
                         holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING, new UnnecessaryElseFixer());
                     }

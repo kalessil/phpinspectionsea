@@ -5,9 +5,9 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
-import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class UnnecessaryElseFixer implements LocalQuickFix {
@@ -70,12 +70,28 @@ public class UnnecessaryElseFixer implements LocalQuickFix {
             }
         }
 
-        // handle `elseif`: replace elseif with if
-        if (expression instanceof ElseIf) {
-            Statement anIf = PhpPsiElementFactory.createStatement(project, "if");
-            element.replace(anIf);
+        if (expression instanceof ElseIf) { /* handle 'elseif' */
+            final ElseIf elseIfStatement    = (ElseIf) expression;
+            final If parentIfExpression     = (If) expression.getParent();
+            final PsiElement parentIfHolder = parentIfExpression.getParent();
+
+            /* back up original if */
+            final If newIf = PhpPsiElementFactory.createPhpPsiFromText(project, If.class, "if (true) {\n}");
+            //noinspection ConstantConditions as structures guaranted
+            newIf.getCondition().replace(parentIfExpression.getCondition());
+            //noinspection ConstantConditions as structures guaranted
+            ExpressionSemanticUtil.getGroupStatement(newIf).replace(ExpressionSemanticUtil.getGroupStatement(parentIfExpression));
+
+            /* drop the elseif */
+            //noinspection ConstantConditions as structures guaranted
+            parentIfExpression.getCondition().replace(elseIfStatement.getCondition().copy());
+            //noinspection ConstantConditions as structures guaranted
+            ExpressionSemanticUtil.getGroupStatement(parentIfExpression).replace(ExpressionSemanticUtil.getGroupStatement(elseIfStatement).copy());
+            elseIfStatement.delete();
+
+            /* insert original if */
+            parentIfHolder.addBefore(newIf, parentIfExpression);
+            parentIfHolder.addBefore(newline, parentIfExpression);
         }
-
     }
-
 }

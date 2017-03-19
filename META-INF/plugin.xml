@@ -295,9 +295,9 @@ This release brings new QFs, probable bugs inspections and fixes a new bunch of 
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrNcmpUsedAsStrPosInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-         shortName="UnnecessaryElseInspection"                     displayName="Detect unnecessary else keywords"
-         groupName="Control Flow"                                  enabledByDefault="false" level="WEAK WARNING"
-         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnnecessaryElseInspector"/>
+         shortName="RedundantElseClauseInspection"                 displayName="Redundant else-clause"
+         groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.RedundantElseClauseInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="StringNormalizationInspection"                 displayName="String normalization flaws"
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"

@@ -64,7 +64,13 @@ public class UnnecessaryElseFixer implements LocalQuickFix {
                     last = last.getPrevSibling();
                 }
 
-                parentIfHolder.addAfter(newline, parentIfExpression);
+                /* trailing spacing should not be influence by else body */
+                final PsiElement trailingSpaceCandidate = parentIfExpression.getNextSibling();
+                if (trailingSpaceCandidate instanceof PsiWhiteSpace) {
+                    trailingSpaceCandidate.replace(newline);
+                } else {
+                    parentIfHolder.addAfter(newline, parentIfExpression);
+                }
 
                 return;
             }

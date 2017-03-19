@@ -33,6 +33,7 @@ Inspections Lists (Control flow)
 | Control flow         | StrTrUsageAsStrReplaceInspection                | 'strtr(...)' could be replaced with 'str_replace(...)'                            | no        | yes | no   |
 | Control flow         | SubStrUsedAsStrPosInspection                    | 'substr(...)' could be replaced with 'strpos(...)'                                | no        | yes | no   |
 | Control flow         | StrNcmpUsedAsStrPosInspection                   | 'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)' | no        | yes | no   |
+| Control flow         | RedundantElseClauseInspection                   | Redundant else-clause                                                             | yes       | yes | no   |
 | --                   | ArrayFunctionsInvariantsInspection              |                                                                                   |           |     |      |
 
 Inspections Lists (PhpUnit)

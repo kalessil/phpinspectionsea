@@ -26,12 +26,12 @@ import java.util.List;
  * file that was distributed with this source code.
  */
 
-public class UnnecessaryElseInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%kw%' is not needed here, due to the last statement in previous branch.";
+public class RedundantElseClauseInspector extends BasePhpInspection {
+    private static final String messagePattern = "'%kw%' is not needed here (because of the last statement in if-branch).";
 
     @NotNull
     public String getShortName() {
-        return "UnnecessaryElseInspection";
+        return "RedundantElseClauseInspection";
     }
 
     @Override

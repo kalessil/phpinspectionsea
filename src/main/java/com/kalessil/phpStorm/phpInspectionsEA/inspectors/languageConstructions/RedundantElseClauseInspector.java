@@ -40,7 +40,11 @@ public class RedundantElseClauseInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpIf(If ifStatement) {
-                /* general construct expectation: body wrapped into {} and has alternative branches */
+                /* context expectations: not if-else-if-* constructs */
+                if (ifStatement.getParent() instanceof Else) {
+                    return;
+                }
+                /* general construct expectations: body wrapped into {} and has alternative branches */
                 final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(ifStatement);
                 if (null == ifBody || !ExpressionSemanticUtil.hasAlternativeBranches(ifStatement)) {
                     return;
@@ -69,11 +73,6 @@ public class RedundantElseClauseInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* false-positive: if-else-if-else constructs */
-                if (alternative instanceof Else && ifStatement.getParent() instanceof Else) {
-                    return;
-                }
-
                 /* analyze last statement in if and report if matched inspection pattern */
                 final PsiElement lastStatement = ExpressionSemanticUtil.getLastStatement(ifBody);
                 if (null != lastStatement) {
@@ -85,7 +84,7 @@ public class RedundantElseClauseInspector extends BasePhpInspection {
                     if (isReturnPoint) {
                         final PsiElement target = alternative.getFirstChild();
                         final String message    = messagePattern.replace("%kw%", target.getText());
-                        holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING, new UnnecessaryElseFixer());
+                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UnnecessaryElseFixer());
                     }
                 }
                 alternativeBranches.clear();

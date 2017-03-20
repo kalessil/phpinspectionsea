@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -76,10 +77,9 @@ public class UnnecessaryElseFixer implements LocalQuickFix {
             }
         }
 
-        if (expression instanceof ElseIf) { /* handle 'elseif' */
-            final ElseIf elseIfStatement    = (ElseIf) expression;
-            final If parentIfExpression     = (If) expression.getParent();
-            final PsiElement parentIfHolder = parentIfExpression.getParent();
+        if (expression instanceof ElseIf) { /* handle 'elseif': messed up to not loose cursor after fixing... */
+            final ElseIf elseIfStatement = (ElseIf) expression;
+            final If parentIfExpression  = (If) expression.getParent();
 
             /* back up original if */
             final If newIf = PhpPsiElementFactory.createPhpPsiFromText(project, If.class, "if (true) {\n}");
@@ -88,16 +88,22 @@ public class UnnecessaryElseFixer implements LocalQuickFix {
             //noinspection ConstantConditions as structures guaranted
             ExpressionSemanticUtil.getGroupStatement(newIf).replace(ExpressionSemanticUtil.getGroupStatement(parentIfExpression));
 
-            /* drop the elseif */
+            /* drop the elseif, backup resulted construct */
             //noinspection ConstantConditions as structures guaranted
             parentIfExpression.getCondition().replace(elseIfStatement.getCondition().copy());
             //noinspection ConstantConditions as structures guaranted
             ExpressionSemanticUtil.getGroupStatement(parentIfExpression).replace(ExpressionSemanticUtil.getGroupStatement(elseIfStatement).copy());
             elseIfStatement.delete();
+            final PsiElement followUpIf = parentIfExpression.copy();
 
-            /* insert original if */
+            /* insert following up if, which was backed up */
+            final PsiElement parentIfHolder = parentIfExpression.getParent();
+            parentIfHolder.addAfter(followUpIf, parentIfExpression);
+            parentIfHolder.addAfter(newline, parentIfExpression);
+
+            /* actualize if-statement with clean one */
             parentIfHolder.addBefore(newIf, parentIfExpression);
-            parentIfHolder.addBefore(newline, parentIfExpression);
+            parentIfExpression.delete();
         }
     }
 }

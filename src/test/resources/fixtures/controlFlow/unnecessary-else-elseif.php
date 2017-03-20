@@ -1,28 +1,28 @@
 <?php
 
 /* pattern: exist expressions */
-if ($condition) { die; }  <weak_warning descr="'else' is not needed here (because of the last statement in if-branch).">else</weak_warning> { ; }
-if ($condition) { exit; } <weak_warning descr="'else' is not needed here (because of the last statement in if-branch).">else</weak_warning> { ; }
+if ($condition) { die; }  <warning descr="'else' is not needed here (because of the last statement in if-branch).">else</warning> { ; }
+if ($condition) { exit; } <warning descr="'else' is not needed here (because of the last statement in if-branch).">else</warning> { ; }
 
 /* pattern: return point expressions */
-if ($condition) { return; }   <weak_warning descr="'else' is not needed here (because of the last statement in if-branch).">else</weak_warning> { ; }
-if ($condition) { throw $e; } <weak_warning descr="'else' is not needed here (because of the last statement in if-branch).">else</weak_warning> { ; }
+if ($condition) { return; }   <warning descr="'else' is not needed here (because of the last statement in if-branch).">else</warning> { ; }
+if ($condition) { throw $e; } <warning descr="'else' is not needed here (because of the last statement in if-branch).">else</warning> { ; }
 for (;;) {
-    if ($condition) { break; }    <weak_warning descr="'else' is not needed here (because of the last statement in if-branch).">else</weak_warning> { ; }
-    if ($condition) { continue; } <weak_warning descr="'else' is not needed here (because of the last statement in if-branch).">else</weak_warning> { ; }
+    if ($condition) { break; }    <warning descr="'else' is not needed here (because of the last statement in if-branch).">else</warning> { ; }
+    if ($condition) { continue; } <warning descr="'else' is not needed here (because of the last statement in if-branch).">else</warning> { ; }
 }
 
 /* pattern: alternative branches invariants */
 if ($condition) { return; }
-    <weak_warning descr="'else' is not needed here (because of the last statement in if-branch).">else</weak_warning> { ; }
+    <warning descr="'else' is not needed here (because of the last statement in if-branch).">else</warning> { ; }
 if ($condition) { return; }
-    <weak_warning descr="'elseif' is not needed here (because of the last statement in if-branch).">elseif</weak_warning> ($condition)  { ; }
+    <warning descr="'elseif' is not needed here (because of the last statement in if-branch).">elseif</warning> ($condition)  { ; }
 if ($condition) { return; }
-    <weak_warning descr="'elseif' is not needed here (because of the last statement in if-branch).">elseif</weak_warning> ($condition)  { ; }  elseif($condition) { ; }
+    <warning descr="'elseif' is not needed here (because of the last statement in if-branch).">elseif</warning> ($condition)  { ; }  elseif($condition) { ; }
 if ($condition) { return; }
-    <weak_warning descr="'else' is not needed here (because of the last statement in if-branch).">else</weak_warning> if ($condition) { ; }
+    <warning descr="'else' is not needed here (because of the last statement in if-branch).">else</warning> if ($condition) { ; }
 if ($condition) { return; }
-    <weak_warning descr="'else' is not needed here (because of the last statement in if-branch).">else</weak_warning> if ($condition) { ; } else { ; }
+    <warning descr="'else' is not needed here (because of the last statement in if-branch).">else</warning> if ($condition) { ; } else { ; }
 
 /* false-positives: alternative syntax */
 if ($condition):

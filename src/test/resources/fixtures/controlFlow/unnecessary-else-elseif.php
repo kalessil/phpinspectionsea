@@ -31,6 +31,9 @@ else:
     ;
 endif;
 
+/* false-positives: else-context */
+if ($condition) { ; } else if ($condition) { return; } else { ; }
+
 /* false-positives: structure not as expected */
 if ($condition) { ; }       else { ; }
 if ($condition) {}          else {}

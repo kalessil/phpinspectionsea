@@ -69,6 +69,11 @@ public class RedundantElseClauseInspector extends BasePhpInspection {
                     return;
                 }
 
+                /* false-positive: if-else-if-else constructs */
+                if (alternative instanceof Else && ifStatement.getParent() instanceof Else) {
+                    return;
+                }
+
                 /* analyze last statement in if and report if matched inspection pattern */
                 final PsiElement lastStatement = ExpressionSemanticUtil.getLastStatement(ifBody);
                 if (null != lastStatement) {

@@ -1,30 +1,20 @@
 <?php
 
-trait AnEmptyTrait {
-}
+trait EmptyTrait           {}
+interface EmptyInterface   {}
+class EmptyClassWithTraits { use EmptyTrait; }
 
-interface AnEmptyInterface {
-}
+class EmptyException extends Exception {}
 
-class AnEmptyClassWithTraits {
-    use AnEmptyTrait;
-}
+/** @deprecated */
+class EmptyDeprecatedClass {}
 
-class AnEmptyException {
-}
-
-/**
- * @deprecated
- */
-class AnEmptyDeprecatedClass {
-}
-
-class AClassWithAProperty {
+class ClassWithAProperty {
     public $property;
 }
-
-class AClassWithAMethod {
-    public function __construct()
-    {
-    }
+class ClassWithAMethod {
+    public function __construct() {}
 }
+
+abstract class AbstractClass                { public function method() {} }
+class ExtendsAbstract extends AbstractClass {}

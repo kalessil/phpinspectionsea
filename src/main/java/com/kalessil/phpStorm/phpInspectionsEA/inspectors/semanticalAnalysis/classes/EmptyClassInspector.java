@@ -30,9 +30,15 @@ public class EmptyClassInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* check if class is empty, take into account used traits */
+                /* check if class is empty, take into account used traits and deprecation */
                 final boolean isEmpty = (0 == clazz.getOwnFields().length + clazz.getOwnMethods().length);
                 if (isEmpty && !clazz.isDeprecated() && 0 == clazz.getTraits().length) {
+                    /* false-positive: inheriting abstract classes */
+                    final PhpClass parentClass = clazz.getSuperClass();
+                    if (null != parentClass && parentClass.isAbstract()) {
+                        return;
+                    }
+
                     holder.registerProblem(nameNode, message, ProblemHighlightType.WEAK_WARNING);
                 }
             }

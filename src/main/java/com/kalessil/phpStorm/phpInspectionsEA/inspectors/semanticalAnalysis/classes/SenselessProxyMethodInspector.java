@@ -53,7 +53,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                     }
 
                     /* parent invocation can be both direct or via return */
-                    PsiElement parentReferenceCandidate = null;
+                    final PsiElement parentReferenceCandidate;
                     if (lastStatement instanceof PhpReturn) {
                         parentReferenceCandidate = ExpressionSemanticUtil.getReturnValue((PhpReturn) lastStatement);
                     } else {

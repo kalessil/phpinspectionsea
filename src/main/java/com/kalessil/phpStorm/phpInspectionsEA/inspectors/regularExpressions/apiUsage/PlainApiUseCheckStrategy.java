@@ -46,20 +46,6 @@ public class PlainApiUseCheckStrategy {
         trimPatterns = Pattern.compile("^((\\^[^\\.][\\+\\*])|([^\\.][\\+\\*]\\$)|(\\^[^\\.][\\+\\*]\\|[^\\.][\\+\\*]\\$))$");
     }
 
-    final static private HashMap<String, String> ctypePatterns;
-    static {
-        ctypePatterns = new HashMap<>();
-
-        ctypePatterns.put("^\\d+$",          "ctype_digit");
-        ctypePatterns.put("^[^\\d]+$",       "!ctype_digit");
-
-        ctypePatterns.put("^[A-Za-z]+$",     "ctype_alpha");
-        ctypePatterns.put("^[^A-Za-z]+$",    "!ctype_alpha");
-
-        ctypePatterns.put("^[A-Za-z0-9]+$",  "ctype_alnum");
-        ctypePatterns.put("^[^A-Za-z0-9]+$", "!ctype_alnum");
-    }
-
     static public void apply(
             final String functionName, @NotNull final FunctionReference reference,
             final String modifiers, final String pattern,
@@ -93,14 +79,6 @@ public class PlainApiUseCheckStrategy {
                     String strError = strProblemDescription.replace("%t%", regexMatcher.group(2));
                     holder.registerProblem(reference, strError, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
-            }
-
-            /* investigate using ctype_*(...) instead */
-            if (2 == parametersCount && functionName.equals("preg_match") && ctypePatterns.containsKey(patternAdapted)) {
-                final String message = strProblemCtypeCanBeUsed
-                        .replace("%r%", ctypePatterns.get(patternAdapted))
-                        .replace("%p%", params[1].getText());
-                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
 
             /* investigate using *trim(...) instead */

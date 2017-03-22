@@ -33,4 +33,10 @@ final public class NotOptimalRegularExpressionsInspectorTest extends CodeInsight
         myFixture.enableInspections(NotOptimalRegularExpressionsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
+
+    public void testPossibleCtypeUsages() {
+        myFixture.configureByFile("fixtures/regularExpressions/ctype-functions-usage.php");
+        myFixture.enableInspections(NotOptimalRegularExpressionsInspector.class);
+        myFixture.testHighlighting(true, false, true);
+    }
 }

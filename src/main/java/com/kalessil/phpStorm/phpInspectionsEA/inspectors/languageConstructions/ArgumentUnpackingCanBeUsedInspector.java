@@ -15,9 +15,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
-/**
-    TODO: docs - https://gist.github.com/nikic/6390366
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
 public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
     private static final String messagePattern = "'%e%' should be used instead (3x+ faster)";
 
@@ -44,8 +50,11 @@ public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
                     return;
                 }
 
-                final boolean isContainerValid = params[1] instanceof Variable || params[1] instanceof ArrayCreationExpression;
+                final boolean isContainerValid = params[1] instanceof Variable ||
+                        params[1] instanceof ArrayCreationExpression || params[1] instanceof FunctionReference;
                 if (isContainerValid && params[0] instanceof StringLiteralExpression) {
+                    // TODO: call_user_func_array([...], ...)
+
                     /* do not process strings with injections */
                     final StringLiteralExpression targetFunction = (StringLiteralExpression) params[0];
                     if (null != targetFunction.getFirstPsiChild()){
@@ -56,10 +65,31 @@ public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
                         .replace("%a%", params[1].getText())
                         .replace("%f%", targetFunction.getContents());
                     final String message = messagePattern.replace("%e%", replacement);
-                    /* TODO: fixer title override */
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseSuggestedReplacementFixer(replacement));
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UnpackFix(replacement));
                 }
             }
+
+            //@Nullable
+            //private PsiElement getVariablesHolder() {
+            //    return null;
+            //}
+
+            //@Nullable
+            //private String getCallable() {
+            //    return null;
+            //}
         };
+    }
+
+    private class UnpackFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use unpack argument syntax instead";
+        }
+
+        UnpackFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

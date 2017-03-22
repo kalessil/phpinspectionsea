@@ -23,4 +23,9 @@ final public class UnSafeIsSetOverArrayInspectorTest extends CodeInsightFixtureT
         myFixture.enableInspections(getInspector());
         myFixture.testHighlighting(true, false, true);
     }
+    public void testIfFindsPropertyPatterns() {
+        myFixture.configureByFile("fixtures/controlFlow/isset-on-properties.php");
+        myFixture.enableInspections(getInspector());
+        myFixture.testHighlighting(true, false, true);
+    }
 }

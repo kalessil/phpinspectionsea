@@ -12,8 +12,8 @@ class AClass {
     public function __get($name) {
         $stdObject = new stdClass();
         if (
-            isset($stdObject->property) || isset($this->property) || isset($this->$name) ||
-            isset($stdObject) || !isset($stdObject)
+            isset($this->property) || isset($this->$name) || isset($this->nonExistingProperty) ||
+            isset($stdObject) || !isset($stdObject) || isset($stdObject->property)
         ) {
             return '';
         }

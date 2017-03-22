@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiReference;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -85,9 +86,10 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
 
                     if (!(parameter instanceof ArrayAccessExpression)) {
                         if (parameter instanceof FieldReference) {
-                            FieldReference issetArgument = (FieldReference) parameter;
                             /* if field is not resolved, it's probably dynamic and isset have a purpose */
-                            if (null == issetArgument.getReference() || null == issetArgument.getReference().resolve()) {
+                            final PsiReference referencedField = parameter.getReference();
+                            final PsiElement resolvedField     = null == referencedField ? null : referencedField.resolve();
+                            if (null == resolvedField || ExpressionSemanticUtil.getBlockScope(resolvedField) instanceof PhpClass) {
                                 continue;
                             }
                         }

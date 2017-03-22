@@ -51,6 +51,8 @@ public class PowerOperatorCanBeUsedInspector extends BasePhpInspection {
                 /* report and suggest QF-ing */
                 final String expression =
                         (reference.getParent() instanceof BinaryExpression ? "(%b% ** %p%)" : "%b% ** %p%")
+                        .replace("%p%", params[1] instanceof BinaryExpression ? "(%p%)" : "%p%" )
+                        .replace("%b%", params[0] instanceof BinaryExpression ? "(%b%)" : "%b%")
                         .replace("%p%", params[1].getText())
                         .replace("%b%", params[0].getText());
                 final String message = messagePattern.replace("%e%", expression);

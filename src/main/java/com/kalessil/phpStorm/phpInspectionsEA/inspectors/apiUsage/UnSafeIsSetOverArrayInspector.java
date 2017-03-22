@@ -89,7 +89,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                             /* if field is not resolved, it's probably dynamic and isset have a purpose */
                             final PsiReference referencedField = parameter.getReference();
                             final PsiElement resolvedField     = null == referencedField ? null : referencedField.resolve();
-                            if (null == resolvedField || ExpressionSemanticUtil.getBlockScope(resolvedField) instanceof PhpClass) {
+                            if (null == resolvedField || !(ExpressionSemanticUtil.getBlockScope(resolvedField) instanceof PhpClass)) {
                                 continue;
                             }
                         }

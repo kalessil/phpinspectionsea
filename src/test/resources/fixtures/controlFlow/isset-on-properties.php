@@ -2,6 +2,7 @@
 
 interface ArrayAccessChild extends \ArrayAccess {}
 
+/** @property string $virtualProperty */
 class AClass {
     public $property;
 
@@ -12,8 +13,16 @@ class AClass {
     public function __get($name) {
         $stdObject = new stdClass();
         if (
-            isset($this->property) || isset($this->$name) || isset($this->nonExistingProperty) ||
-            isset($stdObject) || !isset($stdObject) || isset($stdObject->property)
+            isset(<weak_warning descr="'null !== $this->property' construction should be used instead.">$this->property</weak_warning>) ||
+            isset($this->$name) ||
+            isset($this->virtualProperty) ||
+
+            isset($this->nonExistingProperty) ||
+
+            isset(<weak_warning descr="'null !== $stdObject' construction should be used instead.">$stdObject</weak_warning>) ||
+            !isset(<weak_warning descr="'null === $stdObject' construction should be used instead.">$stdObject</weak_warning>) ||
+
+            isset($stdObject->dynamicProperty)
         ) {
             return '';
         }

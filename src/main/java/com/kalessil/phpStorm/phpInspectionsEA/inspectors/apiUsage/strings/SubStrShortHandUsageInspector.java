@@ -17,6 +17,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class SubStrShortHandUsageInspector extends BasePhpInspection {
-    private static final String patternSimplifyLength = "Normally '%l%' can be dropped, so '-%r%' is only left (range bugs can popup, see a bug-report #271 on Bitbucket).";
+    private static final String patternSimplifyLength = "'%r%' can be used instead.";
     private static final String patternDropLength     = "'%l%' can be safely dropped.";
 
     @NotNull
@@ -89,11 +90,16 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                             holder.registerProblem(params[2], message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new Drop3rdParameterLocalFix(reference));
                         } else {
                             /* 3rd parameter can be simplified */
-                            final String message = patternSimplifyLength
-                                    .replace("%l%", leftCall.getText())
-                                    .replace("%r%", candidate.getRightOperand().getText());
-                            final Simplify3rdParameterLocalFix fix = new Simplify3rdParameterLocalFix(candidate);
-                            holder.registerProblem(leftCall, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, fix);
+                            final PsiElement rightOffset = candidate.getRightOperand();
+                            final String replacement;
+                            try {
+                                replacement = "-" + (Integer.valueOf(rightOffset.getText()) - 1);
+                            } catch (NumberFormatException notNumericOffset) {
+                                return;
+                            }
+
+                            final String message = patternSimplifyLength.replace("%r%", replacement);
+                            holder.registerProblem(candidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new SimplifyFix(replacement));
                         }
 
                         // return;
@@ -145,35 +151,15 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
         }
     }
 
-    private static class Simplify3rdParameterLocalFix implements LocalQuickFix {
-        final private SmartPsiElementPointer<BinaryExpression> subject;
-
-        Simplify3rdParameterLocalFix(@NotNull BinaryExpression subject){
-            super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(subject.getProject());
-
-            this.subject = factory.createSmartPsiElementPointer(subject, subject.getContainingFile());
-        }
-
+    private static class SimplifyFix extends UseSuggestedReplacementFixer {
         @NotNull
         @Override
         public String getName() {
-            return "Simplify 3rd parameter";
+            return "Simplify the thisrd parameter";
         }
 
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return getName();
-        }
-
-        @Override
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final BinaryExpression subject = this.subject.getElement();
-            final PsiElement dropCandidate = null == subject ? null : subject.getLeftOperand();
-            if (null != dropCandidate) {
-                dropCandidate.delete();
-            }
+        SimplifyFix(@NotNull String expression) {
+            super(expression);
         }
     }
 }

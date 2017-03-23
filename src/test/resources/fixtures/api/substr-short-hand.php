@@ -1,18 +1,12 @@
 <?php
 
 /* [mb_]strlen($path) can be dropped */
-substr(
-    $path,
-    0,
-    <warning descr="Normally 'strlen($path)' can be dropped, so '-strlen($pathPrefix)' is only left (range bugs can popup, see a bug-report #271 on Bitbucket).">strlen($path)</warning> - strlen($pathPrefix));
-mb_substr(
-    $path,
-    0,
-    <warning descr="Normally 'mb_strlen($path)' can be dropped, so '-mb_strlen($pathPrefix)' is only left (range bugs can popup, see a bug-report #271 on Bitbucket).">mb_strlen($path)</warning> - mb_strlen($pathPrefix));
-mb_substr(
-    $path,
-    0,
-    <warning descr="Normally 'mb_strlen($path)' can be dropped, so '-mb_strlen($pathPrefix)' is only left (range bugs can popup, see a bug-report #271 on Bitbucket).">mb_strlen($path)</warning> - mb_strlen($pathPrefix), 'encoding');
+substr($path, 0, <warning descr="'-1' can be used instead.">strlen($path) - 2</warning>);
+mb_substr($path, 0, <warning descr="'-1' can be used instead.">mb_strlen($path) - 2</warning>);
+mb_substr($path, 0, <warning descr="'-1' can be used instead.">mb_strlen($path) - 2</warning>, 'encoding');
+
+/* false-positives: over-complication, e.g. -(strlen($pathPrefix) - 1) */
+substr($path, 0, strlen($path) - strlen($pathPrefix));
 
 /* 3rd argument can be dropped completely */
 substr(

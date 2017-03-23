@@ -155,7 +155,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Simplify the thisrd parameter";
+            return "Simplify the third parameter";
         }
 
         SimplifyFix(@NotNull String expression) {

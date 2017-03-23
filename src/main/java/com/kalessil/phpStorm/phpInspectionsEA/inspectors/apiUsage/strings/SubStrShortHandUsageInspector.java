@@ -90,10 +90,9 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                             holder.registerProblem(params[2], message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new Drop3rdParameterLocalFix(reference));
                         } else {
                             /* 3rd parameter can be simplified */
-                            final PsiElement rightOffset = candidate.getRightOperand();
                             final String replacement;
                             try {
-                                replacement = "-" + (Integer.valueOf(rightOffset.getText()) - 1);
+                                replacement = "-" + (Integer.valueOf(candidate.getRightOperand().getText()) - 1);
                             } catch (NumberFormatException notNumericOffset) {
                                 return;
                             }

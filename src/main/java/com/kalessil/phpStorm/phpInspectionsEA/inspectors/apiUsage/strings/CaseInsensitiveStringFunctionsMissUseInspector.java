@@ -47,11 +47,11 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final PsiElement[] params = reference.getParameters();
                 final String functionName = reference.getName();
+                final PsiElement[] params = reference.getParameters();
                 if (
                     (2 != params.length && 3 != params.length) ||
-                    StringUtil.isEmpty(functionName) || !mapping.containsKey(functionName)
+                    null == functionName || !mapping.containsKey(functionName)
                 ) {
                     return;
                 }
@@ -65,8 +65,9 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
 
                 final String patternString = pattern.getContents();
                 if (!StringUtil.isEmpty(patternString) && !patternString.matches(".*\\p{L}.*")) {
-                    final String message = messagePattern.replace("%f%", mapping.get(functionName));
-                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(functionName));
+                    final String replacementFunctionName = mapping.get(functionName);
+                    final String message                 = messagePattern.replace("%f%", replacementFunctionName);
+                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(replacementFunctionName));
                 }
             }
         };

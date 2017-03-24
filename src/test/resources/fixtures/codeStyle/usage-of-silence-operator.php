@@ -21,7 +21,7 @@ namespace util {
 
 }
 
-namespace {
+namespace Test {
     use util\BonusCalculation;
     use function util\remove_file as unlink;
 
@@ -29,8 +29,10 @@ namespace {
     <weak_warning descr="Usage of a silence operator.">@</weak_warning>BonusCalculation::calculate(44);
 }
 
-
-/** false positive */
-@unlink('test.php');
-@mkdir('test/');
-@trigger_error('test/');
+namespace {
+    /** false positive */
+    @unlink('test.php');
+    @\unlink('test.php');
+    @mkdir('test/');
+    @trigger_error('test/');
+}

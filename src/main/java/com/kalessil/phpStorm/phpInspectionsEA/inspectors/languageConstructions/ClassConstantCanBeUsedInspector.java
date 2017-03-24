@@ -171,8 +171,8 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
                     /* check all use-statements and use imported name for QF */
                     for (PhpUseList use : PsiTreeUtil.findChildrenOfType(file, PhpUseList.class)) {
-                        /* do not process `function() use () {}` constructs */
-                        if (use.getParent() instanceof Function) {
+                        /* do not process `function() use () {}` constructs or class traits */
+                        if (use.getParent() instanceof Function || use.getParent() instanceof PhpClass) {
                             continue;
                         }
 

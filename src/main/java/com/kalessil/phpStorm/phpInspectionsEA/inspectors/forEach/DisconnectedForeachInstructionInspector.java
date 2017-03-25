@@ -35,7 +35,6 @@ import java.util.List;
 
 public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_USING_CLONE = false;
 
     private static final String messageDisconnected = "This statement seems to be disconnected from its parent foreach.";

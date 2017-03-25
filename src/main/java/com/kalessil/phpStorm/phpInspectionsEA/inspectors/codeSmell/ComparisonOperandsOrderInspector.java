@@ -33,7 +33,6 @@ import java.util.Set;
 
 public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
     public boolean CONFIGURED           = false;
     public boolean PREFER_YODA_STYLE    = false;
     public boolean PREFER_REGULAR_STYLE = false;

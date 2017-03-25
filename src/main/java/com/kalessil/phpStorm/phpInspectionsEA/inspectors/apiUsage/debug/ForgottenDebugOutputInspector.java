@@ -27,7 +27,6 @@ import java.util.List;
 
 public class ForgottenDebugOutputInspector extends BasePhpInspection {
     // custom configuration, automatically saved between restarts so keep out of changing modifiers
-    @SuppressWarnings("WeakerAccess")
     final public LinkedList<String> configuration = new LinkedList<>();
 
     final private HashSet<String> customFunctions = new HashSet<>();

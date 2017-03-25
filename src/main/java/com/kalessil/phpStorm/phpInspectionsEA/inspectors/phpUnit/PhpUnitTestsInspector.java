@@ -39,8 +39,7 @@ import java.util.*;
 public class PhpUnitTestsInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
     @SuppressWarnings("WeakerAccess")
-    public boolean SUGGEST_TO_USE_ASSERTSAME = false;
-    @SuppressWarnings("WeakerAccess")
+    public boolean SUGGEST_TO_USE_ASSERTSAME    = false;
     public boolean WORKAROUND_COVERS_REFERENCES = false;
 
     private final static String messageDepends = "@depends referencing to a non-existing entity.";

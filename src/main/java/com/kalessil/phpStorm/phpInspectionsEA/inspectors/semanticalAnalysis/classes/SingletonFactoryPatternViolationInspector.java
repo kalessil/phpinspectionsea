@@ -18,7 +18,6 @@ import javax.swing.*;
 
 public class SingletonFactoryPatternViolationInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_OVERRIDING_CLONE = false;
 
     private static final String messageClone                = "Singleton should also override __clone to prevent copying the instance";

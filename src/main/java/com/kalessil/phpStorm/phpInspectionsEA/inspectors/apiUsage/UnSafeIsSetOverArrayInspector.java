@@ -22,10 +22,8 @@ import java.util.HashSet;
 
 public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_TO_USE_ARRAY_KEY_EXISTS = false;
-    @SuppressWarnings("WeakerAccess")
-    public boolean SUGGEST_TO_USE_NULL_COMPARISON = true;
+    public boolean SUGGEST_TO_USE_NULL_COMPARISON  = true;
 
     // static messages for triggered messages
     private static final String messageUseArrayKeyExists    = "'array_key_exists(...)' construction should be used for better data *structure* control.";

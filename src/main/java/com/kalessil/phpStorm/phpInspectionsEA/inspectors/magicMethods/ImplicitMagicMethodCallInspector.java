@@ -34,7 +34,6 @@ import java.util.Set;
 
 public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_USING_STRING_CASTING = false;
 
     private static final String message              = "Implicit magic method calls should be avoided as these methods are used by PHP internals.";

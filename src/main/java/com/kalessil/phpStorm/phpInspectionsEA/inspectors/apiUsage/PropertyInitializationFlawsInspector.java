@@ -34,10 +34,8 @@ import java.util.Map;
 
 public class PropertyInitializationFlawsInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
     public boolean REPORT_DEFAULTS_FLAWS = true;
-    @SuppressWarnings("WeakerAccess")
-    public boolean REPORT_INIT_FLAWS = true;
+    public boolean REPORT_INIT_FLAWS     = true;
 
     private static final String messageDefaultValue    = "Null assignment can be safely removed. Define null in annotations if it's important.";
     private static final String messageDefaultOverride = "The assignment can be safely removed as the constructor overrides it.";

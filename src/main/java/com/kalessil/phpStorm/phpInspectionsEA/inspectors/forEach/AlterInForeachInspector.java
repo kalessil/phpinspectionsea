@@ -20,7 +20,6 @@ import javax.swing.*;
 
 public class AlterInForeachInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
     public boolean SUGGEST_USING_VALUE_BY_REF = false;
 
     private static final String strProblemDescription     = "Can be refactored as '$%c% = ...' if $%v% is defined as a reference (ensure that array supplied). Suppress if causes memory mismatches.";

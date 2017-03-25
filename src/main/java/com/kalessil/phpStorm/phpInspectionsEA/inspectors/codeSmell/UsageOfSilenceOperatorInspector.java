@@ -15,8 +15,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,6 +33,10 @@ import java.util.List;
  */
 
 public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
+    // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
+    public boolean RESPECT_CONTEXT = true;
+
     private static final String message = "Try to avoid using the @, as it hides problems and complicates troubleshooting.";
 
     private static final List<String> suppressibleFunctions = Arrays.asList(
@@ -74,11 +80,13 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
 
                 /* valid contexts: `... = @...`, ` return @... ` */
                 PsiElement parent = unaryExpression.getParent();
-                if (parent instanceof TernaryExpression) {
-                    parent = parent.getParent();
-                }
-                if (parent instanceof AssignmentExpression || parent instanceof PhpReturn) {
-                    return;
+                if (RESPECT_CONTEXT) {
+                    if (parent instanceof TernaryExpression) {
+                        parent = parent.getParent();
+                    }
+                    if (parent instanceof AssignmentExpression || parent instanceof PhpReturn) {
+                        return;
+                    }
                 }
 
                 /* pattern 1: whatever but not a function call */
@@ -98,28 +106,54 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* valid context: ' false === @... ', ' false !== @... ' */
-                if (parent instanceof BinaryExpression) {
-                    final BinaryExpression parentExpression = (BinaryExpression) parent;
-                    final IElementType parentOperator       = parentExpression.getOperationType();
-                    if (PhpTokenTypes.opIDENTICAL == parentOperator || PhpTokenTypes.opNOT_IDENTICAL == parentOperator) {
-                        PsiElement falseCandidate = parentExpression.getLeftOperand();
-                        if (falseCandidate == unaryExpression) {
-                            falseCandidate = parentExpression.getRightOperand();
-                        }
-                        if (PhpLanguageUtil.isFalse(falseCandidate)) {
-                            return;
+                if (RESPECT_CONTEXT) {
+                    /* valid context: ' false === @... ', ' false !== @... ' */
+                    if (parent instanceof BinaryExpression) {
+                        final BinaryExpression parentExpression = (BinaryExpression) parent;
+                        final IElementType operator             = parentExpression.getOperationType();
+                        if (PhpTokenTypes.opIDENTICAL == operator || PhpTokenTypes.opNOT_IDENTICAL == operator) {
+                            PsiElement falseCandidate = parentExpression.getLeftOperand();
+                            if (falseCandidate == unaryExpression) {
+                                falseCandidate = parentExpression.getRightOperand();
+                            }
+                            if (PhpLanguageUtil.isFalse(falseCandidate)) {
+                                return;
+                            }
                         }
                     }
-                }
-                /* valid context: logical true/false contexts */
-                if (ExpressionSemanticUtil.isUsedAsLogicalOperand(unaryExpression)) {
-                    return;
+                    /* valid context: logical true/false contexts */
+                    if (ExpressionSemanticUtil.isUsedAsLogicalOperand(unaryExpression)) {
+                        return;
+                    }
                 }
 
                 holder.registerProblem(suppressionCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return (new UsageOfSilenceOperatorInspector.OptionsPanel()).getComponent();
+    }
+
+    private class OptionsPanel {
+        final private JPanel optionsPanel;
+
+        final private JCheckBox contentAware;
+
+        public OptionsPanel() {
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
+
+            contentAware = new JCheckBox("Content aware reporting", RESPECT_CONTEXT);
+
+            contentAware.addChangeListener(e -> RESPECT_CONTEXT = contentAware.isSelected());
+            optionsPanel.add(contentAware, "wrap");
+        }
+
+        JPanel getComponent() {
+            return optionsPanel;
+        }
     }
 
     private static class TheLocalFix implements LocalQuickFix {
@@ -145,5 +179,4 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
             }
         }
     }
-
 }

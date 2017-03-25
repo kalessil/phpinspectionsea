@@ -172,8 +172,8 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     /* check all use-statements and use imported name for QF */
                     for (PhpUseList use : PsiTreeUtil.findChildrenOfType(file, PhpUseList.class)) {
                         /* do not process `function() use () {}` constructs or class traits */
-                        PsiElement parent = use.getParent();
-                        if (parent instanceof Function || parent instanceof PhpClass) {
+                        final PsiElement useParent = use.getParent();
+                        if (useParent instanceof Function || useParent instanceof PhpClass) {
                             continue;
                         }
 
@@ -204,7 +204,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                             boolean useRelativeQN = false;
 
                             /* identify marker/use relative QNs */
-                            PhpNamespace ns = PsiTreeUtil.findChildOfType(file, PhpNamespace.class);
+                            final PhpNamespace ns = PsiTreeUtil.findChildOfType(file, PhpNamespace.class);
                             if (null != ns) {
                                 /* NS-ed file */
                                 if (null == importMarker && ns.getLastChild() instanceof GroupStatement) {
@@ -229,11 +229,11 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
                             /* inject new import after the marker, if relative QN are not possible */
                             if (null != importMarker && !useRelativeQN) {
-                                PhpUseList use = PhpPsiElementFactory.createUseStatement(project, classForReplacement, null);
+                                final PhpUseList use = PhpPsiElementFactory.createUseStatement(project, classForReplacement, null);
 
                                 if (insertBefore) {
                                     importMarker.getParent().addBefore(use, importMarker);
-                                    PsiElement space = PhpPsiElementFactory.createFromText(project, PsiWhiteSpace.class, "\n\n");
+                                    final PsiElement space = PhpPsiElementFactory.createFromText(project, PsiWhiteSpace.class, "\n\n");
                                     if (null != space) {
                                         use.getParent().addAfter(space, use);
                                     }

@@ -6,15 +6,23 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.C
 
 final public class ClassConstantCanBeUsedInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        ClassConstantCanBeUsedInspector inspector = new ClassConstantCanBeUsedInspector();
+        inspector.IMPORT_CLASSES_ON_QF            = true;
+        inspector.USE_RELATIVE_QF                 = true;
+
         myFixture.configureByFile("fixtures/lang/classConstant/class-in-the-same-namespace.php");
         myFixture.configureByFile("fixtures/lang/classConstant/class-name-constant-ns.php");
-        myFixture.enableInspections(ClassConstantCanBeUsedInspector.class);
+        myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
 
         for (IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
-        myFixture.setTestDataPath("./");
-        myFixture.checkResultByFile("fixtures/lang/classConstant/class-name-constant-ns.fixed.php");
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile(
+            "fixtures/lang/classConstant/class-name-constant-ns.php",
+            "fixtures/lang/classConstant/class-name-constant-ns.fixed.php",
+            false
+        );
     }
 }

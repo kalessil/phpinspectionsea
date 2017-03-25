@@ -42,10 +42,8 @@ import java.util.regex.Pattern;
 
 public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
     public boolean IMPORT_CLASSES_ON_QF = true;
-    @SuppressWarnings("WeakerAccess")
-    public boolean USE_RELATIVE_QF = true;
+    public boolean USE_RELATIVE_QF      = true;
 
     private static final String messagePattern = "Perhaps this can be replaced with %c%::class.";
 

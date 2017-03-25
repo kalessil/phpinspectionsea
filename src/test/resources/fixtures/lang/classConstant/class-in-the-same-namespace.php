@@ -1,5 +1,14 @@
 <?php
 
-namespace PhpInspections\EAExtended;
+namespace PhpInspections\Base {
+    class Prerequisites {}
+    class Benefits      {}
+}
 
-class Prerequisites {}
+namespace PhpInspections\EAExtended {
+    class Prerequisites {}
+}
+
+namespace PhpInspections\EAExtended\Sub {
+    class Benefits {}
+}

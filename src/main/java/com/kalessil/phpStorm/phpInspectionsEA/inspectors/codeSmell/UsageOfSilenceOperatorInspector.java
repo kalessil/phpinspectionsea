@@ -107,7 +107,7 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
                 }
 
                 if (RESPECT_CONTEXT) {
-                    /* valid context: ' false === @... ', ' false !== @... ' */
+                    /* valid context: ` false === @... `, ` false !== @... ` */
                     if (parent instanceof BinaryExpression) {
                         final BinaryExpression parentExpression = (BinaryExpression) parent;
                         final IElementType operator             = parentExpression.getOperationType();

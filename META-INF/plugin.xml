@@ -606,6 +606,10 @@ This release brings important bug-fixes and new inspections.
         shortName="DisallowWritingIntoStaticPropertiesInspection" displayName="Disallow writing into static properties"
         groupName="Code Style" enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DisallowWritingIntoStaticPropertiesInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="UsageOfSilenceOperatorInspection"               displayName="Usage of a silence operator"
+        groupName="Code Style"                                     enabledByDefault="false" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UsageOfSilenceOperatorInspector"/>
 
 
 

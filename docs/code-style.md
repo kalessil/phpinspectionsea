@@ -28,7 +28,7 @@ The aim is to improve code usability, by moving handling default logic into body
 
 > Please reference to corresponding [stackoverflow thread](http://stackoverflow.com/questions/136899/suppress-error-with-operator-in-php) for more details.
 
-Using the silence operator (@) is considered a bad practice. Nevertheless we consider following contexts legit:
+Using the [silence operator (@)](http://php.net/manual/en/language.operators.errorcontrol.php) is considered a bad practice. Nevertheless we consider following contexts legit:
 
 ```php
     /* context: result is stored, we assuming that failure result being checked */

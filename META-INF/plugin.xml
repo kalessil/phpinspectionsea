@@ -604,13 +604,12 @@ This release brings important bug-fixes and new inspections.
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ParameterDefaultValueIsNotNullInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DisallowWritingIntoStaticPropertiesInspection" displayName="Disallow writing into static properties"
-        groupName="Code Style" enabledByDefault="false" level="WARNING"
+        groupName="Code Style"                                    enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DisallowWritingIntoStaticPropertiesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="UsageOfSilenceOperatorInspection"               displayName="Usage of a silence operator"
-        groupName="Code Style"                                     enabledByDefault="false" level="WARNING"
+        shortName="UsageOfSilenceOperatorInspection"              displayName="Usage of the silence operator"
+        groupName="Code Style"                                    enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UsageOfSilenceOperatorInspector"/>
-
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

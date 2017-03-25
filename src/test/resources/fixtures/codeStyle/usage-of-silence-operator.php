@@ -1,36 +1,29 @@
 <?php
 
 namespace {
-    <weak_warning descr="Usage of a silence operator.">@</weak_warning>file_get_contents('test.php');
-    echo <weak_warning descr="Usage of a silence operator.">@</weak_warning>$a;
+    <weak_warning descr="Try to avoid using the @, as it hides problems and complicates troubleshooting.">@</weak_warning>file_get_contents('...');
+    echo <weak_warning descr="Try to avoid using the @, as it hides problems and complicates troubleshooting.">@</weak_warning>$a;
 }
 
-
 namespace util {
-    function remove_file($file)
-    {
-
-    }
+    function remove_file($file) {}
 
     class BonusCalculation
     {
-        public static function calculate($value)
-        {
-        }
+        public static function calculate($value) {}
     }
-
 }
 
 namespace Test {
     use util\BonusCalculation;
     use function util\remove_file as unlink;
 
-    <weak_warning descr="Usage of a silence operator.">@</weak_warning>unlink('test.php');
-    <weak_warning descr="Usage of a silence operator.">@</weak_warning>BonusCalculation::calculate(44);
+    <weak_warning descr="Try to avoid using the @, as it hides problems and complicates troubleshooting.">@</weak_warning>unlink('...');
+    <weak_warning descr="Try to avoid using the @, as it hides problems and complicates troubleshooting.">@</weak_warning>BonusCalculation::calculate(44);
 }
 
 namespace {
-    /** false positive */
+    /* false positives: commonly suppressed patterns; TODO: must be allowed only in certain contexts */
     @unlink('test.php');
     @\unlink('test.php');
     @mkdir('test/');

@@ -5,8 +5,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UsageOfSilenc
 
 final public class UsageOfSilenceOperatorInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        UsageOfSilenceOperatorInspector inspector = new UsageOfSilenceOperatorInspector();
+        inspector.RESPECT_CONTEXT                 = true;
+
         myFixture.configureByFile("fixtures/codeStyle/usage-of-silence-operator.php");
-        myFixture.enableInspections(UsageOfSilenceOperatorInspector.class);
+        myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }
 }

@@ -34,7 +34,6 @@ import java.util.List;
 
 public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
     public boolean RESPECT_CONTEXT = true;
 
     private static final String message = "Try to avoid using the @, as it hides problems and complicates troubleshooting.";

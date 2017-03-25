@@ -7,12 +7,14 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -32,9 +34,20 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
     private static final String message = "Try to avoid using the @, as it hides problems and complicates troubleshooting.";
 
     private static final List<String> suppressibleFunctions = Arrays.asList(
-            "\\unlink",
-            "\\mkdir",
-            "\\trigger_error"
+            "\\fclose",            // if fails to close a file, app will have more serious problems ^_^
+
+            "\\filesize",          // expect people to be smart enough and check the existence before the call
+            "\\unlink",            // same as above
+            "\\rmdir",             // same as above
+            "\\chmod",             // same as above
+
+            "\\file_exists",       // honest checks
+            "\\posix_isatty",      // honest checks
+            "\\class_exists",      // honest checks
+            "\\get_resource_type", // honest checks
+            "\\getenv",            // honest checks
+
+            "\\trigger_error"      // own error handler will take care about emitted issues
     );
 
     @NotNull
@@ -52,20 +65,49 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
                     return;
                 }
 
+                /* valid contexts: `... = @...` */
+                final PsiElement parent = unaryExpression.getParent();
+                if (parent instanceof AssignmentExpression) {
+                    return;
+                }
+
                 /* pattern 1: whatever but not a function call */
                 final PsiElement suppressedExpression = unaryExpression.getValue();
                 if (!OpenapiTypesUtil.isFunctionReference(suppressedExpression)) {
-                    holder.registerProblem(suppressionCandidate, message, ProblemHighlightType.WEAK_WARNING);
+                    if (null != suppressedExpression) {
+                        holder.registerProblem(suppressionCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
+                    }
+
                     return;
                 }
 
                 /* pattern 2: a function call */
-                final FunctionReference call = (FunctionReference) suppressedExpression;
-                final String functionName    = call.getFQN();
-                final PsiElement[] params    = call.getParameters();
-                if (params.length > 0 && !suppressibleFunctions.contains(functionName)) {
-                    holder.registerProblem(suppressionCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
+                final PsiElement resolved = ((FunctionReference) suppressedExpression).resolve();
+                final String functionName = resolved instanceof Function ? ((Function) resolved).getFQN() : null;
+                if (null == functionName || suppressibleFunctions.contains(functionName)) {
+                    return;
                 }
+
+                /* valid context: ' false === @... ', ' false !== @... ' */
+                if (parent instanceof BinaryExpression) {
+                    final BinaryExpression parentExpression = (BinaryExpression) parent;
+                    final IElementType parentOperator       = parentExpression.getOperationType();
+                    if (PhpTokenTypes.opIDENTICAL == parentOperator || PhpTokenTypes.opNOT_IDENTICAL == parentOperator) {
+                        PsiElement falseCandidate = parentExpression.getLeftOperand();
+                        if (falseCandidate == unaryExpression) {
+                            falseCandidate = parentExpression.getRightOperand();
+                        }
+                        if (PhpLanguageUtil.isFalse(falseCandidate)) {
+                            return;
+                        }
+                    }
+                }
+                /* valid context: logical true/false contexts */
+                if (ExpressionSemanticUtil.isUsedAsLogicalOperand(unaryExpression)) {
+                    return;
+                }
+
+                holder.registerProblem(suppressionCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
             }
         };
     }

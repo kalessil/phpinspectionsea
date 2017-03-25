@@ -35,8 +35,15 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
 
     private static final List<String> suppressibleFunctions = Arrays.asList(
             "\\fclose",            // if fails to close a file, app will have more serious problems ^_^
+            "\\ldap_unbind",       // quite the same as above
+            "\\ldap_free_result",  // quite the same as above
+            "\\sqlite_close",      // quite the same as above
+            "\\mysql_close",       // quite the same as above
+            "\\mysqli_close",      // quite the same as above
+            "\\pg_close",          // quite the same as above
 
             "\\filesize",          // expect people to be smart enough and check the existence before the call
+            "\\filemtime",         // same as above
             "\\unlink",            // same as above
             "\\rmdir",             // same as above
             "\\chmod",             // same as above
@@ -65,9 +72,12 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* valid contexts: `... = @...` */
-                final PsiElement parent = unaryExpression.getParent();
-                if (parent instanceof AssignmentExpression) {
+                /* valid contexts: `... = @...`, ` return @... ` */
+                PsiElement parent = unaryExpression.getParent();
+                if (parent instanceof TernaryExpression) {
+                    parent = parent.getParent();
+                }
+                if (parent instanceof AssignmentExpression || parent instanceof PhpReturn) {
                     return;
                 }
 

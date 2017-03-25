@@ -27,7 +27,7 @@ The aim is to improve code usability, by moving handling default logic into body
 > Note: the inspection has settings ("Content aware reporting", enabled by default).
 
 > Please reference to corresponding [stackoverflow thread](http://stackoverflow.com/questions/136899/suppress-error-with-operator-in-php) 
-> for more details about why this a bad practice.
+> for more details about why this is a bad practice.
 
 Using the [silence operator (@)](http://php.net/manual/en/language.operators.errorcontrol.php) is considered a bad practice. Nevertheless we consider following contexts legit:
 

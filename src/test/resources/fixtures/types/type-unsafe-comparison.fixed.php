@@ -9,12 +9,14 @@
     $result = $object <> '...';
 
     /* pattern: safe comparison */
-    $result = $x == '';
-    $result = $x != '';
-    $result = $x <> '';
-    $result = $x == '...';
-    $result = $x != '...';
+    $result = $x === '';
+    $result = $x !== '';
+    $result = $x !== '';
+    $result = $x === '...';
+    $result = $x !== '...';
 
     /* pattern: needs hardening */
     $result = $x == '0';
     $result = $x != '0';
+    $result = $x == $y;
+    $result = $x != $y;

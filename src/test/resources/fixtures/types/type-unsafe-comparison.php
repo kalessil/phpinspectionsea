@@ -16,5 +16,7 @@
     $result = <warning descr="Safely use '!==' here.">$x != '...'</warning>;
 
     /* pattern: needs hardening */
-    $result = <weak_warning descr="Hardening to type safe '===', '!==' will cover/point to types casting issues.">$x == '0'</weak_warning>;
-    $result = <weak_warning descr="Hardening to type safe '===', '!==' will cover/point to types casting issues.">$x != '0'</weak_warning>;
+    $result = <weak_warning descr="Please consider using more strict '===' here (hidden types casting will not be applied anymore).">$x == '0'</weak_warning>;
+    $result = <weak_warning descr="Please consider using more strict '!==' here (hidden types casting will not be applied anymore).">$x != '0'</weak_warning>;
+    $result = <weak_warning descr="Please consider using more strict '===' here (hidden types casting will not be applied anymore).">$x == $y</weak_warning>;
+    $result = <weak_warning descr="Please consider using more strict '!==' here (hidden types casting will not be applied anymore).">$x != $y</weak_warning>;

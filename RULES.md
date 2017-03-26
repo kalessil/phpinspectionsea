@@ -3,7 +3,7 @@ Inspections Lists (Type compatibility)
 | Group                | Short Name                                      | Full Name                                           | Quick fix | UTs | QFTs |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
 | Type compatibility   | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                  | no  |
-| Type compatibility   | TypeUnsafeComparisonInspection                  | Type unsafe comparison                              | no  |
+| Type compatibility   | TypeUnsafeComparisonInspection                  | Type unsafe comparison                              | yes       | yes | yes  |
 | Type compatibility   | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search()' type unsafe usage | yes       | yes | yes  |
 | Type compatibility   | ForeachSourceInspection                         | Foreach source to iterate over                      | n/a       | yes | n/a  |
 | Type compatibility   | GenericObjectTypeUsageInspection                | Usage of object type in PhpDoc                      | n/a       | yes | n/a  |

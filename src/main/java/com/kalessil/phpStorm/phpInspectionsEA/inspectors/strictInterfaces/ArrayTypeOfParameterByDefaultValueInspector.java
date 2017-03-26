@@ -16,6 +16,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspection {
     private static final String messagePattern = "Parameter $%p% can be declared as 'array $%p%'.";
 
@@ -84,7 +93,7 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
         @NotNull
         @Override
         public String getName() {
-            return "Use array type";
+            return "Declare as array";
         }
 
         @NotNull
@@ -95,9 +104,13 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final Parameter param = this.param.getElement();
-            if (null != param) {
-                final String pattern = "array $%n% = array()".replace("%n%", param.getName());
+            final Parameter param         = this.param.getElement();
+            final PsiElement defaultValue = null == param ? null : param.getDefaultValue();
+            if (null != defaultValue) {
+                final String pattern = "array %r%$%n% = %d%"
+                    .replace("%d%", defaultValue.getText())
+                    .replace("%n%", param.getName())
+                    .replace("%r%", param.isPassByRef() ? "&" : "");
                 param.replace(PhpPsiElementFactory.createComplexParameter(project, pattern));
             }
         }

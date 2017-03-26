@@ -15,10 +15,19 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ClassInStringContex
 import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ComparableCoreClassesStrategy;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class TypeUnsafeComparisonInspector extends BasePhpInspection {
-    private static final String strProblemDescription                      = "Hardening to type safe '===', '!==' will cover/point to types casting issues.";
-    private static final String strProblemDescriptionSafeToReplace         = "Safely use '... === ...', '... !== ...' constructions instead.";
-    private static final String strProblemDescriptionMissingToStringMethod = "Class %class% must implement __toString().";
+    private static final String messageHarden                = "Hardening to type safe '===', '!==' will cover/point to types casting issues.";
+    private static final String patternCompareStrict         = "Safely use '%o%' here.";
+    private static final String messageToStringMethodMissing = "Class %class% must implement __toString().";
 
     @NotNull
     public String getShortName() {
@@ -31,60 +40,49 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpBinaryExpression(BinaryExpression expression) {
                 /* verify operation is as expected */
-                final PsiElement objOperation = expression.getOperation();
-                if (null == objOperation) {
-                    return;
+                final PsiElement operation  = expression.getOperation();
+                final IElementType operator = null == operation ? null : operation.getNode().getElementType();
+                if (PhpTokenTypes.opEQUAL == operator || PhpTokenTypes.opNOT_EQUAL == operator) {
+                    this.triggerProblem(expression, operator);
                 }
-                final IElementType operationType = objOperation.getNode().getElementType();
-                if (operationType != PhpTokenTypes.opEQUAL && operationType != PhpTokenTypes.opNOT_EQUAL) {
-                    return;
-                }
-
-                this.triggerProblem(expression);
             }
 
-            /** generates more specific warnings for given expression */
-            private void triggerProblem(BinaryExpression objExpression) {
-                final PsiElement objLeftOperand  = objExpression.getLeftOperand();
-                final PsiElement objRightOperand = objExpression.getRightOperand();
-                if (
-                    objRightOperand instanceof StringLiteralExpression ||
-                    objLeftOperand instanceof StringLiteralExpression
-                ) {
-                    PsiElement objNonStringOperand;
-                    String strLiteralValue;
-                    if (objRightOperand instanceof StringLiteralExpression) {
-                        strLiteralValue     = ((StringLiteralExpression) objRightOperand).getContents();
-                        objNonStringOperand = objLeftOperand;
+            private void triggerProblem(@NotNull final BinaryExpression subject, @NotNull final IElementType operator) {
+                final String targetOperator = PhpTokenTypes.opEQUAL == operator ? "===" : "!==";
+                final PsiElement left       = subject.getLeftOperand();
+                final PsiElement right      = subject.getRightOperand();
+                if (right instanceof StringLiteralExpression || left instanceof StringLiteralExpression) {
+                    final PsiElement nonStringOperand;
+                    final String literalValue;
+                    if (right instanceof StringLiteralExpression) {
+                        literalValue     = ((StringLiteralExpression) right).getContents();
+                        nonStringOperand = ExpressionSemanticUtil.getExpressionTroughParenthesis(left);
                     } else {
-                        strLiteralValue     = ((StringLiteralExpression) objLeftOperand).getContents();
-                        objNonStringOperand = objRightOperand;
+                        literalValue     = ((StringLiteralExpression) left).getContents();
+                        nonStringOperand = ExpressionSemanticUtil.getExpressionTroughParenthesis(right);
                     }
 
-
                     /* resolve 2nd operand type, if class ensure __toString is implemented */
-                    objNonStringOperand = ExpressionSemanticUtil.getExpressionTroughParenthesis(objNonStringOperand);
-                    if (
-                        null != objNonStringOperand &&
-                        ClassInStringContextStrategy.apply(objNonStringOperand, holder, objExpression, strProblemDescriptionMissingToStringMethod)
-                    ) {
+                    if (ClassInStringContextStrategy.apply(nonStringOperand, holder, subject, messageToStringMethodMissing)) {
                         /* TODO: weak warning regarding under-the-hood string casting */
                         return;
                     }
 
+                    /* string literal is numeric, no strict compare possible */
+                    if (!literalValue.matches("^[0-9+-]+$")) {
+                        final String messageCompareStrict = patternCompareStrict.replace("%o%", targetOperator);
+                        holder.registerProblem(subject, messageCompareStrict, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
 
-                    if (strLiteralValue.length() > 0 && !strLiteralValue.matches("^[0-9\\+\\-]+$")) {
-                        holder.registerProblem(objExpression, strProblemDescriptionSafeToReplace, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         return;
                     }
                 }
 
                 /* some of objects supporting direct comparison: search for .compare_objects in PHP sources */
-                if (ComparableCoreClassesStrategy.apply(objLeftOperand, objRightOperand, holder)) {
+                if (ComparableCoreClassesStrategy.apply(left, right, holder)) {
                     return;
                 }
 
-                holder.registerProblem(objExpression, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                holder.registerProblem(subject, messageHarden, ProblemHighlightType.WEAK_WARNING);
             }
         };
     }

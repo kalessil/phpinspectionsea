@@ -10,13 +10,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 
 final public class ClassInStringContextStrategy {
     public static boolean apply (
-        PsiElement objNonStringOperand,
+        @Nullable PsiElement objNonStringOperand,
         ProblemsHolder holder,
         PsiElement objExpression,
         String strClassHasNoToStringMessage

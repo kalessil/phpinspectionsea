@@ -1,17 +1,16 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class VariableFunctionsUsageInspector extends BasePhpInspection {
-    private static final String patternInlineArgs = "'call_user_func(%c%, %p%)' should be used instead (enables further analysis).";
+    private static final String patternInlineArgs = "'%e%' should be used instead (enables further analysis).";
     private static final String patternReplace    = "'%e%' should be used instead.";
 
     @NotNull
@@ -49,17 +48,18 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                             if (item instanceof PhpPsiElement) {
                                 final PhpPsiElement itemValue = ((PhpPsiElement) item).getFirstPsiChild();
                                 if (null != itemValue) {
-                                    parametersUsed.add(itemValue.getText());
+                                    parametersUsed.add(parameterAsString(itemValue));
                                 }
                             }
                         }
 
-                        final String message = patternInlineArgs
+                        final String replacement = "call_user_func(%c%, %p%)"
                                 .replace("%c%", parameters[0].getText())
                                 .replace("%p%", String.join(", ", parametersUsed));
                         parametersUsed.clear();
 
-                        holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
+                        final String message = patternInlineArgs.replace("%e%", replacement);
+                        holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new InlineFix(replacement));
                     }
                     return;
                 }
@@ -148,9 +148,9 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
 
                     final List<String> parametersToSuggest = new ArrayList<>();
                     for (PsiElement parameter : Arrays.copyOfRange(parameters, 1, parameters.length)) {
-                        parametersToSuggest.add(parameter.getText());
+                        parametersToSuggest.add(parameterAsString(parameter));
                     }
-                    final String expression = "%f%%o%%s%(%p%)"
+                    final String replacement = "%f%%o%%s%(%p%)"
                         .replace("%o%%s%", null == secondPart ? "" : "%o%%s%")
                         .replace("%p%", String.join(", ", parametersToSuggest))
                         .replace("%s%", null == secondPart            ? ""   : secondAsString)
@@ -158,46 +158,49 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                         .replace("%f%", firstAsString);
                     parametersToSuggest.clear();
 
-                    final String message = patternReplace.replace("%e%", expression);
-                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(expression));
+                    final String message = patternReplace.replace("%e%", replacement);
+                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new ReplaceFix(replacement));
                 }
             }
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
-        final private String replacement;
-
-        TheLocalFix(@NotNull String replacement) {
-            super();
-            this.replacement = replacement;
+    @NotNull
+    private String parameterAsString(@NotNull PsiElement parameter) {
+        String asString     = parameter.getText();
+        PsiElement previous = parameter.getPrevSibling();
+        if (previous instanceof PsiWhiteSpace) {
+            previous = previous.getPrevSibling();
+        }
+        if (null != previous && PhpTokenTypes.opBIT_AND == previous.getNode().getElementType()) {
+            asString = "&" + asString;
         }
 
+        return asString;
+    }
+
+    private class ReplaceFix extends UseSuggestedReplacementFixer {
         @NotNull
         @Override
         public String getName() {
-            return "Use suggested replacement";
+            return "Use variable function instead";
         }
 
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return getName();
-        }
-
-        @Override
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference) {
-                /* wrapping into () needed because $callback(...) target replacement breaks */
-                ParenthesizedExpression replacement = PhpPsiElementFactory.createFromText(
-                        expression.getProject(), ParenthesizedExpression.class, "(" +this.replacement + ")");
-                if (null != replacement) {
-                    expression.replace(replacement.getArgument());
-                }
-            }
+        ReplaceFix(@NotNull String expression) {
+            super(expression);
         }
     }
 
+    private class InlineFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Inline argument and inspect again";
+        }
+
+        InlineFix(@NotNull String expression) {
+            super(expression);
+        }
+    }
 }
 

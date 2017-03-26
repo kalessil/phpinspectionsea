@@ -4,7 +4,7 @@ Inspections Lists (Type compatibility)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --------: | --: | ---: |
 | Type compatibility   | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                  | no  |
 | Type compatibility   | TypeUnsafeComparisonInspection                  | Type unsafe comparison                              | no  |
-| Type compatibility   | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search()' type unsafe usage | yes       | yes | no   |
+| Type compatibility   | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search()' type unsafe usage | yes       | yes | yes  |
 | Type compatibility   | ForeachSourceInspection                         | Foreach source to iterate over                      | n/a       | yes | n/a  |
 | Type compatibility   | GenericObjectTypeUsageInspection                | Usage of object type in PhpDoc                      | n/a       | yes | n/a  |
 | Type compatibility   | ArrayTypeOfParameterByDefaultValueInspection    | Parameter could be declared as array                | yes       | yes | no   |
@@ -112,7 +112,7 @@ Inspections Lists (Language level migration)
 | Language level migration | ShortListSyntaxCanBeUsedInspection              | Short list syntax can be used                       | yes       | yes | no   |
 | Language level migration | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | yes       | yes | no   |
 | Language level migration | AliasFunctionsUsageInspection                   | Alias functions usage                               | yes       | yes | no   |
-| Language level migration | ClassConstantCanBeUsedInspection                | ::class can be used                                 | yes       | yes | no   |
+| Language level migration | ClassConstantCanBeUsedInspection                | ::class can be used                                 | yes       | yes | yes  |
 | Language level migration | CascadingDirnameCallsInspection                 | Cascading dirname() calls                           | yes       | yes | no   |
 | Language level migration | PowerOperatorCanBeUsedInspection                | Power operator can be used                          | yes       | yes | no   |
 | Language level migration | ConstantCanBeUsedInspection                     | A constant can be used                              | yes       | yes | no   |
@@ -197,7 +197,7 @@ Inspections Lists (Performance)
 | Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused"                                                                  | yes       | yes | no  |
 | Performance          | FileFunctionMissUseInspection                   | 'file(...)' misused                                                                         | yes       | yes | no  |
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                              | n/a |
-| Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                    | yes       | yes | no  |
+| Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                    | yes       | yes | yes |
 | Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                              | yes       | yes | no  |
 | Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | yes       | yes | no  |
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes       | yes | no  |

@@ -6,7 +6,7 @@
 
 === Checking out project ===
 
-- Fork https://github.com/kalessil/phpinspectionseaon Github
+- Fork https://github.com/kalessil/phpinspectionsea on Github
 - In IDE: VCS -> Checkout from Version Control -> Git
 --> Provide url, e.g. https://github.com/<your_github_account>/phpinspectionsea.git
 --> IDE will suggest to open a folder after checking source code out

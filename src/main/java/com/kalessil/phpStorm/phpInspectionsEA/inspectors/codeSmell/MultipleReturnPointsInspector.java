@@ -39,16 +39,14 @@ public class MultipleReturnPointsInspector extends BasePhpInspection {
 
             public void visitPhpMethod(Method method) {
                 final PhpClass containingClass = method.getContainingClass();
-                if (containingClass != null && !containingClass.isTrait()) {
+                final PsiElement nameIdentifier = method.getNameIdentifier();
+                if (containingClass != null && nameIdentifier != null && !containingClass.isTrait()) {
 
-                    ReturnPointCountVisitor countVisitor = new ReturnPointCountVisitor(method);
+                    final ReturnPointCountVisitor countVisitor = new ReturnPointCountVisitor(method);
                     method.accept(countVisitor);
 
                     if (countVisitor.getCount() > 1) {
-                        PsiElement nameIdentifier = method.getNameIdentifier();
-                        if (nameIdentifier != null) {
-                            holder.registerProblem(nameIdentifier, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                        }
+                        holder.registerProblem(nameIdentifier, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
 
                 }

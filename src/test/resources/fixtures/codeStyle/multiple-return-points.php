@@ -9,6 +9,8 @@ trait A
         }
         return true;
     }
+
+
 }
 
 class Test_A
@@ -29,6 +31,10 @@ class Test_B
     public function customMethod()
     {
         return true;
+    }
+
+    private function myFunction() {
+        return function(){ return ''; };
     }
 
     public function factory()

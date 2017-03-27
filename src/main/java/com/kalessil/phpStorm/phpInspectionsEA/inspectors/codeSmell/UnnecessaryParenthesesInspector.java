@@ -14,8 +14,17 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class UnnecessaryParenthesesInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "Unnecessary parentheses.";
+    private static final String message = "Unnecessary parentheses.";
 
     @NotNull
     public String getShortName() {
@@ -27,8 +36,7 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpParenthesizedExpression(ParenthesizedExpression expression) {
-                final String fileName = holder.getFile().getName();
-                if (fileName.endsWith(".blade.php")) {
+                if (holder.getFile().getName().endsWith(".blade.php")) {
                     /* syntax injection there is not done properly for elseif, causing false-positives */
                     return;
                 }
@@ -65,36 +73,22 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     (parent instanceof ParameterList && argument instanceof TernaryExpression)
                 ;
 
+                final boolean isMemberReference = parent instanceof MethodReference || parent instanceof FieldReference;
                 /* (new ...)->...: allow method/property access on newly created objects */
-                if (
-                    !knowsLegalCases && argument instanceof NewExpression &&
-                    (parent instanceof MethodReference || parent instanceof FieldReference)
-                ) {
+                if (!knowsLegalCases && isMemberReference && argument instanceof NewExpression) {
                     knowsLegalCases = true;
                 }
-
                 /* (clone ...)->...: allow method/property access on cloned objects */
-                if (
-                    !knowsLegalCases && argument instanceof UnaryExpression &&
-                    (parent instanceof MethodReference || parent instanceof FieldReference)
-                ) {
+                if (!knowsLegalCases && isMemberReference && argument instanceof UnaryExpression) {
                     final PsiElement operator = ((UnaryExpression) argument).getOperation();
                     knowsLegalCases = null != operator && PhpTokenTypes.kwCLONE == operator.getNode().getElementType();
                 }
-
                 /* ( ?? )->...: allow method/property access on null coallesing operator */
-                if (
-                    !knowsLegalCases && argument instanceof BinaryExpression &&
-                    (parent instanceof MethodReference || parent instanceof FieldReference)
-                ) {
+                if (!knowsLegalCases && isMemberReference && argument instanceof BinaryExpression) {
                     knowsLegalCases = PhpTokenTypes.opCOALESCE == ((BinaryExpression) argument).getOperationType();
                 }
-
                 /* ( ?: )->...: allow method/property access on ternary operator */
-                if (
-                    !knowsLegalCases && argument instanceof TernaryExpression &&
-                    (parent instanceof MethodReference || parent instanceof FieldReference)
-                ) {
+                if (!knowsLegalCases && isMemberReference && argument instanceof TernaryExpression) {
                     knowsLegalCases = true;
                 }
 
@@ -110,11 +104,9 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (knowsLegalCases) {
-                    return;
+                if (!knowsLegalCases) {
+                    holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                 }
-
-                holder.registerProblem(expression, strProblemDescription, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
             }
         };
     }

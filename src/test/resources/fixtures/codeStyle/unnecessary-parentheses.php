@@ -9,6 +9,11 @@
     (new stdClass())->with('data');
     (new stdClass())->prop;
 
+    ($x ?: $y)->with('data');
+    ($x ?: $y)->prop;
+    ($x ?? $y)->with('data');
+    ($x ?? $y)->prop;
+
     (clone $stdClass)->with('data');
     (clone $stdClass)->prop;
 

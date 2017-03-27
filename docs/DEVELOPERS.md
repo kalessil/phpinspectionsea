@@ -4,6 +4,8 @@
 - Intllij Idea Untimate (for running Unit Tests)
 - PhpStorm 2016.2.1 (for PHP-related SDK)
 
+> Note: alternatively you can add PHP plugin to IDEA and use it instead. Some test might fail in this case.
+
 === Checking out project ===
 
 - Fork https://github.com/kalessil/phpinspectionsea on Github
@@ -31,4 +33,4 @@
 
 - In IDE: Run -> Edit Configurations
 --> add a new configuration for JUnit called "Tests" (as on screenshot)
-![Tests run configuration](https://-/images/-.png)
+![Tests run configuration](images/test-run-configuration.png)

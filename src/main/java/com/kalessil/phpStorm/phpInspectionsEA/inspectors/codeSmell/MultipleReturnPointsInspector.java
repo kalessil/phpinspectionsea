@@ -5,6 +5,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
  *
  * (c) Funivan <alotofall@gmail.com>
  * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ * (c) Artem Khvastunov <contact@artspb.me>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.

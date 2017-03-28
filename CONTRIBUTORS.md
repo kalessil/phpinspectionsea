@@ -13,6 +13,6 @@ I want to say thank you and mention people who also contributed to this plugin.
 
 [Ryan Shay](https://bitbucket.org/ryanshay)
 
-[Ivan Scherbak](https://bitbucket.org/funivan)
+[Ivan Scherbak](https://github.com/funivan)
 
 [Andrii Volin](https://github.com/angyvolin)

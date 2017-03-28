@@ -22,8 +22,8 @@ class Test_A
             return false;
         }
 
-        return true;
-    }
+return true;
+}
 }
 
 class Test_B
@@ -33,9 +33,21 @@ class Test_B
         return true;
     }
 
-    private function myFunction() {
-        return function(){ return ''; };
+    private function myFunction()
+    {
+        return function () {
+            return '';
+        };
     }
+
+    public function <warning descr="Method with multiple return points.">calculate</warning>($a, $b)
+    {
+        if ($a > $b) {
+            return $a + $b;
+        }
+        return $a - $b;
+    }
+
 
     public function factory()
     {

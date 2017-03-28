@@ -14,14 +14,14 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
-import com.jetbrains.php.lang.psi.elements.Function;
+import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlow;
+import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpExitPointInstruction;
+import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpInstruction;
+import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpReturnInstruction;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpReturn;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class MultipleReturnPointsInspector extends BasePhpInspection {
@@ -42,11 +42,17 @@ public class MultipleReturnPointsInspector extends BasePhpInspection {
                 final PsiElement nameIdentifier = method.getNameIdentifier();
                 if (containingClass != null && nameIdentifier != null && !containingClass.isTrait()) {
 
-                    final ReturnPointCountVisitor countVisitor = new ReturnPointCountVisitor(method);
-                    method.accept(countVisitor);
-
-                    if (countVisitor.getCount() > 1) {
-                        holder.registerProblem(nameIdentifier, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    final PhpControlFlow controlFlow = method.getControlFlow();
+                    final PhpExitPointInstruction exitPoint = controlFlow.getExitPoint();
+                    int count = 0;
+                    for (final PhpInstruction instruction : exitPoint.getPredecessors()) {
+                        if (instruction instanceof PhpReturnInstruction) {
+                            count++;
+                        }
+                        if (count > 1) {
+                            holder.registerProblem(nameIdentifier, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            return;
+                        }
                     }
 
                 }
@@ -55,29 +61,4 @@ public class MultipleReturnPointsInspector extends BasePhpInspection {
         };
     }
 
-
-    private class ReturnPointCountVisitor extends PsiRecursiveElementWalkingVisitor {
-        private final Method method;
-        private int count = 0;
-
-        ReturnPointCountVisitor(Method method) {
-            this.method = method;
-        }
-
-        public void visitElement(PsiElement element) {
-            if (element instanceof PhpReturn) {
-
-                Function scope = ExpressionSemanticUtil.getScope(element);
-                if (scope != null && scope.equals(this.method)) {
-                    count++;
-                }
-            }
-
-            super.visitElement(element);
-        }
-
-        public int getCount() {
-            return count;
-        }
-    }
 }

@@ -610,10 +610,6 @@ This release brings important bug-fixes and new inspections.
         shortName="UsageOfSilenceOperatorInspection"              displayName="Usage of the silence operator"
         groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UsageOfSilenceOperatorInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="MultipleReturnPointsInspection"                displayName="Method with multiple return points"
-        groupName="Code Style"                                    enabledByDefault="false" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MultipleReturnPointsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -710,6 +706,10 @@ This release brings important bug-fixes and new inspections.
         shortName="OverridingDeprecatedMethodInspection"            displayName="Overriding deprecated methods"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.OverridingDeprecatedMethodInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="MultipleReturnStatementsInspection"              displayName="Multiple return statements usage"
+        groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MultipleReturnStatementsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

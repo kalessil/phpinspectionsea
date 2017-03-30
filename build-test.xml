@@ -159,9 +159,9 @@
         <junit haltonfailure="false"
                failureProperty="failure_found"
                outputtoformatters="true"
-               filtertrace="off"
-               showoutput="yes"
-               fork="yes" forkmode="once" reloading="no">
+               filtertrace="on"
+               showoutput="no"
+               fork="no" forkmode="once" reloading="yes">
 
             <jvmarg value="-Didea.home.path=${idea.build}"/>
             <jvmarg value="-Xbootclasspath/a:${idea.build}/lib/boot.jar"/>

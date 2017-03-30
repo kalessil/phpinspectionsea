@@ -158,7 +158,7 @@
 
         <junit haltonfailure="false"
                failureProperty="failure_found"
-               outputtoformatters="false"
+               outputtoformatters="true"
                filtertrace="off"
                showoutput="yes"
                fork="yes" forkmode="once" reloading="no">
@@ -174,7 +174,8 @@
 
             <classpath refid="classpath.test"/>
 
-            <formatter type="brief" usefile="false"/>
+            <formatter type="plain" usefile="false" />
+            <!--<formatter type="brief" usefile="false"/>-->
             <!--<formatter classname="com.undefined.testing.OneLinerFormatter" usefile="false" />-->
 
             <batchtest>

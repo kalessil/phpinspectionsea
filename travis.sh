@@ -46,9 +46,9 @@ function download {
 
 if [ -d ./idea  ]; then
   rm -rf idea
-  mkdir idea
-  echo "created idea dir"
 fi
+
+mkdir idea
 
 # Download main idea folder
 download "http://download.jetbrains.com/idea/ideaIU-${ideaVersion}.tar.gz"
@@ -60,13 +60,13 @@ mv ${ideaPath}/* ./idea
 
 if [ -d ./plugins ]; then
   rm -rf plugins
-  mkdir plugins
-  echo "created plugin dir"
 fi
+
+mkdir plugins
 
 if [ "$PHPSTORM_ENV" == "2017.1" ]; then
     download "https://plugins.jetbrains.com/files/6610/33685/php-171.3780.104.zip"
-    unzip -qo $travisCache/phpstorm-2017.1-php.zip -d ./plugins
+    unzip -qo $travisCache/php-171.3780.104.zip -d ./plugins
 elif [ "$PHPSTORM_ENV" == "eap" ]; then
 
     #php

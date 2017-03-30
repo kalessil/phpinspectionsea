@@ -12,9 +12,4 @@ before_script:
 
 env:
   - PHPSTORM_ENV=2017.1
-  - PHPSTORM_ENV=eap
 
-matrix:
-  allow_failures:
-    - env: PHPSTORM_ENV=eap
-    - env: PHPSTORM_ENV=2017.1

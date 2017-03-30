@@ -34,9 +34,6 @@
         <fileset dir="${idea.build}/plugins/CSS/lib">
             <include name="*.jar"/>
         </fileset>
-        <fileset dir="${basedir}/lib">
-            <include name="*.jar" />
-        </fileset>
     </path>
 
     <path id="classpath">
@@ -68,9 +65,6 @@
         </fileset>
         <fileset dir="${java.home}/../lib">
             <include name="**/*.jar" />
-        </fileset>
-        <fileset dir="${basedir}/lib">
-            <include name="*.jar" />
         </fileset>
     </path>
 

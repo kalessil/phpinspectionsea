@@ -132,6 +132,7 @@
 
             <copy_resources dest="${build}" src="${src}"/>
             <copy_resources dest="${idea.build}" src="${test.resources}" />
+            <copy_resources dest="${basedir}" src="${test.resources}" />
             <make_plugin dest="${plugins}/phpinspectionsea"/>
         </sequential>
     </target>

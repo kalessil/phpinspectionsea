@@ -159,8 +159,8 @@
         <junit haltonfailure="false"
                failureProperty="failure_found"
                outputtoformatters="true"
-               filtertrace="off"
-               showoutput="yes"
+               filtertrace="on"
+               showoutput="no"
                fork="yes" forkmode="once" reloading="no" maxmemory="1024m">
 
             <jvmarg value="-Didea.home.path=${idea.build}"/>
@@ -174,13 +174,13 @@
 
             <classpath refid="classpath.test"/>
 
-            <formatter type="plain" usefile="false" />
-            <!--<formatter type="brief" usefile="false"/>-->
+            <!--<formatter type="plain" usefile="false" />-->
+            <formatter type="brief" usefile="false"/>
             <!--<formatter classname="com.undefined.testing.OneLinerFormatter" usefile="false" />-->
 
             <!--<test filtertrace="off" name="com.kalessil.phpStorm.phpInspectionsEA.api.DirnameCallOnFileConstantInspectorTest" />-->
 
-            <batchtest filtertrace="off">
+            <batchtest>
                 <fileset dir="${test.src}">
                     <include name="**/*Test.java"/>
                     <exclude name="**/*TestCase.java"/>

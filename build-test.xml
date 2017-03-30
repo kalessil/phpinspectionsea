@@ -66,6 +66,9 @@
         <fileset dir="${java.home}/../lib">
             <include name="**/*.jar" />
         </fileset>
+        <fileset dir="${basedir}/lib">
+            <include name="*.jar" />
+        </fileset>
     </path>
 
     <taskdef name="javac2" classname="com.intellij.ant.Javac2">
@@ -170,8 +173,8 @@
 
             <classpath refid="classpath.test"/>
 
-            <!--<formatter type="brief" usefile="false"/>-->
-            <formatter classname="com.undefined.testing.OneLinerFormatter" usefile="false" />
+            <formatter type="brief" usefile="false"/>
+            <!--<formatter classname="com.undefined.testing.OneLinerFormatter" usefile="false" />-->
 
             <batchtest>
                 <fileset dir="${test.src}">

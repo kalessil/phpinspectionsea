@@ -56,7 +56,7 @@ The inspection searches for typical patterns violations:
 A quote from the plugin community member: `There is absolutely nothing wrong with multiple return statements!?!`. 
 At first look it can sound confusing, but multiple return statements indicating violations of single responsibility principe.
 Let's calculate how many test we need to write for this method:
-```
+```php
     /**
      * Type-safe method, checks if a string is empty. Not types casting magic allowed.
      * 

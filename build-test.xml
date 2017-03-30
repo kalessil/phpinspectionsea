@@ -161,7 +161,7 @@
                outputtoformatters="true"
                filtertrace="off"
                showoutput="yes"
-               fork="yes" forkmode="once" reloading="no">
+               fork="yes" forkmode="once" reloading="no" maxmemory="1024m">
 
             <jvmarg value="-Didea.home.path=${idea.build}"/>
             <jvmarg value="-Xbootclasspath/a:${idea.build}/lib/boot.jar"/>
@@ -178,14 +178,14 @@
             <!--<formatter type="brief" usefile="false"/>-->
             <!--<formatter classname="com.undefined.testing.OneLinerFormatter" usefile="false" />-->
 
-            <test filtertrace="off" name="com.kalessil.phpStorm.phpInspectionsEA.api.DirnameCallOnFileConstantInspectorTest" />
+            <!--<test filtertrace="off" name="com.kalessil.phpStorm.phpInspectionsEA.api.DirnameCallOnFileConstantInspectorTest" />-->
 
-            <!--<batchtest filtertrace="off">-->
-                <!--<fileset dir="${test.src}">-->
-                    <!--<include name="**/*Test.java"/>-->
-                    <!--<exclude name="**/*TestCase.java"/>-->
-                <!--</fileset>-->
-            <!--</batchtest>-->
+            <batchtest filtertrace="off">
+                <fileset dir="${test.src}">
+                    <include name="**/*Test.java"/>
+                    <exclude name="**/*TestCase.java"/>
+                </fileset>
+            </batchtest>
         </junit>
 
         <antcall target="check_test"/>

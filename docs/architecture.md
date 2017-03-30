@@ -58,7 +58,7 @@ At first look it can sound confusing, but multiple return statements indicating 
 Let's calculate how many test we need to write for this method:
 ```php
     /**
-     * Type-safe method, checks if a string is empty. Not types casting magic allowed.
+     * Type-safe method, checks if a string is empty. No types casting magic allowed.
      * 
      * @var mixed $argument
      * @return bool
@@ -77,13 +77,13 @@ Let's calculate how many test we need to write for this method:
 ```
 
 To test the method we need at least 5 tests: for null, for non-string type, for empty string, 
-for string with space characters and at least for a string with content.
+for string with space characters only and at least one for a string with content.
 
 Means we have a design problem. E.g. in this case we can ask ourselves questions like: 
 "why does this function have additional validation inside", "why the parent workflow doesn't guarantee string type to be dispatched",
 "why it was not introduced 2 functions here: isEmptyString, isEmptyStringTypeSafe" and so on.
 
-Prom this angle the inspection can spot existing architecture issues and alert when you going to introduce them during 
+From this angle the inspection can spot existing architecture issues and alert when you about to introduce them during 
 development.
 
 

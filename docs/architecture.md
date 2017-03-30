@@ -80,8 +80,8 @@ To test the method we need at least 5 tests: for null, for non-string type, for 
 for string with space characters and at least for a string with content.
 
 Means we have a design problem. E.g. in this case we can ask ourselves questions like: 
-"why is this function have additional validation", "why the parent workflow can not guarantee strings to be dispatched",
-"why it's not 2 functions: isEmptyString, isEmptyStringTypeSafe" and so on.
+"why does this function have have additional validation", "why the parent workflow doesn't guarantee string type to be dispatched",
+"why it was not introduced 2 functions here: isEmptyString, isEmptyStringTypeSafe" and so on.
 
 Prom this angle the inspection can spot existing architecture issues and alert when you going to introduce them during 
 development.

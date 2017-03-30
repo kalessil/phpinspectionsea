@@ -160,7 +160,7 @@
                failureProperty="failure_found"
                outputtoformatters="false"
                filtertrace="on"
-               showoutput="off"
+               showoutput="yes"
                fork="yes" forkmode="once" reloading="no">
 
             <jvmarg value="-Didea.home.path=${idea.build}"/>

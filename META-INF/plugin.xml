@@ -706,6 +706,10 @@ This release brings important bug-fixes and new inspections.
         shortName="OverridingDeprecatedMethodInspection"            displayName="Overriding deprecated methods"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.OverridingDeprecatedMethodInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="MultipleReturnStatementsInspection"              displayName="Multiple return statements usage"
+        groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MultipleReturnStatementsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

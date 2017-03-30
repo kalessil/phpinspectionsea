@@ -158,9 +158,7 @@
 
         <junit haltonfailure="false"
                failureProperty="failure_found"
-               outputtoformatters="true"
-               filtertrace="on"
-               showoutput="no"
+               outputtoformatters="false"
                fork="yes" forkmode="once" reloading="no" maxmemory="1024m">
 
             <jvmarg value="-Didea.home.path=${idea.build}"/>

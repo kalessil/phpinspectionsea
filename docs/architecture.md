@@ -43,3 +43,49 @@ Since none of these consequences are positive, the following workflow might be h
 The inspection searches for typical patterns violations:
 - Factory: the constructor is protected, but create*/from* methods are not defined
 - Singleton: the `getInstance` method exists and is public, but the constructor is public
+
+## Multiple return statements usage
+
+> Note: the inspection is deactivated by default, but highly recommended for enabling
+
+> Note: the inspection applies only to class methods (traits and regular functions are not analyzed)
+
+> Please reference to corresponding [stackoverflow thread](https://stackoverflow.com/questions/36707/should-a-function-have-only-one-return-statement) 
+> for more details.
+
+A quote from the plugin community member: `There is absolutely nothing wrong with multiple return statements!?!`. 
+At first look it can sound confusing, but multiple return statements indicating violations of single responsibility principe.
+Let's calculate how many test we need to write for this method:
+```
+    /**
+     * Type-safe method, checks if a string is empty. Not types casting magic allowed.
+     * 
+     * @var mixed $argument
+     * @return bool
+     */
+    public function isEmptyString($argument) {
+        if (null === $argument) {
+            return false;
+        }
+        
+        if (!is_string($argument)) {
+            return false;
+        }
+        
+        return '' === trim($argument);
+    }
+```
+
+To test the method we need at least 5 tests: for null, for non-string type, for empty string, 
+for string with space characters and at least for a string with content.
+
+Means we have a design problem. E.g. in this case we can ask ourselves questions like: 
+"why is this function have additional validation", "why the parent workflow can not guarantee strings to be dispatched",
+"why it's not 2 functions: isEmptyString, isEmptyStringTypeSafe" and so on.
+
+Prom this angle the inspection can spot existing architecture issues and alert when you going to introduce them during 
+development.
+
+
+
+

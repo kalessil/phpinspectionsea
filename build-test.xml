@@ -160,8 +160,8 @@
                failureProperty="failure_found"
                outputtoformatters="true"
                filtertrace="on"
-               showoutput="no"
-               fork="no" forkmode="once" reloading="yes">
+               showoutput="yes"
+               fork="yes" forkmode="once" reloading="no">
 
             <jvmarg value="-Didea.home.path=${idea.build}"/>
             <jvmarg value="-Xbootclasspath/a:${idea.build}/lib/boot.jar"/>

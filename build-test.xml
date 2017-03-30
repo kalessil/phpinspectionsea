@@ -161,7 +161,7 @@
                outputtoformatters="false"
                filtertrace="off"
                showoutput="yes"
-               fork="no" reloading="no">
+               fork="yes" forkmode="once" reloading="no">
 
             <jvmarg value="-Didea.home.path=${idea.build}"/>
             <jvmarg value="-Xbootclasspath/a:${idea.build}/lib/boot.jar"/>

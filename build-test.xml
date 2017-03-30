@@ -159,7 +159,7 @@
         <junit haltonfailure="false"
                failureProperty="failure_found"
                outputtoformatters="true"
-               filtertrace="on"
+               filtertrace="off"
                showoutput="yes"
                fork="yes" forkmode="once" reloading="no">
 
@@ -178,12 +178,14 @@
             <!--<formatter type="brief" usefile="false"/>-->
             <!--<formatter classname="com.undefined.testing.OneLinerFormatter" usefile="false" />-->
 
-            <batchtest filtertrace="off">
-                <fileset dir="${test.src}">
-                    <include name="**/*Test.java"/>
-                    <exclude name="**/*TestCase.java"/>
-                </fileset>
-            </batchtest>
+            <test filtertrace="off" name="com.kalessil.phpStorm.phpInspectionsEA.api.DirnameCallOnFileConstantInspectorTest" />
+
+            <!--<batchtest filtertrace="off">-->
+                <!--<fileset dir="${test.src}">-->
+                    <!--<include name="**/*Test.java"/>-->
+                    <!--<exclude name="**/*TestCase.java"/>-->
+                <!--</fileset>-->
+            <!--</batchtest>-->
         </junit>
 
         <antcall target="check_test"/>

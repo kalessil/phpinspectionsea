@@ -34,6 +34,10 @@
         <fileset dir="${idea.build}/plugins/CSS/lib">
             <include name="*.jar"/>
         </fileset>
+
+        <fileset dir="${basedir}/lib">
+            <include name="*.jar" />
+        </fileset>
     </path>
 
     <path id="classpath">
@@ -172,11 +176,7 @@
 
             <classpath refid="classpath.test"/>
 
-            <!--<formatter type="plain" usefile="false" />-->
-            <formatter type="brief" usefile="false"/>
-            <!--<formatter classname="com.undefined.testing.OneLinerFormatter" usefile="false" />-->
-
-            <!--<test filtertrace="off" name="com.kalessil.phpStorm.phpInspectionsEA.api.DirnameCallOnFileConstantInspectorTest" />-->
+            <formatter classname="com.undefined.testing.OneLinerFormatter" usefile="false" />
 
             <batchtest>
                 <fileset dir="${test.src}">

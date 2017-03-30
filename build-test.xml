@@ -178,7 +178,7 @@
             <!--<formatter type="brief" usefile="false"/>-->
             <!--<formatter classname="com.undefined.testing.OneLinerFormatter" usefile="false" />-->
 
-            <batchtest>
+            <batchtest filtertrace="off">
                 <fileset dir="${test.src}">
                     <include name="**/*Test.java"/>
                     <exclude name="**/*TestCase.java"/>

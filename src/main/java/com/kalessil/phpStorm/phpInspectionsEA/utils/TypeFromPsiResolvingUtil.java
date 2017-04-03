@@ -95,7 +95,14 @@ final public class TypeFromPsiResolvingUtil {
 //                }
 //            }
 
+            /* try with signature */
             storeAsTypeWithSignaturesImport(((Variable) objSubjectExpression).getSignature(), objScope, objIndex, objTypesSet);
+            /* try with PS itself, makes e.g. parameters resolves happen */
+            if (objTypesSet.isEmpty()) {
+                for (String resolvedType : ((Variable) objSubjectExpression).getType().filterUnknown().getTypes()) {
+                    objTypesSet.add(Types.getType(resolvedType));
+                }
+            }
             return;
         }
 

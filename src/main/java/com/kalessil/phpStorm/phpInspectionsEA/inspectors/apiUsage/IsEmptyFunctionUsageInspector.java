@@ -21,13 +21,19 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.HashSet;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
-    public boolean REPORT_EMPTY_USAGE = false;
-    @SuppressWarnings("WeakerAccess")
-    public boolean SUGGEST_TO_USE_COUNT_CHECK = false;
-    @SuppressWarnings("WeakerAccess")
+    public boolean REPORT_EMPTY_USAGE             = false;
+    public boolean SUGGEST_TO_USE_COUNT_CHECK     = false;
     public boolean SUGGEST_TO_USE_NULL_COMPARISON = true;
 
     // static messages for triggered messages
@@ -45,24 +51,23 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpEmpty(PhpEmpty emptyExpression) {
-                final PhpExpression[] arrValues = emptyExpression.getVariables();
-                if (arrValues.length == 1) {
-                    final PsiElement objParameterToInspect = ExpressionSemanticUtil.getExpressionTroughParenthesis(arrValues[0]);
-                    if (objParameterToInspect instanceof ArrayAccessExpression) {
+                final PhpExpression[] values = emptyExpression.getVariables();
+                if (values.length == 1) {
+                    final PsiElement subject = ExpressionSemanticUtil.getExpressionTroughParenthesis(values[0]);
+                    if (subject instanceof ArrayAccessExpression) {
                         /* currently php docs lacks of array structure notations, skip it */
                         return;
                     }
 
-
                     /* extract types */
-                    final PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
-                    final Function objScope = ExpressionSemanticUtil.getScope(emptyExpression);
-                    final HashSet<String> objResolvedTypes = new HashSet<>();
-                    TypeFromPsiResolvingUtil.resolveExpressionType(objParameterToInspect, objScope, objIndex, objResolvedTypes);
+                    final PhpIndex index                = PhpIndex.getInstance(holder.getProject());
+                    final Function scope                = ExpressionSemanticUtil.getScope(emptyExpression);
+                    final HashSet<String> resolvedTypes = new HashSet<>();
+                    TypeFromPsiResolvingUtil.resolveExpressionType(subject, scope, index, resolvedTypes);
 
                     /* Case 1: empty(array) - hidden logic - empty array */
-                    if (this.isArrayType(objResolvedTypes)) {
-                        objResolvedTypes.clear();
+                    if (this.isArrayType(resolvedTypes)) {
+                        resolvedTypes.clear();
 
                         if (SUGGEST_TO_USE_COUNT_CHECK) {
                             holder.registerProblem(emptyExpression, strProblemDescriptionUseCount, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
@@ -72,8 +77,8 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     }
 
                     /* case 2: nullable classes, int, float, resource */
-                    if (this.isNullableCoreType(objResolvedTypes) || TypesSemanticsUtil.isNullableObjectInterface(objResolvedTypes)) {
-                        objResolvedTypes.clear();
+                    if (this.isNullableCoreType(resolvedTypes) || TypesSemanticsUtil.isNullableObjectInterface(resolvedTypes)) {
+                        resolvedTypes.clear();
 
                         if (SUGGEST_TO_USE_NULL_COMPARISON) {
                             holder.registerProblem(emptyExpression, strProblemDescriptionUseNullComparison, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
@@ -82,7 +87,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         return;
                     }
 
-                    objResolvedTypes.clear();
+                    resolvedTypes.clear();
                 }
 
                 if (REPORT_EMPTY_USAGE) {
@@ -105,6 +110,8 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
 
                 return  resolvedTypesSet.contains(Types.strInteger) ||
                         resolvedTypesSet.contains(Types.strFloat) ||
+                        resolvedTypesSet.contains(Types.strString) ||
+                        resolvedTypesSet.contains(Types.strBoolean) ||
                         resolvedTypesSet.contains(Types.strResource);
             }
         };

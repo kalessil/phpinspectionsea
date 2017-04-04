@@ -13,3 +13,43 @@ Here documented how to fix some of reported cases:
         ...
     }
 ```
+
+## 'empty(...)' usage
+
+> Note: the inspection has settings, most of them deactivated by default
+
+> Note: usage of 'empty(...)' still makes sense when big arrays checked for emptiness due to better performance.
+
+> Note: more information why empty usage should be avoided: [here](https://www.toptal.com/php/10-most-common-mistakes-php-programmers-make#common-mistake-10-misusing-empty)
+
+Here some examples we hope encourage you to stop using empty:
+
+```php
+    /* Case 1: inconsistent data types support */
+    var_dump(empty([]));                // => bool(true), as expected 
+    var_dump(empty(new ArrayObject())); // => bool(false), surprise-surprise =)
+    
+    /* Case 2: not working as expectid with magic classess */
+    class RegularClass
+    {
+        public $property = 'value';
+    }
+    class MagicClass
+    {
+        private $values = ['property' => 'value'];
+    
+        public function __get($key)
+        {
+            if (isset($this->values[$key])) {
+                return $this->values[$key];
+            }
+        }
+    }
+    $regular = new RegularClass();
+    $magic = new MagicClass();
+    var_dump($regular->property);        // => string(5) "value"
+    var_dump($magic->property);          // => string(5) "value"
+    
+    var_dump(empty($regular->property)); // => bool(false), as expected
+    var_dump(empty($magic->property));   // => bool(true), surprise-surprise =)
+```

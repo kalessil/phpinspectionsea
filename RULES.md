@@ -11,7 +11,7 @@ Inspections Lists (Type compatibility)
 ---
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
-| Type compatibility   | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                  | no  |
+| Type compatibility   | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                  | yes | yes | yes  | yes |
 | Type compatibility   | TypeUnsafeComparisonInspection                  | Type unsafe comparison                              | yes | yes | yes  | no  |
 | Type compatibility   | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search()' type unsafe usage | yes | yes | yes  | no  |
 | Type compatibility   | ForeachSourceInspection                         | Foreach source to iterate over                      | n/a | yes | n/a  | wip |

@@ -45,7 +45,7 @@ Here some examples which we hope will encourage you to stop using empty at all:
             }
         }
         
-        /* __set is needed, but omitted for demonstration purpose */
+        /* __set, __isset are omitted for demonstration purpose */
     }
     $regular = new RegularClass();
     $magic = new MagicClass();

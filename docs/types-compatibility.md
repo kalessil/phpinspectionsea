@@ -52,7 +52,7 @@ Here some examples which we hope will encourage you to stop using empty at all:
     var_dump($regular->property);        // => string(5) "value"
     var_dump($magic->property);          // => string(5) "value"
     
-    /* correctly implemented __isset resolvea the issue demonstrated below */
+    /* correctly implemented __isset resolves the issue demonstrated below */
     var_dump(empty($regular->property)); // => bool(false), as expected
     var_dump(empty($magic->property));   // => bool(true), surprise-surprise =)
 ```

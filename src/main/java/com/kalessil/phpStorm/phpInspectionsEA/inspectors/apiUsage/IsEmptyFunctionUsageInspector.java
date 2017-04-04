@@ -36,10 +36,9 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     public boolean SUGGEST_TO_USE_COUNT_CHECK     = false;
     public boolean SUGGEST_TO_USE_NULL_COMPARISON = true;
 
-    // static messages for triggered messages
-    private static final String strProblemDescriptionDoNotUse          = "'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.";
-    private static final String strProblemDescriptionUseCount          = "'0 === count($...)' construction should be used instead.";
-    private static final String strProblemDescriptionUseNullComparison = "You should probably use 'null === $...'.";
+    private static final String messageDoNotUse          = "'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.";
+    private static final String patternUseCount          = "You should probably use '%e%' instead.";
+    private static final String patternUseNullComparison = "You should probably use '%e%' instead.";
 
     @NotNull
     public String getShortName() {
@@ -54,7 +53,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                 final PhpExpression[] values = emptyExpression.getVariables();
                 if (values.length == 1) {
                     final PsiElement subject = ExpressionSemanticUtil.getExpressionTroughParenthesis(values[0]);
-                    if (subject instanceof ArrayAccessExpression) {
+                    if (null == subject || subject instanceof ArrayAccessExpression) {
                         /* currently php docs lacks of array structure notations, skip it */
                         return;
                     }
@@ -70,7 +69,9 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         resolvedTypes.clear();
 
                         if (SUGGEST_TO_USE_COUNT_CHECK) {
-                            holder.registerProblem(emptyExpression, strProblemDescriptionUseCount, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            final String replacement = "0 %o% count(%a%)".replace("%a%", subject.getText());
+                            final String message = patternUseCount.replace("%e%", replacement);
+                            holder.registerProblem(emptyExpression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         }
 
                         return;
@@ -81,7 +82,9 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         resolvedTypes.clear();
 
                         if (SUGGEST_TO_USE_NULL_COMPARISON) {
-                            holder.registerProblem(emptyExpression, strProblemDescriptionUseNullComparison, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            final String replacement = "null %o% %a%".replace("%a%", subject.getText());
+                            final String message = patternUseNullComparison.replace("%e%", replacement);
+                            holder.registerProblem(emptyExpression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         }
 
                         return;
@@ -91,7 +94,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                 }
 
                 if (REPORT_EMPTY_USAGE) {
-                    holder.registerProblem(emptyExpression, strProblemDescriptionDoNotUse, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(emptyExpression, messageDoNotUse, ProblemHighlightType.WEAK_WARNING);
                 }
             }
 
@@ -104,13 +107,13 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
             /** check if nullable int, float, resource */
             private boolean isNullableCoreType(HashSet<String> resolvedTypesSet) {
                 //noinspection SimplifiableIfStatement
-                if (resolvedTypesSet.size() != 2 || !resolvedTypesSet.contains(Types.strNull)) {
+                if (2 != resolvedTypesSet.size() || !resolvedTypesSet.contains(Types.strNull)) {
                     return false;
                 }
 
                 return  resolvedTypesSet.contains(Types.strInteger) ||
-                        resolvedTypesSet.contains(Types.strFloat) ||
-                        resolvedTypesSet.contains(Types.strString) ||
+                        resolvedTypesSet.contains(Types.strFloat)   ||
+                        resolvedTypesSet.contains(Types.strString)  ||
                         resolvedTypesSet.contains(Types.strBoolean) ||
                         resolvedTypesSet.contains(Types.strResource);
             }

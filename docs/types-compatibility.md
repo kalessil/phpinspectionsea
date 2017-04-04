@@ -44,6 +44,8 @@ Here some examples which we hope will encourage you to stop using empty at all:
                 return $this->values[$key];
             }
         }
+        
+        /* __set is needed, but omitted for demonstration purpose */
     }
     $regular = new RegularClass();
     $magic = new MagicClass();

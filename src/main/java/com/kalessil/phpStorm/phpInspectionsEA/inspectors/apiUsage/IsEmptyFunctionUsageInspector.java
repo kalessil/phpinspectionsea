@@ -5,10 +5,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
-import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.PhpEmpty;
-import com.jetbrains.php.lang.psi.elements.PhpExpression;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -58,6 +56,10 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         return;
                     }
 
+                    final PsiElement parent    = emptyExpression.getParent();
+                    final PsiElement operation = parent instanceof UnaryExpression ? ((UnaryExpression) parent).getOperation() : null;
+                    final boolean isInverted   = null != operation && PhpTokenTypes.opNOT == operation.getNode().getElementType();
+
                     /* extract types */
                     final PhpIndex index                = PhpIndex.getInstance(holder.getProject());
                     final Function scope                = ExpressionSemanticUtil.getScope(emptyExpression);
@@ -69,9 +71,12 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         resolvedTypes.clear();
 
                         if (SUGGEST_TO_USE_COUNT_CHECK) {
-                            final String replacement = "0 %o% count(%a%)".replace("%a%", subject.getText());
-                            final String message = patternUseCount.replace("%e%", replacement);
-                            holder.registerProblem(emptyExpression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            final String replacement = "0 %o% count(%a%)"
+                                .replace("%a%", subject.getText())
+                                .replace("%o%", isInverted ? "!==": "===");
+                            final String message    = patternUseCount.replace("%e%", replacement);
+                            final PsiElement target = isInverted ? parent : emptyExpression;
+                            holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         }
 
                         return;
@@ -82,9 +87,12 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         resolvedTypes.clear();
 
                         if (SUGGEST_TO_USE_NULL_COMPARISON) {
-                            final String replacement = "null %o% %a%".replace("%a%", subject.getText());
-                            final String message = patternUseNullComparison.replace("%e%", replacement);
-                            holder.registerProblem(emptyExpression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            final String replacement = "null %o% %a%"
+                                .replace("%a%", subject.getText())
+                                .replace("%o%", isInverted ? "!==": "===");
+                            final String message    = patternUseNullComparison.replace("%e%", replacement);
+                            final PsiElement target = isInverted ? parent : emptyExpression;
+                            holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         }
 
                         return;

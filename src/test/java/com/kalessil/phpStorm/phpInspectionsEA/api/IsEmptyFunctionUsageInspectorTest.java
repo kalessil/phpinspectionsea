@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsEmptyFunctionUsageInspector;
 
@@ -13,5 +14,11 @@ final public class IsEmptyFunctionUsageInspectorTest extends CodeInsightFixtureT
         myFixture.configureByFile("fixtures/api/empty-function.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
+
+        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+            myFixture.launchAction(fix);
+        }
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/api/empty-function.fixed.php");
     }
 }

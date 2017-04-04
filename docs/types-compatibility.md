@@ -22,7 +22,7 @@ Here documented how to fix some of reported cases:
 
 > Note: more information why empty usage should be avoided: [here](https://www.toptal.com/php/10-most-common-mistakes-php-programmers-make#common-mistake-10-misusing-empty)
 
-Here some examples we hope encourage you to stop using empty:
+Here some examples which we hope will encourage you to stop using empty at all:
 
 ```php
     /* Case 1: inconsistent data types support */

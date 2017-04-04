@@ -29,7 +29,7 @@ Here some examples which we hope will encourage you to stop using empty at all:
     var_dump(empty([]));                // => bool(true), as expected 
     var_dump(empty(new ArrayObject())); // => bool(false), surprise-surprise =)
     
-    /* Case 2: not working as expectid with magic classess */
+    /* Case 2: not working as expectid with magic classes */
     class RegularClass
     {
         public $property = 'value';

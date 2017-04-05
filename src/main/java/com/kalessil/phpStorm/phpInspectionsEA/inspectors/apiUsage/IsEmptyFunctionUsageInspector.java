@@ -185,5 +185,4 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
             super(expression);
         }
     }
-
 }

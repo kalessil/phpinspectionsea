@@ -52,14 +52,8 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
             public void visitPhpFunction(Function function) {
                 this.checkParameters(function.getParameters(), function);
 
-                final PsiElement[] children = function.getChildren();
-                if (children.length > 1 && children[1] instanceof PhpUseList) {
-                    final List<Variable> variables = new ArrayList<>();
-                    for (PsiElement variable : children[1].getChildren()) {
-                        if (variable instanceof Variable) {
-                            variables.add((Variable) variable);
-                        }
-                    }
+                final List<Variable> variables = ExpressionSemanticUtil.getUseListVariables(function);
+                if (null != variables) {
                     this.checkUseVariables(variables, function);
                 }
             }
@@ -93,8 +87,8 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         final List<Variable> useList = ExpressionSemanticUtil.getUseListVariables((Function) parentScope);
                         if (null != useList) {
                             /* use-list is found */
-                            for (Variable objUseVariable : useList) {
-                                final String useVariableName = objUseVariable.getName();
+                            for (Variable useVariable : useList) {
+                                final String useVariableName = useVariable.getName();
                                 if (StringUtil.isEmpty(useVariableName)) {
                                     continue;
                                 }

@@ -12,10 +12,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 final public class ExpressionSemanticUtil {
     /**
@@ -233,15 +230,14 @@ final public class ExpressionSemanticUtil {
     }
 
     @Nullable
-    public static LinkedList<Variable> getUseListVariables(@NotNull Function objFunction) {
-        for (PsiElement objChild : objFunction.getChildren()) {
+    public static List<Variable> getUseListVariables(@NotNull Function function) {
+        for (PsiElement child : function.getChildren()) {
             /* iterated child is use list */
-            if (objChild instanceof PhpUseList) {
-                final LinkedList<Variable> list = new LinkedList<>();
-                for (PsiElement objUseChild : objChild.getChildren()) {
-                    /* collect variables */
-                    if (objUseChild instanceof Variable) {
-                        list.add((Variable) objUseChild);
+            if (child instanceof PhpUseList) {
+                final List<Variable> list = new ArrayList<>();
+                for (PsiElement variableCandidate : child.getChildren()) {
+                    if (variableCandidate instanceof Variable) {
+                        list.add((Variable) variableCandidate);
                     }
                 }
 

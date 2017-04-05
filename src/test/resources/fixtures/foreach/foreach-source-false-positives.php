@@ -1,5 +1,16 @@
 <?php
 
+    /* false-positive: global context influenced by foreach-source-false-positives.setup.php */
+    $files = ['...'];
+    foreach ($files as $file) {}
+
+    /* false-positive: overriding variable before foreach */
+    /** @param null|string|string[] $values */
+    function mixedParams($values) {
+        $values = is_array($values) ? $values : explode('...', $values);
+        foreach ($values as $string) {}
+    }
+
     /* ensures that type[] is handled properly */
     /* @var $intOrIntArray int[] */
     foreach ($intOrIntArray as $value) {

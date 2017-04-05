@@ -215,18 +215,18 @@ final public class ExpressionSemanticUtil {
     }
 
     @Nullable
-    public static PsiElement getBlockScope(@NotNull PsiElement objExpression) {
-        PsiElement objParent = objExpression.getParent();
-        while (null != objParent && !(objParent instanceof PhpFile)) {
+    public static PsiElement getBlockScope(@NotNull PsiElement expression) {
+        PsiElement parent = expression.getParent();
+        while (null != parent && !(parent instanceof PhpFile)) {
             if (
-                objParent instanceof Function ||
-                objParent instanceof PhpDocComment ||
-                objParent instanceof PhpClass
+                parent instanceof Function ||
+                parent instanceof PhpDocComment ||
+                parent instanceof PhpClass
             ) {
-                return objParent;
+                return parent;
             }
 
-            objParent = objParent.getParent();
+            parent = parent.getParent();
         }
 
         return null;

@@ -5,10 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
-import com.jetbrains.php.lang.psi.elements.ForeachStatement;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
@@ -17,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 public class ForeachSourceInspector extends BasePhpInspection {
     final private String patternNotRecognized = "Expressions' type was not recognized, please check type hints.";
@@ -43,10 +41,18 @@ public class ForeachSourceInspector extends BasePhpInspection {
             private void analyseContainer(@NotNull PsiElement container) {
                 final HashSet<String> types = new HashSet<>();
                 TypeFromPlatformResolverUtil.resolveExpressionType(container, types);
-                if (0 == types.size()) {
+                if (types.isEmpty()) {
                     holder.registerProblem(container, patternNotRecognized, ProblemHighlightType.WEAK_WARNING);
                     return;
                 }
+
+                /* false-positives: multiple return types checked only in function/method; no global context */
+                final PsiElement scope = ExpressionSemanticUtil.getBlockScope(container);
+                if (types.size() > 1 && !(scope instanceof Function)) {
+                    types.clear();
+                    return;
+                }
+
 
                 /* gracefully request to specify exact types which can appear (mixed, object) */
                 if (types.contains(Types.strMixed)) {
@@ -86,27 +92,26 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 types.remove(Types.strEmptySet); // don't process mysterious empty set type
 
                 /* iterate rest of types */
-                if (types.size() > 0) {
+                if (!types.isEmpty()) {
                     final PhpIndex index = PhpIndex.getInstance(holder.getProject());
-
                     for (String type : types) {
                         /* analyze scalar types */
                         final boolean isClassType = type.startsWith("\\");
                         if (!isClassType) {
                             final String message = patternScalar.replace("%t%", type);
-                            holder.registerProblem(container, message, ProblemHighlightType.ERROR);
+                            holder.registerProblem(container, message, ProblemHighlightType.GENERIC_ERROR);
 
                             continue;
                         }
 
                         /* check classes: collect hierarchy of possible classes */
-                        final HashSet<PhpClass> poolToCheck = new HashSet<>();
+                        final Set<PhpClass> poolToCheck     = new HashSet<>();
                         final Collection<PhpClass> classes  = PhpIndexUtil.getObjectInterfaces(type, index, true);
-                        if (classes.size() > 0) {
+                        if (!classes.isEmpty()) {
                             /* collect all interfaces*/
                             for (PhpClass clazz : classes) {
-                                final HashSet<PhpClass> interfaces = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, false);
-                                if (interfaces.size() > 0) {
+                                final Set<PhpClass> interfaces = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, false);
+                                if (!interfaces.isEmpty()) {
                                     poolToCheck.addAll(interfaces);
                                     interfaces.clear();
                                 }
@@ -117,7 +122,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
 
                         /* analyze classes for having \Traversable in parents */
                         boolean hasTraversable = false;
-                        if (poolToCheck.size() > 0) {
+                        if (!poolToCheck.isEmpty()) {
                             for (PhpClass clazz : poolToCheck) {
                                 if (clazz.getFQN().equals("\\Traversable")) {
                                     hasTraversable = true;
@@ -128,7 +133,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         }
                         if (!hasTraversable) {
                             final String message = patternObject.replace("%t%", type);
-                            holder.registerProblem(container, message, ProblemHighlightType.ERROR);
+                            holder.registerProblem(container, message, ProblemHighlightType.GENERIC_ERROR);
                         }
                     }
 

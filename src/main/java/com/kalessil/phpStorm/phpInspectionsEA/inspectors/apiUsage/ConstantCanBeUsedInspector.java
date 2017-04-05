@@ -28,6 +28,7 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
     static {
         functions.put("phpversion", "PHP_VERSION");
         functions.put("php_sapi_name", "PHP_SAPI");
+        functions.put("get_class", "__CLASS__");
         functions.put("pi", "M_PI");
     }
 
@@ -47,10 +48,21 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
                 }
 
                 final String constant = functions.get(functionName);
-
-                final String message = messagePattern.replace("%c%", constant);
-                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseSuggestedReplacementFixer(constant));
+                final String message  = messagePattern.replace("%c%", constant);
+                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseConstantFix(constant));
             }
         };
+    }
+
+    private class UseConstantFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use the constant instead";
+        }
+
+        UseConstantFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

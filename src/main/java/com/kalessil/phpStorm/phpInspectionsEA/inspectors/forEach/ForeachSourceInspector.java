@@ -1,10 +1,14 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 
+import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
+import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
+import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
+import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -51,6 +55,29 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 if (types.size() > 1 && !(scope instanceof Function)) {
                     types.clear();
                     return;
+                }
+                /* false-positives: mixed parameter type, parameter overridden before foreach */
+                if (types.size() > 1 && scope instanceof Function && container instanceof Variable) {
+                    final String parameter               = ((Variable) container).getName();
+                    final PhpEntryPointInstruction start = ((Function) scope).getControlFlow().getEntryPoint();
+                    final PhpAccessVariableInstruction[] uses
+                            = PhpControlFlowUtil.getFollowingVariableAccessInstructions(start, parameter, false);
+                    for (PhpAccessVariableInstruction instruction : uses) {
+                        final PhpPsiElement expression = instruction.getAnchor();
+                        /* when matched itself, stop processing */
+                        if (expression == container) {
+                            break;
+                        }
+
+                        final PsiElement parent = expression.getParent();
+                        if (parent instanceof AssignmentExpression) {
+                            final PsiElement matchCandidate = ((AssignmentExpression) parent).getVariable();
+                            if (null != matchCandidate && PsiEquivalenceUtil.areElementsEquivalent(matchCandidate, container)) {
+                                types.clear();
+                                return;
+                            }
+                        }
+                    }
                 }
 
 

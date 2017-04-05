@@ -35,3 +35,11 @@
     /* false-positives: default values are of limited type */
     if ($x)     { $var = true;         }
     else        { $var = str_repeat(); }
+
+    /* false-positive: the container used in a condition */
+    if ($x)        { $var1 = true;  }
+    elseif ($var1) { $var1 = true;  }
+    else           { $var1 = false; }
+    /* false-positive: the container used in a condition */
+    if (!$var1)    { $var1 = true;  }
+    else           { $var1 = false; }

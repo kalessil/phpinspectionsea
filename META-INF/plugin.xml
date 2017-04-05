@@ -606,6 +606,10 @@ This release brings important bug-fixes and new inspections.
         shortName="UsageOfSilenceOperatorInspection"              displayName="Usage of the silence operator"
         groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UsageOfSilenceOperatorInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="NamingConventionInspection"                    displayName="Naming convention"
+        groupName="Code Style"                                    enabledByDefault="false" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.NamingConvention.NamingConventionInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

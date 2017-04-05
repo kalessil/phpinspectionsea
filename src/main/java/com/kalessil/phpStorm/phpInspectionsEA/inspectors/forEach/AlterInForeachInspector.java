@@ -22,10 +22,10 @@ public class AlterInForeachInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
     public boolean SUGGEST_USING_VALUE_BY_REF = false;
 
-    private static final String strProblemDescription     = "Can be refactored as '$%c% = ...' if $%v% is defined as a reference (ensure that array supplied). Suppress if causes memory mismatches.";
-    private static final String strProblemUnsafeReference = "This variable must be unset just after foreach to prevent possible side-effects.";
-    private static final String strProblemKeyReference    = "Provokes a PHP Fatal error (key element cannot be a reference).";
-    private static final String strProblemAmbiguousUnset  = "Unsetting $%v% is not needed because it's not a reference.";
+    private static final String patternSuggestReference = "Can be refactored as '$%c% = ...' if $%v% is defined as a reference (ensure that array supplied). Suppress if causes memory mismatches.";
+    private static final String messageMissingUnset     = "This variable must be unset just after foreach to prevent possible side-effects.";
+    private static final String messageKeyReference     = "Provokes a PHP Fatal error (key element cannot be a reference).";
+    private static final String patternAmbiguousUnset   = "Unsetting $%v% is not needed because it's not a reference.";
 
     @NotNull
     public String getShortName() {
@@ -92,7 +92,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
 
                             /* check if warning needs to be reported */
                             if (!isRequirementFullFilled) {
-                                holder.registerProblem(objForeachValue, strProblemUnsafeReference, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                holder.registerProblem(objForeachValue, messageMissingUnset, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         } else {
                             /* check for unset in parent foreach-statements: foreach-{foreach}-unset */
@@ -123,7 +123,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                                             !StringUtil.isEmpty(foreachValueName) &&
                                             unsetArgumentName.equals(foreachValueName)
                                         ) {
-                                            final String message = strProblemAmbiguousUnset.replace("%v%", foreachValueName);
+                                            final String message = patternAmbiguousUnset.replace("%v%", foreachValueName);
                                             holder.registerProblem(unsetExpression, message, ProblemHighlightType.WEAK_WARNING);
                                         }
                                     }
@@ -145,7 +145,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                         prevElement = prevElement.getPrevSibling();
                     }
                     if (null != prevElement && PhpTokenTypes.opBIT_AND == prevElement.getNode().getElementType()) {
-                        holder.registerProblem(prevElement, strProblemKeyReference, ProblemHighlightType.ERROR);
+                        holder.registerProblem(prevElement, messageKeyReference, ProblemHighlightType.ERROR);
                     }
                 }
             }
@@ -197,7 +197,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                         ) {
                             final String strName = objForeachValue.getName();
                             if (!StringUtil.isEmpty(strName)) {
-                                final String message = strProblemDescription
+                                final String message = patternSuggestReference
                                         .replace("%c%", strName)
                                         .replace("%v%", strName);
                                 holder.registerProblem(operand, message, ProblemHighlightType.WEAK_WARNING);

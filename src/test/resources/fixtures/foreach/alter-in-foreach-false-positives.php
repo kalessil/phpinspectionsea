@@ -1,5 +1,18 @@
 <?php
 
+/* false-positive: global context */
+/* @var null|string|string[] $files */
+foreach ($files as $file) {
+    echo $file;
+}
+
+/* false-positive: overriding variable before foreach */
+/** @param null|string|string[] $values */
+function AIFMixedParameters($values) {
+    $values = is_array($values) ? $values : explode('...', $values);
+    foreach ($values as $string) {}
+}
+
 function AIFCommentBeforeUnset(array $x){
     foreach ($x as & $y) {
         echo $y;

@@ -11,25 +11,25 @@ public class PhpValidatableClass {
 
 
     private final PhpClass phpClass;
-    private String type;
+    private NamingRule.ObjectType type;
     private ArrayList<String> extendsFQNs;
 
     PhpValidatableClass(PhpClass phpClass) {
         this.phpClass = phpClass;
     }
 
-    public String getType() {
+    public NamingRule.ObjectType getType() {
         if (type == null) {
             if (phpClass.isInterface()) {
-                type = NamingRule.TYPE_INTERFACE;
+                type = NamingRule.ObjectType.INTERFACE;
             } else if (phpClass.isTrait()) {
-                type = NamingRule.TYPE_TRAIT;
+                type = NamingRule.ObjectType.TRAIT;
             } else if (phpClass.isFinal()) {
-                type = NamingRule.TYPE_FINAL;
+                type = NamingRule.ObjectType.FINAL;
             } else if (phpClass.isAbstract()) {
-                type = NamingRule.TYPE_ABSTRACT;
+                type = NamingRule.ObjectType.ABSTRACT;
             } else {
-                type = NamingRule.TYPE_CLASS;
+                type = NamingRule.ObjectType.CLASS;
             }
         }
         return type;
@@ -48,7 +48,7 @@ public class PhpValidatableClass {
             }
 
             PhpClass[] implementsInterfaces = phpClass.getImplementedInterfaces();
-            for (final PhpClass implementInterface : implementsInterfaces) {
+            for (PhpClass implementInterface : implementsInterfaces) {
                 extendsFQNs.add(implementInterface.getFQN());
             }
         }

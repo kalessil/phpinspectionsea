@@ -2,55 +2,61 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.NamingConven
 
 
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NamingRule {
+    public enum ObjectType {
+        INTERFACE,
+        TRAIT,
+        FINAL,
+        ABSTRACT,
+        CLASS,
+    }
 
-    final public static String TYPE_INTERFACE = "interface";
-    final public static String TYPE_TRAIT = "trait";
-    final public static String TYPE_FINAL = "final";
-    final public static String TYPE_ABSTRACT = "abstract";
-    final public static String TYPE_CLASS = "class";
-
-
+    @NotNull
     final private String nameRegex;
-    final private String type;
+
+    @NotNull
+    final private ObjectType type;
 
     @Nullable
     private final String extendFqn;
 
-    public NamingRule(String nameRegex, String type, @Nullable String extendFqn) {
+    public NamingRule(@NotNull String nameRegex, @NotNull ObjectType type, @Nullable String extendFqn) {
         this.nameRegex = nameRegex;
         this.type = type;
         this.extendFqn = extendFqn;
     }
 
-    public NamingRule(String nameRegex, String type) {
+    public NamingRule(@NotNull String nameRegex, @NotNull ObjectType type) {
         this.nameRegex = nameRegex;
         this.type = type;
         this.extendFqn = null;
     }
 
-    public String getType() {
+    @NotNull
+    public ObjectType getType() {
         return type;
     }
 
 
-    boolean isValid(PhpClass object) {
+    boolean isValid(@NotNull PhpClass object) {
         return object.getName().matches(this.nameRegex);
     }
 
 
-    boolean isSupported(PhpValidatableClass object) {
+    boolean isSupported(@NotNull  PhpValidatableClass object) {
         boolean result = false;
-        ArrayList<String> objectExtendsFqns = object.getExtendsFQNs();
+        final List<String> objectExtendsFqns = object.getExtendsFQNs();
         int extendsSize = objectExtendsFqns.size();
-        if (extendFqn == null) {
-            result = (extendsSize == 0);
+        if (null == extendFqn) {
+            result = (0 == extendsSize);
         } else {
-            for (final String extendClassFqn : objectExtendsFqns) {
+            for (String extendClassFqn : objectExtendsFqns) {
                 if (extendClassFqn.equals(extendFqn)) {
                     result = true;
                     break;

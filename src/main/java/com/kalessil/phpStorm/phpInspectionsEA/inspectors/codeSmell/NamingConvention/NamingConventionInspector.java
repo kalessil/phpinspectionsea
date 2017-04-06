@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -28,16 +29,14 @@ public class NamingConventionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpClass(PhpClass phpClass) {
-                final PsiElement phpClassNameIdentifier = phpClass.getNameIdentifier();
+                final PsiElement phpClassNameIdentifier = NamedElementUtil.getNameIdentifier(phpClass);
                 if (phpClassNameIdentifier != null) {
                     // Create custom validate object to cache object type and extend list
                     final PhpValidatableClass validatableClass = new PhpValidatableClass(phpClass);
                     final Set<NamingRule> objectRules = rules.getRulesByType(validatableClass.getType());
                     for (NamingRule rule : objectRules) {
-                        if (rule.isSupported(validatableClass)) {
-                            if (!rule.isValid(phpClass)) {
-                                holder.registerProblem(phpClassNameIdentifier, message, ProblemHighlightType.WEAK_WARNING);
-                            }
+                        if (rule.isSupported(validatableClass) && !rule.isValid(phpClass)) {
+                            holder.registerProblem(phpClassNameIdentifier, message, ProblemHighlightType.WEAK_WARNING);
                         }
                     }
                 }

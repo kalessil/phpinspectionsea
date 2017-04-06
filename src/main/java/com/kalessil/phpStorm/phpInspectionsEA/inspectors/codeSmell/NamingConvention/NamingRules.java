@@ -1,22 +1,25 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.NamingConvention;
 
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class NamingRules {
 
-    final private HashMap<String, Set<NamingRule>> configuration = new HashMap<>();
+    final private Map<NamingRule.ObjectType, Set<NamingRule>> configuration = new HashMap<>();
 
-    public void add(NamingRule rule) {
-        final String type = rule.getType();
+    public void add(@NotNull NamingRule rule) {
+        final NamingRule.ObjectType type = rule.getType();
         Set<NamingRule> map = getRulesByType(type);
         map.add(rule);
         configuration.put(type, map);
     }
 
-    Set<NamingRule> getRulesByType(String type) {
+    Set<NamingRule> getRulesByType(@NotNull NamingRule.ObjectType type) {
         Set<NamingRule> map = configuration.get(type);
         if (map == null) {
             map = new HashSet<>();

@@ -1,7 +1,7 @@
 ### Pre-requisites
 
 - Java 8 **SDK** SE
-- Intllij Idea Untimate (for running Unit Tests)
+- Intellij Idea Ultimate (for running Unit Tests)
 - PhpStorm 2016.2.1 (for PHP-related SDK)
 
 > Note: alternatively you can add PHP plugin to IDEA and use it instead. Some test might fail in this case.

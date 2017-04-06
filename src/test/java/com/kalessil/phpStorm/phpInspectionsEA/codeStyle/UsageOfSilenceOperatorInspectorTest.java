@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UsageOfSilenceOperatorInspector;
 
-final public class UsageOfSilenceOperatorInspectorTest extends CodeInsightFixtureTestCase {
+final public class UsageOfSilenceOperatorInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         UsageOfSilenceOperatorInspector inspector = new UsageOfSilenceOperatorInspector();
         inspector.RESPECT_CONTEXT                 = true;

@@ -1,7 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.security;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.CryptographicallySecureAlgorithmsInspector;
 
 final public class CryptographicallySecureAlgorithmsInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

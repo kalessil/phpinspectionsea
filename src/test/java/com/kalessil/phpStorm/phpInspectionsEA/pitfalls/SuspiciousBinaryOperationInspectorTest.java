@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.pitfalls;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.SuspiciousBinaryOperationInspector;
 
-final public class SuspiciousBinaryOperationInspectorTest extends CodeInsightFixtureTestCase {
+final public class SuspiciousBinaryOperationInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/pitfalls/suspicious-binary-operations.php");
         myFixture.enableInspections(SuspiciousBinaryOperationInspector.class);

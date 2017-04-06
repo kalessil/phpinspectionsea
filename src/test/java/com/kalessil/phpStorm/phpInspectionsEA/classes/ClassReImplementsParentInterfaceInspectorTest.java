@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.classes;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassReImplementsParentInterfaceInspector;
 
-final public class ClassReImplementsParentInterfaceInspectorTest extends CodeInsightFixtureTestCase {
+final public class ClassReImplementsParentInterfaceInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/classes/re-implements-parent-interface.php");
         myFixture.enableInspections(ClassReImplementsParentInterfaceInspector.class);

@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.foreach;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.DisconnectedForeachInstructionInspector;
 
-final public class DisconnectedForeachInstructionInspectorTest extends CodeInsightFixtureTestCase {
+final public class DisconnectedForeachInstructionInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         DisconnectedForeachInstructionInspector inspector = new DisconnectedForeachInstructionInspector();
         inspector.SUGGEST_USING_CLONE = true;

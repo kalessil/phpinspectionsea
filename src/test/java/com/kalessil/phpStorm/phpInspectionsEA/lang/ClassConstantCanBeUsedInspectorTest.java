@@ -1,10 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.lang;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ClassConstantCanBeUsedInspector;
 
-final public class ClassConstantCanBeUsedInspectorTest extends CodeInsightFixtureTestCase {
+final public class ClassConstantCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         ClassConstantCanBeUsedInspector inspector = new ClassConstantCanBeUsedInspector();
         inspector.IMPORT_CLASSES_ON_QF            = true;

@@ -22,7 +22,7 @@ import java.util.List;
 
 public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection {
     private static final String messagePatternReImplementsParent = "%i% is already announced in %c%.";
-    private static final String messagePatternAlreadyImplements  = "%i% is already announced. Duplicate announcements causing Fatal error.";
+    private static final String messageAlreadyImplements         = "Class cannot implement previously implemented interface";
 
     @NotNull
     public String getShortName() {
@@ -52,8 +52,7 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                             final String interfaceFQN = anInterface.getFQN();
                             if (!StringUtil.isEmpty(interfaceFQN)) {
                                 if (interfaces.contains(interfaceFQN)) {
-                                    final String message = messagePatternAlreadyImplements.replace("%i%", interfaceFQN);
-                                    holder.registerProblem(anInterface, message, ProblemHighlightType.ERROR, new TheLocalFix());
+                                    holder.registerProblem(anInterface, messageAlreadyImplements, ProblemHighlightType.ERROR, new TheLocalFix());
                                 }
                                 interfaces.add(interfaceFQN);
                             }

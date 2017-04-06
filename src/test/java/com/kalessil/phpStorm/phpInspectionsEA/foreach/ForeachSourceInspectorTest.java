@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.foreach;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachSourceInspector;
 
-final public class ForeachSourceInspectorTest extends CodeInsightFixtureTestCase {
+final public class ForeachSourceInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/foreach/foreach-source.php");
         myFixture.enableInspections(ForeachSourceInspector.class);

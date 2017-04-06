@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.phpUnit;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitTestsInspector;
 
-final public class PhpUnitTestsInspectorTest extends CodeInsightFixtureTestCase {
+final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsCoversAnnotationPatterns() {
         PhpUnitTestsInspector inspector = new PhpUnitTestsInspector();
         inspector.WORKAROUND_COVERS_REFERENCES = false;

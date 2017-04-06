@@ -1,11 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnqualifiedReferenceInspector;
 
-final public class UnqualifiedReferenceInspectorTest extends CodeInsightFixtureTestCase {
+final public class UnqualifiedReferenceInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testFindsAllNsPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
 

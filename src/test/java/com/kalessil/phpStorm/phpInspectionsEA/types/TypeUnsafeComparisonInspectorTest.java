@@ -1,10 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.types;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TypeUnsafeComparisonInspector;
 
-final public class TypeUnsafeComparisonInspectorTest extends CodeInsightFixtureTestCase {
+final public class TypeUnsafeComparisonInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/types/type-unsafe-comparison.php");
         myFixture.enableInspections(TypeUnsafeComparisonInspector.class);

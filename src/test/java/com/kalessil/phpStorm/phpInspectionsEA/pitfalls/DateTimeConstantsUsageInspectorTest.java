@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.pitfalls;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.DateTimeConstantsUsageInspector;
 
-final public class DateTimeConstantsUsageInspectorTest extends CodeInsightFixtureTestCase {
+final public class DateTimeConstantsUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/pitfalls/date-time-constants.php");
         myFixture.enableInspections(DateTimeConstantsUsageInspector.class);

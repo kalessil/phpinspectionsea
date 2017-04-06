@@ -129,27 +129,33 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     if (previous instanceof PsiWhiteSpace) {
                         previous = previous.getPrevSibling();
                     }
-                    if (null != previous && PhpTokenTypes.opBIT_AND == previous.getNode().getElementType()) {
-                        continue;
-                    }
 
                     final String parameterName = variable.getName();
                     if (StringUtil.isEmpty(parameterName)) {
                         continue;
                     }
 
-                    final int variableUsages = analyzeAndReturnUsagesCount(parameterName, scopeHolder);
+                    final Boolean isReferencedVariable = null != previous && PhpTokenTypes.opBIT_AND == previous.getNode().getElementType();
+                    final int     variableUsages       = analyzeAndReturnUsagesCount(parameterName, scopeHolder, isReferencedVariable);
                     if (0 == variableUsages) {
                         holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                     }
                 }
             }
 
-            private int analyzeAndReturnUsagesCount(String parameterName, PhpScopeHolder objScopeHolder) {
+            private void analyzeAndReturnUsagesCount(String parameterName, PhpScopeHolder objScopeHolder) {
+                analyzeAndReturnUsagesCount(parameterName, objScopeHolder, false);
+            }
+
+            private int analyzeAndReturnUsagesCount(String parameterName, PhpScopeHolder objScopeHolder, Boolean isReferencedVariable) {
                 PhpEntryPointInstruction objEntryPoint   = objScopeHolder.getControlFlow().getEntryPoint();
                 PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, parameterName, false);
                 if (arrUsages.length == 0) {
                     return arrUsages.length;
+                }
+
+                if (isReferencedVariable) {
+                    return 1;
                 }
 
                 final List<PsiElement> objTargetExpressions = new ArrayList<>();
@@ -216,7 +222,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                                     operation = operation.getNextSibling();
                                 }
 
-                                if (null != operation && operation.getText().replaceAll("\\s+","").equals("=&")) {
+                                if (null != operation && operation.getText().replaceAll("\\s+", "").equals("=&")) {
                                     intCountWriteAccesses++;
                                     isReference = true;
 

@@ -40,7 +40,8 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
         return "OnlyWritesOnParameterInspection";
     }
 
-    static private PhpAccessVariableInstruction[] getVariablesAccessInstructions(String parameterName, PhpScopeHolder objScopeHolder) {
+    @NotNull
+    static private PhpAccessVariableInstruction[] getVariablesAccessInstructions(@NotNull String parameterName, @NotNull PhpScopeHolder objScopeHolder) {
         PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
         return PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, parameterName, false);
     }

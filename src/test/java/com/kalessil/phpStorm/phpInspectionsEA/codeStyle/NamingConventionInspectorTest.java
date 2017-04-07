@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.NamingConvent
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.NamingConvention.NamingRule;
 
 
-public class NamingConventionInspectorTest extends CodeInsightFixtureTestCase {
+final public class NamingConventionInspectorTest extends CodeInsightFixtureTestCase {
 
     public void testCheckClass() {
         myFixture.configureByFile("fixtures/codeStyle/naming-convention/check-class.php");
@@ -32,14 +32,10 @@ public class NamingConventionInspectorTest extends CodeInsightFixtureTestCase {
         testRule(new NamingRule(".+Trait.+", NamingRule.ObjectType.TRAIT));
     }
 
-
-
-
     public void testExtendsClass() {
         myFixture.configureByFile("fixtures/codeStyle/naming-convention/extend-class.php");
         testRule(new NamingRule(".+Controller$", NamingRule.ObjectType.CLASS, "\\BaseController"));
     }
-
 
     private void testRule(NamingRule rule) {
         NamingConventionInspector inspector = new NamingConventionInspector();

@@ -5,7 +5,6 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NamingRule {
@@ -49,12 +48,11 @@ public class NamingRule {
     }
 
 
-    boolean isSupported(@NotNull  PhpValidatableClass object) {
+    boolean isSupported(@NotNull PhpValidatableClass object) {
         boolean result = false;
         final List<String> objectExtendsFqns = object.getExtendsFQNs();
-        int extendsSize = objectExtendsFqns.size();
         if (null == extendFqn) {
-            result = (0 == extendsSize);
+            result = objectExtendsFqns.isEmpty();
         } else {
             for (String extendClassFqn : objectExtendsFqns) {
                 if (extendClassFqn.equals(extendFqn)) {

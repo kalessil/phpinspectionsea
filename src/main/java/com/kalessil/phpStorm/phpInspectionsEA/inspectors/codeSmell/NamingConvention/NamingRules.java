@@ -14,14 +14,14 @@ public class NamingRules {
 
     public void add(@NotNull NamingRule rule) {
         final NamingRule.ObjectType type = rule.getType();
-        Set<NamingRule> map = getRulesByType(type);
+        final Set<NamingRule> map = getRulesByType(type);
         map.add(rule);
         configuration.put(type, map);
     }
 
     Set<NamingRule> getRulesByType(@NotNull NamingRule.ObjectType type) {
         Set<NamingRule> map = configuration.get(type);
-        if (map == null) {
+        if (null == map) {
             map = new HashSet<>();
         }
         return map;

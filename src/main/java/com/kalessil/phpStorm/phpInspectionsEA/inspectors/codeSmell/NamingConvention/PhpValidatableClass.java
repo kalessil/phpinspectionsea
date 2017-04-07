@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.NamingConven
 
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +15,13 @@ public class PhpValidatableClass {
     private NamingRule.ObjectType type;
     private ArrayList<String> extendsFQNs;
 
-    PhpValidatableClass(PhpClass phpClass) {
+    PhpValidatableClass(@NotNull PhpClass phpClass) {
         this.phpClass = phpClass;
     }
 
+    @NotNull
     public NamingRule.ObjectType getType() {
-        if (type == null) {
+        if (null == type) {
             if (phpClass.isInterface()) {
                 type = NamingRule.ObjectType.INTERFACE;
             } else if (phpClass.isTrait()) {
@@ -39,15 +41,15 @@ public class PhpValidatableClass {
      * Get extended class FQN + all FQN of the interfaces that are implemented in the class
      */
     ArrayList<String> getExtendsFQNs() {
-        if (extendsFQNs == null) {
+        if (null == extendsFQNs) {
             extendsFQNs = new ArrayList<>();
 
-            List<ClassReference> a = phpClass.getExtendsList().getReferenceElements();
-            for (ClassReference extendedClassRef : a) {
+            final List<ClassReference> extendClassReferences = phpClass.getExtendsList().getReferenceElements();
+            for (ClassReference extendedClassRef : extendClassReferences) {
                 extendsFQNs.add(extendedClassRef.getFQN());
             }
 
-            PhpClass[] implementsInterfaces = phpClass.getImplementedInterfaces();
+            final PhpClass[] implementsInterfaces = phpClass.getImplementedInterfaces();
             for (PhpClass implementInterface : implementsInterfaces) {
                 extendsFQNs.add(implementInterface.getFQN());
             }

@@ -7,7 +7,7 @@ class Container {
                 (array $inner, array &$outer)
                 use (
                     <weak_warning descr="The variable seems to be not used.">$in</weak_warning>,
-                    &$out,
+                    &<weak_warning descr="The variable seems to be not used.">$out</weak_warning>,
                     $log
                 )
             {

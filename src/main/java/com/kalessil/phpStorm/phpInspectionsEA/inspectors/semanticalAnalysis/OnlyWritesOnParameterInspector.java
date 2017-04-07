@@ -120,21 +120,26 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     }
 
                     analyzeAndReturnUsagesCount(parameterName, scopeHolder);
-               }
+                }
             }
 
             private void checkUseVariables(@NotNull List<Variable> variables, @NotNull PhpScopeHolder scopeHolder) {
                 for (Variable variable : variables) {
+                    final String parameterName = variable.getName();
+                    if (StringUtil.isEmpty(parameterName)) {
+                        continue;
+                    }
+
                     PsiElement previous = variable.getPrevSibling();
                     if (previous instanceof PsiWhiteSpace) {
                         previous = previous.getPrevSibling();
                     }
                     if (null != previous && PhpTokenTypes.opBIT_AND == previous.getNode().getElementType()) {
-                        continue;
-                    }
+                        final PhpAccessVariableInstruction[] usages = getUsages(parameterName, scopeHolder);
+                        if (0 == usages.length) {
+                            holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                        }
 
-                    final String parameterName = variable.getName();
-                    if (StringUtil.isEmpty(parameterName)) {
                         continue;
                     }
 
@@ -145,11 +150,10 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 }
             }
 
-            private int analyzeAndReturnUsagesCount(String parameterName, PhpScopeHolder objScopeHolder) {
-                PhpEntryPointInstruction objEntryPoint   = objScopeHolder.getControlFlow().getEntryPoint();
-                PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, parameterName, false);
-                if (arrUsages.length == 0) {
-                    return arrUsages.length;
+            private int analyzeAndReturnUsagesCount(@NotNull String parameterName, @NotNull PhpScopeHolder scopeHolder) {
+                final PhpAccessVariableInstruction[] usages = getUsages(parameterName, scopeHolder);
+                if (usages.length == 0) {
+                    return usages.length;
                 }
 
                 final List<PsiElement> objTargetExpressions = new ArrayList<>();
@@ -158,7 +162,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 int intCountReadAccesses  = 0;
                 int intCountWriteAccesses = 0;
                 PhpAccessInstruction.Access objAccess;
-                for (PhpAccessVariableInstruction objInstruction : arrUsages) {
+                for (PhpAccessVariableInstruction objInstruction : usages) {
                     PsiElement objParent = objInstruction.getAnchor().getParent();
 
                     if (objParent instanceof ArrayAccessExpression) {
@@ -216,7 +220,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                                     operation = operation.getNextSibling();
                                 }
 
-                                if (null != operation && operation.getText().replaceAll("\\s+","").equals("=&")) {
+                                if (null != operation && operation.getText().replaceAll("\\s+", "").equals("=&")) {
                                     intCountWriteAccesses++;
                                     isReference = true;
 
@@ -259,7 +263,13 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 }
                 objTargetExpressions.clear();
 
-                return arrUsages.length;
+                return usages.length;
+            }
+
+            @NotNull
+            private PhpAccessVariableInstruction[] getUsages(@NotNull String parameterName, @NotNull PhpScopeHolder scopeHolder) {
+                PhpEntryPointInstruction objEntryPoint = scopeHolder.getControlFlow().getEntryPoint();
+                return PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, parameterName, false);
             }
         };
     }

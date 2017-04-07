@@ -40,6 +40,11 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
         return "OnlyWritesOnParameterInspection";
     }
 
+    static private PhpAccessVariableInstruction[] getVariablesAccessInstructions(String parameterName, PhpScopeHolder objScopeHolder) {
+        PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
+        return PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, parameterName, false);
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
@@ -135,27 +140,26 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    final Boolean isReferencedVariable = null != previous && PhpTokenTypes.opBIT_AND == previous.getNode().getElementType();
-                    final int     variableUsages       = analyzeAndReturnUsagesCount(parameterName, scopeHolder, isReferencedVariable);
+                    if (null != previous && PhpTokenTypes.opBIT_AND == previous.getNode().getElementType()) {
+                        PhpAccessVariableInstruction[] arrUsages = getVariablesAccessInstructions(parameterName, scopeHolder);
+                        if (0 == arrUsages.length) {
+                            holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                        }
+
+                        continue;
+                    }
+
+                    final int variableUsages = analyzeAndReturnUsagesCount(parameterName, scopeHolder);
                     if (0 == variableUsages) {
                         holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                     }
                 }
             }
 
-            private void analyzeAndReturnUsagesCount(String parameterName, PhpScopeHolder objScopeHolder) {
-                analyzeAndReturnUsagesCount(parameterName, objScopeHolder, false);
-            }
-
-            private int analyzeAndReturnUsagesCount(String parameterName, PhpScopeHolder objScopeHolder, Boolean isReferencedVariable) {
-                PhpEntryPointInstruction objEntryPoint   = objScopeHolder.getControlFlow().getEntryPoint();
-                PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, parameterName, false);
-                if (arrUsages.length == 0) {
-                    return arrUsages.length;
-                }
-
-                if (isReferencedVariable) {
-                    return 1;
+            private int analyzeAndReturnUsagesCount(String parameterName, PhpScopeHolder objScopeHolder) {
+                PhpAccessVariableInstruction[] arrUsages = getVariablesAccessInstructions(parameterName, objScopeHolder);
+                if (0 == arrUsages.length) {
+                    return 0;
                 }
 
                 final List<PsiElement> objTargetExpressions = new ArrayList<>();

@@ -23,9 +23,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class SideEffectAnalysisInspector extends BasePhpInspection {
-    private static final String message = "This call can be removed because it have no side-effect.";
-    private static HashMap<String, SideEffect> mappedSideEffects = new HashMap<>();
-    private static HashMap<String, Integer> mappedRefPositions = new HashMap<>();
+    private static final String                      message            = "This call can be removed because it have no side-effect.";
+    private static       HashMap<String, SideEffect> mappedSideEffects  = new HashMap<>();
+    private static       HashMap<String, Integer>    mappedRefPositions = new HashMap<>();
 
     private enum SideEffect {NONE, POSSIBLE, UNKNOW, INTERNAL, EXTERNAL}
 
@@ -56,14 +56,12 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
     }
 
     @NotNull
-    private static SideEffect getIdentifiedSideEffect(@NotNull final FunctionReference functionReference) {
-        final String functionFQN = functionReference.getFQN();
-
-        if (!mappedSideEffects.containsKey(functionFQN)) {
-            mappedSideEffects.put(functionFQN, identifySideEffect(functionReference));
+    private static SideEffect getIdentifiedSideEffect(@NotNull final FunctionReference functionReference, @NotNull final String functionQualifiedName) {
+        if (!mappedSideEffects.containsKey(functionQualifiedName)) {
+            mappedSideEffects.put(functionQualifiedName, identifySideEffect(functionReference));
         }
 
-        return mappedSideEffects.get(functionFQN);
+        return mappedSideEffects.get(functionQualifiedName);
     }
 
     @NotNull
@@ -77,13 +75,16 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(final FunctionReference functionReference) {
-                final SideEffect functionSideEffect = getIdentifiedSideEffect(functionReference);
+                final Function function = (Function) functionReference.resolve();
+                if (null != function && functionReference.getParent().getClass().equals(StatementImpl.class)) {
+                    final String     functionQualifiedName = function.getFQN();
+                    final SideEffect functionSideEffect    = getIdentifiedSideEffect(functionReference, functionQualifiedName);
 
-                if (functionReference.getParent().getClass().equals(StatementImpl.class)) {
                     if (functionSideEffect.equals(SideEffect.NONE)) {
                         registerProblem(functionReference);
-                    } else if (functionSideEffect.equals(SideEffect.POSSIBLE) &&
-                        functionReference.getParameters().length < mappedRefPositions.get(functionReference.getFQN())) {
+                    }
+                    else if (functionSideEffect.equals(SideEffect.POSSIBLE) &&
+                        functionReference.getParameters().length < mappedRefPositions.get(functionQualifiedName)) {
                         registerProblem(functionReference);
                     }
                 }

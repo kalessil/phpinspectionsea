@@ -19,4 +19,12 @@ final public class NotOptimalIfConditionsInspectionTest extends CodeInsightFixtu
         myFixture.enableInspections(NotOptimalIfConditionsInspection.class);
         myFixture.testHighlighting(true, false, true);
     }
+    public void testLiteralOperatorsPatterns() {
+        NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
+        inspector.REPORT_LITERAL_OPERATORS         = true;
+
+        myFixture.configureByFile("fixtures/ifs/if-literal-operators.php");
+        myFixture.enableInspections(inspector);
+        myFixture.testHighlighting(true, false, true);
+    }
 }

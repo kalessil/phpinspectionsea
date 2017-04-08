@@ -30,19 +30,18 @@ import java.util.Map;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
     public boolean REPORT_LITERAL_OPERATORS = true;
 
     private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
 
-    private static final String strProblemDescriptionInstanceOfAmbiguous     = "This condition is ambiguous and can be safely removed.";
-    private static final String messageOrdering                              = "This condition execution costs less than the previous one.";
-    private static final String strProblemDescriptionDuplicateConditions     = "This condition is duplicated in another if/elseif branch.";
-    private static final String messageBooleansUsed                          = "This boolean in condition makes no sense or enforces condition result.";
-    private static final String strProblemDescriptionDuplicateConditionPart  = "This call is duplicated in conditions set.";
-    private static final String strProblemDescriptionIssetCanBeMergedAndCase = "This can be merged into the previous 'isset(..., ...[, ...])'.";
-    private static final String strProblemDescriptionIssetCanBeMergedOrCase  = "This can be merged into the previous '!isset(..., ...[, ...])'.";
-    private static final String strProblemDescriptionConditionShouldBeWrapped = "Confusing conditions structure: please wrap with '(...)'.";
+    private static final String strProblemDescriptionInstanceOfAmbiguous      = "This condition is ambiguous and can be safely removed.";
+    private static final String messageOrdering                               = "This condition execution costs less than the previous one.";
+    private static final String strProblemDescriptionDuplicateConditions      = "This condition is duplicated in another if/elseif branch.";
+    private static final String messageBooleansUsed                           = "This boolean in condition makes no sense or enforces condition result.";
+    private static final String strProblemDescriptionDuplicateConditionPart   = "This call is duplicated in conditions set.";
+    private static final String strProblemDescriptionIssetCanBeMergedAndCase  = "This can be merged into the previous 'isset(..., ...[, ...])'.";
+    private static final String strProblemDescriptionIssetCanBeMergedOrCase   = "This can be merged into the previous '!isset(..., ...[, ...])'.";
+    private static final String strProblemDescriptionConditionShouldBeWrapped = "Confusing conditions structure: please wrap needed with '(...)'.";
 
     @NotNull
     public String getShortName() {

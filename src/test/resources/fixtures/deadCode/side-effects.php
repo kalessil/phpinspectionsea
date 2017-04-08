@@ -34,3 +34,8 @@ sideEffectExternalResource($resource);
 $shouldNotConsider = function () {
 };
 $shouldNotConsider();
+
+
+function sleep() {
+}
+sleep();

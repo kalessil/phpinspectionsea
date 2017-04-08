@@ -30,6 +30,57 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
 
     private enum SideEffect {NONE, POSSIBLE, UNKNOW, INTERNAL, EXTERNAL}
 
+    static {
+        mappedSideEffects.put("\\abort", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\apache_setenv", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\assert", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\call_user_func", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\call_user_func_array", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\chdir", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\chmod", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\class_exists", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\clearstatcache", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\closelog", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\copy", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\date_default_timezone_set", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\error_reporting", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\exec", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\extract", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\file_put_contents", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\forward_static_call", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\header", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\ini_set", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\json_decode", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\mkdir", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\mt_srand", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\ob_end_clean", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\ob_start", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\passthru", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\pcntl_alarm", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\pcntl_async_signals", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\pcntl_signal", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\posix_kill", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\putenv", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\register_shutdown_function", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\rename", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\restore_error_handler", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\set_error_handler", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\set_exception_handler", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\set_time_limit", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\sleep", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\spl_autoload_register", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\spl_autoload_unregister", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\sqlsrv_fetch", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\srand", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\syslog", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\touch", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\trigger_error", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\unlink", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\usleep", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\var_dump", SideEffect.EXTERNAL);
+        mappedSideEffects.put("\\xcache_clear_cache", SideEffect.EXTERNAL);
+    }
+
     @NotNull
     private static SideEffect identifySideEffect(@NotNull final FunctionReference functionReference) {
         final Function function = (Function) functionReference.resolve();

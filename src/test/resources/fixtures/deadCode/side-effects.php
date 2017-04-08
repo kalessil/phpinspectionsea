@@ -1,5 +1,7 @@
 <?php
 
+sideEffectUnknow();
+
 function sideEffectNone($number = null) {
 }
 

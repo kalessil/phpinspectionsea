@@ -12,6 +12,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Statement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -24,10 +25,15 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
     private static final String message = "This call can be removed because it have no side-effect.";
     private static HashMap<String, SideEffect> mappedSideEffects = new HashMap<>();
 
-    private enum SideEffect {NONE, UNKNOW, INTERNAL, EXTERNAL}
+    private enum SideEffect {NONE, POSSIBLE, UNKNOW, INTERNAL, EXTERNAL}
 
     @NotNull
-    private static SideEffect identifySideEffect(FunctionReference functionReference) {
+    private static SideEffect identifySideEffect(@NotNull final FunctionReference functionReference) {
+        final Function function = (Function) functionReference.resolve();
+        if (null == function) {
+            return SideEffect.UNKNOW;
+        }
+
         return SideEffect.NONE;
     }
 
@@ -52,7 +58,7 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpFunctionCall(FunctionReference functionReference) {
+            public void visitPhpFunctionCall(final FunctionReference functionReference) {
                 final SideEffect functionSideEffect = getIdentifiedSideEffect(functionReference);
 
                 if (functionSideEffect.equals(SideEffect.NONE) && functionReference.getParent() instanceof Statement) {

@@ -25,7 +25,7 @@ if (sideEffectPossible()) {
 }
 
 
-function sideEffectExternalResource(resource $resource) {
+function sideEffectExternalResource(resource $resource, &$possible = null) {
 }
 
 sideEffectExternalResource();

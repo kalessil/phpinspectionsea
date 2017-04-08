@@ -37,16 +37,16 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
             return SideEffect.UNKNOW;
         }
 
-        if (function.hasRefParams()) {
-            saveRefPosition(function);
-            return SideEffect.POSSIBLE;
-        }
-
         final Parameter[] functionParameters = function.getParameters();
         for (Parameter functionParameter : functionParameters) {
             if (functionParameter.getType().equals(PhpType.RESOURCE)) {
                 return SideEffect.EXTERNAL;
             }
+        }
+
+        if (function.hasRefParams()) {
+            saveRefPosition(function);
+            return SideEffect.POSSIBLE;
         }
 
         return SideEffect.NONE;

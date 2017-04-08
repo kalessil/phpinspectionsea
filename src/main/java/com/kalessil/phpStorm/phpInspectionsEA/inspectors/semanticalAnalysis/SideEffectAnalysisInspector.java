@@ -14,6 +14,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.Parameter;
 import com.jetbrains.php.lang.psi.elements.Statement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -24,6 +25,7 @@ import java.util.HashMap;
 public class SideEffectAnalysisInspector extends BasePhpInspection {
     private static final String message = "This call can be removed because it have no side-effect.";
     private static HashMap<String, SideEffect> mappedSideEffects = new HashMap<>();
+    private static HashMap<String, Integer> mappedRefPositions = new HashMap<>();
 
     private enum SideEffect {NONE, POSSIBLE, UNKNOW, INTERNAL, EXTERNAL}
 
@@ -34,7 +36,23 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
             return SideEffect.UNKNOW;
         }
 
+        if (function.hasRefParams()) {
+            saveRefPosition(function);
+            return SideEffect.POSSIBLE;
+        }
+
         return SideEffect.NONE;
+    }
+
+    private static void saveRefPosition(@NotNull final Function function) {
+        final Parameter[] functionParameters = function.getParameters();
+
+        for (int functionParametersIndex = 0; functionParametersIndex < functionParameters.length; functionParametersIndex++) {
+            if (functionParameters[functionParametersIndex].isPassByRef()) {
+                mappedRefPositions.put(function.getFQN(), functionParametersIndex + 1);
+                break;
+            }
+        }
     }
 
     @NotNull
@@ -62,8 +80,17 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
                 final SideEffect functionSideEffect = getIdentifiedSideEffect(functionReference);
 
                 if (functionSideEffect.equals(SideEffect.NONE) && functionReference.getParent() instanceof Statement) {
-                    holder.registerProblem(functionReference.getParent(), message, ProblemHighlightType.WEAK_WARNING);
+                    registerProblem(functionReference);
                 }
+
+                if (functionSideEffect.equals(SideEffect.POSSIBLE) &&
+                    functionReference.getParameters().length < mappedRefPositions.get(functionReference.getFQN())) {
+                    registerProblem(functionReference);
+                }
+            }
+
+            private void registerProblem(@NotNull final FunctionReference functionReference) {
+                holder.registerProblem(functionReference.getParent(), message, ProblemHighlightType.WEAK_WARNING);
             }
         };
     }

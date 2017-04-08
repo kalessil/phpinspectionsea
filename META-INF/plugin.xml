@@ -515,7 +515,13 @@ This release brings important bug-fixes and new inspections.
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnusedGotoLabelInspection"                     displayName="Unused goto labels"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnusedGotoLabelInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnusedGotoLabelInspector"/>v
+
+
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="SideEffectAnalysisInspection"                  displayName="Call have no side-effect"
+        groupName="SideEffect"                                    enabledByDefault="false" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SideEffectAnalysisInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

@@ -6,7 +6,7 @@
 
 ### Literal and, or operators usage
 
-By literal operators we mean `and`, `or` keywords used "instead" of `&&`, `||`. Instead is double quited for the same 
+By literal operators we mean `and`, `or` keywords used "instead" of `&&`, `||`. Instead is double quoted for the same 
  reason why we encourage you to use `&&`, `||` - because of the operators precedence which differs.
  
 Please reference to the [official documentation](http://php.net/manual/en/language.operators.logical.php) for more 

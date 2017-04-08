@@ -30,3 +30,7 @@ function sideEffectExternalResource(resource $resource, &$possible = null) {
 
 sideEffectExternalResource();
 sideEffectExternalResource($resource);
+
+$shouldNotConsider = function () {
+};
+$shouldNotConsider();

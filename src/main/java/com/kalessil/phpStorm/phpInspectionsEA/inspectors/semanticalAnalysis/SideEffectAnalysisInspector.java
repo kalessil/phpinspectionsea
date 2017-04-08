@@ -83,6 +83,11 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(final FunctionReference functionReference) {
+                final String functionSimplifiedName = functionReference.getName();
+                if (null != functionSimplifiedName && functionSimplifiedName.isEmpty()) {
+                    return;
+                }
+
                 final Function function = (Function) functionReference.resolve();
                 if (null != function && functionReference.getParent().getClass().equals(StatementImpl.class)) {
                     final String     functionQualifiedName = function.getFQN();

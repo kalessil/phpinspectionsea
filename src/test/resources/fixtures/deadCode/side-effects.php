@@ -23,3 +23,10 @@ sideEffectPossible(1, $arg2);
 if (sideEffectPossible()) {
     <weak_warning descr="This call can be removed because it have no side-effect.">sideEffectPossible(sideEffectPossible());</weak_warning>
 }
+
+
+function sideEffectExternalResource(resource $resource) {
+}
+
+sideEffectExternalResource();
+sideEffectExternalResource($resource);

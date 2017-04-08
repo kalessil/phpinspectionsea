@@ -16,6 +16,7 @@ import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Parameter;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +40,13 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
         if (function.hasRefParams()) {
             saveRefPosition(function);
             return SideEffect.POSSIBLE;
+        }
+
+        final Parameter[] functionParameters = function.getParameters();
+        for (Parameter functionParameter : functionParameters) {
+            if (functionParameter.getType().equals(PhpType.RESOURCE)) {
+                return SideEffect.EXTERNAL;
+            }
         }
 
         return SideEffect.NONE;

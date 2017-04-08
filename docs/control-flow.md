@@ -6,11 +6,11 @@
 
 ### Literal and, or operators usage
 
-By literal operators we mean `and`, `or` keyword used "instead" of `&&`, '||'. Instead is double quited for the same 
- reason, why we encourage to use `&&`, `||` - because of different operators precedence which differs.
+By literal operators we mean `and`, `or` keywords used "instead" of `&&`, `||`. Instead is double quited for the same 
+ reason why we encourage you to use `&&`, `||` - because of the operators precedence which differs.
  
 Please reference to the [official documentation](http://php.net/manual/en/language.operators.logical.php) for more 
-details. Following case should give you a common idea about side-effects:
+details. Following example should give you a common idea about side-effects:
 
 ```php
     $x = false || true;  // is ($x = (false || true)) => true

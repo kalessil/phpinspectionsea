@@ -79,14 +79,13 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(final FunctionReference functionReference) {
                 final SideEffect functionSideEffect = getIdentifiedSideEffect(functionReference);
 
-                if (functionSideEffect.equals(SideEffect.NONE) &&
-                    functionReference.getParent().getClass().equals(StatementImpl.class)) {
-                    registerProblem(functionReference);
-                }
-
-                if (functionSideEffect.equals(SideEffect.POSSIBLE) &&
-                    functionReference.getParameters().length < mappedRefPositions.get(functionReference.getFQN())) {
-                    registerProblem(functionReference);
+                if (functionReference.getParent().getClass().equals(StatementImpl.class)) {
+                    if (functionSideEffect.equals(SideEffect.NONE)) {
+                        registerProblem(functionReference);
+                    } else if (functionSideEffect.equals(SideEffect.POSSIBLE) &&
+                        functionReference.getParameters().length < mappedRefPositions.get(functionReference.getFQN())) {
+                        registerProblem(functionReference);
+                    }
                 }
             }
 

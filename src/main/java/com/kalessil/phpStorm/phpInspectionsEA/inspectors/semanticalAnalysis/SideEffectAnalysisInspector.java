@@ -15,7 +15,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Parameter;
-import com.jetbrains.php.lang.psi.elements.Statement;
+import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -79,7 +79,8 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(final FunctionReference functionReference) {
                 final SideEffect functionSideEffect = getIdentifiedSideEffect(functionReference);
 
-                if (functionSideEffect.equals(SideEffect.NONE) && functionReference.getParent() instanceof Statement) {
+                if (functionSideEffect.equals(SideEffect.NONE) &&
+                    functionReference.getParent().getClass().equals(StatementImpl.class)) {
                     registerProblem(functionReference);
                 }
 

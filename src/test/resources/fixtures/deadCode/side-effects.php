@@ -35,6 +35,11 @@ $shouldNotConsider = function () {
 };
 $shouldNotConsider();
 
+
+/** No annotation */
+function noAnnotation() {
+}
+
 <weak_warning descr="Unsupported value on property @side-effect.">/**
  * @side-effect invalid
  */</weak_warning>
@@ -52,7 +57,6 @@ function invalidSinglelineAnnotation(){
 function sleep() {
 }
 sleep();
-
 
 function sumSideEffectNone($a, $b) {
     return $a + $b;

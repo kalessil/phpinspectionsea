@@ -16,6 +16,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
@@ -24,10 +25,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class SideEffectAnalysisInspector extends BasePhpInspection {
     private static final String messageNoSideEffect      = "This call can be removed because it have no side-effect.";
@@ -38,9 +38,6 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
 
     private static final HashMap<String, SideEffect> mappedPhpFunctions        = new HashMap<>();
     private static final HashMap<String, SideEffect> sideEffectAnnotationTypes = new HashMap<>();
-
-    private static final Pattern sideEffectAnnotationPattern =
-        Pattern.compile("(?:^\\s*\\*|^/\\*{2})\\s*@side-effect\\s*(?<type>\\w+)\\s*(?:$|\\*/)", Pattern.MULTILINE);
 
     private enum SideEffect {NONE, POSSIBLE, UNKNOW, INTERNAL, EXTERNAL}
 
@@ -185,22 +182,34 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
                 parseSideEffectAnnotation(function);
             }
 
-            // TODO: Should have a way to improve this part with some OpenAPI method for read DocComment @side-effect.
             private void parseSideEffectAnnotation(@NotNull final Function function) {
                 final PhpDocComment functionDocComment = function.getDocComment();
                 if (null != functionDocComment) {
-                    final String  functionDocCommentText    = functionDocComment.getText();
-                    final Matcher functionDocCommentMatcher = sideEffectAnnotationPattern.matcher(functionDocCommentText);
-                    if (functionDocCommentMatcher.find() &&
-                        functionDocCommentMatcher.groupCount() == 1) {
-                        final String sideEffectAnnotationValue = functionDocCommentMatcher.group("type").toLowerCase();
-                        if (!sideEffectAnnotationTypes.containsKey(sideEffectAnnotationValue)) {
-                            holder.registerProblem(functionDocComment, messageInvalidAnnotation, ProblemHighlightType.WEAK_WARNING);
-                        }
-                        else {
-                            function.putUserData(SideEffectType, sideEffectAnnotationTypes.get(sideEffectAnnotationValue));
+                    final Collection<PhpDocTag> functionDocTags = PsiTreeUtil.findChildrenOfType(functionDocComment, PhpDocTag.class);
+                    if (functionDocTags.size() == 0) {
+                        return;
+                    }
+
+                    final ArrayList<PhpDocTag> functionDocSideEffectTags = new ArrayList<>();
+                    for (final PhpDocTag functionDocTag : functionDocTags) {
+                        if (functionDocTag.getName().toLowerCase().equals("@side-effect")) {
+                            functionDocSideEffectTags.add(functionDocTag);
                         }
                     }
+
+                    if (functionDocSideEffectTags.size() == 0) {
+                        return;
+                    }
+
+                    final PhpDocTag functionDocSideEffectTag      = functionDocSideEffectTags.get(0);
+                    final String    functionDocSideEffectTagValue = functionDocSideEffectTag.getTagValue().toLowerCase();
+
+                    if (!sideEffectAnnotationTypes.containsKey(functionDocSideEffectTagValue)) {
+                        holder.registerProblem(functionDocComment, messageInvalidAnnotation, ProblemHighlightType.WEAK_WARNING);
+                        return;
+                    }
+
+                    function.putUserData(SideEffectType, sideEffectAnnotationTypes.get(functionDocSideEffectTagValue));
                 }
             }
 

@@ -2,6 +2,7 @@
 
     /* the main case */
     <error descr="'dirname(__DIR__) . '/'' should be used instead (due to how realpath handles streams).">realpath (__DIR__ . '/../')</error>;
+    <error descr="'dirname(dirname(dirname(__DIR__))) . '/'' should be used instead (due to how realpath handles streams).">realpath (__DIR__ . '/../../../')</error>;
     <error descr="'realpath()' works differently in a stream context (e.g., for phar://...). Consider using 'dirname()' instead.">realpath</error> (__DIR__ . '/..' . '/..');
 
     /* similar cases, when the issues will popup */

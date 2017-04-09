@@ -2,6 +2,7 @@
 
     /* the main case */
     dirname(__DIR__) . '/';
+    dirname(dirname(dirname(__DIR__))) . '/';
     realpath (__DIR__ . '/..' . '/..');
 
     /* similar cases, when the issues will popup */

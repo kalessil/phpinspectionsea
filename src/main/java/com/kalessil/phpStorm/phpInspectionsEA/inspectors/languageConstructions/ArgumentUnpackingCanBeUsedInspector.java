@@ -53,8 +53,6 @@ public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
                 final boolean isContainerValid = params[1] instanceof Variable ||
                         params[1] instanceof ArrayCreationExpression || params[1] instanceof FunctionReference;
                 if (isContainerValid && params[0] instanceof StringLiteralExpression) {
-                    // TODO: call_user_func_array([...], ...)
-
                     /* do not process strings with injections */
                     final StringLiteralExpression targetFunction = (StringLiteralExpression) params[0];
                     if (null != targetFunction.getFirstPsiChild()){
@@ -67,6 +65,9 @@ public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
                     final String message = messagePattern.replace("%e%", replacement);
                     holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UnpackFix(replacement));
                 }
+
+                // TODO: if (isContainerValid && params[0] instanceof ArrayCreationExpression) {
+                // TODO: call_user_func_array([...], ...); string method name must not contain ::
             }
 
             //@Nullable

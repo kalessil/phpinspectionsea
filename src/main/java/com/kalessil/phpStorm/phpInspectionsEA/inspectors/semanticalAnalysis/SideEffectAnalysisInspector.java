@@ -34,88 +34,88 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
     private static final String messageMultipleAnnotations = "Multiple declarations of @side-effect is not allowed.";
     private static final String messageInvalidAnnotation   = "Unsupported value on property @side-effect.";
 
-    private static final Key<Integer>    ReferenceIndex = Key.create("SideEffect.ReferenceIndex");
-    private static final Key<SideEffect> SideEffectType = Key.create("SideEffect.Type");
+    private static final Key<Integer>         ReferenceIndex = Key.create("SideEffect.ReferenceIndex");
+    private static final Key<SideEffect.Type> SideEffectType = Key.create("SideEffect.Type");
 
-    private static final HashMap<String, SideEffect> mappedPhpFunctions        = new HashMap<>();
-    private static final HashMap<String, SideEffect> sideEffectAnnotationTypes = new HashMap<>();
-
-    private enum SideEffect {NONE, POSSIBLE, UNKNOW, INTERNAL, EXTERNAL}
+    private static final HashMap<String, SideEffect.Type> mappedPhpFunctions        = new HashMap<>();
+    private static final HashMap<String, SideEffect.Type> sideEffectAnnotationTypes = new HashMap<>();
 
     static {
-        sideEffectAnnotationTypes.put("none", SideEffect.NONE);
-        sideEffectAnnotationTypes.put("possible", SideEffect.POSSIBLE);
-        sideEffectAnnotationTypes.put("unknow", SideEffect.UNKNOW);
-        sideEffectAnnotationTypes.put("internal", SideEffect.INTERNAL);
-        sideEffectAnnotationTypes.put("external", SideEffect.EXTERNAL);
+        sideEffectAnnotationTypes.put("none", SideEffect.Type.NONE);
+        sideEffectAnnotationTypes.put("possible", SideEffect.Type.POSSIBLE);
+        sideEffectAnnotationTypes.put("unknow", SideEffect.Type.UNKNOW);
+        sideEffectAnnotationTypes.put("internal", SideEffect.Type.INTERNAL);
+        sideEffectAnnotationTypes.put("external", SideEffect.Type.EXTERNAL);
 
-        mappedPhpFunctions.put("\\abort", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\apache_setenv", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\assert", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\call_user_func", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\call_user_func_array", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\chdir", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\chmod", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\class_exists", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\clearstatcache", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\closelog", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\copy", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\date_default_timezone_set", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\error_reporting", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\exec", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\extract", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\file_put_contents", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\forward_static_call", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\header", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\ini_set", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\json_decode", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\mkdir", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\mt_srand", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\ob_end_clean", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\ob_start", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\passthru", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\pcntl_alarm", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\pcntl_async_signals", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\pcntl_signal", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\posix_kill", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\putenv", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\register_shutdown_function", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\rename", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\restore_error_handler", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\set_error_handler", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\set_exception_handler", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\set_time_limit", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\sleep", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\spl_autoload_register", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\spl_autoload_unregister", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\sqlsrv_fetch", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\srand", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\syslog", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\touch", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\trigger_error", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\unlink", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\usleep", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\var_dump", SideEffect.EXTERNAL);
-        mappedPhpFunctions.put("\\xcache_clear_cache", SideEffect.EXTERNAL);
+        mappedPhpFunctions.put("\\abort", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\apache_setenv", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\assert", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\call_user_func", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\call_user_func_array", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\chdir", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\chmod", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\class_exists", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\clearstatcache", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\closelog", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\copy", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\date_default_timezone_set", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\error_reporting", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\exec", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\extract", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\file_put_contents", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\forward_static_call", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\header", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\ini_set", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\json_decode", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\mkdir", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\mt_srand", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\ob_end_clean", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\ob_start", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\passthru", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\pcntl_alarm", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\pcntl_async_signals", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\pcntl_signal", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\posix_kill", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\putenv", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\register_shutdown_function", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\rename", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\restore_error_handler", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\set_error_handler", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\set_exception_handler", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\set_time_limit", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\sleep", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\spl_autoload_register", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\spl_autoload_unregister", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\sqlsrv_fetch", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\srand", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\syslog", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\touch", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\trigger_error", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\unlink", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\usleep", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\var_dump", SideEffect.Type.EXTERNAL);
+        mappedPhpFunctions.put("\\xcache_clear_cache", SideEffect.Type.EXTERNAL);
     }
 
     @NotNull
-    private static SideEffect identifySideEffect(@Nullable final Function function) {
+    private static SideEffect.Type identifySideEffect(@Nullable final Function function) {
         if (null == function) {
-            return SideEffect.UNKNOW;
+            return SideEffect.Type.UNKNOW;
         }
 
         final Parameter[] functionParameters = function.getParameters();
         for (final Parameter functionParameter : functionParameters) {
             if (functionParameter.getType().equals(PhpType.RESOURCE)) {
-                return SideEffect.EXTERNAL;
+                return SideEffect.Type.EXTERNAL;
             }
         }
 
         if (function.hasRefParams()) {
             mapRefIndex(function);
-            return SideEffect.POSSIBLE;
+            return SideEffect.Type.POSSIBLE;
         }
+
+        SideEffect.Type functionSideEffect = SideEffect.Type.NONE;
 
         final Collection<FunctionReference> functionReferencesCall = PsiTreeUtil.findChildrenOfType(function, FunctionReference.class);
         for (final FunctionReference functionReferenceCall : functionReferencesCall) {
@@ -124,15 +124,18 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
                 continue;
             }
 
-            final SideEffect functionReferenceSideEffect = identifySideEffect(functionReferenceCallResolved);
+            final SideEffect.Type functionReferenceSideEffect = identifySideEffect(functionReferenceCallResolved);
 
-            if (functionReferenceSideEffect == SideEffect.EXTERNAL ||
-                functionReferenceSideEffect == SideEffect.UNKNOW) {
-                return functionReferenceSideEffect;
+            if (SideEffect.isPrecedenceHigherThan(functionReferenceSideEffect, functionSideEffect)) {
+                functionSideEffect = functionReferenceSideEffect;
+
+                if (SideEffect.isPrecedenceIsMax(functionSideEffect)) {
+                    return functionSideEffect;
+                }
             }
         }
 
-        return SideEffect.NONE;
+        return functionSideEffect;
     }
 
     private static void mapRefIndex(@NotNull final Function function) {
@@ -147,13 +150,13 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
     }
 
     @NotNull
-    private static SideEffect getIdentifiedSideEffect(@NotNull final FunctionReference functionReference) {
+    private static SideEffect.Type getIdentifiedSideEffect(@NotNull final FunctionReference functionReference) {
         final Function function = (Function) functionReference.resolve();
         if (null == function) {
-            return SideEffect.UNKNOW;
+            return SideEffect.Type.UNKNOW;
         }
 
-        SideEffect sideEffect = function.getUserData(SideEffectType);
+        SideEffect.Type sideEffect = function.getUserData(SideEffectType);
         if (null == sideEffect) {
             final String functionQualifiedName = function.getFQN();
 
@@ -237,10 +240,10 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
                 final Method classConstructor = classReferenceResolved instanceof Method
                     ? (Method) classReferenceResolved
                     : ((PhpClass) classReferenceResolved).getConstructor();
-                final SideEffect classConstructorSideEffect = identifySideEffect(classConstructor);
+                final SideEffect.Type classConstructorSideEffect = identifySideEffect(classConstructor);
 
-                if (classConstructorSideEffect.equals(SideEffect.NONE) ||
-                    classConstructorSideEffect.equals(SideEffect.UNKNOW)) {
+                if (classConstructorSideEffect.equals(SideEffect.Type.NONE) ||
+                    classConstructorSideEffect.equals(SideEffect.Type.UNKNOW)) {
                     registerSideEffectProblem(expression);
                 }
             }
@@ -254,12 +257,12 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
 
                 final Function function = (Function) functionReference.resolve();
                 if (null != function && functionReference.getParent().getClass().equals(StatementImpl.class)) {
-                    final SideEffect functionSideEffect = getIdentifiedSideEffect(functionReference);
+                    final SideEffect.Type functionSideEffect = getIdentifiedSideEffect(functionReference);
 
-                    if (functionSideEffect.equals(SideEffect.NONE)) {
+                    if (functionSideEffect.equals(SideEffect.Type.NONE)) {
                         registerSideEffectProblem(functionReference);
                     }
-                    else if (functionSideEffect.equals(SideEffect.POSSIBLE)) {
+                    else if (functionSideEffect.equals(SideEffect.Type.POSSIBLE)) {
                         final Integer functionParameterReferencePosition = function.getUserData(ReferenceIndex);
                         if (null != functionParameterReferencePosition &&
                             functionReference.getParameters().length < functionParameterReferencePosition) {
@@ -273,5 +276,33 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
                 holder.registerProblem(functionReference.getParent(), messageNoSideEffect, ProblemHighlightType.WEAK_WARNING);
             }
         };
+    }
+
+    private static class SideEffect {
+        final static Integer MAX_PRECEDENCE = 4;
+
+        final private static HashMap<Type, Integer> typePrecedence = new HashMap<>();
+
+        enum Type {NONE, POSSIBLE, UNKNOW, INTERNAL, EXTERNAL}
+
+        static {
+            typePrecedence.put(Type.NONE, MAX_PRECEDENCE - 4);
+            typePrecedence.put(Type.POSSIBLE, MAX_PRECEDENCE - 3);
+            typePrecedence.put(Type.INTERNAL, MAX_PRECEDENCE - 2);
+            typePrecedence.put(Type.EXTERNAL, MAX_PRECEDENCE - 1);
+            typePrecedence.put(Type.UNKNOW, MAX_PRECEDENCE);
+        }
+
+        static Integer getPrecedence(final Type type) {
+            return typePrecedence.get(type);
+        }
+
+        static Boolean isPrecedenceHigherThan(final Type newType, final Type currentType) {
+            return getPrecedence(newType) > getPrecedence(currentType);
+        }
+
+        static Boolean isPrecedenceIsMax(final Type type) {
+            return getPrecedence(type).equals(MAX_PRECEDENCE);
+        }
     }
 }

@@ -123,7 +123,12 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
 
         final Collection<FunctionReference> functionReferencesCall = PsiTreeUtil.findChildrenOfType(function, FunctionReference.class);
         for (FunctionReference functionReferenceCall : functionReferencesCall) {
-            final SideEffect functionReferenceSideEffect = identifySideEffect((Function) functionReferenceCall.resolve());
+            final Function functionReferenceCallResolved = (Function) functionReferenceCall.resolve();
+            if (functionReferenceCallResolved == function) {
+                continue;
+            }
+
+            final SideEffect functionReferenceSideEffect = identifySideEffect(functionReferenceCallResolved);
 
             if (functionReferenceSideEffect == SideEffect.EXTERNAL ||
                 functionReferenceSideEffect == SideEffect.UNKNOW) {

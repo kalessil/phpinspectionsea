@@ -70,3 +70,9 @@ function sumSideEffectUnknow() {
     return unresolvedFunction();
 }
 sumSideEffectUnknow();
+
+
+function factorial(){
+    return factorial();
+}
+<weak_warning descr="This call can be removed because it have no side-effect.">factorial();</weak_warning>

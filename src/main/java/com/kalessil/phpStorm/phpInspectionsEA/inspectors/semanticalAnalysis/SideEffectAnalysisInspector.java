@@ -13,6 +13,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Parameter;
@@ -24,18 +25,30 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SideEffectAnalysisInspector extends BasePhpInspection {
     private static final String messageNoSideEffect      = "This call can be removed because it have no side-effect.";
+    private static final String messageInvalidAnnotation = "Unsupported value on property @side-effect.";
 
     private static final Key<Integer>    ReferenceIndex = Key.create("SideEffect.ReferenceIndex");
     private static final Key<SideEffect> SideEffectType = Key.create("SideEffect.Type");
 
     private static HashMap<String, SideEffect> mappedPhpFunctions        = new HashMap<>();
+    private static HashMap<String, SideEffect> sideEffectAnnotationTypes = new HashMap<>();
+
+    private static Pattern sideEffectAnnotationPattern = Pattern.compile("(?:^\\s*\\*|^\\/\\*{2})\\s*@side-effect\\s*(?<type>\\w+)\\s*(?:$|\\*\\/)", Pattern.MULTILINE);
 
     private enum SideEffect {NONE, POSSIBLE, UNKNOW, INTERNAL, EXTERNAL}
 
     static {
+        sideEffectAnnotationTypes.put("none", SideEffect.NONE);
+        sideEffectAnnotationTypes.put("possible", SideEffect.POSSIBLE);
+        sideEffectAnnotationTypes.put("unknow", SideEffect.UNKNOW);
+        sideEffectAnnotationTypes.put("internal", SideEffect.INTERNAL);
+        sideEffectAnnotationTypes.put("external", SideEffect.EXTERNAL);
+
         mappedPhpFunctions.put("\\abort", SideEffect.EXTERNAL);
         mappedPhpFunctions.put("\\apache_setenv", SideEffect.EXTERNAL);
         mappedPhpFunctions.put("\\assert", SideEffect.EXTERNAL);
@@ -148,6 +161,32 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
+            @Override
+            public void visitPhpFunction(Function function) {
+                function.putUserData(SideEffectType, identifySideEffect(function));
+                mapRefIndex(function);
+                parseSideEffectAnnotation(function);
+            }
+
+            // TODO: Should have a way to improve this part with some OpenAPI method for read DocComment @side-effect.
+            private void parseSideEffectAnnotation(@NotNull Function function) {
+                final PhpDocComment functionDocComment = function.getDocComment();
+                if (null != functionDocComment) {
+                    final String  functionDocCommentText    = functionDocComment.getText();
+                    final Matcher functionDocCommentMatcher = sideEffectAnnotationPattern.matcher(functionDocCommentText);
+                    if (functionDocCommentMatcher.find() &&
+                        functionDocCommentMatcher.groupCount() == 1) {
+                        final String sideEffectAnnotationValue = functionDocCommentMatcher.group("type").toLowerCase();
+                        if (!sideEffectAnnotationTypes.containsKey(sideEffectAnnotationValue)) {
+                            holder.registerProblem(functionDocComment, messageInvalidAnnotation, ProblemHighlightType.WEAK_WARNING);
+                        }
+                        else {
+                            function.putUserData(SideEffectType, sideEffectAnnotationTypes.get(sideEffectAnnotationValue));
+                        }
+                    }
+                }
+            }
+
             @Override
             public void visitPhpFunctionCall(@NotNull final FunctionReference functionReference) {
                 final String functionSimplifiedName = functionReference.getName();

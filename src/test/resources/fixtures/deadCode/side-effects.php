@@ -35,7 +35,20 @@ $shouldNotConsider = function () {
 };
 $shouldNotConsider();
 
+<weak_warning descr="Unsupported value on property @side-effect.">/**
+ * @side-effect invalid
+ */</weak_warning>
+function invalidMultilineAnnotation(){
+}
 
+<weak_warning descr="Unsupported value on property @side-effect.">/** @side-effect invalid */</weak_warning>
+function invalidSinglelineAnnotation(){
+}
+
+/**
+ * Emulating a PHP internal function.
+ * @side-effect external
+ */
 function sleep() {
 }
 sleep();

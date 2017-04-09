@@ -26,12 +26,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 
 public class SideEffectAnalysisInspector extends BasePhpInspection {
-    private static final String message = "This call can be removed because it have no side-effect.";
+    private static final String messageNoSideEffect      = "This call can be removed because it have no side-effect.";
 
     private static final Key<Integer>    ReferenceIndex = Key.create("SideEffect.ReferenceIndex");
     private static final Key<SideEffect> SideEffectType = Key.create("SideEffect.Type");
 
-    private static HashMap<String, SideEffect> mappedPhpFunctions = new HashMap<>();
+    private static HashMap<String, SideEffect> mappedPhpFunctions        = new HashMap<>();
 
     private enum SideEffect {NONE, POSSIBLE, UNKNOW, INTERNAL, EXTERNAL}
 
@@ -160,20 +160,20 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
                     final SideEffect functionSideEffect = getIdentifiedSideEffect(functionReference);
 
                     if (functionSideEffect.equals(SideEffect.NONE)) {
-                        registerProblem(functionReference);
+                        registerSideEffectProblem(functionReference);
                     }
                     else if (functionSideEffect.equals(SideEffect.POSSIBLE)) {
                         final Integer functionParameterReferencePosition = function.getUserData(ReferenceIndex);
                         if (null != functionParameterReferencePosition &&
                             functionReference.getParameters().length < functionParameterReferencePosition) {
-                            registerProblem(functionReference);
+                            registerSideEffectProblem(functionReference);
                         }
                     }
                 }
             }
 
-            private void registerProblem(@NotNull final FunctionReference functionReference) {
-                holder.registerProblem(functionReference.getParent(), message, ProblemHighlightType.WEAK_WARNING);
+            private void registerSideEffectProblem(@NotNull final FunctionReference functionReference) {
+                holder.registerProblem(functionReference.getParent(), messageNoSideEffect, ProblemHighlightType.WEAK_WARNING);
             }
         };
     }

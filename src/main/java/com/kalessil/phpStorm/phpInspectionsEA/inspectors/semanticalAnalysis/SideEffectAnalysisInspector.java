@@ -250,6 +250,11 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
                                     final PsiElement anchorParent = anchor.getParent();
 
                                     if (anchorParent instanceof MethodReference) {
+                                        if (!anchorParent.getParent().getClass().equals(StatementImpl.class)) {
+                                            variableSideEffect = SideEffect.Type.EXTERNAL;
+                                            break;
+                                        }
+
                                         final MethodReference anchorMethodReference  = (MethodReference) anchorParent;
                                         final Method          anchorMethod           = (Method) anchorMethodReference.resolve();
                                         final SideEffect.Type anchorMethodSideEffect = identifySideEffect(anchorMethod);
@@ -267,11 +272,13 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
 
                             if (variableSideEffect.equals(SideEffect.Type.NONE)) {
                                 registerSideEffectProblem(expressionParentClass);
-                                return;
                             }
+
+                            return;
                         }
                     }
                 }
+
                 if (!expressionParentClass.getClass().equals(StatementImpl.class)) {
                     return;
                 }

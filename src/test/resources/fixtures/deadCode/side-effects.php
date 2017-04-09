@@ -100,7 +100,7 @@ class SideEffectNone_WithConstructor {
 class SideEffectNone_WithoutConstructor {}
 <weak_warning descr="This call can be removed because it have no side-effect.">new SideEffectNone_WithoutConstructor;</weak_warning>
 <weak_warning descr="This call can be removed because it have no side-effect.">$sideEffectNone_WithoutConstructor = new SideEffectNone_WithoutConstructor;</weak_warning>
-return new SideEffectNone_WithoutConstructor;
+echo new SideEffectNone_WithoutConstructor;
 
 
 class SideEffect_FullExample {
@@ -108,5 +108,9 @@ class SideEffect_FullExample {
 }
 <weak_warning descr="This call can be removed because it have no side-effect.">$sideEffect_FullExample = new SideEffect_FullExample;</weak_warning>
 $sideEffect_FullExample->calculate();
+
+$sideEffect_FullExample_Echoed = new SideEffect_FullExample;
+echo $sideEffect_FullExample_Echoed->calculate();
+
 
 (new stdClass)->field = new SideEffect_FullExample();

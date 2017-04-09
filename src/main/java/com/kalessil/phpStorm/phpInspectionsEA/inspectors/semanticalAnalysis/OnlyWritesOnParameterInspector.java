@@ -135,7 +135,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         previous = previous.getPrevSibling();
                     }
                     if (null != previous && PhpTokenTypes.opBIT_AND == previous.getNode().getElementType()) {
-                        final PhpAccessVariableInstruction[] usages = getUsages(parameterName, scopeHolder);
+                        final PhpAccessVariableInstruction[] usages = getVariableUsages(parameterName, scopeHolder);
                         if (0 == usages.length) {
                             holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                         }
@@ -151,7 +151,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
             }
 
             private int analyzeAndReturnUsagesCount(@NotNull String parameterName, @NotNull PhpScopeHolder scopeHolder) {
-                final PhpAccessVariableInstruction[] usages = getUsages(parameterName, scopeHolder);
+                final PhpAccessVariableInstruction[] usages = getVariableUsages(parameterName, scopeHolder);
                 if (usages.length == 0) {
                     return usages.length;
                 }
@@ -269,8 +269,8 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
     }
 
     @NotNull
-    static private PhpAccessVariableInstruction[] getVariablesAccessInstructions(@NotNull String parameterName, @NotNull PhpScopeHolder objScopeHolder) {
-        PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
+    static private PhpAccessVariableInstruction[] getVariableUsages(@NotNull String parameterName, @NotNull PhpScopeHolder scopeHolder) {
+        PhpEntryPointInstruction objEntryPoint = scopeHolder.getControlFlow().getEntryPoint();
         return PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, parameterName, false);
     }
 }

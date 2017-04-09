@@ -76,3 +76,13 @@ function factorial(){
     return factorial();
 }
 <weak_warning descr="This call can be removed because it have no side-effect.">factorial();</weak_warning>
+
+
+class SideEffectNone_WithConstructor {
+    public function __construct() {}
+}
+<weak_warning descr="This call can be removed because it have no side-effect.">new SideEffectNone_WithConstructor;</weak_warning>
+
+
+class SideEffectNone_WithoutConstructor {}
+<weak_warning descr="This call can be removed because it have no side-effect.">new SideEffectNone_WithoutConstructor;</weak_warning>

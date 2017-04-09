@@ -12,12 +12,11 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.Key;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.Parameter;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -40,7 +39,8 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
     private static final HashMap<String, SideEffect> mappedPhpFunctions        = new HashMap<>();
     private static final HashMap<String, SideEffect> sideEffectAnnotationTypes = new HashMap<>();
 
-    private static final Pattern sideEffectAnnotationPattern = Pattern.compile("(?:^\\s*\\*|^\\/\\*{2})\\s*@side-effect\\s*(?<type>\\w+)\\s*(?:$|\\*\\/)", Pattern.MULTILINE);
+    private static final Pattern sideEffectAnnotationPattern =
+        Pattern.compile("(?:^\\s*\\*|^/\\*{2})\\s*@side-effect\\s*(?<type>\\w+)\\s*(?:$|\\*/)", Pattern.MULTILINE);
 
     private enum SideEffect {NONE, POSSIBLE, UNKNOW, INTERNAL, EXTERNAL}
 
@@ -205,6 +205,29 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
             }
 
             @Override
+            public void visitPhpNewExpression(final NewExpression expression) {
+                final ClassReference classReference = expression.getClassReference();
+                if (null == classReference) {
+                    return;
+                }
+
+                final PsiElement classReferenceResolved = classReference.resolve();
+                if (null == classReferenceResolved) {
+                    return;
+                }
+
+                final Method classConstructor = classReferenceResolved instanceof Method
+                    ? (Method) classReferenceResolved
+                    : ((PhpClass) classReferenceResolved).getConstructor();
+                final SideEffect classConstructorSideEffect = identifySideEffect(classConstructor);
+
+                if (classConstructorSideEffect.equals(SideEffect.NONE) ||
+                    classConstructorSideEffect.equals(SideEffect.UNKNOW)) {
+                    registerSideEffectProblem(expression);
+                }
+            }
+
+            @Override
             public void visitPhpFunctionCall(@NotNull final FunctionReference functionReference) {
                 final String functionSimplifiedName = functionReference.getName();
                 if (null != functionSimplifiedName && functionSimplifiedName.isEmpty()) {
@@ -228,7 +251,7 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
                 }
             }
 
-            private void registerSideEffectProblem(@NotNull final FunctionReference functionReference) {
+            private void registerSideEffectProblem(@NotNull final PsiElement functionReference) {
                 holder.registerProblem(functionReference.getParent(), messageNoSideEffect, ProblemHighlightType.WEAK_WARNING);
             }
         };

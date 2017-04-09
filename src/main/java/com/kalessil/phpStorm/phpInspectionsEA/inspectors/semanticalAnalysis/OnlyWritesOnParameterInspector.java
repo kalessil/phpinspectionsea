@@ -265,12 +265,12 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
                 return usages.length;
             }
-
-            @NotNull
-            private PhpAccessVariableInstruction[] getUsages(@NotNull String parameterName, @NotNull PhpScopeHolder scopeHolder) {
-                PhpEntryPointInstruction objEntryPoint = scopeHolder.getControlFlow().getEntryPoint();
-                return PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, parameterName, false);
-            }
         };
+    }
+
+    @NotNull
+    static private PhpAccessVariableInstruction[] getVariablesAccessInstructions(@NotNull String parameterName, @NotNull PhpScopeHolder objScopeHolder) {
+        PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
+        return PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, parameterName, false);
     }
 }

@@ -30,8 +30,9 @@ import java.util.Collection;
 import java.util.HashMap;
 
 public class SideEffectAnalysisInspector extends BasePhpInspection {
-    private static final String messageNoSideEffect      = "This call can be removed because it have no side-effect.";
-    private static final String messageInvalidAnnotation = "Unsupported value on property @side-effect.";
+    private static final String messageNoSideEffect        = "This call can be removed because it have no side-effect.";
+    private static final String messageMultipleAnnotations = "Multiple declarations of @side-effect is not allowed.";
+    private static final String messageInvalidAnnotation   = "Unsupported value on property @side-effect.";
 
     private static final Key<Integer>    ReferenceIndex = Key.create("SideEffect.ReferenceIndex");
     private static final Key<SideEffect> SideEffectType = Key.create("SideEffect.Type");
@@ -198,6 +199,10 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
                     }
 
                     if (functionDocSideEffectTags.size() == 0) {
+                        return;
+                    }
+                    else if (functionDocSideEffectTags.size() > 1) {
+                        holder.registerProblem(functionDocComment, messageMultipleAnnotations, ProblemHighlightType.WEAK_WARNING);
                         return;
                     }
 

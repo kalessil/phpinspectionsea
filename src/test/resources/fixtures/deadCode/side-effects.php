@@ -50,6 +50,14 @@ function invalidMultilineAnnotation(){
 function invalidSinglelineAnnotation(){
 }
 
+<weak_warning descr="Multiple declarations of @side-effect is not allowed.">/**
+ * @side-effect none
+ * @side-effect external
+ */</weak_warning>
+function invalidMultipleAnnotations(){
+}
+
+
 /**
  * Emulating a PHP internal function.
  * @side-effect external

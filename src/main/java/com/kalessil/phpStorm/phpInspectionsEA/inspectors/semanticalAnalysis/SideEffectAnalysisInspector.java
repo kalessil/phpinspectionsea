@@ -179,7 +179,7 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpFunction(final Function function) {
+            public void visitPhpFunction(@NotNull final Function function) {
                 function.putUserData(SideEffectType, identifySideEffect(function));
                 mapRefIndex(function);
                 parseSideEffectAnnotation(function);
@@ -205,7 +205,11 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
             }
 
             @Override
-            public void visitPhpNewExpression(final NewExpression expression) {
+            public void visitPhpNewExpression(@NotNull final NewExpression expression) {
+                if (!expression.getParent().getClass().equals(StatementImpl.class)) {
+                    return;
+                }
+
                 final ClassReference classReference = expression.getClassReference();
                 if (null == classReference) {
                     return;

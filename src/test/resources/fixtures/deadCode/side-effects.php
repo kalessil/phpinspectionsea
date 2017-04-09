@@ -107,3 +107,5 @@ class SideEffect_FullExample {
 }
 <weak_warning descr="This call can be removed because it have no side-effect.">$sideEffect_FullExample = new SideEffect_FullExample;</weak_warning>
 $sideEffect_FullExample->calculate();
+
+(new stdClass)->field = new SideEffect_FullExample();

@@ -233,8 +233,9 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
                 final Boolean    isAssignment          = expressionParentClass instanceof AssignmentExpressionImpl;
 
                 if (isAssignment) {
-                    final Variable variable = (Variable) ((AssignmentExpression) expressionParentClass).getVariable();
-                    if (null != variable) {
+                    final PsiElement expressionParentVariable = ((AssignmentExpression) expressionParentClass).getVariable();
+                    if (expressionParentVariable instanceof Variable) {
+                        final Variable       variable              = (Variable) expressionParentVariable;
                         final PhpScopeHolder expressionScopeHolder = PsiTreeUtil.getParentOfType(expression, PhpScopeHolder.class);
                         if (null != expressionScopeHolder) {
                             final PhpEntryPointInstruction scopeEntryPoint    = expressionScopeHolder.getControlFlow().getEntryPoint();

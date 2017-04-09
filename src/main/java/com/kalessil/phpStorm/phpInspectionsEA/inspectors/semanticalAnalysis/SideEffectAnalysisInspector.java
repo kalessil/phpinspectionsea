@@ -272,7 +272,7 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
                         }
                     }
                 }
-                if (!StatementImpl.class.isInstance(expressionParentClass)) {
+                if (!expressionParentClass.getClass().equals(StatementImpl.class)) {
                     return;
                 }
 

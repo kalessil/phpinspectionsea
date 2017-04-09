@@ -100,6 +100,7 @@ class SideEffectNone_WithConstructor {
 class SideEffectNone_WithoutConstructor {}
 <weak_warning descr="This call can be removed because it have no side-effect.">new SideEffectNone_WithoutConstructor;</weak_warning>
 <weak_warning descr="This call can be removed because it have no side-effect.">$sideEffectNone_WithoutConstructor = new SideEffectNone_WithoutConstructor;</weak_warning>
+return new SideEffectNone_WithoutConstructor;
 
 
 class SideEffect_FullExample {

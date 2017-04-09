@@ -2,22 +2,21 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.Include;
-import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
 public class RealpathInSteamContextInspector extends BasePhpInspection {
-    private static final String message = "'realpath()' works differently in a stream context (e.g., for phar://...). Consider using 'dirname()' instead.";
+    private static final String messageUseDirname = "'realpath()' works differently in a stream context (e.g., for phar://...). Consider using 'dirname()' instead.";
+    private static final String patternUseDirname = "'%e%' should be used instead (due to how realpath handles streams).";
 
     @NotNull
     public String getShortName() {
@@ -32,7 +31,7 @@ public class RealpathInSteamContextInspector extends BasePhpInspection {
                 /* check general requirements */
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if (1 != params.length || StringUtil.isEmpty(functionName) || !functionName.equals("realpath")) {
+                if (1 != params.length || null == functionName || !functionName.equals("realpath")) {
                     return;
                 }
 
@@ -44,18 +43,32 @@ public class RealpathInSteamContextInspector extends BasePhpInspection {
                     parent = parent.getParent();
                 }
                 if (parent instanceof Include) {
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                    final String replacement = generateReplacement(params[0]);
+                    if (null == replacement) {
+                        holder.registerProblem(reference, messageUseDirname, ProblemHighlightType.GENERIC_ERROR);
+                    } else {
+                        final String message = patternUseDirname.replace("%e%", replacement);
+                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new SecureRealpathFix(replacement));
+                    }
+
                     return;
                 }
 
 
                 /* case 2: realpath applied to a relative path '..' */
-                Collection<StringLiteralExpression> strings = PsiTreeUtil.findChildrenOfType(reference, StringLiteralExpression.class);
+                final Collection<StringLiteralExpression> strings
+                        = PsiTreeUtil.findChildrenOfType(reference, StringLiteralExpression.class);
                 if (strings.size() > 0) {
                     for (StringLiteralExpression oneString : strings) {
                         if (oneString.getContents().contains("..")) {
-                            /* report the issue */
-                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                            final String replacement = generateReplacement(params[0]);
+                            if (null == replacement) {
+                                holder.registerProblem(reference, messageUseDirname, ProblemHighlightType.GENERIC_ERROR);
+                            } else {
+                                final String message = patternUseDirname.replace("%e%", replacement);
+                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new SecureRealpathFix(replacement));
+                            }
+
                             break;
                         }
                     }
@@ -64,4 +77,52 @@ public class RealpathInSteamContextInspector extends BasePhpInspection {
             }
         };
     }
+
+    @Nullable
+    private static String generateReplacement(@NotNull PsiElement subject) {
+        String replacement = null;
+
+        if (subject instanceof ConcatenationExpression) {
+            final ConcatenationExpression concat = (ConcatenationExpression) subject;
+            final PsiElement left                = concat.getLeftOperand();
+            if (
+                null != left && !(left instanceof ConcatenationExpression) &&
+                concat.getRightOperand() instanceof StringLiteralExpression
+            ) {
+                final StringLiteralExpression right = (StringLiteralExpression) concat.getRightOperand();
+                final String rightContent           = right.getContents();
+                if (rightContent.startsWith("/..")) {
+                    final String quote = right.isSingleQuote() ? "'" : "\"";
+
+                    String newLeft  = left.getText();
+                    String newRight = rightContent;
+                    while (newRight.startsWith("/..")) {
+                        newRight = newRight.replace("/..", "");
+                        newLeft  = "dirname(" + newLeft + ")";
+                    }
+
+                    replacement = newLeft + " . " + quote + newRight + quote;
+                }
+            }
+        }
+
+        if (subject instanceof StringLiteralExpression) {
+            replacement = subject.getText();
+        }
+
+        return replacement;
+    }
+
+    private class SecureRealpathFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Secure this realpath(...)";
+        }
+
+        SecureRealpathFix(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
 }

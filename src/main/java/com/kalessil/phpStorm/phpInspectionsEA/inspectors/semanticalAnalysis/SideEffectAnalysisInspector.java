@@ -21,6 +21,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
@@ -86,8 +87,7 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
     }
 
     @NotNull
-    private static SideEffect identifySideEffect(@NotNull final FunctionReference functionReference) {
-        final Function function = (Function) functionReference.resolve();
+    private static SideEffect identifySideEffect(@Nullable final Function function) {
         if (null == function) {
             return SideEffect.UNKNOW;
         }
@@ -131,7 +131,7 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
 
             sideEffect = mappedPhpFunctions.containsKey(functionQualifiedName)
                 ? mappedPhpFunctions.get(functionQualifiedName)
-                : identifySideEffect(functionReference);
+                : identifySideEffect((Function) functionReference.resolve());
 
             function.putUserData(SideEffectType, sideEffect);
         }

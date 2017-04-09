@@ -13,6 +13,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
@@ -24,6 +25,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -117,7 +119,19 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
             return SideEffect.POSSIBLE;
         }
 
-        return SideEffect.NONE;
+        SideEffect functionSideEffect = SideEffect.NONE;
+
+        final Collection<FunctionReference> functionReferencesCall = PsiTreeUtil.findChildrenOfType(function, FunctionReference.class);
+        for (FunctionReference functionReferenceCall : functionReferencesCall) {
+            final SideEffect functionReferenceSideEffect = identifySideEffect((Function) functionReferenceCall.resolve());
+
+            if (functionReferenceSideEffect == SideEffect.EXTERNAL ||
+                functionReferenceSideEffect == SideEffect.UNKNOW) {
+                return functionReferenceSideEffect;
+            }
+        }
+
+        return functionSideEffect;
     }
 
     private static void mapRefIndex(@NotNull final Function function) {

@@ -52,3 +52,21 @@ function invalidSinglelineAnnotation(){
 function sleep() {
 }
 sleep();
+
+
+function sumSideEffectNone($a, $b) {
+    return $a + $b;
+}
+<weak_warning descr="This call can be removed because it have no side-effect.">sumSideEffectNone();</weak_warning>
+
+
+function sumSideEffectExternal() {
+    return touch();
+}
+sumSideEffectExternal();
+
+
+function sumSideEffectUnknow() {
+    return unresolvedFunction();
+}
+sumSideEffectUnknow();

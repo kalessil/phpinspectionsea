@@ -239,7 +239,7 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
                         final PhpScopeHolder expressionScopeHolder = PsiTreeUtil.getParentOfType(expression, PhpScopeHolder.class);
                         if (null != expressionScopeHolder) {
                             final PhpEntryPointInstruction scopeEntryPoint    = expressionScopeHolder.getControlFlow().getEntryPoint();
-                            SideEffect.Type                variableSideEffect = SideEffect.Type.NONE;
+                            Boolean                        possibleSideEffect = false;
 
                             final PhpAccessVariableInstruction[] variableInstructions =
                                 PhpControlFlowUtil.getFollowingVariableAccessInstructions(scopeEntryPoint, variable.getName(), false);
@@ -251,7 +251,7 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
 
                                     if (anchorParent instanceof MethodReference) {
                                         if (!anchorParent.getParent().getClass().equals(StatementImpl.class)) {
-                                            variableSideEffect = SideEffect.Type.EXTERNAL;
+                                            possibleSideEffect = true;
                                             break;
                                         }
 
@@ -259,18 +259,15 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
                                         final Method          anchorMethod           = (Method) anchorMethodReference.resolve();
                                         final SideEffect.Type anchorMethodSideEffect = identifySideEffect(anchorMethod);
 
-                                        if (SideEffect.isPrecedenceHigherThan(anchorMethodSideEffect, variableSideEffect)) {
-                                            variableSideEffect = anchorMethodSideEffect;
-
-                                            if (SideEffect.isPrecedenceIsMax(variableSideEffect)) {
-                                                break;
-                                            }
+                                        if (SideEffect.isPrecedenceHigherOrEqualsThan(anchorMethodSideEffect, SideEffect.Type.POSSIBLE)) {
+                                            possibleSideEffect = true;
+                                            break;
                                         }
                                     }
                                 }
                             }
 
-                            if (variableSideEffect.equals(SideEffect.Type.NONE)) {
+                            if (!possibleSideEffect) {
                                 registerSideEffectProblem(expressionParentClass);
                             }
 
@@ -355,6 +352,10 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
 
         static Boolean isPrecedenceHigherThan(final Type newType, final Type currentType) {
             return getPrecedence(newType) > getPrecedence(currentType);
+        }
+
+        static Boolean isPrecedenceHigherOrEqualsThan(final Type newType, final Type currentType) {
+            return getPrecedence(newType) >= getPrecedence(currentType);
         }
 
         static Boolean isPrecedenceIsMax(final Type type) {

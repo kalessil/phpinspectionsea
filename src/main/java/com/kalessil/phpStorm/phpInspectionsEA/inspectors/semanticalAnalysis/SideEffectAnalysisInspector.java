@@ -37,10 +37,10 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
     private static final Key<Integer>    ReferenceIndex = Key.create("SideEffect.ReferenceIndex");
     private static final Key<SideEffect> SideEffectType = Key.create("SideEffect.Type");
 
-    private static HashMap<String, SideEffect> mappedPhpFunctions        = new HashMap<>();
-    private static HashMap<String, SideEffect> sideEffectAnnotationTypes = new HashMap<>();
+    private static final HashMap<String, SideEffect> mappedPhpFunctions        = new HashMap<>();
+    private static final HashMap<String, SideEffect> sideEffectAnnotationTypes = new HashMap<>();
 
-    private static Pattern sideEffectAnnotationPattern = Pattern.compile("(?:^\\s*\\*|^\\/\\*{2})\\s*@side-effect\\s*(?<type>\\w+)\\s*(?:$|\\*\\/)", Pattern.MULTILINE);
+    private static final Pattern sideEffectAnnotationPattern = Pattern.compile("(?:^\\s*\\*|^\\/\\*{2})\\s*@side-effect\\s*(?<type>\\w+)\\s*(?:$|\\*\\/)", Pattern.MULTILINE);
 
     private enum SideEffect {NONE, POSSIBLE, UNKNOW, INTERNAL, EXTERNAL}
 
@@ -108,7 +108,7 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
         }
 
         final Parameter[] functionParameters = function.getParameters();
-        for (Parameter functionParameter : functionParameters) {
+        for (final Parameter functionParameter : functionParameters) {
             if (functionParameter.getType().equals(PhpType.RESOURCE)) {
                 return SideEffect.EXTERNAL;
             }
@@ -119,10 +119,8 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
             return SideEffect.POSSIBLE;
         }
 
-        SideEffect functionSideEffect = SideEffect.NONE;
-
         final Collection<FunctionReference> functionReferencesCall = PsiTreeUtil.findChildrenOfType(function, FunctionReference.class);
-        for (FunctionReference functionReferenceCall : functionReferencesCall) {
+        for (final FunctionReference functionReferenceCall : functionReferencesCall) {
             final Function functionReferenceCallResolved = (Function) functionReferenceCall.resolve();
             if (functionReferenceCallResolved == function) {
                 continue;
@@ -136,7 +134,7 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
             }
         }
 
-        return functionSideEffect;
+        return SideEffect.NONE;
     }
 
     private static void mapRefIndex(@NotNull final Function function) {
@@ -178,17 +176,17 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
 
     @NotNull
     @Override
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpFunction(Function function) {
+            public void visitPhpFunction(final Function function) {
                 function.putUserData(SideEffectType, identifySideEffect(function));
                 mapRefIndex(function);
                 parseSideEffectAnnotation(function);
             }
 
             // TODO: Should have a way to improve this part with some OpenAPI method for read DocComment @side-effect.
-            private void parseSideEffectAnnotation(@NotNull Function function) {
+            private void parseSideEffectAnnotation(@NotNull final Function function) {
                 final PhpDocComment functionDocComment = function.getDocComment();
                 if (null != functionDocComment) {
                     final String  functionDocCommentText    = functionDocComment.getText();

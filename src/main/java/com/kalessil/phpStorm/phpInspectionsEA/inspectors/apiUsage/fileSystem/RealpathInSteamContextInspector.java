@@ -124,5 +124,4 @@ public class RealpathInSteamContextInspector extends BasePhpInspection {
             super(expression);
         }
     }
-
 }

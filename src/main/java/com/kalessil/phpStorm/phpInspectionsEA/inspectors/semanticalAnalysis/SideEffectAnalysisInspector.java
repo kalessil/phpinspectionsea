@@ -15,9 +15,15 @@ import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.codeInsight.PhpScopeHolder;
+import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
+import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessInstruction;
+import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
+import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.AssignmentExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -223,7 +229,49 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpNewExpression(@NotNull final NewExpression expression) {
-                if (!expression.getParent().getClass().equals(StatementImpl.class)) {
+                final PsiElement expressionParentClass = expression.getParent();
+                final Boolean    isAssignment          = expressionParentClass instanceof AssignmentExpressionImpl;
+
+                if (isAssignment) {
+                    final Variable variable = (Variable) ((AssignmentExpression) expressionParentClass).getVariable();
+                    if (null != variable) {
+                        final PhpScopeHolder expressionScopeHolder = PsiTreeUtil.getParentOfType(expression, PhpScopeHolder.class);
+                        if (null != expressionScopeHolder) {
+                            final PhpEntryPointInstruction scopeEntryPoint    = expressionScopeHolder.getControlFlow().getEntryPoint();
+                            SideEffect.Type                variableSideEffect = SideEffect.Type.NONE;
+
+                            final PhpAccessVariableInstruction[] variableInstructions =
+                                PhpControlFlowUtil.getFollowingVariableAccessInstructions(scopeEntryPoint, variable.getName(), false);
+
+                            for (final PhpAccessVariableInstruction variableInstruction : variableInstructions) {
+                                if (variableInstruction.getAccess().equals(PhpAccessInstruction.Access.READ_ACCESS)) {
+                                    final Variable   anchor       = (Variable) variableInstruction.getAnchor();
+                                    final PsiElement anchorParent = anchor.getParent();
+
+                                    if (anchorParent instanceof MethodReference) {
+                                        final MethodReference anchorMethodReference  = (MethodReference) anchorParent;
+                                        final Method          anchorMethod           = (Method) anchorMethodReference.resolve();
+                                        final SideEffect.Type anchorMethodSideEffect = identifySideEffect(anchorMethod);
+
+                                        if (SideEffect.isPrecedenceHigherThan(anchorMethodSideEffect, variableSideEffect)) {
+                                            variableSideEffect = anchorMethodSideEffect;
+
+                                            if (SideEffect.isPrecedenceIsMax(variableSideEffect)) {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (variableSideEffect.equals(SideEffect.Type.NONE)) {
+                                registerSideEffectProblem(expressionParentClass);
+                                return;
+                            }
+                        }
+                    }
+                }
+                if (!StatementImpl.class.isInstance(expressionParentClass)) {
                     return;
                 }
 

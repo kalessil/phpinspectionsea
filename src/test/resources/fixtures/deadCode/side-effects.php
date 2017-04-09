@@ -94,9 +94,16 @@ class SideEffectNone_WithConstructor {
     public function __construct() {}
 }
 <weak_warning descr="This call can be removed because it have no side-effect.">new SideEffectNone_WithConstructor;</weak_warning>
-$sideEffectNone_WithoutConstructor = new SideEffectNone_WithConstructor;
+<weak_warning descr="This call can be removed because it have no side-effect.">$sideEffectNone_WithoutConstructor = new SideEffectNone_WithConstructor;</weak_warning>
 
 
 class SideEffectNone_WithoutConstructor {}
 <weak_warning descr="This call can be removed because it have no side-effect.">new SideEffectNone_WithoutConstructor;</weak_warning>
-$sideEffectNone_WithoutConstructor = new SideEffectNone_WithoutConstructor;
+<weak_warning descr="This call can be removed because it have no side-effect.">$sideEffectNone_WithoutConstructor = new SideEffectNone_WithoutConstructor;</weak_warning>
+
+
+class SideEffect_FullExample {
+    public function calculate() { }
+}
+<weak_warning descr="This call can be removed because it have no side-effect.">$sideEffect_FullExample = new SideEffect_FullExample;</weak_warning>
+$sideEffect_FullExample->calculate();

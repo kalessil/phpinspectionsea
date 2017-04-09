@@ -27,10 +27,10 @@ import java.util.HashMap;
 public class SideEffectAnalysisInspector extends BasePhpInspection {
     private static final String message = "This call can be removed because it have no side-effect.";
 
+    private static final Key<Integer>    ReferenceIndex = Key.create("SideEffect.ReferenceIndex");
     private static final Key<SideEffect> SideEffectType = Key.create("SideEffect.Type");
 
     private static HashMap<String, SideEffect> mappedPhpFunctions = new HashMap<>();
-    private static HashMap<String, Integer>    mappedRefPositions = new HashMap<>();
 
     private enum SideEffect {NONE, POSSIBLE, UNKNOW, INTERNAL, EXTERNAL}
 
@@ -100,19 +100,19 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
         }
 
         if (function.hasRefParams()) {
-            saveRefPosition(function);
+            mapRefIndex(function);
             return SideEffect.POSSIBLE;
         }
 
         return SideEffect.NONE;
     }
 
-    private static void saveRefPosition(@NotNull final Function function) {
+    private static void mapRefIndex(@NotNull final Function function) {
         final Parameter[] functionParameters = function.getParameters();
 
         for (int functionParametersIndex = 0; functionParametersIndex < functionParameters.length; functionParametersIndex++) {
             if (functionParameters[functionParametersIndex].isPassByRef()) {
-                mappedRefPositions.put(function.getFQN(), functionParametersIndex + 1);
+                function.putUserData(ReferenceIndex, functionParametersIndex + 1);
                 break;
             }
         }
@@ -149,7 +149,7 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpFunctionCall(final FunctionReference functionReference) {
+            public void visitPhpFunctionCall(@NotNull final FunctionReference functionReference) {
                 final String functionSimplifiedName = functionReference.getName();
                 if (null != functionSimplifiedName && functionSimplifiedName.isEmpty()) {
                     return;
@@ -157,15 +157,17 @@ public class SideEffectAnalysisInspector extends BasePhpInspection {
 
                 final Function function = (Function) functionReference.resolve();
                 if (null != function && functionReference.getParent().getClass().equals(StatementImpl.class)) {
-                    final String     functionQualifiedName = function.getFQN();
-                    final SideEffect functionSideEffect    = getIdentifiedSideEffect(functionReference);
+                    final SideEffect functionSideEffect = getIdentifiedSideEffect(functionReference);
 
                     if (functionSideEffect.equals(SideEffect.NONE)) {
                         registerProblem(functionReference);
                     }
-                    else if (functionSideEffect.equals(SideEffect.POSSIBLE) &&
-                        functionReference.getParameters().length < mappedRefPositions.get(functionQualifiedName)) {
-                        registerProblem(functionReference);
+                    else if (functionSideEffect.equals(SideEffect.POSSIBLE)) {
+                        final Integer functionParameterReferencePosition = function.getUserData(ReferenceIndex);
+                        if (null != functionParameterReferencePosition &&
+                            functionReference.getParameters().length < functionParameterReferencePosition) {
+                            registerProblem(functionReference);
+                        }
                     }
                 }
             }

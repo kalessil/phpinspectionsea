@@ -3,34 +3,29 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.PhpIndex;
+import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
-import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 
 final public class TypeFromPlatformResolverUtil {
-    public static void resolveExpressionType(PsiElement objSubjectExpression, HashSet<String> objTypesSet) {
-        Project project = objSubjectExpression.getProject();
+    public static void resolveExpressionType(@NotNull PsiElement expression, @NotNull HashSet<String> types) {
+        final Project project = expression.getProject();
+        final PhpIndex index = PhpIndex.getInstance(project);
+        final Function scope = ExpressionSemanticUtil.getScope(expression);
 
-        PhpType indexValueType = ((PhpTypedElement)objSubjectExpression).getType().global(project);
-        if (indexValueType.getTypes().size() > 0) {
-            for (String strType : indexValueType.getTypes()) {
-                final boolean isSignatureProvided = strType.contains("?") || strType.contains("#");
-                if (isSignatureProvided) {
-                    TypeFromPsiResolvingUtil.resolveExpressionType(
-                            objSubjectExpression,
-                            ExpressionSemanticUtil.getScope(objSubjectExpression),
-                            PhpIndex.getInstance(project),
-                            objTypesSet
-                    );
-                    continue;
-                }
-
-                objTypesSet.add(Types.getType(strType));
+        for (String resolvedType : ((PhpTypedElement) expression).getType().global(project).getTypes()) {
+            final boolean isSignatureProvided = resolvedType.contains("?") || resolvedType.contains("#");
+            if (isSignatureProvided) {
+                TypeFromPsiResolvingUtil.resolveExpressionType(expression, scope, index, types);
+                continue;
             }
+
+            types.add(Types.getType(resolvedType));
         }
 
-        objTypesSet.remove(Types.strClassNotResolved);
-        objTypesSet.remove(Types.strResolvingAbortedOnPsiLevel);
+        types.remove(Types.strClassNotResolved);
+        types.remove(Types.strResolvingAbortedOnPsiLevel);
     }
 }

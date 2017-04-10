@@ -21,7 +21,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%m%' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.";
+    private static final String patternNeedsDeprecation = "'%m%' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.";
+    private static final String patternDeprecateParent  = "Parent '%m%' probably needs to be deprecated as well.";
 
     @NotNull
     public String getShortName() {
@@ -33,14 +34,10 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
-                /* do not process already deprecated methods */
-                if (method.isDeprecated()) {
-                    return;
-                }
-                /* do not process un-reportable, test classes and interfaces - we are searching real tech. debt here */
+                /* do not process un-reportable classes and interfaces - we are searching real tech. debt here */
                 final PhpClass clazz        = method.getContainingClass();
                 final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
-                if (null == methodName || null == clazz || clazz.isInterface()) {
+                if (null == methodName || null == clazz) {
                     return;
                 }
 
@@ -49,21 +46,32 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                 /* search for deprecated parent methods */
                 final PhpClass parent     = clazz.getSuperClass();
                 final Method parentMethod = null == parent ? null : parent.findMethodByName(searchMethodName);
-                if (null != parentMethod && parentMethod.isDeprecated()) {
-                    final String message = messagePattern.replace("%m%", searchMethodName);
-                    holder.registerProblem(methodName, message, ProblemHighlightType.LIKE_DEPRECATED);
-
-                    return;
-                }
-
-                /* search for deprecated interface methods */
-                for (PhpClass iface : clazz.getImplementedInterfaces()) {
-                    final Method ifaceMethod = iface.findMethodByName(searchMethodName);
-                    if (null != ifaceMethod && ifaceMethod.isDeprecated()) {
-                        final String message = messagePattern.replace("%m%", searchMethodName);
+                if (null != parentMethod) {
+                    if (!method.isDeprecated() && parentMethod.isDeprecated()) {
+                        final String message = patternNeedsDeprecation.replace("%m%", searchMethodName);
                         holder.registerProblem(methodName, message, ProblemHighlightType.LIKE_DEPRECATED);
 
                         return;
+                    }
+
+                    if (method.isDeprecated() && !parentMethod.isDeprecated()) {
+                        final String message = patternDeprecateParent.replace("%m%", searchMethodName);
+                        holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING);
+
+                        return;
+                    }
+                }
+
+                /* search for deprecated interface methods */
+                if (!method.isDeprecated()) {
+                    for (PhpClass iface : clazz.getImplementedInterfaces()) {
+                        final Method ifaceMethod = iface.findMethodByName(searchMethodName);
+                        if (null != ifaceMethod && ifaceMethod.isDeprecated()) {
+                            final String message = patternNeedsDeprecation.replace("%m%", searchMethodName);
+                            holder.registerProblem(methodName, message, ProblemHighlightType.LIKE_DEPRECATED);
+
+                            return;
+                        }
                     }
                 }
             }

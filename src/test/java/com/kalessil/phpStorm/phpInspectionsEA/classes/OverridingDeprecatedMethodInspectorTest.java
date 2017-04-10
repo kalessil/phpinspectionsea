@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 
 final public class OverridingDeprecatedMethodInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsInconsistentGetsSetsPatterns() {
-        myFixture.configureByFile("fixtures/classes/overriding-deprecated-methods.php");
+        myFixture.configureByFile("fixtures/classes/overriding-deprecated-constructs.php");
         myFixture.enableInspections(OverridingDeprecatedMethodInspector.class);
         myFixture.testHighlighting(true, false, true);
     }

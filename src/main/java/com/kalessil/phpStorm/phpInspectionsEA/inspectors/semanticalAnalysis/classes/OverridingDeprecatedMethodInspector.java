@@ -40,7 +40,7 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                 /* do not process un-reportable, test classes and interfaces - we are searching real tech. debt here */
                 final PhpClass clazz        = method.getContainingClass();
                 final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
-                if (null == methodName || null == clazz || clazz.isInterface()) {
+                if (null == methodName || null == clazz) {
                     return;
                 }
 

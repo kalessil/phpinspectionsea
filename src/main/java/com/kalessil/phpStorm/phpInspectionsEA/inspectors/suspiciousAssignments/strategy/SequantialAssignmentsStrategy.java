@@ -1,8 +1,15 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy;
 
+import com.intellij.codeInsight.PsiEquivalenceUtil;
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -14,9 +21,75 @@ import org.jetbrains.annotations.NotNull;
  */
 
 final public class SequantialAssignmentsStrategy {
-    private static final String messagePattern = "";
+    private static final String patternProbableElse = "%c% is immediately overridden, perhaps it was intended to use 'else' here.";
+    private static final String patternGeneral      = "%c% is immediately overridden, please check this code fragment.";
 
     static public void apply(@NotNull AssignmentExpression expression, @NotNull ProblemsHolder holder) {
+        final PsiElement parent    = expression.getParent();
+        final PsiElement container = expression.getVariable();
+        if (null != container && StatementImpl.class == parent.getClass() && !isContainerUsed(container, expression)) {
+            final PhpPsiElement previous = ((PhpPsiElement) parent).getPrevPsiSibling();
+            if (null != previous) {
+                if (previous instanceof If) {
+                    handlePrecedingIf(container, (If) previous, holder);
+                } else if (previous.getFirstChild() instanceof AssignmentExpression) {
+                    handlePrecedingAssignment(container, (AssignmentExpression) previous.getFirstChild(), holder);
+                }
+            }
+        }
+    }
 
+    static private boolean isContainerUsed(@NotNull PsiElement container, @Nullable PsiElement expression) {
+        boolean result = false;
+        if (null != expression) {
+            for (PsiElement matchCandidate : PsiTreeUtil.findChildrenOfType(expression, container.getClass())) {
+                if (matchCandidate != container && PsiEquivalenceUtil.areElementsEquivalent(matchCandidate, container)) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    static private void handlePrecedingIf(
+        @NotNull PsiElement container,
+        @NotNull If previous,
+        @NotNull ProblemsHolder holder
+    ) {
+        final GroupStatement body      = ExpressionSemanticUtil.getGroupStatement(previous);
+        final PsiElement lastStatement = null == body ? null : ExpressionSemanticUtil.getLastStatement(body);
+        if (null != lastStatement) {
+            final boolean isExitStatement = lastStatement.getFirstChild() instanceof PhpExit;
+            final boolean isReturnPoint   = isExitStatement ||
+                       lastStatement instanceof PhpReturn   || lastStatement instanceof PhpThrow ||
+                       lastStatement instanceof PhpContinue || lastStatement instanceof PhpBreak;
+            if (!isReturnPoint) {
+                for (PsiElement bodyStatement : body.getChildren()) {
+                    final PsiElement candidateExpression = bodyStatement.getFirstChild();
+                    if (candidateExpression instanceof AssignmentExpression) {
+                        final PsiElement candidate = ((AssignmentExpression) candidateExpression).getVariable();
+                        if (null != candidate && PsiEquivalenceUtil.areElementsEquivalent(candidate, container)) {
+                            final String message = patternProbableElse.replace("%c%", container.getText());
+                            holder.registerProblem(container.getParent(), message, ProblemHighlightType.GENERIC_ERROR);
+
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    static private void handlePrecedingAssignment(
+        @NotNull PsiElement container,
+        @NotNull AssignmentExpression previous,
+        @NotNull ProblemsHolder holder
+    ) {
+        final PsiElement previousContainer = previous.getVariable();
+        if (null != previousContainer && PsiEquivalenceUtil.areElementsEquivalent(previousContainer, container)) {
+            final String message = patternGeneral.replace("%c%", container.getText());
+            holder.registerProblem(container, message, ProblemHighlightType.GENERIC_ERROR);
+        }
     }
 }

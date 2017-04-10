@@ -6,7 +6,7 @@
         <weak_warning descr="Objects should be created outside of a loop and cloned instead.">$now = new $class();</weak_warning>
         <weak_warning descr="Objects should be created outside of a loop and cloned instead.">$domElement = (new \DOMDocument())->createElement('');</weak_warning>
 
-        <weak_warning descr="This statement seems to be disconnected from its parent foreach.">error_log('Processing next file', 3, '/tmp/debug');</weak_warning>
+        <weak_warning descr="This statement seems to be disconnected from its parent foreach.">error_log('Processing next file: ' + $file, 3, '/tmp/debug');</weak_warning>
         <weak_warning descr="This statement seems to be disconnected from its parent foreach.">error_log($class, 3, '/tmp/debug');</weak_warning>
 
         <weak_warning descr="This statement seems to be disconnected from its parent foreach.">for</weak_warning> (; $for < 10;){

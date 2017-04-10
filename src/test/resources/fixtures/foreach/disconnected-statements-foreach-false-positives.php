@@ -91,3 +91,10 @@ foreach ($files as $file10) {
     if ($false3) { return; }
     if ($false4) { throw $exception; }
 }
+
+/* false-positives: statement is not operating with any variable */
+foreach ($links as $link) {
+    echo '<li>';
+    echo $link;
+    echo '</li>';
+}

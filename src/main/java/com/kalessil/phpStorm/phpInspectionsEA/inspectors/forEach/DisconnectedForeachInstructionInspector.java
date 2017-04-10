@@ -20,9 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -62,7 +60,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 /* ensure foreach structure is ready for inspection */
                 if (null != foreachBody && variables.size() > 0) {
                     /* pre-collect introduced and internally used variables */
-                    final HashSet<String> allModifiedVariables = new HashSet<>();
+                    final Set<String> allModifiedVariables = new HashSet<>();
                     for (Variable variable : variables) {
                         final String variableName = variable.getName();
                         if (!StringUtil.isEmpty(variableName)) {
@@ -71,11 +69,11 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     }
                     variables.clear();
 
-                    final HashMap<PsiElement, HashSet<String>> instructionDependencies = new HashMap<>();
+                    final Map<PsiElement, Set<String>> instructionDependencies = new HashMap<>();
                     /* iteration 1 - investigate what are dependencies and influence */
                     for (PsiElement oneInstruction : foreachBody.getStatements()) {
                         if (oneInstruction instanceof PhpPsiElement && !(oneInstruction instanceof PsiComment)) {
-                            final HashSet<String> individualDependencies = new HashSet<>();
+                            final Set<String> individualDependencies = new HashSet<>();
 
                             instructionDependencies.put(oneInstruction, individualDependencies);
                             investigateInfluence((PhpPsiElement) oneInstruction, individualDependencies, allModifiedVariables);
@@ -88,7 +86,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             boolean isDependOnModifiedVariables = false;
 
                             /* check if any dependency is overridden */
-                            final HashSet<String> individualDependencies = instructionDependencies.get(oneInstruction);
+                            final Set<String> individualDependencies = instructionDependencies.get(oneInstruction);
                             if (null != individualDependencies && individualDependencies.size() > 0) {
                                 /* contains not only this */
                                 for (String dependencyName : individualDependencies) {
@@ -125,9 +123,12 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                     /* secure exceptions with '<?= ?>' constructions, false-positives with html */
                                     if (PhpPsiElementImpl.class != oneInstruction.getClass() && oneInstruction.getTextLength() > 0) {
                                         /* inner looping termination/continuation should be taken into account */
-                                        final PsiElement loopInterrupter =
-                                            PsiTreeUtil.findChildOfAnyType(oneInstruction, true, PhpBreak.class, PhpContinue.class, PhpThrow.class, PhpReturn.class);
-                                        if (null == loopInterrupter) {
+                                        final PsiElement loopInterrupter
+                                            = PsiTreeUtil.findChildOfAnyType(oneInstruction, true, PhpBreak.class, PhpContinue.class, PhpThrow.class, PhpReturn.class);
+                                        /* operating with variables should be taken into account */
+                                        final boolean isVariablesUsed
+                                            = null != PsiTreeUtil.findChildOfAnyType(oneInstruction, true, Variable.class);
+                                        if (null == loopInterrupter && isVariablesUsed) {
                                             holder.registerProblem(reportingTarget, messageDisconnected, ProblemHighlightType.WEAK_WARNING);
                                         }
                                     }
@@ -151,8 +152,8 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
             private void investigateInfluence(
                 @Nullable PhpPsiElement oneInstruction,
-                @NotNull HashSet<String> individualDependencies,
-                @NotNull HashSet<String> allModifiedVariables
+                @NotNull Set<String> individualDependencies,
+                @NotNull Set<String> allModifiedVariables
             ) {
                 for (PsiElement variable : PsiTreeUtil.findChildrenOfType(oneInstruction, Variable.class)) {
                     final String variableName = ((Variable) variable).getName();

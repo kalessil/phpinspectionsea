@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 
 final public class UnusedConstructorDependenciesInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.configureByFile("fixtures/classes/unused-constructor-dependencies.php");
         myFixture.enableInspections(UnusedConstructorDependenciesInspector.class);
+
+        myFixture.configureByFile("fixtures/classes/unused-constructor-dependencies.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

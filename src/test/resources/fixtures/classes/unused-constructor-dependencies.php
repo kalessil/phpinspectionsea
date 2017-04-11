@@ -22,13 +22,14 @@ class ClassUpdComplex
     private $p1;
     private $p2;
     private $p3;
+    private $usedByLambda;
 
     private $traitProperty;
 
     protected $p4;
     public $p5;
 
-    public function __construct($p1, $p2, $p3)
+    public function __construct($p1, $p2, $p3, $usedByLambda)
     {
         $this->p1 = $p1;
         $this->p2 = $p2;
@@ -41,9 +42,17 @@ class ClassUpdComplex
 
         $this->p4 = 1;
         $this->p5 = 1;
+
+        $this->usedByLambda = $usedByLambda;
     }
 
     public function m1() { return [$this->p1]; }
     public function m2() { return [$this->p2]; }
     public function m3() { return [$this->p1, $this->p2]; }
+
+    static public function BreakIncapsulation() {
+        return function (ClassUpdComplex $instance) {
+            return $instance->usedByLambda;
+        };
+    }
 }

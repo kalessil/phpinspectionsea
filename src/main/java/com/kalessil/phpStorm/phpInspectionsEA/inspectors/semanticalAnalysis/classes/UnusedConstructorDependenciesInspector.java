@@ -2,14 +2,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.cla
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.psi.elements.Field;
-import com.jetbrains.php.lang.psi.elements.FieldReference;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -40,18 +36,16 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
              * Extracts private fields list as map name => field object, so we could use name as glue
              * and direct comparision of object pointers unique for field objects.
              */
-            private HashMap<String, Field> getPrivateFields(@NotNull PhpClass clazz) {
-                final HashMap<String, Field> privateFields = new HashMap<>();
+            private Map<String, Field> getPrivateFields(@NotNull PhpClass clazz) {
+                final Map<String, Field> privateFields = new HashMap<>();
 
-                final Field[] ownFields = clazz.getOwnFields();
-                if (ownFields.length > 0) {
-                    for (Field field : ownFields) {
-                        if (field.isConstant() || !field.getModifier().isPrivate() || field.getModifier().isStatic()) {
-                            continue;
-                        }
-
-                        privateFields.put(field.getName(), field);
+                for (Field field : clazz.getOwnFields()) {
+                    final PhpModifier modifiers = field.getModifier();
+                    if (field.isConstant() || !modifiers.isPrivate() || modifiers.isStatic()) {
+                        continue;
                     }
+
+                    privateFields.put(field.getName(), field);
                 }
 
                 return  privateFields;
@@ -60,37 +54,34 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
             /**
              * Extracts private fields references from method as field name => reference objects, so we could use name as glue.
              */
-            private HashMap<String, List<FieldReference>> getFieldReferences(@NotNull Method method, @NotNull HashMap<String, Field> privateFields) {
-                final HashMap<String, List<FieldReference>> filteredReferences = new HashMap<>();
+            private Map<String, List<FieldReference>> getFieldReferences(@NotNull Method method, @NotNull Map<String, Field> privateFields) {
+                final Map<String, List<FieldReference>> filteredReferences = new HashMap<>();
                 /* not all methods needs to be analyzed */
-                if (method.isAbstract() || method.isStatic()) {
+                if (method.isAbstract()) {
                     return filteredReferences;
                 }
 
                 final Collection<FieldReference> references = PsiTreeUtil.findChildrenOfType(method, FieldReference.class);
-                if (references.size() > 0) {
-                    for (FieldReference ref : references) {
-                        /* if field name not in given list, skip heavy resolving */
-                        final String fieldName = ref.getName();
-                        if (StringUtil.isEmpty(fieldName) || !privateFields.containsKey(fieldName)) {
-                            continue;
-                        }
-
-                        /* if not resolved or not in given list, continue */
-                        final PsiElement resolved = ref.resolve();
-                        if (!(resolved instanceof Field) || !privateFields.containsValue(resolved)) {
-                            continue;
-                        }
-
-                        /* bingo, store newly found reference */
-                        if (!filteredReferences.containsKey(fieldName)) {
-                            filteredReferences.put(fieldName, new ArrayList<>());
-                        }
-                        filteredReferences.get(fieldName).add(ref);
+                for (FieldReference ref : references) {
+                    /* if field name not in given list, skip heavy resolving */
+                    final String fieldName = ref.getName();
+                    if (null == fieldName || !privateFields.containsKey(fieldName)) {
+                        continue;
                     }
 
-                    references.clear();
+                    /* if not resolved or not in given list, continue */
+                    final PsiElement resolved = ref.resolve();
+                    if (!(resolved instanceof Field) || !privateFields.containsValue(resolved)) {
+                        continue;
+                    }
+
+                    /* bingo, store newly found reference */
+                    if (!filteredReferences.containsKey(fieldName)) {
+                        filteredReferences.put(fieldName, new ArrayList<>());
+                    }
+                    filteredReferences.get(fieldName).add(ref);
                 }
+                references.clear();
 
                 return filteredReferences;
             }
@@ -98,8 +89,8 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
             /**
              * Orchestrates extraction of references from methods
              */
-            private HashMap<String, List<FieldReference>> getMethodsFieldReferences(@NotNull Method constructor, @NotNull HashMap<String, Field> privateFields) {
-                final HashMap<String, List<FieldReference>> filteredReferences = new HashMap<>();
+            private Map<String, List<FieldReference>> getMethodsFieldReferences(@NotNull Method constructor, @NotNull Map<String, Field> privateFields) {
+                final Map<String, List<FieldReference>> filteredReferences = new HashMap<>();
 
                 /* collect methods to inspect, incl. once from traits */
                 final List<Method> methodsToCheck = new ArrayList<>();
@@ -111,27 +102,27 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
 
                 /* find references */
                 for (Method method : methodsToCheck) {
-                    if (method == constructor || method.isAbstract() || method.isStatic()) {
+                    if (method == constructor) {
                         continue;
                     }
 
-                    final HashMap<String, List<FieldReference>> methodsReferences = getFieldReferences(method, privateFields);
-                    if (methodsReferences.size() > 0) {
+                    final Map<String, List<FieldReference>> innerReferences = getFieldReferences(method, privateFields);
+                    if (innerReferences.size() > 0) {
                         /* merge method's scan results into common container */
-                        for (String fieldName : methodsReferences.keySet()) {
+                        for (String fieldName : innerReferences.keySet()) {
                             if (!filteredReferences.containsKey(fieldName)) {
                                 filteredReferences.put(fieldName, new ArrayList<>());
                             }
                             filteredReferences
                                     .get(fieldName)
-                                    .addAll(methodsReferences.get(fieldName));
+                                    .addAll(innerReferences.get(fieldName));
                         }
 
                         /* release references found in the method as they in common container now */
-                        for (List<FieldReference> references : methodsReferences.values()) {
+                        for (List<FieldReference> references : innerReferences.values()) {
                             references.clear();
                         }
-                        methodsReferences.clear();
+                        innerReferences.clear();
                     }
                 }
                 methodsToCheck.clear();
@@ -155,16 +146,16 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                 if (method != constructor) {
                     return;
                 }
-                final HashMap<String, Field> clazzPrivateFields =  this.getPrivateFields(clazz);
+                final Map<String, Field> clazzPrivateFields =  this.getPrivateFields(clazz);
                 if (0 == clazzPrivateFields.size()) {
                     return;
                 }
 
                 /* === intensive part : extract references === */
-                final HashMap<String, List<FieldReference>> constructorsReferences = getFieldReferences(constructor, clazzPrivateFields);
+                final Map<String, List<FieldReference>> constructorsReferences = getFieldReferences(constructor, clazzPrivateFields);
                 if (constructorsReferences.size() > 0) {
                     /* constructor's references being identified */
-                    final HashMap<String, List<FieldReference>> otherReferences = getMethodsFieldReferences(constructor, clazzPrivateFields);
+                    final Map<String, List<FieldReference>> otherReferences = getMethodsFieldReferences(constructor, clazzPrivateFields);
                     /* methods's references being identified, time to re-visit constructor's references */
                     for (String fieldName : constructorsReferences.keySet()) {
                         /* field is used, we do nothing more */

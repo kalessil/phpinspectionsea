@@ -39,6 +39,7 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
             public void visitPhpFile(PhpFile file) {
                 final String fileName = file.getName();
                 if (fileName.endsWith(".php")) {
+                    /* find out how many named classes has been defined in the file */
                     final List<PhpClass> classes = new ArrayList<>();
                     for (PhpClass clazz : PsiTreeUtil.findChildrenOfAnyType(file, PhpClass.class)) {
                         if (null != NamedElementUtil.getNameIdentifier(clazz)) {
@@ -46,14 +47,17 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
                         }
                     }
 
+                    /* multiple classes defined, do nothing - this is not PSR compatible */
                     if (1 == classes.size()) {
                         final PhpClass clazz = classes.get(0);
 
+                        /* support older PSR classloading (Package_Subpackage_Class) naming */
                         String className = clazz.getName();
                         if (0 == clazz.getFQN().lastIndexOf('\\') && -1 != className.indexOf('_')) {
                             className = className.substring(className.lastIndexOf('_'));
                         }
 
+                        /* now check if names are identical */
                         final String expectedClassName = fileName.substring(0, fileName.indexOf('.'));
                         if (!expectedClassName.equals(className)) {
                             final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);

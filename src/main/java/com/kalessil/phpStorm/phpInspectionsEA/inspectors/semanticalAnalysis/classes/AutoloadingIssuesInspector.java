@@ -13,7 +13,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -27,6 +29,11 @@ import java.util.List;
 public class AutoloadingIssuesInspector extends BasePhpInspection {
     private static final String message = "Class autoloading might be broken: file and class names are not identical.";
 
+    private static final Set<String> ignoredFiles = new HashSet<>();
+    static {
+        ignoredFiles.add("actions.class.php"); // Symfony 1.*
+    }
+
     @NotNull
     public String getShortName() {
         return "AutoloadingIssuesInspection";
@@ -38,9 +45,7 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFile(PhpFile file) {
                 final String fileName = file.getName();
-                if (fileName.endsWith(".php")) {
-                    // TODO: actions.class.php
-
+                if (fileName.endsWith(".php") && !ignoredFiles.contains(fileName)) {
                     /* find out how many named classes has been defined in the file */
                     final List<PhpClass> classes = new ArrayList<>();
                     for (PhpClass clazz : PsiTreeUtil.findChildrenOfAnyType(file, PhpClass.class)) {

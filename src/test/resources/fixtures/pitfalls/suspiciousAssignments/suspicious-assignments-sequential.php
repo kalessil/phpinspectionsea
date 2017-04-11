@@ -33,7 +33,7 @@ function immediateOverrides()
 
     /* false-positive: accumulation */
     $y7[] = '';
-    $vy7[] = '';
+    $y7[] = '';
 
 
     return [$y1, $y2, $y3, $y4, $y5, $y6, $y7];

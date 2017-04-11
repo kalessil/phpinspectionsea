@@ -79,6 +79,13 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         }
                     }
                 }
+                /* false-positives: array type parameter declaration adds mixed */
+                if (types.size() > 1 && scope instanceof Function && container instanceof ArrayAccessExpression) {
+                    final PsiElement candidate = ((ArrayAccessExpression) container).getValue();
+                    if (candidate instanceof Variable && types.contains(Types.strMixed) && types.contains(Types.strArray)) {
+                        types.remove(Types.strMixed);
+                    }
+                }
 
 
                 /* gracefully request to specify exact types which can appear (mixed, object) */

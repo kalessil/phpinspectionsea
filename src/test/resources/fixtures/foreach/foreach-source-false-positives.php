@@ -11,6 +11,12 @@
         foreach ($values as $string) {}
     }
 
+    /* false-positive: mysterious appearance of mixed */
+    /** @param array[] $array */
+    function mysteriousMixedTypeAppearance(array $array) {
+        foreach ($array['key'] as $something) {}
+    }
+
     /* ensures that type[] is handled properly */
     /* @var $intOrIntArray int[] */
     foreach ($intOrIntArray as $value) {

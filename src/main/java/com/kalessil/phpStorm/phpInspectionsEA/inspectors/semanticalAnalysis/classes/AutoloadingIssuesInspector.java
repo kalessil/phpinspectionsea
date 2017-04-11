@@ -54,7 +54,7 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
                         /* support older PSR classloading (Package_Subpackage_Class) naming */
                         String className = clazz.getName();
                         if (0 == clazz.getFQN().lastIndexOf('\\') && -1 != className.indexOf('_')) {
-                            className = className.substring(className.lastIndexOf('_'));
+                            className = className.substring(1 + className.lastIndexOf('_'));
                         }
 
                         /* now check if names are identical */

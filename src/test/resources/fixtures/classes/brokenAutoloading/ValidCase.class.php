@@ -1,5 +1,5 @@
 <?php
 
-class ValidCase
+class Older_ClassLoading_ValidCase
 {
 }

@@ -31,6 +31,7 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
 
     private static final Set<String> ignoredFiles = new HashSet<>();
     static {
+        ignoredFiles.add("index.php");
         ignoredFiles.add("actions.class.php"); // Symfony 1.*
     }
 

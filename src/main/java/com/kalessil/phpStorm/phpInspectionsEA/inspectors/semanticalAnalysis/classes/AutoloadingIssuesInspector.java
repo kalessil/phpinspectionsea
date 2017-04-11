@@ -39,6 +39,8 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
             public void visitPhpFile(PhpFile file) {
                 final String fileName = file.getName();
                 if (fileName.endsWith(".php")) {
+                    // TODO: actions.class.php
+
                     /* find out how many named classes has been defined in the file */
                     final List<PhpClass> classes = new ArrayList<>();
                     for (PhpClass clazz : PsiTreeUtil.findChildrenOfAnyType(file, PhpClass.class)) {
@@ -52,14 +54,14 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
                         final PhpClass clazz = classes.get(0);
 
                         /* support older PSR classloading (Package_Subpackage_Class) naming */
-                        String className = clazz.getName();
-                        if (0 == clazz.getFQN().lastIndexOf('\\') && -1 != className.indexOf('_')) {
-                            className = className.substring(1 + className.lastIndexOf('_'));
+                        String extractedClassName = clazz.getName();
+                        if (0 == clazz.getFQN().lastIndexOf('\\') && -1 != extractedClassName.indexOf('_')) {
+                            extractedClassName = extractedClassName.substring(1 + extractedClassName.lastIndexOf('_'));
                         }
 
                         /* now check if names are identical */
                         final String expectedClassName = fileName.substring(0, fileName.indexOf('.'));
-                        if (!expectedClassName.equals(className)) {
+                        if (!expectedClassName.equals(extractedClassName) && !expectedClassName.equals(clazz.getName())) {
                             final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
                             if (null != classNameNode) {
                                 holder.registerProblem(classNameNode, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);

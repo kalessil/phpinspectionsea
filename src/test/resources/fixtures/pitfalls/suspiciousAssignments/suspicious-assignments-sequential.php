@@ -3,42 +3,38 @@
 function immediateOverrides()
 {
     /* case 1: possible override, if itself */
-    if ($x) {
-        $y = '';
-    }
-    <error descr="$y is immediately overridden, perhaps it was intended to use 'else' here.">$y = ''</error>;
-    /* case 1: possible override, alternative branch */
-    if ($x) {
-        ;
-    } else {
-        $y = '';
-    }
-    <error descr="$y is immediately overridden, perhaps it was intended to use 'else' here.">$y = ''</error>;
+    if ($x) { $y1 = ''; }
+    <error descr="$y1 is immediately overridden, perhaps it was intended to use 'else' here.">$y1 = ''</error>;
 
     /* false-positive: if ends with an exit point */
     if ($x) {
-        $y = '';
-        return $y;
+        $y2 = '';
+        return $y2;
     }
-    $y = '';
+    $y2 = '';
+
+    /* false-positive: if has alternative branches */
+    if ($x) { $y3 = ''; }
+    else    { $y3 = ''; }
+    $y3 = '';
+
     /* false-positive: 2nd write is optional */
-    $t = '';
-    if ($x) {
-        $t = '';
-    }
+    $y4 = '';
+    if ($x) { $y4 = ''; }
 
 
     /* case 2: guaranteed override */
-    $z = '';
-    <error descr="$z is immediately overridden, please check this code fragment.">$z</error> = $y;
+    $y5 = '';
+    <error descr="$y5 is immediately overridden, please check this code fragment.">$y5</error> = 'y5';
 
     /* false-positive: depends on itself */
-    $a = '';
-    $a = trim($a);
+    $y6 = '';
+    $y6 = trim($y6);
+
     /* false-positive: accumulation */
-    $v[] = '';
-    $v[] = '';
+    $y7[] = '';
+    $vy7[] = '';
 
 
-    return [$y, $z, $t, $a];
+    return [$y1, $y2, $y3, $y4, $y5, $y6, $y7];
 }

@@ -45,7 +45,7 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
 
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
                 SuspiciousOperatorFormattingStrategy.apply(assignmentExpression, holder);
-                SequantialAssignmentsStrategy.apply(assignmentExpression, holder);
+                SequentialAssignmentsStrategy.apply(assignmentExpression, holder);
             }
         };
     }

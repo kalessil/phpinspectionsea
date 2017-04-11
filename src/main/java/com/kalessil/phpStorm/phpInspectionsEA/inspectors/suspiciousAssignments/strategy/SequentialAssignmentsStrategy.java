@@ -20,14 +20,17 @@ import org.jetbrains.annotations.Nullable;
  * file that was distributed with this source code.
  */
 
-final public class SequantialAssignmentsStrategy {
+final public class SequentialAssignmentsStrategy {
     private static final String patternProbableElse = "%c% is immediately overridden, perhaps it was intended to use 'else' here.";
     private static final String patternGeneral      = "%c% is immediately overridden, please check this code fragment.";
 
     static public void apply(@NotNull AssignmentExpression expression, @NotNull ProblemsHolder holder) {
         final PsiElement parent    = expression.getParent();
         final PsiElement container = expression.getVariable();
-        if (null != container && StatementImpl.class == parent.getClass() && !isContainerUsed(container, expression)) {
+        if (
+            null != container && StatementImpl.class == parent.getClass() &&
+            !isArrayPush(container) && !isContainerUsed(container, expression)
+        ) {
             final PhpPsiElement previous = ((PhpPsiElement) parent).getPrevPsiSibling();
             if (null != previous) {
                 if (previous instanceof If) {
@@ -37,6 +40,15 @@ final public class SequantialAssignmentsStrategy {
                 }
             }
         }
+    }
+
+    static private boolean isArrayPush(@NotNull PsiElement container) {
+        boolean result = false;
+        if (container instanceof ArrayAccessExpression) {
+            final ArrayIndex index = ((ArrayAccessExpression) container).getIndex();
+            result = null != index && null == index.getValue();
+        }
+        return result;
     }
 
     static private boolean isContainerUsed(@NotNull PsiElement container, @Nullable PsiElement expression) {
@@ -57,7 +69,8 @@ final public class SequantialAssignmentsStrategy {
         @NotNull If previous,
         @NotNull ProblemsHolder holder
     ) {
-        final GroupStatement body      = ExpressionSemanticUtil.getGroupStatement(previous);
+        final boolean hasOtherBranches = ExpressionSemanticUtil.hasAlternativeBranches(previous);
+        final GroupStatement body      = hasOtherBranches ? null : ExpressionSemanticUtil.getGroupStatement(previous);
         final PsiElement lastStatement = null == body ? null : ExpressionSemanticUtil.getLastStatement(body);
         if (null != lastStatement) {
             final boolean isExitStatement = lastStatement.getFirstChild() instanceof PhpExit;

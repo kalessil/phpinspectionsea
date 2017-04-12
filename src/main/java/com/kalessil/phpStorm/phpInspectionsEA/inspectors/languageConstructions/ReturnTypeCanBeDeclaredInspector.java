@@ -11,6 +11,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
@@ -162,11 +163,9 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     if (null != injectionPoint) {
                         final Function donor = PhpPsiElementFactory.createFunction(project, "function(): " + type + "{}");
                         PsiElement implant   = donor.getReturnType();
-                        for (byte iterationsCount = 1; iterationsCount < 4; ++iterationsCount) {
-                            if (null != implant) {
-                                injectionPoint.getParent().addAfter(implant, injectionPoint);
-                                implant = implant.getPrevSibling();
-                            }
+                        while (null != implant && PhpTokenTypes.chRPAREN != implant.getNode().getElementType()) {
+                            injectionPoint.getParent().addAfter(implant, injectionPoint);
+                            implant = implant.getPrevSibling();
                         }
                     }
                 }

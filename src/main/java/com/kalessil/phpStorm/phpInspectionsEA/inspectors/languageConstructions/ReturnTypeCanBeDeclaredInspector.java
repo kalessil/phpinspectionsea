@@ -13,8 +13,7 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.Method;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -99,6 +98,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 for (String type : method.getType().global(holder.getProject()).filterUnknown().getTypes()) {
                     normalizedTypes.add(Types.getType(type));
                 }
+                checkNonImplicitNullReturn(method, normalizedTypes);
 
                 final int typesCount = normalizedTypes.size();
                 /* case 1: offer using void */
@@ -132,6 +132,16 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         final String typeHint = isLegitVoid ? suggestedType : "?" + suggestedType;
                         final String message  = messagePattern.replace("%t%", typeHint);
                         holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(typeHint));
+                    }
+                }
+            }
+
+            private void checkNonImplicitNullReturn(@NotNull Method method, @NotNull Set<String> types) {
+                if (!types.isEmpty() && !types.contains(Types.strNull) && !types.contains(Types.strVoid)) {
+                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
+                    final PsiElement last     = null == body ? null : ExpressionSemanticUtil.getLastStatement(body);
+                    if (null == last || (!(last instanceof PhpReturn) && !(last instanceof PhpThrow))) {
+                        types.add(Types.strNull);
                     }
                 }
             }

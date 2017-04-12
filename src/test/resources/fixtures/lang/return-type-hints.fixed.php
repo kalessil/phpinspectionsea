@@ -79,4 +79,12 @@ abstract class ClassCasesHolder {
     /** @param $x string|null */
     public function returnStringN($x): ?string
     { return $x; }
+
+    /* case 4: handling supported nullable types; no DocBlock, incomplete returns structure; */
+    public function NonImplicitNullReturn($x): ?\stdClass
+    {
+        if ($x) {
+            return new \stdClass();
+        }
+    }
 }

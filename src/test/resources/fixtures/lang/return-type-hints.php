@@ -62,4 +62,11 @@ abstract class ClassCasesHolder {
     public function <weak_warning descr="': ?int' can be declared as return type hint">returnIntN</weak_warning>($x) { return $x; }
     /** @param $x string|null */
     public function <weak_warning descr="': ?string' can be declared as return type hint">returnStringN</weak_warning>($x) { return $x; }
+
+    /* case 4: handling supported nullable types; no DocBlock, incomplete returns structure; */
+    public function <weak_warning descr="': ?\stdClass' can be declared as return type hint">NonImplicitNullReturn</weak_warning>($x) {
+        if ($x) {
+            return new \stdClass();
+        }
+    }
 }

@@ -1,16 +1,23 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.psi.elements.Function;
+import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
@@ -92,8 +99,9 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 final int typesCount = normalizedTypes.size();
                 /* case 1: offer using void */
                 if (0 == typesCount && supportNullableTypes) {
-                    final String message = messagePattern.replace("%t%", "void");
-                    holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    final String suggestedType = "void";
+                    final String message       = messagePattern.replace("%t%", suggestedType);
+                    holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(suggestedType));
                 }
                 /* case 2: offer using type */
                 if (1 == typesCount) {
@@ -101,7 +109,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     final boolean isLegit   = singleType.startsWith("\\") || returnTypes.contains(singleType);
                     if (isLegit) {
                         final String message = messagePattern.replace("%t%", singleType);
-                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(singleType));
                     }
                 }
                 /* case 3: offer using nullable type */
@@ -111,11 +119,58 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     final String nullableType = normalizedTypes.iterator().next();
                     final boolean isLegit     = nullableType.startsWith("\\") || returnTypes.contains(nullableType);
                     if (isLegit) {
-                        final String message = messagePattern.replace("%t%", "?" + nullableType);
-                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        final String suggestedType = "?" + nullableType;
+                        final String message       = messagePattern.replace("%t%", suggestedType);
+                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(suggestedType));
                     }
                 }
             }
         };
+    }
+
+    private class DeclareReturnTypeFix implements LocalQuickFix {
+        final private String type;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Declare the return type";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        DeclareReturnTypeFix(@NotNull String type) {
+            this.type = type;
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (null != expression) {
+                final Method method = (Method) expression.getParent();
+                final PsiElement body
+                        = method.isAbstract() ? method.getLastChild() : ExpressionSemanticUtil.getGroupStatement(method);
+                if (null != body) {
+                    PsiElement injectionPoint = body.getPrevSibling();
+                    if (injectionPoint instanceof PsiWhiteSpace) {
+                        injectionPoint = injectionPoint.getPrevSibling();
+                    }
+                    if (null != injectionPoint) {
+                        final Function donor = PhpPsiElementFactory.createFunction(project, "function(): " + type + "{}");
+                        PsiElement implant   = donor.getReturnType();
+                        for (byte iterationsCount = 1; iterationsCount < 4; ++iterationsCount) {
+                            if (null != implant) {
+                                injectionPoint.getParent().addAfter(implant, injectionPoint);
+                                implant = implant.getPrevSibling();
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

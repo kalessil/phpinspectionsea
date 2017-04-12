@@ -27,8 +27,16 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
 
         showStoppers.add("\\Shopware\\Bundle\\StoreFrontBundle\\Struct\\BaseProduct");
         showStoppers.add("\\Enlight_Controller_Action");
+        showStoppers.add("\\Enlight_Plugin_Bootstrap");
 
-        showStoppers.add("");
+        showStoppers.add("\\sfActions");
+        showStoppers.add("\\sfAction");
+        showStoppers.add("\\sfFormObject");
+        showStoppers.add("\\sfFormFilter");
+
+        showStoppers.add("\\BaseObject");
+        showStoppers.add("\\ModelCriteria");
+        showStoppers.add("\\Propel\\Runtime\\ActiveQuery\\ModelCriteria");
     }
 
     @NotNull

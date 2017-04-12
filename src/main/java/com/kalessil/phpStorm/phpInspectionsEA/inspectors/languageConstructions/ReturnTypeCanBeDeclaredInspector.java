@@ -75,7 +75,9 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 @NotNull PsiElement target,
                 boolean supportNullableTypes
             ) {
-                /* check the PHP doc, return declares single [nullable] type */
+                if (null != method.getDocComment()) {
+                    handleMethod(method, target, supportNullableTypes);
+                }
             }
 
             private void handleMethod(

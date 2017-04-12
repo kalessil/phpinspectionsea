@@ -34,7 +34,7 @@ import java.util.Set;
  */
 
 public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
-    private static final String messagePattern = "': %t%' can be declared as return type hint";
+    private static final String messagePattern = "': %t%' can be declared as return type hint.";
 
     private static final Set<String> returnTypes = new HashSet<>();
     private static final Set<String> voidTypes   = new HashSet<>();
@@ -110,7 +110,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 /* case 2: offer using type */
                 if (1 == typesCount) {
                     final String singleType    = normalizedTypes.iterator().next();
-                    final String suggestedType = voidTypes.contains(singleType) ? Types.strVoid : singleType;
+                    final String suggestedType
+                        = voidTypes.contains(singleType) ? Types.strVoid : compactType(singleType, method);
 
                     final boolean isLegitBasic = singleType.startsWith("\\") || returnTypes.contains(singleType);
                     final boolean isLegitVoid  = supportNullableTypes && suggestedType.equals(Types.strVoid);
@@ -123,8 +124,9 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 if (2 == typesCount && supportNullableTypes && normalizedTypes.contains(Types.strNull)) {
                     normalizedTypes.remove(Types.strNull);
 
-                    final String nullableType  = normalizedTypes.iterator().next();
-                    final String suggestedType = voidTypes.contains(nullableType) ? Types.strVoid : nullableType;
+                    final String nullableType = normalizedTypes.iterator().next();
+                    final String suggestedType
+                        = voidTypes.contains(nullableType) ? Types.strVoid : compactType(nullableType, method);
 
                     final boolean isLegitNullable = nullableType.startsWith("\\") || returnTypes.contains(nullableType);
                     final boolean isLegitVoid     = suggestedType.equals(Types.strVoid);
@@ -134,6 +136,18 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(typeHint));
                     }
                 }
+            }
+
+            private String compactType(@NotNull String type, @NotNull Method method) {
+                String compacted = type;
+                if (type.startsWith("\\")) {
+                    final PhpClass clazz   = method.getContainingClass();
+                    final String nameSpace = null == clazz ? null : clazz.getNamespaceName();
+                    if (null != nameSpace && nameSpace.length() > 1 && type.startsWith(nameSpace)) {
+                        compacted = compacted.replace(nameSpace, "");
+                    }
+                }
+                return compacted;
             }
 
             private void checkNonImplicitNullReturn(@NotNull Method method, @NotNull Set<String> types) {

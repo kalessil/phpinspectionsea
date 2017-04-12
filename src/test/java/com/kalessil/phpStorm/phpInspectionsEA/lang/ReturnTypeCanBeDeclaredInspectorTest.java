@@ -1,7 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.lang;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
@@ -12,13 +11,20 @@ final public class ReturnTypeCanBeDeclaredInspectorTest extends PhpCodeInsightFi
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(ReturnTypeCanBeDeclaredInspector.class);
 
-        myFixture.configureByFile("fixtures/lang/return-type-hints.php");
+        myFixture.configureByFile("fixtures/lang/typeHints/return-type-hints.ns.php");
+        myFixture.testHighlighting(true, false, true);
+
+        myFixture.configureByFile("fixtures/lang/typeHints/return-type-hints.php");
         myFixture.testHighlighting(true, false, true);
 
         for (IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/lang/return-type-hints.fixed.php");
+        myFixture.checkResultByFile(
+            "fixtures/lang/typeHints/return-type-hints.php",
+            "fixtures/lang/typeHints/return-type-hints.fixed.php",
+            false
+        );
     }
 }

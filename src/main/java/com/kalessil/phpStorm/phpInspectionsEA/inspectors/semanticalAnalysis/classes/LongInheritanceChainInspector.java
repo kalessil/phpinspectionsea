@@ -11,8 +11,25 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class LongInheritanceChainInspector extends BasePhpInspection {
-    private static final String message = "Class has 3 or more parent classes, consider using appropriate design patterns.";
+    private static final String messagePattern = "Class has %c% parent classes, consider using appropriate design patterns.";
+
+    private static final Set<String> showStoppers = new HashSet<>();
+    static {
+        showStoppers.add("\\PHPUnit_Framework_TestCase");
+        showStoppers.add("\\PHPUnit\\Framework\\TestCase");
+
+        showStoppers.add("\\yii\\base\\Behavior");
+        showStoppers.add("\\yii\\base\\Component");
+
+        showStoppers.add("\\Shopware\\Bundle\\StoreFrontBundle\\Struct\\BaseProduct");
+        showStoppers.add("\\Enlight_Controller_Action");
+
+        showStoppers.add("");
+    }
 
     @NotNull
     public String getShortName() {
@@ -31,16 +48,28 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* count parents */
-                int intParentsCount   = 0;
                 PhpClass classToCheck = clazz;
-                /* in source code class CAN extend itself, PS will report it but data structure is incorrect still */
-                while (null != classToCheck.getSuperClass() && clazz != classToCheck.getSuperClass()) {
-                    classToCheck = classToCheck.getSuperClass();
-                    ++intParentsCount;
+                PhpClass parent       = classToCheck.getSuperClass();
+                /* false-positives: abstract class implementation */
+                if (null != parent && !classToCheck.isAbstract() && parent.isAbstract()) {
+                    return;
                 }
 
-                if (intParentsCount >= 3 && !clazz.isDeprecated()) {
+                int parentsCount = 0;
+                /* in source code class CAN extend itself, PS will report it but data structure is incorrect still */
+                while (null != parent && clazz != parent) {
+                    classToCheck = parent;
+                    parent       = classToCheck.getSuperClass();
+                    ++parentsCount;
+
+                    /* show-stoppers: frameworks god classes */
+                    if (null != parent && showStoppers.contains(parent.getFQN())) {
+                        break;
+                    }
+                }
+
+                if (parentsCount >= 3 && !clazz.isDeprecated()) {
+                    final String message = messagePattern.replace("%c%", String.valueOf(parentsCount));
                     holder.registerProblem(psiClassName, message, ProblemHighlightType.WEAK_WARNING);
                 }
             }

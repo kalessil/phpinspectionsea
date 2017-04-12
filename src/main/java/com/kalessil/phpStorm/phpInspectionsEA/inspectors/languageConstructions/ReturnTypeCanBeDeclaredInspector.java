@@ -151,10 +151,13 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             }
 
             private void checkNonImplicitNullReturn(@NotNull Method method, @NotNull Set<String> types) {
-                if (!types.isEmpty() && !types.contains(Types.strNull) && !types.contains(Types.strVoid)) {
+                if (
+                    !method.isAbstract() && !types.isEmpty() &&
+                    !types.contains(Types.strNull) && !types.contains(Types.strVoid)
+                ) {
                     final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
                     final PsiElement last     = null == body ? null : ExpressionSemanticUtil.getLastStatement(body);
-                    if ((null == last && !method.isAbstract()) || (!(last instanceof PhpReturn) && !(last instanceof PhpThrow))) {
+                    if (null == last || (!(last instanceof PhpReturn) && !(last instanceof PhpThrow))) {
                         types.add(Types.strNull);
                     }
                 }

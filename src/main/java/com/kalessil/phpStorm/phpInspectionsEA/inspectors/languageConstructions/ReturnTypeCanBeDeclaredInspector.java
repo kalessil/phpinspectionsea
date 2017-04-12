@@ -9,8 +9,6 @@ import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.fixers.UnnecessaryElseFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
@@ -107,16 +105,14 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     }
                 }
                 /* case 3: offer using nullable type */
-                if (2 == typesCount && supportNullableTypes) {
-                    if (normalizedTypes.contains(Types.strNull)) {
-                        normalizedTypes.remove(Types.strNull);
+                if (2 == typesCount && supportNullableTypes && normalizedTypes.contains(Types.strNull)) {
+                    normalizedTypes.remove(Types.strNull);
 
-                        final String nullableType = normalizedTypes.iterator().next();
-                        final boolean isLegit     = nullableType.startsWith("\\") || returnTypes.contains(nullableType);
-                        if (isLegit) {
-                            final String message = messagePattern.replace("%t%", "?" + nullableType);
-                            holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                        }
+                    final String nullableType = normalizedTypes.iterator().next();
+                    final boolean isLegit     = nullableType.startsWith("\\") || returnTypes.contains(nullableType);
+                    if (isLegit) {
+                        final String message = messagePattern.replace("%t%", "?" + nullableType);
+                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                 }
             }

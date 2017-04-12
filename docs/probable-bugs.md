@@ -74,3 +74,10 @@ Ignoring this PHP specific can lead to introducing bugs and even [vulnerabilitie
 
 PHP is not warning if a 'compact()' was called referencing non-existent variable. A typo or refactoring might cost 
 long debugging in this case.
+
+# Class autoloading correctness
+
+> Note: the inspection is based on PSR-0 and psr-4 autoloading Standards
+
+From time to time we name class and the file containing it with typos, or probably renaming class without renaming its' 
+file and breaking class autoloading. The inspection will spot class and file names mismatch before the issue popped up.

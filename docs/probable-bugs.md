@@ -77,7 +77,7 @@ long debugging in this case.
 
 # Class autoloading correctness
 
-> Note: the inspection is based on PSR-0 and psr-4 autoloading Standards
+> Note: the inspection is based on PSR-0 and psr-4 autoloading standards
 
 From time to time we name class and the file containing it with typos, or probably renaming class without renaming its' 
 file and breaking class autoloading. The inspection will spot class and file names mismatch before the issue popped up.

@@ -664,6 +664,10 @@ This release brings important bug-fixes and new inspections.
         shortName="ArgumentUnpackingCanBeUsedInspection"          displayName="Argument unpacking can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ArgumentUnpackingCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ReturnTypeCanBeDeclaredInspection"             displayName="Return type hint can be used"
+        groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ReturnTypeCanBeDeclaredInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

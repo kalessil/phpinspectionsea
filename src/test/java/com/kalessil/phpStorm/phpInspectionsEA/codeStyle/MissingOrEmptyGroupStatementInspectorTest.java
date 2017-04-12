@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.MissingOrEmptyGroupStatementInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MissingOrEmptyGroupStatementInspector;
 
 final public class MissingOrEmptyGroupStatementInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsMissingStatements() {

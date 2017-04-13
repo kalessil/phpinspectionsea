@@ -258,7 +258,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 final PsiElement operator = ((UnaryExpression) value).getOperation();
                 wrap = null != operator && PhpTokenTypes.kwCLONE == operator.getNode().getElementType();
             }
-            if (wrap && !(variable.getParent() instanceof PhpThrow)) {
+            if (wrap && variable.getParent() instanceof MemberReference) {
                 final String wrappedPattern = "(" + value.getText() + ")";
                 final ParenthesizedExpression wrapped
                     = PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, wrappedPattern);

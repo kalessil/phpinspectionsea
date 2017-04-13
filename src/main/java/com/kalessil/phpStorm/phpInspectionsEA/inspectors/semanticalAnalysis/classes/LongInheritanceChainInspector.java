@@ -19,16 +19,17 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
 
     private static final Set<String> showStoppers = new HashSet<>();
     static {
+        /* for future people: controller classes must not appear here - deal with you debts! */
+
         /* allows to introduce own abstraction and test cases */
         showStoppers.add("\\PHPUnit_Framework_TestCase");
         showStoppers.add("\\PHPUnit\\Framework\\TestCase");
 
-        /* prevents over-inheritance in user space; Yii 2 */
-        showStoppers.add("\\yii\\base\\Controller");
+        /* prevents over-inheritance in user space; Yii 2+ */
         showStoppers.add("\\yii\\base\\Component");
         showStoppers.add("\\yii\\base\\Behavior");
 
-        /* prevents over-inheritance in user space; Zend Framework 2 */
+        /* prevents over-inheritance in user space; Zend Framework 2+ */
         showStoppers.add("\\Zend\\Form\\Form");
     }
 
@@ -65,6 +66,7 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
 
                     /* show-stoppers: frameworks god classes */
                     if (null != parent && showStoppers.contains(parent.getFQN())) {
+                        ++parentsCount;
                         break;
                     }
                 }

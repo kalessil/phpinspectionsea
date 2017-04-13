@@ -31,6 +31,7 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
 
         showStoppers.add("\\sfActions");
         showStoppers.add("\\sfAction");
+        showStoppers.add("\\sfBaseTask");
         showStoppers.add("\\sfFormObject");
         showStoppers.add("\\sfFormFilter");
 

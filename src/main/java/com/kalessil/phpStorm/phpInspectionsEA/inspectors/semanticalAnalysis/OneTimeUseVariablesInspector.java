@@ -14,6 +14,7 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableI
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
@@ -27,6 +28,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class OneTimeUseVariablesInspector extends BasePhpInspection {
     private static final String messagePattern = "Variable $%v% is redundant.";
@@ -241,8 +250,24 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 nextExpression.delete();
             }
 
+            /* inline the value */
+            boolean wrap = false;
+            if (value instanceof NewExpression) {
+                wrap = true;
+            } else if (value instanceof UnaryExpression) {
+                final PsiElement operator = ((UnaryExpression) value).getOperation();
+                wrap = null != operator && PhpTokenTypes.kwCLONE == operator.getNode().getElementType();
+            }
+            if (wrap && !(variable.getParent() instanceof PhpThrow)) {
+                final String wrappedPattern = "(" + value.getText() + ")";
+                final ParenthesizedExpression wrapped
+                    = PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, wrappedPattern);
+                variable.replace(wrapped);
+            } else {
+                variable.replace(value);
+            }
+
             /* delete assignment itself */
-            variable.replace(value);
             assignment.delete();
         }
     }

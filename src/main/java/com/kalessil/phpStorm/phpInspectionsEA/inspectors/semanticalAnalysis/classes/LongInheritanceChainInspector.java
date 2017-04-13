@@ -19,25 +19,17 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
 
     private static final Set<String> showStoppers = new HashSet<>();
     static {
+        /* allows to introduce own abstraction and test cases */
         showStoppers.add("\\PHPUnit_Framework_TestCase");
         showStoppers.add("\\PHPUnit\\Framework\\TestCase");
 
-        showStoppers.add("\\yii\\base\\Behavior");
+        /* prevents over-inheritance in user space; Yii 2 */
+        showStoppers.add("\\yii\\base\\Controller");
         showStoppers.add("\\yii\\base\\Component");
+        showStoppers.add("\\yii\\base\\Behavior");
 
-        showStoppers.add("\\Shopware\\Bundle\\StoreFrontBundle\\Struct\\BaseProduct");
-        showStoppers.add("\\Enlight_Controller_Action");
-        showStoppers.add("\\Enlight_Plugin_Bootstrap");
-
-        showStoppers.add("\\sfActions");
-        showStoppers.add("\\sfAction");
-        showStoppers.add("\\sfBaseTask");
-        showStoppers.add("\\sfFormObject");
-        showStoppers.add("\\sfFormFilter");
-
-        showStoppers.add("\\BaseObject");
-        showStoppers.add("\\ModelCriteria");
-        showStoppers.add("\\Propel\\Runtime\\ActiveQuery\\ModelCriteria");
+        /* prevents over-inheritance in user space; Zend Framework 2 */
+        showStoppers.add("\\Zend\\Form\\Form");
     }
 
     @NotNull

@@ -1,17 +1,22 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.jetbrains.php.lang.psi.elements.ControlStatement;
-import com.jetbrains.php.lang.psi.elements.Else;
-import com.jetbrains.php.lang.psi.elements.ElseIf;
-import com.jetbrains.php.lang.psi.elements.If;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.GroupStatementImpl;
 import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -49,9 +54,81 @@ public class AvoidNotConditionalsInspector extends BasePhpInspection {
                 // Finally, check if this Unary Expression uses the not-operator.
                 final LeafPsiElement conditionOperation = (LeafPsiElement) ((UnaryExpressionImpl) statementCondition).getOperation();
                 if (null != conditionOperation && conditionOperation.getText().equals("!")) {
-                    problemsHolder.registerProblem(statementCondition, suggestionMessage, ProblemHighlightType.WEAK_WARNING);
+                    problemsHolder.registerProblem(statementCondition, suggestionMessage, ProblemHighlightType.WEAK_WARNING,
+                        new TheLocalQuickFix(controlStatement, elseStatement, (UnaryExpressionImpl) statementCondition));
                 }
             }
         };
+    }
+
+    class TheLocalQuickFix implements LocalQuickFix {
+
+        private final SmartPsiElementPointer<ControlStatement>    controlStatement;
+        private final SmartPsiElementPointer<Else>                elseStatement;
+        private final SmartPsiElementPointer<UnaryExpressionImpl> unaryExpression;
+
+        TheLocalQuickFix(@NotNull final ControlStatement controlStatement, @NotNull  final Else elseStatement, final UnaryExpressionImpl unaryExpression) {
+            super();
+
+            final SmartPointerManager factory = SmartPointerManager.getInstance(controlStatement.getProject());
+
+            this.controlStatement = factory.createSmartPsiElementPointer(controlStatement, controlStatement.getContainingFile());
+            this.elseStatement = factory.createSmartPsiElementPointer(elseStatement, elseStatement.getContainingFile());
+            this.unaryExpression = factory.createSmartPsiElementPointer(unaryExpression, unaryExpression.getContainingFile());
+        }
+
+        @Nls
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return "Flip if-else to avoid not-operator";
+        }
+
+        @Nls
+        @NotNull
+        @Override
+        public String getName() {
+            return getFamilyName();
+        }
+
+        @Override
+        public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor problemDescriptor) {
+            final ControlStatement    controlStatementElement = controlStatement.getElement();
+            final Else                elseStatementElement    = elseStatement.getElement();
+            final UnaryExpressionImpl unaryExpressionElement  = unaryExpression.getElement();
+
+            if (null == controlStatementElement || null == elseStatementElement || null == unaryExpressionElement) {
+                return;
+            }
+
+            final PsiElement unaryExpressionOperation = unaryExpressionElement.getOperation();
+            if (null == unaryExpressionOperation) {
+                return;
+            }
+
+            unaryExpressionOperation.delete();
+
+            final Statement controlTheStatement = controlStatementElement.getStatement();
+            final Statement elseTheStatement    = (Statement) elseStatementElement.getStatement();
+
+            if (null == controlTheStatement || null == elseTheStatement) {
+                return;
+            }
+
+            final Statement controlNewStatement = getStatementAsText(project, controlTheStatement);
+            final Statement elseNewStatement    = getStatementAsText(project, elseTheStatement);
+
+            controlTheStatement.replace(elseNewStatement);
+            elseTheStatement.replace(controlNewStatement);
+        }
+
+        @NotNull
+        private Statement getStatementAsText(@NotNull final Project project, final Statement controlTheStatement) {
+            final String controlStatementText = controlTheStatement instanceof GroupStatementImpl
+                ? controlTheStatement.getText()
+                : '{' + controlTheStatement.getText() + '}';
+
+            return PhpPsiElementFactory.createStatement(project, controlStatementText);
+        }
     }
 }

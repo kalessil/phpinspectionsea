@@ -25,19 +25,45 @@ Classes responsibility are not separated: inspections are also generating replac
   - Project Settings -> Project
     ![Project Settings](images/project-settings.png)
 
+    If `No SDK` is initially selected, use button `New...` to add one. System installed SDK can be selected
+    by choosing option `SDK` or `IntelliJ Platform Plugin SDK`, the latest is the more straightforward. If
+    you choose `SDK` you may be asked to configure the internal SDK to use, locate you JDK installed in your
+    system then.
+
+    If no output directory is selected in `Project Compiler Output` you can configure it to point to `out` in
+    the root of the project, it will be ignore by git also.
+
   - Project Settings -> libraries (Screenshot; Idea lib, PS jar, PS PHP/CSS plugin folders)
+
+    If there is no library, create one named the way you want, name is important only to reference it later on.
+
     ![Project libs](images/libraries.png)
 
-    If you use JetBrains toolbox to install IDEs, be sure to use directories where the IDE installation is. Don't use
-    the suggested directory containing `app` path since it does not contain all needed dependencies.
+    Paths to be included in the library must be:
+    - `[IntelliJ Root install directory]/lib`
+    - `[IntelliJ Root install directory]/plugins/CSS/lib`
+    - `[PhpStorm Root install directory]/plugins/php/lib`
+    - `[PhpStorm Root install directory]/lib/phpstorm.jar`
+
+    If you use JetBrains toolbox to install IDEs, be sure to use directories where the IDE installation really is.
+    Don't use the suggested directory containing `app` path since it does not contain all needed dependencies.
+
   - Project Settings -> Modules
 
     ![Module Settings](images/module-settings.png)
 
+    In first step of the install the file `PhpInspectionsEA.iml.dist` was renamed. This created the module
+    settings needed in here. Be sure to have similar setup. If needed, just select folders and mark them as
+    one of the categories displayed in *Mark as* section: `Sources`, `Test`, etc..
+
     ![Module Dependencies](images/module-settings-deps.png)
+
+    As the module dependencies, select the library created in previous steps, and change the scope to `Provided`.
 
   - Platform Settings -> SDKs
     ![Platform SDKs](images/sdks.png)
+
+    For the Platform SDK, just select the SDK created in earlier steps, when configuring `Project` section.
 
 ## Configuring and running test
 

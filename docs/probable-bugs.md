@@ -89,7 +89,8 @@ file and breaking class autoloading. The inspection will spot class and file nam
 The inspection name is clearly taken from Java, we also actively enhancing the inspection towards similar checks in Java.
 
 Php specific is taken into account, but some limitations are exists: is_object(), is_null() and similar is_*() functions 
-calls are not analyzed, instead we recommend to rely on null identity and instanceof operators.
+calls are not analyzed, instead we recommend to rely on null identity and instanceof operators. Another limitation is 
+that the inspection don't rely on DocBlock - types must be implicitly declared.
 
 Following cases currently supported (we'll keep extending the list):
 - method parameters (nullable objects), e.g. `public function method(?\stdClass $first, \stdClass $second = null) { ... }`

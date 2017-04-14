@@ -18,17 +18,14 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableI
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
 
 final public class NullableParameterStrategy {
-    private static final String message = "...";
+    private static final String message = "Null pointer exception may occur here.";
 
     private static final Set<String> objectTypes = new HashSet<>();
     static {
@@ -47,7 +44,7 @@ final public class NullableParameterStrategy {
             if (declaredTypes.contains(Types.strNull) || PhpLanguageUtil.isNull(parameter.getDefaultValue())) {
                 declaredTypes.remove(Types.strNull);
 
-                boolean isObject = true;
+                boolean isObject = !declaredTypes.isEmpty();
                 for (String type : declaredTypes) {
                     if (!type.startsWith("\\") && !objectTypes.contains(type)) {
                         isObject = false;
@@ -103,9 +100,8 @@ final public class NullableParameterStrategy {
             if (parent instanceof MemberReference) {
                 final MemberReference reference = (MemberReference) parent;
                 final PsiElement subject        = reference.getClassReference();
-                final PsiElement target         = OpenapiPsiSearchUtil.findResolutionOperator(reference);
-                if (null != target && subject instanceof Variable && ((Variable) subject).getName().equals(parameterName)) {
-                    holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                if (subject instanceof Variable && ((Variable) subject).getName().equals(parameterName)) {
+                    holder.registerProblem(subject, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }
             /* TODO: dispatching as an argument: resolve, check if non-nullable object */

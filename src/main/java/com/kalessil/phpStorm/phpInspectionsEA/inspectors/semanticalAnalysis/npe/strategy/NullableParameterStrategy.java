@@ -80,7 +80,7 @@ final public class NullableParameterStrategy {
                 if (PhpTokenTypes.opIDENTICAL == operation || PhpTokenTypes.opNOT_IDENTICAL == operation) {
                     PsiElement second = expression.getLeftOperand();
                     second            = second == variable ? expression.getRightOperand() : second;
-                    if (PhpLanguageUtil.isFalse(second)) {
+                    if (PhpLanguageUtil.isNull(second)) {
                         return;
                     }
 

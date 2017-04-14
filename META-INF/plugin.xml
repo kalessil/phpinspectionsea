@@ -408,6 +408,10 @@ This release brings important bug-fixes and new inspections.
         shortName="AutoloadingIssuesInspection"                   displayName="Class autoloading correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.AutoloadingIssuesInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="NullPointerExceptionInspection"                displayName="Null pointer exceptions prevention (beta)"
+        groupName="Probable bugs"                                 enabledByDefault="false" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.NullPointerExceptionInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

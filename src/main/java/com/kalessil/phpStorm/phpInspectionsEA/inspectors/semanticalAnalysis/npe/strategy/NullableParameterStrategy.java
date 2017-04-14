@@ -73,6 +73,7 @@ final public class NullableParameterStrategy {
             final PhpPsiElement variable = instruction.getAnchor();
             final PsiElement parent      = variable.getParent();
 
+            /* instanceof, implicit null comparisons */
             if (parent instanceof BinaryExpression) {
                 final BinaryExpression expression = (BinaryExpression) parent;
                 final IElementType operation      = expression.getOperationType();
@@ -89,19 +90,25 @@ final public class NullableParameterStrategy {
                     continue;
                 }
             }
+            /*non-implicit null comparisons */
+            if (parent instanceof PhpEmpty || parent instanceof PhpIsset) {
+                return;
+            }
+            /* logical operand context */
             if (ExpressionSemanticUtil.isUsedAsLogicalOperand(variable)) {
                 return;
             }
 
+            /* cases when NPE can be introduced: call on the variable */
             if (parent instanceof MemberReference) {
                 final MemberReference reference = (MemberReference) parent;
                 final PsiElement subject        = reference.getClassReference();
                 final PsiElement target         = OpenapiPsiSearchUtil.findResolutionOperator(reference);
                 if (null != target && subject instanceof Variable && ((Variable) subject).getName().equals(parameterName)) {
                     holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                    return;
                 }
             }
+            /* TODO: dispatching as an argument: resolve, check if non-nullable object */
         }
     }
 }

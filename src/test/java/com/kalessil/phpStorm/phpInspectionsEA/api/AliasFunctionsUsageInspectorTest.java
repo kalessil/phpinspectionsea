@@ -8,10 +8,10 @@ final public class AliasFunctionsUsageInspectorTest extends CodeInsightFixtureTe
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(AliasFunctionsUsageInspector.class);
 
-        myFixture.configureByFile("fixtures/api/alias-functions.php");
+        myFixture.configureByFile("fixtures/api/alias-functions.ns.php");
         myFixture.testHighlighting(true, false, true);
 
-        myFixture.configureByFile("fixtures/api/alias-functions.ns.php");
+        myFixture.configureByFile("fixtures/api/alias-functions.php");
         myFixture.testHighlighting(true, false, true);
 
         for (IntentionAction fix : myFixture.getAllQuickFixes()) {

@@ -98,7 +98,7 @@ Inspections Lists (Code style)
 | Code style           | UnnecessaryParenthesesInspection                | Unnecessary parentheses                             | yes | yes | no   | no  |
 | Code style           | DynamicInvocationViaScopeResolutionInspection   | Dynamic methods invocation via '::'                 | yes | yes | no   | no  |
 | Code style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes | yes | no   | no  |
-| Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | yes | yes | no   | no  |
+| Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | yes | yes | yes  | no  |
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes | yes | no   | no  |
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | yes | yes | no   | no  |
 | Code style           | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                  | yes | yes | no   | no  |

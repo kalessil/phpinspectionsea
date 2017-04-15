@@ -2,9 +2,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.api;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.AliasFunctionsUsageInspector;
 
-final public class AliasFunctionsUsageInspectorTest extends CodeInsightFixtureTestCase {
+final public class AliasFunctionsUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(AliasFunctionsUsageInspector.class);
 
@@ -23,6 +24,5 @@ final public class AliasFunctionsUsageInspectorTest extends CodeInsightFixtureTe
             "fixtures/api/alias-functions.fixed.php",
             false
         );
-
     }
 }

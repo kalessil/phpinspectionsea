@@ -10,7 +10,6 @@
     echo implode();
     echo array_key_exists();
     echo rtrim();
-    echo closedir();
     echo ini_set();
     echo is_writable();
     echo set_magic_quotes_runtime();

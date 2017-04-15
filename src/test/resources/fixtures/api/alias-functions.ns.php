@@ -2,11 +2,14 @@
 
 namespace OtherNamespace {
     function join() {}
+
+    echo join();
+    echo <warning descr="'join(...)' is an alias function. Use 'implode(...)' instead.">\join()</warning>;
 }
 
 namespace CasesHolder {
     use function OtherNamespace\join;
 
     echo join();
-    echo <warning descr="'sizeof(...)' is an alias function. Use 'count(...)' instead.">sizeof()</warning>;
+    echo <warning descr="'join(...)' is an alias function. Use 'implode(...)' instead.">\join()</warning>;
 }

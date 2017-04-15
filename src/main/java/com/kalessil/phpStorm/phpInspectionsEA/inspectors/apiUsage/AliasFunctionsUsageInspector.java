@@ -15,6 +15,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -45,7 +48,6 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         mapping.put("join",                 "implode");
         mapping.put("key_exists",           "array_key_exists");
         mapping.put("chop",                 "rtrim");
-        mapping.put("close",                "closedir");
         mapping.put("ini_alter",            "ini_set");
         mapping.put("is_writeable",         "is_writable");
         mapping.put("magic_quotes_runtime", "set_magic_quotes_runtime");
@@ -65,23 +67,26 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
                     /* avoid complaining to imported functions */
                     PsiElement function = reference.resolve();
                     if (null == function) {
+                        /* handle multiply resolved functions - we need one unique FQN */
+                        final Map<String, Function> resolvedFunctions = new HashMap<>();
                         for (ResolveResult resolve : reference.multiResolve(true)) {
                             final PsiElement resolved = resolve.getElement();
-                            if (null != resolved) {
-                                function = resolved;
+                            if (resolved instanceof Function) {
+                                resolvedFunctions.put(((Function) resolved).getFQN(), (Function) resolved);
                             }
                         }
+                        if (1 == resolvedFunctions.size()) {
+                            function = resolvedFunctions.values().iterator().next();
+                        }
+                        resolvedFunctions.clear();
                     }
-                    if (function instanceof Function && !((Function) function).getFQN().equals('\\' + functionName)) {
-                        return;
+                    if (function instanceof Function && ((Function) function).getFQN().equals('\\' + functionName)) {
+                        final String suggestedName = mapping.get(functionName);
+                        final String message       = messagePattern
+                                .replace("%a%", functionName)
+                                .replace("%f%", suggestedName);
+                        holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedName));
                     }
-
-                    /* fire message */
-                    final String suggestedName = mapping.get(functionName);
-                    final String message = messagePattern
-                            .replace("%a%", functionName)
-                            .replace("%f%", suggestedName);
-                    holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedName));
                 }
             }
         };

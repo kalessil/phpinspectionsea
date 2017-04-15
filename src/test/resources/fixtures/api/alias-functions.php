@@ -10,7 +10,6 @@
     echo <warning descr="'join(...)' is an alias function. Use 'implode(...)' instead.">join()</warning>;
     echo <warning descr="'key_exists(...)' is an alias function. Use 'array_key_exists(...)' instead.">key_exists()</warning>;
     echo <warning descr="'chop(...)' is an alias function. Use 'rtrim(...)' instead.">chop()</warning>;
-    echo <warning descr="'close(...)' is an alias function. Use 'closedir(...)' instead.">close()</warning>;
     echo <warning descr="'ini_alter(...)' is an alias function. Use 'ini_set(...)' instead.">ini_alter()</warning>;
     echo <warning descr="'is_writeable(...)' is an alias function. Use 'is_writable(...)' instead.">is_writeable()</warning>;
     echo <warning descr="'magic_quotes_runtime(...)' is an alias function. Use 'set_magic_quotes_runtime(...)' instead.">magic_quotes_runtime()</warning>;

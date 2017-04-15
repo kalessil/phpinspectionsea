@@ -78,19 +78,19 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 if (null == referenceName || !reference.getImmediateNamespaceName().isEmpty()) {
                     return;
                 }
+                if (reference instanceof ConstantReference && falsePositives.contains(referenceName)) {
+                    return;
+                }
                 final PhpNamespace ns = PsiTreeUtil.findChildOfType(reference.getContainingFile(), PhpNamespace.class);
                 if (null == ns) {
                     return;
                 }
-                if (reference instanceof ConstantReference && falsePositives.contains(referenceName)) {
-                    return;
-                }
 
                 /* resolve the constant/function, report if it's from the root NS */
-                final PsiElement resolved = reference.resolve();
-                final boolean isFunction  = resolved instanceof Function;
-                if (isFunction || resolved instanceof Constant) {
-                    final String fqn = ((PhpNamedElement) resolved).getFQN();
+                final PsiElement function = reference.resolve();
+                final boolean isFunction  = function instanceof Function;
+                if (isFunction || function instanceof Constant) {
+                    final String fqn = ((PhpNamedElement) function).getFQN();
                     if (fqn.length() != 1 + referenceName.length() || !fqn.equals("\\" + referenceName)) {
                         return;
                     }

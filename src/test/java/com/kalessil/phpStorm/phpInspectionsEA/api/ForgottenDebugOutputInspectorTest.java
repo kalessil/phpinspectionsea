@@ -5,14 +5,19 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.debug.Forgotte
 
 final public class ForgottenDebugOutputInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(ForgottenDebugOutputInspector.class);
+        ForgottenDebugOutputInspector inspector  = new ForgottenDebugOutputInspector();
+        inspector.defaultsTransferredToUserSpace = false;
+        inspector.registerCustomDebugMethod(""); // to force userspace FQNs extension
+
+        myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/pitfalls/forgotten-debug-statements.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testMethodsNameCollision() {
         ForgottenDebugOutputInspector inspector  = new ForgottenDebugOutputInspector();
-        inspector.defaultsTransferredToUserSpace = true;
+        inspector.defaultsTransferredToUserSpace = false;
+        inspector.registerCustomDebugMethod(""); // to force userspace FQNs extension
 
         inspector.registerCustomDebugMethod("\\DebugClass1::debug");
         inspector.registerCustomDebugMethod("\\DebugClass2::debug");
@@ -22,7 +27,11 @@ final public class ForgottenDebugOutputInspectorTest extends CodeInsightFixtureT
         myFixture.testHighlighting(true, false, true);
     }
     public void testFalsePositives() {
-        myFixture.enableInspections(ForgottenDebugOutputInspector.class);
+        ForgottenDebugOutputInspector inspector  = new ForgottenDebugOutputInspector();
+        inspector.defaultsTransferredToUserSpace = false;
+        inspector.registerCustomDebugMethod(""); // to force userspace FQNs extension
+
+        myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/pitfalls/forgotten-debug-statements-false-positives.php");
         myFixture.testHighlighting(true, false, true);

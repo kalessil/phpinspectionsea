@@ -41,7 +41,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     final private Set<String> customMethodsNames                  = new HashSet<>();
 
     // prepared content for smooth runtime
-    static private final String strProblemDescription = "Please ensure this is not a forgotten debug statement.";
+    static private final String message = "Please ensure this is not a forgotten debug statement.";
 
     public ForgottenDebugOutputInspector() {
     }
@@ -73,6 +73,8 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             migrated.add("\\Symfony\\Component\\Debug\\DebugClassLoader::enable");
             migrated.add("\\Zend\\Debug\\Debug::dump");
             migrated.add("\\Zend\\Di\\Display\\Console::export");
+            migrated.add("error_log");
+            migrated.add("phpinfo");
             migrated.addAll(this.configuration);
 
             /* migrate the list */
@@ -115,8 +117,6 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         functionsRequirements.put("var_dump",              -1);
         functionsRequirements.put("debug_zval_dump",       -1);
         functionsRequirements.put("debug_print_backtrace", -1);
-        functionsRequirements.put("phpinfo",               -1);
-        functionsRequirements.put("error_log",             -1);
     }
 
     @Override
@@ -145,7 +145,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                     if (null != clazz) {
                         final String classFqn = clazz.getFQN();
                         if (!StringUtil.isEmpty(classFqn) && match.getFirst().equals(classFqn)) {
-                            holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             return;
                         }
                     }
@@ -153,10 +153,10 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             }
 
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final String function = reference.getName();
+                final String functionName = reference.getName();
                 if (
-                    !StringUtil.isEmpty(function) && functionsRequirements.containsKey(function) &&
-                    reference.getParameters().length != functionsRequirements.get(function) // keep it here when function hit
+                    null != functionName && functionsRequirements.containsKey(functionName) &&
+                    reference.getParameters().length != functionsRequirements.get(functionName) // keep it here when function hit
                 ) {
                     PsiElement parent = reference.getParent();
 
@@ -180,13 +180,13 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                         }
                     }
 
-                    holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
 
                 /* user-defined functions */
-                if (customFunctions.contains(function)) {
-                    holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                if (customFunctions.contains(functionName)) {
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }
         };

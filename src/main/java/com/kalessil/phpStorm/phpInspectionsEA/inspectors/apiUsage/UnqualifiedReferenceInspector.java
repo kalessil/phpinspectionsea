@@ -60,19 +60,29 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                analyze(reference);
-            }
-            public void visitPhpConstantReference(ConstantReference reference) {
-                analyze(reference);
-            }
-
-            private void analyze(PhpReference reference) {
                 /* makes sense only with PHP7+ opcache */
                 final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
-                if (!phpVersion.isAtLeast(PhpLanguageLevel.PHP700)) {
-                    return;
+                if (phpVersion.isAtLeast(PhpLanguageLevel.PHP700)) {
+                    analyzeCall(reference);
+                    analyzeCallback(reference);
                 }
+            }
+            public void visitPhpConstantReference(ConstantReference reference) {
+                /* makes sense only with PHP7+ opcache */
+                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
+                if (phpVersion.isAtLeast(PhpLanguageLevel.PHP700)) {
+                    analyzeCall(reference);
+                }
+            }
 
+            private void analyzeCallback(FunctionReference reference) {
+                /* 2+ params,callback literal without injections, not starting with back-slash, without :: */
+                // call_user_func(1st param), call_user_func_array(1st param)
+                // array_filter(2nd param), array_map(1st param), array_walk(2nd param), array_reduce(2nd param)
+                // the function must exist in root ns.
+            }
+
+            private void analyzeCall(PhpReference reference) {
                 /* constructs structure expectations */
                 final String referenceName = reference.getName();
                 if (null == referenceName || !reference.getImmediateNamespaceName().isEmpty()) {
@@ -122,6 +132,15 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 final PsiElement rootNs   = PhpPsiElementFactory.createNamespaceReference(project, "\\", false);
                 final PsiElement nameNode = target.getFirstChild();
                 nameNode.getParent().addBefore(rootNs, nameNode);
+            }
+            if (target instanceof StringLiteralExpression) {
+                final StringLiteralExpression expression = (StringLiteralExpression) target;
+                final String quote                       = expression.isSingleQuote() ? "'" : "\"";
+                final String roootNs                     = expression.isSingleQuote() ? "\\" : "\\\\";
+                final String pattern                     = quote + roootNs + expression.getContents() + quote;
+                final StringLiteralExpression replacement
+                        = PhpPsiElementFactory.createPhpPsiFromText(project, StringLiteralExpression.class, pattern);
+                target.replace(replacement);
             }
         }
     }

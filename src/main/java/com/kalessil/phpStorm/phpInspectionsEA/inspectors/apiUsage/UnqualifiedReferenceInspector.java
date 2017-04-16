@@ -155,7 +155,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
             if (target instanceof FunctionReference || target instanceof ConstantReference) {
-                final PsiElement rootNs   = PhpPsiElementFactory.createNamespaceReference(project, "\\", false);
+                final PsiElement rootNs   = PhpPsiElementFactory.createNamespaceReference(project, "\\ ", false);
                 final PsiElement nameNode = target.getFirstChild();
                 nameNode.getParent().addBefore(rootNs, nameNode);
             }

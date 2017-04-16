@@ -216,5 +216,5 @@ Inspections Lists (Performance)
 | Performance          | FilePutContentsMissUseInspection                | 'file_put_contents(...)' misused                                                            | yes | yes | no  | no  |
 | Performance          | PackedHashtableOptimizationInspection           | Packed hashtable optimizations                                                              | n/a | yes | n/a | yes |
 | Performance          | StaticLocalVariablesUsageInspection             | Static local variables usage                                                                | n/a | yes | n/a | yes |
-| Performance          | UnqualifiedReferenceInspection                  | Unqualified function/constant reference                                                     | yes | yes | no  | no  |
+| Performance          | UnqualifiedReferenceInspection                  | Unqualified function/constant reference                                                     | yes | yes | yes | no  |
 | Performance          | ExplodeMissUseInspection                        | 'explode()' misused                                                                         | no  | yes | no  | no  |

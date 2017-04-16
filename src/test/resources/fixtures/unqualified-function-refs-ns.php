@@ -16,6 +16,8 @@ namespace Unqualified\References {
     echo \array_walk([], <weak_warning descr="Using '\my_function' would enable some of opcache optimizations">'my_function'</weak_warning>);
     echo \array_reduce([], <weak_warning descr="Using '\my_function' would enable some of opcache optimizations">'my_function'</weak_warning>);
 
+    echo \array_reduce([], <weak_warning descr="Using '\my_function' would enable some of opcache optimizations">"my_function"</weak_warning>);
+
     /* false-positives: a qualified call */
     echo \uniqid();
     echo \PHP_INT_MAX;

@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnqualifiedReferenceInspector;
@@ -12,7 +13,11 @@ final public class UnqualifiedReferenceInspectorTest extends PhpCodeInsightFixtu
         myFixture.configureByFile("fixtures/unqualified-function-refs-ns.php");
         myFixture.testHighlighting(true, false, true);
 
-        /* TODO: QF tests */
+        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+            myFixture.launchAction(fix);
+        }
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/unqualified-function-refs-ns.fixed.php");
     }
     public void testFindsAllNonNsPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);

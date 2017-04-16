@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
@@ -16,7 +17,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /*
@@ -31,7 +34,8 @@ import java.util.Set;
 public class UnqualifiedReferenceInspector extends BasePhpInspection {
     private static final String messagePattern = "Using '\\%t%' would enable some of opcache optimizations";
 
-    final private static Set<String> falsePositives = new HashSet<>();
+    final private static Set<String> falsePositives             = new HashSet<>();
+    final private static Map<String, Integer> callbacksPsitions = new HashMap<>();
     static {
         falsePositives.add("true");
         falsePositives.add("TRUE");
@@ -48,6 +52,13 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
         falsePositives.add("__TRAIT__");
         falsePositives.add("__METHOD__");
         falsePositives.add("__NAMESPACE__");
+
+        callbacksPsitions.put("call_user_func", 0);
+        callbacksPsitions.put("call_user_func_array", 0);
+        callbacksPsitions.put("array_filter", 1);
+        callbacksPsitions.put("array_map", 0);
+        callbacksPsitions.put("array_walk", 1);
+        callbacksPsitions.put("array_reduce", 1);
     }
 
     @NotNull
@@ -76,10 +87,25 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
             }
 
             private void analyzeCallback(FunctionReference reference) {
-                /* 2+ params,callback literal without injections, not starting with back-slash, without :: */
-                // call_user_func(1st param), call_user_func_array(1st param)
-                // array_filter(2nd param), array_map(1st param), array_walk(2nd param), array_reduce(2nd param)
-                // the function must exist in root ns.
+                final PsiElement[] params = reference.getParameters();
+                final String functionName = reference.getName();
+                if (null != functionName && params.length >= 2 && callbacksPsitions.containsKey(functionName)) {
+                    final Integer callbackPosition = callbacksPsitions.get(functionName);
+                    if (params[callbackPosition] instanceof StringLiteralExpression) {
+                        final StringLiteralExpression callback = (StringLiteralExpression) params[callbackPosition];
+                        if (null == callback.getFirstPsiChild()) {
+                            final String function     = callback.getContents();
+                            final boolean isCandidate = !function.startsWith("\\") && !function.contains("::");
+                            if (isCandidate) {
+                                final PhpIndex index = PhpIndex.getInstance(holder.getProject());
+                                if (!index.getFunctionsByFQN("\\" + functionName).isEmpty()) {
+                                    final String message = messagePattern.replace("%t%", function);
+                                    holder.registerProblem(callback, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             private void analyzeCall(PhpReference reference) {

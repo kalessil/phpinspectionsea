@@ -44,6 +44,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
     public boolean IMPORT_CLASSES_ON_QF = true;
     public boolean USE_RELATIVE_QF      = true;
+    public boolean LOOK_ROOT_NS_UP      = false;
 
     private static final String messagePattern = "Perhaps this can be replaced with %c%::class.";
 
@@ -94,13 +95,15 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     String normalizedContents = contents.replaceAll("\\\\\\\\", "\\\\");
 
                     /* TODO: handle __NAMESPACE__.'\Class' */
-                    final boolean isFull = normalizedContents.charAt(0) == '\\';
-                    Set<String> namesToLookup = new HashSet<>();
+                    final boolean isFull            = normalizedContents.charAt(0) == '\\';
+                    final Set<String> namesToLookup = new HashSet<>();
                     if (isFull) {
                         namesToLookup.add(normalizedContents);
                     } else {
-                        normalizedContents = '\\' + normalizedContents;
-                        namesToLookup.add(normalizedContents);
+                        if (LOOK_ROOT_NS_UP || normalizedContents.contains("\\")) {
+                            normalizedContents = '\\' + normalizedContents;
+                            namesToLookup.add(normalizedContents);
+                        }
                     }
 
                     /* if we could find an appropriate candidate and resolved the class => report (case must match) */
@@ -261,12 +264,17 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     public class OptionsPanel {
         final private JPanel optionsPanel;
 
+        final private JCheckBox lookRootNamespaceUp;
         final private JCheckBox importClassesAutomatically;
         final private JCheckBox useRelativeQNs;
 
         public OptionsPanel() {
             optionsPanel = new JPanel();
             optionsPanel.setLayout(new MigLayout());
+
+            lookRootNamespaceUp = new JCheckBox("Lookup root namespace classes", LOOK_ROOT_NS_UP);
+            lookRootNamespaceUp.addChangeListener(e -> LOOK_ROOT_NS_UP = lookRootNamespaceUp.isSelected());
+            optionsPanel.add(lookRootNamespaceUp, "wrap");
 
             importClassesAutomatically = new JCheckBox("Import classes automatically", IMPORT_CLASSES_ON_QF);
             importClassesAutomatically.addChangeListener(e -> IMPORT_CLASSES_ON_QF = importClassesAutomatically.isSelected());

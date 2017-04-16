@@ -9,6 +9,7 @@ final public class ClassConstantCanBeUsedInspectorTest extends PhpCodeInsightFix
         ClassConstantCanBeUsedInspector inspector = new ClassConstantCanBeUsedInspector();
         inspector.IMPORT_CLASSES_ON_QF            = true;
         inspector.USE_RELATIVE_QF                 = true;
+        inspector.LOOK_ROOT_NS_UP                 = true;
 
         myFixture.configureByFile("fixtures/lang/classConstant/class-in-the-same-namespace.php");
         myFixture.configureByFile("fixtures/lang/classConstant/class-name-constant-ns.php");

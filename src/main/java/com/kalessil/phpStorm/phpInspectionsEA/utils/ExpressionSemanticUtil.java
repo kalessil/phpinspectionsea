@@ -255,6 +255,9 @@ final public class ExpressionSemanticUtil {
         if (parent instanceof If) {
             return true;
         }
+        if (parent instanceof TernaryExpression && expression == ((TernaryExpression) parent).getCondition()) {
+            return true;
+        }
 
         /* implicit logical operand */
         if (parent instanceof UnaryExpression) {

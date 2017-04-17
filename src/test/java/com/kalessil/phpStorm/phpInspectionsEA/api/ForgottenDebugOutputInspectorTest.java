@@ -5,12 +5,20 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.debug.Forgotte
 
 final public class ForgottenDebugOutputInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        ForgottenDebugOutputInspector inspector  = new ForgottenDebugOutputInspector();
+        inspector.defaultsTransferredToUserSpace = false;
+        inspector.registerCustomDebugMethod(""); // to force userspace FQNs extension
+
+        myFixture.enableInspections(inspector);
+
         myFixture.configureByFile("fixtures/pitfalls/forgotten-debug-statements.php");
-        myFixture.enableInspections(ForgottenDebugOutputInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
     public void testMethodsNameCollision() {
-        ForgottenDebugOutputInspector inspector = new ForgottenDebugOutputInspector();
+        ForgottenDebugOutputInspector inspector  = new ForgottenDebugOutputInspector();
+        inspector.defaultsTransferredToUserSpace = false;
+        inspector.registerCustomDebugMethod(""); // to force userspace FQNs extension
+
         inspector.registerCustomDebugMethod("\\DebugClass1::debug");
         inspector.registerCustomDebugMethod("\\DebugClass2::debug");
 
@@ -18,10 +26,14 @@ final public class ForgottenDebugOutputInspectorTest extends CodeInsightFixtureT
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }
-
     public void testFalsePositives() {
+        ForgottenDebugOutputInspector inspector  = new ForgottenDebugOutputInspector();
+        inspector.defaultsTransferredToUserSpace = false;
+        inspector.registerCustomDebugMethod(""); // to force userspace FQNs extension
+
+        myFixture.enableInspections(inspector);
+
         myFixture.configureByFile("fixtures/pitfalls/forgotten-debug-statements-false-positives.php");
-        myFixture.enableInspections(ForgottenDebugOutputInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

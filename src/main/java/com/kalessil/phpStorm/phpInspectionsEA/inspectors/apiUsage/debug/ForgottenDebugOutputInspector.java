@@ -10,31 +10,38 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.gui.PrettyListControl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import net.miginfocom.swing.MigLayout;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class ForgottenDebugOutputInspector extends BasePhpInspection {
     // custom configuration, automatically saved between restarts so keep out of changing modifiers
-    final public LinkedList<String> configuration = new LinkedList<>();
+    final public List<String> configuration       = new ArrayList<>();
+    public boolean defaultsTransferredToUserSpace = false;
 
-    final private HashSet<String> customFunctions = new HashSet<>();
-    final private HashMap<String, Pair<String, String>> customMethods = new HashMap<>();
-    final private HashSet<String> customMethodsNames = new HashSet<>();
+    final private Set<String> customFunctions                     = new HashSet<>();
+    final private Map<String, Pair<String, String>> customMethods = new HashMap<>();
+    final private Set<String> customMethodsNames                  = new HashSet<>();
 
     // prepared content for smooth runtime
-    static private final String strProblemDescription = "Please ensure this is not a forgotten debug statement.";
+    static private final String message = "Please ensure this is not a forgotten debug statement.";
 
     public ForgottenDebugOutputInspector() {
     }
@@ -54,22 +61,31 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         customMethods.clear();
         customMethodsNames.clear();
 
-        final List<String> customDebugFQNs = new LinkedList<>();
-        customDebugFQNs.addAll(this.configuration);
+        final List<String> customDebugFQNs = new ArrayList<>();
+        if (!this.defaultsTransferredToUserSpace) {
+            /* prepare migrated list */
+            final List<String> migrated = new ArrayList<>();
+            migrated.add("\\Codeception\\Util\\Debug::pause");
+            migrated.add("\\Codeception\\Util\\Debug::debug");
+            migrated.add("\\Symfony\\Component\\Debug\\Debug::enable");
+            migrated.add("\\Symfony\\Component\\Debug\\ErrorHandler::register");
+            migrated.add("\\Symfony\\Component\\Debug\\ExceptionHandler::register");
+            migrated.add("\\Symfony\\Component\\Debug\\DebugClassLoader::enable");
+            migrated.add("\\Zend\\Debug\\Debug::dump");
+            migrated.add("\\Zend\\Di\\Display\\Console::export");
+            migrated.add("error_log");
+            migrated.add("phpinfo");
+            migrated.addAll(this.configuration);
 
-        /* known debug methods from community */
-        /* codeception */
-        customDebugFQNs.add("\\Codeception\\Util\\Debug::pause");
-        customDebugFQNs.add("\\Codeception\\Util\\Debug::debug");
-        /* symfony 2/3; */
-        customDebugFQNs.add("\\Symfony\\Component\\Debug\\Debug::enable");
-        customDebugFQNs.add("\\Symfony\\Component\\Debug\\ErrorHandler::register");
-        customDebugFQNs.add("\\Symfony\\Component\\Debug\\ExceptionHandler::register");
-        customDebugFQNs.add("\\Symfony\\Component\\Debug\\DebugClassLoader::enable");
-        /* ZF 2 */
-        customDebugFQNs.add("\\Zend\\Debug\\Debug::dump");
-        customDebugFQNs.add("\\Zend\\Di\\Display\\Console::export");
-        /* known debug methods from community */
+            /* migrate the list */
+            this.configuration.clear();
+            this.configuration.addAll(migrated);
+            this.defaultsTransferredToUserSpace = true;
+
+            /* cleanup */
+            migrated.clear();
+        }
+        customDebugFQNs.addAll(this.configuration);
 
         /* parse what was provided FQNs */
         for (String stringDescriptor : customDebugFQNs) {
@@ -79,7 +95,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                 continue;
             }
 
-            String[] disassembledDescriptor = stringDescriptor.split("::", 2);
+            final String[] disassembledDescriptor = stringDescriptor.split("::", 2);
             customMethods.put(
                     stringDescriptor.toLowerCase(),
                     Pair.create(disassembledDescriptor[0], disassembledDescriptor[1])
@@ -101,8 +117,6 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         functionsRequirements.put("var_dump",              -1);
         functionsRequirements.put("debug_zval_dump",       -1);
         functionsRequirements.put("debug_print_backtrace", -1);
-        functionsRequirements.put("phpinfo",               -1);
-        functionsRequirements.put("error_log",             -1);
     }
 
     @Override
@@ -121,17 +135,17 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                     }
 
                     // resolve as method
-                    PsiElement resolved = reference.resolve();
+                    final PsiElement resolved = reference.resolve();
                     if (!(resolved instanceof Method)) {
                         continue;
                     }
 
                     // analyze if class as needed
-                    PhpClass clazz = ((Method) resolved).getContainingClass();
+                    final PhpClass clazz = ((Method) resolved).getContainingClass();
                     if (null != clazz) {
-                        String classFqn = clazz.getFQN();
+                        final String classFqn = clazz.getFQN();
                         if (!StringUtil.isEmpty(classFqn) && match.getFirst().equals(classFqn)) {
-                            holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             return;
                         }
                     }
@@ -139,10 +153,10 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             }
 
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final String function = reference.getName();
+                final String functionName = reference.getName();
                 if (
-                    !StringUtil.isEmpty(function) && functionsRequirements.containsKey(function) &&
-                    reference.getParameters().length != functionsRequirements.get(function) // keep it here when function hit
+                    null != functionName && functionsRequirements.containsKey(functionName) &&
+                    reference.getParameters().length != functionsRequirements.get(functionName) // keep it here when function hit
                 ) {
                     PsiElement parent = reference.getParent();
 
@@ -157,8 +171,8 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                     /* ensure it's not prepended with 'ob_start();' */
                     if (parent instanceof StatementImpl) {
                         final PsiElement preceding = ((StatementImpl) parent).getPrevPsiSibling();
-                        if (null != preceding && preceding.getFirstChild() instanceof FunctionReferenceImpl) {
-                            final FunctionReferenceImpl precedingCall = (FunctionReferenceImpl) preceding.getFirstChild();
+                        if (null != preceding && OpenapiTypesUtil.isFunctionReference(preceding.getFirstChild())) {
+                            final FunctionReference precedingCall = (FunctionReference) preceding.getFirstChild();
                             final String precedingFunction            = precedingCall.getName();
                             if (!StringUtil.isEmpty(precedingFunction) && precedingFunction.equals("ob_start")) {
                                 return;
@@ -166,13 +180,13 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                         }
                     }
 
-                    holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
 
                 /* user-defined functions */
-                if (customFunctions.contains(function)) {
-                    holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                if (customFunctions.contains(functionName)) {
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }
         };
@@ -189,7 +203,6 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             optionsPanel = new JPanel();
             optionsPanel.setLayout(new MigLayout());
 
-            // inject controls
             optionsPanel.add(new JLabel("Custom debug methods:"), "wrap");
             optionsPanel.add((new PrettyListControl(configuration) {
                 protected void fireContentsChanged() {

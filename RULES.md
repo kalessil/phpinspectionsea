@@ -98,7 +98,7 @@ Inspections Lists (Code style)
 | Code style           | UnnecessaryParenthesesInspection                | Unnecessary parentheses                             | yes | yes | no   | no  |
 | Code style           | DynamicInvocationViaScopeResolutionInspection   | Dynamic methods invocation via '::'                 | yes | yes | no   | no  |
 | Code style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes | yes | no   | no  |
-| Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | yes | yes | no   | no  |
+| Code style           | UnnecessaryUseAliasInspection                   | Unnecessary aliases                                 | yes | yes | yes  | no  |
 | Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes | yes | no   | no  |
 | Code style           | PrefixedIncDecrementEquivalentInspection        | Prefixed increment/decrement equivalent             | yes | yes | no   | no  |
 | Code style           | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                  | yes | yes | no   | no  |
@@ -216,5 +216,5 @@ Inspections Lists (Performance)
 | Performance          | FilePutContentsMissUseInspection                | 'file_put_contents(...)' misused                                                            | yes | yes | no  | no  |
 | Performance          | PackedHashtableOptimizationInspection           | Packed hashtable optimizations                                                              | n/a | yes | n/a | yes |
 | Performance          | StaticLocalVariablesUsageInspection             | Static local variables usage                                                                | n/a | yes | n/a | yes |
-| Performance          | UnqualifiedReferenceInspection                  | Unqualified function/constant reference                                                     | yes | yes | no  | no  |
+| Performance          | UnqualifiedReferenceInspection                  | Unqualified function/constant reference                                                     | yes | yes | yes | no  |
 | Performance          | ExplodeMissUseInspection                        | 'explode()' misused                                                                         | no  | yes | no  | no  |

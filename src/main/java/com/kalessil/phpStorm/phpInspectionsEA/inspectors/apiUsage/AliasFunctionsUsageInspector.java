@@ -5,9 +5,9 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.ResolveResult;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -15,6 +15,16 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Map;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class AliasFunctionsUsageInspector extends BasePhpInspection {
     private static final String messagePattern = "'%a%(...)' is an alias function. Use '%f%(...)' instead.";
@@ -36,7 +46,6 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         mapping.put("join",                 "implode");
         mapping.put("key_exists",           "array_key_exists");
         mapping.put("chop",                 "rtrim");
-        mapping.put("close",                "closedir");
         mapping.put("ini_alter",            "ini_set");
         mapping.put("is_writeable",         "is_writable");
         mapping.put("magic_quotes_runtime", "set_magic_quotes_runtime");
@@ -52,19 +61,30 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (!StringUtil.isEmpty(functionName) && mapping.containsKey(functionName)) {
+                if (null != functionName && mapping.containsKey(functionName)) {
                     /* avoid complaining to imported functions */
-                    final PsiElement function = reference.resolve();
-                    if (function instanceof Function && !((Function) function).getFQN().equals('\\' + functionName)) {
-                        return;
+                    PsiElement function = reference.resolve();
+                    if (null == function) {
+                        /* handle multiply resolved functions - we need one unique FQN */
+                        final Map<String, Function> resolvedFunctions = new HashMap<>();
+                        for (ResolveResult resolve : reference.multiResolve(true)) {
+                            final PsiElement resolved = resolve.getElement();
+                            if (resolved instanceof Function) {
+                                resolvedFunctions.put(((Function) resolved).getFQN(), (Function) resolved);
+                            }
+                        }
+                        if (1 == resolvedFunctions.size()) {
+                            function = resolvedFunctions.values().iterator().next();
+                        }
+                        resolvedFunctions.clear();
                     }
-
-                    /* fire message */
-                    final String suggestedName = mapping.get(functionName);
-                    final String message = messagePattern
-                            .replace("%a%", functionName)
-                            .replace("%f%", suggestedName);
-                    holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedName));
+                    if (function instanceof Function && ((Function) function).getFQN().equals('\\' + functionName)) {
+                        final String suggestedName = mapping.get(functionName);
+                        final String message       = messagePattern
+                                .replace("%a%", functionName)
+                                .replace("%f%", suggestedName);
+                        holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedName));
+                    }
                 }
             }
         };

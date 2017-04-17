@@ -40,6 +40,8 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
 
     private static final List<String> suppressibleFunctions = Arrays.asList(
             "\\fclose",            // if fails to close a file, app will have more serious problems ^_^
+            "\\closedir",          // quite the same as above
+            "\\ftp_close",         // quite the same as above
             "\\ldap_unbind",       // quite the same as above
             "\\ldap_free_result",  // quite the same as above
             "\\sqlite_close",      // quite the same as above
@@ -52,6 +54,7 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
             "\\unlink",            // same as above
             "\\rmdir",             // same as above
             "\\chmod",             // same as above
+            "\\ftp_chmod",         // same as above
 
             "\\file_exists",       // honest checks
             "\\posix_isatty",      // honest checks

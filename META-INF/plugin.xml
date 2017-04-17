@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.5</version>
+  <version>2.3.6</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -54,23 +54,40 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Our <a href="https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security/x/16148880#/">crowdfunding campaign</a> needs your support!
-This release brings important bug-fixes and new inspections.
+Our <a href="https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security/x/16148880#/">crowdfunding campaign</a> finishes soon!
+This release makes you even more awesome, really =).
 <br/>
 <br/>
-- Empty class: resolved false-positives (inheriting abstract classes)<br/>
-- Incomplete throw statements: resolved false-positives (%s, non-exception classes being reported)<br/>
-- Non-optimal regular expression: resolve false-positives (suggested ctype_* are locale-dependent)<br/>
-- Power operator can be used: bug-fix (incorrect QFing in some cases)<br/>
-- Unnecessary double quotes: bug-fix ("" was not reported)<br/>
-- 'explode()' misused: QF implemented<br/>
-- 'file_put_contents(...)' misused: resolved false-positives (method calls)<br/>
-- 'isset(...)' usage: resolved false-positives (@property annotations)<br/>
-- *printf/*scanf arguments count mismatches: resolved false-positives (*scanf %[...] modifiers, variadic variables)<br/>
+- Alias functions usage: resolved false-positives (imported functions)<br/>
+- Default value is hidden in else branch: resolved a false-positive (container being used in conditions)<br/>
+- Long inheritance chain: resolved false-positives (frameworks aware)<br/>
+- One-time use variables: QF bug-fix<br/>
+- Parameter could be declared as array: QF bug-fix<br/>
+- Phar-incompatible 'realpath()' usage: QF implemented<br/>
+- Statement could be decoupled from foreach: resolved false-positives (statements not operating with vars)<br/>
+- Type unsafe comparison: QF implemented<br/>
+- Unnecessary parentheses: resolved false-positives (multiple cases)<br/>
+- Unused constructor dependencies: resolved false-positives (static context was not checked)<br/>
+- Variable functions usage: QF rewritten<br/>
+- ::class can be used: QF bug-fix, new options (lookup root namespace classes); thank you @Garethp<br/>
+- 'empty(...)' usage: QF implemented<br/>
+- 'stristr(...)/stripos(...)/strripos(...)' could be replaced with 'strstr(...)/strpos()/strrpos()': QF bug-fix<br/>
+- 'substr(...)' short-hand usage: QF bug-fix, resolved false-positives (non-numeric offset)<br/>
 <br/>
-- Argument unpacking can be used: implemented<br/>
-- Redundant 'else' keyword: implemented<br/>
-- Strings normalization: implemented<br/>
+- Parameter/variable is not used: new patterns<br/>
+- A constant can be used: new patterns<br/>
+- Overriding deprecated methods: new patterns<br/>
+- Suspicious assignments: new patterns<br/>
+- 'array_keys(...)/array_values(...)' used as foreach array: dropped<br/>
+- Foreach source to iterate over: reworked (less false-positives)<br/>
+- Unqualified function/constant reference: new patters<br/>
+<br/>
+- Class autoloading correctness: implemented<br/>
+- Multiple return statements usage: implemented (needs activation)<br/>
+- Null pointer exceptions prevention: pilot version<br/>
+- Return type hint can be used: implemented<br/>
+- Usage of the silence operator: implemented (context aware!); thank you @funivan<br/>
+<br/>
 <hr/>
   ]]></change-notes>
 
@@ -408,6 +425,10 @@ This release brings important bug-fixes and new inspections.
         shortName="AutoloadingIssuesInspection"                   displayName="Class autoloading correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.AutoloadingIssuesInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="NullPointerExceptionInspection"                displayName="Null pointer exceptions prevention (beta)"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.NullPointerExceptionInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

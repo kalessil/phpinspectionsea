@@ -1,10 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ThrowRawExceptionInspector;
 
-final public class ThrowRawExceptionInspectorTest extends CodeInsightFixtureTestCase {
+final public class ThrowRawExceptionInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(ThrowRawExceptionInspector.class);
 

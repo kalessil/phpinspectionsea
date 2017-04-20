@@ -41,7 +41,6 @@ Inspections Lists (Control flow)
 | Control flow         | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                | yes | yes | no   | no  |
 | Control flow         | StrTrUsageAsStrReplaceInspection                | 'strtr(...)' could be replaced with 'str_replace(...)'                            | no  | yes | no   | no  |
 | Control flow         | SubStrUsedAsStrPosInspection                    | 'substr(...)' could be replaced with 'strpos(...)'                                | no  | yes | no   | no  |
-| Control flow         | StrNcmpUsedAsStrPosInspection                   | 'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)' | no  | yes | no   | no  |
 | Control flow         | StringNormalizationInspection                   | Strings normalization                                                             | yes | yes | no   | no  |
 | Control flow         | RedundantElseClauseInspection                   | Redundant 'else' keyword                                                          | yes | yes | no   | no  |
 | --                   | ArrayFunctionsInvariantsInspection              |                                                                                   |     |     |      |     |

@@ -171,7 +171,7 @@ This release makes you even more awesome, really =).
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.SubStrShortHandUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="SubStrUsedAsArrayAccessInspection"             displayName="'(mb_)substr(...)' used as index-based access"
+        shortName="SubStrUsedAsArrayAccessInspection"             displayName="'substr(...)' used as index-based access"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.SubStrUsedAsArrayAccessInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

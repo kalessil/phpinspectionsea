@@ -20,6 +20,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class ForeachSourceInspector extends BasePhpInspection {
     final private String patternNotRecognized = "Expressions' type was not recognized, please check type hints.";
     final private String patternMixedTypes    = "Expressions' type contains '%t%', please specify possible types instead (best practices).";
@@ -120,6 +129,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
 
                 /* do not process foreach-compatible types */
                 types.remove(Types.strArray);
+                types.remove(Types.strIterable);
                 types.remove("\\Traversable");
                 types.remove("\\Iterator");
                 types.remove("\\IteratorAggregate");

@@ -5,14 +5,18 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -26,6 +30,16 @@ import org.jetbrains.annotations.NotNull;
 public class NonSecureUniqidUsageInspector extends BasePhpInspection {
     private static final String message = "Please provide both prefix and more entropy parameters.";
 
+    final private static Map<String, Integer> callbacksPositions = new HashMap<>();
+    static {
+        callbacksPositions.put("call_user_func", 0);
+        callbacksPositions.put("call_user_func_array", 0);
+        callbacksPositions.put("array_filter", 1);
+        callbacksPositions.put("array_map", 0);
+        callbacksPositions.put("array_walk", 1);
+        callbacksPositions.put("array_reduce", 1);
+    }
+
     @NotNull
     public String getShortName() {
         return "NonSecureUniqidUsageInspection";
@@ -36,18 +50,48 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final String strFunction = reference.getName();
-                if (
-                    2 != reference.getParameters().length &&
-                    !StringUtil.isEmpty(strFunction) && strFunction.equals("uniqid")
-                ) {
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new TheLocalFix());
+                final String functionName = reference.getName();
+                if (null != functionName) {
+                    final PsiElement[] params = reference.getParameters();
+                    if (params.length < 2 && functionName.equals("uniqid")) {
+                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new AddMissingParametersFix());
+                    }
+
+                    if (params.length >= 2 && callbacksPositions.containsKey(functionName)) {
+                        final int neededIndex = callbacksPositions.get(functionName);
+                        if (params[neededIndex] instanceof StringLiteralExpression) {
+                            String callback = ((StringLiteralExpression) params[neededIndex]).getContents();
+                            if (callback.startsWith("\\")) {
+                                callback = callback.substring(1);
+                            }
+                            if (callback.equals("uniqid")) {
+                                holder.registerProblem(params[neededIndex], message, ProblemHighlightType.GENERIC_ERROR, new UseLambdaFix());
+                            }
+                        }
+                    }
                 }
             }
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static class UseLambdaFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Add missing arguments";
+        }
+
+        UseLambdaFix () {
+            super("function($value){ return uniqid($value, true); }");
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            super.applyFix(project, descriptor);
+        }
+    }
+
+    private static class AddMissingParametersFix implements LocalQuickFix {
         @NotNull
         @Override
         public String getName() {
@@ -68,7 +112,8 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
                 final PsiElement[] params    = call.getParameters();
 
                 /* override existing parameters */
-                final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, "uniqid('', true)");
+                final FunctionReference replacement
+                        = PhpPsiElementFactory.createFunctionReference(project, "uniqid('', true)");
                 for (int index = 0; index < params.length; ++index) {
                     replacement.getParameters()[index].replace(params[index]);
                 }

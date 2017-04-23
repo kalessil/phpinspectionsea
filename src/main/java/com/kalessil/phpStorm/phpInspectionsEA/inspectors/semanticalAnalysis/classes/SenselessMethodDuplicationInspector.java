@@ -120,7 +120,6 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 if (method.getAccess().equals(parentMethod.getAccess())) {
                     final String message = messagePatternIdentical.replace("%s%", method.getName());
                     holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING, canFix ? new DropMethodFix() : null);
-                    // TODO: QF, [return] parent::...(...) if not private
                 } else {
                     final String message = messagePatternProxy.replace("%s%", method.getName());
                     holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING, canFix ? new ProxyCallFix() : null);

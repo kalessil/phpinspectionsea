@@ -60,7 +60,7 @@ Inspections Lists (Unused)
 | Unused               | PropertyInitializationFlawsInspection           | Class property initialization flaws                 | yes | yes | no   | no  |
 | Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a | yes | n/a  | no  |
 | Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes | yes | no   | no  |
-| Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | n/a | yes | n/a  | no  |
+| Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | yes | yes | yes  | no  |
 | Unused               | UnusedGotoLabelInspection                       | Unused goto labels                                  | yes | yes | no   | no  |
 
 Inspections Lists (Compatibility)

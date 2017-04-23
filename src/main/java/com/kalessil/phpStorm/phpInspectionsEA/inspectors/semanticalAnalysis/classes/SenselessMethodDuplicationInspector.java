@@ -1,22 +1,26 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.DropMethodFix;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -29,11 +33,11 @@ import java.util.Set;
 
 public class SenselessMethodDuplicationInspector extends BasePhpInspection {
     // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
     public int MAX_METHOD_SIZE = 20;
     /* TODO: configurable via drop-down; clean code: 20 lines/method; PMD: 50; Checkstyle: 100 */
 
-    private static final String messagePattern = "'%s%' method can be dropped, as it identical to parent's one.";
+    private static final String messagePatternIdentical = "'%s%' method can be dropped, as it identical to parent's one.";
+    private static final String messagePatternProxy     = "'%s%' method should call parent's one instead of duplicating code.";
 
     @NotNull
     public String getShortName() {
@@ -112,9 +116,15 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 }
                 collection.clear();
 
-
-                final String message = messagePattern.replace("%s%", method.getName());
-                holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING);
+                final boolean canFix = !parentMethod.getAccess().isPrivate();
+                if (method.getAccess().equals(parentMethod.getAccess())) {
+                    final String message = messagePatternIdentical.replace("%s%", method.getName());
+                    holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING, canFix ? new DropMethodFix() : null);
+                    // TODO: QF, [return] parent::...(...) if not private
+                } else {
+                    final String message = messagePatternProxy.replace("%s%", method.getName());
+                    holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING, canFix ? new ProxyCallFix() : null);
+                }
             }
 
             private Collection<String> getUsedReferences(@NotNull GroupStatement body) {
@@ -137,5 +147,53 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 return fqns;
             }
         };
+    }
+
+    private static class ProxyCallFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Proxy call to parent";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement().getParent();
+            if (expression instanceof Method) {
+                final Method method = (Method) expression;
+
+                /* pre-collect resources needed for generation */
+                final List<String> parameters = new ArrayList<>();
+                for (Parameter parameter: method.getParameters()) {
+                    parameters.add("$" + parameter.getName());
+                }
+                final Set<String> types = new HashSet<>();
+                for (String type : method.getType().global(project).filterUnknown().getTypes()) {
+                    types.add(Types.getType(type));
+                }
+                types.remove(Types.strVoid);
+
+                /* generate replacement and release resources */
+                final String pattern = "function() { %r%parent::%m%(%p%); }"
+                        .replace("%r%", types.isEmpty() ? "" : "return ")
+                        .replace("%m%", method.getName())
+                        .replace("%p%", String.join(", ", parameters));
+                types.clear();
+                parameters.clear();
+
+                final Function donor             = PhpPsiElementFactory.createPhpPsiFromText(project, Function.class, pattern);
+                final GroupStatement body        = ExpressionSemanticUtil.getGroupStatement(method);
+                final GroupStatement replacement = ExpressionSemanticUtil.getGroupStatement(donor);
+                if (null != body && null != replacement) {
+                    body.replace(replacement);
+                }
+            }
+        }
     }
 }

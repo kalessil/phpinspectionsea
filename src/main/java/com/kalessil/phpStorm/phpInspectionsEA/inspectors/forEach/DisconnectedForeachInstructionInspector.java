@@ -129,13 +129,13 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                         final boolean isVariablesUsed
                                             = null != PsiTreeUtil.findChildOfAnyType(oneInstruction, true, Variable.class);
                                         if (null == loopInterrupter && isVariablesUsed) {
-                                            holder.registerProblem(reportingTarget, messageDisconnected, ProblemHighlightType.WEAK_WARNING);
+                                            holder.registerProblem(reportingTarget, messageDisconnected, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                                         }
                                     }
                                 }
 
                                 if (SUGGEST_USING_CLONE && (ExpressionType.DOM_ELEMENT_CREATE == target || ExpressionType.NEW == target)) {
-                                    holder.registerProblem(oneInstruction, messageUseClone, ProblemHighlightType.WEAK_WARNING);
+                                    holder.registerProblem(oneInstruction, messageUseClone, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                                 }
                             }
 

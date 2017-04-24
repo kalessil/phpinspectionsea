@@ -251,7 +251,7 @@ This release makes you even more awesome, really =).
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ThrowRawExceptionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DisconnectedForeachInstructionInspection"      displayName="Statement could be decoupled from foreach"
-        groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
+        groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.DisconnectedForeachInstructionInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ExceptionsAnnotatingAndHandlingInspection"      displayName="Exceptions handling and annotating"

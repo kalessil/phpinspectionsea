@@ -19,7 +19,10 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ClassImportStatementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ImportStatus;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Importable;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -169,32 +173,19 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     boolean isImportedAlready     = false;
                     boolean isImportNameCollision = false;
                     PsiElement importMarker       = null;
+                    ClassImportStatementUtil useUtil = new ClassImportStatementUtil();
 
-                    /* check all use-statements and use imported name for QF */
-                    for (PhpUseList use : PsiTreeUtil.findChildrenOfType(file, PhpUseList.class)) {
-                        /* do not process `function() use () {}` constructs or class traits */
-                        final PsiElement useParent = use.getParent();
-                        if (useParent instanceof Function || useParent instanceof PhpClass) {
-                            continue;
-                        }
+                    Importable imported = useUtil.canImportClass(file, className, fqn);
+                    ImportStatus importStatus = imported.getImportStatus();
+                    if (importStatus.equals(ImportStatus.IMPORTED)) {
+                        isImportedAlready = true;
+                        classForReplacement = imported.getClassName();
+                        importMarker = imported.getImportMarker();
+                    }
 
-                        importMarker = use;
-                        for (PsiElement used : use.getChildren()){
-                            if (!(used instanceof PhpUse)) {
-                                continue;
-                            }
-
-                            final PhpUse useStatement = (PhpUse) used;
-                            if (useStatement.getFQN().equals(fqn)) {
-                                classForReplacement = useStatement.getName();
-                                isImportedAlready   = true;
-                                break;
-                            }
-
-                            if (className.equals(useStatement.getName())) {
-                                isImportNameCollision = true;
-                            }
-                        }
+                    if (importStatus.equals(ImportStatus.ALIAS_CLASH)) {
+                        isImportNameCollision = true;
+                        importMarker = imported.getImportMarker();
                     }
 
                     if (!isImportedAlready && !isImportNameCollision && importClasses) {

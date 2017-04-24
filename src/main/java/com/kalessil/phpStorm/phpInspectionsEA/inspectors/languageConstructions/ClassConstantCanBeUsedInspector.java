@@ -22,7 +22,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ClassImportStatementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ImportStatus;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Importable;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -175,18 +173,11 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     PsiElement importMarker       = null;
                     ClassImportStatementUtil useUtil = new ClassImportStatementUtil();
 
-                    Importable imported = useUtil.canImportClass(file, className, fqn);
-                    ImportStatus importStatus = imported.getImportStatus();
-                    if (importStatus.equals(ImportStatus.IMPORTED)) {
-                        isImportedAlready = true;
-                        classForReplacement = imported.getClassName();
-                        importMarker = imported.getImportMarker();
-                    }
-
-                    if (importStatus.equals(ImportStatus.ALIAS_CLASH)) {
-                        isImportNameCollision = true;
-                        importMarker = imported.getImportMarker();
-                    }
+                    ImportStatus imported = useUtil.canImportClass(file, className, fqn);
+                    isImportedAlready = imported.getImported();
+                    classForReplacement = imported.getClassName();
+                    importMarker = imported.getImportMarker();
+                    isImportNameCollision = imported.getImportNameCollision();
 
                     if (!isImportedAlready && !isImportNameCollision && importClasses) {
                         /* do not import classes from the root namespace */

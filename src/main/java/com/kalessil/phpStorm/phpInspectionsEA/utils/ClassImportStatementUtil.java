@@ -1,7 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.tree.java.ImportStatementBaseElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.Function;
@@ -10,9 +9,12 @@ import com.jetbrains.php.lang.psi.elements.PhpUse;
 import com.jetbrains.php.lang.psi.elements.PhpUseList;
 
 final public class ClassImportStatementUtil {
-    public Importable canImportClass(PhpFile file, String className, String FQCN) {
+    public ImportStatus canImportClass(PhpFile file, String className, String FQCN) {
         PsiElement importMarker = null;
-        ImportStatus importStatus = ImportStatus.NOT_IMPORTED;
+        Boolean isImported = false;
+        Boolean isCollision = false;
+        String importName = FQCN;
+
         for (PhpUseList useList : PsiTreeUtil.findChildrenOfType(file, PhpUseList.class)) {
             final PsiElement useParent = useList.getParent();
 
@@ -29,16 +31,18 @@ final public class ClassImportStatementUtil {
                 final PhpUse useStatement = (PhpUse) use;
 
                 if (useStatement.getFQN().equals(FQCN)) {
-                    return new Importable(ImportStatus.IMPORTED, useStatement.getName(), importMarker);
+                    isImported = true;
+                    importName = useStatement.getName();
+                    break;
                 }
 
                 if (useStatement.getName().equals(className)) {
-                    importStatus = ImportStatus.ALIAS_CLASH;
+                    isCollision = true;
                 }
             }
         }
 
-        return new Importable(importStatus, importMarker);
+        return new ImportStatus(isImported, isCollision, importName, importMarker);
     }
 }
 

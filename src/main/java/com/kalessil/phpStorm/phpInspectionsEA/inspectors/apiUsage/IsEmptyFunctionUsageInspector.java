@@ -10,15 +10,16 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
-import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.HashSet;
+
+import org.jetbrains.annotations.NotNull;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -30,10 +31,10 @@ import java.util.HashSet;
  */
 
 public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
-    // configuration flags automatically saved by IDE
-    public boolean REPORT_EMPTY_USAGE             = false;
-    public boolean SUGGEST_TO_USE_COUNT_CHECK     = false;
-    public boolean SUGGEST_TO_USE_NULL_COMPARISON = true;
+    // Inspections options.
+    public boolean optionReportEmptyUsage       = false;
+    public boolean optionSuggestToUseCountCheck = false;
+    public boolean optionsToUseNullComparison   = true;
 
     private static final String messageDoNotUse          = "'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.";
     private static final String patternUseCount          = "You should probably use '%e%' instead.";
@@ -71,7 +72,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     if (this.isArrayType(resolvedTypes)) {
                         resolvedTypes.clear();
 
-                        if (SUGGEST_TO_USE_COUNT_CHECK) {
+                        if (optionSuggestToUseCountCheck) {
                             final String replacement = "0 %o% count(%a%)"
                                 .replace("%a%", subject.getText())
                                 .replace("%o%", isInverted ? "!==": "===");
@@ -87,7 +88,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     if (this.isNullableCoreType(resolvedTypes) || TypesSemanticsUtil.isNullableObjectInterface(resolvedTypes)) {
                         resolvedTypes.clear();
 
-                        if (SUGGEST_TO_USE_NULL_COMPARISON) {
+                        if (optionsToUseNullComparison) {
                             final String replacement = "null %o% %a%"
                                 .replace("%a%", subject.getText())
                                 .replace("%o%", isInverted ? "!==": "===");
@@ -102,7 +103,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     resolvedTypes.clear();
                 }
 
-                if (REPORT_EMPTY_USAGE) {
+                if (optionReportEmptyUsage) {
                     holder.registerProblem(emptyExpression, messageDoNotUse, ProblemHighlightType.WEAK_WARNING);
                 }
             }
@@ -130,36 +131,11 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return (new IsEmptyFunctionUsageInspector.OptionsPanel()).getComponent();
-    }
-
-    private class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox reportEmptyUsage;
-        final private JCheckBox suggestToUseCountComparison;
-        final private JCheckBox suggestToUseNullComparison;
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            reportEmptyUsage = new JCheckBox("Report empty() usage", REPORT_EMPTY_USAGE);
-            reportEmptyUsage.addChangeListener(e -> REPORT_EMPTY_USAGE = reportEmptyUsage.isSelected());
-            optionsPanel.add(reportEmptyUsage, "wrap");
-
-            suggestToUseCountComparison = new JCheckBox("Suggest to use count()-comparison", SUGGEST_TO_USE_COUNT_CHECK);
-            suggestToUseCountComparison.addChangeListener(e -> SUGGEST_TO_USE_COUNT_CHECK = suggestToUseCountComparison.isSelected());
-            optionsPanel.add(suggestToUseCountComparison, "wrap");
-
-            suggestToUseNullComparison = new JCheckBox("Suggest to use null-comparison", SUGGEST_TO_USE_NULL_COMPARISON);
-            suggestToUseNullComparison.addChangeListener(e -> SUGGEST_TO_USE_NULL_COMPARISON = suggestToUseNullComparison.isSelected());
-            optionsPanel.add(suggestToUseNullComparison, "wrap");
-        }
-
-        JPanel getComponent() {
-            return optionsPanel;
-        }
+        return OptionsComponent.create((component) -> {
+            component.createCheckbox("Report empty() usage", optionReportEmptyUsage, (isSelected) -> optionReportEmptyUsage = isSelected);
+            component.createCheckbox("Suggest to use count()-comparison", optionSuggestToUseCountCheck, (isSelected) -> optionSuggestToUseCountCheck = isSelected);
+            component.createCheckbox("Suggest to use null-comparison", optionsToUseNullComparison, (isSelected) -> optionsToUseNullComparison = isSelected);
+        });
     }
 
     private class CompareToNullFix extends UseSuggestedReplacementFixer {

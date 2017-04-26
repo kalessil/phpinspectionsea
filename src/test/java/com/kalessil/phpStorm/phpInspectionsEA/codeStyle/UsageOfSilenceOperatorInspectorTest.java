@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UsageOfSilenc
 final public class UsageOfSilenceOperatorInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         UsageOfSilenceOperatorInspector inspector = new UsageOfSilenceOperatorInspector();
-        inspector.RESPECT_CONTEXT                 = true;
+        inspector.optionRespectContext = true;
 
         myFixture.configureByFile("fixtures/codeStyle/usage-of-silence-operator.php");
         myFixture.enableInspections(inspector);

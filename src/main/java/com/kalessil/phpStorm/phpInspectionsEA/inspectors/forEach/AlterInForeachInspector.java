@@ -13,14 +13,15 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 
 import javax.swing.*;
 
+import org.jetbrains.annotations.NotNull;
+
 public class AlterInForeachInspector extends BasePhpInspection {
-    // configuration flags automatically saved by IDE
-    public boolean SUGGEST_USING_VALUE_BY_REF = false;
+    // Inspection options.
+    public boolean optionSuggestUsingValueByRef = false;
 
     private static final String patternSuggestReference = "Can be refactored as '$%c% = ...' if $%v% is defined as a reference (ensure that array supplied). Suppress if causes memory mismatches.";
     private static final String messageMissingUnset     = "This variable must be unset just after foreach to prevent possible side-effects.";
@@ -151,7 +152,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
             }
 
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
-                if (!SUGGEST_USING_VALUE_BY_REF /*|| ... PHP7 ...*/) {
+                if (!optionSuggestUsingValueByRef /*|| ... PHP7 ...*/) {
                     return;
                 }
 
@@ -214,25 +215,8 @@ public class AlterInForeachInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return (new AlterInForeachInspector.OptionsPanel()).getComponent();
-    }
-
-    private class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox suggestUsingValueByRef;
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            suggestUsingValueByRef = new JCheckBox("Suggest using value by reference", SUGGEST_USING_VALUE_BY_REF);
-            suggestUsingValueByRef.addChangeListener(e -> SUGGEST_USING_VALUE_BY_REF = suggestUsingValueByRef.isSelected());
-            optionsPanel.add(suggestUsingValueByRef, "wrap");
-        }
-
-        JPanel getComponent() {
-            return optionsPanel;
-        }
+        return OptionsComponent.create((component) -> {
+            component.createCheckbox("Suggest using value by reference", optionSuggestUsingValueByRef, (isSelected) -> optionSuggestUsingValueByRef = isSelected);
+        });
     }
 }

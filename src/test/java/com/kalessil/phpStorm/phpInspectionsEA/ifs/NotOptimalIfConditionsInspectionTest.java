@@ -21,7 +21,7 @@ final public class NotOptimalIfConditionsInspectionTest extends CodeInsightFixtu
     }
     public void testLiteralOperatorsPatterns() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
-        inspector.REPORT_LITERAL_OPERATORS         = true;
+        inspector.optionReportLiteralOperators = true;
 
         myFixture.configureByFile("fixtures/ifs/if-literal-operators.php");
         myFixture.enableInspections(inspector);

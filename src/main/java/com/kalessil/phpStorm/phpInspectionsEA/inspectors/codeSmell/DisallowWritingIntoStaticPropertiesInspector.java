@@ -7,16 +7,17 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+import org.jetbrains.annotations.NotNull;
+
 
 public class DisallowWritingIntoStaticPropertiesInspector extends BasePhpInspection {
-
-    public boolean ALLOW_WRITE_FROM_SOURCE_CLASS = true;
+    // Inspection options.
+    public boolean optionAllowWriteFromSourceClass = true;
 
     private static final String messageDisallowExternalWrites = "Static property should be modified only inside the source class";
     private static final String messageDisallowAnyWrites = "Static property should not be modified";
@@ -45,7 +46,7 @@ public class DisallowWritingIntoStaticPropertiesInspector extends BasePhpInspect
                     return;
                 }
 
-                if (!ALLOW_WRITE_FROM_SOURCE_CLASS) {
+                if (!optionAllowWriteFromSourceClass) {
                     holder.registerProblem(assignmentExpression, messageDisallowAnyWrites, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
@@ -101,30 +102,8 @@ public class DisallowWritingIntoStaticPropertiesInspector extends BasePhpInspect
     }
 
     public JComponent createOptionsPanel() {
-        return (new OptionsPanel()).getComponent();
+        return OptionsComponent.create((component) -> {
+            component.createCheckbox("Allow write from the source class", optionAllowWriteFromSourceClass, (isSelected) -> optionAllowWriteFromSourceClass = isSelected);
+        });
     }
-
-    private class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox allowWriteFromSourceClassC;
-
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            allowWriteFromSourceClassC = new JCheckBox("Allow write from the source class", ALLOW_WRITE_FROM_SOURCE_CLASS);
-
-
-            allowWriteFromSourceClassC.addChangeListener(e -> ALLOW_WRITE_FROM_SOURCE_CLASS = allowWriteFromSourceClassC.isSelected());
-            optionsPanel.add(allowWriteFromSourceClassC, "wrap");
-
-        }
-
-        JPanel getComponent() {
-            return optionsPanel;
-        }
-    }
-
 }

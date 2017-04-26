@@ -15,16 +15,16 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
-import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+import org.jetbrains.annotations.NotNull;
+
 public class StaticInvocationViaThisInspector extends BasePhpInspection {
-    // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
-    public boolean RESPECT_PHPUNIT_STANDARDS = true;
+    // Inspection options.
+    private boolean optionRespectPhpUnitStandards = true;
 
     private static final String messageThisUsed       = "'static::%m%(...)' should be used instead.";
     private static final String messageExpressionUsed = "'...::%m%(...)' should be used instead.";
@@ -70,7 +70,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                     }
 
                     /* PHP Unit's official docs saying to use $this, follow the guidance */
-                    if (RESPECT_PHPUNIT_STANDARDS) {
+                    if (optionRespectPhpUnitStandards) {
                         final String classFqn = clazz.getFQN();
                         if (classFqn.startsWith("\\PHPUnit_Framework_") || classFqn.startsWith("\\PHPUnit\\Framework\\")) {
                             return;
@@ -135,25 +135,8 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return (new StaticInvocationViaThisInspector.OptionsPanel()).getComponent();
-    }
-
-    private class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox respectPhpunitStandards;
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            respectPhpunitStandards = new JCheckBox("Follow PHPUnit standards", RESPECT_PHPUNIT_STANDARDS);
-            respectPhpunitStandards.addChangeListener(e -> RESPECT_PHPUNIT_STANDARDS = respectPhpunitStandards.isSelected());
-            optionsPanel.add(respectPhpunitStandards, "wrap");
-        }
-
-        public JPanel getComponent() {
-            return optionsPanel;
-        }
+        return OptionsComponent.create((component) -> {
+            component.createCheckbox("Follow PHPUnit standards", optionRespectPhpUnitStandards, (isSelected) -> optionRespectPhpUnitStandards = isSelected);
+        });
     }
 }

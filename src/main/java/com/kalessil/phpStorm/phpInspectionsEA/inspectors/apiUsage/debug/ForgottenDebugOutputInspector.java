@@ -11,16 +11,16 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
-import com.kalessil.phpStorm.phpInspectionsEA.gui.PrettyListControl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import net.miginfocom.swing.MigLayout;
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.*;
+
+import org.jetbrains.annotations.NotNull;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -32,8 +32,9 @@ import java.util.*;
  */
 
 public class ForgottenDebugOutputInspector extends BasePhpInspection {
-    // custom configuration, automatically saved between restarts so keep out of changing modifiers
-    final public List<String> configuration       = new ArrayList<>();
+    // Inspection options.
+    private final List<String> optionCustomDebugMethods = new ArrayList<>();
+
     public boolean defaultsTransferredToUserSpace = false;
 
     final private Set<String> customFunctions                     = new HashSet<>();
@@ -52,7 +53,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     }
 
     public void registerCustomDebugMethod(@NotNull String fqn) {
-        this.configuration.add(fqn);
+        this.optionCustomDebugMethods.add(fqn);
         this.recompileConfiguration();
     }
 
@@ -75,17 +76,17 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             migrated.add("\\Zend\\Di\\Display\\Console::export");
             migrated.add("error_log");
             migrated.add("phpinfo");
-            migrated.addAll(this.configuration);
+            migrated.addAll(this.optionCustomDebugMethods);
 
             /* migrate the list */
-            this.configuration.clear();
-            this.configuration.addAll(migrated);
+            this.optionCustomDebugMethods.clear();
+            this.optionCustomDebugMethods.addAll(migrated);
             this.defaultsTransferredToUserSpace = true;
 
             /* cleanup */
             migrated.clear();
         }
-        customDebugFQNs.addAll(this.configuration);
+        customDebugFQNs.addAll(this.optionCustomDebugMethods);
 
         /* parse what was provided FQNs */
         for (String stringDescriptor : customDebugFQNs) {
@@ -193,27 +194,8 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return (new ForgottenDebugOutputInspector.OptionsPanel()).getComponent();
-    }
-
-    private class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        private OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            optionsPanel.add(new JLabel("Custom debug methods:"), "wrap");
-            optionsPanel.add((new PrettyListControl(configuration) {
-                protected void fireContentsChanged() {
-                    recompileConfiguration();
-                    super.fireContentsChanged();
-                }
-            }).getComponent(), "pushx, growx");
-        }
-
-        private JPanel getComponent() {
-            return optionsPanel;
-        }
+        return OptionsComponent.create((component) -> {
+            component.createList("Custom debug methods:", optionCustomDebugMethods, this::recompileConfiguration);
+        });
     }
 }

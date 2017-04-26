@@ -10,20 +10,21 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
-import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.HashSet;
 
+import org.jetbrains.annotations.NotNull;
+
 public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
-    // configuration flags automatically saved by IDE
-    public boolean SUGGEST_TO_USE_ARRAY_KEY_EXISTS = false;
-    public boolean SUGGEST_TO_USE_NULL_COMPARISON  = true;
+    // Inspection options.
+    public boolean optionSuggestToUseArrayKeyExists = false;
+    public boolean optionSuggestToUseNullComparison = true;
 
     // static messages for triggered messages
     private static final String messageUseArrayKeyExists    = "'array_key_exists(...)' construction should be used for better data *structure* control.";
@@ -92,7 +93,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                             }
                         }
 
-                        if (SUGGEST_TO_USE_NULL_COMPARISON) {
+                        if (optionSuggestToUseNullComparison) {
                             final String message = (issetInverted ? messageUseNullComparison : messageUseNotNullComparison)
                                     .replace("%s%", parameter.getText());
                             holder.registerProblem(parameter, message, ProblemHighlightType.WEAK_WARNING);
@@ -106,7 +107,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    if (SUGGEST_TO_USE_ARRAY_KEY_EXISTS && !isArrayAccess((ArrayAccessExpression) parameter)) {
+                    if (optionSuggestToUseArrayKeyExists && !isArrayAccess((ArrayAccessExpression) parameter)) {
                         holder.registerProblem(parameter, messageUseArrayKeyExists, ProblemHighlightType.WEAK_WARNING);
                     }
                 }
@@ -175,30 +176,9 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return (new UnSafeIsSetOverArrayInspector.OptionsPanel()).getComponent();
-    }
-
-    public class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox suggestToUseArrayKeyExists;
-        final private JCheckBox suggestToUseNullComparison;
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            suggestToUseArrayKeyExists = new JCheckBox("Suggest to use array_key_exists()", SUGGEST_TO_USE_ARRAY_KEY_EXISTS);
-            suggestToUseArrayKeyExists.addChangeListener(e -> SUGGEST_TO_USE_ARRAY_KEY_EXISTS = suggestToUseArrayKeyExists.isSelected());
-            optionsPanel.add(suggestToUseArrayKeyExists, "wrap");
-
-            suggestToUseNullComparison = new JCheckBox("Suggest to use null-comparison", SUGGEST_TO_USE_NULL_COMPARISON);
-            suggestToUseNullComparison.addChangeListener(e -> SUGGEST_TO_USE_NULL_COMPARISON = suggestToUseNullComparison.isSelected());
-            optionsPanel.add(suggestToUseNullComparison, "wrap");
-        }
-
-        public JPanel getComponent() {
-            return optionsPanel;
-        }
+        return OptionsComponent.create((component) -> {
+            component.createCheckbox("Suggest to use array_key_exists()", optionSuggestToUseArrayKeyExists, (isSelected) -> optionSuggestToUseArrayKeyExists = isSelected);
+            component.createCheckbox("Suggest to use null-comparison", optionSuggestToUseNullComparison, (isSelected) -> optionSuggestToUseNullComparison = isSelected);
+        });
     }
 }

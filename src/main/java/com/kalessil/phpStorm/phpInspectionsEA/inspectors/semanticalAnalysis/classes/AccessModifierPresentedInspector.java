@@ -17,16 +17,16 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpModifierList;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+import org.jetbrains.annotations.NotNull;
+
 public class AccessModifierPresentedInspector extends BasePhpInspection {
-    // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
-    public boolean ANALYZE_INTERFACES = true;
+    // Inspection options.
+    private boolean optionAnalyzeInterfaces = true;
 
     private static final String messagePattern = "'%s%' should be declared with access modifier.";
 
@@ -41,7 +41,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
                 /* community request: interfaces have only public methods, what is default access levels */
-                if (!ANALYZE_INTERFACES && clazz.isInterface()){
+                if (!optionAnalyzeInterfaces && clazz.isInterface()){
                     return;
                 }
 
@@ -77,26 +77,9 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return (new AccessModifierPresentedInspector.OptionsPanel()).getComponent();
-    }
-
-    private class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox analyzeInterfaces;
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            analyzeInterfaces = new JCheckBox("Analyze interfaces", ANALYZE_INTERFACES);
-            analyzeInterfaces.addChangeListener(e -> ANALYZE_INTERFACES = analyzeInterfaces.isSelected());
-            optionsPanel.add(analyzeInterfaces, "wrap");
-        }
-
-        JPanel getComponent() {
-            return optionsPanel;
-        }
+        return OptionsComponent.create((component) -> {
+            component.createCheckbox("Analyze interfaces", optionAnalyzeInterfaces, (isSelected) -> optionAnalyzeInterfaces = isSelected);
+        });
     }
 
     private static class TheLocalFix implements LocalQuickFix {

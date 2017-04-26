@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.AlterInForeachI
 final public class AlterInForeachInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         AlterInForeachInspector inspector    = new AlterInForeachInspector();
-        inspector.SUGGEST_USING_VALUE_BY_REF = true;
+        inspector.optionSuggestUsingValueByRef = true;
 
         myFixture.configureByFile("fixtures/foreach/alter-in-foreach.php");
         myFixture.enableInspections(inspector);

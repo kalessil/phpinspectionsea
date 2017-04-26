@@ -6,8 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ComparisonOpe
 final public class ComparisonOperandsOrderInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsYodaPatterns() {
         ComparisonOperandsOrderInspector inspector = new ComparisonOperandsOrderInspector();
-        inspector.CONFIGURED                       = true;
-        inspector.PREFER_YODA_STYLE                = true;
+        inspector.optionPreferYodaStyle = true;
 
         myFixture.configureByFile("fixtures/codeStyle/comparison-order-yoda.php");
         myFixture.enableInspections(inspector);
@@ -15,8 +14,7 @@ final public class ComparisonOperandsOrderInspectorTest extends CodeInsightFixtu
     }
     public void testIfFindsRegularPatterns() {
         ComparisonOperandsOrderInspector inspector = new ComparisonOperandsOrderInspector();
-        inspector.CONFIGURED                       = true;
-        inspector.PREFER_REGULAR_STYLE             = true;
+        inspector.optionPreferRegularStyle = true;
 
         myFixture.configureByFile("fixtures/codeStyle/comparison-order-regular.php");
         myFixture.enableInspections(inspector);

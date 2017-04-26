@@ -20,22 +20,21 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.Try;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpDoc.ThrowsResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpExceptions.CollectPossibleThrowsUtil;
-import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.*;
 
+import org.jetbrains.annotations.NotNull;
+
 public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection {
-    /* TODO: add settings for FQNs which doesn't need to be reported */
-    // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
-    public boolean REPORT_NON_THROWN_EXCEPTIONS = false;
+    // Inspection options.
+    private boolean optionReportNonThrownExceptions = false;
 
     private static final String messagePattern           = "Throws a non-annotated/unhandled exception: '%c%'.";
     private static final String messagePatternUnthrown   = "Following exceptions annotated, but not thrown: '%c%'.";
@@ -126,7 +125,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
 
                 /* do reporting now: exceptions annotated, but not thrown */
-                if (REPORT_NON_THROWN_EXCEPTIONS && annotatedButNotThrownExceptions.size() > 0) {
+                if (optionReportNonThrownExceptions && annotatedButNotThrownExceptions.size() > 0) {
                     List<String> toReport = new ArrayList<>();
                     for (PhpClass notThrown : annotatedButNotThrownExceptions) {
                         toReport.add(notThrown.getFQN());
@@ -282,26 +281,8 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
     }
 
     public JComponent createOptionsPanel() {
-        return (new ExceptionsAnnotatingAndHandlingInspector.OptionsPanel()).getComponent();
+        return OptionsComponent.create((component) -> {
+            component.createCheckbox("Report non-thrown exceptions", optionReportNonThrownExceptions, (isSelected) -> optionReportNonThrownExceptions = isSelected);
+        });
     }
-
-    public class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox importClassesAutomatically;
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            importClassesAutomatically = new JCheckBox("Report non-thrown exceptions", REPORT_NON_THROWN_EXCEPTIONS);
-            importClassesAutomatically.addChangeListener(e -> REPORT_NON_THROWN_EXCEPTIONS = importClassesAutomatically.isSelected());
-            optionsPanel.add(importClassesAutomatically, "wrap");
-        }
-
-        public JPanel getComponent() {
-            return optionsPanel;
-        }
-    }
-
 }

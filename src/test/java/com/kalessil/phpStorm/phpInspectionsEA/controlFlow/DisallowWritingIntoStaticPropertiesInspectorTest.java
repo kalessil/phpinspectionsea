@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DisallowWriti
 final public class DisallowWritingIntoStaticPropertiesInspectorTest extends CodeInsightFixtureTestCase {
     public void testAllowWriteFromSourceClassOnly() {
         DisallowWritingIntoStaticPropertiesInspector inspector = new DisallowWritingIntoStaticPropertiesInspector();
-        inspector.ALLOW_WRITE_FROM_SOURCE_CLASS = true;
+        inspector.optionAllowWriteFromSourceClass = true;
         myFixture.configureByFile("fixtures/controlFlow/disallow-write-into-static-property-default.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
@@ -14,7 +14,7 @@ final public class DisallowWritingIntoStaticPropertiesInspectorTest extends Code
 
     public void testDisallowAnyWrites() {
         DisallowWritingIntoStaticPropertiesInspector inspector = new DisallowWritingIntoStaticPropertiesInspector();
-        inspector.ALLOW_WRITE_FROM_SOURCE_CLASS = false;
+        inspector.optionAllowWriteFromSourceClass = false;
         myFixture.configureByFile("fixtures/controlFlow/disallow-any-write-into-static-property.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);

@@ -21,6 +21,8 @@ class Action {
             'stdClassAlias',
             'Prerequisites',
 
+            static::class,
+
             stdClassAlias::class,
             stdClassAlias::class,
             Prerequisites::class,
@@ -31,7 +33,7 @@ class Action {
             Sub\Benefits::class,
 
             \PhpInspections\Base\Prerequisites::class,
-            Benefits::class,
+            Benefits::class
         ];
     }
 

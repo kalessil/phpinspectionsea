@@ -147,7 +147,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use unpack argument syntax instead";
+            return "Use static::class instead.";
         }
 
         UseStaticFix(@NotNull String expression) {

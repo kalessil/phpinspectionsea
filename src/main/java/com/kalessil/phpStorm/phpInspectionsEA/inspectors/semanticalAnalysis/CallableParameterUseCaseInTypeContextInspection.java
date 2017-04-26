@@ -26,9 +26,18 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInspection {
-    private static final String strProblemNoSense = "Makes no sense, because it's always true according to annotations.";
-    private static final String strProblemCheckViolatesDefinition = "Makes no sense, because this type is not defined in annotations.";
+    private static final String strProblemNoSense                      = "Makes no sense, because it's always true according to annotations.";
+    private static final String strProblemCheckViolatesDefinition      = "Makes no sense, because this type is not defined in annotations.";
     private static final String strProblemAssignmentViolatesDefinition = "New value type (%s%) is not in annotated types.";
 
     @NotNull
@@ -108,7 +117,11 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             boolean isTypeAnnounced;
 
                             if (strFunctionName.equals("is_array"))
-                                isTypeAnnounced = (strParameterType.contains(Types.strArray) || strParameterType.contains("[]"));
+                                isTypeAnnounced = (
+                                    strParameterType.contains(Types.strArray) ||
+                                    strParameterType.contains(Types.strIterable) ||
+                                    strParameterType.contains("[]")
+                                );
                             else if (strFunctionName.equals("is_string"))
                                 isTypeAnnounced = strParameterType.contains(Types.strString);
                             else if (strFunctionName.equals("is_bool"))

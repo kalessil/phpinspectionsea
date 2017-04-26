@@ -7,6 +7,7 @@ import java.util.Map;
 
 final public class Types {
     final static public String strArray    = "array";
+    final static public String strIterable = "iterable";
     final static public String strString   = "string";
     final static public String strBoolean  = "bool";
     final static public String strInteger  = "int";
@@ -31,6 +32,9 @@ final public class Types {
 
             mapTypes.put(strArray,     strArray);
             mapTypes.put("\\array",    strArray);
+
+            mapTypes.put(strIterable,  strIterable);
+            mapTypes.put("\\iterable", strIterable);
 
             mapTypes.put(strString,    strString);
             mapTypes.put("\\string",   strString);

@@ -171,7 +171,7 @@ This release makes you even more awesome, really =).
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.SubStrShortHandUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="SubStrUsedAsArrayAccessInspection"             displayName="'(mb_)substr(...)' used as index-based access"
+        shortName="SubStrUsedAsArrayAccessInspection"             displayName="'substr(...)' used as index-based access"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.SubStrUsedAsArrayAccessInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -251,7 +251,7 @@ This release makes you even more awesome, really =).
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ThrowRawExceptionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DisconnectedForeachInstructionInspection"      displayName="Statement could be decoupled from foreach"
-        groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
+        groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.DisconnectedForeachInstructionInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ExceptionsAnnotatingAndHandlingInspection"      displayName="Exceptions handling and annotating"
@@ -297,10 +297,6 @@ This release makes you even more awesome, really =).
          shortName="SubStrUsedAsStrPosInspection"                  displayName="'substr(...)' could be replaced with 'strpos(...)'"
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.SubStrUsedAsStrPosInspector"/>
-  <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-         shortName="StrNcmpUsedAsStrPosInspection"                 displayName="'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)'"
-         groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
-         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrNcmpUsedAsStrPosInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="RedundantElseClauseInspection"                 displayName="Redundant 'else' keyword"
          groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"

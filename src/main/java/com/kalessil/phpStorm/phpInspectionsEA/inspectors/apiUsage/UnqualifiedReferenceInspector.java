@@ -34,8 +34,8 @@ import java.util.Set;
 public class UnqualifiedReferenceInspector extends BasePhpInspection {
     private static final String messagePattern = "Using '\\%t%' would enable some of opcache optimizations";
 
-    final private static Set<String> falsePositives             = new HashSet<>();
-    final private static Map<String, Integer> callbacksPsitions = new HashMap<>();
+    final private static Set<String> falsePositives              = new HashSet<>();
+    final private static Map<String, Integer> callbacksPositions = new HashMap<>();
     static {
         falsePositives.add("true");
         falsePositives.add("TRUE");
@@ -53,12 +53,12 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
         falsePositives.add("__METHOD__");
         falsePositives.add("__NAMESPACE__");
 
-        callbacksPsitions.put("call_user_func", 0);
-        callbacksPsitions.put("call_user_func_array", 0);
-        callbacksPsitions.put("array_filter", 1);
-        callbacksPsitions.put("array_map", 0);
-        callbacksPsitions.put("array_walk", 1);
-        callbacksPsitions.put("array_reduce", 1);
+        callbacksPositions.put("call_user_func", 0);
+        callbacksPositions.put("call_user_func_array", 0);
+        callbacksPositions.put("array_filter", 1);
+        callbacksPositions.put("array_map", 0);
+        callbacksPositions.put("array_walk", 1);
+        callbacksPositions.put("array_reduce", 1);
     }
 
     @NotNull
@@ -89,8 +89,8 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
             private void analyzeCallback(FunctionReference reference) {
                 final PsiElement[] params = reference.getParameters();
                 final String functionName = reference.getName();
-                if (null != functionName && params.length >= 2 && callbacksPsitions.containsKey(functionName)) {
-                    final Integer callbackPosition = callbacksPsitions.get(functionName);
+                if (null != functionName && params.length >= 2 && callbacksPositions.containsKey(functionName)) {
+                    final Integer callbackPosition = callbacksPositions.get(functionName);
                     if (params[callbackPosition] instanceof StringLiteralExpression) {
                         final StringLiteralExpression callback = (StringLiteralExpression) params[callbackPosition];
                         if (null == callback.getFirstPsiChild()) {

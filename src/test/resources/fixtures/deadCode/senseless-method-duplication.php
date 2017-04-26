@@ -2,7 +2,8 @@
 
     class ClassMethodDefinedHere {
 
-        protected function method() {
+        protected function method()
+        {
             // PsiEquivalenceUtil.areElementsEquivalent is not matching those assignments properly
             // We had to place ugly workaround there
             $x = [];
@@ -12,7 +13,18 @@
             return $x;
         }
 
-        protected function abc(){
+        protected function methodProxy($x)
+        {
+            return $this->method();
+        }
+
+        private function methodDuplicate($x)
+        {
+            return $this->method();
+        }
+
+        protected function abc()
+        {
             echo 1;
         }
 
@@ -22,7 +34,8 @@
 
     class ClassDuplicates extends ClassTransitive {
 
-        protected function <weak_warning descr="'method' method can be dropped, as it identical to parent's one.">method</weak_warning> () {
+        protected function <weak_warning descr="'method' method can be dropped, as it identical to parent's one.">method</weak_warning> ()
+        {
             // PsiEquivalenceUtil.areElementsEquivalent is not matching those assignments properly
             // We had to place ugly workaround there
             $x = [];
@@ -36,7 +49,18 @@
             return $x;
         }
 
-        protected function abc(){
+        public function <weak_warning descr="'methodProxy' method should call parent's one instead of duplicating code.">methodProxy</weak_warning>($x)
+        {
+            return $this->method();
+        }
+
+        public function <weak_warning descr="'methodDuplicate' method should call parent's one instead of duplicating code.">methodDuplicate</weak_warning>($x)
+        {
+            return $this->method();
+        }
+
+        protected function abc()
+        {
             echo 2;
         }
 

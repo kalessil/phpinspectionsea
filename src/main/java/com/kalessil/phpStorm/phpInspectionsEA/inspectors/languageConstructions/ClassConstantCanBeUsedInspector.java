@@ -17,6 +17,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -46,7 +47,8 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     public boolean USE_RELATIVE_QF      = true;
     public boolean LOOK_ROOT_NS_UP      = false;
 
-    private static final String messagePattern = "Perhaps this can be replaced with %c%::class.";
+    private static final String messagePattern   = "Perhaps this can be replaced with %c%::class.";
+    private static final String messageUseStatic = "'static::class' can be used instead.";
 
     final static private Pattern classNameRegex;
     static {
@@ -63,6 +65,15 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
+            public void visitPhpFunctionCall(FunctionReference reference) {
+                final String functionName = reference.getName();
+                final PsiElement[] params = reference.getParameters();
+                if (0 == params.length && null != functionName && functionName.equals("get_called_class")) {
+                    final String replacement = "static::class";
+                    holder.registerProblem(reference, messageUseStatic, ProblemHighlightType.WEAK_WARNING, new UseStaticFix(replacement));
+                }
+            }
+
             public void visitPhpStringLiteralExpression(StringLiteralExpression expression) {
                 /* ensure selected language level supports the ::class feature*/
                 final Project project             = holder.getProject();
@@ -132,7 +143,19 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
         };
     }
 
-    static private class TheLocalFix implements LocalQuickFix {
+    private class UseStaticFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use static::class instead.";
+        }
+
+        UseStaticFix(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private class TheLocalFix implements LocalQuickFix {
         final String fqn;
         final boolean importClasses;
         final boolean useRelativeQN;

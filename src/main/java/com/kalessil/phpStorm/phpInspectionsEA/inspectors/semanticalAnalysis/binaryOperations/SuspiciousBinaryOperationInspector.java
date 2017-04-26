@@ -3,10 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.bin
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy.EqualsInAssignmentContextStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy.GreaterOrEqualInHashElementStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy.IdenticalOperandsStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy.InstanceOfTraitStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +32,8 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
                     InstanceOfTraitStrategy.apply(expression, holder) ||
                     EqualsInAssignmentContextStrategy.apply(expression, holder) ||
                     GreaterOrEqualInHashElementStrategy.apply(expression, holder) ||
-                    IdenticalOperandsStrategy.apply(expression, holder)
+                    IdenticalOperandsStrategy.apply(expression, holder) ||
+                    MisplacedOperatorStrategy.apply(expression, holder)
                 ) {
                     return;
                 }

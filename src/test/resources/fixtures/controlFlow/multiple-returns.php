@@ -13,14 +13,14 @@ trait A
 
 class Test_A
 {
-    public function <warning descr="Method has multiple return points, try to introduce just one to uncover complexity behind.">TwoReturnsMethod</warning>() {
+    public function <warning descr="Method has 2 return points, try to introduce just one to uncover complexity behind.">TwoReturnsMethod</warning>() {
         if ($this instanceof TestA) {
             return false;
         }
         return true;
     }
 
-    public function <error descr="Method has multiple return points, try to introduce just one to uncover complexity behind.">FourReturnsMethod</error>($a, $b, $c) {
+    public function <error descr="Method has 4 return points, try to introduce just one to uncover complexity behind.">FourReturnsMethod</error>($a, $b, $c) {
         if ($this instanceof $a) {
             return false;
         }
@@ -53,7 +53,7 @@ class Test_B
                 return 0;
             }
 
-            public function <warning descr="Method has multiple return points, try to introduce just one to uncover complexity behind.">isValid</warning>() {
+            public function <warning descr="Method has 2 return points, try to introduce just one to uncover complexity behind.">isValid</warning>() {
                 if ($this instanceof Test_Valid) {
                     return true;
                 }

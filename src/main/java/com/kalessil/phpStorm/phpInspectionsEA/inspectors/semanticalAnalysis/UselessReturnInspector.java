@@ -10,9 +10,18 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class UselessReturnInspector extends BasePhpInspection {
-    private static final String strProblemUseless   = "Senseless statement: safely remove it.";
-    private static final String strProblemConfusing = "Confusing statement: should be re-factored.";
+    private static final String messageSenseless = "Senseless statement: return null implicitly or safely remove it.";
+    private static final String messageConfusing = "Confusing statement: consider re-factoring.";
 
     @NotNull
     public String getShortName() {
@@ -24,9 +33,12 @@ public class UselessReturnInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpReturn(PhpReturn returnStatement) {
-                PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue(returnStatement);
-                if (returnValue instanceof AssignmentExpression && ((AssignmentExpression) returnValue).getVariable() instanceof Variable) {
-                    holder.registerProblem(returnStatement, strProblemConfusing, ProblemHighlightType.WEAK_WARNING);
+                final PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue(returnStatement);
+                if (returnValue instanceof AssignmentExpression) {
+                    final AssignmentExpression assignment = (AssignmentExpression) returnValue;
+                    if (assignment.getVariable() instanceof Variable) {
+                        holder.registerProblem(returnStatement, messageConfusing, ProblemHighlightType.WEAK_WARNING);
+                    }
                 }
             }
 
@@ -38,20 +50,14 @@ public class UselessReturnInspector extends BasePhpInspection {
                 this.inspectForSenselessReturn(function);
             }
 
-            private void inspectForSenselessReturn(Function callable) {
-                GroupStatement body = ExpressionSemanticUtil.getGroupStatement(callable);
-                if (null == body) {
-                    return;
-                }
-
-                PsiElement lastExpression = ExpressionSemanticUtil.getLastStatement(body);
-                if (!(lastExpression instanceof PhpReturn)) {
-                    return;
-                }
-
-                PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue((PhpReturn) lastExpression);
-                if (null == returnValue) {
-                    holder.registerProblem(lastExpression, strProblemUseless, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+            private void inspectForSenselessReturn(@NotNull Function callable) {
+                final GroupStatement body      = ExpressionSemanticUtil.getGroupStatement(callable);
+                final PsiElement lastStatement = null == body ? null : ExpressionSemanticUtil.getLastStatement(body);
+                if (lastStatement instanceof PhpReturn) {
+                    final PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue((PhpReturn) lastStatement);
+                    if (null == returnValue) {
+                        holder.registerProblem(lastStatement, messageSenseless, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                    }
                 }
             }
         };

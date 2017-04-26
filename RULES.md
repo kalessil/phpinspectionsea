@@ -28,7 +28,7 @@ Inspections Lists (Control flow)
 | Control flow         | DefaultValueInElseBranchInspection              | Default value is hidden in else branch                                            | n/a | yes | n/a  | no  |
 | Control flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                                         | n/a |
 | Control flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                                                          | n/a | yes | n/a  | no  |
-| Control flow         | ThrowRawExceptionInspection                     | General '\Exception' is thrown                                                    | no  |
+| Control flow         | ThrowRawExceptionInspection                     | General '\Exception' is thrown                                                    | yes | yes | yes  | no  |
 | Control flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach                                         | n/a | yes | n/a  | no  |
 | Control flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                                                | yes |
 | Control flow         | DegradedSwitchInspection                        | Switch-case could be simplified                                                   | n/a |
@@ -41,7 +41,6 @@ Inspections Lists (Control flow)
 | Control flow         | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                | yes | yes | no   | no  |
 | Control flow         | StrTrUsageAsStrReplaceInspection                | 'strtr(...)' could be replaced with 'str_replace(...)'                            | no  | yes | no   | no  |
 | Control flow         | SubStrUsedAsStrPosInspection                    | 'substr(...)' could be replaced with 'strpos(...)'                                | no  | yes | no   | no  |
-| Control flow         | StrNcmpUsedAsStrPosInspection                   | 'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)' | no  | yes | no   | no  |
 | Control flow         | StringNormalizationInspection                   | Strings normalization                                                             | yes | yes | no   | no  |
 | Control flow         | RedundantElseClauseInspection                   | Redundant 'else' keyword                                                          | yes | yes | no   | no  |
 | --                   | ArrayFunctionsInvariantsInspection              |                                                                                   |     |     |      |     |
@@ -61,7 +60,7 @@ Inspections Lists (Unused)
 | Unused               | PropertyInitializationFlawsInspection           | Class property initialization flaws                 | yes | yes | no   | no  |
 | Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a | yes | n/a  | no  |
 | Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes | yes | no   | no  |
-| Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | n/a | yes | n/a  | no  |
+| Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | yes | yes | yes  | no  |
 | Unused               | UnusedGotoLabelInspection                       | Unused goto labels                                  | yes | yes | no   | no  |
 
 Inspections Lists (Compatibility)
@@ -80,7 +79,7 @@ Inspections Lists (Confusing constructs)
 | Confusing constructs | SenselessTernaryOperatorInspection              | Suspicious ternary operator                         | n/a | yes | n/a  | no  |
 | Confusing constructs | ClassMethodNameMatchesFieldNameInspection       | Method name matches existing field name             | n/a | yes | n/a  | no  |
 | Confusing constructs | NestedTernaryOperatorInspection                 | Nested ternary operator                             | no  | yes | no   | no  |
-| Confusing constructs | UselessReturnInspection                         | Useless return                                      | n/a |
+| Confusing constructs | UselessReturnInspection                         | Useless return                                      | n/a | yes | n/a  | no  |
 | Confusing constructs | ParameterByRefWithDefaultInspection             | Parameter passed by reference has default value     | n/a | yes | n/a  | no  |
 | Confusing constructs | ReferencingObjectsInspection                    | Referencing objects                                 | yes | yes | no   | no  |
 
@@ -131,7 +130,7 @@ Inspections Lists (Architecture)
 ---
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
-| Architecture         | BadExceptionsProcessingInspection               | Badly organized exception handling                  | n/a |
+| Architecture         | BadExceptionsProcessingInspection               | Badly organized exception handling                  | n/a | yes | n/a  | no  |
 | Architecture         | MoreThanThreeArgumentsInspection                | Too many parameters in a callable                   | n/a | yes | n/a  | no  |
 | Architecture         | CallableParameterUseCaseInTypeContextInspection | Callable parameter usage violates definition        | n/a |
 | Architecture         | ClassOverridesFieldOfSuperClassInspection       | Class overrides a field of a parent class           | n/a | yes | n/a  | yes |
@@ -177,7 +176,7 @@ Inspections Lists (Security)
 ---
 | Group                | Short Name                                         | Full Name                                                 | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------       | :--------------------------------------------------       | --: | --: | ---: | --: |
-| Security             | NonSecureUniqidUsageInspection                     | Insecure 'uniqid()' usage                                 | yes | yes | no   | no  |
+| Security             | NonSecureUniqidUsageInspection                     | Insecure 'uniqid()' usage                                 | yes | yes | yes  | no  |
 | Security             | NonSecureExtractUsageInspection                    | Insecure 'extract(...)' usage                             | n/a | yes | n/a  | yes |
 | Security             | NonSecureParseStrUsageInspection                   | Insecure 'parse_str(...)' usage                           | n/a | yes | n/a  | yes |
 | Security             | UntrustedInclusionInspection                       | Untrusted files inclusion                                 | n/a | yes | n/a  | no  |
@@ -210,7 +209,7 @@ Inspections Lists (Performance)
 | Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                              | yes | yes | no  | no  |
 | Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | yes | yes | no  | no  |
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes | yes | no  | no  |
-| Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes | yes | no  | no  |
+| Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes | yes | yes | no  |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | no  | yes | no  | no  |
 | Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                    | yes | yes | no  | no  |
 | Performance          | FilePutContentsMissUseInspection                | 'file_put_contents(...)' misused                                                            | yes | yes | no  | no  |

@@ -1,23 +1,28 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiWhiteSpace;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.DropMethodFix;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class SenselessProxyMethodInspector extends BasePhpInspection {
     private static final String messagePattern = "'%s%' method can be dropped, as it only calls parent's one.";
@@ -144,45 +149,10 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                     /* decide if need to report any issues */
                     if (isDispatchingWithoutModifications && !isChangingSignature) {
                         final String message = messagePattern.replace("%s%", method.getName());
-                        holder.registerProblem(methodNameNode, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                        holder.registerProblem(methodNameNode, message, ProblemHighlightType.WEAK_WARNING, new DropMethodFix());
                     }
                 }
             }
         };
-    }
-
-    private static class TheLocalFix implements LocalQuickFix {
-        @NotNull
-        @Override
-        public String getName() {
-            return "Drop it";
-        }
-
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return getName();
-        }
-
-        @Override
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement expression = descriptor.getPsiElement().getParent();
-            if (expression instanceof Method) {
-                /* delete preceding PhpDoc */
-                final PhpPsiElement previous = ((Method) expression).getPrevPsiSibling();
-                if (previous instanceof PhpDocComment) {
-                    previous.delete();
-                }
-
-                /* delete space after the method */
-                PsiElement nextExpression = expression.getNextSibling();
-                if (nextExpression instanceof PsiWhiteSpace) {
-                    nextExpression.delete();
-                }
-
-                /* delete proxy itself */
-                expression.delete();
-            }
-        }
     }
 }

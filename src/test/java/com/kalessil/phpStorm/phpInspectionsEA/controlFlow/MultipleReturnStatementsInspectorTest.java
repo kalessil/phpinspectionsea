@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MultipleRetur
 
 final public class MultipleReturnStatementsInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.configureByFile("fixtures/controlFlow/multiple-returns.php");
         myFixture.enableInspections(MultipleReturnStatementsInspector.class);
+
+        myFixture.configureByFile("fixtures/controlFlow/multiple-returns.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

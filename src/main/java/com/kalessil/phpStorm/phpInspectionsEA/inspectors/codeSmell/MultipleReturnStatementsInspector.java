@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class MultipleReturnStatementsInspector extends BasePhpInspection {
-    private static final String message = "Method has multiple return points, try to introduce just one to uncover complexity behind.";
+    private static final String messagePattern = "Method has %c% return points, try to introduce just one to uncover complexity behind.";
 
     @NotNull
     public String getShortName() {
@@ -46,14 +46,16 @@ public class MultipleReturnStatementsInspector extends BasePhpInspection {
 
                     int returnsCount = 0;
                     for (final PhpInstruction instruction : exitPoint.getPredecessors()) {
-                        if (instruction instanceof PhpReturnInstruction && ++returnsCount > 3) {
-                            holder.registerProblem(nameIdentifier, message, ProblemHighlightType.GENERIC_ERROR);
-                            return;
+                        if (instruction instanceof PhpReturnInstruction) {
+                            ++returnsCount;
                         }
                     }
 
                     if (returnsCount > 1) {
-                        holder.registerProblem(nameIdentifier, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        final ProblemHighlightType level
+                            = returnsCount > 3 ? ProblemHighlightType.GENERIC_ERROR : ProblemHighlightType.GENERIC_ERROR_OR_WARNING;
+                        final String message = messagePattern.replace("%c%", String.valueOf(returnsCount));
+                        holder.registerProblem(nameIdentifier, message, level);
                     }
                 }
             }

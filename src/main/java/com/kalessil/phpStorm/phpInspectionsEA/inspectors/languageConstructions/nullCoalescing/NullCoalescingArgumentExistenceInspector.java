@@ -13,9 +13,11 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
+import com.jetbrains.php.config.PhpLanguageFeature;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -49,9 +51,14 @@ public class NullCoalescingArgumentExistenceInspector extends BasePhpInspection 
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpBinaryExpression(BinaryExpression expression) {
-                final IElementType operator  = expression.getOperationType();
+                final PhpLanguageLevel phpVersion
+                        = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (!phpVersion.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
+                    return;
+                }
+
                 final PsiElement leftOperand = expression.getLeftOperand();
-                if (PhpTokenTypes.opCOALESCE == operator && leftOperand instanceof Variable) {
+                if (PhpTokenTypes.opCOALESCE == expression.getOperationType() && leftOperand instanceof Variable) {
                     final Variable variable = (Variable) leftOperand;
                     if (!this.isSuppliedFromOutside(variable)) {
                         analyzeExistence(variable);

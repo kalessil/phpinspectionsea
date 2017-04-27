@@ -49,12 +49,18 @@ public class MissingIssetImplementationInspector extends BasePhpInspection {
 
                 for (final PhpExpression parameter : parameters) {
                     if (parameter instanceof FieldReference) {
-                        final PhpExpression variable = ((FieldReference) parameter).getClassReference();
+                        /* if the fields resolved, continue */
+                        if (null != ((FieldReference) parameter).resolve()) {
+                            continue;
+                        }
+
                         /* false-positives: in the $this context we are dealing with dynamic properties */
+                        final PhpExpression variable = ((FieldReference) parameter).getClassReference();
                         if (null == variable || variable.getText().equals("$this")) {
                             continue;
                         }
 
+                        /* long way around: identify an lookup classes */
                         final Set<String> resolvedTypes = variable.getType().global(project).filterUnknown().getTypes();
                         for (final String type : resolvedTypes) {
                             final String normalizedType = Types.getType(type);

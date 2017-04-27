@@ -27,6 +27,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class NullCoalescingArgumentExistenceInspector extends BasePhpInspection {
     private static final String messagePattern = "'$%v%' seems to be not defined in the scope.";
 

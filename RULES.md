@@ -171,6 +171,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | SuspiciousBinaryOperationInspection             | Suspicious binary operations                              | n/a | yes | n/a  | no  |
 | Probable bugs        | IncompleteThrowStatementsInspection             | Incomplete throw statements                               | yes | yes | no   | no  |
 | Probable bugs        | AutoloadingIssuesInspection                     | Class autoloading correctness                             | n/a | yes | n/a  | no  |
+| Probable bugs        | NullCoalescingArgumentExistenceInspection       | Null coalescing operator variable existence               | n/a | yes | n/a  | no  |
 
 Inspections Lists (Security)
 ---

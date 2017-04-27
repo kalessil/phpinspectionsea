@@ -64,10 +64,16 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
                     parent       = classToCheck.getSuperClass();
                     ++parentsCount;
 
-                    /* show-stoppers: frameworks god classes */
-                    if (null != parent && showStoppers.contains(parent.getFQN())) {
-                        ++parentsCount;
-                        break;
+                    if (null != parent) {
+                        /* show-stoppers: frameworks god classes */
+                        if (showStoppers.contains(parent.getFQN())) {
+                            ++parentsCount;
+                            break;
+                        }
+                        /* exceptions named according to DDD, check parents named with exception suffix */
+                        if (parent.getName().endsWith("Exception")) {
+                            return;
+                        }
                     }
                 }
 

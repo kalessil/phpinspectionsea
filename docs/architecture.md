@@ -48,7 +48,7 @@ The inspection searches for typical patterns violations:
 
 ## Multiple return statements usage
 
-> Note: the inspection is deactivated by default, but highly recommended for enabling
+> Note: the inspection is deactivated by default
 
 > Note: the inspection applies only to class methods (traits and regular functions are not analyzed)
 

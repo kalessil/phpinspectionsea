@@ -93,13 +93,13 @@ public class OptionsComponent {
         /**
          * Store all Radio Elements handled by this Radio Component.
          */
-        ArrayList<Element> elements = new ArrayList<>();
+        ArrayList<Widget> widgets = new ArrayList<>();
 
         /**
          * Store the current selected Radio.
          */
         @Nullable
-        private Element currentSelection;
+        private Widget currentSelection;
 
         /**
          * @param fieldTitle     The title of the field on options panel.
@@ -107,36 +107,36 @@ public class OptionsComponent {
          * @param updateConsumer The update consumer (called after item change).
          */
         public void createOption(final String fieldTitle, final boolean defaultValue, final Consumer<Boolean> updateConsumer) {
-            final Element createElement = new Element(fieldTitle, defaultValue, updateConsumer);
-            elements.add(createElement);
+            final Widget createWidget = new Widget(fieldTitle, defaultValue, updateConsumer);
+            widgets.add(createWidget);
 
             if (defaultValue) {
-                currentSelection = createElement;
+                currentSelection = createWidget;
             }
         }
 
         /**
          * Handle a JCheckBox component and it Update Consumer.
          */
-        private class Element {
+        private class Widget {
             /**
-             * Stores the JCheckBox component related to the Element.
+             * Stores the JCheckBox component related to the Widget.
              */
             final JCheckBox checkbox;
 
             /**
-             * Stores the Update Consumer related to the Element.
+             * Stores the Update Consumer related to the Widget.
              */
             final Consumer<Boolean> updateConsumer;
 
             /**
-             * Constructs the Element.
+             * Constructs the Widget.
              *
              * @param fieldTitle     The title of the field on options panel.
              * @param defaultValue   The default or current field value stored on inspection.
              * @param updateConsumer The update consumer (called after item change).
              */
-            Element(final String fieldTitle, final boolean defaultValue, final Consumer<Boolean> updateConsumer) {
+            Widget(final String fieldTitle, final boolean defaultValue, final Consumer<Boolean> updateConsumer) {
                 this.updateConsumer = updateConsumer;
 
                 checkbox = new JCheckBox(fieldTitle, defaultValue);
@@ -154,6 +154,11 @@ public class OptionsComponent {
                 optionsPanel.add(checkbox, "wrap");
             }
 
+            /**
+             * Update the checkbox "checked" status related to Widget and call the Consumer.
+             *
+             * @param isSelected Indicate the new status.
+             */
             final void setSelected(final boolean isSelected) {
                 checkbox.setSelected(isSelected);
                 updateConsumer.accept(isSelected);

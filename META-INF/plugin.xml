@@ -622,7 +622,7 @@ We keep delivering funded results =)
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ShortOpenTagUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ComparisonOperandsOrderInspection"             displayName="Yoda/regular conditions style usage"
-        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ComparisonOperandsOrderInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ParameterDefaultValueIsNotNullInspection"      displayName="Non-null parameters default value"

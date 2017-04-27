@@ -32,9 +32,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     // Inspections options.
-    public boolean optionReportEmptyUsage       = false;
-    public boolean optionSuggestToUseCountCheck = false;
-    public boolean optionsToUseNullComparison   = true;
+    public boolean REPORT_EMPTY_USAGE             = false;
+    public boolean SUGGEST_TO_USE_COUNT_CHECK     = false;
+    public boolean SUGGEST_TO_USE_NULL_COMPARISON = true;
 
     private static final String messageDoNotUse          = "'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.";
     private static final String patternUseCount          = "You should probably use '%e%' instead.";
@@ -72,7 +72,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     if (this.isArrayType(resolvedTypes)) {
                         resolvedTypes.clear();
 
-                        if (optionSuggestToUseCountCheck) {
+                        if (SUGGEST_TO_USE_COUNT_CHECK) {
                             final String replacement = "0 %o% count(%a%)"
                                 .replace("%a%", subject.getText())
                                 .replace("%o%", isInverted ? "!==": "===");
@@ -88,7 +88,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     if (this.isNullableCoreType(resolvedTypes) || TypesSemanticsUtil.isNullableObjectInterface(resolvedTypes)) {
                         resolvedTypes.clear();
 
-                        if (optionsToUseNullComparison) {
+                        if (SUGGEST_TO_USE_NULL_COMPARISON) {
                             final String replacement = "null %o% %a%"
                                 .replace("%a%", subject.getText())
                                 .replace("%o%", isInverted ? "!==": "===");
@@ -103,7 +103,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     resolvedTypes.clear();
                 }
 
-                if (optionReportEmptyUsage) {
+                if (REPORT_EMPTY_USAGE) {
                     holder.registerProblem(emptyExpression, messageDoNotUse, ProblemHighlightType.WEAK_WARNING);
                 }
             }
@@ -132,9 +132,9 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Report empty() usage", optionReportEmptyUsage, (isSelected) -> optionReportEmptyUsage = isSelected);
-            component.createCheckbox("Suggest to use count()-comparison", optionSuggestToUseCountCheck, (isSelected) -> optionSuggestToUseCountCheck = isSelected);
-            component.createCheckbox("Suggest to use null-comparison", optionsToUseNullComparison, (isSelected) -> optionsToUseNullComparison = isSelected);
+            component.createCheckbox("Report empty() usage", REPORT_EMPTY_USAGE, (isSelected) -> REPORT_EMPTY_USAGE = isSelected);
+            component.createCheckbox("Suggest to use count()-comparison", SUGGEST_TO_USE_COUNT_CHECK, (isSelected) -> SUGGEST_TO_USE_COUNT_CHECK = isSelected);
+            component.createCheckbox("Suggest to use null-comparison", SUGGEST_TO_USE_NULL_COMPARISON, (isSelected) -> SUGGEST_TO_USE_NULL_COMPARISON = isSelected);
         });
     }
 

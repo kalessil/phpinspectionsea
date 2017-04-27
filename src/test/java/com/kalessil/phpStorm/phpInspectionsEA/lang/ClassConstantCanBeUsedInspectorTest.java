@@ -7,9 +7,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.C
 final public class ClassConstantCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         ClassConstantCanBeUsedInspector inspector = new ClassConstantCanBeUsedInspector();
-        inspector.optionImportClassesOnQF = true;
-        inspector.optionUseRelativeQF = true;
-        inspector.optionLookRootNsUp = true;
+        inspector.IMPORT_CLASSES_ON_QF = true;
+        inspector.USE_RELATIVE_QF = true;
+        inspector.LOOK_ROOT_NS_UP = true;
 
         myFixture.configureByFile("fixtures/lang/classConstant/class-in-the-same-namespace.php");
         myFixture.configureByFile("fixtures/lang/classConstant/class-name-constant-ns.php");

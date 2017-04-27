@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DisallowWritingIntoStaticPropertiesInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean optionAllowWriteFromSourceClass = true;
+    public boolean ALLOW_WRITE_FROM_SOURCE_CLASS = true;
 
     private static final String messageDisallowExternalWrites = "Static property should be modified only inside the source class";
     private static final String messageDisallowAnyWrites = "Static property should not be modified";
@@ -46,7 +46,7 @@ public class DisallowWritingIntoStaticPropertiesInspector extends BasePhpInspect
                     return;
                 }
 
-                if (!optionAllowWriteFromSourceClass) {
+                if (!ALLOW_WRITE_FROM_SOURCE_CLASS) {
                     holder.registerProblem(assignmentExpression, messageDisallowAnyWrites, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     return;
                 }
@@ -103,7 +103,7 @@ public class DisallowWritingIntoStaticPropertiesInspector extends BasePhpInspect
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Allow write from the source class", optionAllowWriteFromSourceClass, (isSelected) -> optionAllowWriteFromSourceClass = isSelected);
+            component.createCheckbox("Allow write from the source class", ALLOW_WRITE_FROM_SOURCE_CLASS, (isSelected) -> ALLOW_WRITE_FROM_SOURCE_CLASS = isSelected);
         });
     }
 }

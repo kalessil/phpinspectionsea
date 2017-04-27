@@ -34,8 +34,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean optionPreferYodaStyle    = false;
-    public boolean optionPreferRegularStyle = false;
+    public boolean PREFER_YODA_STYLE    = false;
+    public boolean PREFER_REGULAR_STYLE = false;
 
     final static private String messageUseYoda    = "Yoda conditions style should be used instead";
     final static private String messageUseRegular = "Regular conditions style should be used instead";
@@ -58,7 +58,7 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpBinaryExpression(BinaryExpression expression) {
-                if (!optionPreferYodaStyle && !optionPreferRegularStyle) {
+                if (!PREFER_YODA_STYLE && !PREFER_REGULAR_STYLE) {
                     return;
                 }
 
@@ -83,11 +83,11 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (optionPreferYodaStyle && isRightConstant) {
+                if (PREFER_YODA_STYLE && isRightConstant) {
                     holder.registerProblem(expression, messageUseYoda, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                     return;
                 }
-                if (optionPreferRegularStyle && isLeftConstant) {
+                if (PREFER_REGULAR_STYLE && isLeftConstant) {
                     holder.registerProblem(expression, messageUseRegular, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                 }
             }
@@ -97,8 +97,8 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
             component.createRadio((radioComponent) -> {
-                radioComponent.createOption("Prefer yoda style", optionPreferYodaStyle, (isSelected) -> optionPreferYodaStyle = isSelected);
-                radioComponent.createOption("Prefer regular style", optionPreferRegularStyle, (isSelected) -> optionPreferRegularStyle = isSelected);
+                radioComponent.createOption("Prefer yoda style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
+                radioComponent.createOption("Prefer regular style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
             });
         });
     }

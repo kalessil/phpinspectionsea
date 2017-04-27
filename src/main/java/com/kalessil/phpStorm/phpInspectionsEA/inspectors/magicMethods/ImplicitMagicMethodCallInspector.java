@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean optionSuggestUsingStringCasting = false;
+    public boolean SUGGEST_USING_STRING_CASTING = false;
 
     private static final String message              = "Implicit magic method calls should be avoided as these methods are used by PHP internals.";
     private static final String patternStringCasting = "Please use (string) %o% instead.";
@@ -78,14 +78,14 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
                         !referenceObject.equals("$this") && !referenceObject.equals("parent")
                     ) {
                         /* __toString is a special case */
-                        if (optionSuggestUsingStringCasting && methodName.equals("__toString")) {
+                        if (SUGGEST_USING_STRING_CASTING && methodName.equals("__toString")) {
                             final String message = patternStringCasting.replace("%o%", referenceObject);
                             holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseStringCastingLocalFix());
 
                             return;
                         }
                         /* allow calling __toString, as a developer don't want hints on this */
-                        if (!optionSuggestUsingStringCasting && methodName.equals("__toString")) {
+                        if (!SUGGEST_USING_STRING_CASTING && methodName.equals("__toString")) {
                             return;
                         }
 
@@ -102,7 +102,7 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
                             return;
                         }
                         /* allow calling __toString, as a developer don't want hints on this */
-                        if (!optionSuggestUsingStringCasting && methodName.equals("__toString")) {
+                        if (!SUGGEST_USING_STRING_CASTING && methodName.equals("__toString")) {
                             return;
                         }
 
@@ -141,7 +141,7 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Suggest using (string)...", optionSuggestUsingStringCasting, (isSelected) -> optionSuggestUsingStringCasting = isSelected);
+            component.createCheckbox("Suggest using (string)...", SUGGEST_USING_STRING_CASTING, (isSelected) -> SUGGEST_USING_STRING_CASTING = isSelected);
         });
     }
 }

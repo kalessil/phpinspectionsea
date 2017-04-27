@@ -8,7 +8,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RandomApiMigra
 final public class RandomApiMigrationInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsMtPatterns() {
         RandomApiMigrationInspector inspector = new RandomApiMigrationInspector();
-        inspector.optionSuggestUsingRandomInt = false;
+        inspector.SUGGEST_USING_RANDOM_INT = false;
 
         myFixture.configureByFile("fixtures/api/random-api-mt.php");
         myFixture.enableInspections(inspector);

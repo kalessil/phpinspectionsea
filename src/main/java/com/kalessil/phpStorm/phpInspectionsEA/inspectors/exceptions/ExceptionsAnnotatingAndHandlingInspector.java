@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection {
     // Inspection options.
-    private boolean optionReportNonThrownExceptions = false;
+    private boolean REPORT_NON_THROWN_EXCEPTIONS = false;
 
     private static final String messagePattern           = "Throws a non-annotated/unhandled exception: '%c%'.";
     private static final String messagePatternUnthrown   = "Following exceptions annotated, but not thrown: '%c%'.";
@@ -125,7 +125,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
 
                 /* do reporting now: exceptions annotated, but not thrown */
-                if (optionReportNonThrownExceptions && annotatedButNotThrownExceptions.size() > 0) {
+                if (REPORT_NON_THROWN_EXCEPTIONS && annotatedButNotThrownExceptions.size() > 0) {
                     List<String> toReport = new ArrayList<>();
                     for (PhpClass notThrown : annotatedButNotThrownExceptions) {
                         toReport.add(notThrown.getFQN());
@@ -282,7 +282,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Report non-thrown exceptions", optionReportNonThrownExceptions, (isSelected) -> optionReportNonThrownExceptions = isSelected);
+            component.createCheckbox("Report non-thrown exceptions", REPORT_NON_THROWN_EXCEPTIONS, (isSelected) -> REPORT_NON_THROWN_EXCEPTIONS = isSelected);
         });
     }
 }

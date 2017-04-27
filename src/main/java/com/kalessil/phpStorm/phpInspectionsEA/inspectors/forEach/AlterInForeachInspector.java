@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class AlterInForeachInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean optionSuggestUsingValueByRef = false;
+    public boolean SUGGEST_USING_VALUE_BY_REF = false;
 
     private static final String patternSuggestReference = "Can be refactored as '$%c% = ...' if $%v% is defined as a reference (ensure that array supplied). Suppress if causes memory mismatches.";
     private static final String messageMissingUnset     = "This variable must be unset just after foreach to prevent possible side-effects.";
@@ -152,7 +152,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
             }
 
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
-                if (!optionSuggestUsingValueByRef /*|| ... PHP7 ...*/) {
+                if (!SUGGEST_USING_VALUE_BY_REF /*|| ... PHP7 ...*/) {
                     return;
                 }
 
@@ -216,7 +216,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Suggest using value by reference", optionSuggestUsingValueByRef, (isSelected) -> optionSuggestUsingValueByRef = isSelected);
+            component.createCheckbox("Suggest using value by reference", SUGGEST_USING_VALUE_BY_REF, (isSelected) -> SUGGEST_USING_VALUE_BY_REF = isSelected);
         });
     }
 }

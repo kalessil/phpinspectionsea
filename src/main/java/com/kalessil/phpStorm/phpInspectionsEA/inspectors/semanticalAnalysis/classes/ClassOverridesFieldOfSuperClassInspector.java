@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection {
     // Inspection options.
-    private boolean optionReportPrivateRedefinition = true;
+    private boolean REPORT_PRIVATE_REDEFINITION = true;
 
     private static final String patternShadows            = "Field '%p%' is already defined in %c%, check our online documentation for options.";
     private static final String patternProtectedCandidate = "Likely needs to be protected (already defined in %c%).";
@@ -80,7 +80,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
 
                         /* re-defining private fields with the same name is pretty suspicious itself */
                         if (superclassField.getModifier().isPrivate()) {
-                            if (optionReportPrivateRedefinition) {
+                            if (REPORT_PRIVATE_REDEFINITION) {
                                 final String message = patternProtectedCandidate.replace("%c%", superClassFQN);
                                 holder.registerProblem(ownFieldParent, message, ProblemHighlightType.WEAK_WARNING);
                             }
@@ -101,7 +101,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Report re-defining private fields", optionReportPrivateRedefinition, (isSelected) -> optionReportPrivateRedefinition = isSelected);
+            component.createCheckbox("Report re-defining private fields", REPORT_PRIVATE_REDEFINITION, (isSelected) -> REPORT_PRIVATE_REDEFINITION = isSelected);
         });
     }
 }

@@ -39,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PhpUnitTestsInspector extends BasePhpInspection {
     // Inspection options.
-    private boolean optionSuggestToUseAssertSame = false;
+    private boolean SUGGEST_TO_USE_ASSERTSAME = false;
 
     // TODO: refactor to avoid this.
     public boolean WORKAROUND_COVERS_REFERENCES = false;
@@ -168,7 +168,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 ) {
                     return;
                 }
-                if (optionSuggestToUseAssertSame) {
+                if (SUGGEST_TO_USE_ASSERTSAME) {
                     @SuppressWarnings({"unused", "UnusedAssignment"})
                     boolean strictAsserts =
                         AssertSameStrategy.apply(methodName, reference, holder) ||
@@ -212,7 +212,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Suggest to use assertSame", optionSuggestToUseAssertSame, (isSelected) -> optionSuggestToUseAssertSame = isSelected);
+            component.createCheckbox("Suggest to use assertSame", SUGGEST_TO_USE_ASSERTSAME, (isSelected) -> SUGGEST_TO_USE_ASSERTSAME = isSelected);
         });
     }
 

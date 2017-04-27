@@ -6,8 +6,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PropertyInitia
 final public class PropertyInitializationFlawsInspectorTest extends CodeInsightFixtureTestCase {
     public void testNullInitPatterns() {
         PropertyInitializationFlawsInspector inspector = new PropertyInitializationFlawsInspector();
-        inspector.optionReportInitFlaws = true;
-        inspector.optionReportDefaultsFlaws = true;
+        inspector.REPORT_INIT_FLAWS = true;
+        inspector.REPORT_DEFAULTS_FLAWS = true;
 
         myFixture.configureByFile("fixtures/codeStyle/property-null-initialization.php");
         myFixture.enableInspections(inspector);
@@ -15,8 +15,8 @@ final public class PropertyInitializationFlawsInspectorTest extends CodeInsightF
     }
     public void testPropertyOverridePatterns() {
         PropertyInitializationFlawsInspector inspector = new PropertyInitializationFlawsInspector();
-        inspector.optionReportInitFlaws = true;
-        inspector.optionReportDefaultsFlaws = true;
+        inspector.REPORT_INIT_FLAWS = true;
+        inspector.REPORT_DEFAULTS_FLAWS = true;
 
         myFixture.configureByFile("fixtures/codeStyle/property-initialization-override.php");
         myFixture.enableInspections(inspector);

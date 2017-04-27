@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean optionSuggestUsingClone = false;
+    public boolean SUGGEST_USING_CLONE = false;
 
     private static final String messageDisconnected = "This statement seems to be disconnected from its parent foreach.";
     private static final String messageUseClone     = "Objects should be created outside of a loop and cloned instead.";
@@ -135,7 +135,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                     }
                                 }
 
-                                if (optionSuggestUsingClone && (ExpressionType.DOM_ELEMENT_CREATE == target || ExpressionType.NEW == target)) {
+                                if (SUGGEST_USING_CLONE && (ExpressionType.DOM_ELEMENT_CREATE == target || ExpressionType.NEW == target)) {
                                     holder.registerProblem(oneInstruction, messageUseClone, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                                 }
                             }
@@ -315,7 +315,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Suggest using clone", optionSuggestUsingClone, (isSelected) -> optionSuggestUsingClone = isSelected);
+            component.createCheckbox("Suggest using clone", SUGGEST_USING_CLONE, (isSelected) -> SUGGEST_USING_CLONE = isSelected);
         });
     }
 }

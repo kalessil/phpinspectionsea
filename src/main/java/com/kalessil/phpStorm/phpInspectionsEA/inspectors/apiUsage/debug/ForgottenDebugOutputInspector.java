@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ForgottenDebugOutputInspector extends BasePhpInspection {
     // Inspection options.
-    private final List<String> optionCustomDebugMethods = new ArrayList<>();
+    private final List<String> configuration = new ArrayList<>();
 
     public boolean defaultsTransferredToUserSpace = false;
 
@@ -53,7 +53,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     }
 
     public void registerCustomDebugMethod(@NotNull String fqn) {
-        this.optionCustomDebugMethods.add(fqn);
+        this.configuration.add(fqn);
         this.recompileConfiguration();
     }
 
@@ -76,17 +76,17 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             migrated.add("\\Zend\\Di\\Display\\Console::export");
             migrated.add("error_log");
             migrated.add("phpinfo");
-            migrated.addAll(this.optionCustomDebugMethods);
+            migrated.addAll(this.configuration);
 
             /* migrate the list */
-            this.optionCustomDebugMethods.clear();
-            this.optionCustomDebugMethods.addAll(migrated);
+            this.configuration.clear();
+            this.configuration.addAll(migrated);
             this.defaultsTransferredToUserSpace = true;
 
             /* cleanup */
             migrated.clear();
         }
-        customDebugFQNs.addAll(this.optionCustomDebugMethods);
+        customDebugFQNs.addAll(this.configuration);
 
         /* parse what was provided FQNs */
         for (String stringDescriptor : customDebugFQNs) {
@@ -195,7 +195,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createList("Custom debug methods:", optionCustomDebugMethods, this::recompileConfiguration);
+            component.createList("Custom debug methods:", configuration, this::recompileConfiguration);
         });
     }
 }

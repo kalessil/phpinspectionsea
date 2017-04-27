@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class AccessModifierPresentedInspector extends BasePhpInspection {
     // Inspection options.
-    private boolean optionAnalyzeInterfaces = true;
+    private boolean ANALYZE_INTERFACES = true;
 
     private static final String messagePattern = "'%s%' should be declared with access modifier.";
 
@@ -41,7 +41,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
                 /* community request: interfaces have only public methods, what is default access levels */
-                if (!optionAnalyzeInterfaces && clazz.isInterface()){
+                if (!ANALYZE_INTERFACES && clazz.isInterface()){
                     return;
                 }
 
@@ -78,7 +78,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Analyze interfaces", optionAnalyzeInterfaces, (isSelected) -> optionAnalyzeInterfaces = isSelected);
+            component.createCheckbox("Analyze interfaces", ANALYZE_INTERFACES, (isSelected) -> ANALYZE_INTERFACES = isSelected);
         });
     }
 

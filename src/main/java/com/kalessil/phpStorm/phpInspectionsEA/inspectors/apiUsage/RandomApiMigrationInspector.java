@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class RandomApiMigrationInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean optionSuggestUsingRandomInt = true;
+    public boolean SUGGEST_USING_RANDOM_INT = true;
 
     private static final String messagePattern = "'%o%(...)' has recommended replacement '%n%(...)', consider migrating.";
 
@@ -56,7 +56,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
     }
 
     private Map<String, String> getMapping(PhpLanguageLevel phpVersion) {
-        if (optionSuggestUsingRandomInt && phpVersion.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) {
+        if (SUGGEST_USING_RANDOM_INT && phpVersion.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) {
             return mappingEdge;
         }
 
@@ -97,7 +97,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Suggest using random_int", optionSuggestUsingRandomInt, (isSelected) -> optionSuggestUsingRandomInt = isSelected);
+            component.createCheckbox("Suggest using random_int", SUGGEST_USING_RANDOM_INT, (isSelected) -> SUGGEST_USING_RANDOM_INT = isSelected);
         });
     }
 

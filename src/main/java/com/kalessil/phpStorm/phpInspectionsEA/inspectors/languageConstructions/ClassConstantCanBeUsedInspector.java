@@ -44,9 +44,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean optionImportClassesOnQF = true;
-    public boolean optionUseRelativeQF     = true;
-    public boolean optionLookRootNsUp      = false;
+    public boolean IMPORT_CLASSES_ON_QF = true;
+    public boolean USE_RELATIVE_QF      = true;
+    public boolean LOOK_ROOT_NS_UP      = false;
 
     private static final String messagePattern   = "Perhaps this can be replaced with %c%::class.";
     private static final String messageUseStatic = "'static::class' can be used instead.";
@@ -112,7 +112,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     if (isFull) {
                         namesToLookup.add(normalizedContents);
                     } else {
-                        if (optionLookRootNsUp || normalizedContents.contains("\\")) {
+                        if (LOOK_ROOT_NS_UP || normalizedContents.contains("\\")) {
                             normalizedContents = '\\' + normalizedContents;
                             namesToLookup.add(normalizedContents);
                         }
@@ -134,7 +134,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                             final String message = messagePattern.replace("%c%", normalizedContents);
                             holder.registerProblem(
                                 expression, message, ProblemHighlightType.WEAK_WARNING,
-                                new TheLocalFix(normalizedContents, optionImportClassesOnQF, optionUseRelativeQF)
+                                new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF)
                             );
                         }
                     }
@@ -283,9 +283,9 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Lookup root namespace classes", optionLookRootNsUp, (isSelected) -> optionLookRootNsUp = isSelected);
-            component.createCheckbox("Import classes automatically", optionImportClassesOnQF, (isSelected) -> optionImportClassesOnQF = isSelected);
-            component.createCheckbox("Use relative QN where possible", optionUseRelativeQF, (isSelected) -> optionUseRelativeQF = isSelected);
+            component.createCheckbox("Lookup root namespace classes", LOOK_ROOT_NS_UP, (isSelected) -> LOOK_ROOT_NS_UP = isSelected);
+            component.createCheckbox("Import classes automatically", IMPORT_CLASSES_ON_QF, (isSelected) -> IMPORT_CLASSES_ON_QF = isSelected);
+            component.createCheckbox("Use relative QN where possible", USE_RELATIVE_QF, (isSelected) -> USE_RELATIVE_QF = isSelected);
         });
     }
 }

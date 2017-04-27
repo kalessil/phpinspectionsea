@@ -11,7 +11,7 @@ final public class SingletonFactoryPatternViolationInspectorTest extends CodeIns
     }
     public void testSingletonNeedsOverrideClone() {
         SingletonFactoryPatternViolationInspector inspector = new SingletonFactoryPatternViolationInspector();
-        inspector.optionSuggestOverridingClone = true;
+        inspector.SUGGEST_OVERRIDING_CLONE = true;
 
         myFixture.configureByFile("fixtures/designPatterns/singleton-needs-override-clone.php");
         myFixture.enableInspections(inspector);

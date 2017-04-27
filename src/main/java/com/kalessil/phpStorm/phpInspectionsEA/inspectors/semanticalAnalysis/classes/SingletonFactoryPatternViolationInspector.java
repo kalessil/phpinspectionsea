@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SingletonFactoryPatternViolationInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean optionSuggestOverridingClone = false;
+    public boolean SUGGEST_OVERRIDING_CLONE = false;
 
     private static final String messageClone                = "Singleton should also override __clone to prevent copying the instance";
     private static final String messageFactoryOrSingleton   = "Ensure that one of public getInstance/create*/from* methods are defined.";
@@ -49,7 +49,7 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
                 final Method getInstance     = clazz.findOwnMethodByName("getInstance");
                 final boolean hasGetInstance = (null != getInstance && getInstance.getAccess().isPublic());
                 if (hasGetInstance) {
-                    if (optionSuggestOverridingClone && null == clazz.findOwnMethodByName("__clone")) {
+                    if (SUGGEST_OVERRIDING_CLONE && null == clazz.findOwnMethodByName("__clone")) {
                         holder.registerProblem(nameNode, messageClone, ProblemHighlightType.WEAK_WARNING);
                     }
 
@@ -79,7 +79,7 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Suggest overriding __clone", optionSuggestOverridingClone, (isSelected) -> optionSuggestOverridingClone = isSelected);
+            component.createCheckbox("Suggest overriding __clone", SUGGEST_OVERRIDING_CLONE, (isSelected) -> SUGGEST_OVERRIDING_CLONE = isSelected);
         });
     }
 }

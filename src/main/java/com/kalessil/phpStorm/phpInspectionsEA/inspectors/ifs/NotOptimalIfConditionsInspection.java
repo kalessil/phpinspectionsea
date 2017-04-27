@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     // Inspection options.
-    public boolean optionReportLiteralOperators = true;
+    public boolean REPORT_LITERAL_OPERATORS = true;
 
     private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
 
@@ -93,7 +93,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                     objConditionsFromStatement.clear();
 
-                    if (optionReportLiteralOperators) {
+                    if (REPORT_LITERAL_OPERATORS) {
                         AndOrWordsUsageStrategy.apply(ifStatement.getCondition(), holder);
                     }
                 }
@@ -113,7 +113,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                         objConditionsFromStatement.clear();
 
-                        if (optionReportLiteralOperators) {
+                        if (REPORT_LITERAL_OPERATORS) {
                             AndOrWordsUsageStrategy.apply(objElseIf.getCondition(), holder);
                         }
                     }
@@ -556,7 +556,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Report literal and/or operators", optionReportLiteralOperators, (isSelected) -> optionReportLiteralOperators = isSelected);
+            component.createCheckbox("Report literal and/or operators", REPORT_LITERAL_OPERATORS, (isSelected) -> REPORT_LITERAL_OPERATORS = isSelected);
         });
     }
 }

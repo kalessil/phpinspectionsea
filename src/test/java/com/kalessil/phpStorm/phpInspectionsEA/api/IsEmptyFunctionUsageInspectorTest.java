@@ -7,9 +7,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsEmptyFunctio
 final public class IsEmptyFunctionUsageInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         final IsEmptyFunctionUsageInspector inspector = new IsEmptyFunctionUsageInspector();
-        inspector.optionSuggestToUseCountCheck = true;
-        inspector.optionReportEmptyUsage = true;
-        inspector.optionsToUseNullComparison = true;
+        inspector.SUGGEST_TO_USE_COUNT_CHECK = true;
+        inspector.REPORT_EMPTY_USAGE = true;
+        inspector.SUGGEST_TO_USE_NULL_COMPARISON = true;
 
         myFixture.configureByFile("fixtures/api/empty-function.php");
         myFixture.enableInspections(inspector);

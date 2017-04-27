@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class StaticInvocationViaThisInspector extends BasePhpInspection {
     // Inspection options.
-    private boolean optionRespectPhpUnitStandards = true;
+    private boolean RESPECT_PHPUNIT_STANDARDS = true;
 
     private static final String messageThisUsed       = "'static::%m%(...)' should be used instead.";
     private static final String messageExpressionUsed = "'...::%m%(...)' should be used instead.";
@@ -70,7 +70,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                     }
 
                     /* PHP Unit's official docs saying to use $this, follow the guidance */
-                    if (optionRespectPhpUnitStandards) {
+                    if (RESPECT_PHPUNIT_STANDARDS) {
                         final String classFqn = clazz.getFQN();
                         if (classFqn.startsWith("\\PHPUnit_Framework_") || classFqn.startsWith("\\PHPUnit\\Framework\\")) {
                             return;
@@ -136,7 +136,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Follow PHPUnit standards", optionRespectPhpUnitStandards, (isSelected) -> optionRespectPhpUnitStandards = isSelected);
+            component.createCheckbox("Follow PHPUnit standards", RESPECT_PHPUNIT_STANDARDS, (isSelected) -> RESPECT_PHPUNIT_STANDARDS = isSelected);
         });
     }
 }

@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean optionRespectContext = false;
+    public boolean RESPECT_CONTEXT = false;
 
     private static final String message = "Try to avoid using the @, as it hides problems and complicates troubleshooting.";
 
@@ -83,7 +83,7 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
 
                 /* valid contexts: `... = @...`, ` return @... ` */
                 PsiElement parent = unaryExpression.getParent();
-                if (optionRespectContext) {
+                if (RESPECT_CONTEXT) {
                     if (parent instanceof TernaryExpression) {
                         parent = parent.getParent();
                     }
@@ -109,7 +109,7 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (optionRespectContext) {
+                if (RESPECT_CONTEXT) {
                     /* valid context: ` false === @... `, ` false !== @... ` */
                     if (parent instanceof BinaryExpression) {
                         final BinaryExpression parentExpression = (BinaryExpression) parent;
@@ -137,7 +137,7 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Content aware reporting", optionRespectContext, (isSelected) -> optionRespectContext = isSelected);
+            component.createCheckbox("Content aware reporting", RESPECT_CONTEXT, (isSelected) -> RESPECT_CONTEXT = isSelected);
         });
     }
 

@@ -35,8 +35,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class PropertyInitializationFlawsInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean optionReportDefaultsFlaws = true;
-    public boolean optionReportInitFlaws     = true;
+    public boolean REPORT_DEFAULTS_FLAWS = true;
+    public boolean REPORT_INIT_FLAWS     = true;
 
     private static final String messageDefaultValue    = "Null assignment can be safely removed. Define null in annotations if it's important.";
     private static final String messageDefaultOverride = "The assignment can be safely removed as the constructor overrides it.";
@@ -53,7 +53,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpField(Field field) {
                 /* configuration-based toggle */
-                if (!optionReportDefaultsFlaws) {
+                if (!REPORT_DEFAULTS_FLAWS) {
                     return;
                 }
 
@@ -80,7 +80,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
 
             public void visitPhpMethod(Method method) {
                 /* configuration-based toggle */
-                if (!optionReportInitFlaws) {
+                if (!REPORT_INIT_FLAWS) {
                     return;
                 }
 
@@ -153,7 +153,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                             break;
                         }
 
-                        if (!isPropertyReused && optionReportDefaultsFlaws) {
+                        if (!isPropertyReused && REPORT_DEFAULTS_FLAWS) {
                             holder.registerProblem(fieldDefault, messageDefaultOverride, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DropFieldDefaultValueFix());
                         }
                     }
@@ -165,8 +165,8 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Check default values", optionReportDefaultsFlaws, (isSelected) -> optionReportDefaultsFlaws = isSelected);
-            component.createCheckbox("Check constructor", optionReportInitFlaws, (isSelected) -> optionReportInitFlaws = isSelected);
+            component.createCheckbox("Check default values", REPORT_DEFAULTS_FLAWS, (isSelected) -> REPORT_DEFAULTS_FLAWS = isSelected);
+            component.createCheckbox("Check constructor", REPORT_INIT_FLAWS, (isSelected) -> REPORT_INIT_FLAWS = isSelected);
         });
     }
 

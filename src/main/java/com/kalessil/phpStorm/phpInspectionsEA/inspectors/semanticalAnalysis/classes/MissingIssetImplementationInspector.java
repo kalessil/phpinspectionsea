@@ -79,7 +79,7 @@ public class MissingIssetImplementationInspector extends BasePhpInspection {
                                     final PhpClass clazz   = classes.iterator().next();
                                     final boolean hasField = null != clazz.findFieldByName(parameter.getName(), false);
                                     if (!hasField && null == clazz.findMethodByName("__isset")) {
-                                        final String message = messagePattern.replace("%c%", clazz.getFQN());
+                                        final String message = messagePattern.replace("%c%", normalizedType);
                                         holder.registerProblem(parameter, message, ProblemHighlightType.GENERIC_ERROR);
 
                                         break;

@@ -17,14 +17,22 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 public class MissingIssetImplementationInspector extends BasePhpInspection {
     private static final String messagePattern = "%c% needs to implement __isset to properly work here.";
+
+    private static final Set<String> magicClasses = new HashSet<>();
+    static {
+        magicClasses.add("\\SimpleXMLElement");
+        magicClasses.add("\\stdClass");
+    }
 
     @NotNull
     public String getShortName() {
@@ -49,13 +57,14 @@ public class MissingIssetImplementationInspector extends BasePhpInspection {
 
                 for (final PhpExpression parameter : parameters) {
                     if (parameter instanceof FieldReference) {
-                        /* if the fields resolved, continue */
-                        if (null != ((FieldReference) parameter).resolve()) {
+                        final FieldReference reference = (FieldReference) parameter;
+                        /* if the field name is not implicit or the field resolved, continue */
+                        if (null == reference.getNameNode() || null != reference.resolve()) {
                             continue;
                         }
 
                         /* false-positives: in the $this context we are dealing with dynamic properties */
-                        final PhpExpression variable = ((FieldReference) parameter).getClassReference();
+                        final PhpExpression variable = reference.getClassReference();
                         if (null == variable || variable.getText().equals("$this")) {
                             continue;
                         }
@@ -65,7 +74,7 @@ public class MissingIssetImplementationInspector extends BasePhpInspection {
                         for (final String type : resolvedTypes) {
                             final String normalizedType = Types.getType(type);
                             /* false-positives: SimpleXMLElement */
-                            if (normalizedType.startsWith("\\") && !normalizedType.equals("\\SimpleXMLElement")) {
+                            if (normalizedType.startsWith("\\") && !magicClasses.contains(normalizedType)) {
                                 final Collection<PhpClass> classes = projectIndex.getClassesByFQN(normalizedType);
                                 if (!classes.isEmpty()) {
                                     final PhpClass clazz   = classes.iterator().next();

@@ -429,6 +429,10 @@ This release makes you even more awesome, really =).
         shortName="NullCoalescingArgumentExistenceInspection"     displayName="Null coalescing operator variable existence"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.NullCoalescingArgumentExistenceInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="MissingIssetImplementationInspection"          displayName="Empty/isset results correctness"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.MissingIssetImplementationInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

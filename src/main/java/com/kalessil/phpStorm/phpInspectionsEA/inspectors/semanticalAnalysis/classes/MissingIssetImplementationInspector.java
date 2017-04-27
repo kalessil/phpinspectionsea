@@ -48,23 +48,33 @@ public class MissingIssetImplementationInspector extends BasePhpInspection {
                 final PhpIndex projectIndex = PhpIndex.getInstance(project);
 
                 for (final PhpExpression parameter : parameters) {
-                    final Set<String> resolvedTypes = parameter.getType().global(project).filterUnknown().getTypes();
-                    for (final String type : resolvedTypes) {
-                        final String normalizedType = Types.getType(type);
-                        if (normalizedType.startsWith("\\")) {
-                            final Collection<PhpClass> classes = projectIndex.getClassesByFQN(normalizedType);
-                            if (!classes.isEmpty()) {
-                                final PhpClass clazz = classes.iterator().next();
-                                if (null == clazz.findMethodByName("__isset")) {
-                                    final String message = messagePattern.replace("%c%", clazz.getFQN());
-                                    holder.registerProblem(parameter, message, ProblemHighlightType.GENERIC_ERROR);
+                    if (parameter instanceof FieldReference) {
+                        final PhpExpression variable = ((FieldReference) parameter).getClassReference();
+                        /* false-positives: in the $this context we are dealing with dynamic properties */
+                        if (null == variable || variable.getText().equals("$this")) {
+                            continue;
+                        }
 
-                                    break;
+                        final Set<String> resolvedTypes = variable.getType().global(project).filterUnknown().getTypes();
+                        for (final String type : resolvedTypes) {
+                            final String normalizedType = Types.getType(type);
+                            /* false-positives: SimpleXMLElement */
+                            if (normalizedType.startsWith("\\") && !normalizedType.equals("\\SimpleXMLElement")) {
+                                final Collection<PhpClass> classes = projectIndex.getClassesByFQN(normalizedType);
+                                if (!classes.isEmpty()) {
+                                    final PhpClass clazz   = classes.iterator().next();
+                                    final boolean hasField = null != clazz.findFieldByName(parameter.getName(), false);
+                                    if (!hasField && null == clazz.findMethodByName("__isset")) {
+                                        final String message = messagePattern.replace("%c%", clazz.getFQN());
+                                        holder.registerProblem(parameter, message, ProblemHighlightType.GENERIC_ERROR);
+
+                                        break;
+                                    }
                                 }
                             }
                         }
+                        resolvedTypes.clear();
                     }
-                    resolvedTypes.clear();
                 }
             }
         };

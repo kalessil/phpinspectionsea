@@ -431,7 +431,7 @@ This release makes you even more awesome, really =).
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.NullCoalescingArgumentExistenceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MissingIssetImplementationInspection"          displayName="Empty/isset results correctness"
-        groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.MissingIssetImplementationInspector"/>
 
 

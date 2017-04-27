@@ -425,6 +425,10 @@ This release makes you even more awesome, really =).
         shortName="NullPointerExceptionInspection"                displayName="Null pointer exceptions prevention (beta)"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.NullPointerExceptionInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="NullCoalescingArgumentExistenceInspection"     displayName="Null coalescing operator variable existence"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.NullCoalescingArgumentExistenceInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

@@ -4,31 +4,31 @@
   url: /
 
 - title: Docs
-  url: /getting-started
+  url: /docs/getting-started.html
   sublinks:
     - title: Getting Started
-      url: /getting-started
+      url: /docs/getting-started.html
 
     - title: Architecture
-      url: /architecture
+      url: /docs/architecture.html
 
     - title: Code Style
-      url: /code-style
+      url: /docs/code-style.html
 
     - title: Control Flow
-      url: /control-flow
+      url: /docs/control-flow.html
 
     - title: Performance
-      url: /performance
+      url: /docs/performance.html
 
     - title: Probable Bugs
-      url: /probable-bugs
+      url: /docs/probable-bugs.html
 
     - title: Security
-      url: /security
+      url: /docs/security.html
 
     - title: Types Compatibility
-      url: /types-compatibility
+      url: /docs/types-compatibility.html
 
     - title: Developers
-      url: /DEVELOPERS
+      url: /docs/DEVELOPERS.html

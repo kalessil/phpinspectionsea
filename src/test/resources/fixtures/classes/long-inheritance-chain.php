@@ -17,16 +17,26 @@ namespace PHPUnit\Framework {
                                  extends TestCaseImplementation  {}
 }
 namespace yii\base {
-    class Behavior                                          {}
+    class Behavior                                        {}
     class AbstractBehavior       extends Behavior         {}
     class BehaviorImplementation extends AbstractBehavior {}
     class <weak_warning descr="Class has 3 parent classes, consider using appropriate design patterns.">IDoOopWrong</weak_warning>
                                  extends BehaviorImplementation  {}
 }
 namespace Zend\Form {
-    class Form                                    {}
+    class Form                                        {}
     class AbstractForm           extends Form         {}
     class FormImplementation     extends AbstractForm {}
+    class <weak_warning descr="Class has 3 parent classes, consider using appropriate design patterns.">IDoOopWrong</weak_warning>
+                                 extends FormImplementation  {}
+}
+
+namespace Phalcon\Di {
+    class Injectable                          {}
+}
+namespace Phalcon\Forms {
+    class Form extends \Phalcon\Di\Injectable {}
+    class FormImplementation     extends Form {}
     class <weak_warning descr="Class has 3 parent classes, consider using appropriate design patterns.">IDoOopWrong</weak_warning>
                                  extends FormImplementation  {}
 }

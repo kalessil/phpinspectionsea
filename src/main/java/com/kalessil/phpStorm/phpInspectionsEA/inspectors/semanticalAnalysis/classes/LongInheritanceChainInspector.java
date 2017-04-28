@@ -31,6 +31,9 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
 
         /* prevents over-inheritance in user space; Zend Framework 2+ */
         showStoppers.add("\\Zend\\Form\\Form");
+
+        /* prevents over-inheritance in user space; Phalcon */
+        showStoppers.add("\\Phalcon\\Di\\Injectable");
     }
 
     @NotNull

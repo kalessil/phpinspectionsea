@@ -22,6 +22,8 @@ details. Following example should give you a common idea about side-effects:
 
 ## PDO API usage
 
+> Note: this chapter describes not yet released behaviour and quick-fixes 
+
 The inspection reports following cases:
 
 ```php

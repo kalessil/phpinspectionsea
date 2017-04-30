@@ -58,3 +58,15 @@ Here some examples which we hope will encourage you to stop using empty at all:
     var_dump(empty($regular->property)); // => bool(false), as expected
     var_dump(empty($magic->property));   // => bool(true), surprise-surprise =)
 ```
+
+## Strict comparison
+
+Due to php loose typing and [type juggling](http://php.net/manual/de/language.types.type-juggling.php) you
+can get unexpected results when comparing two variables. More type safe operations can improve your code
+and avoid you head aches. PHP7 [new features towards typing](http://php.net/manual/en/migration70.new-features.php)
+shows it.
+
+Examples illustrating the above exposed can be found [here](http://www.phptherightway.com/pages/The-Basics.html#comparison-operators). In
+there you can found also relevants resources explaining how php comparisson works.
+
+Take into account that while loose typing in PHP is a powerfull feature. As any powerfull feature needs care when dealing with it.

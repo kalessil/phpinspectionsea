@@ -79,3 +79,18 @@ of the same explanation exposed in previous section, there will be cases in whic
 In order to emphasize on this, lets read more carefully the _WARNING_ that comes with documentation of **array_search** 
 [return value](http://php.net/manual/en/function.array-search.php#refsect1-function.array-search-returnvalues). Do you see how it is referenced
 again the issue with comparisons against loose typed variables?
+
+## Generic objects
+
+The generic type `object` is too much of that: **Generic**. How do you get into more specificity from
+it? Take a look and the [seudo types](http://php.net/manual/en/language.pseudo-types.php) documentation.
+
+Put your self as user of an API which use the `object` seudo type as return types or parameter types. How do
+you know what is really being return or passed to method? Using `object` would be the same as saying any class
+instance can be returned, thats too general, users of your API (many time yourself after couple of months) will
+be forced to read the code and try to understand every part of it before using it.
+
+Take also into account that having a method which return `object` (or `mixed` which is the same to this case) can
+indicate a code smell. Why it is needed to return/accept such a wide and "can ba all" type. Is your method taking
+care of too much logic? Why do your method needs it, instead returning specific data type? Single responsability
+principle could be in danger.

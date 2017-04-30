@@ -94,3 +94,8 @@ Take also into account that having a method which return `object` (or `mixed` wh
 indicate a code smell. Why it is needed to return/accept such a wide and "can ba all" type. Is your method taking
 care of too much logic? Why do your method needs it, instead returning specific data type? Single responsability
 principle could be in danger.
+
+## Parameter can be declared as array
+
+Reports if a callable parameter can be defined with the `array` type. Refactoring can affect class inheritance and
+test coverage should be verified before making changes.

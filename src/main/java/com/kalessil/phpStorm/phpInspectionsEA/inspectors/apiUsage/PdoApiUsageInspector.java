@@ -1,11 +1,12 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.*;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
@@ -15,7 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class PdoApiUsageInspector extends BasePhpInspection {
-    private static final String message = "'->query(...)' or '->exec(...)'  should be used instead of 'prepare-execute' calls chain.";
+    private static final String message = "'->query(...)' or '->exec(...)' should be used instead of 'prepare-execute' calls chain.";
 
     @NotNull
     public String getShortName() {
@@ -28,9 +29,9 @@ public class PdoApiUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpMethodReference(MethodReference reference) {
                 /* check requirements */
-                final PsiElement[] arrParams = reference.getParameters();
-                final String methodName      = reference.getName();
-                if (0 != arrParams.length || StringUtil.isEmpty(methodName) || !methodName.equals("execute")) {
+                final PsiElement[] params = reference.getParameters();
+                final String methodName   = reference.getName();
+                if (params.length > 0 || methodName == null || !methodName.equals("execute")) {
                     return;
                 }
 
@@ -59,7 +60,7 @@ public class PdoApiUsageInspector extends BasePhpInspection {
                     /* predecessor's value is ->prepare */
                     final MethodReference precedingReference = (MethodReference) assignment.getValue();
                     final String precedingMethod             = precedingReference.getName();
-                    if (StringUtil.isEmpty(precedingMethod) || !precedingMethod.equals("prepare")) {
+                    if (null == precedingMethod || !precedingMethod.equals("prepare")) {
                         return;
                     }
 
@@ -74,18 +75,57 @@ public class PdoApiUsageInspector extends BasePhpInspection {
                             final MethodReference succeedingReference = (MethodReference) successor.getFirstChild();
                             final String succeedingMethod             = succeedingReference.getName();
                             if (
-                                !StringUtil.isEmpty(succeedingMethod) && succeedingMethod.equals("execute") &&
+                                succeedingMethod != null && succeedingMethod.equals("execute") &&
                                 PsiEquivalenceUtil.areElementsEquivalent(variableUsed, succeedingReference.getFirstChild())
                             ){
                                 return;
                             }
                         }
 
-                        holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseQueryFix(precedingReference));
                     }
                 }
             }
         };
+    }
+
+    private static class UseQueryFix implements LocalQuickFix {
+        @NotNull
+        private final SmartPsiElementPointer<MethodReference> prepare;
+
+        UseQueryFix(@NotNull MethodReference prepare) {
+            super();
+            SmartPointerManager manager =  SmartPointerManager.getInstance(prepare.getProject());
+
+            this.prepare = manager.createSmartPsiElementPointer(prepare);
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use '->query(...)' instead";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression   = descriptor.getPsiElement();
+            final MethodReference prepare = this.prepare.getElement();
+            if (null != prepare && expression instanceof MethodReference) {
+                final PsiElement execute = expression.getParent();
+                if (execute.getPrevSibling() instanceof PsiWhiteSpace) {
+                    execute.getPrevSibling().delete();
+                }
+                execute.delete();
+
+                prepare.handleElementRename("query");
+            }
+        }
     }
 }
 

@@ -33,7 +33,7 @@ Inspections Lists (Control flow)
 | Control flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                                                | yes |
 | Control flow         | DegradedSwitchInspection                        | Switch-case could be simplified                                                   | n/a |
 | Control flow         | ForeachInvariantsInspection                     | Foreach usage possible                                                            | no  | yes | no   | no  |
-| Control flow         | PdoApiUsageInspection                           | PDO api usage                                                                     | yes | yes | yes  | no  |
+| Control flow         | PdoApiUsageInspection                           | PDO api usage                                                                     | yes | yes | yes  | yes |
 | Control flow         | OneTimeUseVariablesInspection                   | One-time use variables                                                            | yes | yes | yes  | no  |
 | Control flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                                                     | n/a | yes | n/a  | no  |
 | Control flow         | GetTypeMissUseInspection                        | 'gettype(...)' could be replaced with 'is_*(...)'                                 | yes | yes | no   | no  |

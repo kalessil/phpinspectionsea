@@ -270,9 +270,9 @@ This release makes you even more awesome, really =).
         groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OneTimeUseVariablesInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="PdoApiUsageInspection"                          displayName="PDO api usage"
+        shortName="PdoApiUsageInspection"                          displayName="PDO API usage"
         groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PdoApiUsageInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.PdoApiUsageInspector"/>
   <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MultiAssignmentUsageInspection"                 displayName="'list(...) = ' usage possible"
         groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"

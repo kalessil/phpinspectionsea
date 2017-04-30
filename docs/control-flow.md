@@ -19,3 +19,35 @@ details. Following example should give you a common idea about side-effects:
     $x = true && false;  // is ($x = (true && false)) => false
     $x = true and false; // is (($x = true) and false) => true
 ```
+
+## PDO API usage
+
+The inspection reports following cases:
+
+```php
+    /* case 1: PDO:query() can be used instead */
+    $statement = $pdo->prepare('...');
+    /* the prepared statement executed immediately and without parameters and result check */
+    $statement->execute(); 
+```
+
+```php
+    /* case 2: PDO:exec() can be used instead - result statement of PDO:query() is not used */
+    $pdo->query('...');
+```
+
+Normally DB schema optimization and query result caching are the most robust techniques we recommend 
+to focus on.
+
+The first case doesn't have any parameters binding and prepared statements not really makes sense. 
+Also the results of the query execution are not even checked. Following changes can be applied:
+
+- Apply a Quick-Fix to use PDO:query() instead
+- Bind arguments while executing the statement
+- Validate the statement execution result
+
+The second case will consume system resources while the constructed statement is not used at all.
+Following changes can be applied:
+
+- Apply a Quick-Fix to use PDO:exec() instead
+- Use the returned statement

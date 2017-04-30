@@ -31,23 +31,20 @@ The inspection reports following cases:
     $statement->execute(); 
 ```
 
-```php
-    /* case 2: PDO:exec() can be used instead - result statement of PDO:query() is not used */
-    $pdo->query('...');
-```
-
-Normally DB schema optimization and query result caching are the most robust techniques we recommend 
-to focus on.
-
-The first case doesn't have any parameters binding and prepared statements not really makes sense. 
-Also the results of the query execution are not even checked. Following changes can be applied:
+The case doesn't have any parameters binding and the prepared statement is not really make any sense. 
+Also the result of the query execution is not even checked. Following changes can be applied to fix the case:
 
 - Apply a Quick-Fix to use PDO:query() instead
 - Bind arguments while executing the statement
 - Validate the statement execution result
 
-The second case will consume system resources while the constructed statement is not used at all.
-Following changes can be applied:
+```php
+    /* case 2: PDO:exec() can be used instead - result statement of PDO:query() is not used */
+    $pdo->query('...');
+```
+
+The case will consume system resources while the constructed statement is not used at all.
+Following changes can be applied to fix the case:
 
 - Apply a Quick-Fix to use PDO:exec() instead
 - Use the returned statement

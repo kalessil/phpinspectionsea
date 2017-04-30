@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -16,7 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class PdoApiUsageInspector extends BasePhpInspection {
-    private static final String message = "'->query(...)' or '->exec(...)' should be used instead of 'prepare-execute' calls chain.";
+    private static final String message = "'PDO::query(...)' should be used instead of 'prepare-execute' calls chain.";
 
     @NotNull
     public String getShortName() {
@@ -28,6 +28,8 @@ public class PdoApiUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethodReference(MethodReference reference) {
+                /* TODO: `...->query(<single parameter>);` should be replaced by exec */
+
                 /* check requirements */
                 final PsiElement[] params = reference.getParameters();
                 final String methodName   = reference.getName();
@@ -70,18 +72,6 @@ public class PdoApiUsageInspector extends BasePhpInspection {
                         null != variableAssigned && null != variableUsed &&
                         PsiEquivalenceUtil.areElementsEquivalent(variableAssigned, variableUsed)
                     ) {
-                        /* succeeding statement must not be ...->execute (bulk execution of prepared statement) */
-                        if (null != successor && successor.getFirstChild() instanceof MethodReference) {
-                            final MethodReference succeedingReference = (MethodReference) successor.getFirstChild();
-                            final String succeedingMethod             = succeedingReference.getName();
-                            if (
-                                succeedingMethod != null && succeedingMethod.equals("execute") &&
-                                PsiEquivalenceUtil.areElementsEquivalent(variableUsed, succeedingReference.getFirstChild())
-                            ){
-                                return;
-                            }
-                        }
-
                         holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseQueryFix(precedingReference));
                     }
                 }

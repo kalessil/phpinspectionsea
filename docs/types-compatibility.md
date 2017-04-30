@@ -70,3 +70,12 @@ Examples illustrating the above exposed can be found [here](http://www.phptherig
 there you can found also relevants resources explaining how php comparisson works.
 
 Take into account that while loose typing in PHP is a powerfull feature. As any powerfull feature needs care when dealing with it.
+
+## Strict type search in arrays
+
+This inspection states that when the context requires strict types checking, then the third parameter flag should be used. Because
+of the same explanation exposed in previous section, there will be cases in which you need to do strict type cheking here.
+
+In order to emphasize on this, lets read more carefully the _WARNING_ that comes with documentation of **array_search** 
+[return value](http://php.net/manual/en/function.array-search.php#refsect1-function.array-search-returnvalues). Do you see how it is referenced
+again the issue with comparisons against loose typed variables?

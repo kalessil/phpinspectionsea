@@ -13,7 +13,7 @@ Inspections Lists (Type compatibility)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
 | Type compatibility   | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                  | yes | yes | yes  | yes |
 | Type compatibility   | TypeUnsafeComparisonInspection                  | Type unsafe comparison                              | yes | yes | yes  | yes |
-| Type compatibility   | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search()' type unsafe usage | yes | yes | yes  | no  |
+| Type compatibility   | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search()' type unsafe usage | yes | yes | yes  | yes  |
 | Type compatibility   | ForeachSourceInspection                         | Foreach source to iterate over                      | n/a | yes | n/a  | wip |
 | Type compatibility   | GenericObjectTypeUsageInspection                | Usage of object type in PhpDoc                      | n/a | yes | n/a  | no  |
 | Type compatibility   | ArrayTypeOfParameterByDefaultValueInspection    | Parameter could be declared as array                | yes | yes | yes  | no  |

@@ -1,4 +1,7 @@
-# Static local variables
+# Performance
+This document covers changes to your code to improve php performance.
+
+## Static local variables
 
 > Note: the inspection is deactivated by default.
 
@@ -12,7 +15,7 @@ From performance point of view the technique is a micro-optimization with follow
 - the variable reused on repetitive calls without new memory allocation;
 - static variables can be used for replacing/hiding static class members;
 
-# Packed hashtable optimizations
+## Packed hashtable optimizations
 
 > Note: please reference this [article](https://blog.blackfire.io/php-7-performance-improvements-packed-arrays.html) 
 > for more technical details and real-life examples
@@ -24,7 +27,7 @@ ascending order, then it will consume less memory and work a little bit faster w
 Php Inspections (EA Extended) checks array creation constructs and gives hints if found ways for enabling the 
 optimizations.
 
-# Slow array function used in loop
+## Slow array function used in loop
 
 > Note: you might want to check benchmarks first - [one](https://gist.github.com/Ocramius/8399625), [two](https://github.com/kalessil/phpinspectionsea/issues/138#issuecomment-279457133)
 

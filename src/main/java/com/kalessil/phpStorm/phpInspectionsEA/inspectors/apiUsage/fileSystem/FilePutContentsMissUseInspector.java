@@ -1,18 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -43,7 +38,7 @@ public class FilePutContentsMissUseInspector extends BasePhpInspection {
                 /* validate parameters amount and function name (file) */
                 final PsiElement[] params = reference.getParameters();
                 final String functionName = reference.getName();
-                if (2 != params.length || StringUtil.isEmpty(functionName) || !functionName.equals("file_put_contents")) {
+                if (2 != params.length || null == functionName || !functionName.equals("file_put_contents")) {
                     return;
                 }
 
@@ -62,47 +57,27 @@ public class FilePutContentsMissUseInspector extends BasePhpInspection {
                     final String innerName                 = innerReference.getName();
                     final PsiElement[] innerParams         = innerReference.getParameters();
                     /* check if matches the target pattern */
-                    if (1 == innerParams.length && !StringUtil.isEmpty(innerName) && innerName.equals("file_get_contents")) {
+                    if (1 == innerParams.length && null != innerName && innerName.equals("file_get_contents")) {
                         final String pattern = "copy(%s%, %d%)"
                                 .replace("%s%", innerParams[0].getText())
                                 .replace("%d%", params[0].getText());
                         final String message = messagePattern.replace("%e%", pattern);
-                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new TheLocalFix(pattern));
+                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new UseCopyFix(pattern));
                     }
                 }
             }
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
-        final private String expression;
-
+    private class UseCopyFix extends UseSuggestedReplacementFixer {
         @NotNull
         @Override
         public String getName() {
-            return "Use suggested replacement";
+            return "Use copy(...) instead";
         }
 
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return getName();
-        }
-
-        public TheLocalFix(@NotNull String expression) {
-            super();
-            this.expression = expression;
-        }
-
-        @Override
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference) {
-                ParenthesizedExpression replacement = PhpPsiElementFactory.createFromText(project, ParenthesizedExpression.class, "(" + this.expression + ")");
-                if (null != replacement) {
-                    expression.replace(replacement.getArgument());
-                }
-            }
+        UseCopyFix(@NotNull String expression) {
+            super(expression);
         }
     }
 }

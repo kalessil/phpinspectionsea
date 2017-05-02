@@ -188,7 +188,7 @@ Inspections Lists (Security)
 | Security             | PotentialMalwareInspection                         | Basic malware patterns                                    | n/a | yes | n/a  | no  |
 | Security             | CryptographicallySecureRandomnessInspection        | Cryptographically secure randomness                       | n/a | yes | n/a  | yes |
 | Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage                               | n/a | yes | n/a  | no  |
-| Security             | CryptographicallySecureAlgorithms                  | Cryptographically secure algorithms                       | n/a |
+| Security             | CryptographicallySecureAlgorithms                  | Cryptographically secure algorithms                       | n/a | yes | n/a  | no  |
 
 Inspections Lists (Performance)
 ---

@@ -37,7 +37,7 @@ public class LowPerformanceArrayUniqueUsageInspector extends BasePhpInspection {
                 /* try filtering by args count first */
                 final PsiElement[] params = reference.getParameters();
                 final String functionName = reference.getName();
-                if (1 != params.length || null == functionName || !functionName.equals("array_unique")) {
+                if (params.length != 1 || functionName == null || !functionName.equals("array_unique")) {
                     return;
                 }
 
@@ -46,7 +46,7 @@ public class LowPerformanceArrayUniqueUsageInspector extends BasePhpInspection {
                 if (OpenapiTypesUtil.isFunctionReference(context)) {
                     final FunctionReference parentCall = (FunctionReference) context;
                     final String parentFunctionName    = parentCall.getName();
-                    if (null != parentFunctionName) {
+                    if (parentFunctionName != null) {
                         /* test array_values(array_unique(<expression>)) case */
                         if (parentFunctionName.equals("array_values")) {
                             final String replacement = "array_keys(array_count_values(%a%))".replace("%a%", params[0].getText());

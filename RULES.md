@@ -213,7 +213,7 @@ Inspections Lists (Performance)
 | Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes | yes | yes | no  |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | no  | yes | no  | no  |
 | Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                    | yes | yes | no  | no  |
-| Performance          | FilePutContentsMissUseInspection                | 'file_put_contents(...)' misused                                                            | yes | yes | no  | no  |
+| Performance          | FilePutContentsMissUseInspection                | 'file_put_contents(...)' misused                                                            | yes | yes | yes | no  |
 | Performance          | PackedHashtableOptimizationInspection           | Packed hashtable optimizations                                                              | n/a | yes | n/a | yes |
 | Performance          | StaticLocalVariablesUsageInspection             | Static local variables usage                                                                | n/a | yes | n/a | yes |
 | Performance          | UnqualifiedReferenceInspection                  | Unqualified function/constant reference                                                     | yes | yes | yes | no  |

@@ -40,16 +40,10 @@ public class PdoApiUsageInspector extends BasePhpInspection {
                 /* inspect preceding and succeeding statement */
                 final PsiElement parent = reference.getParent();
                 PsiElement predecessor  = null;
-                PsiElement successor    = null;
                 if (parent instanceof StatementImpl) {
                     predecessor = ((StatementImpl) parent).getPrevPsiSibling();
                     while (predecessor instanceof PhpDocComment) {
                         predecessor = ((PhpDocComment) predecessor).getPrevPsiSibling();
-                    }
-
-                    successor = ((StatementImpl) parent).getNextPsiSibling();
-                    while (successor instanceof PhpDocComment) {
-                        successor = ((PhpDocComment) successor).getNextPsiSibling();
                     }
                 }
                 if (null != predecessor && predecessor.getFirstChild() instanceof AssignmentExpression) {
@@ -62,14 +56,14 @@ public class PdoApiUsageInspector extends BasePhpInspection {
                     /* predecessor's value is ->prepare */
                     final MethodReference precedingReference = (MethodReference) assignment.getValue();
                     final String precedingMethod             = precedingReference.getName();
-                    if (null == precedingMethod || !precedingMethod.equals("prepare")) {
+                    if (precedingMethod == null || !precedingMethod.equals("prepare")) {
                         return;
                     }
 
                     final PsiElement variableAssigned = assignment.getVariable();
                     final PsiElement variableUsed     = reference.getClassReference();
                     if (
-                        null != variableAssigned && null != variableUsed &&
+                        variableAssigned != null && variableUsed != null &&
                         PsiEquivalenceUtil.areElementsEquivalent(variableAssigned, variableUsed)
                     ) {
                         holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseQueryFix(precedingReference));

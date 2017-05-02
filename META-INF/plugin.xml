@@ -191,7 +191,7 @@ This release makes you even more awesome, really =).
         groupName="Performance"                                   enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnqualifiedReferenceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="ExplodeMissUseInspection"                      displayName="'explode()' misused"
+        shortName="ExplodeMissUseInspection"                      displayName="'explode(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ExplodeMissUseInspector"/>
 
@@ -204,7 +204,7 @@ This release makes you even more awesome, really =).
         groupName="Type compatibility"                            enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TypeUnsafeComparisonInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="TypeUnsafeArraySearchInspection"               displayName="'in_array(...)', 'array_search()' type unsafe usage"
+        shortName="TypeUnsafeArraySearchInspection"               displayName="'in_array(...)', 'array_search(...)' type unsafe usage"
         groupName="Type compatibility"                            enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.TypeUnsafeArraySearchInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -346,7 +346,7 @@ This release makes you even more awesome, really =).
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PrintfScanfArgumentsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="RealpathInSteamContextInspection"              displayName="Phar-incompatible 'realpath()' usage"
+        shortName="RealpathInSteamContextInspection"              displayName="Phar-incompatible 'realpath(...)' usage"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.RealpathInSteamContextInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -390,7 +390,7 @@ This release makes you even more awesome, really =).
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassReImplementsParentInterfaceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="PregQuoteUsageInspection"                      displayName="Proper preg_quote() usage"
+        shortName="PregQuoteUsageInspection"                      displayName="Proper preg_quote(...) usage"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PregQuoteUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -678,7 +678,7 @@ This release makes you even more awesome, really =).
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ClassConstantCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="CascadingDirnameCallsInspection"               displayName="Cascading dirname() calls"
+        shortName="CascadingDirnameCallsInspection"               displayName="Cascading dirname(...) calls"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.CascadingDirnameCallsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -750,7 +750,7 @@ This release makes you even more awesome, really =).
         groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RandomApiMigrationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="MktimeUsageInspection"                           displayName="'gmmktime()'/'mktime()' usage"
+        shortName="MktimeUsageInspection"                           displayName="'gmmktime(...)'/'mktime(...)' usage"
         groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.MktimeUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

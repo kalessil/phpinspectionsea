@@ -9,14 +9,14 @@ Abbreviations meaning:
 
 Inspections Lists (Type compatibility)
 ---
-| Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
-| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
-| Type compatibility   | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                  | yes | yes | yes  | yes |
-| Type compatibility   | TypeUnsafeComparisonInspection                  | Type unsafe comparison                              | yes | yes | yes  | no  |
-| Type compatibility   | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search()' type unsafe usage | yes | yes | yes  | no  |
-| Type compatibility   | ForeachSourceInspection                         | Foreach source to iterate over                      | n/a | yes | n/a  | wip |
-| Type compatibility   | GenericObjectTypeUsageInspection                | Usage of object type in PhpDoc                      | n/a | yes | n/a  | no  |
-| Type compatibility   | ArrayTypeOfParameterByDefaultValueInspection    | Parameter could be declared as array                | yes | yes | yes  | no  |
+| Group                | Short Name                                      | Full Name                                              | QF  | UTs | QFTs | Doc |
+| :------------------- | :-------------------------------------------    | :----------------------------------------------------- | --: | --: | ---: | --: |
+| Type compatibility   | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                     | yes | yes | yes  | yes |
+| Type compatibility   | TypeUnsafeComparisonInspection                  | Type unsafe comparison                                 | yes | yes | yes  | no  |
+| Type compatibility   | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search(...)' type unsafe usage | yes | yes | yes  | no  |
+| Type compatibility   | ForeachSourceInspection                         | Foreach source to iterate over                         | n/a | yes | n/a  | wip |
+| Type compatibility   | GenericObjectTypeUsageInspection                | Usage of object type in PhpDoc                         | n/a | yes | n/a  | no  |
+| Type compatibility   | ArrayTypeOfParameterByDefaultValueInspection    | Parameter could be declared as array                   | yes | yes | yes  | no  |
 
 Inspections Lists (Control flow)
 ---
@@ -69,7 +69,7 @@ Inspections Lists (Compatibility)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
 | Compatibility        | DeprecatedIniOptionsInspection                  | Deprecated configuration options                    | n/a |
 | Compatibility        | RandomApiMigrationInspection                    | Random API migration                                | yes | yes | no   | no  |
-| Compatibility        | MktimeUsageInspection                           | 'gmmktime()'/'mktime()' usage                       | yes | yes | no   | no  |
+| Compatibility        | MktimeUsageInspection                           | 'gmmktime(...)'/'mktime(...)' usage                 | yes | yes | no   | no  |
 | Compatibility        | FopenBinaryUnsafeUsageInspection                | Binary-unsafe fopen usage                           | yes | yes | no   | no  |
 
 Inspections Lists (Confusing constructs)
@@ -116,12 +116,12 @@ Inspections Lists (Language level migration)
 | Language level migration | NullCoalescingOperatorCanBeUsedInspection       | Null coalescing operator can be used                | yes | yes | no   | no  |
 | Language level migration | TypesCastingWithFunctionsInspection             | Type casting can be used                            | yes | yes | no   | no  |
 | Language level migration | dirnameCallOnFileConstantInspection             | __DIR__ constant can be used                        | yes | yes | no   | no  |
-| Language level migration | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes | yes | no   | no  |
+| Language level migration | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes | yes | yes  | no  |
 | Language level migration | ShortListSyntaxCanBeUsedInspection              | Short list syntax can be used                       | yes | yes | no   | no  |
 | Language level migration | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | yes | yes | no   | no  |
 | Language level migration | AliasFunctionsUsageInspection                   | Alias functions usage                               | yes | yes | no   | no  |
 | Language level migration | ClassConstantCanBeUsedInspection                | ::class can be used                                 | yes | yes | yes  | no  |
-| Language level migration | CascadingDirnameCallsInspection                 | Cascading dirname() calls                           | yes | yes | no   | no  |
+| Language level migration | CascadingDirnameCallsInspection                 | Cascading dirname(...) calls                        | yes | yes | no   | no  |
 | Language level migration | PowerOperatorCanBeUsedInspection                | Power operator can be used                          | yes | yes | no   | no  |
 | Language level migration | ConstantCanBeUsedInspection                     | A constant can be used                              | yes | yes | yes  | no  |
 | Language level migration | ArgumentUnpackingCanBeUsedInspection            | Argument unpacking can be used                      | yes | yes | no   | no  |
@@ -152,7 +152,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | ReferenceMismatchInspection                     | Reference mismatch                                        | n/a |
 | Probable bugs        | ImplicitMagicMethodCallInspection               | Implicit magic method calls                               | yes | yes |  no  | no  |
 | Probable bugs        | PrintfScanfArgumentsInspection                  | -printf/-scanf arguments count mismatches                 | n/a | yes | n/a  | no  |
-| Probable bugs        | RealpathInSteamContextInspection                | Phar-incompatible 'realpath()' usage                      | yes | yes | yes  | yes |
+| Probable bugs        | RealpathInSteamContextInspection                | Phar-incompatible 'realpath(...)' usage                   | yes | yes | yes  | yes |
 | Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | n/a | yes | n/a  | no  |
 | Probable bugs        | SummerTimeUnsafeTimeManipulationInspection      | Summer-time unsafe date manipulations                     | n/a | yes | n/a  | no  |
 | Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | n/a | yes | n/a  | no  |
@@ -164,7 +164,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | DateIntervalSpecificationInspection             | Date interval specification validity                      | n/a | yes | n/a  | no  |
 | Probable bugs        | UsingInclusionOnceReturnValueInspection         | Suspicious usage of include_once/require_once return value| yes | yes | no   | no  |
 | Probable bugs        | ClassReImplementsParentInterfaceInspection      | Class implements interfaces multiple times                | yes | yes | no   | no  |
-| Probable bugs        | PregQuoteUsageInspection                        | Proper preg_quote() usage                                 | n/a | yes | n/a  | yes |
+| Probable bugs        | PregQuoteUsageInspection                        | Proper preg_quote(...) usage                              | n/a | yes | n/a  | yes |
 | Probable bugs        | SuspiciousAssignmentsInspection                 | Suspicious assignments                                    | n/a | yes | n/a  | no  |
 | Probable bugs        | DateTimeConstantsUsageInspection                | DateTime constants usage validity                         | yes | yes | no   | no  |
 | Probable bugs        | SuspiciousReturnInspection                      | Suspicious returns                                        | n/a | yes | n/a  | no  |
@@ -188,7 +188,7 @@ Inspections Lists (Security)
 | Security             | PotentialMalwareInspection                         | Basic malware patterns                                    | n/a | yes | n/a  | no  |
 | Security             | CryptographicallySecureRandomnessInspection        | Cryptographically secure randomness                       | n/a | yes | n/a  | yes |
 | Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage                               | n/a | yes | n/a  | no  |
-| Security             | CryptographicallySecureAlgorithms                  | Cryptographically secure algorithms                       | n/a |
+| Security             | CryptographicallySecureAlgorithms                  | Cryptographically secure algorithms                       | n/a | yes | n/a  | no  |
 
 Inspections Lists (Performance)
 ---
@@ -202,7 +202,7 @@ Inspections Lists (Performance)
 | Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                            | n/a |
 | Performance          | StrStrUsedAsStrPosInspection                    | 'str(i)str(...)' could be replaced with 'str(i)pos(...)'                                    | yes | yes | no  | no  |
 | Performance          | AlterInForeachInspection                        | Slow alter in foreach                                                                       | n/a | yes | n/a | no  |
-| Performance          | LowPerformanceArrayUniqueUsageInspection        | 'array_unique()' low performing usage                                                       | n/a |
+| Performance          | LowPerformanceArrayUniqueUsageInspection        | 'array_unique()' low performing usage                                                       | yes | yes | yes | no  |
 | Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused"                                                                  | yes | yes | no  | no  |
 | Performance          | FileFunctionMissUseInspection                   | 'file(...)' misused                                                                         | yes | yes | no  | no  |
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                              | n/a |
@@ -213,8 +213,8 @@ Inspections Lists (Performance)
 | Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes | yes | yes | no  |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | no  | yes | no  | no  |
 | Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                    | yes | yes | no  | no  |
-| Performance          | FilePutContentsMissUseInspection                | 'file_put_contents(...)' misused                                                            | yes | yes | no  | no  |
-| Performance          | PackedHashtableOptimizationInspection           | Packed hashtable optimizations                                                              | n/a | yes | n/a | yes |
+| Performance          | FilePutContentsMissUseInspection                | 'file_put_contents(...)' misused                                                            | yes | yes | yes | no  |
+| Performance          | PackedHashtableOptimizationInspection           | Packed hashtable optimizations                                                              | no  | yes | no  | yes |
 | Performance          | StaticLocalVariablesUsageInspection             | Static local variables usage                                                                | n/a | yes | n/a | yes |
 | Performance          | UnqualifiedReferenceInspection                  | Unqualified function/constant reference                                                     | yes | yes | yes | no  |
-| Performance          | ExplodeMissUseInspection                        | 'explode()' misused                                                                         | no  | yes | no  | no  |
+| Performance          | ExplodeMissUseInspection                        | 'explode(...)' misused                                                                      | yes | yes | yes | no  |

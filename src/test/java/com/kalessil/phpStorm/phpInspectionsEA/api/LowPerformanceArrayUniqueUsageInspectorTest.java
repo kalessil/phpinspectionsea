@@ -2,19 +2,19 @@ package com.kalessil.phpStorm.phpInspectionsEA.api;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.LowPerformanceArrayUniqueUsageInspector;
 
-final public class IsNullFunctionUsageInspectorTest extends CodeInsightFixtureTestCase {
+final public class LowPerformanceArrayUniqueUsageInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(IsNullFunctionUsageInspector.class);
+        myFixture.enableInspections(LowPerformanceArrayUniqueUsageInspector.class);
 
-        myFixture.configureByFile("fixtures/api/is-null-function.php");
+        myFixture.configureByFile("fixtures/api/array-unique.php");
         myFixture.testHighlighting(true, false, true);
 
         for (IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/is-null-function.fixed.php");
+        myFixture.checkResultByFile("fixtures/api/array-unique.fixed.php");
     }
 }

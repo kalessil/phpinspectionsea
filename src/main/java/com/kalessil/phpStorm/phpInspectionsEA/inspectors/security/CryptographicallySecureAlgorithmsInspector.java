@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.security;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.Function;
@@ -73,18 +72,18 @@ public class CryptographicallySecureAlgorithmsInspector extends BasePhpInspectio
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpConstantReference(ConstantReference reference) {
-                final String name = reference.getName();
-                if (!StringUtil.isEmpty(name) && constants.containsKey(name)) {
+                final String constantName = reference.getName();
+                if (constantName != null && constants.containsKey(constantName)) {
                     /* ignore test classes */
                     final Function scope = ExpressionSemanticUtil.getScope(reference);
                     if (scope instanceof Method) {
                         final PhpClass clazz = ((Method) scope).getContainingClass();
-                        if (null != clazz && FileSystemUtil.isTestClass(clazz)) {
+                        if (clazz != null && FileSystemUtil.isTestClass(clazz)) {
                             return;
                         }
                     }
 
-                    holder.registerProblem(reference, constants.get(name), ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(reference, constants.get(constantName), ProblemHighlightType.GENERIC_ERROR);
                 }
             }
         };

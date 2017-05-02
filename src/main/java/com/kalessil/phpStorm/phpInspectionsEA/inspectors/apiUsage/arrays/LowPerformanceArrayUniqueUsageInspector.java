@@ -42,27 +42,25 @@ public class LowPerformanceArrayUniqueUsageInspector extends BasePhpInspection {
                 }
 
                 /* check the context */
-                if (reference.getParent() instanceof ParameterList) {
-                    final PsiElement parent = reference.getParent().getParent();
-                    if (OpenapiTypesUtil.isFunctionReference(parent)) {
-                        final FunctionReference parentCall = (FunctionReference) parent;
-                        final String parentFunctionName    = parentCall.getName();
-                        if (null != parentFunctionName) {
-                            /* test array_values(array_unique(<expression>)) case */
-                            if (parentFunctionName.equals("array_values")) {
-                                final String replacement = "array_keys(array_count_values(%a%))".replace("%a%", params[0].getText());
-                                final String message     = messagePattern.replace("%e%", replacement);
-                                holder.registerProblem(parentCall, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new ReplaceFix(replacement));
-                                return;
-                            }
+                final PsiElement context = reference.getParent().getParent();
+                if (OpenapiTypesUtil.isFunctionReference(context)) {
+                    final FunctionReference parentCall = (FunctionReference) context;
+                    final String parentFunctionName    = parentCall.getName();
+                    if (null != parentFunctionName) {
+                        /* test array_values(array_unique(<expression>)) case */
+                        if (parentFunctionName.equals("array_values")) {
+                            final String replacement = "array_keys(array_count_values(%a%))".replace("%a%", params[0].getText());
+                            final String message     = messagePattern.replace("%e%", replacement);
+                            holder.registerProblem(parentCall, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new ReplaceFix(replacement));
+                            return;
+                        }
 
-                            /* test count(array_unique(<expression>)) case */
-                            if (parentFunctionName.equals("count")) {
-                                final String replacement = "count(array_count_values(%a%))".replace("%a%", params[0].getText());
-                                final String message     = messagePattern.replace("%e%", replacement);
-                                holder.registerProblem(parentCall, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new ReplaceFix(replacement));
-                                // return;
-                            }
+                        /* test count(array_unique(<expression>)) case */
+                        if (parentFunctionName.equals("count")) {
+                            final String replacement = "count(array_count_values(%a%))".replace("%a%", params[0].getText());
+                            final String message     = messagePattern.replace("%e%", replacement);
+                            holder.registerProblem(parentCall, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new ReplaceFix(replacement));
+                            // return;
                         }
                     }
                 }

@@ -1,3 +1,5 @@
+# Types compatibility
+
 ## Foreach source to iterate over
 
 Checks foreach value, takes into account classes supporting iteration operations.

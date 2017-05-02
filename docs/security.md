@@ -1,4 +1,6 @@
-# Exploiting unserialize
+# Security
+
+## Exploiting unserialize
 
 > When Php Inspection (EA Extended) reports the rule violations, ensure that it not belongs to any of dev-tools 
 > (profilers, dev-environment specific caching and etc.). Dev-tools should not go to production and normally 
@@ -9,12 +11,12 @@ using unserialize() function (more details here: https://www.owasp.org/index.php
 
 There are several options how to resolve the issue:
 
-## Using JSON format
+### Using JSON format
 
 The approach is straightforward and includes using json_decode()/json_encode() instead of serialization.
 Unfortunately it is not suitable for performance-optimized components.
 
-## PHP 7.0.0+
+### PHP 7.0.0+
 
 Since PHP 7.0.0 the unserialize function has second parameter $options, which allows to 
 implicitly specify which classes can be unserialized.
@@ -29,7 +31,7 @@ implicitly specify which classes can be unserialized.
     }
 ```
 
-## Hooking into unserialize callback
+### Hooking into unserialize callback
 
 This technique allows to hook into class-loading during unserialize, making it possible to prevent new classes loading.
 
@@ -45,13 +47,13 @@ This technique allows to hook into class-loading during unserialize, making it p
     /* your code here */
 ```
 
-# Cryptographically secure algorithms
+## Cryptographically secure algorithms
 
-## General
+### General
 
 MD2, MD4, MD5, SHA0, SHA1, DES, 3DES, RC2, RC4 algorithms are proven flawed or weak. Avoid using them when possible.
 
-## mcrypt extension
+### mcrypt extension
 
 The extension is not maintained and has been deprecated since PHP 7.1, consider migrating to openssl.
 
@@ -59,7 +61,7 @@ Nevertheless if you still using mcrypt, Php Inspections (EA Extended) finds seve
 * MCRYPT_RIJNDAEL_192 and MCRYPT_RIJNDAEL_256 [are not AES-compliant](https://bugs.php.net/bug.php?id=47125);
 * MCRYPT_RIJNDAEL_256 [is not AES-256](https://paragonie.com/blog/2015/05/if-you-re-typing-word-mcrypt-into-your-code-you-re-doing-it-wrong#title.1.2)
 
-# Cryptographically secure randomness
+## Cryptographically secure randomness
 
 For cryptographic operations purposes it's important to properly generate IV (Initialization Vector), which used for 
 further operations. In PHP you can use following functions for IV generation: openssl_random_pseudo_bytes, mcrypt_create_iv 
@@ -67,7 +69,7 @@ and random_bytes.
 
 Using openssl_random_pseudo_bytes and mcrypt_create_iv has own requirements, so let see how it should look like:
 
-## openssl_random_pseudo_bytes
+### openssl_random_pseudo_bytes
 
 The code checks if random value was cryptographically strong and if the value generation succeeded. 
 ```php
@@ -77,7 +79,7 @@ if (false === $isSourceStrong || false === $random) {
 }
 ```
 
-## mcrypt_create_iv
+### mcrypt_create_iv
 
 The code uses MCRYPT_DEV_RANDOM (available on Windows since PHP 5.3) which might block until more entropy available 
 and checks if the value generation succeeded.
@@ -88,9 +90,9 @@ if (false === $random) {
 }
 ```
 
-# Variables extraction
+## Variables extraction
 
-## parse_str()
+### parse_str()
 
 The function parses encoded string as if it were the query string passed via a URL and sets variables in the current 
 scope (or in the array if second parameter is provided). To stay safe, you should always provide second parameter.
@@ -100,7 +102,7 @@ parse_str($encodedString, $parsedValues);
 /* now you can work with your data: $parsedValues['variable'] or $parsedValues['variable'][0] */
 ```
 
-## extract()
+### extract()
 
 The function imports variables from an array into the current scope. You can apply some rules to extraction process by 
 providing second argument.
@@ -113,9 +115,9 @@ if ($countVariablesCreated != count($values)) {
 }
 ```
 
-# SSL server spoofing
+## SSL server spoofing
 
-## curl_setopt()
+### curl_setopt()
 
 The function allows to manipulate CURLOPT_SSL_VERIFYHOST and CURLOPT_SSL_VERIFYPEER, responsible for SSL 
 connection certificate validation (host name and CA information). Disabling the settings allows to intercept SSL connections.
@@ -140,7 +142,7 @@ curl_setopt($curlHandler, CURLOPT_CAINFO,  '<path>/ca.crt');
 curl_setopt($curlHandler, CURLOPT_CAPATH , '<path>/');
 ```
  
-# Security advisories
+## Security advisories
 
 > Note: if the composer.lock is coming with you project, adding roave/security-advisories brings 0 deployment risks.
 

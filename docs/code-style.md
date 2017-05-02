@@ -1,3 +1,5 @@
+# Code Styles
+
 ## Non-null parameters default value
 
 > Note: the inspection is deactivated by default.

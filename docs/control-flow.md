@@ -1,3 +1,5 @@
+# Control flow
+
 ## Non-optimal if conditions
 
 > Note: the inspection has settings

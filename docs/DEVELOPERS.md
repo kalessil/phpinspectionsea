@@ -1,3 +1,8 @@
+# Developer docs
+Helps on setting up the project and running tests.
+
+## Setting up the project
+
 ### Pre-requisites
 
 - Java 8 **SDK** SE

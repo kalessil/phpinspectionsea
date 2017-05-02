@@ -2,18 +2,27 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParameterList;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class LowPerformanceArrayUniqueUsageInspector extends BasePhpInspection {
-    private static final String strProblemUseArrayKeysWithCountValues = "'array_keys(array_count_values(...))' would be more efficient (make sure to leave a comment to explain the intent).";
-    private static final String strProblemUseCountWithCountValues     = "'count(array_count_values(...))' would be more efficient (make sure to leave a comment to explain the intent).";
+    private static final String messagePattern = "'%e%' would be more efficient (make sure to leave a comment to explain the intent).";
 
     @NotNull
     public String getShortName() {
@@ -26,37 +35,50 @@ public class LowPerformanceArrayUniqueUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /* try filtering by args count first */
-                final PsiElement[] parameters = reference.getParameters();
-                final String strFunctionName  = reference.getName();
-                if (parameters.length != 1 || StringUtil.isEmpty(strFunctionName) || !strFunctionName.equals("array_unique")) {
+                final PsiElement[] params = reference.getParameters();
+                final String functionName = reference.getName();
+                if (1 != params.length || null == functionName || !functionName.equals("array_unique")) {
                     return;
                 }
 
-                /* check it's nested call */
+                /* check the context */
                 if (reference.getParent() instanceof ParameterList) {
-                    ParameterList params = (ParameterList) reference.getParent();
-                    if (params.getParent() instanceof FunctionReference) {
-                        FunctionReference parentCall = (FunctionReference) params.getParent();
-                        /* look up for parent function name */
-                        String strParentFunction = parentCall.getName();
-                        if (! StringUtil.isEmpty(strParentFunction)) {
-
-                            /* === test array_values(array_unique(<expression>)) case === */
-                            if (strParentFunction.equals("array_values")) {
-                                holder.registerProblem(parentCall, strProblemUseArrayKeysWithCountValues, ProblemHighlightType.WEAK_WARNING);
+                    final PsiElement parent = reference.getParent().getParent();
+                    if (OpenapiTypesUtil.isFunctionReference(parent)) {
+                        final FunctionReference parentCall = (FunctionReference) parent;
+                        final String parentFunctionName    = parentCall.getName();
+                        if (null != parentFunctionName) {
+                            /* test array_values(array_unique(<expression>)) case */
+                            if (parentFunctionName.equals("array_values")) {
+                                final String replacement = "array_keys(array_count_values(%a%))".replace("%a%", params[0].getText());
+                                final String message     = messagePattern.replace("%e%", replacement);
+                                holder.registerProblem(parentCall, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new ReplaceFix(replacement));
                                 return;
                             }
 
-                            /* === test count(array_unique(<expression>)) case === */
-                            if (strParentFunction.equals("count")) {
-                                holder.registerProblem(parentCall, strProblemUseCountWithCountValues, ProblemHighlightType.WEAK_WARNING);
+                            /* test count(array_unique(<expression>)) case */
+                            if (parentFunctionName.equals("count")) {
+                                final String replacement = "count(array_count_values(%a%))".replace("%a%", params[0].getText());
+                                final String message     = messagePattern.replace("%e%", replacement);
+                                holder.registerProblem(parentCall, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new ReplaceFix(replacement));
                                 // return;
                             }
                         }
                     }
                 }
             }
-
         };
+    }
+
+    private class ReplaceFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Optimize array_unique(...) usage";
+        }
+
+        ReplaceFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

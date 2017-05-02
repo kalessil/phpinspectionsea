@@ -202,7 +202,7 @@ Inspections Lists (Performance)
 | Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                            | n/a |
 | Performance          | StrStrUsedAsStrPosInspection                    | 'str(i)str(...)' could be replaced with 'str(i)pos(...)'                                    | yes | yes | no  | no  |
 | Performance          | AlterInForeachInspection                        | Slow alter in foreach                                                                       | n/a | yes | n/a | no  |
-| Performance          | LowPerformanceArrayUniqueUsageInspection        | 'array_unique()' low performing usage                                                       | n/a |
+| Performance          | LowPerformanceArrayUniqueUsageInspection        | 'array_unique()' low performing usage                                                       | yes | yes | yes | no  |
 | Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused"                                                                  | yes | yes | no  | no  |
 | Performance          | FileFunctionMissUseInspection                   | 'file(...)' misused                                                                         | yes | yes | no  | no  |
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                              | n/a |

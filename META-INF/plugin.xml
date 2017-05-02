@@ -144,7 +144,7 @@ This release makes you even more awesome, really =).
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.InArrayMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="LowPerformanceArrayUniqueUsageInspection"      displayName="'array_unique(...)' low performing usage"
-        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
+        groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.LowPerformanceArrayUniqueUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ArrayPushMissUseInspection"                    displayName="'array_push(...)' misused"

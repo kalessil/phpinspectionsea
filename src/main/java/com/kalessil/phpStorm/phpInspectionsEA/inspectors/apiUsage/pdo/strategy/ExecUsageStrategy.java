@@ -35,7 +35,7 @@ final public class ExecUsageStrategy {
         }
 
         final PsiElement parent = reference.getParent();
-        if (parent instanceof StatementImpl) {
+        if (parent.getClass() == StatementImpl.class) {
             final PsiElement resolved = reference.resolve();
             if (resolved != null && isPdoQueryMethod((Method) resolved)) {
                 holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseExecFix());

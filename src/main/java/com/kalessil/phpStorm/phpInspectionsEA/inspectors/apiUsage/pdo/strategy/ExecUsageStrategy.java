@@ -6,14 +6,10 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.utils.MethodIdentityUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -34,32 +30,12 @@ final public class ExecUsageStrategy {
             return;
         }
 
-        final PsiElement parent = reference.getParent();
-        if (parent.getClass() == StatementImpl.class) {
-            final PsiElement resolved = reference.resolve();
-            if (resolved != null && isPdoQueryMethod((Method) resolved)) {
-                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseExecFix());
-            }
+        if (
+            reference.getParent().getClass() == StatementImpl.class &&
+            MethodIdentityUtil.isReferencingMethod(reference, "\\PDO", "query")
+        ) {
+            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseExecFix());
         }
-    }
-
-    private static boolean isPdoQueryMethod(@NotNull Method method) {
-        boolean result = method.getFQN().equals("\\PDO::query");
-        if (!result) {
-            final PhpClass clazz = method.getContainingClass();
-            if (clazz != null && !clazz.isTrait()) {
-                final Set<PhpClass> parents = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true);
-                for (final PhpClass parent : parents) {
-                    if (parent.getFQN().equals("\\PDO")) {
-                        result = true;
-                        break;
-                    }
-                }
-                parents.clear();
-            }
-        }
-
-        return result;
     }
 
     private static class UseExecFix implements LocalQuickFix {

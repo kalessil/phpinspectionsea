@@ -14,6 +14,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.utils.MethodIdentityUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -51,21 +52,22 @@ final public class QueryUsageStrategy {
             if (!(assignment.getValue() instanceof MethodReference)) {
                 return;
             }
-
-            /* predecessor's value is ->prepare */
             final MethodReference precedingReference = (MethodReference) assignment.getValue();
-            final String precedingMethod             = precedingReference.getName();
-            if (precedingMethod == null || !precedingMethod.equals("prepare")) {
-                return;
-            }
+            if (MethodIdentityUtil.isReferencingMethod(precedingReference, "\\PDO", "prepare")) {
+                final PsiElement variableAssigned = assignment.getVariable();
+                final PsiElement variableUsed     = reference.getClassReference();
+                if (
+                    variableAssigned != null && variableUsed != null &&
+                    PsiEquivalenceUtil.areElementsEquivalent(variableAssigned, variableUsed)
+                ) {
+                    holder.registerProblem(
+                            reference,
+                            message,
+                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                            new UseQueryFix(precedingReference)
+                    );
+                }
 
-            final PsiElement variableAssigned = assignment.getVariable();
-            final PsiElement variableUsed     = reference.getClassReference();
-            if (
-                variableAssigned != null && variableUsed != null &&
-                PsiEquivalenceUtil.areElementsEquivalent(variableAssigned, variableUsed)
-            ) {
-                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseQueryFix(precedingReference));
             }
         }
     }

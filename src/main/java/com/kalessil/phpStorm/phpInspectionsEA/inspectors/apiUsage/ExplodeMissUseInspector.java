@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -57,8 +58,8 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                 }
 
                 /* discover possible values */
-                final HashSet<PsiElement> processed = new HashSet<>();
-                final HashSet<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(params[0], processed);
+                final Set<PsiElement> processed = new HashSet<>();
+                final Set<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(params[0], processed);
                 processed.clear();
 
                 /* do not analyze invariants */
@@ -68,8 +69,9 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
 
                     if (OpenapiTypesUtil.isFunctionReference(value)) {
                         /* inner call must be explode() */
-                        final String innerFunctionName = ((FunctionReference) value).getName();
-                        final PsiElement[] innerParams = ((FunctionReference) value).getParameters();
+                        final FunctionReference innerCall = (FunctionReference) value;
+                        final String innerFunctionName    = innerCall.getName();
+                        final PsiElement[] innerParams    = innerCall.getParameters();
                         if (null == innerFunctionName || 2 != innerParams.length || !innerFunctionName.equals("explode")) {
                             return;
                         }
@@ -79,10 +81,12 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                             final PhpScopeHolder parentScope = ExpressionSemanticUtil.getScope(reference);
                             if (null != parentScope) {
                                 final PhpAccessVariableInstruction[] usages
-                                        = PhpControlFlowUtil.getFollowingVariableAccessInstructions(
-                                            parentScope.getControlFlow().getEntryPoint(),
-                                            ((Variable) params[0]).getName(), false
-                                          );
+                                    = PhpControlFlowUtil.getFollowingVariableAccessInstructions
+                                      (
+                                          parentScope.getControlFlow().getEntryPoint(),
+                                          ((Variable) params[0]).getName(),
+                                          false
+                                      );
                                 if (2 != usages.length) {
                                     return;
                                 }

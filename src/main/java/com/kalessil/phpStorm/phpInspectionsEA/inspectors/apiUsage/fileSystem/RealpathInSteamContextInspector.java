@@ -14,6 +14,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class RealpathInSteamContextInspector extends BasePhpInspection {
     private static final String messageUseDirname = "'realpath()' works differently in a stream context (e.g., for phar://...). Consider using 'dirname()' instead.";
     private static final String patternUseDirname = "'%e%' should be used instead (due to how realpath handles streams).";

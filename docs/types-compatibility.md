@@ -91,9 +91,9 @@ instance can be returned, thats too general, users of your API (many time yourse
 be forced to read the code and try to understand every part of it before using it.
 
 Take also into account that having a method which return `object` (or `mixed` which is the same to this case) can
-indicate a code smell. Why it is needed to return/accept such a wide and "can ba all" type. Is your method taking
-care of too much logic? Why do your method needs it, instead returning specific data type? Single responsability
-principle could be in danger.
+indicate a code smell. Why it is needed to return/accept such a wide and "can be all" type. Is your method taking
+care of too much logic? Is your method doing more than one thing? Why do your method needs it, instead returning
+specific data type?
 
 ## Parameter can be declared as array
 

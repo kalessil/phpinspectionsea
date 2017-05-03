@@ -212,7 +212,7 @@ Inspections Lists (Performance)
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes | yes | no  | no  |
 | Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes | yes | yes | no  |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | no  | yes | no  | no  |
-| Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                    | yes | yes | no  | no  |
+| Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                    | yes | yes | yes | no  |
 | Performance          | FilePutContentsMissUseInspection                | 'file_put_contents(...)' misused                                                            | yes | yes | yes | no  |
 | Performance          | PackedHashtableOptimizationInspection           | Packed hashtable optimizations                                                              | no  | yes | no  | yes |
 | Performance          | StaticLocalVariablesUsageInspection             | Static local variables usage                                                                | n/a | yes | n/a | yes |

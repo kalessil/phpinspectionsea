@@ -14,6 +14,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class MktimeUsageInspector extends BasePhpInspection {
     private static final String messageUseTime             = "You should use time() function instead (current usage produces a runtime warning).";
     private static final String messageParameterDeprecated = "Parameter 'is_dst' is deprecated and removed in PHP 7.";

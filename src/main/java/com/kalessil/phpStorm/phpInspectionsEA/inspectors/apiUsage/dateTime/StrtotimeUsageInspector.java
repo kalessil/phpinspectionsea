@@ -1,19 +1,25 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class StrtotimeUsageInspector extends BasePhpInspection {
     private static final String messageUseTime  = "'time()' should be used instead (2x faster).";
@@ -43,7 +49,13 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
                     if (params[0] instanceof StringLiteralExpression) {
                         final StringLiteralExpression pattern = (StringLiteralExpression) params[0];
                         if (pattern.getContents().equalsIgnoreCase("now")) {
-                            holder.registerProblem(reference, messageUseTime, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseTimeFunctionLocalFix());
+                            holder.registerProblem
+                            (
+                                    reference,
+                                    messageUseTime,
+                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                                    new UseTimeFunctionLocalFix("time()")
+                            );
                         }
                     }
                     return;
@@ -54,7 +66,14 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
                     if (OpenapiTypesUtil.isFunctionReference(params[1])) {
                         final String callName = ((FunctionReference) params[1]).getName();
                         if (callName != null && callName.equals("time")) {
-                            holder.registerProblem(params[1], messageDropTime, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                            final String replacement = "strtotime(%a%)".replace("%a%", params[0].getText());
+                            holder.registerProblem
+                            (
+                                    reference,
+                                    messageDropTime,
+                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                    new DropTimeFunctionCallLocalFix(replacement)
+                            );
                         }
                     }
                     // return;
@@ -63,25 +82,27 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseTimeFunctionLocalFix implements LocalQuickFix {
+    private static class UseTimeFunctionLocalFix extends UseSuggestedReplacementFixer {
         @NotNull
         @Override
         public String getName() {
-            return "Use time()";
+            return "Use time() instead";
         }
 
+        UseTimeFunctionLocalFix(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private static class DropTimeFunctionCallLocalFix extends UseSuggestedReplacementFixer {
         @NotNull
         @Override
-        public String getFamilyName() {
-            return getName();
+        public String getName() {
+            return "Drop unnecessary time() call";
         }
 
-        @Override
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference) {
-                expression.replace(PhpPsiElementFactory.createFunctionReference(project, "time()"));
-            }
+        DropTimeFunctionCallLocalFix(@NotNull String expression) {
+            super(expression);
         }
     }
 }

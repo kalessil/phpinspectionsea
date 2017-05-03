@@ -11,7 +11,7 @@ function casesHolder(\PDO $x)
     <weak_warning descr="'PDO::exec(...)' should be used instead (consumes less resources).">$x->query('...')</weak_warning>;
 }
 
-function falsePositivesHolder()
+function falsePositivesHolder(\PDO $x)
 {
     /* false-positives: parameters */
     $y = $x->prepare('');

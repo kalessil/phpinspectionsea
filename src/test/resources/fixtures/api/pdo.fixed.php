@@ -10,7 +10,7 @@ function casesHolder(\PDO $x)
     $x->exec('...');
 }
 
-function falsePositivesHolder()
+function falsePositivesHolder(\PDO $x)
 {
     /* false-positives: parameters */
     $y = $x->prepare('');

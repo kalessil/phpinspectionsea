@@ -5,15 +5,14 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class StrtotimeUsageInspector extends BasePhpInspection {
@@ -34,7 +33,7 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 if (
                     params.length == 0 || params.length > 2 ||
-                    StringUtil.isEmpty(functionName) || !functionName.equals("strtotime")
+                    functionName == null || !functionName.equals("strtotime")
                 ) {
                     return;
                 }
@@ -52,10 +51,9 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
 
                 /* handle case: strtotime(..., time()) -> date(...) */
                 if (params.length == 2) {
-                    if (params[1] instanceof FunctionReferenceImpl) {
-                        final FunctionReferenceImpl call = (FunctionReferenceImpl) params[1];
-                        final String callName            = call.getName();
-                        if (!StringUtil.isEmpty(callName) && callName.equals("time")) {
+                    if (OpenapiTypesUtil.isFunctionReference(params[1])) {
+                        final String callName = ((FunctionReference) params[1]).getName();
+                        if (callName != null && callName.equals("time")) {
                             holder.registerProblem(params[1], messageDropTime, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                         }
                     }

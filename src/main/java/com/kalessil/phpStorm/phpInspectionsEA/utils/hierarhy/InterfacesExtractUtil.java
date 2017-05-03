@@ -9,19 +9,19 @@ import java.util.Set;
 
 final public class InterfacesExtractUtil {
     @NotNull
-    public static HashSet<PhpClass> getCrawlCompleteInheritanceTree(@NotNull PhpClass objClass, boolean withClasses) {
+    public static HashSet<PhpClass> getCrawlCompleteInheritanceTree(@NotNull PhpClass clazz, boolean withClasses) {
         final HashSet<PhpClass> processedItems = new HashSet<>();
 
-        if (objClass.isInterface()) {
-            processInterface(objClass, processedItems);
+        if (clazz.isInterface()) {
+            processInterface(clazz, processedItems);
         } else {
-            processClass(objClass, processedItems, withClasses);
+            processClass(clazz, processedItems, withClasses);
         }
 
         return processedItems;
     }
 
-    private static void processClass(PhpClass clazz, Set<PhpClass> processedItems, boolean withClasses) {
+    private static void processClass(@NotNull PhpClass clazz, @NotNull Set<PhpClass> processedItems, boolean withClasses) {
         if (clazz.isInterface()) {
             throw new InvalidParameterException("Interface should not be provided");
         }
@@ -31,24 +31,24 @@ final public class InterfacesExtractUtil {
         }
 
         /* re-delegate interface handling */
-        for (PhpClass interfacee : clazz.getImplementedInterfaces()) {
+        for (final PhpClass interfacee : clazz.getImplementedInterfaces()) {
             processInterface(interfacee, processedItems);
         }
 
         /* handle parent class */
-        if (null != clazz.getSuperClass()) {
+        if (clazz.getSuperClass() != null) {
             processClass(clazz.getSuperClass(), processedItems, withClasses);
         }
     }
 
-    private static void processInterface(PhpClass clazz, Set<PhpClass> processedItems) {
+    private static void processInterface(@NotNull PhpClass clazz, @NotNull Set<PhpClass> processedItems) {
         if (!clazz.isInterface()) {
             throw new InvalidParameterException("Class should not be provided");
         }
 
         if (processedItems.add(clazz)) {
-            for (PhpClass objParentInterface : clazz.getImplementedInterfaces()) {
-                processInterface(objParentInterface, processedItems);
+            for (final PhpClass parentInterface : clazz.getImplementedInterfaces()) {
+                processInterface(parentInterface, processedItems);
             }
         }
     }

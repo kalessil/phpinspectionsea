@@ -1,0 +1,34 @@
+# Belongs at: /_data/navigation.yml
+
+- title: Home
+  url: /
+
+- title: Docs
+  url: /docs/getting-started.html
+  sublinks:
+    - title: Getting Started
+      url: /docs/getting-started.html
+
+    - title: Architecture
+      url: /docs/architecture.html
+
+    - title: Code Style
+      url: /docs/code-style.html
+
+    - title: Control Flow
+      url: /docs/control-flow.html
+
+    - title: Performance
+      url: /docs/performance.html
+
+    - title: Probable Bugs
+      url: /docs/probable-bugs.html
+
+    - title: Security
+      url: /docs/security.html
+
+    - title: Types Compatibility
+      url: /docs/types-compatibility.html
+
+    - title: Developers
+      url: /docs/DEVELOPERS.html

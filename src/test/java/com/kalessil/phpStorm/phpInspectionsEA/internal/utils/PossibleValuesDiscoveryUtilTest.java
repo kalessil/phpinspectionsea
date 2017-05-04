@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 
 import java.util.HashSet;
+import java.util.Set;
 
 final public class PossibleValuesDiscoveryUtilTest extends CodeInsightFixtureTestCase {
     public void testTernaryDiscovery() {
@@ -15,8 +16,8 @@ final public class PossibleValuesDiscoveryUtilTest extends CodeInsightFixtureTes
         PsiElement expression = PhpPsiElementFactory.createFromText(myFixture.getProject(), TernaryExpression.class, pattern);
         assertNotNull(expression);
 
-        HashSet<PsiElement> processed = new HashSet<>();
-        HashSet<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(expression, processed);
+        Set<PsiElement> processed = new HashSet<>();
+        Set<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(expression, processed);
         assertEquals(2, values.size());
         assertInstanceOf(values.iterator().next(), ConstantReference.class);
     }
@@ -30,8 +31,8 @@ final public class PossibleValuesDiscoveryUtilTest extends CodeInsightFixtureTes
         PsiElement expression = PsiTreeUtil.findChildOfType(clazz, FieldReference.class);
         assertNotNull(expression);
 
-        HashSet<PsiElement> processed = new HashSet<>();
-        HashSet<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(expression, processed);
+        Set<PsiElement> processed = new HashSet<>();
+        Set<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(expression, processed);
         assertEquals(1, values.size());
         assertInstanceOf(values.iterator().next(), StringLiteralExpression.class);
     }
@@ -44,8 +45,8 @@ final public class PossibleValuesDiscoveryUtilTest extends CodeInsightFixtureTes
         PsiElement expression = PsiTreeUtil.findChildOfType(clazz, ClassConstantReference.class);
         assertNotNull(expression);
 
-        HashSet<PsiElement> processed = new HashSet<>();
-        HashSet<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(expression, processed);
+        Set<PsiElement> processed = new HashSet<>();
+        Set<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(expression, processed);
         assertEquals(1, values.size());
         assertInstanceOf(values.iterator().next(), StringLiteralExpression.class);
     }
@@ -62,8 +63,8 @@ final public class PossibleValuesDiscoveryUtilTest extends CodeInsightFixtureTes
         expression = PsiTreeUtil.findChildOfType(expression, FieldReference.class);
         assertNotNull(expression);
 
-        HashSet<PsiElement> processed = new HashSet<>();
-        HashSet<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(expression, processed);
+        Set<PsiElement> processed = new HashSet<>();
+        Set<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(expression, processed);
         assertEquals(1, values.size());
         assertInstanceOf(values.iterator().next(), StringLiteralExpression.class);
     }
@@ -78,8 +79,8 @@ final public class PossibleValuesDiscoveryUtilTest extends CodeInsightFixtureTes
         expression = PsiTreeUtil.findChildOfType(expression, Variable.class);
         assertNotNull(expression);
 
-        HashSet<PsiElement> processed = new HashSet<>();
-        HashSet<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(expression, processed);
+        Set<PsiElement> processed = new HashSet<>();
+        Set<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(expression, processed);
         assertEquals(1, values.size());
         assertInstanceOf(values.iterator().next(), ConstantReference.class);
     }
@@ -94,8 +95,8 @@ final public class PossibleValuesDiscoveryUtilTest extends CodeInsightFixtureTes
         expression = PsiTreeUtil.findChildOfType(expression, Variable.class);
         assertNotNull(expression);
 
-        HashSet<PsiElement> processed = new HashSet<>();
-        HashSet<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(expression, processed);
+        Set<PsiElement> processed = new HashSet<>();
+        Set<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(expression, processed);
         assertEquals(1, values.size());
         assertInstanceOf(values.iterator().next(), ConstantReference.class);
     }

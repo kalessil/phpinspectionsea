@@ -21,12 +21,12 @@ import java.util.Set;
 
 public class PossibleValuesDiscoveryUtil {
     @NotNull
-    static public HashSet<PsiElement> discover(@NotNull PsiElement expression, @NotNull Set<PsiElement> processed) {
+    static public Set<PsiElement> discover(@NotNull PsiElement expression, @NotNull Set<PsiElement> processed) {
         /* un-wrap parenthesises to avoid false-positives */
         expression = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression);
 
         /* do not process same expressions multiple times */
-        HashSet<PsiElement> result = new HashSet<>();
+        Set<PsiElement> result = new HashSet<>();
         if (processed.contains(expression)) {
             return result;
         }
@@ -62,7 +62,7 @@ public class PossibleValuesDiscoveryUtil {
     }
 
     static private void handleVariable(
-            @NotNull Variable variable, @NotNull HashSet<PsiElement> result, @NotNull Set<PsiElement> processed
+            @NotNull Variable variable, @NotNull Set<PsiElement> result, @NotNull Set<PsiElement> processed
     ) {
         final String variableName = variable.getName();
         final Function callable   = StringUtil.isEmpty(variableName) ? null : ExpressionSemanticUtil.getScope(variable);
@@ -91,7 +91,7 @@ public class PossibleValuesDiscoveryUtil {
             if (null != storedValue && container instanceof Variable) {
                 final String containerName = ((Variable) container).getName();
                 if (containerName.equals(variableName)) {
-                    final HashSet<PsiElement> discoveredWrites = discover(storedValue, processed);
+                    final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
                     if (discoveredWrites.size() > 0) {
                         result.addAll(discoveredWrites);
                         discoveredWrites.clear();
@@ -102,7 +102,7 @@ public class PossibleValuesDiscoveryUtil {
     }
 
     static private void handleClassConstantReference(
-            @NotNull ClassConstantReference reference, @NotNull HashSet<PsiElement> result, @NotNull Set<PsiElement> processed
+            @NotNull ClassConstantReference reference, @NotNull Set<PsiElement> result, @NotNull Set<PsiElement> processed
     ) {
         final String constantName          = reference.getName();
         final PsiElement resolvedReference = StringUtil.isEmpty(constantName) ? null : reference.resolve();
@@ -115,7 +115,7 @@ public class PossibleValuesDiscoveryUtil {
     }
 
     static private void handleClassFieldReference(
-            @NotNull FieldReference reference, @NotNull HashSet<PsiElement> result, @NotNull Set<PsiElement> processed
+            @NotNull FieldReference reference, @NotNull Set<PsiElement> result, @NotNull Set<PsiElement> processed
     ) {
         final String fieldName             = reference.getName();
         final PsiElement resolvedReference = StringUtil.isEmpty(fieldName) ? null : reference.resolve();
@@ -147,7 +147,7 @@ public class PossibleValuesDiscoveryUtil {
                         null != containerName && containerName.equals(fieldName) &&
                         PsiEquivalenceUtil.areElementsEquivalent(container, reference)
                     ) {
-                        final HashSet<PsiElement> discoveredWrites = discover(storedValue, processed);
+                        final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
                         if (discoveredWrites.size() > 0) {
                             result.addAll(discoveredWrites);
                             discoveredWrites.clear();
@@ -159,7 +159,7 @@ public class PossibleValuesDiscoveryUtil {
     }
 
     static private void handleTernary(
-            @NotNull TernaryExpression ternary, @NotNull HashSet<PsiElement> result, @NotNull Set<PsiElement> processed
+            @NotNull TernaryExpression ternary, @NotNull Set<PsiElement> result, @NotNull Set<PsiElement> processed
     ) {
         final PsiElement trueVariant  = ternary.getTrueVariant();
         final PsiElement falseVariant = ternary.getFalseVariant();
@@ -168,12 +168,12 @@ public class PossibleValuesDiscoveryUtil {
         }
 
         /* discover true and false branches */
-        HashSet<PsiElement> trueVariants = discover(trueVariant, processed);
+        Set<PsiElement> trueVariants = discover(trueVariant, processed);
         if (trueVariants.size() > 0) {
             result.addAll(trueVariants);
             trueVariants.clear();
         }
-        HashSet<PsiElement> falseVariants = discover(falseVariant, processed);
+        Set<PsiElement> falseVariants = discover(falseVariant, processed);
         if (falseVariants.size() > 0) {
             result.addAll(falseVariants);
             falseVariants.clear();

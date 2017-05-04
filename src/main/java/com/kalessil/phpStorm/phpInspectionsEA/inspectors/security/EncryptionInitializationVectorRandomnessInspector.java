@@ -12,10 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -57,8 +54,8 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
                 /* variable functions are not supported, as we are checking 2 different extensions functions */
                 if (functionName.equals("openssl_encrypt") || functionName.equals("mcrypt_encrypt")) {
                     /* discover and inspect possible values */
-                    final HashSet<PsiElement> processed = new HashSet<>();
-                    final HashSet<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(params[4], processed);
+                    final Set<PsiElement> processed = new HashSet<>();
+                    final Set<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(params[4], processed);
                     if (values.size() > 0) {
                         List<String> reporting = new LinkedList<>();
 

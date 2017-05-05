@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.cla
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
@@ -11,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +29,8 @@ import java.util.Set;
  */
 
 public class CallableMethodValidityInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%m%' should be public and static (e.g. $this usage in static context provokes fatal errors).";
+    private static final String patternNotPublic = "'%m%' should be public (e.g. $this usage in static context provokes fatal errors).";
+    private static final String patternNotStatic = "'%m%' should be static (e.g. $this usage in static context provokes fatal errors).";
 
     @NotNull
     public String getShortName() {
@@ -50,7 +53,7 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                     if (callable != null && this.isTarget(callable)) {
                         final PsiReference resolver = this.buildResolver(callable);
                         if (resolver != null) {
-                            this.analyzeValidity(resolver.resolve(), params[0]);
+                            this.analyzeValidity(resolver.resolve(), params[0], callable);
                         }
                     }
                     values.clear();
@@ -76,11 +79,39 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                 return result;
             }
 
-            private void analyzeValidity(@Nullable PsiElement element, @NotNull PsiElement target) {
+            private void analyzeValidity(
+                    @Nullable PsiElement element,
+                    @NotNull PsiElement target,
+                    @NotNull PsiElement callable
+            ) {
                 if (element instanceof Method) {
                     final Method method = (Method) element;
-                    if (!method.isStatic() || !method.getAccess().isPublic()) {
-                        final String message = messagePattern.replace("%m%", method.getName());
+                    if (!method.getAccess().isPublic()) {
+                        final String message = patternNotPublic.replace("%m%", method.getName());
+                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    }
+
+                    boolean needStatic = false;
+                    if (callable instanceof StringLiteralExpression && !method.isStatic()) {
+                        needStatic = true;
+                    }
+                    if (callable instanceof ArrayCreationExpression && !method.isStatic()) {
+                        final PsiElement classCandidate = callable.getChildren()[0].getFirstChild();
+                        /* try resolving the expression */
+                        if (classCandidate instanceof PhpTypedElement) {
+                            final PhpTypedElement candidate = (PhpTypedElement) classCandidate;
+                            final Project project           = classCandidate.getProject();
+                            for (final String type : candidate.getType().global(project).filterUnknown().getTypes()) {
+                                final String resolvedType = Types.getType(type);
+                                if (resolvedType.equals(Types.strString) || resolvedType.equals(Types.strCallable)) {
+                                    needStatic = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (needStatic) {
+                        final String message = patternNotStatic.replace("%m%", method.getName());
                         holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                 }

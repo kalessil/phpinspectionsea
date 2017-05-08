@@ -386,10 +386,6 @@ This release makes you even more awesome, really =).
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.DateIntervalSpecificationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="ClassReImplementsParentInterfaceInspection"    displayName="Class implements interfaces multiple times"
-        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassReImplementsParentInterfaceInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="PregQuoteUsageInspection"                      displayName="Proper preg_quote(...) usage"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PregQuoteUsageInspector"/>
@@ -743,6 +739,10 @@ This release makes you even more awesome, really =).
         shortName="MultipleReturnStatementsInspection"              displayName="Multiple return statements usage"
         groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MultipleReturnStatementsInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="ClassReImplementsParentInterfaceInspection"     displayName="Class implements interfaces multiple times"
+         groupName="Architecture"                                   enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassReImplementsParentInterfaceInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

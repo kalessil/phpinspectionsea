@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
@@ -17,12 +16,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
 import java.util.List;
 
 public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection {
     private static final String messagePatternReImplementsParent = "%i% is already announced in %c%.";
-    private static final String messageAlreadyImplements         = "Class cannot implement previously implemented interface";
 
     @NotNull
     public String getShortName() {
@@ -42,66 +39,41 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
 
                 /* check if parent class and own implements are available */
                 final List<ClassReference> listImplements = clazz.getImplementsList().getReferenceElements();
-                if (listImplements.size() > 0) {
-
-                    /* Case 1: duplicate interfaces in implements - runtime error will be caused */
-                    if (listImplements.size() > 1) {
-                        /* match parents interfaces against class we checking */
-                        HashSet<String> interfaces = new HashSet<>();
-                        for (ClassReference anInterface : listImplements) {
-                            final String interfaceFQN = anInterface.getFQN();
-                            if (!StringUtil.isEmpty(interfaceFQN)) {
-                                if (interfaces.contains(interfaceFQN)) {
-                                    holder.registerProblem(anInterface, messageAlreadyImplements, ProblemHighlightType.ERROR, new TheLocalFix());
-                                }
-                                interfaces.add(interfaceFQN);
-                            }
-                        }
-                        interfaces.clear();
+                /* case: re-implementation of parent interfaces */
+                for (final PhpClass parent : clazz.getSupers()) {
+                    /* do not process parent interfaces */
+                    if (parent.isInterface()) {
+                        continue;
                     }
 
-
-                    /* Case 2: re-implementation of parent interfaces */
-                    for (PhpClass objParentClass : clazz.getSupers()) {
-                        /* do not process parent interfaces */
-                        if (objParentClass.isInterface()) {
+                    /* ensure implements some interfaces and discoverable properly */
+                    final List<ClassReference> listImplementsParents = parent.getImplementsList().getReferenceElements();
+                    final String parentClassFQN                      = parent.getFQN();
+                    for (final ClassReference parentInterfaceRef : listImplementsParents) {
+                        /* ensure we have all identities valid, or skip analyzing */
+                        final String parentInterfaceFQN  = parentInterfaceRef.getFQN();
+                        final String parentInterfaceName = parentInterfaceRef.getName();
+                        if (parentInterfaceFQN == null || parentInterfaceName == null) {
                             continue;
                         }
 
-                        /* ensure implements some interfaces and discoverable properly */
-                        final List<ClassReference> listImplementsParents = objParentClass.getImplementsList().getReferenceElements();
-                        if (listImplementsParents.size() > 0) {
-                            /* check interfaces of a parent class */
-                            final String parentClassFQN = objParentClass.getFQN();
-                            for (ClassReference parentInterfaceRef : listImplementsParents) {
-                                /* ensure we have all identities valid, or skip analyzing */
-                                final String parentInterfaceFQN  = parentInterfaceRef.getFQN();
-                                final String parentInterfaceName = parentInterfaceRef.getName();
-                                if (StringUtil.isEmpty(parentInterfaceFQN) || StringUtil.isEmpty(parentInterfaceName)) {
-                                    continue;
-                                }
+                        /* match parents interfaces against class we checking */
+                        for (final ClassReference ownInterface : listImplements) {
+                            /* ensure FQNs matches */
+                            final String ownInterfaceFQN = ownInterface.getFQN();
+                            if (ownInterfaceFQN != null && ownInterfaceFQN.equals(parentInterfaceFQN)) {
+                                final String message = messagePatternReImplementsParent
+                                        .replace("%i%", parentInterfaceName)
+                                        .replace("%c%", parentClassFQN);
 
-                                /* match parents interfaces against class we checking */
-                                for (ClassReference ownInterface : listImplements) {
-                                    /* ensure FQNs matches */
-                                    final String ownInterfaceFQN = ownInterface.getFQN();
-                                    if (!StringUtil.isEmpty(ownInterfaceFQN) && ownInterfaceFQN.equals(parentInterfaceFQN)) {
-                                        final String message = messagePatternReImplementsParent
-                                                .replace("%i%", parentInterfaceName)
-                                                .replace("%c%", parentClassFQN);
-
-                                        holder.registerProblem(ownInterface, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new TheLocalFix());
-                                        break;
-                                    }
-                                }
+                                holder.registerProblem(ownInterface, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new TheLocalFix());
+                                break;
                             }
-
-                            listImplementsParents.clear();
                         }
                     }
-
-                    listImplements.clear();
+                    listImplementsParents.clear();
                 }
+                listImplements.clear();
             }
         };
     }

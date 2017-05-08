@@ -8,7 +8,6 @@ import com.intellij.openapi.extensions.PluginId;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.analytics.AnalyticsUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
@@ -47,14 +46,21 @@ public class EAApplicationComponent implements ApplicationComponent {
 /*    public void MonitorPerformance() {
         final ThreadMXBean threadManager = ManagementFactory.getThreadMXBean();
         for (final long threadId : threadManager.getAllThreadIds()) {
-            *//* TODO: monitor processes, rely on stack trace to identify when it's free *//*
-            final long threadTimeOccupied        = threadManager.getThreadUserTime(threadId);
-            final StackTraceElement[] stacktrace = threadManager.getThreadInfo(threadId).getStackTrace();
-        }
+            final long threadTimeOccupied = threadManager.getThreadUserTime(threadId);
+            final long time               = threadTimeOccupied == -1 ? -1 : threadTimeOccupied / 1000000;
 
-        final List<GarbageCollectorMXBean> gcManagers = ManagementFactory.getGarbageCollectorMXBeans();
-        for (final GarbageCollectorMXBean gc : gcManagers) {
-            final long gcTimeOccupied = gc.getCollectionTime();
+            final ThreadInfo info                = threadManager.getThreadInfo(threadId, Byte.MAX_VALUE);
+            final StackTraceElement[] stacktrace = info.getStackTrace();
+            if (null != stacktrace && stacktrace.length > 0) {
+                final StackTraceElement topElement = stacktrace[stacktrace.length - 1];
+                System.out.println(String.format(
+                        "#%s: ut %s ms; %s; %s",
+                        info.getThreadName() + "#" + threadId,
+                        time,
+                        topElement.getClassName() + "::" + topElement.getMethodName(),
+                        topElement.getFileName() + ":" + topElement.getLineNumber()
+                ));
+            }
         }
     }*/
 

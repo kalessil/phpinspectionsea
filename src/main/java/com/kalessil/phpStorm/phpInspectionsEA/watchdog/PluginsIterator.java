@@ -1,27 +1,28 @@
 package com.kalessil.phpStorm.phpInspectionsEA.watchdog;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.ide.plugins.IdeaPluginDescriptorImpl;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.extensions.PluginId;
+import com.intellij.openapi.util.Pair;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 final public class PluginsIterator implements Iterator {
     @NotNull
-    final private Set<String> pluginsIds = new HashSet<>();
+    final private List<Pair<String, String>> pluginsIds = new ArrayList<>();
 
     @NotNull
-    final private Iterator<String> pluginsIterator;
+    final private Iterator<Pair<String, String>> pluginsIterator;
 
     PluginsIterator() {
         for (final IdeaPluginDescriptor plugin : PluginManager.getPlugins()) {
-            final String stringId = plugin.getPluginId().getIdString();
+            final PluginId pluginId = plugin.getPluginId();
+            final String stringId   = pluginId.getIdString();
             if (StringUtils.countMatches(stringId, ".") > 1) {
-                this.pluginsIds.add(stringId);
+                this.pluginsIds.add(Pair.create(stringId, plugin.getName()));
             }
         }
 
@@ -34,7 +35,7 @@ final public class PluginsIterator implements Iterator {
     }
 
     @Override
-    public String next() {
+    public Pair<String, String> next() {
         return this.pluginsIterator.next();
     }
 

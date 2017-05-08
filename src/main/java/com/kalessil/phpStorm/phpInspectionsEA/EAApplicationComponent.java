@@ -8,6 +8,10 @@ import com.intellij.openapi.extensions.PluginId;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.analytics.AnalyticsUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
+
 public class EAApplicationComponent implements ApplicationComponent {
     private boolean updated;
     private boolean updateNotificationShown;
@@ -37,6 +41,15 @@ public class EAApplicationComponent implements ApplicationComponent {
     @Override
     public void disposeComponent() {
     }
+
+    /* public void MonitorPerformance() {
+        final ThreadMXBean threadManager = ManagementFactory.getThreadMXBean();
+        for (final long threadId : threadManager.getAllThreadIds()) {
+            / * TODO: monitor processes, rely on stack trace to identify when it's free * /
+            final long threadTimeOccupied        = threadManager.getThreadUserTime(threadId);
+            final StackTraceElement[] stacktrace = threadManager.getThreadInfo(threadId).getStackTrace();
+        }
+    }*/
 
     @NotNull
     @Override

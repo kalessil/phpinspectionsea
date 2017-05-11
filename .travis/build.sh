@@ -8,7 +8,7 @@ ideaVersion="2017.1"
 if [ "$IDE_ID" == "2017.1" ]; then
     ideaVersion="2017.1"
 elif [ "$IDE_ID" == "eap" ]; then
-    ideaVersion="163.5644.15"
+    ideaVersion="171.4424.37"
 fi
 
 travisCache=".cache"

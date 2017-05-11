@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# bash strict mode is on
+set -euo pipefail
+IFS=$'\n\t'
+
 ideaVersion="2017.1"
 if [ "$IDE_ID" == "2016.1.2" ]; then
     ideaVersion="2016.1.4"
@@ -77,9 +81,9 @@ fi
 
 # Run the tests
 if [ "$1" = "-d" ]; then
-    ant -d -f .travis/ant-build.xml -DIDEA_HOME=./idea
+    ant -d -f .travis/ant-build.xml -DIDEA_HOME=./../idea
 else
-    ant -f .travis/ant-build.xml -DIDEA_HOME=./idea
+    ant -f .travis/ant-build.xml -DIDEA_HOME=./../idea
 fi
 
 # Return the build status

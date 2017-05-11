@@ -81,6 +81,4 @@ fi
 
 # run tests
 echo "Running from: " `pwd`
-ant -f ./.travis/ant-build.xml -DIDEA_HOME=./idea
-# buble the return code up
-exit ${stat}
+ant -f ./.travis/ant-build.xml -DIDEA_HOME=./idea || { echo "Build has failed, please check logs below"; exit 1; }

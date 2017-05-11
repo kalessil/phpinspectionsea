@@ -1,18 +1,18 @@
-sudo: false
+sudo:     false
 language: java
 jdk:
   - oraclejdk8
 
 notifications:
-  email: false
+  email:  false
 
-script: "./travis.sh"
+script: ".travis/build.sh"
 cache:
   directories:
     - .cache
 before_script:
- - chmod +x travis.sh
+ - chmod +x .travis/build.sh
 
 env:
-  - PHPSTORM_ENV=2017.1
+  - IDE_ID=2017.1
 

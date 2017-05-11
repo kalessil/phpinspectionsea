@@ -1,4 +1,4 @@
-<project name="Php Inspections Extended" default="test" basedir=".">
+<project name="Php Inspections Extended" default="test" basedir="../../">
 
     <property file="build.properties" />
 

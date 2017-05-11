@@ -1,19 +1,19 @@
 #!/bin/bash
 
 ideaVersion="2017.1"
-if [ "$PHPSTORM_ENV" == "2016.1.2" ]; then
+if [ "$IDE_ID" == "2016.1.2" ]; then
     ideaVersion="2016.1.4"
-elif [ "$PHPSTORM_ENV" == "2016.2.1" ]; then
+elif [ "$IDE_ID" == "2016.2.1" ]; then
     ideaVersion="2016.2.5"
-elif [ "$PHPSTORM_ENV" == "2016.3" ]; then
+elif [ "$IDE_ID" == "2016.3" ]; then
     ideaVersion="2016.3.5"
-elif [ "$PHPSTORM_ENV" == "2016.3.1" ]; then
+elif [ "$IDE_ID" == "2016.3.1" ]; then
     ideaVersion="2016.3.5"
-elif [ "$PHPSTORM_ENV" == "2016.3.2" ]; then
+elif [ "$IDE_ID" == "2016.3.2" ]; then
     ideaVersion="2016.3.5"
-elif [ "$PHPSTORM_ENV" == "2017.1" ]; then
+elif [ "$IDE_ID" == "2017.1" ]; then
     ideaVersion="2017.1"
-elif [ "$PHPSTORM_ENV" == "eap" ]; then
+elif [ "$IDE_ID" == "eap" ]; then
     ideaVersion="163.5644.15"
 fi
 
@@ -64,37 +64,23 @@ fi
 
 mkdir plugins
 
-if [ "$PHPSTORM_ENV" == "2017.1" ]; then
+if [ "$IDE_ID" == "2017.1" ]; then
     download "https://plugins.jetbrains.com/files/6610/33685/php-171.3780.104.zip"
     unzip -qo $travisCache/php-171.3780.104.zip -d ./plugins
-elif [ "$PHPSTORM_ENV" == "eap" ]; then
-
-    #php
+elif [ "$IDE_ID" == "eap" ]; then
     download "https://plugins.jetbrains.com/files/6610/28124/php-163.3512.10.zip"
     unzip -qo $travisCache/php-163.3512.10.zip -d ./plugins
 else
-    echo "Unknown PHPSTORM_ENV value: $PHPSTORM_ENV"
+    echo "Unknown IDE_ID value: $IDE_ID"
     exit 1
 fi
 
 # Run the tests
 if [ "$1" = "-d" ]; then
-    ant -d -f build-test.xml -DIDEA_HOME=./idea
+    ant -d -f .travis/ant-build.xml -DIDEA_HOME=./idea
 else
-    ant -f build-test.xml -DIDEA_HOME=./idea
+    ant -f .travis/ant-build.xml -DIDEA_HOME=./idea
 fi
-#
-## Was our build successful?
-#stat=$?
-#
-#if [ "${TRAVIS}" != true ]; then
-#    ant -f build-test.xml -q clean
-#
-#    if [ "$1" = "-r" ]; then
-#        rm -rf idea
-#        rm -rf plugins
-#    fi
-#fi
 
 # Return the build status
 exit ${stat}

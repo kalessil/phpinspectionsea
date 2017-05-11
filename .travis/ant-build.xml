@@ -5,17 +5,18 @@
     <!-- set global properties for this build -->
     <property name="build.compiler" value="modern"/>
 
-    <property name="src" location="${basedir}/src/main/java"/>
-    <property name="test.src" location="${basedir}/src/test/java"/>
-    <property name="build" location="build"/>
-    <property name="test.build" location="build_test"/>
-    <property name="resources" value="${basedir}/src/main/resources"/>
+    <property name="src"            location="${basedir}/src/main/java"/>
+    <property name="test.src"       location="${basedir}/src/test/java"/>
+    <property name="build"          location="build"/>
+    <property name="test.build"     location="build_test"/>
+    <property name="idea.build"     location="${basedir}/idea/" />
+    <property name="plugins"        location="${basedir}/plugins"/>
+    <property name="deploy"         location="${basedir}/deploy"/>
+    <property name="resources"      value="${basedir}/src/main/resources"/>
     <property name="test.resources" value="${basedir}/src/test/resources" />
-    <property name="idea.build" location="${basedir}/idea/" />
-    <property name="plugins" location="${basedir}/plugins"/>
-    <property name="deploy" location="${basedir}/deploy"/>
 
     <path id="idea.classpath">
+        <!-- java dependencies for the plugin -->
         <fileset dir="${idea.build}/lib">
             <include name="*.jar"/>
         </fileset>
@@ -35,8 +36,12 @@
             <include name="*.jar"/>
         </fileset>
 
+        <!-- java dependencies for running builds -->
         <fileset dir="${basedir}/lib">
             <include name="*.jar" />
+        </fileset>
+        <fileset dir="${basedir}/.travis">
+            <include name="*.java" />
         </fileset>
     </path>
 
@@ -88,12 +93,10 @@
         <sequential>
             <echo message="Copying resources"/>
             <patternset id="resources">
-                <include name="**/*.php"/>
-                <include name="**/*.png"/>
-                <include name="**/*.xml"/>
-                <include name="**/*.yml"/>
-                <include name="**/*.xlf"/>
-                <include name="**/*.json"/>
+                <include name="**/*.php"  />
+                <include name="**/*.xml"  />
+                <include name="**/*.yml"  />
+                <include name="**/*.json" />
             </patternset>
 
             <copy toDir="@{dest}">

@@ -79,12 +79,7 @@ else
     exit 1
 fi
 
-# Run the tests
-if [ "$1" = "-d" ]; then
-    ant -d -f .travis/ant-build.xml -DIDEA_HOME=./../idea
-else
-    ant -f .travis/ant-build.xml -DIDEA_HOME=./../idea
-fi
-
-# Return the build status
+# run tests
+ant -f .travis/ant-build.xml -DIDEA_HOME=./../idea
+# buble the return code up
 exit ${stat}

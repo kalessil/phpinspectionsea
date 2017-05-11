@@ -1,10 +1,16 @@
 sudo:     false
-language: java
-jdk:
-  - oraclejdk8
 
 notifications:
   email:  false
+
+language: java
+
+matrix:
+  include:
+    - jdk: oraclejdk8
+      env: IDE_ID=2017.1
+    - jdk: oraclejdk8
+      env: IDE_ID=eap
 
 script: ".travis/build.sh"
 
@@ -14,8 +20,3 @@ cache:
 
 before_script:
  - chmod +x .travis/build.sh
-
-env:
-  - IDE_ID=2017.1
-  - IDE_ID=eap
-

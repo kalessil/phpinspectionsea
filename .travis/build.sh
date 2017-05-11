@@ -5,17 +5,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 ideaVersion="2017.1"
-if [ "$IDE_ID" == "2016.1.2" ]; then
-    ideaVersion="2016.1.4"
-elif [ "$IDE_ID" == "2016.2.1" ]; then
-    ideaVersion="2016.2.5"
-elif [ "$IDE_ID" == "2016.3" ]; then
-    ideaVersion="2016.3.5"
-elif [ "$IDE_ID" == "2016.3.1" ]; then
-    ideaVersion="2016.3.5"
-elif [ "$IDE_ID" == "2016.3.2" ]; then
-    ideaVersion="2016.3.5"
-elif [ "$IDE_ID" == "2017.1" ]; then
+if [ "$IDE_ID" == "2017.1" ]; then
     ideaVersion="2017.1"
 elif [ "$IDE_ID" == "eap" ]; then
     ideaVersion="163.5644.15"

@@ -80,6 +80,6 @@ else
 fi
 
 # run tests
-ant -f ant-build.xml -DIDEA_HOME=./idea
+ant -f ./ant-build.xml -DIDEA_HOME=./idea
 # buble the return code up
 exit ${stat}

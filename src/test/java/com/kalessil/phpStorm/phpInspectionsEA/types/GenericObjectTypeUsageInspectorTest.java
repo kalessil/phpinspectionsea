@@ -4,9 +4,10 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc.GenericObjectTypeUsageInspector;
 
 final public class GenericObjectTypeUsageInspectorTest extends CodeInsightFixtureTestCase {
-    public void testIfFindsAllPatterns2() {
-        myFixture.configureByFile("fixtures/types/type-object-annotation.php");
+    public void testIfFindsAllPatterns() {
         myFixture.enableInspections(GenericObjectTypeUsageInspector.class);
+
+        myFixture.configureByFile("fixtures/types/type-object-annotation.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

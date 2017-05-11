@@ -62,8 +62,8 @@ if [ "$IDE_ID" == "2017.1" ]; then
     download "https://plugins.jetbrains.com/files/6610/33685/php-171.3780.104.zip"
     unzip -qo $travisCache/php-171.3780.104.zip -d ./plugins
 elif [ "$IDE_ID" == "eap" ]; then
-    download "https://plugins.jetbrains.com/files/6610/28124/php-163.3512.10.zip"
-    unzip -qo $travisCache/php-163.3512.10.zip -d ./plugins
+    download "https://plugins.jetbrains.com/files/6610/28510/php-163.4830.18.zip"
+    unzip -qo $travisCache/php-163.4830.18.zip -d ./plugins
 else
     echo "Unknown IDE_ID value: $IDE_ID"
     exit 1

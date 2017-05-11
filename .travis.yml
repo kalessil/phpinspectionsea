@@ -15,9 +15,7 @@ cache:
 before_script:
  - chmod +x .travis/build.sh
 
-matrix:
-  include:
-    - env: IDE_ID=eap
-    - env: IDE_ID=2017.1
-
+env:
+  - IDE_ID=2017.1
+  - IDE_ID=eap
 

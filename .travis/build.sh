@@ -80,6 +80,7 @@ else
 fi
 
 # run tests
+echo "Running from: " `pwd`
 ant -f ./ant-build.xml -DIDEA_HOME=./idea
 # buble the return code up
 exit ${stat}

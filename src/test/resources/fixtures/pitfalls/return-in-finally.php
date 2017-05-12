@@ -6,7 +6,7 @@ try {
     }
 } catch (Exception $e) {
 } finally {
-    <error descr="Overrides return/throw statements from the try-block">return -1;</error>
+    <error descr="Voids all return and throw statements from the try-block (returned values and exceptions are lost)">return -1;</error>
 }
 
 try {
@@ -15,5 +15,5 @@ try {
     }
 } catch (Exception $e) {
 } finally {
-    <error descr="Overrides return/throw statements from the try-block">return -1;</error>
+    <error descr="Voids all return and throw statements from the try-block (returned values and exceptions are lost)">return -1;</error>
 }

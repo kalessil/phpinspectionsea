@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class SuspiciousReturnInspector extends BasePhpInspection {
-    private static final String message = "Overrides return/throw statements from the try-block";
+    private static final String message = "Voids all return and throw statements from the try-block (returned values and exceptions are lost)";
 
     @NotNull
     public String getShortName() {

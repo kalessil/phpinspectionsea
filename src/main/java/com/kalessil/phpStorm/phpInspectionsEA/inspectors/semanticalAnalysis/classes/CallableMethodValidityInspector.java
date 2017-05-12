@@ -109,6 +109,11 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                                 }
                             }
                         }
+                        /* older PS versions are nor recognizing ::class as we need */
+                        if (!needStatic && classCandidate instanceof ClassConstantReference) {
+                            final String constantName = ((ClassConstantReference) classCandidate).getName();
+                            needStatic                = null != constantName && constantName.equals("class");
+                        }
                     }
                     if (needStatic) {
                         final String message = patternNotStatic.replace("%m%", method.getName());

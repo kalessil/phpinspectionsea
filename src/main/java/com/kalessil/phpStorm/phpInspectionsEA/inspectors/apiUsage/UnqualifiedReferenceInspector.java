@@ -71,17 +71,19 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                /* makes sense only with PHP7+ opcache */
-                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
-                if (phpVersion.isAtLeast(PhpLanguageLevel.PHP700)) {
+                /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcache */
+                final PhpLanguageLevel phpVersion
+                        = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
+                if (phpVersion.compareTo(PhpLanguageLevel.PHP700) >= 0) {
                     analyzeCall(reference);
                     analyzeCallback(reference);
                 }
             }
             public void visitPhpConstantReference(ConstantReference reference) {
-                /* makes sense only with PHP7+ opcache */
-                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
-                if (phpVersion.isAtLeast(PhpLanguageLevel.PHP700)) {
+                /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcache */
+                final PhpLanguageLevel phpVersion
+                        = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
+                if (phpVersion.compareTo(PhpLanguageLevel.PHP700) >= 0) {
                     analyzeCall(reference);
                 }
             }

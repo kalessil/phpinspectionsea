@@ -43,7 +43,7 @@
             <include name="*.jar" />
         </fileset>
         <fileset dir="${basedir}/.travis">
-            <include name="*.java" />
+            <include name="**/*.java" />
         </fileset>
     </path>
 
@@ -81,7 +81,7 @@
             <include name="*.jar" />
         </fileset>
         <fileset dir="${basedir}/.travis">
-            <include name="*.java" />
+            <include name="**/*.java" />
         </fileset>
     </path>
 

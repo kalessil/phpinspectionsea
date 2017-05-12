@@ -16,10 +16,13 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection {
-    private static final String messagePatternReImplementsParent = "%i% is already announced in %c%.";
+    private static final String patternReImplementsParent = "%i% is already announced in %c%.";
+    private static final String messageAlreadyImplements  = "Class cannot implement previously implemented interface";
 
     @NotNull
     public String getShortName() {
@@ -39,7 +42,24 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
 
                 /* check if parent class and own implements are available */
                 final List<ClassReference> listImplements = clazz.getImplementsList().getReferenceElements();
-                /* case: re-implementation of parent interfaces */
+
+                /* case 1 (older PS compatibility): duplicate interfaces in implements - runtime error will be caused */
+                if (listImplements.size() > 1) {
+                    /* match parents interfaces against class we checking */
+                    final Set<String> interfaces = new HashSet<>();
+                    for (final ClassReference anInterface : listImplements) {
+                        final String interfaceFQN = anInterface.getFQN();
+                        if (interfaceFQN != null) {
+                            if (interfaces.contains(interfaceFQN)) {
+                                holder.registerProblem(anInterface, messageAlreadyImplements, ProblemHighlightType.ERROR, new TheLocalFix());
+                            }
+                            interfaces.add(interfaceFQN);
+                        }
+                    }
+                    interfaces.clear();
+                }
+
+                /* case 2: re-implementation of parent interfaces */
                 for (final PhpClass parent : clazz.getSupers()) {
                     /* do not process parent interfaces */
                     if (parent.isInterface()) {
@@ -62,7 +82,7 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                             /* ensure FQNs matches */
                             final String ownInterfaceFQN = ownInterface.getFQN();
                             if (ownInterfaceFQN != null && ownInterfaceFQN.equals(parentInterfaceFQN)) {
-                                final String message = messagePatternReImplementsParent
+                                final String message = patternReImplementsParent
                                         .replace("%i%", parentInterfaceName)
                                         .replace("%c%", parentClassFQN);
 

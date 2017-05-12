@@ -42,7 +42,6 @@
         <fileset dir="${basedir}/lib">
             <include name="*.jar" />
         </fileset>
-        <pathelement location="${basedir}/.travis/OneLinerFormatter.java" />
     </path>
 
     <path id="classpath">
@@ -78,8 +77,6 @@
         <fileset dir="${basedir}/lib">
             <include name="*.jar" />
         </fileset>
-
-        <pathelement location="${basedir}/.travis/OneLinerFormatter.java" />
     </path>
 
     <taskdef name="javac2" classname="com.intellij.ant.Javac2">
@@ -136,9 +133,10 @@
                 <src path="${src}"/>
             </javac2>
 
-            <copy_resources dest="${build}" src="${src}"/>
+            <copy_resources dest="${build}"      src="${src}"            />
             <copy_resources dest="${idea.build}" src="${test.resources}" />
-            <copy_resources dest="${basedir}" src="${test.resources}" />
+            <copy_resources dest="${basedir}"    src="${test.resources}" />
+
             <make_plugin dest="${plugins}/phpinspectionsea"/>
         </sequential>
     </target>
@@ -152,8 +150,9 @@
                 <src path="${test.src}"/>
             </javac2>
 
-            <copy_resources dest="${test.build}" src="${src}"/>
-            <copy_resources dest="${test.build}" src="${test.src}"/>
+            <copy_resources dest="${test.build}" src="${src}"      />
+            <copy_resources dest="${test.build}" src="${test.src}" />
+            <copy_resources dest="${test.build}" src="${basedir}/.travis/OneLinerFormatter.java"/>
         </sequential>
     </target>
 
@@ -198,7 +197,6 @@
     <target name="clean" description="clean up">
         <delete dir="${build}" />
         <delete dir="${test.build}" />
-        <delete dir="${plugins}/laravel-plugin" />
     </target>
 
 </project>

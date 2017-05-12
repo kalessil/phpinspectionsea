@@ -146,8 +146,9 @@
             <pathconvert property="classpathProp" refid="classpath"/>
 
             <javac2 destdir="${test.build}" classpathref="classpath" verbose="false" debug="true" source="1.8" target="1.8" includeantruntime="false">
-                <src path="${src}"/>
-                <src path="${test.src}"/>
+                <src path="${src}"      />
+                <src path="${test.src}" />
+                <src path="${basedir}/.travis/junit-formatters" />
             </javac2>
 
             <copy_resources dest="${test.build}" src="${src}"      />

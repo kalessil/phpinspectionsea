@@ -152,7 +152,7 @@
 
             <copy_resources dest="${test.build}" src="${src}"      />
             <copy_resources dest="${test.build}" src="${test.src}" />
-            <copy_resources dest="${test.build}" src="${basedir}/.travis/junit-formatters "/>
+            <copy_resources dest="${test.build}" src="${basedir}/.travis/junit-formatters" />
         </sequential>
     </target>
 

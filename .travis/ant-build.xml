@@ -42,7 +42,7 @@
         <fileset dir="${basedir}/lib">
             <include name="*.jar" />
         </fileset>
-        <pathelement location="${basedir}/.travis" />
+        <pathelement location="${basedir}/.travis/OneLinerFormatter.java" />
     </path>
 
     <path id="classpath">
@@ -79,7 +79,7 @@
             <include name="*.jar" />
         </fileset>
 
-        <pathelement location="${basedir}/.travis" />
+        <pathelement location="${basedir}/.travis/OneLinerFormatter.java" />
     </path>
 
     <taskdef name="javac2" classname="com.intellij.ant.Javac2">

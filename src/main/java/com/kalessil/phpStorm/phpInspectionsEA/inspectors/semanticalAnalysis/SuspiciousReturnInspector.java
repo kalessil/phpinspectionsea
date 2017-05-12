@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class SuspiciousReturnInspector extends BasePhpInspection {
-    private static final String message = "Overrides returned values from the try-block";
+    private static final String message = "Overrides return/throw statements from the try-block";
 
     @NotNull
     public String getShortName() {
@@ -46,15 +46,13 @@ public class SuspiciousReturnInspector extends BasePhpInspection {
                     parent = parent.getParent();
                 }
 
-                if (null != parent  && parent.getParent() instanceof Try) {
+                if (null != parent && parent.getParent() instanceof Try) {
                     final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(parent.getParent());
-                    if (null == body) {
-                        return;
-                    }
-
-                    final PhpReturn firstReturn = PsiTreeUtil.findChildOfType(body, PhpReturn.class);
-                    if (null != firstReturn) {
-                        holder.registerProblem(returnStatement, message, ProblemHighlightType.GENERIC_ERROR);
+                    if (null != body) {
+                        final PsiElement firstReturn = PsiTreeUtil.findChildOfAnyType(body, PhpReturn.class, PhpThrow.class);
+                        if (null != firstReturn) {
+                            holder.registerProblem(returnStatement, message, ProblemHighlightType.GENERIC_ERROR);
+                        }
                     }
                 }
             }

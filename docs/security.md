@@ -2,27 +2,27 @@
 
 ## Exploiting unserialize
 
-> When Php Inspection (EA Extended) reports the rule violations, ensure that it not belongs to any of dev-tools 
-> (profilers, dev-environment specific caching and etc.). Dev-tools should not go to production and normally 
+> When Php Inspection (EA Extended) reports the rule violations, ensure that it does not belong to any dev-tools 
+> (profilers, dev-environment specific caching etc). Dev-tools should not go to production and normally 
 > do not have any security guarantee.
 
-The vulnerability allows to remotely execute code or perform code/SQL injection by 
-using unserialize() function (more details here: https://www.owasp.org/index.php/PHP_Object_Injection).
+The vulnerability allows remote code execution or code/SQL injection by using 
+the unserialize() function (more details here: https://www.owasp.org/index.php/PHP_Object_Injection).
 
-There are several options how to resolve the issue:
+There are several options to resolve the issue:
 
 ### Using JSON format
 
-The approach is straightforward and includes using json_decode()/json_encode() instead of serialization.
+This approach is straightforward: use json_decode()/json_encode() instead of serialization.
 Unfortunately it is not suitable for performance-optimized components.
 
 ### PHP 7.0.0+
 
-Since PHP 7.0.0 the unserialize function has second parameter $options, which allows to 
-implicitly specify which classes can be unserialized.
+Since PHP 7.0.0 the unserialize function has a second parameter $options, which allows 
+implicitly specifying which classes can be unserialized.
 
 ```php
-    /* graceful approach with supporting older versions of PHP */ 
+    /* graceful approach which supports older versions of PHP */ 
     if (PHP_VERSION_ID >= 70000) {
         /* to forbid classes unserializing at all use this: array('allowed_classes' => false) */
         $unserializedData = unserialize($serializedData, array('allowed_classes' => ['Class1', 'Class2']));
@@ -33,7 +33,7 @@ implicitly specify which classes can be unserialized.
 
 ### Hooking into unserialize callback
 
-This technique allows to hook into class-loading during unserialize, making it possible to prevent new classes loading.
+This technique hooks into class-loading during unserialize, making it possible to prevent new classes from loading.
 
 ```php
     function __autoload($classname) {
@@ -55,23 +55,23 @@ MD2, MD4, MD5, SHA0, SHA1, DES, 3DES, RC2, RC4 algorithms are proven flawed or w
 
 ### mcrypt extension
 
-The extension is not maintained and has been deprecated since PHP 7.1, consider migrating to openssl.
+The mcrypt extension is not maintained and has been deprecated since PHP 7.1, consider migrating to openssl.
 
-Nevertheless if you still using mcrypt, Php Inspections (EA Extended) finds several issues:
+Nevertheless if you are still using mcrypt, Php Inspections (EA Extended) finds several issues:
 * MCRYPT_RIJNDAEL_192 and MCRYPT_RIJNDAEL_256 [are not AES-compliant](https://bugs.php.net/bug.php?id=47125);
 * MCRYPT_RIJNDAEL_256 [is not AES-256](https://paragonie.com/blog/2015/05/if-you-re-typing-word-mcrypt-into-your-code-you-re-doing-it-wrong#title.1.2)
 
 ## Cryptographically secure randomness
 
-For cryptographic operations purposes it's important to properly generate IV (Initialization Vector), which used for 
-further operations. In PHP you can use following functions for IV generation: openssl_random_pseudo_bytes, mcrypt_create_iv 
+For cryptographic operations purposes it's important to properly generate IV (Initialization Vector), which is used for 
+further operations. In PHP you can use the following functions for IV generation: openssl_random_pseudo_bytes, mcrypt_create_iv 
 and random_bytes.
 
-Using openssl_random_pseudo_bytes and mcrypt_create_iv has own requirements, so let see how it should look like:
+The openssl_random_pseudo_bytes and mcrypt_create_iv functions require slightly different approaches, for example:
 
 ### openssl_random_pseudo_bytes
 
-The code checks if random value was cryptographically strong and if the value generation succeeded. 
+This code checks if a random value was cryptographically strong and if the value generation succeeded. 
 ```php
 $random = openssl_random_pseudo_bytes(32, $isSourceStrong);
 if (false === $isSourceStrong || false === $random) {
@@ -81,7 +81,7 @@ if (false === $isSourceStrong || false === $random) {
 
 ### mcrypt_create_iv
 
-The code uses MCRYPT_DEV_RANDOM (available on Windows since PHP 5.3) which might block until more entropy available 
+This code uses MCRYPT_DEV_RANDOM (available on Windows since PHP 5.3) which might block until more entropy is available 
 and checks if the value generation succeeded.
 ```php
 $random = mcrypt_create_iv(32, MCRYPT_DEV_RANDOM);
@@ -94,8 +94,8 @@ if (false === $random) {
 
 ### parse_str()
 
-The function parses encoded string as if it were the query string passed via a URL and sets variables in the current 
-scope (or in the array if second parameter is provided). To stay safe, you should always provide second parameter.
+The parse_str function parses an encoded string as if it were the query string passed via a URL, and sets variables in the current 
+scope (or in the array if the second parameter is provided). To stay safe, you should always provide the second parameter.
 ```php
 parse_str($encodedString, $parsedValues);
 
@@ -104,8 +104,8 @@ parse_str($encodedString, $parsedValues);
 
 ### extract()
 
-The function imports variables from an array into the current scope. You can apply some rules to extraction process by 
-providing second argument.
+The extract function imports variables from an array into the current scope. You can apply some rules to the extraction process by 
+providing the second argument.
 ```php
 /* an example: we are protecting existing scope from modification */
 
@@ -119,8 +119,8 @@ if ($countVariablesCreated != count($values)) {
 
 ### curl_setopt()
 
-The function allows to manipulate CURLOPT_SSL_VERIFYHOST and CURLOPT_SSL_VERIFYPEER, responsible for SSL 
-connection certificate validation (host name and CA information). Disabling the settings allows to intercept SSL connections.
+The curl_setopt function allows manipulation of CURLOPT_SSL_VERIFYHOST and CURLOPT_SSL_VERIFYPEER, responsible for SSL 
+connection certificate validation (host name and CA information). Disabling the settings allows interception of SSL connections.
 
 ```php
 /* case 1: debug/production environment */
@@ -144,17 +144,17 @@ curl_setopt($curlHandler, CURLOPT_CAPATH , '<path>/');
  
 ## Security advisories
 
-> Note: if the composer.lock is coming with you project, adding roave/security-advisories brings 0 deployment risks.
+> Note: if the composer.lock file ships with your project, adding roave/security-advisories brings 0 deployment risks.
 
 > Best practices: consider adding `composer update` into your CI/CD to get informed about security issues early.
 
-Security Advisories is a Vulnerability Database from SensioLabs (https://security.sensiolabs.org/database), which can 
+Security Advisories is a Vulnerability Database from SensioLabs (https://security.sensiolabs.org/database) which can 
 be integrated with your workflows in several ways.
 
-One of ways is using a Components Firewall (https://github.com/Roave/SecurityAdvisories), by adding just one line into 
-your composer.json file. The firewall declares vulnerable components as conflicting and not allows to install them via 
+One way is to use a Components Firewall (https://github.com/Roave/SecurityAdvisories) by adding just one line into 
+your composer.json file. The firewall declares vulnerable components as conflicting and prevents their installation via 
 Composer.
 
-Php Inspection (EA Extended) suggests adding the firewall only if third-party components being used: e.g. if 
+Php Inspection (EA Extended) suggests adding the firewall only if third-party components are being used: e.g. if 
 composer.json declares "name" property as "your-company/product" all non-dev packages not starting with "your-company/" 
 are considered third-party.

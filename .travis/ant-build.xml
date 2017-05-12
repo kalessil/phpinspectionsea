@@ -42,9 +42,7 @@
         <fileset dir="${basedir}/lib">
             <include name="*.jar" />
         </fileset>
-        <fileset dir="${basedir}/.travis">
-            <include name="**/*.java" />
-        </fileset>
+        <pathelement location="${basedir}/.travis" />
     </path>
 
     <path id="classpath">
@@ -80,9 +78,8 @@
         <fileset dir="${basedir}/lib">
             <include name="*.jar" />
         </fileset>
-        <fileset dir="${basedir}/.travis">
-            <include name="**/*.java" />
-        </fileset>
+
+        <pathelement location="${basedir}/.travis" />
     </path>
 
     <taskdef name="javac2" classname="com.intellij.ant.Javac2">

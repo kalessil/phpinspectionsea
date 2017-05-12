@@ -1,27 +1,30 @@
-<project name="Php Inspections Extended" default="test" basedir=".">
+<project name="Php Inspections (EA Extended)" default="test" basedir="../">
 
     <property file="build.properties" />
 
     <!-- set global properties for this build -->
     <property name="build.compiler" value="modern"/>
 
-    <property name="src" location="${basedir}/src/main/java"/>
-    <property name="test.src" location="${basedir}/src/test/java"/>
-    <property name="build" location="build"/>
-    <property name="test.build" location="build_test"/>
-    <property name="resources" value="${basedir}/src/main/resources"/>
+    <property name="src"            location="${basedir}/src/main/java"/>
+    <property name="test.src"       location="${basedir}/src/test/java"/>
+    <property name="build"          location="build"/>
+    <property name="test.build"     location="build_test"/>
+    <property name="idea.build"     location="${basedir}/idea/" />
+    <property name="plugins"        location="${basedir}/plugins"/>
+    <property name="deploy"         location="${basedir}/deploy"/>
+    <property name="resources"      value="${basedir}/src/main/resources"/>
     <property name="test.resources" value="${basedir}/src/test/resources" />
-    <property name="idea.build" location="${basedir}/idea/" />
-    <property name="plugins" location="${basedir}/plugins"/>
-    <property name="deploy" location="${basedir}/deploy"/>
 
     <path id="idea.classpath">
+        <!-- java dependencies for the plugin -->
         <fileset dir="${idea.build}/lib">
             <include name="*.jar"/>
         </fileset>
         <fileset dir="${plugins}">
             <include name="*.jar"/>
         </fileset>
+
+
         <fileset dir="${plugins}/php/lib">
             <include name="*.jar"/>
         </fileset>
@@ -35,14 +38,15 @@
             <include name="*.jar"/>
         </fileset>
 
+        <!-- java dependencies for running builds -->
         <fileset dir="${basedir}/lib">
             <include name="*.jar" />
         </fileset>
     </path>
 
     <path id="classpath">
-        <pathelement location="${build}"/>
-        <path refid="idea.classpath"/>
+        <pathelement location="${build}" />
+        <path refid="idea.classpath"     />
     </path>
 
     <path id="classpath.test">
@@ -83,17 +87,13 @@
     </taskdef>
 
     <macrodef name="copy_resources">
-        <attribute name="dest"/>
-        <attribute name="src"/>
+        <attribute name="dest" />
+        <attribute name="src"  />
         <sequential>
             <echo message="Copying resources"/>
             <patternset id="resources">
-                <include name="**/*.php"/>
-                <include name="**/*.png"/>
-                <include name="**/*.xml"/>
-                <include name="**/*.yml"/>
-                <include name="**/*.xlf"/>
-                <include name="**/*.json"/>
+                <include name="**/*.php"  />
+                <include name="**/*.json" />
             </patternset>
 
             <copy toDir="@{dest}">
@@ -118,15 +118,14 @@
 
     <target name="init">
         <tstamp/>
-        <mkdir dir="${build}"/>
-        <mkdir dir="${test.build}"/>
-        <mkdir dir="${plugins}/phpinspectionsea"/>
-        <echo message="Using IDEA build from: ${idea.build}"/>
-        <echo message="Using JAVA_HOME: ${java.home}"/>
+        <mkdir dir="${build}"      />
+        <mkdir dir="${test.build}" />
+        <mkdir dir="${plugins}/phpinspectionsea" />
+        <echo message="Using IDEA build from: ${idea.build}" />
+        <echo message="Using JAVA_HOME: ${java.home}"        />
     </target>
 
     <target name="compile" depends="init" description="Compile the source code">
-
         <sequential>
             <pathconvert property="classpathProp" refid="classpath"/>
 
@@ -134,9 +133,10 @@
                 <src path="${src}"/>
             </javac2>
 
-            <copy_resources dest="${build}" src="${src}"/>
+            <copy_resources dest="${build}"      src="${src}"            />
             <copy_resources dest="${idea.build}" src="${test.resources}" />
-            <copy_resources dest="${basedir}" src="${test.resources}" />
+            <copy_resources dest="${basedir}"    src="${test.resources}" />
+
             <make_plugin dest="${plugins}/phpinspectionsea"/>
         </sequential>
     </target>
@@ -146,12 +146,13 @@
             <pathconvert property="classpathProp" refid="classpath"/>
 
             <javac2 destdir="${test.build}" classpathref="classpath" verbose="false" debug="true" source="1.8" target="1.8" includeantruntime="false">
-                <src path="${src}"/>
-                <src path="${test.src}"/>
+                <src path="${src}"      />
+                <src path="${test.src}" />
+                <src path="${basedir}/.travis/junit-formatters" />
             </javac2>
 
-            <copy_resources dest="${test.build}" src="${src}"/>
-            <copy_resources dest="${test.build}" src="${test.src}"/>
+            <copy_resources dest="${test.build}" src="${src}"      />
+            <copy_resources dest="${test.build}" src="${test.src}" />
         </sequential>
     </target>
 
@@ -196,7 +197,6 @@
     <target name="clean" description="clean up">
         <delete dir="${build}" />
         <delete dir="${test.build}" />
-        <delete dir="${plugins}/laravel-plugin" />
     </target>
 
 </project>

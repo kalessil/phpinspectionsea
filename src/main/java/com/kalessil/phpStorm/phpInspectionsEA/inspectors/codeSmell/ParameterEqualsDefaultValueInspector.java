@@ -1,9 +1,15 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.lang.ASTNode;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -72,15 +78,63 @@ public class ParameterEqualsDefaultValueInspector extends BasePhpInspection {
                 }
 
                 if (referenceParameterLower != null) {
+                    final PsiElement referenceParameterLowerPrev = ((PhpPsiElement) referenceParameterLower).getPrevPsiSibling();
+                    final PsiElement referenceParameterStart = (referenceParameterLowerPrev == null)
+                                                               ? referenceParameterLower
+                                                               : referenceParameterLowerPrev.getNextSibling();
+
                     problemsHolder.registerProblem(problemsHolder.getManager().createProblemDescriptor(
                         referenceParameterLower,
                         referenceParameters[referenceParameters.length - 1],
                         message,
                         ProblemHighlightType.WEAK_WARNING,
-                        onTheFly
+                        onTheFly,
+                        new TheLocalFix(referenceParameterStart, referenceParameters[referenceParameters.length - 1])
                     ));
                 }
             }
         };
+    }
+
+    private static final class TheLocalFix implements LocalQuickFix {
+        private final SmartPsiElementPointer<PsiElement> dropTo;
+        private final SmartPsiElementPointer<PsiElement> dropFrom;
+
+        private TheLocalFix(@NotNull final PsiElement dropFromElement, @NotNull final PsiElement dropToElement) {
+            dropFrom = SmartPointerManager.getInstance(dropFromElement.getProject()).createSmartPsiElementPointer(dropFromElement);
+            dropTo = SmartPointerManager.getInstance(dropToElement.getProject()).createSmartPsiElementPointer(dropToElement);
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Drop rewritten parameters";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+            final PsiElement dropFromElement = dropFrom.getElement();
+            final PsiElement dropToElement   = dropTo.getElement();
+
+            if ((dropFromElement != null) &&
+                (dropToElement != null)) {
+                ASTNode       dropFromNode = dropFromElement.getNode();
+                final ASTNode dropToNode   = dropToElement.getNode();
+
+                while (dropFromNode != dropToNode) {
+                    final ASTNode dropNextNode = dropFromNode.getTreeNext();
+                    dropFromNode.getTreeParent().removeChild(dropFromNode);
+                    dropFromNode = dropNextNode;
+                }
+
+                dropToNode.getTreeParent().removeChild(dropToNode);
+            }
+        }
     }
 }

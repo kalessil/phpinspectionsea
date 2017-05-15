@@ -620,6 +620,10 @@ We keep delivering funded results =)
         groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ParameterDefaultValueIsNotNullInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ParameterEqualsDefaultValueInspection"         displayName="Calls with the same default value"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ParameterEqualsDefaultValueInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DisallowWritingIntoStaticPropertiesInspection" displayName="Disallow writing into static properties"
         groupName="Code Style"                                    enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DisallowWritingIntoStaticPropertiesInspector"/>

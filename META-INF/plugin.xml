@@ -538,7 +538,7 @@ We keep delivering funded results =)
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnusedGotoLabelInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="ArgumentEqualsDefaultValueInspection"          displayName="Calls with the same default value"
+        shortName="ArgumentEqualsDefaultValueInspection"          displayName="Unnecessary arguments specification"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ArgumentEqualsDefaultValueInspector"/>
 

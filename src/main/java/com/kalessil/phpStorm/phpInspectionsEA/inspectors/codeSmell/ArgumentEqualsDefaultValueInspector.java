@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
-    private static final String message = "This parameter could be dropped, because the value is the same from default value.";
+    private static final String message = "The argument can be safely dropped, as identical to the default value.";
 
     @NotNull
     public final String getShortName() {
@@ -109,7 +109,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Drop rewritten parameters";
+            return "Safely drop rewritten argument";
         }
 
         @NotNull

@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.byReference;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;

@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ParameterByRefWithDefaultInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.byReference.ParameterByRefWithDefaultInspector;
 
 final public class ParameterByRefWithDefaultInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

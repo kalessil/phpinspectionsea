@@ -324,7 +324,7 @@ We keep delivering funded results =)
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ReferenceMismatchInspection"                   displayName="Reference mismatch"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ReferenceMismatchInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.byReference.ReferenceMismatchInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ImplicitMagicMethodCallInspection"             displayName="Implicit magic method calls"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
@@ -425,6 +425,10 @@ We keep delivering funded results =)
         shortName="CallableMethodValidityInspection"              displayName="Callable methods validity"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.CallableMethodValidityInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="PassingByReferenceCorrectnessInspection"       displayName="Passing arguments by reference correctness"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.byReference.PassingByReferenceCorrectnessInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -502,7 +506,7 @@ We keep delivering funded results =)
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ParameterByRefWithDefaultInspection"           displayName="Parameter passed by reference has default value"
         groupName="Confusing constructs"                          enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ParameterByRefWithDefaultInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.byReference.ParameterByRefWithDefaultInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ReferencingObjectsInspection"                  displayName="Referencing objects"
         groupName="Confusing constructs"                          enabledByDefault="true" level="ERROR"

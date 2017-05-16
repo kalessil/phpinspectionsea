@@ -281,7 +281,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Report non-thrown exceptions", REPORT_NON_THROWN_EXCEPTIONS, (isSelected) -> REPORT_NON_THROWN_EXCEPTIONS = isSelected);
+            component.addCheckbox("Report non-thrown exceptions", REPORT_NON_THROWN_EXCEPTIONS, (isSelected) -> REPORT_NON_THROWN_EXCEPTIONS = isSelected);
         });
     }
 }

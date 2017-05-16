@@ -94,12 +94,10 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) -> {
-            component.createRadio((radioComponent) -> {
-                radioComponent.createOption("Prefer yoda style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
-                radioComponent.createOption("Prefer regular style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
-            });
-        });
+        return OptionsComponent.create((component) -> component.delegateRadioCreation((radioComponent) -> {
+            radioComponent.addOption("Prefer yoda style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
+            radioComponent.addOption("Prefer regular style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
+        }));
     }
 
     private static class TheLocalFix implements LocalQuickFix {

@@ -164,8 +164,8 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Check default values", REPORT_DEFAULTS_FLAWS, (isSelected) -> REPORT_DEFAULTS_FLAWS = isSelected);
-            component.createCheckbox("Check constructor", REPORT_INIT_FLAWS, (isSelected) -> REPORT_INIT_FLAWS = isSelected);
+            component.addCheckbox("Check default values", REPORT_DEFAULTS_FLAWS, (isSelected) -> REPORT_DEFAULTS_FLAWS = isSelected);
+            component.addCheckbox("Check constructor", REPORT_INIT_FLAWS, (isSelected) -> REPORT_INIT_FLAWS = isSelected);
         });
     }
 

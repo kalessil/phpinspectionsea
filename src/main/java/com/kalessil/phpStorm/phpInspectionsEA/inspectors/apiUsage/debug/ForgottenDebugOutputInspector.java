@@ -194,7 +194,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createList("Custom debug methods:", configuration, this::recompileConfiguration);
+            component.addList("Custom debug methods:", configuration, this::recompileConfiguration);
         });
     }
 }

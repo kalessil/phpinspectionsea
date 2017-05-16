@@ -102,7 +102,7 @@ public class DisallowWritingIntoStaticPropertiesInspector extends BasePhpInspect
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Allow write from the source class", ALLOW_WRITE_FROM_SOURCE_CLASS, (isSelected) -> ALLOW_WRITE_FROM_SOURCE_CLASS = isSelected);
+            component.addCheckbox("Allow write from the source class", ALLOW_WRITE_FROM_SOURCE_CLASS, (isSelected) -> ALLOW_WRITE_FROM_SOURCE_CLASS = isSelected);
         });
     }
 }

@@ -131,9 +131,9 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Report empty() usage", REPORT_EMPTY_USAGE, (isSelected) -> REPORT_EMPTY_USAGE = isSelected);
-            component.createCheckbox("Suggest to use count()-comparison", SUGGEST_TO_USE_COUNT_CHECK, (isSelected) -> SUGGEST_TO_USE_COUNT_CHECK = isSelected);
-            component.createCheckbox("Suggest to use null-comparison", SUGGEST_TO_USE_NULL_COMPARISON, (isSelected) -> SUGGEST_TO_USE_NULL_COMPARISON = isSelected);
+            component.addCheckbox("Report empty() usage", REPORT_EMPTY_USAGE, (isSelected) -> REPORT_EMPTY_USAGE = isSelected);
+            component.addCheckbox("Suggest to use count()-comparison", SUGGEST_TO_USE_COUNT_CHECK, (isSelected) -> SUGGEST_TO_USE_COUNT_CHECK = isSelected);
+            component.addCheckbox("Suggest to use null-comparison", SUGGEST_TO_USE_NULL_COMPARISON, (isSelected) -> SUGGEST_TO_USE_NULL_COMPARISON = isSelected);
         });
     }
 

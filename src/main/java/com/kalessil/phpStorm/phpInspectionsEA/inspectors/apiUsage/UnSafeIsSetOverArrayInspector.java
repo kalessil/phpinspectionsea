@@ -176,8 +176,8 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Suggest to use array_key_exists()", SUGGEST_TO_USE_ARRAY_KEY_EXISTS, (isSelected) -> SUGGEST_TO_USE_ARRAY_KEY_EXISTS = isSelected);
-            component.createCheckbox("Suggest to use null-comparison", SUGGEST_TO_USE_NULL_COMPARISON, (isSelected) -> SUGGEST_TO_USE_NULL_COMPARISON = isSelected);
+            component.addCheckbox("Suggest to use array_key_exists()", SUGGEST_TO_USE_ARRAY_KEY_EXISTS, (isSelected) -> SUGGEST_TO_USE_ARRAY_KEY_EXISTS = isSelected);
+            component.addCheckbox("Suggest to use null-comparison", SUGGEST_TO_USE_NULL_COMPARISON, (isSelected) -> SUGGEST_TO_USE_NULL_COMPARISON = isSelected);
         });
     }
     }

@@ -140,7 +140,7 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Suggest using (string)...", SUGGEST_USING_STRING_CASTING, (isSelected) -> SUGGEST_USING_STRING_CASTING = isSelected);
+            component.addCheckbox("Suggest using (string)...", SUGGEST_USING_STRING_CASTING, (isSelected) -> SUGGEST_USING_STRING_CASTING = isSelected);
         });
     }
 }

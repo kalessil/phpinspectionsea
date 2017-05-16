@@ -78,7 +78,7 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Suggest overriding __clone", SUGGEST_OVERRIDING_CLONE, (isSelected) -> SUGGEST_OVERRIDING_CLONE = isSelected);
+            component.addCheckbox("Suggest overriding __clone", SUGGEST_OVERRIDING_CLONE, (isSelected) -> SUGGEST_OVERRIDING_CLONE = isSelected);
         });
     }
 }

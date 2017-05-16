@@ -100,7 +100,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Report re-defining private fields", REPORT_PRIVATE_REDEFINITION, (isSelected) -> REPORT_PRIVATE_REDEFINITION = isSelected);
+            component.addCheckbox("Report re-defining private fields", REPORT_PRIVATE_REDEFINITION, (isSelected) -> REPORT_PRIVATE_REDEFINITION = isSelected);
         });
     }
 }

@@ -282,9 +282,9 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Lookup root namespace classes", LOOK_ROOT_NS_UP, (isSelected) -> LOOK_ROOT_NS_UP = isSelected);
-            component.createCheckbox("Import classes automatically", IMPORT_CLASSES_ON_QF, (isSelected) -> IMPORT_CLASSES_ON_QF = isSelected);
-            component.createCheckbox("Use relative QN where possible", USE_RELATIVE_QF, (isSelected) -> USE_RELATIVE_QF = isSelected);
+            component.addCheckbox("Lookup root namespace classes", LOOK_ROOT_NS_UP, (isSelected) -> LOOK_ROOT_NS_UP = isSelected);
+            component.addCheckbox("Import classes automatically", IMPORT_CLASSES_ON_QF, (isSelected) -> IMPORT_CLASSES_ON_QF = isSelected);
+            component.addCheckbox("Use relative QN where possible", USE_RELATIVE_QF, (isSelected) -> USE_RELATIVE_QF = isSelected);
         });
     }
 }

@@ -136,7 +136,7 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.createCheckbox("Content aware reporting", RESPECT_CONTEXT, (isSelected) -> RESPECT_CONTEXT = isSelected);
+            component.addCheckbox("Content aware reporting", RESPECT_CONTEXT, (isSelected) -> RESPECT_CONTEXT = isSelected);
         });
     }
 

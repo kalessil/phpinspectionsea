@@ -5,8 +5,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 
 final public class AccessModifierPresentedInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        AccessModifierPresentedInspector inspector = new AccessModifierPresentedInspector();
+        inspector.ANALYZE_INTERFACES               = true;
+
         myFixture.configureByFile("fixtures/classes/access-modifiers.php");
-        myFixture.enableInspections(AccessModifierPresentedInspector.class);
+        myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }
 }

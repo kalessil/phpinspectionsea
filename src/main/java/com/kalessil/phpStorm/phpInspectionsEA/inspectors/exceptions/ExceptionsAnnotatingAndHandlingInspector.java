@@ -33,7 +33,7 @@ import java.util.*;
 
 public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection {
     // Inspection options.
-    private boolean REPORT_NON_THROWN_EXCEPTIONS = false;
+    public boolean REPORT_NON_THROWN_EXCEPTIONS = false;
 
     private static final String messagePattern           = "Throws a non-annotated/unhandled exception: '%c%'.";
     private static final String messagePatternUnthrown   = "Following exceptions annotated, but not thrown: '%c%'.";

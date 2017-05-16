@@ -5,8 +5,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 
 final public class ClassOverridesFieldOfSuperClassInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        ClassOverridesFieldOfSuperClassInspector inspector = new ClassOverridesFieldOfSuperClassInspector();
+        inspector.REPORT_PRIVATE_REDEFINITION              = true;
+
         myFixture.configureByFile("fixtures/classes/class-overrides-fields.php");
-        myFixture.enableInspections(ClassOverridesFieldOfSuperClassInspector.class);
+        myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }
 }

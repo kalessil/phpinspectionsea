@@ -4,7 +4,6 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.xmlb.XmlSerializer;
@@ -32,9 +31,8 @@ import java.util.*;
 
 public class ForgottenDebugOutputInspector extends BasePhpInspection {
     // Inspection options.
-    private final List<String> configuration = new ArrayList<>();
-
-    public boolean defaultsTransferredToUserSpace = false;
+    public final List<String> configuration = new ArrayList<>();
+    public boolean migratedIntoUserSpace    = false;
 
     final private Set<String> customFunctions                     = new HashSet<>();
     final private Map<String, Pair<String, String>> customMethods = new HashMap<>();
@@ -57,14 +55,14 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     }
 
     private void recompileConfiguration() {
-        customFunctions.clear();
-        customMethods.clear();
-        customMethodsNames.clear();
+        this.customFunctions.clear();
+        this.customMethods.clear();
+        this.customMethodsNames.clear();
 
         final List<String> customDebugFQNs = new ArrayList<>();
-        if (!this.defaultsTransferredToUserSpace) {
+        if (!this.migratedIntoUserSpace) {
             /* prepare migrated list */
-            final List<String> migrated = new ArrayList<>();
+            final Set<String> migrated = new TreeSet<>();
             migrated.add("\\Codeception\\Util\\Debug::pause");
             migrated.add("\\Codeception\\Util\\Debug::debug");
             migrated.add("\\Symfony\\Component\\Debug\\Debug::enable");
@@ -73,14 +71,19 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             migrated.add("\\Symfony\\Component\\Debug\\DebugClassLoader::enable");
             migrated.add("\\Zend\\Debug\\Debug::dump");
             migrated.add("\\Zend\\Di\\Display\\Console::export");
+            migrated.add("debug_print_backtrace");
+            migrated.add("debug_zval_dump");
             migrated.add("error_log");
             migrated.add("phpinfo");
+            migrated.add("print_r");
+            migrated.add("var_export");
+            migrated.add("var_dump");
             migrated.addAll(this.configuration);
 
             /* migrate the list */
             this.configuration.clear();
             this.configuration.addAll(migrated);
-            this.defaultsTransferredToUserSpace = true;
+            this.migratedIntoUserSpace = true;
 
             /* cleanup */
             migrated.clear();
@@ -109,14 +112,15 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         return "ForgottenDebugOutputInspection";
     }
 
-    private static final HashMap<String, Integer> functionsRequirements = new HashMap<>();
+    private static final Map<String, Integer> functionsRequirements = new HashMap<>();
     static {
         /* function name => amount of arguments considered legal */
-        functionsRequirements.put("print_r",               2);
-        functionsRequirements.put("var_export",            2);
-        functionsRequirements.put("var_dump",              -1);
-        functionsRequirements.put("debug_zval_dump",       -1);
         functionsRequirements.put("debug_print_backtrace", -1);
+        functionsRequirements.put("debug_zval_dump",       -1);
+        functionsRequirements.put("phpinfo",                1);
+        functionsRequirements.put("print_r",                2);
+        functionsRequirements.put("var_export",             2);
+        functionsRequirements.put("var_dump",               -1);
     }
 
     @Override
@@ -124,27 +128,16 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethodReference(MethodReference reference) {
-                final String name = reference.getName();
-                if (0 == customMethods.size() || StringUtil.isEmpty(name) || !customMethodsNames.contains(name)) {
+                final String methodName = reference.getName();
+                if (customMethods.isEmpty() || methodName == null || !customMethodsNames.contains(methodName)) {
                     return;
                 }
 
-                for (Pair<String, String> match : customMethods.values()) {
-                    if (!name.equals(match.getSecond())) {
-                        continue;
-                    }
-
-                    // resolve as method
-                    final PsiElement resolved = reference.resolve();
-                    if (!(resolved instanceof Method)) {
-                        continue;
-                    }
-
-                    // analyze if class as needed
-                    final PhpClass clazz = ((Method) resolved).getContainingClass();
-                    if (null != clazz) {
-                        final String classFqn = clazz.getFQN();
-                        if (!StringUtil.isEmpty(classFqn) && match.getFirst().equals(classFqn)) {
+                for (final Pair<String, String> match : customMethods.values()) {
+                    final PsiElement resolved = methodName.equals(match.getSecond()) ? reference.resolve() : null;
+                    if (resolved instanceof Method) {
+                        final PhpClass clazz = ((Method) resolved).getContainingClass();
+                        if (clazz != null && match.getFirst().equals(clazz.getFQN())) {
                             holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             return;
                         }
@@ -154,47 +147,47 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
 
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (
-                    null != functionName && functionsRequirements.containsKey(functionName) &&
-                    reference.getParameters().length != functionsRequirements.get(functionName) // keep it here when function hit
-                ) {
-                    PsiElement parent = reference.getParent();
+                if (functionName != null && customFunctions.contains(functionName)) {
+                    final Integer paramsNeeded = functionsRequirements.get(functionName);
+                    if (paramsNeeded != null && reference.getParameters().length == paramsNeeded) {
+                        return;
+                    }
+                    if (!this.isBuffered(reference)) {
+                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    }
+                }
+            }
 
-                    /* statement can be prepended by @ (silence) */
-                    if (parent instanceof UnaryExpression) {
-                        final PsiElement operation = ((UnaryExpression) parent).getOperation();
-                        if (null != operation && PhpTokenTypes.opSILENCE == operation.getNode().getElementType()) {
-                            parent = parent.getParent();
+            private boolean isBuffered(@NotNull PsiElement debugStatement) {
+                boolean result = false;
+
+                PsiElement parent = debugStatement.getParent();
+                /* statement can be prepended by @ (silence) */
+                if (parent instanceof UnaryExpression) {
+                    final PsiElement operation = ((UnaryExpression) parent).getOperation();
+                    if (operation != null && operation.getNode().getElementType() == PhpTokenTypes.opSILENCE) {
+                        parent = parent.getParent();
+                    }
+                }
+                /* ensure it's not prepended with 'ob_start();' */
+                if (parent instanceof StatementImpl) {
+                    final PsiElement preceding = ((StatementImpl) parent).getPrevPsiSibling();
+                    if (preceding != null && OpenapiTypesUtil.isFunctionReference(preceding.getFirstChild())) {
+                        final FunctionReference precedingCall = (FunctionReference) preceding.getFirstChild();
+                        final String precedingFunctionName    = precedingCall.getName();
+                        if (precedingFunctionName != null && precedingFunctionName.equals("ob_start")) {
+                            result = true;
                         }
                     }
-
-                    /* ensure it's not prepended with 'ob_start();' */
-                    if (parent instanceof StatementImpl) {
-                        final PsiElement preceding = ((StatementImpl) parent).getPrevPsiSibling();
-                        if (null != preceding && OpenapiTypesUtil.isFunctionReference(preceding.getFirstChild())) {
-                            final FunctionReference precedingCall = (FunctionReference) preceding.getFirstChild();
-                            final String precedingFunction            = precedingCall.getName();
-                            if (!StringUtil.isEmpty(precedingFunction) && precedingFunction.equals("ob_start")) {
-                                return;
-                            }
-                        }
-                    }
-
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                    return;
                 }
 
-                /* user-defined functions */
-                if (customFunctions.contains(functionName)) {
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                }
+                return result;
             }
         };
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) -> {
-            component.addList("Custom debug methods:", configuration, this::recompileConfiguration);
-        });
+        return OptionsComponent.create((component)
+                -> component.addList("Custom debug methods:", configuration, this::recompileConfiguration));
     }
 }

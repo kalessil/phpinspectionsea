@@ -38,9 +38,7 @@ import java.util.*;
 
 public class PhpUnitTestsInspector extends BasePhpInspection {
     // Inspection options.
-    private boolean SUGGEST_TO_USE_ASSERTSAME = false;
-
-    // TODO: refactor to avoid this.
+    public boolean SUGGEST_TO_USE_ASSERTSAME    = false;
     public boolean WORKAROUND_COVERS_REFERENCES = false;
 
     private final static String messageDepends = "@depends referencing to a non-existing entity.";

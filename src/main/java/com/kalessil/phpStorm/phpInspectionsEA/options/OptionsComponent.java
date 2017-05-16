@@ -38,6 +38,10 @@ public class OptionsComponent {
         return component.optionsPanel;
     }
 
+    public void refresh() {
+        optionsPanel.revalidate();
+    }
+
     public void addCheckbox(@NotNull String label, boolean defaultValue, @NotNull Consumer<Boolean> updateConsumer) {
         final JCheckBox createdCheckbox = new JCheckBox(label, defaultValue);
         createdCheckbox.addItemListener((itemEvent) -> updateConsumer.accept(createdCheckbox.isSelected()));

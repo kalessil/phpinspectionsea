@@ -30,7 +30,7 @@ import javax.swing.*;
 
 public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection {
     // Inspection options.
-    private boolean REPORT_PRIVATE_REDEFINITION = true;
+    public boolean REPORT_PRIVATE_REDEFINITION = true;
 
     private static final String patternShadows            = "Field '%p%' is already defined in %c%, check our online documentation for options.";
     private static final String patternProtectedCandidate = "Likely needs to be protected (already defined in %c%).";

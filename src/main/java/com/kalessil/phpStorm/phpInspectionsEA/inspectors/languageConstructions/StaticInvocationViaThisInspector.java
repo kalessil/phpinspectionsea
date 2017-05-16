@@ -23,7 +23,7 @@ import javax.swing.*;
 
 public class StaticInvocationViaThisInspector extends BasePhpInspection {
     // Inspection options.
-    private boolean RESPECT_PHPUNIT_STANDARDS = true;
+    public boolean RESPECT_PHPUNIT_STANDARDS = true;
 
     private static final String messageThisUsed       = "'static::%m%(...)' should be used instead.";
     private static final String messageExpressionUsed = "'...::%m%(...)' should be used instead.";

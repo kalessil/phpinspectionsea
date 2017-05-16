@@ -25,7 +25,7 @@ import javax.swing.*;
 
 public class AccessModifierPresentedInspector extends BasePhpInspection {
     // Inspection options.
-    private boolean ANALYZE_INTERFACES = true;
+    public boolean ANALYZE_INTERFACES = true;
 
     private static final String messagePattern = "'%s%' should be declared with access modifier.";
 

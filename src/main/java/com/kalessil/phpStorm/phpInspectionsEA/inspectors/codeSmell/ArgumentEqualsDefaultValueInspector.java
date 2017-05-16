@@ -88,7 +88,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                         referenceParameterLower,
                         referenceParameters[referenceParameters.length - 1],
                         message,
-                        ProblemHighlightType.WEAK_WARNING,
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                         onTheFly,
                         new TheLocalFix(referenceParameterStart, referenceParameters[referenceParameters.length - 1])
                     ));

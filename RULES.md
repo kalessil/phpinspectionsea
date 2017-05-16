@@ -62,6 +62,7 @@ Inspections Lists (Unused)
 | Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes | yes | no   | no  |
 | Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | yes | yes | yes  | no  |
 | Unused               | UnusedGotoLabelInspection                       | Unused goto labels                                  | yes | yes | no   | no  |
+| Unused               | ArgumentEqualsDefaultValueInspection            | Calls with the same default value                   | yes | yes | yes  | no  |
 
 Inspections Lists (Compatibility)
 ---
@@ -107,7 +108,6 @@ Inspections Lists (Code style)
 | Code style           | ComparisonOperandsOrderInspection               | Yoda/regular conditions style usage                 | yes | yes | no   | no  |
 | Code style           | UnknownInspectionInspection                     | Unknown inspection suppression                      | n/a | yes | n/a  | no  |
 | Code style           | ParameterDefaultValueIsNotNullInspection        | Non-null parameters default value                   | n/a | yes | n/a  | yes |
-| Code style           | ArgumentEqualsDefaultValueInspection            | Calls with the same default value                   | yes | yes | yes  | no  |
 
 Inspections Lists (Language level migration)
 ---

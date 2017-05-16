@@ -15,8 +15,8 @@
     echo <weak_warning descr="'$x[0] ?? null' construction should be used instead.">!array_key_exists(0, $x) ? null : $x[0]</weak_warning>;
 
     /* patter: isset on static properties was not working, fixed in PHP 7.0.19 and 7.1.5 */
-    echo isset(stdClass::$test) ? stdClass::$test : 'test';
-    echo isset($classname::$test) ? $classname::$test : 'test';
+    echo <weak_warning descr="'stdClass::$test ?? 'test'' construction should be used instead.">isset(stdClass::$test) ? stdClass::$test : 'test'</weak_warning>;
+    echo <weak_warning descr="'$classname::$test ?? 'test'' construction should be used instead.">isset($classname::$test) ? $classname::$test : 'test'</weak_warning>;
 
     /* false-positives */
     echo array_key_exists(0, $x) ? $x[0] : 'default';

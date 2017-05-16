@@ -64,17 +64,23 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             public void visitPhpMethod(Method method) {
                 final Project project      = holder.getProject();
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
-                if (php.hasFeature(PhpLanguageFeature.RETURN_TYPES) && null == method.getReturnType()) {
-                    final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
-                    final boolean isMagicFunction   = method.getName().startsWith("__");
-                    if (!isMagicFunction && null != methodNameNode) {
-                        final boolean supportNullableTypes = php.hasFeature(PhpLanguageFeature.NULLABLES);
-                        if (method.isAbstract()) {
-                            handleAbstractMethod(method, methodNameNode, supportNullableTypes);
-                        } else {
-                            handleMethod(method, methodNameNode, supportNullableTypes);
-                        }
-                    }
+
+                if(!php.hasFeature(PhpLanguageFeature.RETURN_TYPES) || null != method.getReturnType()) {
+                    return;
+                }
+
+                final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
+                final boolean isMagicFunction   = method.getName().startsWith("__");
+
+                if (isMagicFunction || null == methodNameNode) {
+                    return;
+                }
+
+                final boolean supportNullableTypes = php.hasFeature(PhpLanguageFeature.NULLABLES);
+                if (method.isAbstract()) {
+                    handleAbstractMethod(method, methodNameNode, supportNullableTypes);
+                } else {
+                    handleMethod(method, methodNameNode, supportNullableTypes);
                 }
             }
 
@@ -187,24 +193,32 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (null != expression) {
-                final Method method = (Method) expression.getParent();
-                final PsiElement body
-                        = method.isAbstract() ? method.getLastChild() : ExpressionSemanticUtil.getGroupStatement(method);
-                if (null != body) {
-                    PsiElement injectionPoint = body.getPrevSibling();
-                    if (injectionPoint instanceof PsiWhiteSpace) {
-                        injectionPoint = injectionPoint.getPrevSibling();
-                    }
-                    if (null != injectionPoint) {
-                        final Function donor = PhpPsiElementFactory.createFunction(project, "function(): " + type + "{}");
-                        PsiElement implant   = donor.getReturnType();
-                        while (null != implant && PhpTokenTypes.chRPAREN != implant.getNode().getElementType()) {
-                            injectionPoint.getParent().addAfter(implant, injectionPoint);
-                            implant = implant.getPrevSibling();
-                        }
-                    }
-                }
+            if (null == expression) {
+                return;
+            }
+
+            final Method method = (Method) expression.getParent();
+            final PsiElement body
+                    = method.isAbstract() ? method.getLastChild() : ExpressionSemanticUtil.getGroupStatement(method);
+
+            if (null == body) {
+                return;
+            }
+
+            PsiElement injectionPoint = body.getPrevSibling();
+            if (injectionPoint instanceof PsiWhiteSpace) {
+                injectionPoint = injectionPoint.getPrevSibling();
+            }
+
+            if (null == injectionPoint) {
+                return;
+            }
+
+            final Function donor = PhpPsiElementFactory.createFunction(project, "function(): " + type + "{}");
+            PsiElement implant   = donor.getReturnType();
+            while (null != implant && PhpTokenTypes.chRPAREN != implant.getNode().getElementType()) {
+                injectionPoint.getParent().addAfter(implant, injectionPoint);
+                implant = implant.getPrevSibling();
             }
         }
     }

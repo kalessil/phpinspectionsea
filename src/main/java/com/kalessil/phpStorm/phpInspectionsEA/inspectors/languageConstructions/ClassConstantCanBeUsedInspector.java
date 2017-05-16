@@ -20,7 +20,9 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ClassImportStatementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ImportStatus;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -192,33 +194,13 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     boolean isImportedAlready     = false;
                     boolean isImportNameCollision = false;
                     PsiElement importMarker       = null;
+                    ClassImportStatementUtil useUtil = new ClassImportStatementUtil();
 
-                    /* check all use-statements and use imported name for QF */
-                    for (PhpUseList use : PsiTreeUtil.findChildrenOfType(file, PhpUseList.class)) {
-                        /* do not process `function() use () {}` constructs or class traits */
-                        final PsiElement useParent = use.getParent();
-                        if (useParent instanceof Function || useParent instanceof PhpClass) {
-                            continue;
-                        }
-
-                        importMarker = use;
-                        for (PsiElement used : use.getChildren()){
-                            if (!(used instanceof PhpUse)) {
-                                continue;
-                            }
-
-                            final PhpUse useStatement = (PhpUse) used;
-                            if (useStatement.getFQN().equals(fqn)) {
-                                classForReplacement = useStatement.getName();
-                                isImportedAlready   = true;
-                                break;
-                            }
-
-                            if (className.equals(useStatement.getName())) {
-                                isImportNameCollision = true;
-                            }
-                        }
-                    }
+                    ImportStatus imported = useUtil.canImportClass(file, className, fqn);
+                    isImportedAlready = imported.getImported();
+                    classForReplacement = imported.getClassName();
+                    importMarker = imported.getImportMarker();
+                    isImportNameCollision = imported.getImportNameCollision();
 
                     if (!isImportedAlready && !isImportNameCollision && importClasses) {
                         /* do not import classes from the root namespace */

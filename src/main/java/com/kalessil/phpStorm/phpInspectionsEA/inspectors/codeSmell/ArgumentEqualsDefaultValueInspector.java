@@ -84,18 +84,13 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                 }
 
                 if (referenceParameterLower != null) {
-                    final PsiElement referenceParameterLowerPrev = ((PhpPsiElement) referenceParameterLower).getPrevPsiSibling();
-                    final PsiElement referenceParameterStart = (referenceParameterLowerPrev == null)
-                                                               ? referenceParameterLower
-                                                               : referenceParameterLowerPrev.getNextSibling();
-
                     problemsHolder.registerProblem(problemsHolder.getManager().createProblemDescriptor(
                         referenceParameterLower,
                         referenceParameters[referenceParameters.length - 1],
                         message,
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                         onTheFly,
-                        new TheLocalFix(referenceParameterStart, referenceParameters[referenceParameters.length - 1])
+                        new TheLocalFix(referenceParameterLower, referenceParameters[referenceParameters.length - 1])
                     ));
                 }
             }
@@ -130,7 +125,12 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
 
             if ((dropFromElement != null) &&
                 (dropToElement != null)) {
-                ASTNode       dropFromNode = dropFromElement.getNode();
+                final PsiElement dropFromElementPrevious = ((PhpPsiElement) dropFromElement).getPrevPsiSibling();
+                final PsiElement dropFromElementStarting = (dropFromElementPrevious == null)
+                                                           ? dropFromElement
+                                                           : dropFromElementPrevious.getNextSibling();
+
+                ASTNode       dropFromNode = dropFromElementStarting.getNode();
                 final ASTNode dropToNode   = dropToElement.getNode();
 
                 while (dropFromNode != dropToNode) {

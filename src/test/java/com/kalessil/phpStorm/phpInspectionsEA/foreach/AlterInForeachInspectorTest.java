@@ -14,8 +14,9 @@ final public class AlterInForeachInspectorTest extends CodeInsightFixtureTestCas
     }
 
     public void testFalsePositives() {
+        myFixture.enableInspections(new AlterInForeachInspector());
+
         myFixture.configureByFile("fixtures/foreach/alter-in-foreach-false-positives.php");
-        myFixture.enableInspections(AlterInForeachInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

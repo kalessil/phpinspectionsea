@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 
 final public class CallableMethodValidityInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsPatterns() {
-        myFixture.enableInspections(CallableMethodValidityInspector.class);
+        myFixture.enableInspections(new CallableMethodValidityInspector());
 
         myFixture.configureByFile("fixtures/classes/callable-methods-validity.php");
         myFixture.testHighlighting(true, false, true);

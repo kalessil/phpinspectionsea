@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 
 final public class ClassReImplementsParentInterfaceInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(ClassReImplementsParentInterfaceInspector.class);
+        myFixture.enableInspections(new ClassReImplementsParentInterfaceInspector());
 
         myFixture.configureByFile("fixtures/classes/re-implements-parent-interface.php");
         myFixture.testHighlighting(true, false, true);

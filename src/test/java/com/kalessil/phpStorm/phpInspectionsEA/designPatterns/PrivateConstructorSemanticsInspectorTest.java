@@ -5,13 +5,13 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 
 final public class PrivateConstructorSemanticsInspectorTest extends CodeInsightFixtureTestCase {
     public void testValidEntityWithOwnFactoryMethodCreate () {
-        myFixture.configureByFile("fixtures/designPatterns/entiry-with-own-factory-methods-create.php");
+        myFixture.configureByFile("fixtures/designPatterns/entry-with-own-factory-methods-create.php");
         myFixture.enableInspections(PrivateConstructorSemanticsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 
     public void testValidEntityWithOwnFactoryMethodFrom () {
-        myFixture.configureByFile("fixtures/designPatterns/entiry-with-own-factory-methods-from.php");
+        myFixture.configureByFile("fixtures/designPatterns/entry-with-own-factory-methods-from.php");
         myFixture.enableInspections(PrivateConstructorSemanticsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }

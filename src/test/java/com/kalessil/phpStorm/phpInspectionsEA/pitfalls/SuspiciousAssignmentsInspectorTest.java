@@ -4,19 +4,22 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.SuspiciousAssignmentsInspector;
 
 final public class SuspiciousAssignmentsInspectorTest extends CodeInsightFixtureTestCase {
-    public void testSwitchFallThruPatterns() {
-        myFixture.configureByFile("fixtures/pitfalls/suspiciousAssignments/suspicious-assignments-switch.php");
+    public void testSwitchFallThroughPatterns() {
         myFixture.enableInspections(SuspiciousAssignmentsInspector.class);
+
+        myFixture.configureByFile("fixtures/pitfalls/suspiciousAssignments/suspicious-assignments-switch.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testSelfAssignmentPatterns() {
-        myFixture.configureByFile("fixtures/pitfalls/suspiciousAssignments/suspicious-assignments-self-assignment.php");
         myFixture.enableInspections(SuspiciousAssignmentsInspector.class);
+
+        myFixture.configureByFile("fixtures/pitfalls/suspiciousAssignments/suspicious-assignments-self-assignment.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testParametersOverridePatterns() {
-        myFixture.configureByFile("fixtures/pitfalls/suspiciousAssignments/suspicious-assignments-param-override.php");
         myFixture.enableInspections(SuspiciousAssignmentsInspector.class);
+
+        myFixture.configureByFile("fixtures/pitfalls/suspiciousAssignments/suspicious-assignments-param-override.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testSuspiciousFormattingPatterns() {

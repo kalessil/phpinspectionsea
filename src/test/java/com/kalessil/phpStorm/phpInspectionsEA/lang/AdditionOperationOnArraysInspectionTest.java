@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.A
 
 final public class AdditionOperationOnArraysInspectionTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new AdditionOperationOnArraysInspection());
+
         myFixture.configureByFile("fixtures/lang/arrays-concatenate.php");
-        myFixture.enableInspections(AdditionOperationOnArraysInspection.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

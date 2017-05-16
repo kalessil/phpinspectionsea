@@ -8,9 +8,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.Cas
 final public class CascadingDirnameCallsInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
+        myFixture.enableInspections(new CascadingDirnameCallsInspector());
 
         myFixture.configureByFile("fixtures/api/cascade-dirname.php");
-        myFixture.enableInspections(CascadingDirnameCallsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

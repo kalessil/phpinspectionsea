@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.Fil
 
 final public class FileFunctionMissUseInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.configureByFile("fixtures/api/file-function-missuse.php");
+        myFixture.configureByFile("fixtures/api/file-function-misuse.php");
         myFixture.enableInspections(FileFunctionMissUseInspector.class);
         myFixture.testHighlighting(true, false, true);
     }

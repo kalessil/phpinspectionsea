@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 
 final public class AutoloadingIssuesInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsPatterns() {
-        myFixture.enableInspections(AutoloadingIssuesInspector.class);
+        myFixture.enableInspections(new AutoloadingIssuesInspector());
 
         myFixture.configureByFile("fixtures/classes/brokenAutoloading/case1.php");
         myFixture.testHighlighting(true, false, true);
@@ -15,7 +15,7 @@ final public class AutoloadingIssuesInspectorTest extends CodeInsightFixtureTest
     }
 
     public void testFalsePositives() {
-        myFixture.enableInspections(AutoloadingIssuesInspector.class);
+        myFixture.enableInspections(new AutoloadingIssuesInspector());
 
         myFixture.configureByFile("fixtures/classes/brokenAutoloading/ValidCase.php");
         myFixture.testHighlighting(true, false, true);

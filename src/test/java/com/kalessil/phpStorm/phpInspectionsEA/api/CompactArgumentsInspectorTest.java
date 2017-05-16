@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.CompactArgumen
 
 final public class CompactArgumentsInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new CompactArgumentsInspector());
+
         myFixture.configureByFile("fixtures/api/compact-arguments-existence.php");
-        myFixture.enableInspections(CompactArgumentsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayPu
 
 final public class ArrayPushMissUseInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new ArrayPushMissUseInspector());
+
         myFixture.configureByFile("fixtures/lang/array-push-via-function.php");
-        myFixture.enableInspections(ArrayPushMissUseInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

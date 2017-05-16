@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.AliasFunctions
 
 final public class AliasFunctionsUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(AliasFunctionsUsageInspector.class);
+        myFixture.enableInspections(new AliasFunctionsUsageInspector());
 
         myFixture.configureByFile("fixtures/api/alias-functions.ns.php");
         myFixture.testHighlighting(true, false, true);

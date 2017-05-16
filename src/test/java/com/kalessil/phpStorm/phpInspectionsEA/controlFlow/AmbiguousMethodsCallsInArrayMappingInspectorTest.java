@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.AmbiguousMeth
 
 final public class AmbiguousMethodsCallsInArrayMappingInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new AmbiguousMethodsCallsInArrayMappingInspector());
+
         myFixture.configureByFile("fixtures/controlFlow/array-mapping-ambiguous-calls.php");
-        myFixture.enableInspections(AmbiguousMethodsCallsInArrayMappingInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

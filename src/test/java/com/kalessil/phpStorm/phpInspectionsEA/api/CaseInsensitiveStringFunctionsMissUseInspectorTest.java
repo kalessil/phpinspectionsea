@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.CaseIn
 
 final public class CaseInsensitiveStringFunctionsMissUseInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new CaseInsensitiveStringFunctionsMissUseInspector());
+
         myFixture.configureByFile("fixtures/api/str-i-functions.php");
-        myFixture.enableInspections(CaseInsensitiveStringFunctionsMissUseInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

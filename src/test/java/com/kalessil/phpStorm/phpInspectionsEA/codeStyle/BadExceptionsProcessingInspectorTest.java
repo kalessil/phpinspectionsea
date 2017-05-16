@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.BadExceptions
 
 final public class BadExceptionsProcessingInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(BadExceptionsProcessingInspector.class);
+        myFixture.enableInspections(new BadExceptionsProcessingInspector());
 
         myFixture.configureByFile("fixtures/codeStyle/bad-exceptions-handling.php");
         myFixture.testHighlighting(true, false, true);

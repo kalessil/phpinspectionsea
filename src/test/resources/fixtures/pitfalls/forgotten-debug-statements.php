@@ -16,3 +16,5 @@
 
     <error descr="Please ensure this is not a forgotten debug statement.">debug_print_backtrace</error>();
     <error descr="Please ensure this is not a forgotten debug statement.">phpinfo</error>();
+
+    <error descr="Please ensure this is not a forgotten debug statement.">my_debug_function</error>();

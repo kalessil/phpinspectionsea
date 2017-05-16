@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 final public class UnSafeIsSetOverArrayInspectorTest extends CodeInsightFixtureTestCase {
     @NotNull
     private UnSafeIsSetOverArrayInspector getInspector() {
-        UnSafeIsSetOverArrayInspector inspector = new UnSafeIsSetOverArrayInspector();
+        UnSafeIsSetOverArrayInspector inspector   = new UnSafeIsSetOverArrayInspector();
         inspector.SUGGEST_TO_USE_ARRAY_KEY_EXISTS = true;
-        inspector.SUGGEST_TO_USE_NULL_COMPARISON = true;
+        inspector.SUGGEST_TO_USE_NULL_COMPARISON  = true;
         return inspector;
     }
 

@@ -1,14 +1,14 @@
 <?php
 
-function method($a = 0, $b = 0) {
+function test($a = 0, $b = 0) {
 }
 
 // Positives.
-method();
-method(1);
-method(0, 1);
+test();
+test(1);
+test(0, 1);
 
 // Warnings.
-method();
-method(1);
-method();
+test();
+test(1);
+test();

@@ -20,12 +20,13 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.*;
+
+import org.jetbrains.annotations.NotNull;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -37,9 +38,10 @@ import java.util.*;
  */
 
 public class PhpUnitTestsInspector extends BasePhpInspection {
-    // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
-    public boolean SUGGEST_TO_USE_ASSERTSAME    = false;
+    // Inspection options.
+    private boolean SUGGEST_TO_USE_ASSERTSAME = false;
+
+    // TODO: refactor to avoid this.
     public boolean WORKAROUND_COVERS_REFERENCES = false;
 
     private final static String messageDepends = "@depends referencing to a non-existing entity.";
@@ -209,26 +211,9 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return (new PhpUnitTestsInspector.OptionsPanel()).getComponent();
-    }
-
-    public class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox suggestToUseAssertSame;
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            suggestToUseAssertSame = new JCheckBox("Suggest to use assertSame", SUGGEST_TO_USE_ASSERTSAME);
-            suggestToUseAssertSame.addChangeListener(e -> SUGGEST_TO_USE_ASSERTSAME = suggestToUseAssertSame.isSelected());
-            optionsPanel.add(suggestToUseAssertSame, "wrap");
-        }
-
-        public JPanel getComponent() {
-            return optionsPanel;
-        }
+        return OptionsComponent.create((component) -> {
+            component.createCheckbox("Suggest to use assertSame", SUGGEST_TO_USE_ASSERTSAME, (isSelected) -> SUGGEST_TO_USE_ASSERTSAME = isSelected);
+        });
     }
 
     private static class AmbiguousTestAnnotationLocalFix implements LocalQuickFix {

@@ -10,14 +10,15 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpModifier;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
-import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+
+import org.jetbrains.annotations.NotNull;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -29,9 +30,8 @@ import javax.swing.*;
  */
 
 public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection {
-    // configuration flags automatically saved by IDE
-    @SuppressWarnings("WeakerAccess")
-    public boolean REPORT_PRIVATE_REDEFINITION = true;
+    // Inspection options.
+    private boolean REPORT_PRIVATE_REDEFINITION = true;
 
     private static final String patternShadows            = "Field '%p%' is already defined in %c%, check our online documentation for options.";
     private static final String patternProtectedCandidate = "Likely needs to be protected (already defined in %c%).";
@@ -100,25 +100,8 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
     }
 
     public JComponent createOptionsPanel() {
-        return (new ClassOverridesFieldOfSuperClassInspector.OptionsPanel()).getComponent();
-    }
-
-    public class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox reportPrivateRedefinition;
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            reportPrivateRedefinition = new JCheckBox("Report re-defining private fields", REPORT_PRIVATE_REDEFINITION);
-            reportPrivateRedefinition.addChangeListener(e -> REPORT_PRIVATE_REDEFINITION = reportPrivateRedefinition.isSelected());
-            optionsPanel.add(reportPrivateRedefinition, "wrap");
-        }
-
-        public JPanel getComponent() {
-            return optionsPanel;
-        }
+        return OptionsComponent.create((component) -> {
+            component.createCheckbox("Report re-defining private fields", REPORT_PRIVATE_REDEFINITION, (isSelected) -> REPORT_PRIVATE_REDEFINITION = isSelected);
+        });
     }
 }

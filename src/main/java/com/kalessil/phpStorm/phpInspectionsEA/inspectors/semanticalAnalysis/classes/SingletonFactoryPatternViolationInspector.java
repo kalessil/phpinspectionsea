@@ -10,14 +10,15 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpModifier;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+import org.jetbrains.annotations.NotNull;
+
 public class SingletonFactoryPatternViolationInspector extends BasePhpInspection {
-    // configuration flags automatically saved by IDE
+    // Inspection options.
     public boolean SUGGEST_OVERRIDING_CLONE = false;
 
     private static final String messageClone                = "Singleton should also override __clone to prevent copying the instance";
@@ -77,25 +78,8 @@ public class SingletonFactoryPatternViolationInspector extends BasePhpInspection
     }
 
     public JComponent createOptionsPanel() {
-        return (new OptionsPanel()).getComponent();
-    }
-
-    public class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox suggestOverridingClone;
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            suggestOverridingClone = new JCheckBox("Suggest overriding __clone", SUGGEST_OVERRIDING_CLONE);
-            suggestOverridingClone.addChangeListener(e -> SUGGEST_OVERRIDING_CLONE = suggestOverridingClone.isSelected());
-            optionsPanel.add(suggestOverridingClone, "wrap");
-        }
-
-        public JPanel getComponent() {
-            return optionsPanel;
-        }
+        return OptionsComponent.create((component) -> {
+            component.createCheckbox("Suggest overriding __clone", SUGGEST_OVERRIDING_CLONE, (isSelected) -> SUGGEST_OVERRIDING_CLONE = isSelected);
+        });
     }
 }

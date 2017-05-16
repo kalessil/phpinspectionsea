@@ -15,12 +15,13 @@ import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 
 import javax.swing.*;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -32,8 +33,7 @@ import java.util.Set;
  */
 
 public class ComparisonOperandsOrderInspector extends BasePhpInspection {
-    // configuration flags automatically saved by IDE
-    public boolean CONFIGURED           = false;
+    // Inspection options.
     public boolean PREFER_YODA_STYLE    = false;
     public boolean PREFER_REGULAR_STYLE = false;
 
@@ -58,10 +58,14 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpBinaryExpression(BinaryExpression expression) {
+                if (!PREFER_YODA_STYLE && !PREFER_REGULAR_STYLE) {
+                    return;
+                }
+
                 /* verify general structure */
-                final IElementType operator = CONFIGURED ? expression.getOperationType() : null;
-                final PsiElement left       = CONFIGURED ? expression.getLeftOperand() : null;
-                final PsiElement right      = CONFIGURED ? expression.getRightOperand() : null;
+                final IElementType operator = expression.getOperationType();
+                final PsiElement   left     = expression.getLeftOperand();
+                final PsiElement   right    = expression.getRightOperand();
                 if (null == operator || null == left || null == right || !operations.contains(operator)) {
                     return;
                 }
@@ -91,48 +95,12 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return (new ComparisonOperandsOrderInspector.OptionsPanel()).getComponent();
-    }
-
-    private class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox preferYodaStyle;
-        final private JCheckBox preferRegularStyle;
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            preferYodaStyle    = new JCheckBox("Prefer yoda style", PREFER_YODA_STYLE);
-            preferRegularStyle = new JCheckBox("Prefer regular style", PREFER_REGULAR_STYLE);
-
-            preferYodaStyle.addChangeListener(e -> {
-                PREFER_YODA_STYLE = preferYodaStyle.isSelected();
-                if (PREFER_YODA_STYLE) {
-                    preferRegularStyle.setSelected(false);
-                    PREFER_REGULAR_STYLE = false;
-                }
-
-                CONFIGURED = PREFER_YODA_STYLE || PREFER_REGULAR_STYLE;
+        return OptionsComponent.create((component) -> {
+            component.createRadio((radioComponent) -> {
+                radioComponent.createOption("Prefer yoda style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
+                radioComponent.createOption("Prefer regular style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
             });
-            optionsPanel.add(preferYodaStyle, "wrap");
-
-            preferRegularStyle.addChangeListener(e -> {
-                PREFER_REGULAR_STYLE = preferRegularStyle.isSelected();
-                if (PREFER_REGULAR_STYLE) {
-                    preferYodaStyle.setSelected(false);
-                    PREFER_YODA_STYLE = false;
-                }
-
-                CONFIGURED = PREFER_YODA_STYLE || PREFER_REGULAR_STYLE;
-            });
-            optionsPanel.add(preferRegularStyle, "wrap");
-        }
-
-        JPanel getComponent() {
-            return optionsPanel;
-        }
+        });
     }
 
     private static class TheLocalFix implements LocalQuickFix {

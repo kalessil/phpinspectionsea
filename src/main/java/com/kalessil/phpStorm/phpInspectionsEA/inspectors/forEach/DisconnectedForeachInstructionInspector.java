@@ -14,13 +14,14 @@ import com.jetbrains.php.lang.psi.elements.impl.PhpPsiElementImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.*;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -32,7 +33,7 @@ import java.util.*;
  */
 
 public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
-    // configuration flags automatically saved by IDE
+    // Inspection options.
     public boolean SUGGEST_USING_CLONE = false;
 
     private static final String messageDisconnected = "This statement seems to be disconnected from its parent foreach.";
@@ -313,25 +314,8 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return (new DisconnectedForeachInstructionInspector.OptionsPanel()).getComponent();
-    }
-
-    public class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox suggestUsingRandomInt;
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            suggestUsingRandomInt = new JCheckBox("Suggest using clone", SUGGEST_USING_CLONE);
-            suggestUsingRandomInt.addChangeListener(e -> SUGGEST_USING_CLONE = suggestUsingRandomInt.isSelected());
-            optionsPanel.add(suggestUsingRandomInt, "wrap");
-        }
-
-        public JPanel getComponent() {
-            return optionsPanel;
-        }
+        return OptionsComponent.create((component) -> {
+            component.createCheckbox("Suggest using clone", SUGGEST_USING_CLONE, (isSelected) -> SUGGEST_USING_CLONE = isSelected);
+        });
     }
 }

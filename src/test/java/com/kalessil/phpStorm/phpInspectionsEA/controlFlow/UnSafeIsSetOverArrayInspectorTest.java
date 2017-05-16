@@ -9,7 +9,7 @@ final public class UnSafeIsSetOverArrayInspectorTest extends CodeInsightFixtureT
     private UnSafeIsSetOverArrayInspector getInspector() {
         UnSafeIsSetOverArrayInspector inspector = new UnSafeIsSetOverArrayInspector();
         inspector.SUGGEST_TO_USE_ARRAY_KEY_EXISTS = true;
-        inspector.SUGGEST_TO_USE_NULL_COMPARISON  = true;
+        inspector.SUGGEST_TO_USE_NULL_COMPARISON = true;
         return inspector;
     }
 

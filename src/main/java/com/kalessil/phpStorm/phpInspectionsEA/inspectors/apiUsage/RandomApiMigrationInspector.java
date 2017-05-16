@@ -14,12 +14,13 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 
 import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.jetbrains.annotations.NotNull;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -31,7 +32,7 @@ import java.util.Map;
  */
 
 public class RandomApiMigrationInspector extends BasePhpInspection {
-    // configuration flags automatically saved by IDE
+    // Inspection options.
     public boolean SUGGEST_USING_RANDOM_INT = true;
 
     private static final String messagePattern = "'%o%(...)' has recommended replacement '%n%(...)', consider migrating.";
@@ -95,26 +96,9 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return (new RandomApiMigrationInspector.OptionsPanel()).getComponent();
-    }
-
-    public class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox suggestUsingRandomInt;
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            suggestUsingRandomInt = new JCheckBox("Suggest using random_int", SUGGEST_USING_RANDOM_INT);
-            suggestUsingRandomInt.addChangeListener(e -> SUGGEST_USING_RANDOM_INT = suggestUsingRandomInt.isSelected());
-            optionsPanel.add(suggestUsingRandomInt, "wrap");
-        }
-
-        public JPanel getComponent() {
-            return optionsPanel;
-        }
+        return OptionsComponent.create((component) -> {
+            component.createCheckbox("Suggest using random_int", SUGGEST_USING_RANDOM_INT, (isSelected) -> SUGGEST_USING_RANDOM_INT = isSelected);
+        });
     }
 
     private static class TheLocalFix implements LocalQuickFix {

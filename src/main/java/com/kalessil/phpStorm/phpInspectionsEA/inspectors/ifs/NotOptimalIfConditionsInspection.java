@@ -15,12 +15,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCos
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionsCouplingCheckUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
-import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -28,8 +26,11 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
-    // configuration flags automatically saved by IDE
+    // Inspection options.
     public boolean REPORT_LITERAL_OPERATORS = true;
 
     private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
@@ -554,25 +555,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return (new NotOptimalIfConditionsInspection.OptionsPanel()).getComponent();
-    }
-
-    private class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox reportLiteralOperators;
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            reportLiteralOperators = new JCheckBox("Report literal and/or operators", REPORT_LITERAL_OPERATORS);
-            reportLiteralOperators.addChangeListener(e -> REPORT_LITERAL_OPERATORS = reportLiteralOperators.isSelected());
-            optionsPanel.add(reportLiteralOperators, "wrap");
-        }
-
-        JPanel getComponent() {
-            return optionsPanel;
-        }
+        return OptionsComponent.create((component) -> {
+            component.createCheckbox("Report literal and/or operators", REPORT_LITERAL_OPERATORS, (isSelected) -> REPORT_LITERAL_OPERATORS = isSelected);
+        });
     }
 }

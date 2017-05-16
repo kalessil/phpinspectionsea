@@ -12,16 +12,17 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.jetbrains.annotations.NotNull;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -33,7 +34,7 @@ import java.util.Map;
  */
 
 public class PropertyInitializationFlawsInspector extends BasePhpInspection {
-    // configuration flags automatically saved by IDE
+    // Inspection options.
     public boolean REPORT_DEFAULTS_FLAWS = true;
     public boolean REPORT_INIT_FLAWS     = true;
 
@@ -163,31 +164,10 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return (new PropertyInitializationFlawsInspector.OptionsPanel()).getComponent();
-    }
-
-    public class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox reportDefaultsFlaws;
-        final private JCheckBox reportInitFlaws;
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            reportDefaultsFlaws = new JCheckBox("Check default values", REPORT_DEFAULTS_FLAWS);
-            reportDefaultsFlaws.addChangeListener(e -> REPORT_DEFAULTS_FLAWS = reportDefaultsFlaws.isSelected());
-            optionsPanel.add(reportDefaultsFlaws, "wrap");
-
-            reportInitFlaws = new JCheckBox("Check constructor", REPORT_INIT_FLAWS);
-            reportInitFlaws.addChangeListener(e -> REPORT_INIT_FLAWS = reportInitFlaws.isSelected());
-            optionsPanel.add(reportInitFlaws, "wrap");
-        }
-
-        public JPanel getComponent() {
-            return optionsPanel;
-        }
+        return OptionsComponent.create((component) -> {
+            component.createCheckbox("Check default values", REPORT_DEFAULTS_FLAWS, (isSelected) -> REPORT_DEFAULTS_FLAWS = isSelected);
+            component.createCheckbox("Check constructor", REPORT_INIT_FLAWS, (isSelected) -> REPORT_INIT_FLAWS = isSelected);
+        });
     }
 
     private static class DropFieldDefaultValueFix implements LocalQuickFix {

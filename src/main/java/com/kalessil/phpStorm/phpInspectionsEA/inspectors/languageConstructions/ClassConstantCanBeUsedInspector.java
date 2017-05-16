@@ -20,10 +20,9 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -31,6 +30,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.jetbrains.annotations.NotNull;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -42,7 +43,7 @@ import java.util.regex.Pattern;
  */
 
 public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
-    // configuration flags automatically saved by IDE
+    // Inspection options.
     public boolean IMPORT_CLASSES_ON_QF = true;
     public boolean USE_RELATIVE_QF      = true;
     public boolean LOOK_ROOT_NS_UP      = false;
@@ -281,35 +282,10 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return (new ClassConstantCanBeUsedInspector.OptionsPanel()).getComponent();
-    }
-
-    public class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox lookRootNamespaceUp;
-        final private JCheckBox importClassesAutomatically;
-        final private JCheckBox useRelativeQNs;
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            lookRootNamespaceUp = new JCheckBox("Lookup root namespace classes", LOOK_ROOT_NS_UP);
-            lookRootNamespaceUp.addChangeListener(e -> LOOK_ROOT_NS_UP = lookRootNamespaceUp.isSelected());
-            optionsPanel.add(lookRootNamespaceUp, "wrap");
-
-            importClassesAutomatically = new JCheckBox("Import classes automatically", IMPORT_CLASSES_ON_QF);
-            importClassesAutomatically.addChangeListener(e -> IMPORT_CLASSES_ON_QF = importClassesAutomatically.isSelected());
-            optionsPanel.add(importClassesAutomatically, "wrap");
-
-            useRelativeQNs = new JCheckBox("Use relative QN where possible", USE_RELATIVE_QF);
-            useRelativeQNs.addChangeListener(e -> USE_RELATIVE_QF = useRelativeQNs.isSelected());
-            optionsPanel.add(useRelativeQNs, "wrap");
-        }
-
-        public JPanel getComponent() {
-            return optionsPanel;
-        }
+        return OptionsComponent.create((component) -> {
+            component.createCheckbox("Lookup root namespace classes", LOOK_ROOT_NS_UP, (isSelected) -> LOOK_ROOT_NS_UP = isSelected);
+            component.createCheckbox("Import classes automatically", IMPORT_CLASSES_ON_QF, (isSelected) -> IMPORT_CLASSES_ON_QF = isSelected);
+            component.createCheckbox("Use relative QN where possible", USE_RELATIVE_QF, (isSelected) -> USE_RELATIVE_QF = isSelected);
+        });
     }
 }

@@ -12,15 +12,16 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Arrays;
 import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -33,8 +34,8 @@ import java.util.List;
  */
 
 public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
-    // configuration flags automatically saved by IDE
-    public boolean RESPECT_CONTEXT = true;
+    // Inspection options.
+    public boolean RESPECT_CONTEXT = false;
 
     private static final String message = "Try to avoid using the @, as it hides problems and complicates troubleshooting.";
 
@@ -135,27 +136,9 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return (new UsageOfSilenceOperatorInspector.OptionsPanel()).getComponent();
-    }
-
-    private class OptionsPanel {
-        final private JPanel optionsPanel;
-
-        final private JCheckBox contentAware;
-
-        public OptionsPanel() {
-            optionsPanel = new JPanel();
-            optionsPanel.setLayout(new MigLayout());
-
-            contentAware = new JCheckBox("Content aware reporting", RESPECT_CONTEXT);
-
-            contentAware.addChangeListener(e -> RESPECT_CONTEXT = contentAware.isSelected());
-            optionsPanel.add(contentAware, "wrap");
-        }
-
-        JPanel getComponent() {
-            return optionsPanel;
-        }
+        return OptionsComponent.create((component) -> {
+            component.createCheckbox("Content aware reporting", RESPECT_CONTEXT, (isSelected) -> RESPECT_CONTEXT = isSelected);
+        });
     }
 
     private static class TheLocalFix implements LocalQuickFix {

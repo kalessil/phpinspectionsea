@@ -39,6 +39,11 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
     public final PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean onTheFly) {
         return new BasePhpElementVisitor() {
             @Override
+            public void visitPhpMethodReference(final MethodReference reference) {
+                visitPhpFunctionCall(reference);
+            }
+
+            @Override
             public void visitPhpFunctionCall(final FunctionReference reference) {
                 final PsiElement[] referenceParameters = reference.getParameters();
 

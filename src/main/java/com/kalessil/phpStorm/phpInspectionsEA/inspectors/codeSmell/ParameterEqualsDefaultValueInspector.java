@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * This file is part of the Php Inspections (EA Extended) package.
  *
+ * (c) David Rodrigues <david.proweb@gmail.com>
  * (c) Vladimir Reznichenko <kalessil@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE

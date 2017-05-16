@@ -61,14 +61,6 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                         for (int index = 0, max = Math.min(parameters.length, arguments.length); index < max; ++index) {
                             if (parameters[index].isPassByRef()) {
                                 final PsiElement argument = arguments[index];
-
-                                /* case 1: properties and array accesses */
-                                if (argument instanceof ArrayAccessExpression || argument instanceof FieldReference) {
-                                    holder.registerProblem(argument, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                                    continue;
-                                }
-
-                                /* case 2: function/method reference but not a reference returned by the argument */
                                 if (argument instanceof FunctionReference && !this.isByReference(argument)) {
                                     final PsiElement resolvedArgument = ((FunctionReference) argument).resolve();
                                     if (resolvedArgument instanceof Function) {

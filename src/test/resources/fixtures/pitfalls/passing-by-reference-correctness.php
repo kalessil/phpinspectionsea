@@ -9,11 +9,18 @@ class Clazz
         $parameter = 'modified';
         return $parameter;
     }
+
+    public function x()
+    {
+        return '';
+    }
 }
 
 $obj = new Clazz();
-$obj->method(<warning descr="Emits a notice (only variable references should be returned by reference)">$obj->property</warning>);
+$obj->method($obj->property);
 $obj->method(<warning descr="Emits a notice (only variable references should be returned by reference)">explode(...[])</warning>);
+$obj->method(<warning descr="Emits a notice (only variable references should be returned by reference)">$obj->x()</warning>);
 
 $array = [0];
-$obj->method(<warning descr="Emits a notice (only variable references should be returned by reference)">$array[0]</warning>);
+$obj->method($array[0]);
+

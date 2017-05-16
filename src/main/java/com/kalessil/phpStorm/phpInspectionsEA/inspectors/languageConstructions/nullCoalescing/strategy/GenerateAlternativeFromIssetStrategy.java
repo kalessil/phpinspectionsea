@@ -48,14 +48,6 @@ final public class GenerateAlternativeFromIssetStrategy {
             return null;
         }
 
-        /* false-positive: refactoring causes errors */
-        if (subject instanceof FieldReference) {
-            final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator((MemberReference) subject);
-            if (null != operator && PhpTokenTypes.SCOPE_RESOLUTION == operator.getNode().getElementType()) {
-                return null;
-            }
-        }
-
         return subject.getText() + " ?? " + alternative.getText();
     }
 }

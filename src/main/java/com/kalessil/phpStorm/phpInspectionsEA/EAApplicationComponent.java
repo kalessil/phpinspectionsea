@@ -8,11 +8,6 @@ import com.intellij.openapi.extensions.PluginId;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.analytics.AnalyticsUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadInfo;
-import java.lang.management.ThreadMXBean;
-import java.util.List;
-
 public class EAApplicationComponent implements ApplicationComponent {
     private boolean updated;
     private boolean updateNotificationShown;

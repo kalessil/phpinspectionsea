@@ -2,14 +2,13 @@ package com.kalessil.phpStorm.phpInspectionsEA.options;
 
 import com.kalessil.phpStorm.phpInspectionsEA.gui.PrettyListControl;
 import net.miginfocom.swing.MigLayout;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Helps on constructions of a normalized inspection options list for IntelliJ's IDE.

@@ -15,11 +15,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.HashSet;
-
-import org.jetbrains.annotations.NotNull;
 
 public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     // Inspection options.

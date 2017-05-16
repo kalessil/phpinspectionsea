@@ -7,7 +7,9 @@ import com.intellij.openapi.util.Pair;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 final public class PluginsIterator implements Iterator {
     private static List<String> jetBrainsPlugins = new ArrayList<>();

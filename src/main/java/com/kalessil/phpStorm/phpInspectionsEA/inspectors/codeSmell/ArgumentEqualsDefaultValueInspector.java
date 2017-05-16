@@ -26,12 +26,12 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class ParameterEqualsDefaultValueInspector extends BasePhpInspection {
+public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
     private static final String message = "This parameter could be dropped, because the value is the same from default value.";
 
     @NotNull
     public final String getShortName() {
-        return "ParameterEqualsDefaultValueInspection";
+        return "ArgumentEqualsDefaultValueInspection";
     }
 
     @NotNull

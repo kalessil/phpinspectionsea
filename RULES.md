@@ -63,6 +63,12 @@ Inspections Lists (Unused)
 | Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | yes | yes | yes  | no  |
 | Unused               | UnusedGotoLabelInspection                       | Unused goto labels                                  | yes | yes | no   | no  |
 
+Inspections Lists (Side-Effect)
+---
+| Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
+| :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
+| SideEffect           | SideEffectAnalysisInspector                     | Call can be removed because it have no side-effect  | n/a | yes | n/a  | no  |
+
 Inspections Lists (Compatibility)
 ---
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |

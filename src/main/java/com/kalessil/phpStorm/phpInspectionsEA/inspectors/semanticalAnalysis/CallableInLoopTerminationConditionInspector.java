@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class CallableInLoopTerminationConditionInspector extends BasePhpInspection {
-    private static final String messagePattern  = "'for (%existingInit%%newInit%; %newCheck%; ...)' should be used for better performance.";
+    private static final String messagePattern  = "'for (%s%s; %s; ...)' should be used for better performance.";
     private static final String messageExternal = "Callable result should be stored outside of the loop for better performance.";
 
     @NotNull
@@ -72,10 +72,10 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
                                         ? (variableCandidate.getText() + ' ' + operation.getText() + ' ' + '$' + variableName)
                                         : ('$' + variableName + ' ' + operation.getText() + ' ' + variableCandidate.getText());
 
-                return messagePattern
-                    .replace("%newCheck%", newCheck)
-                    .replace("%newInit%", '$' + variableName + " = " + referenceCandidate.getText())
-                    .replace("%existingInit%", hasInit ? "..., " : "");
+                return String.format(messagePattern,
+                                     hasInit ? "..., " : "",
+                                     '$' + variableName + " = " + referenceCandidate.getText(),
+                                     newCheck);
             }
 
             public void visitPhpFor(final For forStatement) {

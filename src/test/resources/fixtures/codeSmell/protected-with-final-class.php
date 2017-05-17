@@ -55,3 +55,7 @@ final class ConstClass2 {
     <weak_warning descr="Protected modifier could be replaced by private.">protected</weak_warning> const CONST2 = 2;
     private const CONST3 = 3;
 }
+
+final class ConstClass3 {
+    <weak_warning descr="Protected modifier could be replaced by private.">PROTECTED</weak_warning> const IGNORE_CASE = true;
+}

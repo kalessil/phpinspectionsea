@@ -43,7 +43,7 @@ public class ProtectedWithFinalClassInspector extends BasePhpInspection {
                 assert elementModifiers != null;
 
                 for (final LeafPsiElement elementModifier : elementModifiers) {
-                    if ("protected".equals(elementModifier.getText())) {
+                    if ("protected".equalsIgnoreCase(elementModifier.getText())) {
                         problemsHolder.registerProblem(elementModifier, message, ProblemHighlightType.WEAK_WARNING);
                         break;
                     }

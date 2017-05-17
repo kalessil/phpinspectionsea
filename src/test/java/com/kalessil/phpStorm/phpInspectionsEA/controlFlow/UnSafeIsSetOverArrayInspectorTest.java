@@ -14,18 +14,21 @@ final public class UnSafeIsSetOverArrayInspectorTest extends CodeInsightFixtureT
     }
 
     public void testIfFindsScalarAndArrayPatterns() {
-        myFixture.configureByFile("fixtures/controlFlow/isset-over-scalars-and-arrays.php");
         myFixture.enableInspections(getInspector());
+
+        myFixture.configureByFile("fixtures/controlFlow/isset-over-scalars-and-arrays.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testIfFindsClassPatterns() {
-        myFixture.configureByFile("fixtures/controlFlow/isset-over-class.php");
         myFixture.enableInspections(getInspector());
+
+        myFixture.configureByFile("fixtures/controlFlow/isset-over-class.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testIfFindsPropertyPatterns() {
-        myFixture.configureByFile("fixtures/controlFlow/isset-on-properties.php");
         myFixture.enableInspections(getInspector());
+
+        myFixture.configureByFile("fixtures/controlFlow/isset-on-properties.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

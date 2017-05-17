@@ -20,5 +20,10 @@ if (isset(<warning descr="Concatenation is used in an index, it should be moved 
     return isset(<weak_warning descr="'array_key_exists(...)' construction should be used for better data *structure* control.">$array['0' . 1]</weak_warning>);
 }
 
-$x = isset(<weak_warning descr="'null !== $array' construction should be used instead.">$array</weak_warning>);
-$y = !isset(<weak_warning descr="'null === $array' construction should be used instead.">$array</weak_warning>);
+/* case: variables in global/function/method scopes */
+function variablesScopeHolder(array $array)
+{
+    $x = isset(<weak_warning descr="'null !== $array' construction should be used instead.">$array</weak_warning>);
+    $y = !isset(<weak_warning descr="'null === $array' construction should be used instead.">$array</weak_warning>);
+}
+$y = !isset($array);

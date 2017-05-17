@@ -4,12 +4,12 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.GroupStatementImpl;
@@ -38,7 +38,7 @@ public class AvoidNotConditionalsInspector extends BasePhpInspection {
 
     @NotNull
     @Override
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
+    public final PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpElse(final Else elseStatement) {
@@ -52,7 +52,7 @@ public class AvoidNotConditionalsInspector extends BasePhpInspection {
 
                 // If this `if` have `elseif` branches, then will suggests over the last branch only.
                 final List<ElseIf> controlElseIfs = Arrays.asList(((If) controlStatement).getElseIfBranches());
-                if (controlElseIfs.size() > 0) {
+                if (!controlElseIfs.isEmpty()) {
                     controlStatement = controlElseIfs.get(controlElseIfs.size() - 1);
                 }
 
@@ -63,8 +63,8 @@ public class AvoidNotConditionalsInspector extends BasePhpInspection {
                 }
 
                 // Finally, check if this Unary Expression uses the not-operator.
-                final LeafPsiElement conditionOperation = (LeafPsiElement) ((UnaryExpressionImpl) statementCondition).getOperation();
-                if (null != conditionOperation && conditionOperation.getText().equals("!")) {
+                final ASTNode conditionOperation = (ASTNode) ((UnaryExpression) statementCondition).getOperation();
+                if ((conditionOperation != null) && "!".equals(conditionOperation.getText())) {
                     problemsHolder.registerProblem(statementCondition, suggestionMessage, ProblemHighlightType.WEAK_WARNING,
                                                    new TheLocalQuickFix(controlStatement, elseStatement, (UnaryExpressionImpl) statementCondition));
                 }
@@ -72,20 +72,26 @@ public class AvoidNotConditionalsInspector extends BasePhpInspection {
         };
     }
 
-    class TheLocalQuickFix implements LocalQuickFix {
-
+    static final class TheLocalQuickFix implements LocalQuickFix {
         private final SmartPsiElementPointer<ControlStatement>    controlStatement;
         private final SmartPsiElementPointer<Else>                elseStatement;
         private final SmartPsiElementPointer<UnaryExpressionImpl> unaryExpression;
 
         TheLocalQuickFix(@NotNull final ControlStatement controlStatement, @NotNull  final Else elseStatement, final UnaryExpressionImpl unaryExpression) {
-            super();
-
             final SmartPointerManager factory = SmartPointerManager.getInstance(controlStatement.getProject());
 
             this.controlStatement = factory.createSmartPsiElementPointer(controlStatement, controlStatement.getContainingFile());
             this.elseStatement = factory.createSmartPsiElementPointer(elseStatement, elseStatement.getContainingFile());
             this.unaryExpression = factory.createSmartPsiElementPointer(unaryExpression, unaryExpression.getContainingFile());
+        }
+
+        @NotNull
+        private static Statement getStatementAsText(@NotNull final Project project, final PsiElement controlTheStatement) {
+            final String controlStatementText = (controlTheStatement instanceof GroupStatementImpl)
+                                                ? controlTheStatement.getText()
+                                                : ('{' + controlTheStatement.getText() + '}');
+
+            return PhpPsiElementFactory.createStatement(project, controlStatementText);
         }
 
         @Nls
@@ -108,21 +114,24 @@ public class AvoidNotConditionalsInspector extends BasePhpInspection {
             final Else                elseStatementElement    = elseStatement.getElement();
             final UnaryExpressionImpl unaryExpressionElement  = unaryExpression.getElement();
 
-            if (null == controlStatementElement || null == elseStatementElement || null == unaryExpressionElement) {
+            if ((controlStatementElement == null) ||
+                (elseStatementElement == null) ||
+                (unaryExpressionElement == null)) {
                 return;
             }
 
             final PsiElement unaryExpressionOperation = unaryExpressionElement.getOperation();
-            if (null == unaryExpressionOperation) {
+            if (unaryExpressionOperation == null) {
                 return;
             }
 
             unaryExpressionOperation.delete();
 
-            final Statement controlTheStatement = controlStatementElement.getStatement();
-            final Statement elseTheStatement    = (Statement) elseStatementElement.getStatement();
+            final Statement  controlTheStatement = controlStatementElement.getStatement();
+            final PsiElement elseTheStatement    = elseStatementElement.getStatement();
 
-            if (null == controlTheStatement || null == elseTheStatement) {
+            if ((controlTheStatement == null) ||
+                (elseTheStatement == null)) {
                 return;
             }
 
@@ -131,15 +140,6 @@ public class AvoidNotConditionalsInspector extends BasePhpInspection {
 
             controlTheStatement.replace(elseNewStatement);
             elseTheStatement.replace(controlNewStatement);
-        }
-
-        @NotNull
-        private Statement getStatementAsText(@NotNull final Project project, final Statement controlTheStatement) {
-            final String controlStatementText = controlTheStatement instanceof GroupStatementImpl
-                                                ? controlTheStatement.getText()
-                                                : '{' + controlTheStatement.getText() + '}';
-
-            return PhpPsiElementFactory.createStatement(project, controlStatementText);
         }
     }
 }

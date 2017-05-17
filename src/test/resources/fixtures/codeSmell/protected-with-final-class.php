@@ -41,3 +41,17 @@ final class MethodClass3 {
     static <weak_warning descr="Protected modifier could be replaced by private.">protected</weak_warning> function method2s() { }
     static private function method3s() { }
 }
+
+class ConstClass1 {
+    const CONST0 = 0;
+    public const CONST1 = 1;
+    protected const CONST2 = 2;
+    private const CONST3 = 3;
+}
+
+final class ConstClass2 {
+    const CONST0 = 0;
+    public const CONST1 = 1;
+    <weak_warning descr="Protected modifier could be replaced by private.">protected</weak_warning> const CONST2 = 2;
+    private const CONST3 = 3;
+}

@@ -56,6 +56,7 @@ public class ProtectedWithFinalClassInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpField(final Field field) {
+                // Note: it does the work for properties and constants.
                 checkElement(field);
             }
 

@@ -9,7 +9,18 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+
 import org.jetbrains.annotations.NotNull;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) David Rodrigues <david.proweb@gmail.com>
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class CallableInLoopTerminationConditionInspector extends BasePhpInspection {
     private static final String messagePattern  = "'for (%existingInit%%newInit%; %newCheck%; ...)' should be used for better performance.";
@@ -22,59 +33,66 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
 
     @Override
     @NotNull
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @NotNull
-            private String generateMessage(@NotNull For expression, @NotNull BinaryExpression problematicExpression) {
+            private String generateMessage(@NotNull final For expression, @NotNull final BinaryExpression problematicExpression) {
                 /* extract part of expression we need to report */
                 PsiElement referenceCandidate = problematicExpression.getRightOperand();
                 PsiElement variableCandidate  = problematicExpression.getLeftOperand();
-                boolean leftToRight = true;
+                boolean    leftToRight        = true;
+
                 if (!(referenceCandidate instanceof FunctionReference)) {
                     referenceCandidate = problematicExpression.getLeftOperand();
-                    variableCandidate  = problematicExpression.getRightOperand();
-                    leftToRight        = false;
+                    variableCandidate = problematicExpression.getRightOperand();
+                    leftToRight = false;
                 }
 
                 /* check if we can customize message at all */
-                PsiElement operation = problematicExpression.getOperation();
-                if (null == operation || null == variableCandidate || null == referenceCandidate) {
+                final PsiElement operation = problematicExpression.getOperation();
+
+                if ((operation == null) ||
+                    (variableCandidate == null) ||
+                    (referenceCandidate == null)) {
                     return messageExternal;
                 }
 
                 /* try extracting variable name from variable candidate */
                 String variableName = null;
+
                 if (variableCandidate instanceof Variable) {
                     variableName = ((Variable) variableCandidate).getName();
                 }
-                variableName = StringUtil.isEmpty(variableName) ? "loopsCount" : variableName + "Max";
+
+                variableName = StringUtil.isEmpty(variableName) ? "loopsCount" : (variableName + "Max");
 
                 /* generate message */
                 final boolean hasInit = expression.getInitialExpressions().length > 0;
+                final String newCheck = leftToRight
+                                        ? (variableCandidate.getText() + ' ' + operation.getText() + ' ' + '$' + variableName)
+                                        : ('$' + variableName + ' ' + operation.getText() + ' ' + variableCandidate.getText());
+
                 return messagePattern
-                    .replace("%newCheck%",
-                        leftToRight
-                            ? variableCandidate.getText() + " " + operation.getText() + " " + "$" + variableName
-                            : "$" + variableName + " " + operation.getText() + " " + variableCandidate.getText()
-                    )
-                    .replace("%newInit%", "$" + variableName + " = " + referenceCandidate.getText())
+                    .replace("%newCheck%", newCheck)
+                    .replace("%newInit%", '$' + variableName + " = " + referenceCandidate.getText())
                     .replace("%existingInit%", hasInit ? "..., " : "");
             }
 
-            public void visitPhpFor(For expression) {
+            public void visitPhpFor(final For forStatement) {
                 /* TODO: re-evaluate searching in tree for catching more cases */
-                final PhpPsiElement[] conditions = expression.getConditionalExpressions();
-                if (1 != conditions.length || !(conditions[0] instanceof BinaryExpression)) {
+                final PhpPsiElement[] conditions = forStatement.getConditionalExpressions();
+
+                if ((conditions.length != 1) ||
+                    !(conditions[0] instanceof BinaryExpression)) {
                     return;
                 }
 
                 final BinaryExpression condition = (BinaryExpression) conditions[0];
-                if (
-                    OpenapiTypesUtil.isFunctionReference(condition.getRightOperand()) ||
-                    OpenapiTypesUtil.isFunctionReference(condition.getLeftOperand())
-                ) {
-                    final String message = generateMessage(expression, condition);
-                    holder.registerProblem(condition, message, ProblemHighlightType.GENERIC_ERROR);
+
+                if (OpenapiTypesUtil.isFunctionReference(condition.getRightOperand()) ||
+                    OpenapiTypesUtil.isFunctionReference(condition.getLeftOperand())) {
+                    final String message = generateMessage(forStatement, condition);
+                    problemsHolder.registerProblem(condition, message, ProblemHighlightType.GENERIC_ERROR);
                 }
             }
         };

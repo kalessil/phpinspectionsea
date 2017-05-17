@@ -1,9 +1,11 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
+import com.android.annotations.Nullable;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -30,7 +32,7 @@ public class ProtectedWithFinalClassInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            private void checkElement(final PhpElementWithModifier element, final PsiElement elementModifierScope) {
+            private void checkElement(final PhpElementWithModifier element) {
                 if (!element.getModifier().isProtected()) {
                     return;
                 }
@@ -43,37 +45,69 @@ public class ProtectedWithFinalClassInspector extends BasePhpInspection {
                     return;
                 }
 
-                final PhpModifierList  elementModifierList = PsiTreeUtil.findChildOfType(elementModifierScope, PhpModifierList.class);
-                final LeafPsiElement[] elementModifiers    = PsiTreeUtil.getChildrenOfType(elementModifierList, LeafPsiElement.class);
+                if (isOverridedFromProtected((PsiElement) element, elementClass)) {
+                    return;
+                }
+
+                final PsiElement elementProtectedModifier = getProtectedModifier((PsiElement) element);
+                if (elementProtectedModifier != null) {
+                    problemsHolder.registerProblem(elementProtectedModifier, message, ProblemHighlightType.WEAK_WARNING,
+                                                   new TheLocalFix(elementProtectedModifier));
+                }
+            }
+
+            private boolean isOverridedFromProtected(final PsiElement element, final PhpClass elementClass) {
+                final String  elementName = ((NavigationItem) element).getName();
+                final boolean isField     = element instanceof Field;
+                final boolean isConstant  = isField && ((Field) element).isConstant();
+
+                for (final PhpClass superClass : elementClass.getSupers()) {
+                    final PsiElement compatibleElement = isField
+                                                         ? superClass.findFieldByName(elementName, isConstant)
+                                                         : superClass.findMethodByName(elementName);
+
+                    if (compatibleElement != null) {
+                        return getProtectedModifier(compatibleElement) != null;
+                    }
+                }
+
+                return false;
+            }
+
+            @Nullable
+            private PsiElement getProtectedModifier(final PsiElement element) {
+                final PsiElement       elementModifierScope = (element instanceof Field) ? element.getParent() : element;
+                final PhpModifierList  elementModifierList  = PsiTreeUtil.findChildOfType(elementModifierScope, PhpModifierList.class);
+                final LeafPsiElement[] elementModifiers     = PsiTreeUtil.getChildrenOfType(elementModifierList, LeafPsiElement.class);
 
                 assert elementModifiers != null;
 
                 for (final LeafPsiElement elementModifier : elementModifiers) {
                     if ("protected".equalsIgnoreCase(elementModifier.getText())) {
-                        problemsHolder.registerProblem(elementModifier, message, ProblemHighlightType.WEAK_WARNING,
-                                                       new TheLocalFix(elementModifier));
-                        break;
+                        return elementModifier;
                     }
                 }
+
+                return null;
             }
 
             @Override
             public void visitPhpField(final Field field) {
                 // Note: it does the work for properties and constants.
-                checkElement(field, field.getParent());
+                checkElement(field);
             }
 
             @Override
             public void visitPhpMethod(final Method method) {
-                checkElement(method, method);
+                checkElement(method);
             }
         };
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private final SmartPsiElementPointer<LeafPsiElement> modifier;
+        private final SmartPsiElementPointer<PsiElement> modifier;
 
-        TheLocalFix(@NotNull final LeafPsiElement modifierElement) {
+        TheLocalFix(@NotNull final PsiElement modifierElement) {
             final SmartPointerManager manager = SmartPointerManager.getInstance(modifierElement.getProject());
 
             modifier = manager.createSmartPsiElementPointer(modifierElement);

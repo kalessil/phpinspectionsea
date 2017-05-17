@@ -59,3 +59,21 @@ final class ConstClass2 {
 final class ConstClass3 {
     <weak_warning descr="Protected modifier could be replaced by private.">PROTECTED</weak_warning> const IGNORE_CASE = true;
 }
+
+abstract class AbstractParent {
+    protected const CONST0 = 0;
+
+    protected $isProtected;
+
+    abstract protected function method0();
+    protected function method1() { }
+}
+
+final class RespectParent extends AbstractParent {
+    protected const CONST0 = 0;
+
+    protected $isProtected;
+
+    protected function method0() { }
+    protected function method1() { }
+}

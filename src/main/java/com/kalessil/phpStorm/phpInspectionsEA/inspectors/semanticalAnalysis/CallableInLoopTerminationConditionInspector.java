@@ -23,8 +23,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class CallableInLoopTerminationConditionInspector extends BasePhpInspection {
-    private static final String messagePattern  = "'for (%s%s; %s; ...)' should be used for better performance.";
-    private static final String messageExternal = "Callable result should be stored outside of the loop for better performance.";
+    private static final String messagePattern = "'for (%s%s; %s; ...)' should be used for better performance.";
 
     @NotNull
     public String getShortName() {
@@ -35,8 +34,7 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            @NotNull
-            private String generateMessage(@NotNull final For expression, @NotNull final BinaryExpression problematicExpression) {
+            private void checkStatement(@NotNull final For expression, @NotNull final BinaryExpression problematicExpression) {
                 /* extract part of expression we need to report */
                 PsiElement referenceCandidate = problematicExpression.getRightOperand();
                 PsiElement variableCandidate  = problematicExpression.getLeftOperand();
@@ -51,11 +49,9 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
                 /* check if we can customize message at all */
                 final PsiElement operation = problematicExpression.getOperation();
 
-                if ((operation == null) ||
-                    (variableCandidate == null) ||
-                    (referenceCandidate == null)) {
-                    return messageExternal;
-                }
+                assert operation != null;
+                assert variableCandidate != null;
+                assert referenceCandidate != null;
 
                 /* try extracting variable name from variable candidate */
                 String variableName = null;
@@ -72,10 +68,12 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
                                         ? (variableCandidate.getText() + ' ' + operation.getText() + ' ' + '$' + variableName)
                                         : ('$' + variableName + ' ' + operation.getText() + ' ' + variableCandidate.getText());
 
-                return String.format(messagePattern,
-                                     hasInit ? "..., " : "",
-                                     '$' + variableName + " = " + referenceCandidate.getText(),
-                                     newCheck);
+                final String message = String.format(messagePattern,
+                                                     hasInit ? "..., " : "",
+                                                     '$' + variableName + " = " + referenceCandidate.getText(),
+                                                     newCheck);
+
+                problemsHolder.registerProblem(problematicExpression, message, ProblemHighlightType.GENERIC_ERROR);
             }
 
             public void visitPhpFor(final For forStatement) {
@@ -91,8 +89,7 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
 
                 if (OpenapiTypesUtil.isFunctionReference(condition.getRightOperand()) ||
                     OpenapiTypesUtil.isFunctionReference(condition.getLeftOperand())) {
-                    final String message = generateMessage(forStatement, condition);
-                    problemsHolder.registerProblem(condition, message, ProblemHighlightType.GENERIC_ERROR);
+                    checkStatement(forStatement, condition);
                 }
             }
         };

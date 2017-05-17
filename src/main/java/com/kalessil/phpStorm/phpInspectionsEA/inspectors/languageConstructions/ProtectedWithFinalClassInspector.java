@@ -24,7 +24,7 @@ public class ProtectedWithFinalClassInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            private void checkElement(final PhpElementWithModifier element) {
+            private void checkElement(final PhpElementWithModifier element, final PsiElement elementModifierScope) {
                 if (!element.getModifier().isProtected()) {
                     return;
                 }
@@ -36,10 +36,6 @@ public class ProtectedWithFinalClassInspector extends BasePhpInspection {
                 if (!elementClass.isFinal()) {
                     return;
                 }
-
-                final PsiElement elementModifierScope = (element instanceof Field)
-                                                        ? ((Field) element).getParent()
-                                                        : (PsiElement) element;
 
                 final PhpModifierList  elementModifierList = PsiTreeUtil.findChildOfType(elementModifierScope, PhpModifierList.class);
                 final LeafPsiElement[] elementModifiers    = PsiTreeUtil.getChildrenOfType(elementModifierList, LeafPsiElement.class);
@@ -57,12 +53,12 @@ public class ProtectedWithFinalClassInspector extends BasePhpInspection {
             @Override
             public void visitPhpField(final Field field) {
                 // Note: it does the work for properties and constants.
-                checkElement(field);
+                checkElement(field, field.getParent());
             }
 
             @Override
             public void visitPhpMethod(final Method method) {
-                checkElement(method);
+                checkElement(method, method);
             }
         };
     }

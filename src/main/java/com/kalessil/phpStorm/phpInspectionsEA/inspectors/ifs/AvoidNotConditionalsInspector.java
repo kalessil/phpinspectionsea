@@ -16,11 +16,22 @@ import com.jetbrains.php.lang.psi.elements.impl.GroupStatementImpl;
 import com.jetbrains.php.lang.psi.elements.impl.UnaryExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) David Rodrigues <david.proweb@gmail.com>
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class AvoidNotConditionalsInspector extends BasePhpInspection {
     private static final String suggestionMessage = "This negative if conditional could be avoided";
@@ -55,7 +66,7 @@ public class AvoidNotConditionalsInspector extends BasePhpInspection {
                 final LeafPsiElement conditionOperation = (LeafPsiElement) ((UnaryExpressionImpl) statementCondition).getOperation();
                 if (null != conditionOperation && conditionOperation.getText().equals("!")) {
                     problemsHolder.registerProblem(statementCondition, suggestionMessage, ProblemHighlightType.WEAK_WARNING,
-                        new TheLocalQuickFix(controlStatement, elseStatement, (UnaryExpressionImpl) statementCondition));
+                                                   new TheLocalQuickFix(controlStatement, elseStatement, (UnaryExpressionImpl) statementCondition));
                 }
             }
         };
@@ -125,8 +136,8 @@ public class AvoidNotConditionalsInspector extends BasePhpInspection {
         @NotNull
         private Statement getStatementAsText(@NotNull final Project project, final Statement controlTheStatement) {
             final String controlStatementText = controlTheStatement instanceof GroupStatementImpl
-                ? controlTheStatement.getText()
-                : '{' + controlTheStatement.getText() + '}';
+                                                ? controlTheStatement.getText()
+                                                : '{' + controlTheStatement.getText() + '}';
 
             return PhpPsiElementFactory.createStatement(project, controlStatementText);
         }

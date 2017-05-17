@@ -25,7 +25,7 @@ public class ProtectedWithFinalClassInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return "ProtectedWithFinalClassInspector";
+        return "ProtectedWithFinalClassInspection";
     }
 
     @Override

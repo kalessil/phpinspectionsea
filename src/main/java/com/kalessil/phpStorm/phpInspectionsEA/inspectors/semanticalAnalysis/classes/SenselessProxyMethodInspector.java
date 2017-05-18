@@ -136,6 +136,16 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                                         }
                                     }
                                 }
+
+                                /* verify returned type declaration */
+                                if (!isChangingSignature) {
+                                    final PsiElement methodReturn = method.getReturnType();
+                                    final PsiElement parentReturn = nestedMethod.getReturnType();
+                                    if (methodReturn != parentReturn) {
+                                        isChangingSignature = methodReturn == null || parentReturn == null ||
+                                                !PsiEquivalenceUtil.areElementsEquivalent(methodReturn, parentReturn);
+                                    }
+                                }
                             } else {
                                 /* okay obviously changed */
                                 isChangingSignature = true;

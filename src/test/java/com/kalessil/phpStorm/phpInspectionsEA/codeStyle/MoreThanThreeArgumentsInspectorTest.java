@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MoreThanThree
 final public class MoreThanThreeArgumentsInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         MoreThanThreeArgumentsInspector inspector = new MoreThanThreeArgumentsInspector();
-        inspector.limit = 2;
+        inspector.limit                           = 2;
 
         myFixture.configureByFile("fixtures/codeStyle/too-many-arguments.php");
         myFixture.enableInspections(inspector);

@@ -39,9 +39,8 @@ public class ProtectedWithFinalClassInspector extends BasePhpInspection {
 
                 final PhpClass elementClass = ((PhpClassMember) element).getContainingClass();
 
-                assert elementClass != null;
-
-                if (!elementClass.isFinal()) {
+                if ((elementClass == null) ||
+                    !elementClass.isFinal()) {
                     return;
                 }
 
@@ -80,7 +79,9 @@ public class ProtectedWithFinalClassInspector extends BasePhpInspection {
                 final PhpModifierList  elementModifierList  = PsiTreeUtil.findChildOfType(elementModifierScope, PhpModifierList.class);
                 final LeafPsiElement[] elementModifiers     = PsiTreeUtil.getChildrenOfType(elementModifierList, LeafPsiElement.class);
 
-                assert elementModifiers != null;
+                if (elementModifiers == null) {
+                    return null;
+                }
 
                 for (final LeafPsiElement elementModifier : elementModifiers) {
                     if ("protected".equalsIgnoreCase(elementModifier.getText())) {
@@ -130,8 +131,10 @@ public class ProtectedWithFinalClassInspector extends BasePhpInspection {
             final PsiElement modifierElement     = modifier.getElement();
             final PsiElement modifierReplacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "private");
 
-            assert modifierElement != null;
-            assert modifierReplacement != null;
+            if ((modifierElement == null) ||
+                (modifierReplacement == null)) {
+                return;
+            }
 
             modifierElement.replace(modifierReplacement);
         }

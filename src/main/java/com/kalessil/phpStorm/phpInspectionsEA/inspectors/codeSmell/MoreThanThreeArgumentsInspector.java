@@ -1,6 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
 
+import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.inspections.PhpTooManyParametersInspection;
+import com.jetbrains.php.lang.psi.elements.Function;
+import com.jetbrains.php.lang.psi.elements.Method;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -24,5 +31,40 @@ public class MoreThanThreeArgumentsInspector extends PhpTooManyParametersInspect
 
     public MoreThanThreeArgumentsInspector() {
         limit = 3;
+    }
+
+    @Override
+    @NotNull
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+        return new ProxyVisitor((PhpElementVisitor) super.buildVisitor(holder, isOnTheFly));
+    }
+
+    private class ProxyVisitor extends PhpElementVisitor {
+        @NotNull
+        final PhpElementVisitor visitor;
+
+        ProxyVisitor(@NotNull PhpElementVisitor visitor) {
+            this.visitor = visitor;
+        }
+
+        @Override
+        public void visitPhpFunction(@NotNull Function function) {
+            visitor.visitPhpFunction(function);
+        }
+
+        @Override
+        public void visitPhpClass(@NotNull PhpClass clazz) {
+            if (!FileSystemUtil.isTestClass(clazz)) {
+                visitor.visitPhpClass(clazz);
+            }
+        }
+
+        @Override
+        public void visitPhpMethod(@NotNull Method method) {
+            final PhpClass clazz = method.getContainingClass();
+            if (clazz == null || !FileSystemUtil.isTestClass(clazz)) {
+                visitor.visitPhpMethod(method);
+            }
+        }
     }
 }

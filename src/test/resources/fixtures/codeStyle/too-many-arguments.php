@@ -15,3 +15,7 @@
         public function oneParameter($one)        {}
         public function twoParameters($one, $two) {}
     }
+
+    class PhpUnitTest {
+        public function threeParameters ($one, $two, $three) {}
+    }

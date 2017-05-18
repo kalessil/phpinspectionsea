@@ -8,8 +8,9 @@ final public class MoreThanThreeArgumentsInspectorTest extends CodeInsightFixtur
         MoreThanThreeArgumentsInspector inspector = new MoreThanThreeArgumentsInspector();
         inspector.limit                           = 2;
 
-        myFixture.configureByFile("fixtures/codeStyle/too-many-arguments.php");
         myFixture.enableInspections(inspector);
+
+        myFixture.configureByFile("fixtures/codeStyle/too-many-arguments.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

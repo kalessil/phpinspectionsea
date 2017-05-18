@@ -62,6 +62,7 @@ Inspections Lists (Unused)
 | Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes | yes | no   | no  |
 | Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | yes | yes | yes  | no  |
 | Unused               | UnusedGotoLabelInspection                       | Unused goto labels                                  | yes | yes | no   | no  |
+| Unused               | ArgumentEqualsDefaultValueInspection            | Unnecessary arguments specification                 | yes | yes | yes  | no  |
 
 Inspections Lists (Compatibility)
 ---

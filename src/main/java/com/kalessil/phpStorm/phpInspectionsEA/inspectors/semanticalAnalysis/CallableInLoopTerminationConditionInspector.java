@@ -88,25 +88,30 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
             final For              forStatementElement = forStatement.getElement();
             final BinaryExpression conditionElement    = condition.getElement();
 
-            assert forStatementElement != null;
-            assert conditionElement != null;
+            if ((forStatementElement == null) ||
+                (conditionElement == null)) {
+                return;
+            }
 
             final boolean    functionOnLeft     = conditionElement.getLeftOperand() instanceof FunctionReference;
             final PsiElement referenceCandidate = functionOnLeft ? conditionElement.getLeftOperand() : conditionElement.getRightOperand();
             final PsiElement variableCandidate  = functionOnLeft ? conditionElement.getRightOperand() : conditionElement.getLeftOperand();
             final PsiElement operation          = conditionElement.getOperation();
 
-
-            assert operation != null;
-            assert variableCandidate != null;
-            assert referenceCandidate != null;
+            if ((operation == null) ||
+                (variableCandidate == null) ||
+                (referenceCandidate == null)) {
+                return;
+            }
 
             final String variableName = (variableCandidate instanceof Variable)
                                         ? ('$' + ((Variable) variableCandidate).getName() + "Max")
                                         : "$loopsMax";
             final Variable variableElement = PhpPsiElementFactory.createFromText(project, Variable.class, variableName);
 
-            assert variableElement != null;
+            if (variableElement == null) {
+                return;
+            }
 
             referenceCandidate.replace(variableElement);
 
@@ -114,14 +119,18 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
             final AssignmentExpression assignmentInitializer =
                 PhpPsiElementFactory.createFromText(project, AssignmentExpression.class, variableName + " = " + referenceCandidate.getText());
 
-            assert assignmentInitializer != null;
+            if (assignmentInitializer == null) {
+                return;
+            }
 
             // Case #1 and #2: have at least one initial expression.
             if (initialExpressions.length >= 1) {
                 final PhpPsiElement  lastExpression         = initialExpressions[initialExpressions.length - 1];
                 final LeafPsiElement commaBeforeInitializer = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
 
-                assert commaBeforeInitializer != null;
+                if (commaBeforeInitializer == null) {
+                    return;
+                }
 
                 forStatementElement.addAfter(assignmentInitializer, lastExpression);
                 forStatementElement.addAfter(commaBeforeInitializer, lastExpression);

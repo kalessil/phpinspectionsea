@@ -27,6 +27,7 @@ public class NullPointerExceptionInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
+            @Override
             public void visitPhpMethod(@NotNull Method method) {
                 if (!method.isAbstract()) {
                     NullableParameterStrategy.apply(method, holder);

@@ -6,9 +6,10 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ReturnTypeCanBeDeclaredInspector;
 
-final public class ReturnTypeCanBeDeclaredInspectorTest extends PhpCodeInsightFixtureTestCase {
+public final class ReturnTypeCanBeDeclaredInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
+
         myFixture.enableInspections(ReturnTypeCanBeDeclaredInspector.class);
 
         myFixture.configureByFile("fixtures/lang/typeHints/return-type-hints.ns.php");
@@ -17,9 +18,10 @@ final public class ReturnTypeCanBeDeclaredInspectorTest extends PhpCodeInsightFi
         myFixture.configureByFile("fixtures/lang/typeHints/return-type-hints.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
+
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile(
             "fixtures/lang/typeHints/return-type-hints.php",

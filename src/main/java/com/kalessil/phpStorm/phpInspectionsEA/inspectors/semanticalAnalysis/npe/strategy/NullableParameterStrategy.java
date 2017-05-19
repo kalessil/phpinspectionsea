@@ -15,8 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -39,16 +38,16 @@ final public class NullableParameterStrategy {
 
     public static void apply(@NotNull Method method, @NotNull ProblemsHolder holder) {
         final PhpEntryPointInstruction controlFlowStart = method.getControlFlow().getEntryPoint();
-        for (Parameter parameter : method.getParameters()) {
+        for (final Parameter parameter : method.getParameters()) {
             final Set<String> declaredTypes = new HashSet<>();
-            for (String type: parameter.getDeclaredType().getTypes()) {
+            for (final String type: parameter.getDeclaredType().getTypes()) {
                 declaredTypes.add(Types.getType(type));
             }
             if (declaredTypes.contains(Types.strNull) || PhpLanguageUtil.isNull(parameter.getDefaultValue())) {
                 declaredTypes.remove(Types.strNull);
 
                 boolean isObject = !declaredTypes.isEmpty();
-                for (String type : declaredTypes) {
+                for (final String type : declaredTypes) {
                     if (!type.startsWith("\\") && !objectTypes.contains(type)) {
                         isObject = false;
                         break;
@@ -59,6 +58,7 @@ final public class NullableParameterStrategy {
                     applyToParameter(parameter.getName(), controlFlowStart, holder);
                 }
             }
+            declaredTypes.clear();
         }
     }
 
@@ -69,7 +69,7 @@ final public class NullableParameterStrategy {
     ) {
         final PhpAccessVariableInstruction[] uses
                 = PhpControlFlowUtil.getFollowingVariableAccessInstructions(controlFlowStart, parameterName, false);
-        for (PhpAccessVariableInstruction instruction : uses) {
+        for (final PhpAccessVariableInstruction instruction : uses) {
             final PhpPsiElement variable = instruction.getAnchor();
             final PsiElement parent      = variable.getParent();
 
@@ -123,10 +123,41 @@ final public class NullableParameterStrategy {
             /* cases when NPE can be introduced: __invoke calls */
             if (OpenapiTypesUtil.isFunctionReference(parent) && variable == parent.getFirstChild()) {
                 holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                // continue;
+                continue;
             }
 
-            /* TODO: dispatching as an argument: resolve, check if non-nullable object */
+            /* cases when null dispatched into to non-null parameter */
+            if (parent instanceof ParameterList && parent.getParent() instanceof FunctionReference) {
+                final FunctionReference reference = (FunctionReference) parent.getParent();
+                final PsiElement resolved         = reference.resolve();
+                if (resolved != null)  {
+                    /* get the parameter definition */
+                    final int position        = Arrays.asList(reference.getParameters()).indexOf(variable);
+                    final Parameter parameter = ((Function) resolved).getParameters()[position];
+
+                    /* lookup types, if no null declarations - report class-only declarations */
+                    final Set<String> declaredTypes = new HashSet<>();
+                    for (final String type: parameter.getDeclaredType().getTypes()) {
+                        declaredTypes.add(Types.getType(type));
+                    }
+                    if (!declaredTypes.contains(Types.strNull) && !PhpLanguageUtil.isNull(parameter.getDefaultValue())) {
+                        declaredTypes.remove(Types.strNull);
+
+                        boolean isObject = !declaredTypes.isEmpty();
+                        for (final String type : declaredTypes) {
+                            if (!type.startsWith("\\") && !objectTypes.contains(type)) {
+                                isObject = false;
+                                break;
+                            }
+                        }
+                        if (isObject) {
+                            holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        }
+                    }
+                    declaredTypes.clear();
+                }
+                // continue;
+            }
         }
     }
 }

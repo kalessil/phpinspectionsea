@@ -2,10 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.strategy.NullableArgumentsStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.strategy.NullableParameterStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -35,16 +32,6 @@ public class NullPointerExceptionInspector extends BasePhpInspection {
                 if (!method.isAbstract()) {
                     NullableParameterStrategy.apply(method, holder);
                 }
-            }
-
-            @Override
-            public void visitPhpMethodReference(MethodReference reference) {
-                NullableArgumentsStrategy.apply(reference, holder);
-            }
-
-            @Override
-            public void visitPhpFunctionCall(FunctionReference reference) {
-                NullableArgumentsStrategy.apply(reference, holder);
             }
         };
     }

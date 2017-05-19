@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
-    private static final String messagePattern = "': %t%' can be declared as return type hint.";
+    private static final String messagePattern = "%s can be declared as return type hint";
 
     private static final Collection<String> returnTypes = new HashSet<>();
     private static final Collection<String> voidTypes   = new HashSet<>();
@@ -102,7 +102,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 /* case 1: offer using void */
                 if ((typesCount == 0) && supportNullableTypes) {
                     final String suggestedType = Types.strVoid;
-                    final String message       = messagePattern.replace("%t%", suggestedType);
+                    final String message       = String.format(messagePattern, suggestedType);
 
                     problemsHolder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(suggestedType));
                 }
@@ -116,7 +116,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     final boolean isLegitVoid  = supportNullableTypes && suggestedType.equals(Types.strVoid);
 
                     if (isLegitBasic || isLegitVoid) {
-                        final String message = messagePattern.replace("%t%", suggestedType);
+                        final String message = String.format(messagePattern, suggestedType);
                         problemsHolder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(suggestedType));
                     }
                 }
@@ -133,7 +133,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
 
                     if (isLegitNullable || isLegitVoid) {
                         final String typeHint = isLegitVoid ? suggestedType : ('?' + suggestedType);
-                        final String message  = messagePattern.replace("%t%", typeHint);
+                        final String message  = String.format(messagePattern, typeHint);
 
                         problemsHolder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(typeHint));
                     }

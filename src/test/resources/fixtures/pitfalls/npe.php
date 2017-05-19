@@ -60,7 +60,8 @@ class CasesHolder {
             $one,
             $one,
             <warning descr="Null pointer exception may occur here.">$one</warning>,
-            $one
+            $one,
+            $one /* an extra parameter to ensure inspection is not crashes */
         );
     }
 }

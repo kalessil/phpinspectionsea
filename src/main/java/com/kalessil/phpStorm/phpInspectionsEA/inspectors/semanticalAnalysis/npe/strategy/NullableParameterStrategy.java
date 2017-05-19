@@ -132,10 +132,14 @@ final public class NullableParameterStrategy {
                 final PsiElement resolved         = reference.resolve();
                 if (resolved != null)  {
                     /* get the parameter definition */
-                    final int position        = Arrays.asList(reference.getParameters()).indexOf(variable);
-                    final Parameter parameter = ((Function) resolved).getParameters()[position];
+                    final int position           = Arrays.asList(reference.getParameters()).indexOf(variable);
+                    final Parameter[] parameters = ((Function) resolved).getParameters();
+                    if (position >= parameters.length) {
+                        continue;
+                    }
 
                     /* lookup types, if no null declarations - report class-only declarations */
+                    final Parameter parameter = parameters[position];
                     final Set<String> declaredTypes = new HashSet<>();
                     for (final String type: parameter.getDeclaredType().getTypes()) {
                         declaredTypes.add(Types.getType(type));

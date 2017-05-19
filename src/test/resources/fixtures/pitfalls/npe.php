@@ -54,4 +54,13 @@ class CasesHolder {
         $first = $first ?: null;
         $first->property = 'Obviously NPE, but we stop at re-assigning. No solution as of April 2017.';
     }
+
+    public function npeReportingFunctionReference(?\stdClass $one, \stdClass $two = null, \stdClass $three $four) {
+        $this->npeReportingFunctionReference(
+            null,
+            null,
+            <warning descr="...">null</warning>,
+            null
+        );
+    }
 }

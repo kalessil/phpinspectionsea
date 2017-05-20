@@ -22,6 +22,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -212,12 +213,17 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             }
 
             if (injectionPoint != null) {
-                final Function donor   = PhpPsiElementFactory.createFunction(project, "function(): " + type + "{}");
-                PsiElement     implant = donor.getReturnType();
+                PsiElement       classReference       = PhpPsiElementFactory.createClassReference(project, type);
+                final PsiElement injectionPointParent = injectionPoint.getParent();
 
-                while ((implant != null) && (implant.getNode().getElementType() != PhpTokenTypes.chRPAREN)) {
-                    injectionPoint.getParent().addAfter(implant, injectionPoint);
-                    implant = implant.getPrevSibling();
+                while (true) {
+                    injectionPointParent.addAfter(classReference, injectionPoint);
+                    classReference = classReference.getPrevSibling();
+
+                    if ((classReference == null) ||
+                        Objects.equals(classReference.getText(), PhpTokenTypes.chRPAREN.toString())) {
+                        break;
+                    }
                 }
             }
         }

@@ -38,3 +38,34 @@ class MyLocalClass {
     public function manyFromParam(ManyClassTwo $x): ManyClassTwo
     { return $x; }
 }
+
+function fromReturn(): MyClass
+{ return new MyClass; }
+
+function fromParam(MyClass $x): MyClass
+{ return $x; }
+
+/** @return MyClass|null */
+function nullFromDocblock(): ?MyClass
+{ return new MyClass; }
+
+function nullFromParam(?MyClass $x): ?MyClass
+{ return $x; }
+
+function aliasFromReturn(): MyAlias
+{ return new MyAlias; }
+
+function aliasFromParam(MyAlias $x): MyAlias
+{ return $x; }
+
+function manyAliasFromReturn(): ManyClassOneAlias
+{ return new ManyClassOneAlias; }
+
+function manyAliasFromParam(ManyClassOneAlias $x): ManyClassOneAlias
+{ return $x; }
+
+function manyFromReturn(): ManyClassTwo
+{ return new ManyClassTwo; }
+
+function manyFromParam(ManyClassTwo $x): ManyClassTwo
+{ return $x; }

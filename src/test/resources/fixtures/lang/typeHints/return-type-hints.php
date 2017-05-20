@@ -1,7 +1,8 @@
 <?php
 
 /** @return null|bool */
-function functions_not_supported() { return null; }
+function <weak_warning descr="?bool can be declared as return type hint">functions_now_supported</weak_warning>()
+{ return null; }
 
 interface InterfaceCasesHolder {
     /* case 1: handling of abstract methods */

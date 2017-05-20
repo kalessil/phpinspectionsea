@@ -24,6 +24,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -66,54 +67,78 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
+            @Override
             public void visitPhpMethod(final Method method) {
-                final Project          project       = problemsHolder.getProject();
-                final PhpLanguageLevel languageLevel = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
-
-                if (languageLevel.hasFeature(PhpLanguageFeature.RETURN_TYPES) && (method.getReturnType() == null)) {
-                    final PsiElement methodNameNode   = NamedElementUtil.getNameIdentifier(method);
-                    final boolean    isCommonFunction = !method.getName().startsWith("__");
-
-                    if (isCommonFunction && (methodNameNode != null)) {
-                        final boolean supportNullableTypes = languageLevel.hasFeature(PhpLanguageFeature.NULLABLES);
-
-                        if (!method.isAbstract() || (method.getDocComment() != null)) {
-                            handleMethod(method, methodNameNode, supportNullableTypes);
-                        }
-                    }
-                }
+                handleFunction(method);
             }
 
-            private void handleMethod(@NotNull final Method method, @NotNull final PsiElement target, final boolean supportNullableTypes) {
+            @Override
+            public void visitPhpFunction(final Function function) {
+                handleFunction(function);
+            }
+
+            private void handleFunction(@NotNull final Function function) {
+                if (function.getReturnType() != null) {
+                    return;
+                }
+
+                final PsiElement nameIdentifier = NamedElementUtil.getNameIdentifier(function);
+
+                if (nameIdentifier == null) {
+                    return;
+                }
+
+                final boolean isMethod      = function instanceof Method;
+                final boolean isMagicMethod = isMethod && function.getName().startsWith("__");
+
+                if (isMagicMethod) {
+                    return;
+                }
+
+                if (isMethod && ((Method) function).isAbstract() && (function.getDocComment() == null)) {
+                    return;
+                }
+
                 /* ignore DocBlock, resolve and normalize types instead (DocBlock is involved, but nevertheless) */
                 final Collection<String> normalizedTypes = new HashSet<>();
+                final Set<String>        supportedTypes  = function.getType().global(problemsHolder.getProject()).filterUnknown().getTypes();
 
-                for (final String type : method.getType().global(problemsHolder.getProject()).filterUnknown().getTypes()) {
+                if (supportedTypes.size() > 2) {
+                    return;
+                }
+
+                for (final String type : supportedTypes) {
                     normalizedTypes.add(Types.getType(type));
                 }
 
-                checkNonImplicitNullReturn(method, normalizedTypes);
+                if (checkIfReturnsNullImplicitly(function, normalizedTypes)) {
+                    normalizedTypes.add(Types.strNull);
+                }
 
-                final int typesCount = normalizedTypes.size();
+                final Project          project       = problemsHolder.getProject();
+                final PhpLanguageLevel languageLevel = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
+
+                final boolean supportNullableTypes = languageLevel.hasFeature(PhpLanguageFeature.NULLABLES);
+                final int     typesCount           = normalizedTypes.size();
 
                 if ((typesCount == 0) && supportNullableTypes) {
                     /* case 1: offer using void */
                     final String suggestedType = Types.strVoid;
                     final String message       = String.format(messagePattern, suggestedType);
 
-                    problemsHolder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(suggestedType));
+                    problemsHolder.registerProblem(nameIdentifier, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(suggestedType));
                 }
                 else if (typesCount == 1) {
                     /* case 2: offer using type */
                     final String singleType    = normalizedTypes.iterator().next();
-                    final String suggestedType = voidTypes.contains(singleType) ? Types.strVoid : compactType(singleType, method);
+                    final String suggestedType = voidTypes.contains(singleType) ? Types.strVoid : compactType(singleType, function);
 
                     final boolean isLegitBasic = singleType.startsWith("\\") || returnTypes.contains(singleType);
                     final boolean isLegitVoid  = supportNullableTypes && suggestedType.equals(Types.strVoid);
 
                     if (isLegitBasic || isLegitVoid) {
                         final String message = String.format(messagePattern, suggestedType);
-                        problemsHolder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(suggestedType));
+                        problemsHolder.registerProblem(nameIdentifier, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(suggestedType));
                     }
                 }
                 else if ((typesCount == 2) && supportNullableTypes && normalizedTypes.contains(Types.strNull)) {
@@ -121,7 +146,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     normalizedTypes.remove(Types.strNull);
 
                     final String nullableType  = normalizedTypes.iterator().next();
-                    final String suggestedType = voidTypes.contains(nullableType) ? Types.strVoid : compactType(nullableType, method);
+                    final String suggestedType = voidTypes.contains(nullableType) ? Types.strVoid : compactType(nullableType, function);
 
                     final boolean isLegitNullable = nullableType.startsWith("\\") || returnTypes.contains(nullableType);
                     final boolean isLegitVoid     = suggestedType.equals(Types.strVoid);
@@ -130,21 +155,23 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         final String typeHint = isLegitVoid ? suggestedType : ('?' + suggestedType);
                         final String message  = String.format(messagePattern, typeHint);
 
-                        problemsHolder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(typeHint));
+                        problemsHolder.registerProblem(nameIdentifier, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(typeHint));
                     }
                 }
             }
 
-            private String compactType(@NotNull final String type, @NotNull final PhpClassMember method) {
+            private String compactType(@NotNull final String type, @NotNull final PsiElement function) {
                 if (type.startsWith("\\")) {
-                    final PhpClass clazz     = method.getContainingClass();
-                    final String   nameSpace = (clazz == null) ? null : clazz.getNamespaceName();
+                    if (function instanceof Method) {
+                        final PhpClass clazz     = ((Method) function).getContainingClass();
+                        final String   nameSpace = (clazz == null) ? null : clazz.getNamespaceName();
 
-                    if ((nameSpace != null) && (nameSpace.length() > 1) && type.startsWith(nameSpace)) {
-                        return type.replace(nameSpace, "");
+                        if ((nameSpace != null) && (nameSpace.length() > 1) && type.startsWith(nameSpace)) {
+                            return type.replace(nameSpace, "");
+                        }
                     }
 
-                    final Collection<PhpUse> useList = PsiTreeUtil.findChildrenOfType(method.getContainingFile(), PhpUse.class);
+                    final Collection<PhpUse> useList = PsiTreeUtil.findChildrenOfType(function.getContainingFile(), PhpUse.class);
 
                     for (final PhpUse useItem : useList) {
                         final PhpReference useReference = useItem.getTargetReference();
@@ -165,25 +192,27 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 return type;
             }
 
-            private void checkNonImplicitNullReturn(@NotNull final Method method, @NotNull final Collection<String> types) {
-                if (method.isAbstract() ||
-                    types.isEmpty() ||
-                    types.contains(Types.strNull) ||
-                    types.contains(Types.strVoid)) {
-                    return;
+            private boolean checkIfReturnsNullImplicitly(@NotNull final PsiElement function, @NotNull final Collection<String> types) {
+                if ((function instanceof Method) && ((Method) function).isAbstract()) {
+                    return false;
                 }
 
-                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
+                if (types.isEmpty() ||
+                    types.contains(Types.strNull) ||
+                    types.contains(Types.strVoid)) {
+                    return false;
+                }
+
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
 
                 if (body == null) {
-                    return;
+                    return false;
                 }
 
                 final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
 
-                if ((last == null) || (!(last instanceof PhpReturn) && !(last instanceof PhpThrow))) {
-                    types.add(Types.strNull);
-                }
+                return (last == null) ||
+                       (!(last instanceof PhpReturn) && !(last instanceof PhpThrow));
             }
         };
     }
@@ -215,8 +244,10 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 return;
             }
 
-            final Method     method = (Method) expression.getParent();
-            final PsiElement body   = method.isAbstract() ? method.getLastChild() : ExpressionSemanticUtil.getGroupStatement(method);
+            final PsiElement function = expression.getParent();
+            final PsiElement body = ((function instanceof Method) && ((Method) function).isAbstract())
+                                    ? function.getLastChild()
+                                    : ExpressionSemanticUtil.getGroupStatement(function);
 
             if (body == null) {
                 return;

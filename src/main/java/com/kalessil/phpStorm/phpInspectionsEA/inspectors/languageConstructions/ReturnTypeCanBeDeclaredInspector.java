@@ -174,7 +174,12 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 }
 
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
-                final PsiElement     last = (body == null) ? null : ExpressionSemanticUtil.getLastStatement(body);
+
+                if (body == null) {
+                    return;
+                }
+
+                final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
 
                 if ((last == null) || (!(last instanceof PhpReturn) && !(last instanceof PhpThrow))) {
                     types.add(Types.strNull);

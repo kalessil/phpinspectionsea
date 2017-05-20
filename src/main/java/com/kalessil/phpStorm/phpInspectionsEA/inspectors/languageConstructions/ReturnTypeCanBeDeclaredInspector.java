@@ -158,6 +158,12 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
 
                         if ((useReference instanceof ClassReference) &&
                             Objects.equals(useReference.getFQN(), type)) {
+                            final String useAlias = useItem.getAliasName();
+
+                            if (useAlias != null) {
+                                return useAlias;
+                            }
+
                             return useReference.getName();
                         }
                     }

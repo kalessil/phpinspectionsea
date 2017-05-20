@@ -2,6 +2,7 @@
 
 use MyNamespace\MyClass;
 use MyNamespace\MyOtherClass;
+use MyNamespace\MyAnotherClass as MyAlias;
 
 class MyLocalClass {
     public function fromReturn(): MyClass
@@ -15,5 +16,11 @@ class MyLocalClass {
     { return new MyClass; }
 
     public function nullFromParam(?MyClass $x): ?MyClass
+    { return $x; }
+
+    public function aliasFromReturn(): MyAlias
+    { return new MyAlias; }
+
+    public function aliasFromParam(MyAlias $x): MyAlias
     { return $x; }
 }

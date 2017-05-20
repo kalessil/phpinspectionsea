@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
+import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -12,15 +13,19 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.intentions.PhpImportClassIntention;
+import com.jetbrains.php.lang.intentions.PhpSimplifyFQNIntention;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 
+import javax.swing.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -43,6 +48,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
 
     private static final Collection<String> returnTypes = new HashSet<>();
     private static final Collection<String> voidTypes   = new HashSet<>();
+
+    public boolean optionSimplifyFQN = true;
 
     static {
         /* +class/interface reference for PHP7.0+; +void for PHP7.1+ */
@@ -217,7 +224,13 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
         };
     }
 
-    private static class DeclareReturnTypeFix implements LocalQuickFix {
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Simplify FQN automatically", optionSimplifyFQN, (isSelected) -> optionSimplifyFQN = isSelected);
+        });
+    }
+
+    private class DeclareReturnTypeFix implements LocalQuickFix {
         private final String type;
 
         DeclareReturnTypeFix(@NotNull final String type) {
@@ -270,6 +283,27 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     if ((classReference == null) ||
                         Objects.equals(classReference.getText(), PhpTokenTypes.chRPAREN.toString())) {
                         break;
+                    }
+                }
+
+                if (optionSimplifyFQN && (type.indexOf('\\', 1) > -1)) {
+                    final PsiElement returnType = ((Function) function).getReturnType();
+
+                    if (returnType == null) {
+                        return;
+                    }
+
+                    final PsiElementBaseIntentionAction simplifyFQNIntention = new PhpSimplifyFQNIntention();
+
+                    if (simplifyFQNIntention.isAvailable(project, null, returnType)) {
+                        simplifyFQNIntention.invoke(project, null, returnType);
+                        return;
+                    }
+
+                    final PsiElementBaseIntentionAction importClassIntention = new PhpImportClassIntention();
+
+                    if (importClassIntention.isAvailable(project, null, returnType)) {
+                        importClassIntention.invoke(project, null, returnType);
                     }
                 }
             }

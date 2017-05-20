@@ -8,6 +8,7 @@ abstract class MyClass {
     abstract public function abstractFunction();
     abstract function abstractOnlyFunction();
     static function staticOnlyFunction() { }
+    abstract public static function abstractPublicStaticFunction();
 
     public
     static function publicStaticFunctionMultiline() { }
@@ -18,4 +19,10 @@ abstract class MyClass {
     abstract public function publicAbstractFunction();
 
     public static function staticPublicFunctionMultiline() { }
+
+    abstract public static function abstractStaticPublicFunction();
+
+    abstract public static function staticAbstractPublicFunction();
+
+    abstract public static function staticPublicAbstractFunction();
 }

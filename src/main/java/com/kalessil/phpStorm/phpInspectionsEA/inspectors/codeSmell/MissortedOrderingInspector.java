@@ -1,7 +1,11 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.Method;
@@ -56,8 +60,31 @@ public class MissortedOrderingInspector extends BasePhpInspection {
                     return;
                 }
 
-                problemsHolder.registerProblem(methodModifierList, String.format(message, currentOrdering), ProblemHighlightType.WEAK_WARNING);
+                problemsHolder.registerProblem(methodModifierList, String.format(message, currentOrdering), ProblemHighlightType.WEAK_WARNING,
+                                               new TheLocalFix());
             }
         };
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Sort modifiers";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+            final PsiElement methodModifierList = descriptor.getPsiElement();
+
+            methodModifierList.getParent().addAfter(methodModifierList.getFirstChild(), methodModifierList);
+            methodModifierList.getFirstChild().delete();
+        }
     }
 }

@@ -33,7 +33,7 @@ public class MissortedOrderingInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return "MissortedModifiersInspection";
+        return "MissortedOrderingInspection";
     }
 
     @Override

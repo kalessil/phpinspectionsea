@@ -8,16 +8,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpModifier;
 import com.jetbrains.php.lang.psi.elements.PhpModifierList;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
@@ -46,8 +48,6 @@ public class MissortedOrderingInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(final Method method) {
-                final PhpModifier methodModifierProcessed = method.getModifier();
-
                 if (!method.isStatic() && !method.isAbstract()) {
                     return;
                 }
@@ -67,51 +67,50 @@ public class MissortedOrderingInspector extends BasePhpInspection {
                     return;
                 }
 
-                final PhpClass methodClass = method.getContainingClass();
+                final String modifiersOriginalOrdering = describeOriginalOrdering(methodModifiers, LeafElement::getText).toLowerCase();
+                final String modifiersExpectedOrdering =
+                    describeExpectedOrdering(modifiersOriginalOrdering, methodModifiers.size(),
+                                             "final", "abstract",
+                                             "public", "protected", "private",
+                                             "static");
 
-                if (methodClass == null) {
+                if (modifiersOriginalOrdering.equals(modifiersExpectedOrdering)) {
                     return;
                 }
 
-                final StringBuilder methodModifiersBuilder = new StringBuilder(methodModifiers.size());
+                problemsHolder.registerProblem(methodModifierList, String.format(message, modifiersOriginalOrdering), ProblemHighlightType.WEAK_WARNING,
+                                               new TheLocalFix(modifiersExpectedOrdering));
+            }
+
+            private String describeOriginalOrdering(final Collection<LeafPsiElement> methodModifiers, final Function<LeafPsiElement, String> modifierText) {
+                final StringBuilder describerBuilder = new StringBuilder(methodModifiers.size());
 
                 for (final LeafPsiElement methodModifier : methodModifiers) {
-                    methodModifiersBuilder.append(methodModifier.getText()).append(' ');
+                    describerBuilder.append(modifierText.apply(methodModifier)).append(' ');
                 }
 
-                final String methodModifiersText    = methodModifiersBuilder.toString().trim();
-                String       methodModifiersSubject = methodModifierProcessed.toString();
+                return describerBuilder.toString().trim();
+            }
 
-                if (methodClass.isInterface()) {
-                    methodModifiersSubject = methodModifiersSubject.substring(methodModifiersSubject.indexOf(' ') + 1);
+            private String describeExpectedOrdering(final String modifiersOriginalOrdering, final int modifiersSize, @NotNull final String... expectedOrderingKeywords) {
+                final StringBuilder describerBuilder = new StringBuilder(modifiersSize);
+
+                for (final String expectedOrderingKeyword : expectedOrderingKeywords) {
+                    if (modifiersOriginalOrdering.contains(expectedOrderingKeyword)) {
+                        describerBuilder.append(expectedOrderingKeyword).append(' ');
+                    }
                 }
 
-                if (methodModifiersText.equals(methodModifiersSubject)) {
-                    return;
-                }
-
-                problemsHolder.registerProblem(methodModifierList, String.format(message, methodModifiersText), ProblemHighlightType.WEAK_WARNING,
-                                               new TheLocalFix(methodModifiers));
+                return describerBuilder.toString().trim();
             }
         };
     }
 
     private static final class TheLocalFix implements LocalQuickFix {
-        private final List<LeafPsiElement> methodModifiers;
+        private final String methodModifiers;
 
-        private TheLocalFix(final List<LeafPsiElement> methodModifiers) {
+        private TheLocalFix(final String methodModifiers) {
             this.methodModifiers = methodModifiers;
-        }
-
-        private void reallocateModifier(@NotNull final PsiElement methodModifierList, @NotNull final String... modifierTypes) {
-            for (final LeafPsiElement methodModifier : methodModifiers) {
-                for (final String modifierType : modifierTypes) {
-                    if (methodModifier.getText().equals(modifierType)) {
-                        methodModifierList.getParent().addBefore(methodModifier, methodModifierList);
-                        methodModifier.delete();
-                    }
-                }
-            }
         }
 
         @NotNull
@@ -130,9 +129,8 @@ public class MissortedOrderingInspector extends BasePhpInspection {
         public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
             final PsiElement methodModifierList = descriptor.getPsiElement();
 
-            reallocateModifier(methodModifierList, "abstract");
-            reallocateModifier(methodModifierList, "public", "protected", "private");
-            reallocateModifier(methodModifierList, "static");
+            final Method replacement = PhpPsiElementFactory.createMethod(project, methodModifiers + " function x();");
+            methodModifierList.replace(replacement.getFirstChild());
         }
     }
 }

@@ -2,8 +2,10 @@
 
 interface MyInterface
 {
+    // Alloweds.
     public static function publicStaticFunction();
 
+    // Should warn.
     <weak_warning descr="Missorted modifiers 'static public'">static public</weak_warning> function staticPublicFunction();
 }
 
@@ -33,4 +35,18 @@ abstract class MyClass {
     <weak_warning descr="Missorted modifiers 'static abstract public'">static abstract public</weak_warning> function staticAbstractPublicFunction();
 
     <weak_warning descr="Missorted modifiers 'static public abstract'">static public abstract</weak_warning> function staticPublicAbstractFunction();
+}
+
+class MyAnotherClass {
+    // Alloweds.
+    final public static function finalPublicStaticFunction() { }
+
+    // Should warn.
+    final static function finalStaticFunction() { }
+
+    <weak_warning descr="Missorted modifiers 'static final'">static final</weak_warning> function staticFinalFunction() { }
+
+    <weak_warning descr="Missorted modifiers 'static public final'">static public final</weak_warning> function staticPublicFinalFunction() { }
+
+    <weak_warning descr="Missorted modifiers 'static public final'">STATIC PUBLIC FINAL</weak_warning> function staticPublicFinalFunctionUppercased() { }
 }

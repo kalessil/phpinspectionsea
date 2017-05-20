@@ -6,9 +6,13 @@ abstract class MyClass {
     public static function publicStaticFunction() { }
     abstract public function abstractFunction();
 
-    // Case #1
+    public
+    static function publicStaticFunctionMultiline() { }
+
+    // Should warn.
     public static function staticPublicFunction() { }
 
-    // Case #2
     abstract public function publicAbstractFunction();
+
+    public static function staticPublicFunctionMultiline() { }
 }

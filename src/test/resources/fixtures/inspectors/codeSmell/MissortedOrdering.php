@@ -6,9 +6,14 @@ abstract class MyClass {
     public static function publicStaticFunction() { }
     abstract public function abstractFunction();
 
-    // Case #1
+    public
+    static function publicStaticFunctionMultiline() { }
+
+    // Should warn.
     <weak_warning descr="Missorted modifiers 'static public'">static public</weak_warning> function staticPublicFunction() { }
 
-    // Case #2
     <weak_warning descr="Missorted modifiers 'public abstract'">public abstract</weak_warning> function publicAbstractFunction();
+
+    <weak_warning descr="Missorted modifiers 'static public'">static
+    public</weak_warning> function staticPublicFunctionMultiline() { }
 }

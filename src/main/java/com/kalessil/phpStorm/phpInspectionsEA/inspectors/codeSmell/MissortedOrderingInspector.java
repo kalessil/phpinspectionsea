@@ -7,6 +7,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpModifier;
@@ -54,13 +56,23 @@ public class MissortedOrderingInspector extends BasePhpInspection {
                     return;
                 }
 
-                final String currentOrdering = methodModifierList.getText();
+                final StringBuilder currentOrdering = new StringBuilder(3);
 
-                if (Objects.equals(currentOrdering, methodModifier.toString())) {
+                for (final LeafPsiElement element : PsiTreeUtil.findChildrenOfType(methodModifierList, LeafPsiElement.class)) {
+                    if (element instanceof PsiWhiteSpace) {
+                        continue;
+                    }
+
+                    currentOrdering.append(element.getText()).append(' ');
+                }
+
+                final String currentOrderingText = currentOrdering.toString().trim();
+
+                if (Objects.equals(currentOrderingText, methodModifier.toString())) {
                     return;
                 }
 
-                problemsHolder.registerProblem(methodModifierList, String.format(message, currentOrdering), ProblemHighlightType.WEAK_WARNING,
+                problemsHolder.registerProblem(methodModifierList, String.format(message, currentOrderingText), ProblemHighlightType.WEAK_WARNING,
                                                new TheLocalFix());
             }
         };

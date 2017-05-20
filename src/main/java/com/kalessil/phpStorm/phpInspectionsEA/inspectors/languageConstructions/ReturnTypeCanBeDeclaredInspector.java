@@ -77,12 +77,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     if (isCommonFunction && (methodNameNode != null)) {
                         final boolean supportNullableTypes = languageLevel.hasFeature(PhpLanguageFeature.NULLABLES);
 
-                        if (method.isAbstract()) {
-                            if (method.getDocComment() != null) {
-                                handleMethod(method, methodNameNode, supportNullableTypes);
-                            }
-                        }
-                        else {
+                        if (!method.isAbstract() || (method.getDocComment() != null)) {
                             handleMethod(method, methodNameNode, supportNullableTypes);
                         }
                     }
@@ -101,16 +96,15 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
 
                 final int typesCount = normalizedTypes.size();
 
-                /* case 1: offer using void */
                 if ((typesCount == 0) && supportNullableTypes) {
+                    /* case 1: offer using void */
                     final String suggestedType = Types.strVoid;
                     final String message       = String.format(messagePattern, suggestedType);
 
                     problemsHolder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(suggestedType));
                 }
-
-                /* case 2: offer using type */
-                if (typesCount == 1) {
+                else if (typesCount == 1) {
+                    /* case 2: offer using type */
                     final String singleType    = normalizedTypes.iterator().next();
                     final String suggestedType = voidTypes.contains(singleType) ? Types.strVoid : compactType(singleType, method);
 
@@ -122,9 +116,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         problemsHolder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(suggestedType));
                     }
                 }
-
-                /* case 3: offer using nullable type */
-                if ((typesCount == 2) && supportNullableTypes && normalizedTypes.contains(Types.strNull)) {
+                else if ((typesCount == 2) && supportNullableTypes && normalizedTypes.contains(Types.strNull)) {
+                    /* case 3: offer using nullable type */
                     normalizedTypes.remove(Types.strNull);
 
                     final String nullableType  = normalizedTypes.iterator().next();

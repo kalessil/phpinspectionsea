@@ -1,33 +1,33 @@
 <?php
 
-function test($a = 0, $b = 0) {
+function functionWithDefaults($first = 'default', $second = 'default') {}
+
+abstract class DefaultArgumentsAbstract {
+    public function method($first = 'default', $second = 'default') {}
 }
+class DefaultArgumentsImplementation extends DefaultArgumentsAbstract {}
 
-abstract class MyAbstract {
-    public function test($a = 0, $b = 0) {
-    }
-}
+/* case: function reference */
+functionWithDefaults(<weak_warning descr="The argument can be safely dropped, as it identical to the default value.">'default'</weak_warning>);
+functionWithDefaults('whatever', <weak_warning descr="The argument can be safely dropped, as it identical to the default value.">'default'</weak_warning>);
+functionWithDefaults(<weak_warning descr="The argument can be safely dropped, as it identical to the default value.">'default', 'default'</weak_warning>);
 
-class MyClass extends MyAbstract {
-}
+/* case: proper elements deletion at QF */
+functionWithDefaults(<weak_warning descr="The argument can be safely dropped, as it identical to the default value.">'default', /* comment */ 'default'</weak_warning>);
 
-// Objects.
-$myClass = new MyClass;
+/* false-positives: function reference */
+functionWithDefaults();
+functionWithDefaults('whatever');
+functionWithDefaults('default', 'whatever');
 
-// Positives.
-test();
-test(1);
-test(0, 1);
+$object = new DefaultArgumentsImplementation();
 
-$myClass->test();
-$myClass->test(1);
-$myClass->test(0, 1);
+/* case: methods reference */
+$object->method(<weak_warning descr="The argument can be safely dropped, as it identical to the default value.">'default'</weak_warning>);
+$object->method('whatever', <weak_warning descr="The argument can be safely dropped, as it identical to the default value.">'default'</weak_warning>);
+$object->method(<weak_warning descr="The argument can be safely dropped, as it identical to the default value.">'default', 'default'</weak_warning>);
 
-// Warnings.
-test(<weak_warning descr="The argument can be safely dropped, as identical to the default value.">0</weak_warning>);
-test(1, <weak_warning descr="The argument can be safely dropped, as identical to the default value.">0</weak_warning>);
-test(<weak_warning descr="The argument can be safely dropped, as identical to the default value.">0, 0</weak_warning>);
-
-$myClass->test(<weak_warning descr="The argument can be safely dropped, as identical to the default value.">0</weak_warning>);
-$myClass->test(1, <weak_warning descr="The argument can be safely dropped, as identical to the default value.">0</weak_warning>);
-$myClass->test(<weak_warning descr="The argument can be safely dropped, as identical to the default value.">0, 0</weak_warning>);
+/* false-positives: method reference */
+$object->method();
+$object->method('whatever');
+$object->method('default', 'whatever');

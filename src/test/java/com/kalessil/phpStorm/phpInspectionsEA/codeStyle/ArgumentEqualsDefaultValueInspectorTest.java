@@ -6,8 +6,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ArgumentEqual
 
 public final class ArgumentEqualsDefaultValueInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new ArgumentEqualsDefaultValueInspector());
+
         myFixture.configureByFile("fixtures/codeStyle/argument-default-equals.php");
-        myFixture.enableInspections(ArgumentEqualsDefaultValueInspector.class);
         myFixture.testHighlighting(true, false, true);
 
         for (final IntentionAction fix : myFixture.getAllQuickFixes()) {

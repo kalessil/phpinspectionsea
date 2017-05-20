@@ -1,19 +1,19 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
 
+import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.*;
+import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.parser.PhpElementTypes;
+import com.jetbrains.php.lang.psi.PhpElementType;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
-    private static final String message = "The argument can be safely dropped, as identical to the default value.";
+    private static final String message = "The argument can be safely dropped, as it identical to the default value.";
 
     @NotNull
     public final String getShortName() {
@@ -40,76 +40,67 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(final MethodReference reference) {
-                visitPhpFunctionCall(reference);
+                this.analyze(reference);
             }
 
             @Override
             public void visitPhpFunctionCall(final FunctionReference reference) {
-                final PsiElement[] referenceParameters = reference.getParameters();
+                this.analyze(reference);
+            }
 
-                if (referenceParameters.length == 0) {
-                    return;
-                }
+            private void analyze(@NotNull FunctionReference reference) {
+                final PsiElement[] arguments = reference.getParameters();
+                final Function function      = arguments.length > 0 ? (Function) reference.resolve() : null;
+                if (function != null) {
+                    PsiElement reportFrom = null;
+                    PsiElement reportTo   = null;
 
-                final Function function = (Function) reference.resolve();
+                    final Parameter[] parameters = function.getParameters();
+                    for (int index = Math.min(parameters.length, arguments.length) - 1; index >= 0; --index) {
+                        final PsiElement defaultValue = parameters[index].getDefaultValue();
+                        final PsiElement argument     = arguments[index];
+                        if (defaultValue == null || !PsiEquivalenceUtil.areElementsEquivalent(defaultValue, argument)) {
+                            break;
+                        }
 
-                if (function == null) {
-                    return;
-                }
-
-                final Parameter[] functionParameters = function.getParameters();
-
-                if (functionParameters.length == 0) {
-                    return;
-                }
-
-                PsiElement referenceParameterLower  = null;
-                final int  referenceParametersLimit = Math.min(referenceParameters.length, functionParameters.length) - 1;
-
-                for (int parameterIndex = referenceParametersLimit; parameterIndex >= 0; parameterIndex--) {
-                    final PhpExpression referenceParameter = (PhpExpression) referenceParameters[parameterIndex];
-                    final Parameter     functionParameter  = functionParameters[parameterIndex];
-
-                    if (referenceParameter.getType().equals(functionParameter.getType())) {
-                        final PsiElement functionParameterDefaultValue = functionParameter.getDefaultValue();
-
-                        if ((functionParameterDefaultValue != null) &&
-                            referenceParameter.getText().equals(functionParameterDefaultValue.getText())) {
-                            referenceParameterLower = referenceParameter;
-                            continue;
+                        reportFrom = argument;
+                        if (reportTo == null) {
+                            reportTo   = argument;
                         }
                     }
 
-                    break;
-                }
-
-                if (referenceParameterLower != null) {
-                    problemsHolder.registerProblem(problemsHolder.getManager().createProblemDescriptor(
-                        referenceParameterLower,
-                        referenceParameters[referenceParameters.length - 1],
-                        message,
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                        onTheFly,
-                        new TheLocalFix(referenceParameterLower, referenceParameters[referenceParameters.length - 1])
-                    ));
+                    if (reportFrom != null) {
+                        problemsHolder.registerProblem(
+                                problemsHolder.getManager().createProblemDescriptor(
+                                        reportFrom,
+                                        reportTo,
+                                        message,
+                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                        onTheFly,
+                                        new TheLocalFix(reportFrom, reportTo)
+                                )
+                        );
+                    }
                 }
             }
         };
     }
 
-    private static final class TheLocalFix implements LocalQuickFix {
-        private final SmartPsiElementPointer<PsiElement> dropTo;
+    private class TheLocalFix implements LocalQuickFix {
         private final SmartPsiElementPointer<PsiElement> dropFrom;
+        private final SmartPsiElementPointer<PsiElement> dropTo;
 
-        private TheLocalFix(@NotNull final PsiElement dropFromElement, @NotNull final PsiElement dropToElement) {
-            dropFrom = SmartPointerManager.getInstance(dropFromElement.getProject()).createSmartPsiElementPointer(dropFromElement);
-            dropTo = SmartPointerManager.getInstance(dropToElement.getProject()).createSmartPsiElementPointer(dropToElement);
+        private TheLocalFix(@NotNull PsiElement dropFrom, @NotNull PsiElement dropTo) {
+            final SmartPointerManager manager = SmartPointerManager.getInstance(dropFrom.getProject());
+
+            this.dropFrom = manager.createSmartPsiElementPointer(dropFrom);
+            this.dropTo   = manager.createSmartPsiElementPointer(dropTo);
         }
 
         @NotNull
         @Override
         public String getName() {
-            return "Safely drop rewritten argument";
+            return "Drop unneeded arguments";
         }
 
         @NotNull
@@ -120,26 +111,20 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
-            final PsiElement dropFromElement = dropFrom.getElement();
-            final PsiElement dropToElement   = dropTo.getElement();
-
-            if ((dropFromElement != null) &&
-                (dropToElement != null)) {
-                final PsiElement dropFromElementPrevious = ((PhpPsiElement) dropFromElement).getPrevPsiSibling();
-                final PsiElement dropFromElementStarting = (dropFromElementPrevious == null)
-                                                           ? dropFromElement
-                                                           : dropFromElementPrevious.getNextSibling();
-
-                ASTNode       dropFromNode = dropFromElementStarting.getNode();
-                final ASTNode dropToNode   = dropToElement.getNode();
-
-                while (dropFromNode != dropToNode) {
-                    final ASTNode dropNextNode = dropFromNode.getTreeNext();
-                    dropFromNode.getTreeParent().removeChild(dropFromNode);
-                    dropFromNode = dropNextNode;
+            PsiElement dropFrom     = this.dropFrom.getElement();
+            final PsiElement dropTo = this.dropTo.getElement();
+            if (dropFrom != null && dropTo != null) {
+                PsiElement   previous = dropFrom.getPrevSibling();
+                IElementType prevType = previous == null ? null : previous.getNode().getElementType();
+                while (
+                    (prevType == PhpTokenTypes.opCOMMA && previous != null) ||
+                    previous instanceof PsiWhiteSpace || previous instanceof PsiComment
+                ) {
+                    dropFrom = previous;
+                    previous = previous.getPrevSibling();
+                    prevType = previous == null ? null : previous.getNode().getElementType();
                 }
-
-                dropToNode.getTreeParent().removeChild(dropToNode);
+                dropFrom.getParent().deleteChildRange(dropFrom, dropTo);
             }
         }
     }

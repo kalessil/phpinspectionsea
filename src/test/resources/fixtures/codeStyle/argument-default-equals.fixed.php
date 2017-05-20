@@ -1,33 +1,33 @@
 <?php
 
-function test($a = 0, $b = 0) {
+function functionWithDefaults($first = 'default', $second = 'default') {}
+
+abstract class DefaultArgumentsAbstract {
+    public function method($first = 'default', $second = 'default') {}
 }
+class DefaultArgumentsImplementation extends DefaultArgumentsAbstract {}
 
-abstract class MyAbstract {
-    public function test($a = 0, $b = 0) {
-    }
-}
+/* case: function reference */
+functionWithDefaults();
+functionWithDefaults('whatever');
+functionWithDefaults();
 
-class MyClass extends MyAbstract {
-}
+/* case: proper elements deletion at QF */
+functionWithDefaults();
 
-// Objects.
-$myClass = new MyClass;
+/* false-positives: function reference */
+functionWithDefaults();
+functionWithDefaults('whatever');
+functionWithDefaults('default', 'whatever');
 
-// Positives.
-test();
-test(1);
-test(0, 1);
+$object = new DefaultArgumentsImplementation();
 
-$myClass->test();
-$myClass->test(1);
-$myClass->test(0, 1);
+/* case: methods reference */
+$object->method();
+$object->method('whatever');
+$object->method();
 
-// Warnings.
-test();
-test(1);
-test();
-
-$myClass->test();
-$myClass->test(1);
-$myClass->test();
+/* false-positives: method reference */
+$object->method();
+$object->method('whatever');
+$object->method('default', 'whatever');

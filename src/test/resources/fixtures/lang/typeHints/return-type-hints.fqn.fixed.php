@@ -37,6 +37,9 @@ class MyLocalClass {
 
     public function manyFromParam(ManyClassTwo $x): ManyClassTwo
     { return $x; }
+
+    public function fromOutsideClass(): \MyNamespace\MyOutsideClass
+    { return new \MyNamespace\MyOutsideClass; }
 }
 
 function fromReturn(): MyClass

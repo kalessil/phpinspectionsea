@@ -37,6 +37,9 @@ class MyLocalClass {
 
     public function <weak_warning descr="ManyClassTwo can be declared as return type hint">manyFromParam</weak_warning>(ManyClassTwo $x)
     { return $x; }
+
+    public function <weak_warning descr="\MyNamespace\MyOutsideClass can be declared as return type hint">fromOutsideClass</weak_warning>()
+    { return new \MyNamespace\MyOutsideClass; }
 }
 
 function <weak_warning descr="MyClass can be declared as return type hint">fromReturn</weak_warning>()

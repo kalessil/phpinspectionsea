@@ -3,6 +3,8 @@
 use MyNamespace\MyClass;
 use MyNamespace\MyOtherClass;
 use MyNamespace\MyAnotherClass as MyAlias;
+use MyNamespace\ManyClassOne as ManyClassOneAlias,
+    MyNamespace\ManyClassTwo;
 
 class MyLocalClass {
     public function fromReturn(): MyClass
@@ -22,5 +24,17 @@ class MyLocalClass {
     { return new MyAlias; }
 
     public function aliasFromParam(MyAlias $x): MyAlias
+    { return $x; }
+
+    public function manyAliasFromReturn(): ManyClassOneAlias
+    { return new ManyClassOneAlias; }
+
+    public function manyAliasFromParam(ManyClassOneAlias $x): ManyClassOneAlias
+    { return $x; }
+
+    public function manyFromReturn(): ManyClassTwo
+    { return new ManyClassTwo; }
+
+    public function manyFromParam(ManyClassTwo $x): ManyClassTwo
     { return $x; }
 }

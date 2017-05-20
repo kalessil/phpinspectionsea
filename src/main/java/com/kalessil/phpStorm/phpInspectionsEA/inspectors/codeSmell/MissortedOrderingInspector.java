@@ -16,7 +16,9 @@ import com.jetbrains.php.lang.psi.elements.PhpModifierList;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -56,23 +58,22 @@ public class MissortedOrderingInspector extends BasePhpInspection {
                     return;
                 }
 
-                final StringBuilder currentOrdering = new StringBuilder(3);
+                final List<LeafPsiElement> methodModifiesElements =
+                    PsiTreeUtil.findChildrenOfType(methodModifierList, LeafPsiElement.class).stream()
+                               .filter(element -> !(element instanceof PsiWhiteSpace))
+                               .collect(Collectors.toList());
 
-                for (final LeafPsiElement element : PsiTreeUtil.findChildrenOfType(methodModifierList, LeafPsiElement.class)) {
-                    if (element instanceof PsiWhiteSpace) {
-                        continue;
-                    }
-
-                    currentOrdering.append(element.getText()).append(' ');
-                }
-
-                final String currentOrderingText = currentOrdering.toString().trim();
-
-                if (Objects.equals(currentOrderingText, methodModifier.toString())) {
+                if (methodModifiesElements.size() < 2) {
                     return;
                 }
 
-                problemsHolder.registerProblem(methodModifierList, String.format(message, currentOrderingText), ProblemHighlightType.WEAK_WARNING,
+                final String currentOrdering = methodModifiesElements.get(0).getText() + ' ' + methodModifiesElements.get(1).getText();
+
+                if (Objects.equals(currentOrdering, methodModifier.toString())) {
+                    return;
+                }
+
+                problemsHolder.registerProblem(methodModifierList, String.format(message, currentOrdering), ProblemHighlightType.WEAK_WARNING,
                                                new TheLocalFix());
             }
         };

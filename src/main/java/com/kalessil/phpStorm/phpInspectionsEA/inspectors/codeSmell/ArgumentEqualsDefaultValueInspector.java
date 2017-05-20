@@ -65,7 +65,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
 
                         reportFrom = argument;
                         if (reportTo == null) {
-                            reportTo   = argument;
+                            reportTo = argument;
                         }
                     }
 

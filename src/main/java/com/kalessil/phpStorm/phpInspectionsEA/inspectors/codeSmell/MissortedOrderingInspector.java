@@ -1,0 +1,63 @@
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
+
+import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.elements.Method;
+import com.jetbrains.php.lang.psi.elements.PhpModifier;
+import com.jetbrains.php.lang.psi.elements.PhpModifierList;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+
+import java.util.Objects;
+
+import org.jetbrains.annotations.NotNull;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) David Rodrigues <david.proweb@gmail.com>
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+public class MissortedOrderingInspector extends BasePhpInspection {
+    private static final String message = "Missorted modifiers '%s'";
+
+    @NotNull
+    public String getShortName() {
+        return "MissortedModifiersInspection";
+    }
+
+    @Override
+    @NotNull
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
+        return new BasePhpElementVisitor() {
+            @Override
+            public void visitPhpMethod(final Method method) {
+                final PhpModifier methodModifier = method.getModifier();
+
+                if (!method.isStatic() && !method.isAbstract()) {
+                    return;
+                }
+
+                final PhpModifierList methodModifierList = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
+
+                if ((methodModifierList == null)) {
+                    return;
+                }
+
+                final String currentOrdering = methodModifierList.getText();
+
+                if (Objects.equals(currentOrdering, methodModifier.toString())) {
+                    return;
+                }
+
+                problemsHolder.registerProblem(methodModifierList, String.format(message, currentOrdering), ProblemHighlightType.WEAK_WARNING);
+            }
+        };
+    }
+}

@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
@@ -142,16 +143,27 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             }
 
             private String compactType(@NotNull final String type, @NotNull final PhpClassMember method) {
-                String compacted = type;
                 if (type.startsWith("\\")) {
                     final PhpClass clazz     = method.getContainingClass();
                     final String   nameSpace = (clazz == null) ? null : clazz.getNamespaceName();
 
                     if ((nameSpace != null) && (nameSpace.length() > 1) && type.startsWith(nameSpace)) {
-                        compacted = compacted.replace(nameSpace, "");
+                        return type.replace(nameSpace, "");
+                    }
+
+                    final Collection<PhpUse> useList = PsiTreeUtil.findChildrenOfType(method.getContainingFile(), PhpUse.class);
+
+                    for (final PhpUse useItem : useList) {
+                        final PhpReference useReference = useItem.getTargetReference();
+
+                        if ((useReference instanceof ClassReference) &&
+                            Objects.equals(useReference.getFQN(), type)) {
+                            return useReference.getName();
+                        }
                     }
                 }
-                return compacted;
+
+                return type;
             }
 
             private void checkNonImplicitNullReturn(@NotNull final Method method, @NotNull final Collection<String> types) {
@@ -182,7 +194,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Declare the return type";
+            return "Declare " + type + " as the return type";
         }
 
         @NotNull

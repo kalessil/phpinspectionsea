@@ -44,4 +44,23 @@ public final class ReturnTypeCanBeDeclaredInspectorTest extends PhpCodeInsightFi
             false
         );
     }
+
+    public void testAutoImportingFQN() {
+        PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
+
+        myFixture.enableInspections(ReturnTypeCanBeDeclaredInspector.class);
+        myFixture.configureByFile("fixtures/lang/typeHints/return-type-hints.fqn.php");
+        myFixture.testHighlighting(true, false, true);
+
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
+            myFixture.launchAction(fix);
+        }
+
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile(
+            "fixtures/lang/typeHints/return-type-hints.fqn.php",
+            "fixtures/lang/typeHints/return-type-hints.fqn.fixed.php",
+            false
+        );
+    }
 }

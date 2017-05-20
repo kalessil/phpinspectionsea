@@ -1,5 +1,12 @@
 <?php
 
+interface MyInterface
+{
+    public static function publicStaticFunction();
+
+    public static function staticPublicFunction();
+}
+
 abstract class MyClass {
     // Alloweds.
     function onlyFunction() {}

@@ -80,7 +80,11 @@ public class MissortedOrderingInspector extends BasePhpInspection {
                 }
 
                 final String methodModifiersText    = methodModifiersBuilder.toString().trim();
-                final String methodModifiersSubject = methodModifierProcessed.toString();
+                String       methodModifiersSubject = methodModifierProcessed.toString();
+
+                if (methodClass.isInterface()) {
+                    methodModifiersSubject = methodModifiersSubject.substring(methodModifiersSubject.indexOf(' ') + 1);
+                }
 
                 if (methodModifiersText.equals(methodModifiersSubject)) {
                     return;

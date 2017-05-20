@@ -1,5 +1,12 @@
 <?php
 
+interface MyInterface
+{
+    public static function publicStaticFunction();
+
+    <weak_warning descr="Missorted modifiers 'static public'">static public</weak_warning> function staticPublicFunction();
+}
+
 abstract class MyClass {
     // Alloweds.
     function onlyFunction() {}

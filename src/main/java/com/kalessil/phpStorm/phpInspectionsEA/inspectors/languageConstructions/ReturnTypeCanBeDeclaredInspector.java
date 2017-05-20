@@ -231,7 +231,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             }
 
             if (injectionPoint != null) {
-                PsiElement       classReference       = PhpPsiElementFactory.createClassReference(project, type);
+                PsiElement       classReference       = PhpPsiElementFactory.createPhpPsiFromText(project, ClassReference.class, "function f(): " + type);
                 final PsiElement injectionPointParent = injectionPoint.getParent();
 
                 while (true) {

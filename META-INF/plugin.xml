@@ -636,7 +636,7 @@ We keep delivering funded results =)
         groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UsageOfSilenceOperatorInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="MissortedOrderingInspection"                   displayName="Missorted modifiers"
+        shortName="MissortedOrderingInspection"                   displayName="PSR-compliant modifiers order"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MissortedOrderingInspector"/>
 

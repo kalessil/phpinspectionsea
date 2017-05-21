@@ -20,6 +20,16 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) David Rodrigues <david.proweb@gmail.com>
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class ProtectedWithFinalClassInspector extends BasePhpInspection {
     private static final String message = "Protected modifier could be replaced by private.";
 

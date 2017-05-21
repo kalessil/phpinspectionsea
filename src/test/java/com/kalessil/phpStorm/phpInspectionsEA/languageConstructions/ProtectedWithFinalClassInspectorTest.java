@@ -6,8 +6,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.P
 
 public class ProtectedWithFinalClassInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new ProtectedWithFinalClassInspector());
+
         myFixture.configureByFile("fixtures/codeSmell/protected-with-final-class.php");
-        myFixture.enableInspections(ProtectedWithFinalClassInspector.class);
         myFixture.testHighlighting(true, false, true);
 
         for (final IntentionAction fix : myFixture.getAllQuickFixes()) {

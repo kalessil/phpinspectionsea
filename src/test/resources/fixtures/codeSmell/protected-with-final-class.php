@@ -1,79 +1,89 @@
 <?php
 
-class PropertyClass1 {
-    public $isPublic;
+// Not appliable (not is a final class).
+class NoFinalClassWithProperties {
+    public    $isPublic;
     protected $isProtected;
-    private $isPrivate;
+    private   $isPrivate;
 }
 
-final class PropertyClass2 {
-    public $isPublic;
+// Appliable: should affect only the protected property.
+final class FinalClasWithProperties {
+    public  $isPublic;
     <weak_warning descr="Protected modifier could be replaced by private.">protected</weak_warning> $isProtected;
     private $isPrivate;
 }
 
-class MethodClass1 {
-    function method0() { }
-    public function method1() { }
-    protected function method2() { }
-    private function method3() { }
+// Not appliable (not is a final class).
+class NoFinalClassWithMethods {
+              function noModifierMethod() { }
+    public    function publicMethod() { }
+    protected function protectedMethod() { }
+    private   function privateMethod() { }
 
-    static function method0s() { }
-    static public function method1s() { }
-    static protected function method2s() { }
-    static private function method3s() { }
+    static           function staticNoModifierMethod() { }
+    static public    function staticPublicMethod() { }
+    static protected function staticProtectedMethod() { }
+    static private   function staticPrivateMethod() { }
 }
 
-abstract class MethodClass2 {
-    abstract function method0();
-    abstract public function method1();
-    abstract protected function method2();
+// Not appliable (not is a final class).
+abstract class AbstractClass {
+    abstract           function abstractNoModifierMethod();
+    abstract public    function abstractPublicMethod();
+    abstract protected function abstractProtectedMethod();
 }
 
-final class MethodClass3 {
-    function method0() { }
-    public function method1() { }
-    <weak_warning descr="Protected modifier could be replaced by private.">protected</weak_warning> function method2() { }
-    private function method3() { }
+// Appliable: should affect both protected methods.
+final class FinalClassWithMethods {
+              function noModifierMethod() { }
+    public    function publicMethod() { }
+    <weak_warning descr="Protected modifier could be replaced by private.">protected</weak_warning> function protectedMethod() { }
+    private   function privateMethod() { }
 
-    static function method0s() { }
-    static public function method1s() { }
-    static <weak_warning descr="Protected modifier could be replaced by private.">protected</weak_warning> function method2s() { }
-    static private function method3s() { }
+    static           function staticNoModifierMethod() { }
+    static public    function staticPublicMethod() { }
+    static <weak_warning descr="Protected modifier could be replaced by private.">protected</weak_warning> function staticProtectedMethod() { }
+    static private   function staticPrivateMethod() { }
 }
 
-class ConstClass1 {
-    const CONST0 = 0;
-    public const CONST1 = 1;
-    protected const CONST2 = 2;
-    private const CONST3 = 3;
+// Not appliable.
+class ClassWithConstant {
+              const NOMODIFIER_CONSTANT = 0;
+    public    const PUBLIC_CONSTANT     = 1;
+    protected const PROTECTED_CONSTANT  = 2;
+    private   const PRIVATE_CONSTANT    = 3;
 }
 
-final class ConstClass2 {
-    const CONST0 = 0;
-    public const CONST1 = 1;
-    <weak_warning descr="Protected modifier could be replaced by private.">protected</weak_warning> const CONST2 = 2;
-    private const CONST3 = 3;
+// Appliable: should affect only the protected constant.
+final class FinalClassWithConstant {
+            const NOMODIFIER_CONSTANT = 0;
+    public  const PUBLIC_CONSTANT     = 1;
+    <weak_warning descr="Protected modifier could be replaced by private.">protected</weak_warning> const PROTECTED_CONSTANT  = 2;
+    private const PRIVATE_CONSTANT    = 3;
 }
 
-final class ConstClass3 {
+// Appliable: should affect the protected constant, even with different case.
+final class FinalClassWithUppercaseConstant {
     <weak_warning descr="Protected modifier could be replaced by private.">PROTECTED</weak_warning> const IGNORE_CASE = true;
 }
 
-abstract class AbstractParent {
-    protected const CONST0 = 0;
+// Not appliable.
+abstract class AbstractClassTestingAllTypes {
+    protected const PROTECTED_CONTANT = 0;
 
     protected $isProtected;
 
-    abstract protected function method0();
-    protected function method1() { }
+    abstract protected function abstractProtectedMethod();
+             protected function protectedMethod() { }
 }
 
-final class RespectParent extends AbstractParent {
-    protected const CONST0 = 0;
+// Not appliable: even final class should respect the parent signature.
+final class RespectAbstractClassSignatures extends AbstractClassTestingAllTypes {
+    protected const PROTECTED_CONTANT = 0;
 
     protected $isProtected;
 
-    protected function method0() { }
-    protected function method1() { }
+    protected function abstractProtectedMethod() { }
+    protected function protectedMethod() { }
 }

@@ -34,7 +34,7 @@ public class MagicNumberInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpExpression(final PhpExpression expression) {
-                if (!PhpType.FLOAT_INT.filter(expression.getType()).isEmpty() &&
+                if (PhpType.intersects(expression.getType(), PhpType.FLOAT_INT) &&
                     !allowedNumbers.contains(expression.getText())) {
                     problemsHolder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING);
                 }

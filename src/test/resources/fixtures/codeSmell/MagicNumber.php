@@ -1,5 +1,8 @@
 <?php
 
+// False-positive: generalized way to test expression type.
+$shouldNotBeTested = [ 'array' => 'value' ];
+
 // Allowed: integer zero or one are ignored by default.
 $shouldNotBeConstantByDefault_NumberZero = 0;
 $shouldNotBeConstantByDefault_NumberOne = 1;

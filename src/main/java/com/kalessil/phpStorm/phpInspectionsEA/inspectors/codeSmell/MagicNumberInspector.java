@@ -10,12 +10,13 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
-import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.BinaryExpressionUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ElementTypeUtil;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +27,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class MagicNumberInspector extends BasePhpInspection {
     private static final String message = "Magic number should be replaced by a constant.";
+
+    boolean optionCheckOnMultiplier = true;
+    boolean optionCheckOnProperties = true;
+    boolean optionCheckOnParameters = true;
+    boolean optionCheckOnArguments  = true;
 
     @NotNull
     public String getShortName() {
@@ -50,6 +56,10 @@ public class MagicNumberInspector extends BasePhpInspection {
             @Override
             public void visitPhpBinaryExpression(final BinaryExpression expression) {
                 if (Objects.equals(expression.getOperationType(), PhpTokenTypes.opMUL)) {
+                    if (!optionCheckOnMultiplier) {
+                        return;
+                    }
+
                     if (isNumeric(expression.getLeftOperand()) &&
                         !isNumberOneNegative(expression.getLeftOperand())) {
                         registerProblem(expression.getLeftOperand());
@@ -91,7 +101,8 @@ public class MagicNumberInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpField(final Field field) {
-                if (!field.isConstant() &&
+                if (optionCheckOnProperties &&
+                    !field.isConstant() &&
                     isNotZeroNumber(field.getDefaultValue())) {
                     registerProblem(field.getDefaultValue());
                 }
@@ -99,13 +110,18 @@ public class MagicNumberInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpParameter(final Parameter parameter) {
-                if (isNotZeroNumber(parameter.getDefaultValue())) {
+                if (optionCheckOnParameters &&
+                    isNotZeroNumber(parameter.getDefaultValue())) {
                     registerProblem(parameter.getDefaultValue());
                 }
             }
 
             @Override
             public void visitPhpSelfAssignmentExpression(final SelfAssignmentExpression expression) {
+                if (!optionCheckOnMultiplier) {
+                    return;
+                }
+
                 if (Objects.equals(expression.getOperationType(), PhpTokenTypes.opMUL_ASGN)) {
                     final PhpPsiElement expressionValue = expression.getValue();
 
@@ -130,6 +146,10 @@ public class MagicNumberInspector extends BasePhpInspection {
             }
 
             private void testParametersValue(final FunctionReference functionReference) {
+                if (!optionCheckOnArguments) {
+                    return;
+                }
+
                 final Function function = (Function) functionReference.resolve();
 
                 if (function == null) {
@@ -259,5 +279,14 @@ public class MagicNumberInspector extends BasePhpInspection {
                 problemsHolder.registerProblem(rightOperand, message, ProblemHighlightType.WEAK_WARNING);
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Report on multiplier", optionCheckOnMultiplier, (isSelected) -> optionCheckOnMultiplier = isSelected);
+            component.addCheckbox("Report on properties", optionCheckOnProperties, (isSelected) -> optionCheckOnProperties = isSelected);
+            component.addCheckbox("Report on parameters", optionCheckOnParameters, (isSelected) -> optionCheckOnParameters = isSelected);
+            component.addCheckbox("Report on arguments", optionCheckOnArguments, (isSelected) -> optionCheckOnArguments = isSelected);
+        });
     }
 }

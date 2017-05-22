@@ -3,6 +3,17 @@
         Suggests to avoid magic numbers on code.
 
         <p><strong>Magic numbers</strong> are numeric literals used on code that could be referenced in
-            a lot of places but are not constants, then are hard to maintain.</p>
+            a lot of places but are not constants, then are hard to understand and maintain.</p>
+
+        <p>It will always report for number literals in <code>return</code> statements,
+            <code>switch</code> cases and too conditionals (except on testing counting by zero).</p>
+
+        <p><strong>Additional reporting options:</strong></p>
+        <ul>
+            <li><strong>Report for multiplier:</strong> check if a magic number is used as multiplier (excluding <code>-1</code>).</li>
+            <li><strong>Report for properties:</strong> check if a magic number is used as default value on properties (excluding <code>0</code>).</li>
+            <li><strong>Report for parameters:</strong> check if a magic number is used as default value on parameters (excluding <code>0</code>).</li>
+            <li><strong>Report for arguments:</strong> check if a magic number is used as argument (excluding <code>0</code> and the default parameter value).</li>
+        </ul>
     </body>
 </html>

@@ -1,0 +1,44 @@
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
+
+import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.elements.PhpExpression;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.jetbrains.annotations.NotNull;
+
+public class MagicNumberInspector extends BasePhpInspection {
+    private static final String message = "Magic number should be replaced by a constant.";
+
+    private static final Collection<String> allowedNumbers = new ArrayList<>();
+
+    static {
+        allowedNumbers.add("0");
+        allowedNumbers.add("1");
+    }
+
+    @NotNull
+    public String getShortName() {
+        return "MagicNumberInspection";
+    }
+
+    @Override
+    @NotNull
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
+        return new BasePhpElementVisitor() {
+            @Override
+            public void visitPhpExpression(final PhpExpression expression) {
+                if (!PhpType.FLOAT_INT.filter(expression.getType()).isEmpty() &&
+                    !allowedNumbers.contains(expression.getText())) {
+                    problemsHolder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING);
+                }
+            }
+        };
+    }
+}

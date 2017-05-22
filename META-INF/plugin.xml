@@ -653,6 +653,10 @@ with a laptop.
         shortName="MisorderedModifiersInspection"                 displayName="PSR-compliant modifiers order"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MisorderedModifiersInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="MagicNumberInspection"                         displayName="Magic number usage"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MagicNumberInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

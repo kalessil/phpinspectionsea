@@ -109,6 +109,7 @@ Inspections Lists (Code style)
 | Code style           | UnknownInspectionInspection                     | Unknown inspection suppression                      | n/a | yes | n/a  | no  |
 | Code style           | ParameterDefaultValueIsNotNullInspection        | Non-null parameters default value                   | n/a | yes | n/a  | yes |
 | Code style           | MisorderedModifiersInspection                   | PSR-compliant modifiers order                       | yes | yes | yes  | no  |
+| Code style           | MagicNumberInspection                           | Magic number usage                                  | no  | yes | no   | no  |
 
 Inspections Lists (Language level migration)
 ---

@@ -43,13 +43,11 @@ public class MagicNumberInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpExpression(final PhpExpression expression) {
-                if (isNumeric(expression)) {
-                    if (!(expression.getParent() instanceof PhpReturn)) {
-                        return;
-                    }
+            public void visitPhpReturn(final PhpReturn returnStatement) {
+                final PsiElement returnArgument = returnStatement.getArgument();
 
-                    registerProblem(expression);
+                if (isNumeric(returnArgument)) {
+                    registerProblem(returnArgument);
                 }
             }
 

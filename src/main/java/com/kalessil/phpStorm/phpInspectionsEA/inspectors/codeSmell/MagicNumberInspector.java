@@ -5,10 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.PhpExpression;
-import com.jetbrains.php.lang.psi.elements.PhpReturn;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -56,6 +53,17 @@ public class MagicNumberInspector extends BasePhpInspection {
                 if (isNumeric(rightOperand) &&
                     !isZeroComparedToFunctionReference(rightOperand, leftOperand)) {
                     registerProblem(rightOperand);
+                }
+            }
+
+            @Override
+            public void visitPhpSwitch(final PhpSwitch switchStatement) {
+                for (final PhpCase switchCase : switchStatement.getCases()) {
+                    final PhpPsiElement caseCondition = switchCase.getCondition();
+
+                    if (isNumeric(caseCondition)) {
+                        registerProblem(caseCondition);
+                    }
                 }
             }
 

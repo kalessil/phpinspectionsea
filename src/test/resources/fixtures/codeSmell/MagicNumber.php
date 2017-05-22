@@ -40,3 +40,10 @@ return count($values) >= <weak_warning descr="Magic number should be replaced by
 return $this->size() >= <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning>;
 return <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> >= count($values);
 return <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> >= $this->size();
+
+// Warn: if used on switch.
+switch (getSomeNumber()) {
+    case <weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>: $anyNumberEvenZero = true; break;
+    case <weak_warning descr="Magic number should be replaced by a constant.">5</weak_warning>: $anyOtherNumber    = true; break;
+    default: $shouldBeJustIgnored = true; break;
+}

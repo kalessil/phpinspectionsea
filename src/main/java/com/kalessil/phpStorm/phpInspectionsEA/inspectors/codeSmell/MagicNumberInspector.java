@@ -4,12 +4,15 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.BinaryExpressionUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ElementTypeUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -42,17 +45,14 @@ public class MagicNumberInspector extends BasePhpInspection {
                     return;
                 }
 
-                final PsiElement leftOperand  = expression.getLeftOperand();
-                final PsiElement rightOperand = expression.getRightOperand();
-
-                if (isNumeric(leftOperand) &&
-                    !isZeroComparedToFunctionReference(leftOperand, rightOperand)) {
-                    registerProblem(leftOperand);
+                if (isNumeric(expression.getLeftOperand()) &&
+                    !isCounting(expression)) {
+                    registerProblem(expression.getLeftOperand());
                 }
 
-                if (isNumeric(rightOperand) &&
-                    !isZeroComparedToFunctionReference(rightOperand, leftOperand)) {
-                    registerProblem(rightOperand);
+                if (isNumeric(expression.getRightOperand()) &&
+                    !isCounting(expression)) {
+                    registerProblem(expression.getRightOperand());
                 }
             }
 
@@ -72,9 +72,38 @@ public class MagicNumberInspector extends BasePhpInspection {
                        (expression.getNode().getElementType() == PhpElementTypes.NUMBER);
             }
 
-            private boolean isZeroComparedToFunctionReference(@NotNull final PsiElement primaryOperand, final PsiElement oppositeOperand) {
-                return "0".equals(primaryOperand.getText()) &&
-                       (oppositeOperand instanceof FunctionReference);
+            private boolean isCounting(@NotNull final BinaryExpression binaryExpression) {
+                final IElementType operationType = binaryExpression.getOperationType();
+
+                if (operationType == null) {
+                    return false;
+                }
+
+                final boolean    numericOnOpposite = isNumeric(binaryExpression.getRightOperand());
+                final PsiElement numericOperand    = numericOnOpposite ? binaryExpression.getRightOperand() : binaryExpression.getLeftOperand();
+
+                if (numericOperand == null) {
+                    return false;
+                }
+
+                if (operationType.equals(PhpTokenTypes.opIDENTICAL) ||
+                    operationType.equals(PhpTokenTypes.opNOT_IDENTICAL) ||
+                    operationType.equals(PhpTokenTypes.opEQUAL) ||
+                    operationType.equals(PhpTokenTypes.opNOT_EQUAL)) {
+                    return isBinaryNumeric(numericOperand.getText());
+                }
+
+                final IElementType normalizeOperationType = numericOnOpposite ? operationType : ElementTypeUtil.rotateOperation(operationType);
+
+                return (normalizeOperationType.equals(PhpTokenTypes.opGREATER) ||
+                        normalizeOperationType.equals(PhpTokenTypes.opGREATER_OR_EQUAL)) &&
+                       isBinaryNumeric(numericOperand.getText());
+
+            }
+
+            private boolean isBinaryNumeric(@NotNull final String numericValue) {
+                return "0".equals(numericValue) ||
+                       "1".equals(numericValue);
             }
 
             private void registerProblem(final PsiElement rightOperand) {

@@ -29,17 +29,79 @@ class TypehintCheck {
     public function parameterIsNotANumericLiteral(int $number) { $number !== null; }
 }
 
-// Allowed: zero is allowed in binary expression if one of operands is a function reference.
-return count($values) > 0;
-return $this->size() > 0;
-return 0 > count($values);
-return 0 > $this->size();
+// Allowed: zero or one is allowed in binary expression if is used for counting.
+count($values) >  0;
+count($values) >  1;
+count($values) >= 0;
+count($values) >= 1;
+$this->size() >  0;
+$this->size() >  1;
+$this->size() >= 0;
+$this->size() >= 1;
+$count >  0;
+$count >  1;
+$count >= 0;
+$count >= 1;
+0 <  count($values);
+1 <  count($values);
+0 <= count($values);
+1 <= count($values);
+0 <  $this->size();
+1 <  $this->size();
+0 <= $this->size();
+1 <= $this->size();
+0 <  $count;
+1 <  $count;
+0 <= $count;
+1 <= $count;
+
+// Warn: if zero or one is not used for counting.
+count($values) <  <weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>;
+count($values) <  <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning>;
+count($values) <= <weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>;
+count($values) <= <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning>;
+$this->size() <  <weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>;
+$this->size() <  <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning>;
+$this->size() <= <weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>;
+$this->size() <= <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning>;
+$count <  <weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>;
+$count <  <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning>;
+$count <= <weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>;
+$count <= <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning>;
+<weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning> >  count($values);
+<weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> >  count($values);
+<weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning> >= count($values);
+<weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> >= count($values);
+<weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning> >  $this->size();
+<weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> >  $this->size();
+<weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning> >= $this->size();
+<weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> >= $this->size();
+<weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning> >  $count;
+<weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> >  $count;
+<weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning> >= $count;
+<weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> >= $count;
+
+// Allowed: zero is allowed in binary expression if used for counting zero elements.
+count($values) === 0;
+count($values) !== 0;
+$this->size() === 0;
+$this->size() !== 0;
+$count === 0;
+$count !== 0;
+0 === count($values);
+0 !== count($values);
+0 === $this->size();
+0 !== $this->size();
+0 === $count;
+0 !== $count;
 
 // Warn: it is not applicable to other values.
-return count($values) >= <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning>;
-return $this->size() >= <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning>;
-return <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> >= count($values);
-return <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> >= $this->size();
+count($values) >= <weak_warning descr="Magic number should be replaced by a constant.">2</weak_warning>;
+$this->size() >= <weak_warning descr="Magic number should be replaced by a constant.">2</weak_warning>;
+$count >= <weak_warning descr="Magic number should be replaced by a constant.">2</weak_warning>;
+<weak_warning descr="Magic number should be replaced by a constant.">2</weak_warning> <= count($values);
+<weak_warning descr="Magic number should be replaced by a constant.">2</weak_warning> <= $this->size();
+<weak_warning descr="Magic number should be replaced by a constant.">2</weak_warning> <= $count;
 
 // Warn: if used on switch.
 switch (getSomeNumber()) {

@@ -17,6 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ElementTypeUtil;
 import java.util.Objects;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MagicNumberInspector extends BasePhpInspection {
     private static final String message = "Magic number should be replaced by a constant.";
@@ -85,17 +86,16 @@ public class MagicNumberInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpField(final Field field) {
-                if (!field.isConstant()) {
-                    final PsiElement fieldValue = field.getDefaultValue();
+                if (!field.isConstant() &&
+                    isNotZeroNumber(field.getDefaultValue())) {
+                    registerProblem(field.getDefaultValue());
+                }
+            }
 
-                    if (fieldValue == null) {
-                        return;
-                    }
-
-                    if (isNumeric(fieldValue) &&
-                        !"0".equals(fieldValue.getText())) {
-                        registerProblem(fieldValue);
-                    }
+            @Override
+            public void visitPhpParameter(final Parameter parameter) {
+                if (isNotZeroNumber(parameter.getDefaultValue())) {
+                    registerProblem(parameter.getDefaultValue());
                 }
             }
 
@@ -123,6 +123,12 @@ public class MagicNumberInspector extends BasePhpInspection {
 
                 return (testingExpression instanceof PhpExpressionImpl) &&
                        (testingExpression.getNode().getElementType() == PhpElementTypes.NUMBER);
+            }
+
+            private boolean isNotZeroNumber(@Nullable final PsiElement value) {
+                return (value != null) &&
+                       isNumeric(value) &&
+                       !"0".equals(value.getText());
             }
 
             private boolean isNumberOneNegative(final PsiElement unaryExpression) {

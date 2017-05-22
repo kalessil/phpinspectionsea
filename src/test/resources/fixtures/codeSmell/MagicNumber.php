@@ -142,3 +142,9 @@ $expressionWithMultiply *= <weak_warning descr="Magic number should be replaced 
 // Allowed: number -1 used in multiply.
 $expressionWithMultiply * -1;
 $expressionWithMultiply *= -1;
+
+// Warn: used as default value for parameters.
+function shouldNotBeAllowedOnParameter($shouldNotBeAllowedOnParameter = <weak_warning descr="Magic number should be replaced by a constant.">10</weak_warning>) { }
+
+// Allowed: except by zero.
+function shouldAcceptOnlyZeroOnParameter($shouldAcceptOnlyZeroOnParameter = 0) { }

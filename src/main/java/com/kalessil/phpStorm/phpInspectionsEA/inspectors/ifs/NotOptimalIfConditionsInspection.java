@@ -44,7 +44,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String strProblemDescriptionInstanceOfAmbiguous      = "This condition is ambiguous and can be safely removed.";
     private static final String messageOrdering                               = "This condition execution costs less than the previous one.";
     private static final String messageDuplicateConditions                    = "This condition is duplicated in another if/elseif branch.";
-    private static final String messageBooleansUsed                           = "This boolean in condition makes no sense or enforces condition result.";
     private static final String strProblemDescriptionDuplicateConditionPart   = "This call is duplicated in conditions set.";
     private static final String strProblemDescriptionIssetCanBeMergedAndCase  = "This can be merged into the previous 'isset(..., ...[, ...])'.";
     private static final String strProblemDescriptionIssetCanBeMergedOrCase   = "This can be merged into the previous '!isset(..., ...[, ...])'.";
@@ -88,7 +87,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 if (null != objConditionsFromStatement) {
                     objAllConditions.addAll(objConditionsFromStatement);
 
-                    this.inspectConditionsWithBooleans(objConditionsFromStatement);
                     this.inspectConditionsForMissingParenthesis(objConditionsFromStatement);
                     this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
                     this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
@@ -109,7 +107,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     if (null != objConditionsFromStatement) {
                         objAllConditions.addAll(objConditionsFromStatement);
 
-                        this.inspectConditionsWithBooleans(objConditionsFromStatement);
                         this.inspectConditionsForMissingParenthesis(objConditionsFromStatement);
                         this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
                         this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
@@ -409,18 +406,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     }
                 }
 
-            }
-
-            /**
-             * Checks if any of conditions is boolean
-             * @param branchConditions to check
-             */
-            private void inspectConditionsWithBooleans(@NotNull List<PsiElement> branchConditions) {
-                for (PsiElement expression : branchConditions) {
-                    if (PhpLanguageUtil.isBoolean(expression)) {
-                        holder.registerProblem(expression, messageBooleansUsed, ProblemHighlightType.GENERIC_ERROR);
-                    }
-                }
             }
 
             /**

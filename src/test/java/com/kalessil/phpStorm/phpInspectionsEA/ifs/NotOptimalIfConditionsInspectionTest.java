@@ -16,12 +16,6 @@ final public class NotOptimalIfConditionsInspectionTest extends CodeInsightFixtu
         myFixture.configureByFile("fixtures/ifs/if-isset-not-null.php");
         myFixture.testHighlighting(true, false, true);
     }
-    public void testInlineBooleansPatterns() {
-        myFixture.enableInspections(new NotOptimalIfConditionsInspection());
-
-        myFixture.configureByFile("fixtures/ifs/if-inline-booleans.php");
-        myFixture.testHighlighting(true, false, true);
-    }
     public void testLiteralOperatorsPatterns() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_LITERAL_OPERATORS         = true;

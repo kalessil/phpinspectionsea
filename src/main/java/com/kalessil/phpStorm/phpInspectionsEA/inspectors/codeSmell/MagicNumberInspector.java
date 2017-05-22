@@ -134,7 +134,7 @@ public class MagicNumberInspector extends BasePhpInspection {
 
                 if (function == null) {
                     for (final PsiElement referenceParameter : functionReference.getParameters()) {
-                        if (isNumeric(referenceParameter)) {
+                        if (isNotZeroNumber(referenceParameter)) {
                             registerProblem(referenceParameter);
                         }
                     }
@@ -150,14 +150,9 @@ public class MagicNumberInspector extends BasePhpInspection {
                 for (int parameterIndex = 0; parameterIndex < referenceParametersSize; parameterIndex++) {
                     final PsiElement referenceParameter = referenceParameters.get(parameterIndex);
 
-                    if (isNumeric(referenceParameter)) {
+                    if (isNotZeroNumber(referenceParameter)) {
                         if (parameterIndex <= functionParametersLimit) {
                             final Parameter functionParameter = functionParameters.get(parameterIndex);
-
-                            if ("0".equals(referenceParameter.getText()) &&
-                                PhpType.intersects(functionParameter.getType(), PhpType.INT)) {
-                                continue;
-                            }
 
                             if (isDefaultValued(functionParameter, referenceParameter)) {
                                 continue;

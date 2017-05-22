@@ -149,8 +149,9 @@ function shouldNotBeAllowedOnParameter($shouldNotBeAllowedOnParameter = <weak_wa
 function shouldAcceptOnlyZeroOnParameter($shouldAcceptOnlyZeroOnParameter = 0) { }
 
 // Warn: used as argument.
-writeNumber(<weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>);
+writeNumber(0);
 writeNumber(<weak_warning descr="Magic number should be replaced by a constant.">10</weak_warning>);
+$this->writeNumber(0);
 $this->writeNumber(<weak_warning descr="Magic number should be replaced by a constant.">10</weak_warning>);
 
 // Allowed: except if it matches with the default value (even for long constant references).
@@ -159,17 +160,17 @@ const NUMBER_TEN_REFERENCE = NUMBER_TEN;
 function sameAsDefaultValue($defaultValue = NUMBER_TEN_REFERENCE) { }
 sameAsDefaultValue(10);
 
-// Warn: using zero as argument to a not int parameter.
+// Allowed: using zero as argument to a not int parameter.
 function mixedParameterFunction($mixed) {}
-
-mixedParameterFunction(<weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>);
-
-// Allowed: using zero as argument to int parameter.
 function intParameterFunction(int $int) {}
 function nullableIntParameterFunction(?int $int) {}
 
+mixedParameterFunction(0);
+mixedParameterFunction(<weak_warning descr="Magic number should be replaced by a constant.">10</weak_warning>);
 intParameterFunction(0);
+intParameterFunction(<weak_warning descr="Magic number should be replaced by a constant.">10</weak_warning>);
 nullableIntParameterFunction(0);
+nullableIntParameterFunction(<weak_warning descr="Magic number should be replaced by a constant.">10</weak_warning>);
 
 // Internal: avoiding loopings.
 define("null", null);
@@ -178,10 +179,6 @@ avoidLoopings(<weak_warning descr="Magic number should be replaced by a constant
 
 // Internal (NPE): check parameter size before get it.
 function fewParameters($parameter) { }
-fewParameters(<weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>,
-              <weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>,
-              <weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>);
+fewParameters(0, 0, <weak_warning descr="Magic number should be replaced by a constant.">10</weak_warning>);
 function fewParametersList(...$parameters) { }
-fewParameters(<weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>,
-              <weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>,
-              <weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>);
+fewParametersList(0, 0, <weak_warning descr="Magic number should be replaced by a constant.">10</weak_warning>);

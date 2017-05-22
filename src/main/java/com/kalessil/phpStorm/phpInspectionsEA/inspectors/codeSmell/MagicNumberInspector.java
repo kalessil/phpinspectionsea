@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
@@ -14,6 +15,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.BinaryExpressionUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ElementTypeUtil;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import org.jetbrains.annotations.NotNull;
@@ -112,6 +116,71 @@ public class MagicNumberInspector extends BasePhpInspection {
                         registerProblem(expressionValue);
                     }
                 }
+            }
+
+            @Override
+            public void visitPhpFunctionCall(final FunctionReference reference) {
+                testParametersValue(reference);
+            }
+
+            @Override
+            public void visitPhpMethodReference(final MethodReference reference) {
+                testParametersValue(reference);
+            }
+
+            private void testParametersValue(final FunctionReference functionReference) {
+                final Function function = (Function) functionReference.resolve();
+
+                if (function == null) {
+                    for (final PsiElement referenceParameter : functionReference.getParameters()) {
+                        if (isNumeric(referenceParameter)) {
+                            registerProblem(referenceParameter);
+                        }
+                    }
+
+                    return;
+                }
+
+                final List<Parameter>  functionParameters      = new ArrayList<>(Arrays.asList(function.getParameters()));
+                final List<PsiElement> referenceParameters     = new ArrayList<>(Arrays.asList(functionReference.getParameters()));
+                final int              referenceParametersSize = referenceParameters.size();
+
+                for (int parameterIndex = 0; parameterIndex < referenceParametersSize; parameterIndex++) {
+                    final PsiElement referenceParameter = referenceParameters.get(parameterIndex);
+
+                    if (isNumeric(referenceParameter)) {
+                        final Parameter functionParameter = functionParameters.get(parameterIndex);
+
+                        if (isDefaultValued(functionParameter, referenceParameter)) {
+                            continue;
+                        }
+
+                        registerProblem(referenceParameter);
+                    }
+                }
+            }
+
+            private boolean isDefaultValued(@Nullable final Parameter functionParameter, final PsiElement referenceParameter) {
+                if (functionParameter != null) {
+                    PsiElement defaultOriginal = functionParameter.getDefaultValue();
+
+                    if (defaultOriginal == null) {
+                        return false;
+                    }
+
+                    while (defaultOriginal instanceof ConstantReference) {
+                        final PsiElement nextReference = ((PsiReference) defaultOriginal).resolve();
+
+                        if (nextReference instanceof Constant) {
+                            defaultOriginal = ((Constant) nextReference).getValue();
+                        }
+                    }
+
+                    return (defaultOriginal != null) &&
+                           defaultOriginal.getText().equals(referenceParameter.getText());
+                }
+
+                return false;
             }
 
             private boolean isNumeric(final PsiElement expression) {

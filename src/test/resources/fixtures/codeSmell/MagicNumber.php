@@ -13,7 +13,6 @@ return <weak_warning descr="Magic number should be replaced by a constant.">10.0
 
 // Allowed: ignore indirect returns.
 return $pregMatch[2];
-return sum(1, 2);
 
 // Warn: using in binary expression.
 $binaryExpressionOnLeft  = <weak_warning descr="Magic number should be replaced by a constant.">5</weak_warning> < $number;
@@ -148,3 +147,14 @@ function shouldNotBeAllowedOnParameter($shouldNotBeAllowedOnParameter = <weak_wa
 
 // Allowed: except by zero.
 function shouldAcceptOnlyZeroOnParameter($shouldAcceptOnlyZeroOnParameter = 0) { }
+
+// Warn: used as argument.
+writeNumber(<weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>);
+writeNumber(<weak_warning descr="Magic number should be replaced by a constant.">10</weak_warning>);
+$this->writeNumber(<weak_warning descr="Magic number should be replaced by a constant.">10</weak_warning>);
+
+// Allowed: except if it matches with the default value (even for long constant references).
+const NUMBER_TEN = 10;
+const NUMBER_TEN_REFERENCE = NUMBER_TEN;
+function sameAsDefaultValue($defaultValue = NUMBER_TEN_REFERENCE) { }
+sameAsDefaultValue(10);

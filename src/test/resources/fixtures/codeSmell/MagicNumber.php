@@ -174,4 +174,14 @@ nullableIntParameterFunction(0);
 // Internal: avoiding loopings.
 define("null", null);
 function avoidLoopings($defaultValue = null) { }
-avoidLoopings(10);
+avoidLoopings(<weak_warning descr="Magic number should be replaced by a constant.">10</weak_warning>);
+
+// Internal (NPE): check parameter size before get it.
+function fewParameters($parameter) { }
+fewParameters(<weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>,
+              <weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>,
+              <weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>);
+function fewParametersList(...$parameters) { }
+fewParameters(<weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>,
+              <weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>,
+              <weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>);

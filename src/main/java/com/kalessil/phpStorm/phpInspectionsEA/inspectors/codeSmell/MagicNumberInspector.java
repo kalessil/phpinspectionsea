@@ -143,6 +143,7 @@ public class MagicNumberInspector extends BasePhpInspection {
                 }
 
                 final List<Parameter>  functionParameters      = new ArrayList<>(Arrays.asList(function.getParameters()));
+                final int              functionParametersLimit = functionParameters.size() - 1;
                 final List<PsiElement> referenceParameters     = new ArrayList<>(Arrays.asList(functionReference.getParameters()));
                 final int              referenceParametersSize = referenceParameters.size();
 
@@ -150,15 +151,17 @@ public class MagicNumberInspector extends BasePhpInspection {
                     final PsiElement referenceParameter = referenceParameters.get(parameterIndex);
 
                     if (isNumeric(referenceParameter)) {
-                        final Parameter functionParameter = functionParameters.get(parameterIndex);
+                        if (parameterIndex <= functionParametersLimit) {
+                            final Parameter functionParameter = functionParameters.get(parameterIndex);
 
-                        if ("0".equals(referenceParameter.getText()) &&
-                            PhpType.intersects(functionParameter.getType(), PhpType.INT)) {
-                            continue;
-                        }
+                            if ("0".equals(referenceParameter.getText()) &&
+                                PhpType.intersects(functionParameter.getType(), PhpType.INT)) {
+                                continue;
+                            }
 
-                        if (isDefaultValued(functionParameter, referenceParameter)) {
-                            continue;
+                            if (isDefaultValued(functionParameter, referenceParameter)) {
+                                continue;
+                            }
                         }
 
                         registerProblem(referenceParameter);

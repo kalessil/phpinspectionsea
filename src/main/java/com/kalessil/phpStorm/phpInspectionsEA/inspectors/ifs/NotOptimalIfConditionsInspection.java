@@ -25,15 +25,25 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.*;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     // Inspection options.
-    public boolean REPORT_LITERAL_OPERATORS = true;
+    public boolean REPORT_LITERAL_OPERATORS    = true;
+    public boolean REPORT_DUPLICATE_CONDITIONS = true;
 
     private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
 
     private static final String strProblemDescriptionInstanceOfAmbiguous      = "This condition is ambiguous and can be safely removed.";
     private static final String messageOrdering                               = "This condition execution costs less than the previous one.";
-    private static final String strProblemDescriptionDuplicateConditions      = "This condition is duplicated in another if/elseif branch.";
+    private static final String messageDuplicateConditions                    = "This condition is duplicated in another if/elseif branch.";
     private static final String messageBooleansUsed                           = "This boolean in condition makes no sense or enforces condition result.";
     private static final String strProblemDescriptionDuplicateConditionPart   = "This call is duplicated in conditions set.";
     private static final String strProblemDescriptionIssetCanBeMergedAndCase  = "This can be merged into the previous 'isset(..., ...[, ...])'.";
@@ -115,7 +125,9 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     }
                 }
 
-                this.inspectDuplicatedConditions(objAllConditions, ifStatement);
+                if (REPORT_DUPLICATE_CONDITIONS) {
+                    this.inspectDuplicatedConditions(objAllConditions, ifStatement);
+                }
                 /* TODO: If not binary/ternary/assignment/array access expression,  */
                 /* TODO: perform types lookup - nullable core types/classes should be compared with null.  */
                 /* TODO: Inversion should be un-boxed to get expression. */
@@ -467,6 +479,16 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                             variableCandidate = invertedValue;
                         }
                     }
+                    /* ignore variables (even if compared with booleans) */
+                    if (variableCandidate instanceof BinaryExpression) {
+                        final PsiElement left  = ((BinaryExpression) variableCandidate).getLeftOperand();
+                        final PsiElement right = ((BinaryExpression) variableCandidate).getRightOperand();
+                        if (PhpLanguageUtil.isBoolean(right)) {
+                            variableCandidate = left;
+                        } else if (PhpLanguageUtil.isBoolean(left)) {
+                            variableCandidate = right;
+                        }
+                    }
                     if (
                         variableCandidate instanceof Variable ||
                         variableCandidate instanceof ConstantReference ||
@@ -485,7 +507,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                         boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objInnerLoopExpression, objExpression);
                         if (isDuplicate) {
-                            holder.registerProblem(objInnerLoopExpression, strProblemDescriptionDuplicateConditions, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(objInnerLoopExpression, messageDuplicateConditions, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
 
                             int intInnerIndex = objAllConditions.indexOf(objInnerLoopExpression);
                             objAllConditions.set(intInnerIndex, null);
@@ -500,7 +522,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                         boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objOuterScopeExpression, objExpression);
                         if (isDuplicate) {
-                            holder.registerProblem(objExpression, strProblemDescriptionDuplicateConditions, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(objExpression, messageDuplicateConditions, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
 
                             int intOuterScopeIndex = objParentConditions.indexOf(objOuterScopeExpression);
                             objParentConditions.set(intOuterScopeIndex, null);
@@ -553,6 +575,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
             component.addCheckbox("Report literal and/or operators", REPORT_LITERAL_OPERATORS, (isSelected) -> REPORT_LITERAL_OPERATORS = isSelected);
+            component.addCheckbox("Report duplicate conditions", REPORT_DUPLICATE_CONDITIONS, (isSelected) -> REPORT_DUPLICATE_CONDITIONS = isSelected);
         });
     }
 }

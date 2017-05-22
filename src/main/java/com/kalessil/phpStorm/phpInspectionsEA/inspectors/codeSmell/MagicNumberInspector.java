@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.PhpExpression;
+import com.jetbrains.php.lang.psi.elements.PhpReturn;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -36,6 +37,10 @@ public class MagicNumberInspector extends BasePhpInspection {
             public void visitPhpExpression(final PhpExpression expression) {
                 if (PhpType.intersects(expression.getType(), PhpType.FLOAT_INT) &&
                     !allowedNumbers.contains(expression.getText())) {
+                    if (!(expression.getParent() instanceof PhpReturn)) {
+                        return;
+                    }
+
                     problemsHolder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING);
                 }
             }

@@ -28,3 +28,15 @@ class TypehintCheck {
     public function propertyIsNotANumericLiteral() { $this->isNotANumericLiteral !== null; }
     public function parameterIsNotANumericLiteral(int $number) { $number !== null; }
 }
+
+// Allowed: zero is allowed in binary expression if one of operands is a function reference.
+return count($values) > 0;
+return $this->size() > 0;
+return 0 > count($values);
+return 0 > $this->size();
+
+// Warn: it is not applicable to other values.
+return count($values) >= <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning>;
+return $this->size() >= <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning>;
+return <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> >= count($values);
+return <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> >= $this->size();

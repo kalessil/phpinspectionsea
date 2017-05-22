@@ -68,8 +68,14 @@ public class MagicNumberInspector extends BasePhpInspection {
             }
 
             private boolean isNumeric(final PsiElement expression) {
-                return (expression instanceof PhpExpressionImpl) &&
-                       (expression.getNode().getElementType() == PhpElementTypes.NUMBER);
+                PsiElement testingExpression = expression;
+
+                if (testingExpression instanceof UnaryExpression) {
+                    testingExpression = ((UnaryExpression) testingExpression).getValue();
+                }
+
+                return (testingExpression instanceof PhpExpressionImpl) &&
+                       (testingExpression.getNode().getElementType() == PhpElementTypes.NUMBER);
             }
 
             private boolean isCounting(@NotNull final BinaryExpression binaryExpression) {

@@ -109,3 +109,8 @@ switch (getSomeNumber()) {
     case <weak_warning descr="Magic number should be replaced by a constant.">5</weak_warning>: $anyOtherNumber    = true; break;
     default: $shouldBeJustIgnored = true; break;
 }
+
+// Warn: negative values should be affected too.
+$negativeValue >= <weak_warning descr="Magic number should be replaced by a constant.">-10</weak_warning>;
+$negativeValue >= <weak_warning descr="Magic number should be replaced by a constant.">-1</weak_warning>;
+$negativeValue >= <weak_warning descr="Magic number should be replaced by a constant.">-0</weak_warning>;

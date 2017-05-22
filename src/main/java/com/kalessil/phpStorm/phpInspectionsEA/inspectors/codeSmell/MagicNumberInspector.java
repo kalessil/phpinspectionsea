@@ -154,7 +154,7 @@ public class MagicNumberInspector extends BasePhpInspection {
                     operationType.equals(PhpTokenTypes.opNOT_IDENTICAL) ||
                     operationType.equals(PhpTokenTypes.opEQUAL) ||
                     operationType.equals(PhpTokenTypes.opNOT_EQUAL)) {
-                    return isBinaryNumeric(numericOperand.getText());
+                    return "0".equals(numericOperand.getText());
                 }
 
                 final IElementType normalizeOperationType = numericOnOpposite ? operationType : ElementTypeUtil.rotateOperation(operationType);

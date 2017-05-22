@@ -102,6 +102,12 @@ $count >= <weak_warning descr="Magic number should be replaced by a constant.">2
 <weak_warning descr="Magic number should be replaced by a constant.">2</weak_warning> <= count($values);
 <weak_warning descr="Magic number should be replaced by a constant.">2</weak_warning> <= $this->size();
 <weak_warning descr="Magic number should be replaced by a constant.">2</weak_warning> <= $count;
+<weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> === count($values);
+<weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> !== count($values);
+<weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> === $this->size();
+<weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> !== $this->size();
+<weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> === $count;
+<weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning> !== $count;
 
 // Warn: if used on switch.
 switch (getSomeNumber()) {

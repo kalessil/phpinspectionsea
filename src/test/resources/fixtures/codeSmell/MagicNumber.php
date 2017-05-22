@@ -158,3 +158,15 @@ const NUMBER_TEN = 10;
 const NUMBER_TEN_REFERENCE = NUMBER_TEN;
 function sameAsDefaultValue($defaultValue = NUMBER_TEN_REFERENCE) { }
 sameAsDefaultValue(10);
+
+// Warn: using zero as argument to a not int parameter.
+function mixedParameterFunction($mixed) {}
+
+mixedParameterFunction(<weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>);
+
+// Allowed: using zero as argument to int parameter.
+function intParameterFunction(int $int) {}
+function nullableIntParameterFunction(?int $int) {}
+
+intParameterFunction(0);
+nullableIntParameterFunction(0);

@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.BinaryExpressionUtil;
@@ -150,6 +151,11 @@ public class MagicNumberInspector extends BasePhpInspection {
 
                     if (isNumeric(referenceParameter)) {
                         final Parameter functionParameter = functionParameters.get(parameterIndex);
+
+                        if ("0".equals(referenceParameter.getText()) &&
+                            PhpType.intersects(functionParameter.getType(), PhpType.INT)) {
+                            continue;
+                        }
 
                         if (isDefaultValued(functionParameter, referenceParameter)) {
                             continue;

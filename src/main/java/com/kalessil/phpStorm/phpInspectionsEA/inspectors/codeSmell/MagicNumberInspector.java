@@ -67,6 +67,22 @@ public class MagicNumberInspector extends BasePhpInspection {
                 }
             }
 
+            @Override
+            public void visitPhpField(final Field field) {
+                if (!field.isConstant()) {
+                    final PsiElement fieldValue = field.getDefaultValue();
+
+                    if (fieldValue == null) {
+                        return;
+                    }
+
+                    if (isNumeric(fieldValue) &&
+                        !"0".equals(fieldValue.getText())) {
+                        registerProblem(fieldValue);
+                    }
+                }
+            }
+
             private boolean isNumeric(final PsiElement expression) {
                 PsiElement testingExpression = expression;
 

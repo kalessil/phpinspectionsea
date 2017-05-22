@@ -114,3 +114,15 @@ switch (getSomeNumber()) {
 $negativeValue >= <weak_warning descr="Magic number should be replaced by a constant.">-10</weak_warning>;
 $negativeValue >= <weak_warning descr="Magic number should be replaced by a constant.">-1</weak_warning>;
 $negativeValue >= <weak_warning descr="Magic number should be replaced by a constant.">-0</weak_warning>;
+
+class PropertyNumericClass {
+    // Allowed: const should not be checked.
+    const IGNORE_THAT = 10;
+
+    // Warn: properties should not be numberic too.
+    public $someNumbericValue = <weak_warning descr="Magic number should be replaced by a constant.">10</weak_warning>;
+
+    // Allowed: except for zero.
+    public $zeroValue  = 0;
+    public $ignoreThat = self::IGNORE_THAT;
+}

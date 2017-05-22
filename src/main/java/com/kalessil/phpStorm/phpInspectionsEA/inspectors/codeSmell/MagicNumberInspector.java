@@ -14,6 +14,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.BinaryExpressionUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ElementTypeUtil;
 
+import java.util.Objects;
+
 import org.jetbrains.annotations.NotNull;
 
 public class MagicNumberInspector extends BasePhpInspection {
@@ -41,6 +43,20 @@ public class MagicNumberInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpBinaryExpression(final BinaryExpression expression) {
+                if (Objects.equals(expression.getOperationType(), PhpTokenTypes.opMUL)) {
+                    if (isNumeric(expression.getLeftOperand()) &&
+                        !isNumberOneNegative(expression.getLeftOperand())) {
+                        registerProblem(expression.getLeftOperand());
+                    }
+
+                    if (isNumeric(expression.getRightOperand()) &&
+                        !isNumberOneNegative(expression.getRightOperand())) {
+                        registerProblem(expression.getRightOperand());
+                    }
+
+                    return;
+                }
+
                 if (!BinaryExpressionUtil.isComparison(expression)) {
                     return;
                 }
@@ -83,6 +99,21 @@ public class MagicNumberInspector extends BasePhpInspection {
                 }
             }
 
+            @Override
+            public void visitPhpSelfAssignmentExpression(final SelfAssignmentExpression expression) {
+                if (Objects.equals(expression.getOperationType(), PhpTokenTypes.opMUL_ASGN)) {
+                    final PhpPsiElement expressionValue = expression.getValue();
+
+                    if (isNumberOneNegative(expressionValue)) {
+                        return;
+                    }
+
+                    if (isNumeric(expressionValue)) {
+                        registerProblem(expressionValue);
+                    }
+                }
+            }
+
             private boolean isNumeric(final PsiElement expression) {
                 PsiElement testingExpression = expression;
 
@@ -92,6 +123,17 @@ public class MagicNumberInspector extends BasePhpInspection {
 
                 return (testingExpression instanceof PhpExpressionImpl) &&
                        (testingExpression.getNode().getElementType() == PhpElementTypes.NUMBER);
+            }
+
+            private boolean isNumberOneNegative(final PsiElement unaryExpression) {
+                if (!(unaryExpression instanceof UnaryExpression)) {
+                    return false;
+                }
+
+                final PhpPsiElement unaryValue = ((UnaryExpression) unaryExpression).getValue();
+
+                return (unaryValue != null) &&
+                       "1".equals(unaryValue.getText());
             }
 
             private boolean isCounting(@NotNull final BinaryExpression binaryExpression) {

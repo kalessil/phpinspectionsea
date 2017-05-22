@@ -126,3 +126,13 @@ class PropertyNumericClass {
     public $zeroValue  = 0;
     public $ignoreThat = self::IGNORE_THAT;
 }
+
+// Warn: number used in multiply expression.
+$expressionWithMultiply * <weak_warning descr="Magic number should be replaced by a constant.">10</weak_warning>;
+$expressionWithMultiply * <weak_warning descr="Magic number should be replaced by a constant.">-10</weak_warning>;
+$expressionWithMultiply *= <weak_warning descr="Magic number should be replaced by a constant.">10</weak_warning>;
+$expressionWithMultiply *= <weak_warning descr="Magic number should be replaced by a constant.">-10</weak_warning>;
+
+// Allowed: number -1 used in multiply.
+$expressionWithMultiply * -1;
+$expressionWithMultiply *= -1;

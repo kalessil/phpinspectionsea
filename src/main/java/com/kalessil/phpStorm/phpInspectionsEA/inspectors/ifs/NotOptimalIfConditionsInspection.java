@@ -23,10 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     // Inspection options.
@@ -74,10 +71,10 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpIf(If ifStatement) {
-                LinkedList<PsiElement> objAllConditions = new LinkedList<>();
+                List<PsiElement> objAllConditions = new ArrayList<>();
                 IElementType[] arrOperationHolder = { null };
 
-                LinkedList<PsiElement> objConditionsFromStatement = this.inspectExpressionsOrder(ifStatement.getCondition(), arrOperationHolder);
+                List<PsiElement> objConditionsFromStatement = this.inspectExpressionsOrder(ifStatement.getCondition(), arrOperationHolder);
                 if (null != objConditionsFromStatement) {
                     objAllConditions.addAll(objConditionsFromStatement);
 
@@ -126,7 +123,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 objAllConditions.clear();
             }
 
-            private void inspectConditionsForMissingParenthesis(@NotNull LinkedList<PsiElement> objBranchConditions) {
+            private void inspectConditionsForMissingParenthesis(@NotNull List<PsiElement> objBranchConditions) {
                 for (PsiElement objCondition : objBranchConditions) {
                     if (!(objCondition instanceof BinaryExpression)) {
                         continue;
@@ -148,13 +145,13 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             }
 
             // reports $value instanceof \DateTime OP $value instanceof \DateTimeInterface
-            private void inspectConditionsForAmbiguousInstanceOf(@NotNull LinkedList<PsiElement> objBranchConditions) {
+            private void inspectConditionsForAmbiguousInstanceOf(@NotNull List<PsiElement> objBranchConditions) {
                 if (objBranchConditions.size() < 2) {
                     return;
                 }
 
                 // find all instanceof expressions
-                LinkedList<BinaryExpression> instanceOfExpressions = new LinkedList<>();
+                List<BinaryExpression> instanceOfExpressions = new ArrayList<>();
                 for (PsiElement objExpression : objBranchConditions) {
                     if (objExpression instanceof BinaryExpression) {
                         PsiElement objOperation = ((BinaryExpression) objExpression).getOperation();
@@ -261,7 +258,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             }
 
             /* TODO: is_* functions */
-            private void inspectConditionsForInstanceOfAndIdentityOperations(@NotNull LinkedList<PsiElement> objBranchConditions, @Nullable IElementType operationType) {
+            private void inspectConditionsForInstanceOfAndIdentityOperations(@NotNull List<PsiElement> objBranchConditions, @Nullable IElementType operationType) {
                 if (operationType != PhpTokenTypes.opAND || objBranchConditions.size() < 2) {
                     return;
                 }
@@ -313,7 +310,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
             }
 
-            private void inspectConditionsForMultipleIsSet(@NotNull LinkedList<PsiElement> objBranchConditions, @Nullable IElementType operationType) {
+            private void inspectConditionsForMultipleIsSet(@NotNull List<PsiElement> objBranchConditions, @Nullable IElementType operationType) {
                 /* handle isset && isset ... */
                 if (operationType == PhpTokenTypes.opAND) {
                     int intIssetCallsCount = 0;
@@ -351,13 +348,13 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
             }
 
-            private void inspectConditionsForDuplicatedCalls(@NotNull LinkedList<PsiElement> objBranchConditions) {
+            private void inspectConditionsForDuplicatedCalls(@NotNull List<PsiElement> objBranchConditions) {
                 if (objBranchConditions.size() < 2) {
                     return;
                 }
 
                 /* extract calls */
-                LinkedList<PsiElement> objCallsExtracted = new LinkedList<>();
+                List<PsiElement> objCallsExtracted = new ArrayList<>();
                 for (PsiElement objCondition : objBranchConditions) {
                     if (!(objCondition instanceof BinaryExpression)) {
                         continue;
@@ -406,7 +403,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
              * Checks if any of conditions is boolean
              * @param branchConditions to check
              */
-            private void inspectConditionsWithBooleans(@NotNull LinkedList<PsiElement> branchConditions) {
+            private void inspectConditionsWithBooleans(@NotNull List<PsiElement> branchConditions) {
                 for (PsiElement expression : branchConditions) {
                     if (PhpLanguageUtil.isBoolean(expression)) {
                         holder.registerProblem(expression, messageBooleansUsed, ProblemHighlightType.GENERIC_ERROR);
@@ -419,14 +416,14 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
              * @param objAllConditions to check
              * @param ifStatement current scope
              */
-            private void inspectDuplicatedConditions(LinkedList<PsiElement> objAllConditions, If ifStatement) {
-                LinkedList<PsiElement> objParentConditions = new LinkedList<>();
+            private void inspectDuplicatedConditions(List<PsiElement> objAllConditions, If ifStatement) {
+                List<PsiElement> objParentConditions = new ArrayList<>();
 
                 /* collect parent scopes conditions */
                 PsiElement objParent = ifStatement.getParent();
                 while (null != objParent && !(objParent instanceof PhpFile)) {
                     if (objParent instanceof If) {
-                        LinkedList<PsiElement> tempList = ExpressionSemanticUtil.getConditions(((If) objParent).getCondition(), null);
+                        List<PsiElement> tempList = ExpressionSemanticUtil.getConditions(((If) objParent).getCondition(), null);
                         if (null != tempList) {
                             objParentConditions.addAll(tempList);
                             tempList.clear();
@@ -518,8 +515,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
              * @param objCondition to inspect
              */
             @Nullable
-            private LinkedList<PsiElement> inspectExpressionsOrder(PsiElement objCondition, @Nullable IElementType[] arrOperationHolder) {
-                LinkedList<PsiElement> objPartsCollection = ExpressionSemanticUtil.getConditions(objCondition, arrOperationHolder);
+            private List<PsiElement> inspectExpressionsOrder(PsiElement objCondition, @Nullable IElementType[] arrOperationHolder) {
+                List<PsiElement> objPartsCollection = ExpressionSemanticUtil.getConditions(objCondition, arrOperationHolder);
                 if (null == objPartsCollection) {
                     return null;
                 }

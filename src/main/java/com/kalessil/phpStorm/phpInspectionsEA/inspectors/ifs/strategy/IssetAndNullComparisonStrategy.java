@@ -15,13 +15,13 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 final public class IssetAndNullComparisonStrategy {
     private final static String messagePattern = "It seems like '%e%' is already covered by 'isset(...)'.";
 
-    static public boolean apply(@NotNull LinkedList<PsiElement> conditions, @NotNull ProblemsHolder holder) {
+    static public boolean apply(@NotNull List<PsiElement> conditions, @NotNull ProblemsHolder holder) {
         /* first ensure that we have null identity checks at all */
         final HashMap<PsiElement, PsiElement> nullTestSubjects = new HashMap<>();
         for (PsiElement oneCondition : conditions) {

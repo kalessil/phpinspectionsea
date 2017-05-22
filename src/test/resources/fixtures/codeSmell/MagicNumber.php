@@ -3,15 +3,11 @@
 // Allowed: should not affects pure assignments.
 $shouldNotBeConstant_ItsJustAnAssignment = 10;
 
-// Allowed: integer zero or one are ignored by default.
-return 0;
-return 1;
-
-// Warn: float zero or one are not ignored.
+// Warn: any returned integer or float.
+return <weak_warning descr="Magic number should be replaced by a constant.">0</weak_warning>;
+return <weak_warning descr="Magic number should be replaced by a constant.">1</weak_warning>;
 return <weak_warning descr="Magic number should be replaced by a constant.">0.0</weak_warning>;
 return <weak_warning descr="Magic number should be replaced by a constant.">1.0</weak_warning>;
-
-// Warn: any number, except zero or one, by default.
 return <weak_warning descr="Magic number should be replaced by a constant.">10</weak_warning>;
 return <weak_warning descr="Magic number should be replaced by a constant.">10.0</weak_warning>;
 

@@ -9,20 +9,10 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.jetbrains.annotations.NotNull;
 
 public class MagicNumberInspector extends BasePhpInspection {
     private static final String message = "Magic number should be replaced by a constant.";
-
-    private static final Collection<String> allowedNumbers = new ArrayList<>();
-
-    static {
-        allowedNumbers.add("0");
-        allowedNumbers.add("1");
-    }
 
     @NotNull
     public String getShortName() {
@@ -35,8 +25,7 @@ public class MagicNumberInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpExpression(final PhpExpression expression) {
-                if (PhpType.intersects(expression.getType(), PhpType.FLOAT_INT) &&
-                    !allowedNumbers.contains(expression.getText())) {
+                if (PhpType.intersects(expression.getType(), PhpType.FLOAT_INT)) {
                     if (!(expression.getParent() instanceof PhpReturn)) {
                         return;
                     }

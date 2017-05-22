@@ -17,7 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 final public class HardcodedBooleansStrategy {
-    private static final String message = "This boolean makes no sense or enforces the operation result result.";
+    private static final String message = "This boolean makes no sense or enforces the operation result.";
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         boolean result         = false;

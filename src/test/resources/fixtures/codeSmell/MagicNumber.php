@@ -15,5 +15,9 @@ return <weak_warning descr="Magic number should be replaced by a constant.">10.0
 return $pregMatch[2];
 return sum(1, 2);
 
+// Warn: using in binary expression.
+$binaryExpressionOnLeft  = <weak_warning descr="Magic number should be replaced by a constant.">5</weak_warning> < $number;
+$binaryExpressionOnRight = $number > <weak_warning descr="Magic number should be replaced by a constant.">5</weak_warning>;
+
 // False-positive: generalized way to test expression type.
 $shouldNotBeTested = [ 'array' => 'value' ];

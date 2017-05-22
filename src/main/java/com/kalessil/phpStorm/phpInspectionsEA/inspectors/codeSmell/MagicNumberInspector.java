@@ -168,22 +168,28 @@ public class MagicNumberInspector extends BasePhpInspection {
 
             private boolean isDefaultValued(@Nullable final Parameter functionParameter, final PsiElement referenceParameter) {
                 if (functionParameter != null) {
-                    PsiElement defaultOriginal = functionParameter.getDefaultValue();
+                    PsiElement defaultValue = functionParameter.getDefaultValue();
 
-                    if (defaultOriginal == null) {
+                    if (defaultValue == null) {
                         return false;
                     }
 
-                    while (defaultOriginal instanceof ConstantReference) {
-                        final PsiElement nextReference = ((PsiReference) defaultOriginal).resolve();
+                    while (defaultValue instanceof ConstantReference) {
+                        final PsiElement nextReference = ((PsiReference) defaultValue).resolve();
 
                         if (nextReference instanceof Constant) {
-                            defaultOriginal = ((Constant) nextReference).getValue();
+                            final PsiElement nextReferenceValue = ((Constant) nextReference).getValue();
+
+                            if (defaultValue == nextReferenceValue) {
+                                return false;
+                            }
+
+                            defaultValue = nextReferenceValue;
                         }
                     }
 
-                    return (defaultOriginal != null) &&
-                           defaultOriginal.getText().equals(referenceParameter.getText());
+                    return (defaultValue != null) &&
+                           defaultValue.getText().equals(referenceParameter.getText());
                 }
 
                 return false;

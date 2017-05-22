@@ -170,3 +170,8 @@ function nullableIntParameterFunction(?int $int) {}
 
 intParameterFunction(0);
 nullableIntParameterFunction(0);
+
+// Internal: avoiding loopings.
+define("null", null);
+function avoidLoopings($defaultValue = null) { }
+avoidLoopings(10);

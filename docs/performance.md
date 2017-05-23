@@ -45,7 +45,8 @@ Let's start with an example demonstrating the case:
 
 In order to reduce execution time we can modify the code and perform the merge operation only once:
 ```php
-    $options = [];
+    /* the inner empty array covers cases when no loops were made */
+    $options = [[]]; 
     foreach ($configurationSources as $source) {
         /* more logic here */
         

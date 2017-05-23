@@ -2,11 +2,11 @@ package com.kalessil.phpStorm.phpInspectionsEA.languageConstructions;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.ProtectedWithFinalClassInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.LowerAccessLevelInspector;
 
-public class ProtectedWithFinalClassInspectorTest extends CodeInsightFixtureTestCase {
+public class LowerAccessLevelInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(new ProtectedWithFinalClassInspector());
+        myFixture.enableInspections(new LowerAccessLevelInspector());
 
         myFixture.configureByFile("fixtures/codeSmell/protected-with-final-class.php");
         myFixture.testHighlighting(true, false, true);

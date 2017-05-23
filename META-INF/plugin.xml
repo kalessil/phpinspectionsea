@@ -743,8 +743,8 @@ We keep delivering funded results =)
          groupName="Architecture"                                   enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassReImplementsParentInterfaceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="ProtectedWithFinalClassInspection"              displayName="Declaration access can be weaker"
-        groupName="Architecture"                                   enabledByDefault="true" level="WEAK WARNING"
+        shortName="LowerAccessLevelInspection"                      displayName="Declaration access can be weaker"
+        groupName="Architecture"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.LowerAccessLevelInspector"/>
 
 

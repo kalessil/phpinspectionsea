@@ -1,10 +1,16 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.strategy;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpClassMember;
@@ -30,7 +36,7 @@ final public class ProtectedMembersOfFinalClassStrategy {
         if (isTargetContext && !isOverride(subject, clazz)) {
             final PsiElement modifier = getProtectedModifier(subject);
             if (modifier != null) {
-                holder.registerProblem(modifier, message, ProblemHighlightType.WEAK_WARNING);
+                holder.registerProblem(modifier, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(modifier));
             }
         }
     }
@@ -64,5 +70,36 @@ final public class ProtectedMembersOfFinalClassStrategy {
             result = parentMember != null;
         }
         return result;
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        private final SmartPsiElementPointer<PsiElement> modifier;
+
+        TheLocalFix(@NotNull final PsiElement modifierElement) {
+            final SmartPointerManager manager = SmartPointerManager.getInstance(modifierElement.getProject());
+
+            modifier = manager.createSmartPsiElementPointer(modifierElement);
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Make it private";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+            final PsiElement element     = modifier.getElement();
+            final PsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "private");
+            if (element != null && replacement != null) {
+                element.replace(replacement);
+            }
+        }
     }
 }

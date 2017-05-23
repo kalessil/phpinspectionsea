@@ -1,17 +1,11 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.Method;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.strategy.PropertyUsedInPrivateContextStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.strategy.ProtectedMembersOfFinalClassStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -38,49 +32,19 @@ public class LowerAccessLevelInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpField(final Field field) {
+            public void visitPhpField(@NotNull Field field) {
                 ProtectedMembersOfFinalClassStrategy.apply(field, problemsHolder);
             }
 
             @Override
-            public void visitPhpMethod(final Method method) {
+            public void visitPhpMethod(@NotNull Method method) {
                 ProtectedMembersOfFinalClassStrategy.apply(method, problemsHolder);
             }
-        };
-    }
 
-    private static class TheLocalFix implements LocalQuickFix {
-        private final SmartPsiElementPointer<PsiElement> modifier;
-
-        TheLocalFix(@NotNull final PsiElement modifierElement) {
-            final SmartPointerManager manager = SmartPointerManager.getInstance(modifierElement.getProject());
-
-            modifier = manager.createSmartPsiElementPointer(modifierElement);
-        }
-
-        @NotNull
-        @Override
-        public String getName() {
-            return "Declare private";
-        }
-
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return getName();
-        }
-
-        @Override
-        public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
-            final PsiElement modifierElement     = modifier.getElement();
-            final PsiElement modifierReplacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "private");
-
-            if ((modifierElement == null) ||
-                (modifierReplacement == null)) {
-                return;
+            @Override
+            public void visitPhpClass(PhpClass clazz) {
+                PropertyUsedInPrivateContextStrategy.apply(clazz, problemsHolder);
             }
-
-            modifierElement.replace(modifierReplacement);
-        }
+        };
     }
 }

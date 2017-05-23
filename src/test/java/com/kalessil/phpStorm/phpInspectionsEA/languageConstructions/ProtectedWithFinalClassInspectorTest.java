@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.languageConstructions;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ProtectedWithFinalClassInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.ProtectedWithFinalClassInspector;
 
 public class ProtectedWithFinalClassInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

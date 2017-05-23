@@ -31,7 +31,7 @@ import java.util.Set;
  */
 
 final public class PropertyUsedInPrivateContextStrategy {
-    private static final String message = "...";
+    private static final String message = "Since the property used in private context only, it could be declared private.";
 
     public static void apply(@NotNull PhpClass clazz, @NotNull ProblemsHolder holder) {
         if (!clazz.isFinal() && !clazz.isInterface()) {

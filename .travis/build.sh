@@ -6,7 +6,7 @@ IFS=$'\n\t'
 
 ideaVersion="2017.1"
 if [ "$IDE_ID" == "2017.1" ]; then
-    ideaVersion="2017.1"
+    ideaVersion="2017.1.3"
 elif [ "$IDE_ID" == "2016.3" ]; then
     ideaVersion="2016.3.6"
 elif [ "$IDE_ID" == "2016.2" ]; then

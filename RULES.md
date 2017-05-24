@@ -126,7 +126,6 @@ Inspections Lists (Language level migration)
 | Language level migration | PowerOperatorCanBeUsedInspection                | Power operator can be used                          | yes | yes | no   | no  |
 | Language level migration | ConstantCanBeUsedInspection                     | A constant can be used                              | yes | yes | yes  | no  |
 | Language level migration | ArgumentUnpackingCanBeUsedInspection            | Argument unpacking can be used                      | yes | yes | no   | no  |
-| Language level migration | ProtectedWithFinalClassInspector                | Protected modifier could be replaced by private     | no  | yes | no   | no  |
 
 Inspections Lists (Architecture)
 ---
@@ -142,6 +141,7 @@ Inspections Lists (Architecture)
 | Architecture         | PropertyCanBeStaticInspection                   | Property could be static                            | n/a | yes | n/a  | no  |
 | Architecture         | EmptyClassInspection                            | Empty class                                         | n/a | yes | n/a  | no  |
 | Architecture         | OverridingDeprecatedMethodInspection            | Overriding deprecated methods                       | n/a | yes | n/a  | yes |
+| Architecture         | LowerAccessLevelInspection                      | Declaration access can be weaker                    | yes | yes | yes  | no  |
 
 Inspections Lists (Probable bugs)
 ---

@@ -1,5 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy;
 
+import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
+import org.jetbrains.annotations.NotNull;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -8,14 +16,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.bin
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElement;
-import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
-import org.jetbrains.annotations.NotNull;
 
 final public class EqualsInAssignmentContextStrategy {
     private static final String message = "It seems that '=' should be here.";

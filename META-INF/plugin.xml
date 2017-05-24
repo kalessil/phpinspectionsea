@@ -693,11 +693,6 @@ We keep delivering funded results =)
         shortName="ReturnTypeCanBeDeclaredInspection"             displayName="Return type hint can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ReturnTypeCanBeDeclaredInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="ProtectedWithFinalClassInspection"             displayName="Avoid protected modifier on final classes"
-        groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ProtectedWithFinalClassInspector"/>
-
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="BadExceptionsProcessingInspection"               displayName="Badly organized exception handling"
@@ -747,6 +742,10 @@ We keep delivering funded results =)
          shortName="ClassReImplementsParentInterfaceInspection"     displayName="Class implements interfaces multiple times"
          groupName="Architecture"                                   enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassReImplementsParentInterfaceInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="LowerAccessLevelInspection"                      displayName="Declaration access can be weaker"
+        groupName="Architecture"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.LowerAccessLevelInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

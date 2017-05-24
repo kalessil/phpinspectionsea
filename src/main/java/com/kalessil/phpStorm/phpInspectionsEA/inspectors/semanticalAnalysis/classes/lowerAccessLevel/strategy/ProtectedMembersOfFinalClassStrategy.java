@@ -1,22 +1,14 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.strategy;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpClassMember;
-import com.jetbrains.php.lang.psi.elements.PhpModifierList;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.fixers.MakePrivateFixer;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.utils.ModifierExtractionUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -34,28 +26,11 @@ final public class ProtectedMembersOfFinalClassStrategy {
         final PhpClass clazz          = subject.getContainingClass();
         final boolean isTargetContext = clazz != null && clazz.isFinal() && subject.getModifier().isProtected();
         if (isTargetContext && !isOverride(subject, clazz)) {
-            final PsiElement modifier = getProtectedModifier(subject);
+            final PsiElement modifier = ModifierExtractionUtil.getProtectedModifier(subject);
             if (modifier != null) {
-                holder.registerProblem(modifier, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(modifier));
+                holder.registerProblem(modifier, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new MakePrivateFixer(modifier));
             }
         }
-    }
-
-    @Nullable
-    private static PsiElement getProtectedModifier(final PhpClassMember subject) {
-        final PsiElement expression      = (subject instanceof Field) ? subject.getParent() : subject;
-        final PhpModifierList list       = PsiTreeUtil.findChildOfType(expression, PhpModifierList.class);
-        final LeafPsiElement[] modifiers = PsiTreeUtil.getChildrenOfType(list, LeafPsiElement.class);
-        PsiElement result                = null;
-        if (modifiers != null) {
-            for (final LeafPsiElement modifier : modifiers) {
-                if (modifier.getText().equalsIgnoreCase("protected")) {
-                    result = modifier;
-                    break;
-                }
-            }
-        }
-        return result;
     }
 
     private static boolean isOverride(@NotNull PhpClassMember member, @NotNull PhpClass clazz) {
@@ -70,36 +45,5 @@ final public class ProtectedMembersOfFinalClassStrategy {
             result = parentMember != null;
         }
         return result;
-    }
-
-    private static class TheLocalFix implements LocalQuickFix {
-        private final SmartPsiElementPointer<PsiElement> modifier;
-
-        TheLocalFix(@NotNull final PsiElement modifierElement) {
-            final SmartPointerManager manager = SmartPointerManager.getInstance(modifierElement.getProject());
-
-            modifier = manager.createSmartPsiElementPointer(modifierElement);
-        }
-
-        @NotNull
-        @Override
-        public String getName() {
-            return "Make it private";
-        }
-
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return getName();
-        }
-
-        @Override
-        public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
-            final PsiElement element     = modifier.getElement();
-            final PsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "private");
-            if (element != null && replacement != null) {
-                element.replace(replacement);
-            }
-        }
     }
 }

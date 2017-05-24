@@ -1,20 +1,14 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.strategy;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.fixers.MakePrivateFixer;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.utils.ModifierExtractionUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -89,62 +83,14 @@ final public class PropertyUsedInPrivateContextStrategy {
                     }
                     final Set<String> usages = contextInformation.get(fieldName);
                     if (usages.size() == 1 && usages.contains("private")) {
-                        final PsiElement modifier = getProtectedModifier(fields.get(fieldName));
+                        final PsiElement modifier = ModifierExtractionUtil.getProtectedModifier(fields.get(fieldName));
                         if (modifier != null) {
-                            holder.registerProblem(modifier, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(modifier));
+                            holder.registerProblem(modifier, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new MakePrivateFixer(modifier));
                         }
                     }
                 }
                 contextInformation.clear();
                 fields.clear();
-            }
-        }
-    }
-
-    @Nullable
-    private static PsiElement getProtectedModifier(final PhpClassMember subject) {
-        final PsiElement expression      = (subject instanceof Field) ? subject.getParent() : subject;
-        final PhpModifierList list       = PsiTreeUtil.findChildOfType(expression, PhpModifierList.class);
-        final LeafPsiElement[] modifiers = PsiTreeUtil.getChildrenOfType(list, LeafPsiElement.class);
-        PsiElement result                = null;
-        if (modifiers != null) {
-            for (final LeafPsiElement modifier : modifiers) {
-                if (modifier.getText().equalsIgnoreCase("protected")) {
-                    result = modifier;
-                    break;
-                }
-            }
-        }
-        return result;
-    }
-
-    private static class TheLocalFix implements LocalQuickFix {
-        private final SmartPsiElementPointer<PsiElement> modifier;
-
-        TheLocalFix(@NotNull final PsiElement modifierElement) {
-            final SmartPointerManager manager = SmartPointerManager.getInstance(modifierElement.getProject());
-
-            modifier = manager.createSmartPsiElementPointer(modifierElement);
-        }
-
-        @NotNull
-        @Override
-        public String getName() {
-            return "Make it private";
-        }
-
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return getName();
-        }
-
-        @Override
-        public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
-            final PsiElement element     = modifier.getElement();
-            final PsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "private");
-            if (element != null && replacement != null) {
-                element.replace(replacement);
             }
         }
     }

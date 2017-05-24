@@ -3,6 +3,8 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.bin
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -21,15 +23,21 @@ final public class HardcodedBooleansStrategy {
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         boolean result         = false;
-        final PsiElement left  = expression.getLeftOperand();
-        if (PhpLanguageUtil.isBoolean(left)) {
-            holder.registerProblem(left, message, ProblemHighlightType.GENERIC_ERROR);
-            result = true;
-        }
-        final PsiElement right = expression.getRightOperand();
-        if (PhpLanguageUtil.isBoolean(right)) {
-            holder.registerProblem(right, message, ProblemHighlightType.GENERIC_ERROR);
-            result = true;
+        final IElementType operation = expression.getOperationType();
+        if (
+            operation == PhpTokenTypes.opAND || operation == PhpTokenTypes.opOR ||
+            operation == PhpTokenTypes.opLIT_AND || operation == PhpTokenTypes.opLIT_OR
+        ) {
+            final PsiElement left  = expression.getLeftOperand();
+            if (PhpLanguageUtil.isBoolean(left)) {
+                holder.registerProblem(left, message, ProblemHighlightType.GENERIC_ERROR);
+                result = true;
+            }
+            final PsiElement right = expression.getRightOperand();
+            if (PhpLanguageUtil.isBoolean(right)) {
+                holder.registerProblem(right, message, ProblemHighlightType.GENERIC_ERROR);
+                result = true;
+            }
         }
         return result;
     }

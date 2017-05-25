@@ -22,10 +22,10 @@ final public class HardcodedBooleansStrategy {
     private static final String message = "This boolean makes no sense or enforces the operation result.";
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
-        boolean result         = false;
+        boolean result               = false;
         final IElementType operation = expression.getOperationType();
         if (
-            operation == PhpTokenTypes.opAND || operation == PhpTokenTypes.opOR ||
+            operation == PhpTokenTypes.opAND     || operation == PhpTokenTypes.opOR ||
             operation == PhpTokenTypes.opLIT_AND || operation == PhpTokenTypes.opLIT_OR
         ) {
             final PsiElement left  = expression.getLeftOperand();

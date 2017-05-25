@@ -38,5 +38,5 @@ class MisplacedOperations
 $x = (
     <error descr="This boolean makes no sense or enforces the operation result.">true</error> ||
     <error descr="This boolean makes no sense or enforces the operation result.">true</error> ||
-    false == true
+    false === true
 );

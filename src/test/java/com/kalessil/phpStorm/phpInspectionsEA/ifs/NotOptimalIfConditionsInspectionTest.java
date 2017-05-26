@@ -34,4 +34,13 @@ final public class NotOptimalIfConditionsInspectionTest extends CodeInsightFixtu
         myFixture.configureByFile("fixtures/ifs/if-duplicate-conditions.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testMissingParenthesises() {
+        NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
+        inspector.REPORT_MISSING_PARENTHESISES     = true;
+
+        myFixture.enableInspections(inspector);
+
+        myFixture.configureByFile("fixtures/ifs/if-missing-parenthesises.php");
+        myFixture.testHighlighting(true, false, true);
+    }
 }

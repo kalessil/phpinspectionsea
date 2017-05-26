@@ -36,18 +36,19 @@ import java.util.*;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     // Inspection options.
-    public boolean REPORT_LITERAL_OPERATORS    = true;
-    public boolean REPORT_DUPLICATE_CONDITIONS = true;
+    public boolean REPORT_LITERAL_OPERATORS     = true;
+    public boolean REPORT_DUPLICATE_CONDITIONS  = true;
+    public boolean REPORT_MISSING_PARENTHESISES = true;
 
     private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
 
     private static final String strProblemDescriptionInstanceOfAmbiguous      = "This condition is ambiguous and can be safely removed.";
     private static final String messageOrdering                               = "This condition execution costs less than the previous one.";
     private static final String messageDuplicateConditions                    = "This condition is duplicated in another if/elseif branch.";
-    private static final String strProblemDescriptionDuplicateConditionPart   = "This call is duplicated in conditions set.";
+    private static final String messageDuplicateConditionPart                 = "This call is duplicated in conditions set.";
     private static final String strProblemDescriptionIssetCanBeMergedAndCase  = "This can be merged into the previous 'isset(..., ...[, ...])'.";
     private static final String strProblemDescriptionIssetCanBeMergedOrCase   = "This can be merged into the previous '!isset(..., ...[, ...])'.";
-    private static final String strProblemDescriptionConditionShouldBeWrapped = "Confusing conditions structure: please wrap needed with '(...)'.";
+    private static final String messageConditionShouldBeWrapped               = "Confusing conditions structure: please wrap needed with '(...)'.";
 
     @NotNull
     public String getShortName() {
@@ -87,8 +88,12 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 if (null != objConditionsFromStatement) {
                     objAllConditions.addAll(objConditionsFromStatement);
 
-                    this.inspectConditionsForMissingParenthesis(objConditionsFromStatement);
-                    this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
+                    if (REPORT_MISSING_PARENTHESISES) {
+                        this.inspectConditionsForMissingParenthesis(objConditionsFromStatement);
+                    }
+                    if (REPORT_DUPLICATE_CONDITIONS) {
+                        this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
+                    }
                     this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
                     this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
 
@@ -107,8 +112,12 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     if (null != objConditionsFromStatement) {
                         objAllConditions.addAll(objConditionsFromStatement);
 
-                        this.inspectConditionsForMissingParenthesis(objConditionsFromStatement);
-                        this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
+                        if (REPORT_MISSING_PARENTHESISES) {
+                            this.inspectConditionsForMissingParenthesis(objConditionsFromStatement);
+                        }
+                        if (REPORT_DUPLICATE_CONDITIONS) {
+                            this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
+                        }
                         this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
                         this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
 
@@ -132,23 +141,18 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 objAllConditions.clear();
             }
 
-            private void inspectConditionsForMissingParenthesis(@NotNull List<PsiElement> objBranchConditions) {
-                for (PsiElement objCondition : objBranchConditions) {
-                    if (!(objCondition instanceof BinaryExpression)) {
+            private void inspectConditionsForMissingParenthesis(@NotNull List<PsiElement> conditions) {
+                for (final PsiElement condition : conditions) {
+                    if (!(condition instanceof BinaryExpression)) {
                         continue;
                     }
-
-                    PsiElement objOperation = ((BinaryExpression) objCondition).getOperation();
-                    if (null == objOperation) {
-                        continue;
-                    }
-                    IElementType operationType = objOperation.getNode().getElementType();
+                    final IElementType operationType = ((BinaryExpression) condition).getOperationType();
                     if (operationType != PhpTokenTypes.opAND && operationType != PhpTokenTypes.opOR) {
                         continue;
                     }
 
-                    if (!(objCondition.getParent() instanceof ParenthesizedExpression)) {
-                        holder.registerProblem(objCondition, strProblemDescriptionConditionShouldBeWrapped, ProblemHighlightType.ERROR);
+                    if (!(condition.getParent() instanceof ParenthesizedExpression)) {
+                        holder.registerProblem(condition, messageConditionShouldBeWrapped, ProblemHighlightType.ERROR);
                     }
                 }
             }
@@ -357,51 +361,45 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
             }
 
-            private void inspectConditionsForDuplicatedCalls(@NotNull List<PsiElement> objBranchConditions) {
-                if (objBranchConditions.size() < 2) {
+            private void inspectConditionsForDuplicatedCalls(@NotNull List<PsiElement> conditions) {
+                if (conditions.size() < 2) {
                     return;
                 }
 
                 /* extract calls */
-                List<PsiElement> objCallsExtracted = new ArrayList<>();
-                for (PsiElement objCondition : objBranchConditions) {
-                    if (!(objCondition instanceof BinaryExpression)) {
+                final List<PsiElement> callsExtracted = new ArrayList<>();
+                for (final PsiElement condition : conditions) {
+                    if (!(condition instanceof BinaryExpression)) {
                         continue;
                     }
 
-                    PsiElement tempExpression = ((BinaryExpression) objCondition).getLeftOperand();
+                    PsiElement tempExpression = ((BinaryExpression) condition).getLeftOperand();
                     if (tempExpression instanceof FunctionReference) {
-                        objCallsExtracted.add(tempExpression);
+                        callsExtracted.add(tempExpression);
                     }
-
-                    tempExpression = ((BinaryExpression) objCondition).getRightOperand();
+                    tempExpression = ((BinaryExpression) condition).getRightOperand();
                     if (tempExpression instanceof FunctionReference) {
-                        objCallsExtracted.add(tempExpression);
+                        callsExtracted.add(tempExpression);
                     }
                 }
 
                 /* scan for duplicates */
-                for (PsiElement objExpression : objCallsExtracted) {
-                    if (null == objExpression) {
+                for (final PsiElement expression : callsExtracted) {
+                    if (null == expression) {
                         continue;
                     }
 
                     /* put a stub */
-                    int intOuterIndex = objCallsExtracted.indexOf(objExpression);
-                    objCallsExtracted.set(intOuterIndex, null);
-
+                    callsExtracted.set(callsExtracted.indexOf(expression), null);
                     /* search duplicates in current scope */
-                    for (PsiElement objInnerLoopExpression : objCallsExtracted) {
-                        if (null == objInnerLoopExpression) {
+                    for (final PsiElement innerLoopExpression : callsExtracted) {
+                        if (null == innerLoopExpression) {
                             continue;
                         }
 
-                        boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objInnerLoopExpression, objExpression);
-                        if (isDuplicate) {
-                            holder.registerProblem(objInnerLoopExpression, strProblemDescriptionDuplicateConditionPart, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-
-                            int intInnerIndex = objCallsExtracted.indexOf(objInnerLoopExpression);
-                            objCallsExtracted.set(intInnerIndex, null);
+                        if (PsiEquivalenceUtil.areElementsEquivalent(innerLoopExpression, expression)) {
+                            holder.registerProblem(innerLoopExpression, messageDuplicateConditionPart, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            callsExtracted.set(callsExtracted.indexOf(innerLoopExpression), null);
                         }
                     }
                 }
@@ -561,6 +559,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
         return OptionsComponent.create((component) -> {
             component.addCheckbox("Report literal and/or operators", REPORT_LITERAL_OPERATORS, (isSelected) -> REPORT_LITERAL_OPERATORS = isSelected);
             component.addCheckbox("Report duplicate conditions", REPORT_DUPLICATE_CONDITIONS, (isSelected) -> REPORT_DUPLICATE_CONDITIONS = isSelected);
+            component.addCheckbox("Report confusing conditions", REPORT_MISSING_PARENTHESISES, (isSelected) -> REPORT_MISSING_PARENTHESISES = isSelected);
         });
     }
 }

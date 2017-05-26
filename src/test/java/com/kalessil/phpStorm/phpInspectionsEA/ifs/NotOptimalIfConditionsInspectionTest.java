@@ -10,12 +10,14 @@ final public class NotOptimalIfConditionsInspectionTest extends CodeInsightFixtu
         myFixture.configureByFile("fixtures/ifs/not-optimal-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }
+
     public void testIssetAndNullComparisonPatterns() {
         myFixture.enableInspections(new NotOptimalIfConditionsInspection());
 
         myFixture.configureByFile("fixtures/ifs/if-isset-not-null.php");
         myFixture.testHighlighting(true, false, true);
     }
+
     public void testLiteralOperatorsPatterns() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_LITERAL_OPERATORS         = true;
@@ -25,6 +27,7 @@ final public class NotOptimalIfConditionsInspectionTest extends CodeInsightFixtu
         myFixture.configureByFile("fixtures/ifs/if-literal-operators.php");
         myFixture.testHighlighting(true, false, true);
     }
+
     public void testDuplicateConditions() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_DUPLICATE_CONDITIONS      = true;
@@ -34,6 +37,7 @@ final public class NotOptimalIfConditionsInspectionTest extends CodeInsightFixtu
         myFixture.configureByFile("fixtures/ifs/if-duplicate-conditions.php");
         myFixture.testHighlighting(true, false, true);
     }
+
     public void testMissingParenthesises() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_MISSING_PARENTHESISES     = true;
@@ -41,6 +45,16 @@ final public class NotOptimalIfConditionsInspectionTest extends CodeInsightFixtu
         myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/ifs/if-missing-parenthesises.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+
+    public void testMergeIsset() {
+        NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
+        inspector.SUGGEST_MERGING_ISSET            = true;
+
+        myFixture.enableInspections(inspector);
+
+        myFixture.configureByFile("fixtures/ifs/if-merge-isset.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

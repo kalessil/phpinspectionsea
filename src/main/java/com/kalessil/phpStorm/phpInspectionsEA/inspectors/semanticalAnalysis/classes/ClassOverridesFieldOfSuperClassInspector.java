@@ -2,19 +2,16 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.cla
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpModifier;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -61,36 +58,28 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
                     return;
                 }
 
-
-                final PhpModifier.Access ownFieldAccess  = ownField.getModifier().getAccess();
-                final String ownFieldName                = ownField.getName();
-                final PsiElement ownFieldParent          = ownField.getParent();
-                for (PhpClass parentClass : InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true)) {
-                    /* ensure class and super are explorable */
-                    final String superClassFQN = parentClass.getFQN();
-                    if (clazz == parentClass || parentClass.isInterface() || StringUtil.isEmpty(superClassFQN)) {
-                        continue;
-                    }
-
-                    for (Field superclassField : parentClass.getOwnFields()) {
-                        if (!superclassField.getName().equals(ownFieldName)) {
-                            continue;
-                        }
-
+                final PhpClass parent     = clazz.getSuperClass();
+                final String ownFieldName = ownField.getName();
+                final Field parentField   = parent == null ? null : parent.findFieldByName(ownFieldName, false);
+                if (parentField != null) {
+                    final PhpClass parentFieldHolder = parentField.getContainingClass();
+                    final PsiElement fieldNameNode   = NamedElementUtil.getNameIdentifier(ownField);
+                    if (fieldNameNode != null && parentFieldHolder != null) {
                         /* re-defining private fields with the same name is pretty suspicious itself */
-                        if (superclassField.getModifier().isPrivate()) {
+                        if (parentField.getModifier().isPrivate()) {
                             if (REPORT_PRIVATE_REDEFINITION) {
-                                final String message = patternProtectedCandidate.replace("%c%", superClassFQN);
-                                holder.registerProblem(ownFieldParent, message, ProblemHighlightType.WEAK_WARNING);
+                                final String message = patternProtectedCandidate.replace("%c%", parentFieldHolder.getFQN());
+                                holder.registerProblem(fieldNameNode, message, ProblemHighlightType.WEAK_WARNING);
                             }
-                            continue;
+                            return;
                         }
 
                         /* report only cases when access level is not changed */
-                        if (!ownFieldAccess.isWeakerThan(superclassField.getModifier().getAccess())) {
-                            /* fire common warning */
-                            final String message = patternShadows.replace("%p%", ownFieldName).replace("%c%", superClassFQN);
-                            holder.registerProblem(ownFieldParent, message, ProblemHighlightType.WEAK_WARNING);
+                        if (!ownField.getModifier().getAccess().isWeakerThan(parentField.getModifier().getAccess())) {
+                           /* fire common warning */
+                            final String message
+                                    = patternShadows.replace("%p%", ownFieldName).replace("%c%", parentFieldHolder.getFQN());
+                            holder.registerProblem(fieldNameNode, message, ProblemHighlightType.WEAK_WARNING);
                         }
                     }
                 }

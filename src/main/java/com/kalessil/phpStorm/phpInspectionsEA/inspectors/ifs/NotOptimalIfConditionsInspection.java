@@ -58,11 +58,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
         return "NotOptimalIfConditionsInspection";
     }
 
-    private HashSet<String> functionsSet = null;
-    private HashSet<String> getFunctionsSet() {
-        if (null == functionsSet) {
-            functionsSet = new HashSet<>();
-
+    final private static Set<String> functionsSet = new HashSet<>();
+    static {
             functionsSet.add("array_key_exists");
             functionsSet.add("defined");
             functionsSet.add("is_array");
@@ -74,9 +71,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             functionsSet.add("is_numeric");
             functionsSet.add("is_scalar");
             functionsSet.add("is_object");
-        }
-
-        return functionsSet;
     }
 
     @Override
@@ -517,36 +511,34 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
              */
             @Nullable
             private List<PsiElement> inspectExpressionsOrder(PsiElement objCondition, @Nullable IElementType[] arrOperationHolder) {
-                List<PsiElement> objPartsCollection = ExpressionSemanticUtil.getConditions(objCondition, arrOperationHolder);
-                if (null == objPartsCollection) {
+                final List<PsiElement> conditions = ExpressionSemanticUtil.getConditions(objCondition, arrOperationHolder);
+                if (null == conditions) {
                     return null;
                 }
 
                 /* one item only, skip costs estimation */
-                if (!SUGGEST_OPTIMIZING_CONDITIONS || objPartsCollection.size() < 2) {
-                    return objPartsCollection;
+                if (!SUGGEST_OPTIMIZING_CONDITIONS || conditions.size() < 2) {
+                    return conditions;
                 }
 
                 /* verify if costs estimated are optimal */
-                int intPreviousCost                 = 0;
-                PsiElement objPreviousCond          = null;
-                HashSet<String> functionsSetToAllow = getFunctionsSet();
-
-                for (PsiElement condition : objPartsCollection) {
-                    int intLoopCurrentCost = ExpressionCostEstimateUtil.getExpressionCost(condition, functionsSetToAllow);
+                int intPreviousCost     = 0;
+                PsiElement previousCond = null;
+                for (final PsiElement condition : conditions) {
+                    int intLoopCurrentCost = ExpressionCostEstimateUtil.getExpressionCost(condition, functionsSet);
 
                     if (
-                        null != objPreviousCond && intLoopCurrentCost < intPreviousCost &&
-                        !ExpressionsCouplingCheckUtil.isSecondCoupledWithFirst(objPreviousCond, condition)
+                        null != previousCond && intLoopCurrentCost < intPreviousCost &&
+                        !ExpressionsCouplingCheckUtil.isSecondCoupledWithFirst(previousCond, condition)
                     ) {
                         holder.registerProblem(condition, messageOrdering, ProblemHighlightType.WEAK_WARNING);
                     }
 
                     intPreviousCost = intLoopCurrentCost;
-                    objPreviousCond = condition;
+                    previousCond = condition;
                 }
 
-                return objPartsCollection;
+                return conditions;
             }
         };
     }

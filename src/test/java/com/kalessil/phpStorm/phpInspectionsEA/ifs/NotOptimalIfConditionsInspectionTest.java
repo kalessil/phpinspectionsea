@@ -64,7 +64,17 @@ final public class NotOptimalIfConditionsInspectionTest extends CodeInsightFixtu
 
         myFixture.enableInspections(inspector);
 
-        myFixture.configureByFile("fixtures/ifs/instanceof-flaws.php");
+        myFixture.configureByFile("fixtures/ifs/if-instanceof-flaws.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+
+    public void testIssetFlaws() {
+        NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
+        inspector.REPORT_ISSET_FLAWS               = true;
+
+        myFixture.enableInspections(inspector);
+
+        myFixture.configureByFile("fixtures/ifs/if-isset-flaws.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

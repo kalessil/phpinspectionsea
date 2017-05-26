@@ -40,6 +40,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     public boolean REPORT_DUPLICATE_CONDITIONS  = true;
     public boolean REPORT_MISSING_PARENTHESISES = true;
     public boolean REPORT_INSTANCE_OF_FLAWS     = true;
+    public boolean REPORT_ISSET_FLAWS           = true;
     public boolean SUGGEST_MERGING_ISSET        = true;
 
     private static final String messageInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
@@ -102,7 +103,9 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
                         this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
                     }
-                    IssetAndNullComparisonStrategy.apply(objConditionsFromStatement, holder);
+                    if (REPORT_ISSET_FLAWS) {
+                        IssetAndNullComparisonStrategy.apply(objConditionsFromStatement, holder);
+                    }
 
                     objConditionsFromStatement.clear();
 
@@ -129,7 +132,9 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                             this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
                             this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
                         }
-                        IssetAndNullComparisonStrategy.apply(objConditionsFromStatement, holder);
+                        if (REPORT_ISSET_FLAWS) {
+                            IssetAndNullComparisonStrategy.apply(objConditionsFromStatement, holder);
+                        }
 
                         objConditionsFromStatement.clear();
 
@@ -550,6 +555,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             component.addCheckbox("Report confusing conditions", REPORT_MISSING_PARENTHESISES, (isSelected) -> REPORT_MISSING_PARENTHESISES = isSelected);
             component.addCheckbox("Report duplicate conditions", REPORT_DUPLICATE_CONDITIONS, (isSelected) -> REPORT_DUPLICATE_CONDITIONS = isSelected);
             component.addCheckbox("Report instanceof usage flaws", REPORT_INSTANCE_OF_FLAWS, (isSelected) -> REPORT_INSTANCE_OF_FLAWS = isSelected);
+            component.addCheckbox("Report isset usage flaws", REPORT_ISSET_FLAWS, (isSelected) -> REPORT_ISSET_FLAWS = isSelected);
             component.addCheckbox("Report literal and/or operators", REPORT_LITERAL_OPERATORS, (isSelected) -> REPORT_LITERAL_OPERATORS = isSelected);
             component.addCheckbox("Suggest merging isset constructs", SUGGEST_MERGING_ISSET, (isSelected) -> SUGGEST_MERGING_ISSET = isSelected);
         });

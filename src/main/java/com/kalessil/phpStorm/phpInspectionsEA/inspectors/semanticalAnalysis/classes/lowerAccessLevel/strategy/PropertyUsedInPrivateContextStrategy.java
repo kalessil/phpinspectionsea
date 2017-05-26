@@ -29,22 +29,25 @@ final public class PropertyUsedInPrivateContextStrategy {
 
     private static final Set<String> magicMethods = new HashSet<>();
     static {
-        magicMethods.add("__construct");
-        magicMethods.add("__destruct");
-        magicMethods.add("__clone");
+        // magicMethods.add("__construct"); DI, protected might be needed for extension
+        // magicMethods.add("__destruct");
+        // magicMethods.add("__autoload");  deprecated
+        // magicMethods.add("__call");      calls
+        // magicMethods.add("__callStatic");
+        // magicMethods.add("__invoke");
+
         magicMethods.add("__get");
         magicMethods.add("__isset");
         magicMethods.add("__unset");
         magicMethods.add("__set");
-        magicMethods.add("__call");
-        magicMethods.add("__callStatic");
+
         magicMethods.add("__toString");
         magicMethods.add("__debugInfo");
+
         magicMethods.add("__set_state");
-        magicMethods.add("__invoke");
         magicMethods.add("__wakeup");
         magicMethods.add("__sleep");
-        magicMethods.add("__autoload");
+        magicMethods.add("__clone");
     }
 
     public static void apply(@NotNull PhpClass clazz, @NotNull ProblemsHolder holder) {

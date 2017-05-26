@@ -54,8 +54,8 @@ class ProtectedFieldsInPrivateContext {
 class ProtectedFieldsInMagicContext {
     private $protectedUsedInMagic;
 
-    public function __construct($protectedUsedInMagic)
+    public function __toString()
     {
-        $this->protectedUsedInMagic = $protectedUsedInMagic;
+        return (string)$this->protectedUsedInMagic;
     }
 }

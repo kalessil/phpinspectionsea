@@ -22,7 +22,10 @@ final public class NotOptimalIfConditionsInspectionTest extends CodeInsightFixtu
     }
 
     public void testIssetAndNullComparisonPatterns() {
-        myFixture.enableInspections(new NotOptimalIfConditionsInspection());
+        NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
+        inspector.REPORT_ISSET_FLAWS               = true;
+
+        myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/ifs/if-isset-not-null.php");
         myFixture.testHighlighting(true, false, true);

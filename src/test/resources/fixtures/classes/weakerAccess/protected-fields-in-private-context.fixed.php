@@ -50,3 +50,12 @@ class ProtectedFieldsInPrivateContext {
         ];
     }
 }
+
+class ProtectedFieldsInMagicContext {
+    private $protectedUsedInMagic;
+
+    public function __construct($protectedUsedInMagic)
+    {
+        $this->protectedUsedInMagic = $protectedUsedInMagic;
+    }
+}

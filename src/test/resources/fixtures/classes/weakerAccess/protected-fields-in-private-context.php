@@ -50,3 +50,12 @@ class ProtectedFieldsInPrivateContext {
         ];
     }
 }
+
+class ProtectedFieldsInMagicContext {
+    <weak_warning descr="Since the property used in private context only, it could be declared private.">protected</weak_warning> $protectedUsedInMagic;
+
+    public function __construct($protectedUsedInMagic)
+    {
+        $this->protectedUsedInMagic = $protectedUsedInMagic;
+    }
+}

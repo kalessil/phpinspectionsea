@@ -27,6 +27,26 @@ import java.util.Set;
 final public class PropertyUsedInPrivateContextStrategy {
     private static final String message = "Since the property used in private context only, it could be declared private.";
 
+    private static final Set<String> magicMethods = new HashSet<>();
+    static {
+        magicMethods.add("__construct");
+        magicMethods.add("__destruct");
+        magicMethods.add("__clone");
+        magicMethods.add("__get");
+        magicMethods.add("__isset");
+        magicMethods.add("__unset");
+        magicMethods.add("__set");
+        magicMethods.add("__call");
+        magicMethods.add("__callStatic");
+        magicMethods.add("__toString");
+        magicMethods.add("__debugInfo");
+        magicMethods.add("__set_state");
+        magicMethods.add("__invoke");
+        magicMethods.add("__wakeup");
+        magicMethods.add("__sleep");
+        magicMethods.add("__autoload");
+    }
+
     public static void apply(@NotNull PhpClass clazz, @NotNull ProblemsHolder holder) {
         if (!clazz.isFinal() && !clazz.isInterface()) {
             final PhpClass parent           = clazz.getSuperClass();
@@ -48,6 +68,7 @@ final public class PropertyUsedInPrivateContextStrategy {
                     if (body == null) {
                         continue;
                     }
+                    final boolean isMagicMethod = magicMethods.contains(method.getName());
 
                     /* find fields references matching pre-collected names */
                     for (final FieldReference reference :PsiTreeUtil.findChildrenOfType(body, FieldReference.class)) {
@@ -64,13 +85,13 @@ final public class PropertyUsedInPrivateContextStrategy {
                             }
                             final Set<String> usages        = contextInformation.get(referenceName);
                             final PhpModifier.Access access = method.getAccess();
-                            if (access.isPrivate()) {
+                            if (isMagicMethod || access.isPrivate()) {
                                 usages.add("private");
                             }
-                            if (access.isProtected()) {
+                            if (!isMagicMethod && access.isProtected()) {
                                 usages.add("protected");
                             }
-                            if (access.isPublic()) {
+                            if (!isMagicMethod && access.isPublic()) {
                                 usages.add("public");
                             }
                         }

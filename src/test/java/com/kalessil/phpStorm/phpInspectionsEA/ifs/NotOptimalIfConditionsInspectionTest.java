@@ -57,4 +57,14 @@ final public class NotOptimalIfConditionsInspectionTest extends CodeInsightFixtu
         myFixture.configureByFile("fixtures/ifs/if-merge-isset.php");
         myFixture.testHighlighting(true, false, true);
     }
+
+    public void testInstanceOfFlaws() {
+        NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
+        inspector.REPORT_INSTANCE_OF_FLAWS         = true;
+
+        myFixture.enableInspections(inspector);
+
+        myFixture.configureByFile("fixtures/ifs/instanceof-flaws.php");
+        myFixture.testHighlighting(true, false, true);
+    }
 }

@@ -39,17 +39,17 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     public boolean REPORT_LITERAL_OPERATORS     = true;
     public boolean REPORT_DUPLICATE_CONDITIONS  = true;
     public boolean REPORT_MISSING_PARENTHESISES = true;
+    public boolean REPORT_INSTANCE_OF_FLAWS     = true;
     public boolean SUGGEST_MERGING_ISSET        = true;
 
-    private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
-
-    private static final String strProblemDescriptionInstanceOfAmbiguous      = "This condition is ambiguous and can be safely removed.";
-    private static final String messageOrdering                               = "This condition execution costs less than the previous one.";
-    private static final String messageDuplicateConditions                    = "This condition is duplicated in another if/elseif branch.";
-    private static final String messageDuplicateConditionPart                 = "This call is duplicated in conditions set.";
-    private static final String messageIssetCanBeMergedAndCase                = "This can be merged into the previous 'isset(..., ...[, ...])'.";
-    private static final String messageIssetCanBeMergedOrCase                 = "This can be merged into the previous '!isset(..., ...[, ...])'.";
-    private static final String messageConditionShouldBeWrapped               = "Confusing conditions structure: please wrap needed with '(...)'.";
+    private static final String messageInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
+    private static final String messageInstanceOfAmbiguous       = "This condition is ambiguous and can be safely removed.";
+    private static final String messageOrdering                  = "This condition execution costs less than the previous one.";
+    private static final String messageDuplicateConditions       = "This condition is duplicated in another if/elseif branch.";
+    private static final String messageDuplicateConditionPart    = "This call is duplicated in conditions set.";
+    private static final String messageIssetCanBeMergedAndCase   = "This can be merged into the previous 'isset(..., ...[, ...])'.";
+    private static final String messageIssetCanBeMergedOrCase    = "This can be merged into the previous '!isset(..., ...[, ...])'.";
+    private static final String messageConditionShouldBeWrapped  = "Confusing conditions structure: please wrap needed with '(...)'.";
 
     @NotNull
     public String getShortName() {
@@ -98,9 +98,10 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     if (SUGGEST_MERGING_ISSET) {
                         this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
                     }
-                    this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
-
-                    this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
+                    if (REPORT_INSTANCE_OF_FLAWS) {
+                        this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
+                        this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
+                    }
                     IssetAndNullComparisonStrategy.apply(objConditionsFromStatement, holder);
 
                     objConditionsFromStatement.clear();
@@ -112,7 +113,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                 for (ElseIf objElseIf : ifStatement.getElseIfBranches()) {
                     objConditionsFromStatement = this.inspectExpressionsOrder(objElseIf.getCondition(), arrOperationHolder);
-                    if (null != objConditionsFromStatement) {
+                    if (objConditionsFromStatement != null) {
                         objAllConditions.addAll(objConditionsFromStatement);
 
                         if (REPORT_MISSING_PARENTHESISES) {
@@ -124,8 +125,11 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         if (SUGGEST_MERGING_ISSET) {
                             this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
                         }
-                        this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
-                        this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
+                        if (REPORT_INSTANCE_OF_FLAWS) {
+                            this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
+                            this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
+                        }
+                        IssetAndNullComparisonStrategy.apply(objConditionsFromStatement, holder);
 
                         objConditionsFromStatement.clear();
 
@@ -162,21 +166,17 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             }
 
             // reports $value instanceof \DateTime OP $value instanceof \DateTimeInterface
-            private void inspectConditionsForAmbiguousInstanceOf(@NotNull List<PsiElement> objBranchConditions) {
-                if (objBranchConditions.size() < 2) {
+            private void inspectConditionsForAmbiguousInstanceOf(@NotNull List<PsiElement> conditions) {
+                if (conditions.size() < 2) {
                     return;
                 }
 
                 // find all instanceof expressions
-                List<BinaryExpression> instanceOfExpressions = new ArrayList<>();
-                for (PsiElement objExpression : objBranchConditions) {
-                    if (objExpression instanceof BinaryExpression) {
-                        PsiElement objOperation = ((BinaryExpression) objExpression).getOperation();
-                        if (
-                            null != objOperation && null != objOperation.getNode() &&
-                            PhpTokenTypes.kwINSTANCEOF == objOperation.getNode().getElementType()
-                        ) {
-                            instanceOfExpressions.add((BinaryExpression) objExpression);
+                final List<BinaryExpression> instanceOfExpressions = new ArrayList<>();
+                for (final PsiElement expression : conditions) {
+                    if (expression instanceof BinaryExpression) {
+                        if (PhpTokenTypes.kwINSTANCEOF == ((BinaryExpression) expression).getOperationType()) {
+                            instanceOfExpressions.add((BinaryExpression) expression);
                         }
                     }
                 }
@@ -187,31 +187,25 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
                 // now we need to build up following structure:
-                /*
-                    'subject' => [
-                                    condition => class,
-                                    condition => class,
-                                    condition => class
-                                ]
-                 */
-                HashMap<PsiElement, HashMap<PsiElement, PhpClass>> mappedChecks = new HashMap<>();
-                for (BinaryExpression instanceOfExpression : instanceOfExpressions) {
+                /* 'subject' => [ condition => class, ... ] */
+                final Map<PsiElement, Map<PsiElement, PhpClass>> mappedChecks = new HashMap<>();
+                for (final BinaryExpression instanceOfExpression : instanceOfExpressions) {
                     // ensure expression is well-formed
-                    PsiElement subject = instanceOfExpression.getLeftOperand();
+                    final PsiElement subject = instanceOfExpression.getLeftOperand();
                     if (null == subject || !(instanceOfExpression.getRightOperand() instanceof ClassReference)) {
                         continue;
                     }
 
                     // ensure resolvable
-                    ClassReference reference = (ClassReference) instanceOfExpression.getRightOperand();
+                    final ClassReference reference = (ClassReference) instanceOfExpression.getRightOperand();
                     if (!(reference.resolve() instanceof PhpClass)) {
                         continue;
                     }
-                    PhpClass clazz = (PhpClass) reference.resolve();
+                    final PhpClass clazz = (PhpClass) reference.resolve();
 
                     // push subject properly, as expressions can be different objects with the same semantics
                     PsiElement registeredSubject = null;
-                    for (PsiElement testSubject : mappedChecks.keySet()) {
+                    for (final PsiElement testSubject : mappedChecks.keySet()) {
                         if (PsiEquivalenceUtil.areElementsEquivalent(subject, testSubject)) {
                             registeredSubject = testSubject;
                             break;
@@ -231,8 +225,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
 
                 // process entries, perform subject container clean up on each iteration
-                HashMap<PhpClass, HashSet<PhpClass>> resolvedInheritanceChains = new HashMap<>();
-                for (HashMap<PsiElement, PhpClass> subjectContainer : mappedChecks.values()) {
+                final Map<PhpClass, Set<PhpClass>> resolvedInheritanceChains = new HashMap<>();
+                for (final Map<PsiElement, PhpClass> subjectContainer : mappedChecks.values()) {
                     // investigate one subject when it has multiple instanceof-expressions
                     if (subjectContainer.size() > 1) {
                         // walk through conditions
@@ -242,7 +236,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                             final PsiElement instanceOfExpression = instanceOf2class.getKey();
 
                             // extract current condition details
-                            HashSet<PhpClass> clazzParents = resolvedInheritanceChains.get(clazz);
+                            Set<PhpClass> clazzParents = resolvedInheritanceChains.get(clazz);
                             if (null == clazzParents) {
                                 clazzParents = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true);
                                 resolvedInheritanceChains.put(clazz, clazzParents);
@@ -257,7 +251,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                                 // if alternative references to base class current check is ambiguous
                                 if (clazzParents.contains(instanceOf2classInner.getValue())) {
-                                    holder.registerProblem(instanceOfExpression, strProblemDescriptionInstanceOfAmbiguous, ProblemHighlightType.WEAK_WARNING);
+                                    holder.registerProblem(instanceOfExpression, messageInstanceOfAmbiguous, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                                     break;
                                 }
                             }
@@ -266,7 +260,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     subjectContainer.clear();
                 }
                 // release inheritance cache as well
-                for (HashSet<PhpClass> resolvedInheritance: resolvedInheritanceChains.values()) {
+                for (final Set<PhpClass> resolvedInheritance: resolvedInheritanceChains.values()) {
                     resolvedInheritance.clear();
                 }
                 resolvedInheritanceChains.clear();
@@ -275,51 +269,43 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             }
 
             /* TODO: is_* functions */
-            private void inspectConditionsForInstanceOfAndIdentityOperations(@NotNull List<PsiElement> objBranchConditions, @Nullable IElementType operationType) {
-                if (operationType != PhpTokenTypes.opAND || objBranchConditions.size() < 2) {
+            private void inspectConditionsForInstanceOfAndIdentityOperations(@NotNull List<PsiElement> conditions, @Nullable IElementType operationType) {
+                if (operationType != PhpTokenTypes.opAND || conditions.size() < 2) {
                     return;
                 }
 
-                PsiElement objTestSubject = null;
-                for (PsiElement objExpression : objBranchConditions) {
-                    if (objExpression instanceof BinaryExpression) {
-                        BinaryExpression objInstanceOfExpression = (BinaryExpression) objExpression;
-                        if (
-                            null != objInstanceOfExpression.getOperation() &&
-                            null != objInstanceOfExpression.getOperation().getNode() &&
-                            objInstanceOfExpression.getOperation().getNode().getElementType() == PhpTokenTypes.kwINSTANCEOF
-                        ) {
-                            objTestSubject = objInstanceOfExpression.getLeftOperand();
+                PsiElement testSubject = null;
+                for (final PsiElement expression : conditions) {
+                    if (expression instanceof BinaryExpression) {
+                        final BinaryExpression instanceOfExpression = (BinaryExpression) expression;
+                        if (instanceOfExpression.getOperationType() == PhpTokenTypes.kwINSTANCEOF) {
+                            testSubject = instanceOfExpression.getLeftOperand();
                             break;
                         }
                     }
                 }
-                if (null == objTestSubject) {
+                if (null == testSubject) {
                     return;
                 }
 
-                for (PsiElement objExpression : objBranchConditions) {
-                    if (objExpression instanceof BinaryExpression) {
-                        BinaryExpression objBinaryExpression = (BinaryExpression) objExpression;
+                for (final PsiElement expression : conditions) {
+                    if (expression instanceof BinaryExpression) {
+                        final BinaryExpression binaryExpression = (BinaryExpression) expression;
                         if (
-                            null != objBinaryExpression.getOperation() &&
-                            null != objBinaryExpression.getOperation().getNode() &&
-                            null != objBinaryExpression.getLeftOperand() &&
-                            null != objBinaryExpression.getRightOperand()
-
+                            null != binaryExpression.getOperationType() &&
+                            null != binaryExpression.getLeftOperand() &&
+                            null != binaryExpression.getRightOperand()
                         ) {
-                            IElementType objConditionOperation = objBinaryExpression.getOperation().getNode().getElementType();
+                            final IElementType operation = binaryExpression.getOperationType();
                             if (
-                                objConditionOperation == PhpTokenTypes.opIDENTICAL ||
-                                objConditionOperation == PhpTokenTypes.opNOT_IDENTICAL ||
-                                objConditionOperation == PhpTokenTypes.opEQUAL ||
-                                objConditionOperation == PhpTokenTypes.opNOT_EQUAL
+                                operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL ||
+                                operation == PhpTokenTypes.opEQUAL ||     operation == PhpTokenTypes.opNOT_EQUAL
                             ) {
                                 if (
-                                    PsiEquivalenceUtil.areElementsEquivalent(objTestSubject, objBinaryExpression.getLeftOperand()) ||
-                                    PsiEquivalenceUtil.areElementsEquivalent(objTestSubject, objBinaryExpression.getRightOperand())
+                                    PsiEquivalenceUtil.areElementsEquivalent(testSubject, binaryExpression.getLeftOperand()) ||
+                                    PsiEquivalenceUtil.areElementsEquivalent(testSubject, binaryExpression.getRightOperand())
                                 ) {
-                                    holder.registerProblem(objExpression, strProblemDescriptionInstanceOfComplementarity, ProblemHighlightType.WEAK_WARNING);
+                                    holder.registerProblem(expression, messageInstanceOfComplementarity, ProblemHighlightType.WEAK_WARNING);
                                 }
                             }
                         }
@@ -561,9 +547,10 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.addCheckbox("Report literal and/or operators", REPORT_LITERAL_OPERATORS, (isSelected) -> REPORT_LITERAL_OPERATORS = isSelected);
-            component.addCheckbox("Report duplicate conditions", REPORT_DUPLICATE_CONDITIONS, (isSelected) -> REPORT_DUPLICATE_CONDITIONS = isSelected);
             component.addCheckbox("Report confusing conditions", REPORT_MISSING_PARENTHESISES, (isSelected) -> REPORT_MISSING_PARENTHESISES = isSelected);
+            component.addCheckbox("Report duplicate conditions", REPORT_DUPLICATE_CONDITIONS, (isSelected) -> REPORT_DUPLICATE_CONDITIONS = isSelected);
+            component.addCheckbox("Report instanceof usage flaws", REPORT_INSTANCE_OF_FLAWS, (isSelected) -> REPORT_INSTANCE_OF_FLAWS = isSelected);
+            component.addCheckbox("Report literal and/or operators", REPORT_LITERAL_OPERATORS, (isSelected) -> REPORT_LITERAL_OPERATORS = isSelected);
             component.addCheckbox("Suggest merging isset constructs", SUGGEST_MERGING_ISSET, (isSelected) -> SUGGEST_MERGING_ISSET = isSelected);
         });
     }

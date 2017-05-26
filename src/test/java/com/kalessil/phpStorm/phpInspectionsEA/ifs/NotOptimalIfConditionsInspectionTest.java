@@ -5,7 +5,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.NotOptimalIfConditi
 
 final public class NotOptimalIfConditionsInspectionTest extends CodeInsightFixtureTestCase {
     public void testFalsePositives() {
-        myFixture.enableInspections(new NotOptimalIfConditionsInspection());
+        NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
+        inspector.SUGGEST_OPTIMIZING_CONDITIONS    = true;
+
+        myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/ifs/not-optimal-false-positives.php");
         myFixture.testHighlighting(true, false, true);

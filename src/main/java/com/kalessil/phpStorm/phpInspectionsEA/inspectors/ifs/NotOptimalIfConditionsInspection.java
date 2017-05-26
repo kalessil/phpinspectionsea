@@ -36,12 +36,13 @@ import java.util.*;
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     // Inspection options.
-    public boolean REPORT_LITERAL_OPERATORS     = true;
-    public boolean REPORT_DUPLICATE_CONDITIONS  = true;
-    public boolean REPORT_MISSING_PARENTHESISES = true;
-    public boolean REPORT_INSTANCE_OF_FLAWS     = true;
-    public boolean REPORT_ISSET_FLAWS           = true;
-    public boolean SUGGEST_MERGING_ISSET        = true;
+    public boolean REPORT_LITERAL_OPERATORS      = true;
+    public boolean REPORT_DUPLICATE_CONDITIONS   = true;
+    public boolean REPORT_MISSING_PARENTHESISES  = true;
+    public boolean REPORT_INSTANCE_OF_FLAWS      = true;
+    public boolean REPORT_ISSET_FLAWS            = true;
+    public boolean SUGGEST_MERGING_ISSET         = true;
+    public boolean SUGGEST_OPTIMIZING_CONDITIONS = true;
 
     private static final String messageInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
     private static final String messageInstanceOfAmbiguous       = "This condition is ambiguous and can be safely removed.";
@@ -522,7 +523,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
                 /* one item only, skip costs estimation */
-                if (objPartsCollection.size() < 2) {
+                if (!SUGGEST_OPTIMIZING_CONDITIONS || objPartsCollection.size() < 2) {
                     return objPartsCollection;
                 }
 
@@ -558,6 +559,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             component.addCheckbox("Report isset usage flaws", REPORT_ISSET_FLAWS, (isSelected) -> REPORT_ISSET_FLAWS = isSelected);
             component.addCheckbox("Report literal and/or operators", REPORT_LITERAL_OPERATORS, (isSelected) -> REPORT_LITERAL_OPERATORS = isSelected);
             component.addCheckbox("Suggest merging isset constructs", SUGGEST_MERGING_ISSET, (isSelected) -> SUGGEST_MERGING_ISSET = isSelected);
+            component.addCheckbox("Suggest optimizing conditions", SUGGEST_OPTIMIZING_CONDITIONS, (isSelected) -> SUGGEST_OPTIMIZING_CONDITIONS = isSelected);
         });
     }
 }

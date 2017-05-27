@@ -33,3 +33,22 @@ class ImmediateOverridePropsClass {
         $this->override4 = [];
     }
 }
+
+
+trait TraitWithFields {
+    private $private     = [];
+
+    protected $protected = [];
+    public $public       = [];
+}
+class ClassWithTrait {
+    use TraitWithFields;
+}
+class classOverridesTraitFields extends ClassWithTrait {
+    private $private = [];
+
+    protected $protected
+        = <weak_warning descr="Written value is same as default one, consider removing this assignment.">[]</weak_warning>;
+    public $public
+        = <weak_warning descr="Written value is same as default one, consider removing this assignment.">[]</weak_warning>;
+}

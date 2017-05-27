@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Only
 
 final public class OnlyWritesOnParameterInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new OnlyWritesOnParameterInspector());
+
         myFixture.configureByFile("fixtures/deadCode/parameters-writes-only.php");
-        myFixture.enableInspections(OnlyWritesOnParameterInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

@@ -214,8 +214,14 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         final PsiElement operation  = ((UnaryExpression) parent).getOperation();
                         final IElementType operator = operation == null ? null : operation.getNode().getElementType();
                         if (operator == PhpTokenTypes.opINCREMENT || operator == PhpTokenTypes.opDECREMENT) {
-                            targetExpressions.add(parent);
                             ++intCountWriteAccesses;
+                            if (isReference) {
+                                /* when modifying the reference it's link READ and linked WRITE semantics */
+                                ++intCountReadAccesses;
+                            } else {
+                                /* when modifying non non-reference, register as write only access for reporting */
+                                targetExpressions.add(parent);
+                            }
                         }
                         if (parent.getParent().getClass() != StatementImpl.class) {
                             ++intCountReadAccesses;

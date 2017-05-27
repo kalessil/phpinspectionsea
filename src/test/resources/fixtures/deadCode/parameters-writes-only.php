@@ -23,6 +23,8 @@ class Container {
     }
 
     public function method3($a, $b, $c, &$d) {
+        $local = 0;
+
         foreach ([] as $i => $v) {
             <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$a[$i]</weak_warning> = ++$c;
 
@@ -30,6 +32,9 @@ class Container {
             <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$b++</weak_warning>;
 
             ++$d;
+
+            $local = &$v;
+            ++$local;
         }
     }
 }

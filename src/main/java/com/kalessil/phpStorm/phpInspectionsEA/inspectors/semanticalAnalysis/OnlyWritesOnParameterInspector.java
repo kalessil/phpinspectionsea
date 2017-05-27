@@ -14,6 +14,7 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableI
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -214,10 +215,13 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         final IElementType operator = operation == null ? null : operation.getNode().getElementType();
                         if (operator == PhpTokenTypes.opINCREMENT || operator == PhpTokenTypes.opDECREMENT) {
                             targetExpressions.add(parent);
-
                             ++intCountWriteAccesses;
-                            continue;
                         }
+                        if (parent.getParent().getClass() != StatementImpl.class) {
+                            ++intCountReadAccesses;
+                        }
+
+                        continue;
                     }
 
                     /* if variable assigned with reference, we need to preserve this information for correct checks */

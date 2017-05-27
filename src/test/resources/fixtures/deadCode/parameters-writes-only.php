@@ -22,14 +22,14 @@ class Container {
         $out []= '';
     }
 
-    public function method3($a, $b, &$c) {
+    public function method3($a, $b, $c, &$d) {
         foreach ([] as $i => $v) {
-            <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$a[$i]</weak_warning> = ++$v;
+            <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$a[$i]</weak_warning> = ++$c;
 
             <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">++$b</weak_warning>;
             <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$b++</weak_warning>;
 
-            ++$c;
+            ++$d;
         }
     }
 }

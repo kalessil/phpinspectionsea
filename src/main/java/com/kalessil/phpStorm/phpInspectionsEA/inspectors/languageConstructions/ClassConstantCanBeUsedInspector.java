@@ -66,6 +66,13 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
+                /* ensure selected language level supports the ::class feature*/
+                final Project project             = holder.getProject();
+                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
+                if (!phpVersion.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST)) {
+                    return;
+                }
+
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
                 if (0 == params.length && null != functionName && functionName.equals("get_called_class")) {

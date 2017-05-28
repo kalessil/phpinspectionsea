@@ -1,19 +1,35 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+
+import java.util.Collection;
+
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) David Rodrigues <david.proweb@gmail.com>
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class CallableInLoopTerminationConditionInspector extends BasePhpInspection {
-    private static final String messagePattern  = "'for (%existingInit%%newInit%; %newCheck%; ...)' should be used for better performance.";
-    private static final String messageExternal = "Callable result should be stored outside of the loop for better performance.";
+    private static final String message = "Avoid callables in loop conditionals for better performance.";
 
     @NotNull
     public String getShortName() {
@@ -22,61 +38,115 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
 
     @Override
     @NotNull
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            @NotNull
-            private String generateMessage(@NotNull For expression, @NotNull BinaryExpression problematicExpression) {
-                /* extract part of expression we need to report */
-                PsiElement referenceCandidate = problematicExpression.getRightOperand();
-                PsiElement variableCandidate  = problematicExpression.getLeftOperand();
-                boolean leftToRight = true;
-                if (!(referenceCandidate instanceof FunctionReference)) {
-                    referenceCandidate = problematicExpression.getLeftOperand();
-                    variableCandidate  = problematicExpression.getRightOperand();
-                    leftToRight        = false;
-                }
-
-                /* check if we can customize message at all */
-                PsiElement operation = problematicExpression.getOperation();
-                if (null == operation || null == variableCandidate || null == referenceCandidate) {
-                    return messageExternal;
-                }
-
-                /* try extracting variable name from variable candidate */
-                String variableName = null;
-                if (variableCandidate instanceof Variable) {
-                    variableName = ((Variable) variableCandidate).getName();
-                }
-                variableName = StringUtil.isEmpty(variableName) ? "loopsCount" : variableName + "Max";
-
-                /* generate message */
-                final boolean hasInit = expression.getInitialExpressions().length > 0;
-                return messagePattern
-                    .replace("%newCheck%",
-                        leftToRight
-                            ? variableCandidate.getText() + " " + operation.getText() + " " + "$" + variableName
-                            : "$" + variableName + " " + operation.getText() + " " + variableCandidate.getText()
-                    )
-                    .replace("%newInit%", "$" + variableName + " = " + referenceCandidate.getText())
-                    .replace("%existingInit%", hasInit ? "..., " : "");
-            }
-
-            public void visitPhpFor(For expression) {
+            public void visitPhpFor(final For forStatement) {
                 /* TODO: re-evaluate searching in tree for catching more cases */
-                final PhpPsiElement[] conditions = expression.getConditionalExpressions();
-                if (1 != conditions.length || !(conditions[0] instanceof BinaryExpression)) {
+                final PhpPsiElement[] conditions = forStatement.getConditionalExpressions();
+
+                if ((conditions.length != 1) ||
+                    !(conditions[0] instanceof BinaryExpression)) {
                     return;
                 }
 
                 final BinaryExpression condition = (BinaryExpression) conditions[0];
-                if (
-                    OpenapiTypesUtil.isFunctionReference(condition.getRightOperand()) ||
-                    OpenapiTypesUtil.isFunctionReference(condition.getLeftOperand())
-                ) {
-                    final String message = generateMessage(expression, condition);
-                    holder.registerProblem(condition, message, ProblemHighlightType.GENERIC_ERROR);
+
+                if (OpenapiTypesUtil.isFunctionReference(condition.getRightOperand()) ||
+                    OpenapiTypesUtil.isFunctionReference(condition.getLeftOperand())) {
+                    problemsHolder.registerProblem(condition, message, ProblemHighlightType.GENERIC_ERROR,
+                                                   new TheLocalFix(forStatement, condition));
                 }
             }
         };
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        private final SmartPsiElementPointer<For>              forStatement;
+        private final SmartPsiElementPointer<BinaryExpression> condition;
+
+        TheLocalFix(@NotNull final For forStatement, final BinaryExpression condition) {
+            final SmartPointerManager factory = SmartPointerManager.getInstance(forStatement.getProject());
+
+            this.forStatement = factory.createSmartPsiElementPointer(forStatement);
+            this.condition = factory.createSmartPsiElementPointer(condition);
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Store the callable result to a variable";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+            final For              forStatementElement = forStatement.getElement();
+            final BinaryExpression conditionElement    = condition.getElement();
+
+            if ((forStatementElement == null) ||
+                (conditionElement == null)) {
+                return;
+            }
+
+            final boolean    functionOnLeft     = conditionElement.getLeftOperand() instanceof FunctionReference;
+            final PsiElement referenceCandidate = functionOnLeft ? conditionElement.getLeftOperand() : conditionElement.getRightOperand();
+            final PsiElement variableCandidate  = functionOnLeft ? conditionElement.getRightOperand() : conditionElement.getLeftOperand();
+            final PsiElement operation          = conditionElement.getOperation();
+
+            if ((operation == null) ||
+                (variableCandidate == null) ||
+                (referenceCandidate == null)) {
+                return;
+            }
+
+            final String variableName = (variableCandidate instanceof Variable)
+                                        ? ('$' + ((Variable) variableCandidate).getName() + "Max")
+                                        : "$loopsMax";
+            final Variable variableElement = PhpPsiElementFactory.createFromText(project, Variable.class, variableName);
+
+            if (variableElement == null) {
+                return;
+            }
+
+            referenceCandidate.replace(variableElement);
+
+            final PhpPsiElement[] initialExpressions = forStatementElement.getInitialExpressions();
+            final AssignmentExpression assignmentInitializer =
+                PhpPsiElementFactory.createFromText(project, AssignmentExpression.class, variableName + " = " + referenceCandidate.getText());
+
+            if (assignmentInitializer == null) {
+                return;
+            }
+
+            // Case #1 and #2: have at least one initial expression.
+            if (initialExpressions.length >= 1) {
+                final PhpPsiElement  lastExpression         = initialExpressions[initialExpressions.length - 1];
+                final LeafPsiElement commaBeforeInitializer = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
+
+                if (commaBeforeInitializer == null) {
+                    return;
+                }
+
+                forStatementElement.addAfter(assignmentInitializer, lastExpression);
+                forStatementElement.addAfter(commaBeforeInitializer, lastExpression);
+
+                return;
+            }
+
+            // Case #3: don't have any initial expression (eg. for(; ...)).
+            // As For.class have no way to access the initial expression "container" when it is empty, then we need hard code that.
+            final Collection<LeafPsiElement> forStatementLeafs = PsiTreeUtil.findChildrenOfType(forStatementElement, LeafPsiElement.class);
+            for (final LeafPsiElement forStatementLeaf : forStatementLeafs) {
+                if ("(".equals(forStatementLeaf.getText())) {
+                    forStatementElement.addAfter(assignmentInitializer, forStatementLeaf);
+                    break;
+                }
+            }
+        }
     }
 }

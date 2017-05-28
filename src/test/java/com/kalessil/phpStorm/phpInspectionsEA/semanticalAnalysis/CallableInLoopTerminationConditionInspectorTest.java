@@ -6,8 +6,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Call
 
 public class CallableInLoopTerminationConditionInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new CallableInLoopTerminationConditionInspector());
+
         myFixture.configureByFile("fixtures/semanticalAnalysis/callable-inloop-condition.php");
-        myFixture.enableInspections(CallableInLoopTerminationConditionInspector.class);
         myFixture.testHighlighting(true, false, true);
 
         for (final IntentionAction fix : myFixture.getAllQuickFixes()) {

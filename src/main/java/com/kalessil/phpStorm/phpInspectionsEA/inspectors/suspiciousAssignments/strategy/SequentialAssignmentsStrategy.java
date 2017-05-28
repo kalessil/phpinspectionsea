@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -100,9 +101,16 @@ final public class SequentialAssignmentsStrategy {
         @NotNull ProblemsHolder holder
     ) {
         final PsiElement previousContainer = previous.getVariable();
-        if (null != previousContainer && PsiEquivalenceUtil.areElementsEquivalent(previousContainer, container)) {
-            final String message = patternGeneral.replace("%c%", container.getText());
-            holder.registerProblem(container, message, ProblemHighlightType.GENERIC_ERROR);
+        if (previousContainer != null && PsiEquivalenceUtil.areElementsEquivalent(previousContainer, container)) {
+            PsiElement operation = previousContainer.getNextSibling();
+            while (operation != null && operation.getNode().getElementType() != PhpTokenTypes.opASGN) {
+                operation = operation.getNextSibling();
+            }
+            /* preceding assignments by reference are totally making sense */
+            if (operation != null && !operation.getText().replaceAll("\\s+", "").equals("=&")) {
+                final String message = patternGeneral.replace("%c%", container.getText());
+                holder.registerProblem(container, message, ProblemHighlightType.GENERIC_ERROR);
+            }
         }
     }
 }

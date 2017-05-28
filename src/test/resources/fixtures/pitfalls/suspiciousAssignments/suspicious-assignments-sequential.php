@@ -35,6 +35,10 @@ function immediateOverrides()
     $y7[] = '';
     $y7[] = '';
 
+    /* false-positive: assignments by reference */
+    $array = [0, 0];
+    $y8 = &$array[0];
+    $y8 = $array[1];
 
-    return [$y1, $y2, $y3, $y4, $y5, $y6, $y7];
+    return [$y1, $y2, $y3, $y4, $y5, $y6, $y7, $y8];
 }

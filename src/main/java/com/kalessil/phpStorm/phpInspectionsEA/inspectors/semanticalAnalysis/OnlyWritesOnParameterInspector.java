@@ -235,20 +235,23 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         final AssignmentExpression referenceAssignmentCandidate = (AssignmentExpression) parent;
                         if (referenceAssignmentCandidate.getVariable() instanceof Variable) {
                             final Variable sameVariableCandidate = (Variable) referenceAssignmentCandidate.getVariable();
-                            final String candidateVariableName   = sameVariableCandidate.getName();
-                            if (!StringUtil.isEmpty(candidateVariableName) && candidateVariableName.equals(parameterName)) {
+                            if (sameVariableCandidate.getName().equals(parameterName)) {
+                                ++intCountWriteAccesses;
+                                if (isReference) {
+                                    /* when modifying the reference it's link READ and linked WRITE semantics */
+                                    ++intCountReadAccesses;
+                                }
+
                                 /* now ensure operation is assignment of reference */
                                 PsiElement operation = sameVariableCandidate.getNextSibling();
-                                if (operation instanceof PsiWhiteSpace) {
+                                while (operation != null && operation.getNode().getElementType() != PhpTokenTypes.opASGN) {
                                     operation = operation.getNextSibling();
                                 }
-
-                                if (null != operation && operation.getText().replaceAll("\\s+", "").equals("=&")) {
-                                    intCountWriteAccesses++;
+                                if (operation != null && operation.getText().replaceAll("\\s+", "").equals("=&")) {
                                     isReference = true;
-
-                                    continue;
                                 }
+
+                                continue;
                             }
                         }
                     }

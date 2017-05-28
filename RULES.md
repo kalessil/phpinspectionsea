@@ -219,3 +219,4 @@ Inspections Lists (Performance)
 | Performance          | StaticLocalVariablesUsageInspection             | Static local variables usage                                                                | n/a | yes | n/a | yes |
 | Performance          | UnqualifiedReferenceInspection                  | Unqualified function/constant reference                                                     | yes | yes | yes | no  |
 | Performance          | ExplodeMissUseInspection                        | 'explode(...)' misused                                                                      | yes | yes | yes | no  |
+| Performance          | ScandirUsageInspection                          | 'scandir(...)' low performing usage                                                         | yes | yes | yes | no  |

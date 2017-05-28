@@ -33,7 +33,8 @@ class Container {
 
             ++$d;
 
-            $local = &$v;
+            $array = [0];
+            $local = &$array[0];
             ++$local;
         }
     }

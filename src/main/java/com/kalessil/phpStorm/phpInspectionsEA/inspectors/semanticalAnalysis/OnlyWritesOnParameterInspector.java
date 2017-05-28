@@ -105,7 +105,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         }
 
                         /* verify variable usage */
-                        analyzeAndReturnUsagesCount(variableName, (PhpScopeHolder) parentScope);
+                        this.analyzeAndReturnUsagesCount(variableName, (PhpScopeHolder) parentScope);
                     }
                 }
             }
@@ -121,7 +121,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    analyzeAndReturnUsagesCount(parameterName, scopeHolder);
+                    this.analyzeAndReturnUsagesCount(parameterName, scopeHolder);
                 }
             }
 
@@ -145,7 +145,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    final int variableUsages = analyzeAndReturnUsagesCount(parameterName, scopeHolder);
+                    final int variableUsages = this.analyzeAndReturnUsagesCount(parameterName, scopeHolder);
                     if (0 == variableUsages) {
                         holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                     }
@@ -163,7 +163,6 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 boolean isReference       = false;
                 int intCountReadAccesses  = 0;
                 int intCountWriteAccesses = 0;
-                PhpAccessInstruction.Access objAccess;
                 for (final PhpAccessVariableInstruction instruction : usages) {
                     final PsiElement parent = instruction.getAnchor().getParent();
 
@@ -269,13 +268,12 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
 
                     /* ok variable usage works well with openapi */
-                    objAccess = instruction.getAccess();
-                    if (objAccess.isWrite()) {
+                    final PhpAccessInstruction.Access instructionAccess = instruction.getAccess();
+                    if (instructionAccess.isWrite()) {
                         targetExpressions.add(instruction.getAnchor());
-                        intCountWriteAccesses++;
-                    }
-                    if (objAccess.isRead()) {
-                        intCountReadAccesses++;
+                        ++intCountWriteAccesses;
+                    } else if (instructionAccess.isRead()) {
+                        ++intCountReadAccesses;
                     }
                 }
 

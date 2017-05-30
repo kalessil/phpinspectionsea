@@ -16,11 +16,12 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -32,14 +33,15 @@ import java.util.Set;
  */
 
 public class ComparisonOperandsOrderInspector extends BasePhpInspection {
+    private static final String messageUseYoda    = "Yoda conditions style should be used instead";
+    private static final String messageUseRegular = "Regular conditions style should be used instead";
+
+    private static final Collection<IElementType> operations = new HashSet<>();
+
     // Inspection options.
-    public boolean PREFER_YODA_STYLE    = false;
-    public boolean PREFER_REGULAR_STYLE = false;
+    public boolean PREFER_YODA_STYLE;
+    public boolean PREFER_REGULAR_STYLE;
 
-    final static private String messageUseYoda    = "Yoda conditions style should be used instead";
-    final static private String messageUseRegular = "Regular conditions style should be used instead";
-
-    final static private Set<IElementType> operations   = new HashSet<>();
     static {
         operations.add(PhpTokenTypes.opEQUAL);
         operations.add(PhpTokenTypes.opNOT_EQUAL);
@@ -54,40 +56,41 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
 
     @Override
     @NotNull
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpBinaryExpression(BinaryExpression expression) {
-                if (!PREFER_YODA_STYLE && !PREFER_REGULAR_STYLE) {
-                    return;
-                }
-
+            public void visitPhpBinaryExpression(final BinaryExpression expression) {
                 /* verify general structure */
                 final IElementType operator = expression.getOperationType();
                 final PsiElement   left     = expression.getLeftOperand();
                 final PsiElement   right    = expression.getRightOperand();
-                if (null == operator || null == left || null == right || !operations.contains(operator)) {
+
+                if ((operator == null) ||
+                    (left == null) ||
+                    (right == null) ||
+                    !operations.contains(operator)) {
                     return;
                 }
 
                 /* identify operands type */
                 final boolean isLeftConstant =
-                    left instanceof StringLiteralExpression ||
-                    left instanceof ConstantReference ||
-                    PhpElementTypes.NUMBER == left.getNode().getElementType();
+                    (left instanceof StringLiteralExpression) ||
+                    (left instanceof ConstantReference) ||
+                    (PhpElementTypes.NUMBER == left.getNode().getElementType());
                 final boolean isRightConstant =
-                    right instanceof StringLiteralExpression ||
-                    right instanceof ConstantReference ||
-                    PhpElementTypes.NUMBER == right.getNode().getElementType();
+                    (right instanceof StringLiteralExpression) ||
+                    (right instanceof ConstantReference) ||
+                    (PhpElementTypes.NUMBER == right.getNode().getElementType());
+
                 if (isLeftConstant == isRightConstant) {
                     return;
                 }
 
                 if (PREFER_YODA_STYLE && isRightConstant) {
-                    holder.registerProblem(expression, messageUseYoda, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                    problemsHolder.registerProblem(expression, messageUseYoda, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                     return;
                 }
                 if (PREFER_REGULAR_STYLE && isLeftConstant) {
-                    holder.registerProblem(expression, messageUseRegular, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                    problemsHolder.registerProblem(expression, messageUseRegular, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                 }
             }
         };
@@ -95,8 +98,8 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> component.delegateRadioCreation((radioComponent) -> {
-            radioComponent.addOption("Prefer yoda style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
             radioComponent.addOption("Prefer regular style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
+            radioComponent.addOption("Prefer yoda style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
         }));
     }
 
@@ -114,13 +117,15 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
         }
 
         @Override
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+        public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
             if (target instanceof BinaryExpression) {
                 final BinaryExpression expression = (BinaryExpression) target;
-                final PsiElement left             = expression.getLeftOperand();
-                final PsiElement right            = expression.getRightOperand();
-                if (null == left || null == right) {
+                final PsiElement       left       = expression.getLeftOperand();
+                final PsiElement       right      = expression.getRightOperand();
+
+                if ((left == null) ||
+                    (right == null)) {
                     return;
                 }
 

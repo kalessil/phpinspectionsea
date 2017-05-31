@@ -33,15 +33,14 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ComparisonOperandsOrderInspector extends BasePhpInspection {
-    private static final String messageUseYoda    = "Yoda conditions style should be used instead";
-    private static final String messageUseRegular = "Regular conditions style should be used instead";
-
-    private static final Collection<IElementType> operations = new HashSet<>();
+    private static final String messageUseYoda    = "Yoda conditions style should be used instead.";
+    private static final String messageUseRegular = "Regular conditions style should be used instead.";
 
     // Inspection options.
-    public boolean PREFER_YODA_STYLE;
-    public boolean PREFER_REGULAR_STYLE;
+    public boolean PREFER_YODA_STYLE    = false;
+    public boolean PREFER_REGULAR_STYLE = false;
 
+    private static final Collection<IElementType> operations = new HashSet<>();
     static {
         operations.add(PhpTokenTypes.opEQUAL);
         operations.add(PhpTokenTypes.opNOT_EQUAL);
@@ -61,36 +60,23 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
             public void visitPhpBinaryExpression(final BinaryExpression expression) {
                 /* verify general structure */
                 final IElementType operator = expression.getOperationType();
-                final PsiElement   left     = expression.getLeftOperand();
-                final PsiElement   right    = expression.getRightOperand();
-
-                if ((operator == null) ||
-                    (left == null) ||
-                    (right == null) ||
-                    !operations.contains(operator)) {
-                    return;
-                }
-
-                /* identify operands type */
-                final boolean isLeftConstant =
-                    (left instanceof StringLiteralExpression) ||
-                    (left instanceof ConstantReference) ||
-                    (PhpElementTypes.NUMBER == left.getNode().getElementType());
-                final boolean isRightConstant =
-                    (right instanceof StringLiteralExpression) ||
-                    (right instanceof ConstantReference) ||
-                    (PhpElementTypes.NUMBER == right.getNode().getElementType());
-
-                if (isLeftConstant == isRightConstant) {
-                    return;
-                }
-
-                if (PREFER_YODA_STYLE && isRightConstant) {
-                    problemsHolder.registerProblem(expression, messageUseYoda, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
-                    return;
-                }
-                if (PREFER_REGULAR_STYLE && isLeftConstant) {
-                    problemsHolder.registerProblem(expression, messageUseRegular, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                final PsiElement left       = expression.getLeftOperand();
+                final PsiElement right      = expression.getRightOperand();
+                if (left != null && right != null && operator != null && operations.contains(operator)) {
+                    final boolean isLeftConstant =
+                        left instanceof StringLiteralExpression || left instanceof ConstantReference ||
+                        PhpElementTypes.NUMBER == left.getNode().getElementType();
+                    final boolean isRightConstant =
+                        right instanceof StringLiteralExpression || right instanceof ConstantReference ||
+                        PhpElementTypes.NUMBER == right.getNode().getElementType();
+                    if (isLeftConstant != isRightConstant) {
+                        if (PREFER_YODA_STYLE && isRightConstant) {
+                            problemsHolder.registerProblem(expression, messageUseYoda, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
+                        }
+                        if (PREFER_REGULAR_STYLE && isLeftConstant) {
+                            problemsHolder.registerProblem(expression, messageUseRegular, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
+                        }
+                    }
                 }
             }
         };
@@ -103,7 +89,7 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
         }));
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private class TheLocalFix implements LocalQuickFix {
         @NotNull
         @Override
         public String getName() {
@@ -121,17 +107,13 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
             final PsiElement target = descriptor.getPsiElement();
             if (target instanceof BinaryExpression) {
                 final BinaryExpression expression = (BinaryExpression) target;
-                final PsiElement       left       = expression.getLeftOperand();
-                final PsiElement       right      = expression.getRightOperand();
-
-                if ((left == null) ||
-                    (right == null)) {
-                    return;
+                final PsiElement left             = expression.getLeftOperand();
+                final PsiElement right            = expression.getRightOperand();
+                if (left != null && right != null) {
+                    final PsiElement leftCopy = left.copy();
+                    left.replace(right);
+                    right.replace(leftCopy);
                 }
-
-                final PsiElement leftCopy = left.copy();
-                left.replace(right);
-                right.replace(leftCopy);
             }
         }
     }

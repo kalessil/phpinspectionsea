@@ -58,32 +58,29 @@ Thank you for supporting our crowdfunding campaign!
 We keep delivering funded results =)
 <br/>
 <br/>
-- : <br/>
-ClassConstantCanBeUsedInspector: resolved false-positives (language level considered)
-SuspiciousAssignmentsInspector: resolved false-positives (assignment by reference)
-OnlyWritesOnParameterInspector: resolved false-positives
-NotOptimalIfConditionsInspection: resolved false-positives (comparing to booleans), added options
-SummerTimeUnsafeTimeManipulationInspector: resolved false-positives (context aware now)
-SenselessProxyMethodInspector: resolved false-positives (return type chnaged)
-MoreThanThreeArgumentsInspector: resolved false-positives (UTs context)
-UnSafeIsSetOverArrayInspector: resolved false-positives (global context)
+- Non-optimal if conditions: resolved false-positives (comparing to booleans), added options<br/>
+- Parameter/variable is not used: resolved false-positives<br/>
+- Senseless proxy function: resolved false-positives (return type changed)<br/>
+- Summer-time unsafe date manipulations: resolved false-positives (context aware now)<br/>
+- Suspicious assignments: resolved false-positives (assignment by reference)<br/>
+- Too many parameters in a callable: resolved false-positives (UTs context)<br/>
+- 'isset(...)' usage: resolved false-positives (global context)<br/>
+- ::class can be used: resolved false-positives (language level considered)<br/>
 <br/>
-- : <br/>
-IfReturnReturnSimplificationInspector: QF bug-fix (condition parts were lost)
-CallableInLoopTerminationConditionInspector: QF implemented
-OnlyWritesOnParameterInspector: new patterns
-PropertyInitializationFlawsInspector: new patterns
-ClassOverridesFieldOfSuperClassInspector: new patterns
-SuspiciousBinaryOperationInspector: new patterns
-NullPointerExceptionInspector: new patterns
-CountOnPropelCollectionInspector: dropped
+- Callable calls in loops termination condition: QF implemented<br/>
+- Class overrides a field of a parent class: new patterns<br/>
+- Class property initialization flaws: new patterns<br/>
+- If-return-return could be simplified: QF bug-fix (condition parts were lost)<br/>
+- Null pointer exceptions prevention: new patterns<br/>
+- Parameter/variable is not used: new patterns<br/>
+- Suspicious binary operations: new patterns<br/>
+- 'count(...)' calls on Propel collection: dropped<br/>
 <br/>
-- : <br/>
-ArgumentEqualsDefaultValueInspector: implemented
-PassingByReferenceCorrectnessInspector: implemented
-ScandirUsageInspector: implemented
-MockingFinalClassesInspector: implemented
-LowerAccessLevelInspector: implemented
+- Declaration access can be weaker: implemented<br/>
+- Mocking correctness: implemented<br/>
+- Passing arguments by reference correctness: implemented<br/>
+- Unnecessary arguments specification: implemented<br/>
+- 'scandir(...)' low performing usage: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>

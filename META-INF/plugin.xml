@@ -58,27 +58,32 @@ Thank you for supporting our crowdfunding campaign!
 We keep delivering funded results =)
 <br/>
 <br/>
-- Documentation and reporting enhancements<br/>
-- Callable parameter usage violates definition: resolved false-positives (iterable)<br/>
-- Foreach source to iterate over: resolved false-positives (iterable type)<br/>
-- Long inheritance chain: resolved false-positives (DDD-named exceptions, Phalcon framework)<br/>
-- 'substr(...)' used as index-based access: resolved false-positives (mb_substr)<br/>
+- : <br/>
+ClassConstantCanBeUsedInspector: resolved false-positives (language level considered)
+SuspiciousAssignmentsInspector: resolved false-positives (assignment by reference)
+OnlyWritesOnParameterInspector: resolved false-positives
+NotOptimalIfConditionsInspection: resolved false-positives (comparing to booleans), added options
+SummerTimeUnsafeTimeManipulationInspector: resolved false-positives (context aware now)
+SenselessProxyMethodInspector: resolved false-positives (return type chnaged)
+MoreThanThreeArgumentsInspector: resolved false-positives (UTs context)
+UnSafeIsSetOverArrayInspector: resolved false-positives (global context)
 <br/>
-- Child method is exactly the same: implemented QFes<br/>
-- Insecure 'uniqid(...)' usage: new patterns<br/>
-- General '\Exception' is thrown: QF implemented<br/>
-- PDO API usage: re-worked, added QFes<br/>
-- Suspicious returns: new patterns<br/>
-- Suspicious binary operations: new patterns<br/>
-- 'array_unique(...)' low performing usage: added QFes<br/>
-- 'file_put_contents(...)' misused: added QF<br/>
-- 'strtotime(...)' misused: added QFes<br/>
-- ::class can be used: new patterns<br/>
+- : <br/>
+IfReturnReturnSimplificationInspector: QF bug-fix (condition parts were lost)
+CallableInLoopTerminationConditionInspector: QF implemented
+OnlyWritesOnParameterInspector: new patterns
+PropertyInitializationFlawsInspector: new patterns
+ClassOverridesFieldOfSuperClassInspector: new patterns
+SuspiciousBinaryOperationInspector: new patterns
+NullPointerExceptionInspector: new patterns
+CountOnPropelCollectionInspector: dropped
 <br/>
-- Callable methods validity: implemented<br/>
-- Empty/isset results correctness: implemented<br/>
-- Null coalescing operator variable existence: implemented<br/>
-- 'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)': dropped<br/>
+- : <br/>
+ArgumentEqualsDefaultValueInspector: implemented
+PassingByReferenceCorrectnessInspector: implemented
+ScandirUsageInspector: implemented
+MockingFinalClassesInspector: implemented
+LowerAccessLevelInspector: implemented
 <br/>
 <hr/>
   ]]></change-notes>

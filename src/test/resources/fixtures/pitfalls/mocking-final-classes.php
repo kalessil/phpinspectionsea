@@ -1,5 +1,9 @@
 <?php
 
+namespace PhpSpec {
+    class ObjectBehavior {}
+}
+
 namespace PHPUnit\Framework {
     class TestCase
     {
@@ -33,4 +37,9 @@ namespace {
     $phpUnitNew->getMockBuilder(<error descr="Causes reflection errors as the referenced class is final.">"\\Clazz"</error>);
     $phpUnitNew->getMockClass(<error descr="Causes reflection errors as the referenced class is final.">Clazz::class</error>);
     $phpUnitNew->getMockBuilder(stdClass::class);
+
+    class ClazzSpec extends \PhpSpec\ObjectBehavior
+    {
+        function it_does_something(<error descr="Causes reflection errors as the referenced class is final.">Clazz</error> $clazz) {}
+    }
 }

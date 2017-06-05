@@ -2,12 +2,14 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,6 +52,24 @@ public class MockingFinalClassesInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
+            @Override
+            public void visitPhpClass(@NotNull PhpClass clazz) {
+                final PhpClass parent = clazz.getSuperClass();
+                if (parent != null && parent.getFQN().equals("\\PhpSpec\\ObjectBehavior")) {
+                    for (final Method method : clazz.getOwnMethods()) {
+                        for (final Parameter parameter : method.getParameters()) {
+                            final PsiElement typeCandidate = parameter.getFirstPsiChild();
+                            if (typeCandidate instanceof ClassReference) {
+                                final PsiElement resolved = ((ClassReference) typeCandidate).resolve();
+                                if (resolved instanceof PhpClass && ((PhpClass) resolved).isFinal()) {
+                                    holder.registerProblem(typeCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 final String methodName      = reference.getName();

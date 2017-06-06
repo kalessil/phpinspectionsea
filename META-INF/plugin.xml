@@ -756,6 +756,10 @@ with a laptop.
         shortName="LowerAccessLevelInspection"                      displayName="Declaration access can be weaker"
         groupName="Architecture"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.LowerAccessLevelInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="EfferentObjectCouplingInspection"                displayName="Efferent Coupling Between Objects"
+        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.EfferentObjectCouplingInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

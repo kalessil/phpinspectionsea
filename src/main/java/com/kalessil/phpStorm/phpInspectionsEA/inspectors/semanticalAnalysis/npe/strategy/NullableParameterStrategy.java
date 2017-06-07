@@ -113,6 +113,15 @@ final public class NullableParameterStrategy {
                 }
             }
 
+            /* cases when NPE can be introduced: array access */
+            if (parent instanceof ArrayAccessExpression) {
+                final PsiElement container = ((ArrayAccessExpression) parent).getValue();
+                if (variable == container) {
+                    holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                }
+                continue;
+            }
+
             /* cases when NPE can be introduced: member reference */
             if (parent instanceof MemberReference) {
                 final MemberReference reference = (MemberReference) parent;

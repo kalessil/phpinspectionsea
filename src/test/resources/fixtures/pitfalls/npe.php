@@ -50,6 +50,13 @@ class CasesHolder {
         }
     }
 
+    public function npeCheckArrayAccess(\stdClass $first = null) {
+        return [
+            <warning descr="Null pointer exception may occur here.">$first</warning>['whatever'],
+            $whatever[$first]
+        ];
+    }
+
     public function npeCheckConstraints(\InvokableClass $first = null) {
         $first = $first ?: null;
         $first->property = 'Obviously NPE, but we stop at re-assigning. No solution as of April 2017.';

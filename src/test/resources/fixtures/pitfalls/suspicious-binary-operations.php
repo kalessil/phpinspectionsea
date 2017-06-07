@@ -40,3 +40,9 @@ $x = (
     <error descr="This boolean makes no sense or enforces the operation result.">true</error> ||
     false === true
 );
+
+/* a bug: ternary always returns the argument */
+$y = [
+    <error descr="The operation results to '(int)$x', please add missing parenthesises.">(int)$x</error> ?? 'whatever',
+    (<error descr="The operation results to '(string)$x', please add missing parenthesises.">(string)$x</error>) ?? 'whatever'
+];

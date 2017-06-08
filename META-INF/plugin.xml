@@ -28,7 +28,7 @@ Please follow me at <a href="https://twitter.com/kalessil">twitter</a> for statu
 This plugin is a Static Code Analysis tool for PHP (aka inspections in JetBrains products).<br />
 <br />
 It covers:<br />
-- architecture related issues (e.g. design pattern violations)<br />
+- architecture related issues<br />
 - weak types control and possible code construct simplifications<br />
 - performance issues<br />
 - non-optimal, duplicate and suspicious "if" conditions<br />
@@ -74,6 +74,8 @@ We keep delivering funded results =)
 - Null pointer exceptions prevention: new patterns<br/>
 - Parameter/variable is not used: new patterns<br/>
 - Suspicious binary operations: new patterns<br/>
+- Class violates singleton/factory pattern definition: dropped<br/>
+- Private constructor semantics: dropped<br />
 - 'count(...)' calls on Propel collection: dropped<br/>
 <br/>
 - Declaration access can be weaker: implemented<br/>
@@ -722,14 +724,6 @@ We keep delivering funded results =)
         shortName="ClassOverridesFieldOfSuperClassInspection"       displayName="Class overrides a field of a parent class"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassOverridesFieldOfSuperClassInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="SingletonFactoryPatternViolationInspection"      displayName="Class violates singleton/factory pattern definition"
-        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.SingletonFactoryPatternViolationInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="PrivateConstructorSemanticsInspection"           displayName="Private constructor semantics"
-        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.PrivateConstructorSemanticsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="LongInheritanceChainInspection"                  displayName="Long inheritance chain"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"

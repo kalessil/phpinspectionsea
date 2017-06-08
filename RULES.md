@@ -135,8 +135,6 @@ Inspections Lists (Architecture)
 | Architecture         | MoreThanThreeArgumentsInspection                | Too many parameters in a callable                   | n/a | yes | n/a  | no  |
 | Architecture         | CallableParameterUseCaseInTypeContextInspection | Callable parameter usage violates definition        | n/a |
 | Architecture         | ClassOverridesFieldOfSuperClassInspection       | Class overrides a field of a parent class           | n/a | yes | n/a  | yes |
-| Architecture         | SingletonFactoryPatternViolationInspection      | Class violates singleton/factory pattern definition | n/a |
-| Architecture         | PrivateConstructorSemanticsInspection           | Private constructor semantics                       | n/a | yes | n/a  | no  |
 | Architecture         | LongInheritanceChainInspection                  | Long inheritance chain                              | n/a | yes | n/a  | yes |
 | Architecture         | PropertyCanBeStaticInspection                   | Property could be static                            | n/a | yes | n/a  | no  |
 | Architecture         | EmptyClassInspection                            | Empty class                                         | n/a | yes | n/a  | no  |

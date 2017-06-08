@@ -436,6 +436,10 @@ We keep delivering funded results =)
         shortName="MockingFinalClassesInspection"                 displayName="Mocking correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.MockingFinalClassesInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ClassConstantUsageCorrectnessInspection"       displayName="::class constant usage correctness"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ClassConstantUsageCorrectnessInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

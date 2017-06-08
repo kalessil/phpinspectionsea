@@ -86,7 +86,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                     }
 
                     if (referenceText.contains("\\")) {
-                        /* RQN specified, TODO: more test cases */
+                        /* RQN specified */
                         if (namespace != null && !namespace.getFQN().equals("\\")) {
                             result.add(namespace.getFQN() + "\\" + referenceText);
                         }
@@ -98,7 +98,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                                 final String alias    = use.getAliasName();
                                 final PsiElement what = use.getFirstChild();
                                 if (alias != null) {
-                                    /* alias as it is, TODO: more test cases, don;t like the solution */
+                                    /* alias as it is */
                                     result.add(alias);
                                 } else if (what instanceof ClassReference) {
                                     /* resolve the imported class, as it's the source for correct naming */

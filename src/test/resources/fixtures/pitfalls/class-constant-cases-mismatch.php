@@ -20,6 +20,7 @@ namespace YetAnotherNamespace {
 
     return [
         <error descr="::class result and class qualified name are not identical (case mismatch).">TestClass</error>::class,
-        \stdclass::class
+        <error descr="::class result and class qualified name are not identical (case mismatch).">\stdclass</error>::class,
+        \stdClass::class
     ];
 }

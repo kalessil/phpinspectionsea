@@ -2,10 +2,12 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -46,6 +48,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                         final boolean isTarget     = !referencedQn.equals("self") && !referencedQn.equals("static");
                         final PsiElement resolved  = isTarget ? clazz.resolve() : null;
                         if (resolved instanceof PhpClass) {
+                            /* the resolved class will accumulate case issue in it's FQN */
                             final String clazzFqn       = clazz.getFQN();
                             final List<String> variants = this.getVariants(clazz, (PhpClass) resolved);
                             if (!variants.isEmpty() && clazzFqn != null) {
@@ -65,8 +68,12 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                 final List<String> result  = new ArrayList<>();
                 final String referenceText = reference.getText();
                 if (referenceText.startsWith("\\")) {
-                    /* FQN specified */
-                    result.add(referenceText);
+                    /* FQN specified, resolve as we might have case issues there */
+                    final Project project = reference.getProject();
+                    for (final PhpClass resolved : PhpIndex.getInstance(project).getClassesByFQN(referenceText)) {
+                        result.add(resolved.getFQN());
+                        break;
+                    }
                 } else {
                     PhpNamespace namespace = null;
                     PsiElement current     = reference.getParent();
@@ -79,7 +86,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                     }
 
                     if (referenceText.contains("\\")) {
-                        /* RQN specified */
+                        /* RQN specified, TODO: more test cases */
                         if (namespace != null && !namespace.getFQN().equals("\\")) {
                             result.add(namespace.getFQN() + "\\" + referenceText);
                         }
@@ -91,8 +98,10 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                                 final String alias    = use.getAliasName();
                                 final PsiElement what = use.getFirstChild();
                                 if (alias != null) {
+                                    /* alias as it is, TODO: more test cases, don;t like the solution */
                                     result.add(alias);
                                 } else if (what instanceof ClassReference) {
+                                    /* resolve the imported class, as it's the source for correct naming */
                                     final PsiElement resolved = ((ClassReference) what).resolve();
                                     if (resolved instanceof PhpClass) {
                                         result.add(((PhpClass) resolved).getFQN());

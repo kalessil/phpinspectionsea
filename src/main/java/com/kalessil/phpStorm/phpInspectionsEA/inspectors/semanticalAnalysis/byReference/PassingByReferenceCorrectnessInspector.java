@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
  */
 
 public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
-    private static final String message = "Emits a notice (only variable references should be returned by reference)";
+    private static final String message = "Emits a notice (only variable references should be returned by reference).";
 
     @NotNull
     public String getShortName() {

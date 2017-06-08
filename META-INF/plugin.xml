@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.7</version>
+  <version>2.3.8-preview</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -54,8 +54,7 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Thank you for supporting our crowdfunding campaign!
-We keep delivering funded results =)
+(2.3.8-preview): bug-fixes and new inspections.
 <br/>
 <br/>
 - Non-optimal if conditions: resolved false-positives (comparing to booleans), added options<br/>
@@ -67,7 +66,7 @@ We keep delivering funded results =)
 - 'isset(...)' usage: resolved false-positives (global context)<br/>
 - ::class can be used: resolved false-positives (language level considered)<br/>
 <br/>
-- Callable calls in loops termination condition: QF implemented<br/>
+- Callable calls in loops termination condition: QF implemented (thank you @rentalhost)<br/>
 - Class overrides a field of a parent class: new patterns<br/>
 - Class property initialization flaws: new patterns<br/>
 - If-return-return could be simplified: QF bug-fix (condition parts were lost)<br/>
@@ -78,10 +77,10 @@ We keep delivering funded results =)
 - Private constructor semantics: dropped<br />
 - 'count(...)' calls on Propel collection: dropped<br/>
 <br/>
-- Declaration access can be weaker: implemented<br/>
+- Declaration access can be weaker: implemented (thank you @rentalhost)<br/>
 - Mocking correctness: implemented<br/>
 - Passing arguments by reference correctness: implemented<br/>
-- Unnecessary arguments specification: implemented<br/>
+- Unnecessary arguments specification: implemented (thank you @rentalhost)<br/>
 - 'scandir(...)' low performing usage: implemented<br/>
 - ::class constant usage correctness: implemented<br/>
 <br/>

@@ -26,7 +26,7 @@ import java.util.List;
  */
 
 public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
-    private static final String message = "::class result and class qualified name are not identical (case mismatch).";
+    private static final String message = "::class result and the class qualified name are not identical (case mismatch).";
 
     @NotNull
     public String getShortName() {
@@ -86,9 +86,12 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                     }
 
                     if (referenceText.contains("\\")) {
-                        /* RQN specified */
+                        /* RQN specified, check if resolved class in the same NS */
                         if (namespace != null && !namespace.getFQN().equals("\\")) {
-                            result.add(namespace.getFQN() + "\\" + referenceText);
+                            final String NsFqn = namespace.getFQN();
+                            if (clazz.getFQN().toLowerCase().startsWith(NsFqn.toLowerCase())) {
+                                result.add(NsFqn + "\\" + referenceText);
+                            }
                         }
                     } else {
                         /* imports (incl. aliases) */

@@ -81,6 +81,7 @@ We keep delivering funded results =)
 - Passing arguments by reference correctness: implemented<br/>
 - Unnecessary arguments specification: implemented<br/>
 - 'scandir(...)' low performing usage: implemented<br/>
+- ::class constant usage correctness: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>

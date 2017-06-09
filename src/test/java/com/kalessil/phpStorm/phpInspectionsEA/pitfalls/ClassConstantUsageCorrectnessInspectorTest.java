@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.C
 
 final public class ClassConstantUsageCorrectnessInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.configureByFile("fixtures/pitfalls/class-constant-cases-mismatch.php");
         myFixture.enableInspections(new ClassConstantUsageCorrectnessInspector());
+
+        myFixture.configureByFile("fixtures/pitfalls/class-constant-cases-mismatch.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

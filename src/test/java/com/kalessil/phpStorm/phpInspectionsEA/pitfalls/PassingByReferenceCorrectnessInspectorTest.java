@@ -5,7 +5,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.byRe
 
 final public class PassingByReferenceCorrectnessInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(PassingByReferenceCorrectnessInspector.class);
+        myFixture.enableInspections(new PassingByReferenceCorrectnessInspector());
+
         myFixture.configureByFile("fixtures/pitfalls/passing-by-reference-correctness.php");
         myFixture.testHighlighting(true, false, true);
     }

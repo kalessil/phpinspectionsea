@@ -40,5 +40,13 @@ function immediateOverrides()
     $y8 = &$array[0];
     $y8 = $array[1];
 
-    return [$y1, $y2, $y3, $y4, $y5, $y6, $y7, $y8];
+    /* false-positive: self-assignment after assignment */
+    $y9 = 'whatever';
+    if ($x) {
+        $y9 .= 'xxx';
+    }
+    $y10  = 'whatever';
+    $y10 .= 'xxx';
+
+    return [$y1, $y2, $y3, $y4, $y5, $y6, $y7, $y8, $y9, $y10];
 }

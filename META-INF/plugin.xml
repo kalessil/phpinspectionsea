@@ -70,6 +70,7 @@ with a laptop.
 - Class overrides a field of a parent class: new patterns<br/>
 - Class property initialization flaws: new patterns<br/>
 - If-return-return could be simplified: QF bug-fix (condition parts were lost)<br/>
+- Isset operations variables existence: new patterns<br/>
 - Null pointer exceptions prevention: new patterns<br/>
 - Parameter/variable is not used: new patterns<br/>
 - Suspicious binary operations: new patterns<br/>
@@ -419,9 +420,9 @@ with a laptop.
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.NullPointerExceptionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="NullCoalescingArgumentExistenceInspection"     displayName="Null coalescing operator variable existence"
+        shortName="IssetArgumentExistenceInspection"              displayName="Isset operations variables existence"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.NullCoalescingArgumentExistenceInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.IssetArgumentExistenceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MissingIssetImplementationInspection"          displayName="Empty/isset results correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"

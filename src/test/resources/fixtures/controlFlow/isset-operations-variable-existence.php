@@ -13,6 +13,11 @@ class CasesHolder
         return [$a, $b];
     }
 
+    public function specialCases(): array
+    {
+        return [ $this ?? 'whatever', isset($this), empty($this) ];
+    }
+
     public function reportedCases()
     {
         $x = <error descr="'$x' seems to be not defined in the scope.">$x</error> ?? '';

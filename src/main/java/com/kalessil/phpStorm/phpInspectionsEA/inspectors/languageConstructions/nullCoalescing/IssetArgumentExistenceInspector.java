@@ -73,9 +73,9 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
             }
 
             private void analyzeExistence (@NotNull Variable variable) {
-                final Function scope = ExpressionSemanticUtil.getScope(variable);
-                if (scope != null) {
-                    final String variableName = variable.getName();
+                final Function scope      = ExpressionSemanticUtil.getScope(variable);
+                final String variableName = variable.getName();
+                if (scope != null && !variableName.equals("this")) {
                     final PhpAccessVariableInstruction[] usages
                         = PhpControlFlowUtil.getFollowingVariableAccessInstructions(
                             scope.getControlFlow().getEntryPoint(),

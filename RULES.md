@@ -108,7 +108,7 @@ Inspections Lists (Code style)
 | Code style           | ComparisonOperandsOrderInspection               | Yoda/regular conditions style usage                 | yes | yes | no   | no  |
 | Code style           | UnknownInspectionInspection                     | Unknown inspection suppression                      | n/a | yes | n/a  | no  |
 | Code style           | ParameterDefaultValueIsNotNullInspection        | Non-null parameters default value                   | n/a | yes | n/a  | yes |
-| Code style           | MissortedOrderingInspection                     | Missorted modifiers                                 | yes | yes | yes  | no  |
+| Code style           | MisorderedModifiersInspection                   | PSR-compliant modifiers order                       | yes | yes | yes  | no  |
 
 Inspections Lists (Language level migration)
 ---

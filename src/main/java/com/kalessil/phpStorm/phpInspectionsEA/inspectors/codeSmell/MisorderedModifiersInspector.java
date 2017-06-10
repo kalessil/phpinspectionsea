@@ -34,12 +34,12 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class MissortedOrderingInspector extends BasePhpInspection {
-    private static final String message = "Missorted modifiers '%s'";
+public class MisorderedModifiersInspector extends BasePhpInspection {
+    private static final String message = "Misordered modifiers '%s'";
 
     @NotNull
     public String getShortName() {
-        return "MissortedOrderingInspection";
+        return "MisorderedModifiersInspection";
     }
 
     @Override

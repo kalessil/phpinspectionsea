@@ -1,18 +1,27 @@
 I want to say thank you and mention people who also contributed to this plugin.
 
 
-[Vasiliy Kurdin](https://bitbucket.org/va5ya)
+[Alexander Makarov](https://bitbucket.org/samdark)
+
+[Andrii Volin](https://github.com/angyvolin)
+
+[David Rodrigues](https://github.com/rentalhost)
 
 [Denis Ryabov](https://bitbucket.org/dryabov)
 
-[Thomas Johnell](https://bitbucket.org/tom-1bg)
-
 [Jack Kingsman](https://bitbucket.org/jkingsman)
-
-[Alexander Makarov](https://bitbucket.org/samdark)
-
-[Ryan Shay](https://bitbucket.org/ryanshay)
 
 [Ivan Scherbak](https://github.com/funivan)
 
-[Andrii Volin](https://github.com/angyvolin)
+[Ryan Shay](https://bitbucket.org/ryanshay)
+
+[Thomas Johnell](https://bitbucket.org/tom-1bg)
+
+[Vasiliy Kurdin](https://bitbucket.org/va5ya)
+
+and [other contributors](https://github.com/kalessil/phpinspectionsea/graphs/contributors)
+
+
+
+
+

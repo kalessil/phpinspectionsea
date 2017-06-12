@@ -71,7 +71,7 @@ with a laptop.
 - Class property initialization flaws: new patterns<br/>
 - If-return-return could be simplified: QF bug-fix (condition parts were lost)<br/>
 - Isset operations variables existence: new patterns<br/>
-- Null pointer exceptions prevention: new patterns<br/>
+- Null reference: new patterns<br/>
 - Parameter/variable is not used: new patterns<br/>
 - Suspicious binary operations: new patterns<br/>
 - Class violates singleton/factory pattern definition: dropped<br/>
@@ -416,7 +416,7 @@ with a laptop.
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.AutoloadingIssuesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="NullPointerExceptionInspection"                displayName="Null pointer exceptions prevention"
+        shortName="NullPointerExceptionInspection"                displayName="Null reference"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.NullPointerExceptionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

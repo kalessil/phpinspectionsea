@@ -3,7 +3,7 @@
 [![Downloads](http://phpstorm.espend.de/badge/7622/downloads)](https://plugins.jetbrains.com/plugin/7622)
 [![Downloads last month](http://phpstorm.espend.de/badge/7622/last-month)](https://plugins.jetbrains.com/plugin/7622)
 [![Donate to this project using Paypal](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/VReznichenko)
-[![Donate to this project using Patreon](https://img.shields.io/badge/patreon-donate-yellow.svgg)](https://www.patreon.com/kalessil)
+[![Donate to this project using Patreon](https://img.shields.io/badge/patreon-donate-yellow.svg)](https://www.patreon.com/kalessil)
 
 Php Inspections (EA Extended)
 ---

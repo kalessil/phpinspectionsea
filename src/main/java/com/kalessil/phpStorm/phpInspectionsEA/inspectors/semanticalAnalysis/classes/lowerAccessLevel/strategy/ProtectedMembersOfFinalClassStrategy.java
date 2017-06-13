@@ -25,7 +25,7 @@ final public class ProtectedMembersOfFinalClassStrategy {
     public static void apply(@NotNull PhpClassMember subject, @NotNull ProblemsHolder holder) {
         final PhpClass clazz          = subject.getContainingClass();
         final boolean isTargetContext = clazz != null && clazz.isFinal() && subject.getModifier().isProtected();
-        if (isTargetContext && !isOverride(subject, clazz)) {
+        if (isTargetContext && clazz.getSuperClass() == null &&!isOverride(subject, clazz)) {
             final PsiElement modifier = ModifierExtractionUtil.getProtectedModifier(subject);
             if (modifier != null) {
                 holder.registerProblem(modifier, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new MakePrivateFixer(modifier));

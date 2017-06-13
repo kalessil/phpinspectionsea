@@ -7,9 +7,28 @@
 
 Php Inspections (EA Extended)
 ---
-A Static Code Analysis tool for PHP distributed as a PhpStorm/IdeaUltimate [plugin](https://plugins.jetbrains.com/plugin/7622?pr=phpStorm). 
+<img src="https://user-images.githubusercontent.com/47294/26991958-2a7ee9f4-4d65-11e7-8d60-f57ca8cbb46a.png"  alt="Php Inspections (EA Extended)" height=""/>
 
-Adds new inspections for PHP code, e.g. security-related, probable bugs, language level migration and more.
+This project is a Static Code Analysis tool for PhpStorm and Idea Ultimate.
+
+It covers:
+- architecture related issues
+- weak types control and possible code construct simplifications
+- performance issues
+- non-optimal, duplicate and suspicious "if" conditions
+- validation of magic methods usage
+- regular expressions
+- validation of exception handling workflow
+- compatibility issues
+- variety of time-consuming bugs
+- PhpUnit API usage
+- security issues
+
+Some of inspections are expecting conditional statements (e.g. "if") to use group statement for wrapping body 
+expressions. If this requirement is met then additional inspections are applied to the source code.
+
+On some projects CPU and therefore battery usage could be intensive, so it should be taken into account when traveling
+
 
 Installation and getting started
 ---

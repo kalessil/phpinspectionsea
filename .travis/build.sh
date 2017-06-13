@@ -12,7 +12,7 @@ elif [ "$IDE_ID" == "2016.3" ]; then
 elif [ "$IDE_ID" == "2016.2" ]; then
     ideaVersion="2016.2.5"
 elif [ "$IDE_ID" == "eap" ]; then
-    ideaVersion="171.4424.37"
+    ideaVersion="172.2827.15"
 fi
 
 travisCache=".cache"

@@ -17,6 +17,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -28,7 +31,13 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
-    private static final String message = "The argument can be safely dropped, as it identical to the default value.";
+    private static final String message = "The argument can be safely dropped, as it's identical to the default value.";
+
+    private static Set<String> exceptions = new HashSet<>();
+    static {
+        exceptions.add("array_search");
+        exceptions.add("in_array");
+    }
 
     @NotNull
     public final String getShortName() {
@@ -52,7 +61,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
             private void analyze(@NotNull FunctionReference reference) {
                 final PsiElement[] arguments = reference.getParameters();
                 final Function function      = arguments.length > 0 ? (Function) reference.resolve() : null;
-                if (function != null) {
+                if (function != null && !exceptions.contains(function.getName())) {
                     PsiElement reportFrom = null;
                     PsiElement reportTo   = null;
 

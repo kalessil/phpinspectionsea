@@ -31,3 +31,9 @@ $object->method();
 $object->method();
 $object->method('whatever');
 $object->method('default', 'whatever');
+
+/* false-positives: type-safe array search */
+in_array($x, $y, true);
+in_array($x, $y, false);
+array_search($x, $y, true);
+array_search($x, $y, false);

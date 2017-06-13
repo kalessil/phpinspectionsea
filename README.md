@@ -17,22 +17,17 @@ Please follow this [documentation link](docs/getting-started.md).
 
 Acknowledgments
 ---
-<img src="https://de.shopware.com/media/image/shopware_logo_blue.png" alt="Shopware" height="20"> Shopware is the biggest 
-supporter of our 2017 <a href="https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security#/">crowdfunding campaign</a>.
 
-<img src="https://d22z914jmqt4fj.cloudfront.net/images/logo.gif" alt="Cellsynt" height="20"> Cellsynt is a 
-supporter of our 2017 <a href="https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security#/">crowdfunding campaign</a>.
+<a href="https://shopware.com/"><img src="https://de.shopware.com/media/image/shopware_logo_blue.png" alt="Shopware" height="20"></a> Shopware is the biggest supporter of our 2017 <a href="https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security#/">crowdfunding campaign</a>.
 
-<img src="https://roave.com/themes/ruby-on-roave/images/roave-logo-tiny.svg" alt="Roave" height="20"> Roave LLC is a 
-supporter of our 2017 <a href="https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security#/">crowdfunding campaign</a>.
+<a href="https://www.cellsynt.com"><img src="https://d22z914jmqt4fj.cloudfront.net/images/logo.gif" alt="Cellsynt" height="20"></a> Cellsynt is a supporter of our 2017 <a href="https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security#/">crowdfunding campaign</a>.
 
-<img src="http://www.syrcon.com/wp-content/uploads/2016/10/syrcon_Logo_web-Sr_dark.png" alt="Syrcon GmbH" height="20"> Syrcon GmbH is a 
-supporter of our 2017 <a href="https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security#/">crowdfunding campaign</a>.
+<a href="https://roave.com"><img src="https://roave.com/themes/ruby-on-roave/images/roave-logo-tiny.svg" alt="Roave" height="20"></a> Roave LLC is a supporter of our 2017 <a href="https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security#/">crowdfunding campaign</a>.
 
-<img src="https://www.yourkit.com/images/yklogo.png" alt="YourKit" height="20"> YourKit supports us with their 
-full-featured [Java Profiler](https://www.yourkit.com/java/profiler/).
+<a href="http://www.syrcon.com"><img src="http://www.syrcon.com/wp-content/uploads/2016/10/syrcon_Logo_web-Sr_dark.png" alt="Syrcon GmbH" height="20"></a> Syrcon GmbH is a supporter of our 2017 <a href="https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security#/">crowdfunding campaign</a>.
 
-<img src="https://resources.jetbrains.com/assets/media/open-graph/jetbrains_250x250.png" alt="JetBrains" height="20"> JetBrains 
-supports us with their awesome IDEs.
+<a href="https://www.yourkit.com"><img src="https://www.yourkit.com/images/yklogo.png" alt="YourKit" height="20"></a> YourKit supports us with their full-featured [Java Profiler](https://www.yourkit.com/java/profiler/).
+
+<a href="https://jetbrains.com"><img src="https://resources.jetbrains.com/assets/media/open-graph/jetbrains_250x250.png" alt="JetBrains" height="20"></a>JetBrains supports us with their awesome IDEs.
 
 Project activity and various stats: https://www.openhub.net/p/phpinspectionsea

@@ -17,6 +17,27 @@
         ;
     };
 
+    /** @param callable $callable */
+    function callableTypes ($callable) {
+        return [
+            is_callable($callable),
+            is_string($callable),
+            is_array($callable)
+        ];
+    }
+
+    /**
+     *  @param mixed $mixed
+     *  @param object $object
+     */
+    function mixedTypes ($mixed, $object) {
+        return [
+            is_int($mixed),
+            is_int($object)
+        ];
+    }
+
+
     interface ParentInterface                        {}
     interface ChildInterface extends ParentInterface {}
     class Clazz implements ChildInterface            {}

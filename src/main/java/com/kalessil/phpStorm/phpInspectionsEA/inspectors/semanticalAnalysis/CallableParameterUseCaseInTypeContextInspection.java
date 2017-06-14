@@ -63,24 +63,25 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                 final PhpEntryPointInstruction entryPoint = scopeHolder.getControlFlow().getEntryPoint();
 
                 for (final Parameter parameter : parameters) {
-                    final String parameterName = parameter.getName();
-                    String parameterType       = parameter.getType().toString();
-                    if (
-                        StringUtil.isEmpty(parameterName) ||
-                        StringUtil.isEmpty(parameterType) ||
-                        parameterType.contains("mixed") ||
-                        parameterType.contains("#")
-                    ) {
+                    /* normalize parameter types, skip analysis when mixed or object appears */
+                    final Set<String> parameterTypes = new HashSet<>();
+                    for (final String type : parameter.getType().global(project).filterUnknown().getTypes()) {
+                        final String typeNormalized = Types.getType(type);
+                        if (typeNormalized.equals(Types.strMixed) || typeNormalized.equals(Types.strObject)) {
+                            parameterTypes.clear();
+                            break;
+                        } else if (typeNormalized.equals(Types.strCallable)) {
+                            parameterTypes.add(Types.strArray);
+                            parameterTypes.add(Types.strString);
+                        }
+                        parameterTypes.add(typeNormalized);
+                    }
+                    if (parameterTypes.isEmpty()) {
                         continue;
                     }
-                    /* too lazy to do anything more elegant */
-                    parameterType = parameterType.replace(Types.strCallable, "array|string|callable");
 
-
-                    /* resolve types for parameter */
-                    HashSet<String> parameterTypesResolved = new HashSet<>();
-                    TypeFromSignatureResolvingUtil.resolveSignature(parameterType, (Function) scopeHolder, index, parameterTypesResolved);
-
+                    /* now find instructions operating on the parameter and perform analysis */
+                    final String parameterName = parameter.getName();
                     final PhpAccessVariableInstruction[] usages
                         = PhpControlFlowUtil.getFollowingVariableAccessInstructions(entryPoint, parameterName, false);
                     for (final PhpAccessVariableInstruction instruction : usages) {
@@ -95,29 +96,29 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 continue;
                             }
 
+                            /* we expect that aliases usage has been fixed already */
                             final boolean isTypeAnnounced;
                             switch (functionName) {
                                 case "is_array":
                                     isTypeAnnounced =
-                                        parameterType.contains(Types.strArray) ||
-                                        parameterType.contains(Types.strIterable) ||
-                                        parameterType.contains("[]")
+                                        parameterTypes.contains(Types.strArray) ||
+                                        parameterTypes.contains(Types.strIterable)
                                     ;
                                     break;
                                 case "is_string":
-                                    isTypeAnnounced = parameterType.contains(Types.strString);
+                                    isTypeAnnounced = parameterTypes.contains(Types.strString);
                                     break;
                                 case "is_bool":
-                                    isTypeAnnounced = parameterType.contains(Types.strBoolean);
+                                    isTypeAnnounced = parameterTypes.contains(Types.strBoolean);
                                     break;
                                 case "is_int":
-                                    isTypeAnnounced = parameterType.contains(Types.strInteger);
+                                    isTypeAnnounced = parameterTypes.contains(Types.strInteger);
                                     break;
                                 case "is_float":
-                                    isTypeAnnounced = parameterType.contains(Types.strFloat);
+                                    isTypeAnnounced = parameterTypes.contains(Types.strFloat);
                                     break;
                                 case "is_resource":
-                                    isTypeAnnounced = parameterType.contains(Types.strResource);
+                                    isTypeAnnounced = parameterTypes.contains(Types.strResource);
                                     break;
                                 default:
                                     continue;
@@ -155,7 +156,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                         }
 
                                         final boolean isDefinitionViolation
-                                            = !this.isTypeCompatibleWith(normalizedType, parameterTypesResolved, index);
+                                            = !this.isTypeCompatibleWith(normalizedType, parameterTypes, index);
                                         if (isDefinitionViolation) {
                                             final String message
                                                 = patternAssignmentViolatesDefinition.replace("%s%", normalizedType);
@@ -170,7 +171,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                         /* TODO: analyze comparison operations */
                     }
 
-                    parameterTypesResolved.clear();
+                    parameterTypes.clear();
                 }
             }
 

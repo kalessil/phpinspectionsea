@@ -15,6 +15,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromSignatureResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
@@ -67,8 +68,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     if (
                         StringUtil.isEmpty(parameterName) ||
                         StringUtil.isEmpty(parameterType) ||
-                        parameterType.contains("mixed") ||   /* fair enough */
-                        parameterType.contains("#")          /* TODO: types lookup */
+                        parameterType.contains("mixed") ||
+                        parameterType.contains("#")
                     ) {
                         continue;
                     }
@@ -80,47 +81,28 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     HashSet<String> parameterTypesResolved = new HashSet<>();
                     TypeFromSignatureResolvingUtil.resolveSignature(parameterType, (Function) scopeHolder, index, parameterTypesResolved);
 
-                    PhpAccessVariableInstruction[] usages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(entryPoint, parameterName, false);
-                    if (usages.length == 0) {
-                        continue;
-                    }
-
-                    /* TODO: dedicate to method */
+                    final PhpAccessVariableInstruction[] usages
+                        = PhpControlFlowUtil.getFollowingVariableAccessInstructions(entryPoint, parameterName, false);
                     for (final PhpAccessVariableInstruction instruction : usages) {
-                        final PsiElement expression = instruction.getAnchor().getParent();
+                        final PsiElement parent        = instruction.getAnchor().getParent();
+                        final PsiElement callCandidate = null == parent ? null : parent.getParent();
 
-                        /* inspect type checks are used */
-                        if (
-                            expression instanceof ParameterList &&
-                            expression.getParent() instanceof FunctionReference
-                        ) {
-                            final FunctionReference functionCall = (FunctionReference) expression.getParent();
+                        /* check if is_* functions being used according to definitions */
+                        if (OpenapiTypesUtil.isFunctionReference(callCandidate)) {
+                            final FunctionReference functionCall = (FunctionReference) callCandidate;
                             final String functionName            = functionCall.getName();
-                            if (StringUtil.isEmpty(functionName)) {
+                            if (functionName == null) {
                                 continue;
                             }
 
-                            boolean isReversedCheck = false;
-                            if (functionCall.getParent() instanceof UnaryExpression) {
-                                final UnaryExpression callWrapper = (UnaryExpression) functionCall.getParent();
-                                isReversedCheck = (
-                                    null != callWrapper.getOperation() &&
-                                    null != callWrapper.getOperation().getNode() &&
-                                    PhpTokenTypes.opNOT == callWrapper.getOperation().getNode().getElementType()
-                                );
-                            }
-
-                            boolean isCallHasNoSense;
-                            boolean isCallViolatesDefinition;
-                            boolean isTypeAnnounced;
-
+                            final boolean isTypeAnnounced;
                             switch (functionName) {
                                 case "is_array":
-                                    isTypeAnnounced = (
-                                            parameterType.contains(Types.strArray) ||
-                                                    parameterType.contains(Types.strIterable) ||
-                                                    parameterType.contains("[]")
-                                    );
+                                    isTypeAnnounced =
+                                        parameterType.contains(Types.strArray) ||
+                                        parameterType.contains(Types.strIterable) ||
+                                        parameterType.contains("[]")
+                                    ;
                                     break;
                                 case "is_string":
                                     isTypeAnnounced = parameterType.contains(Types.strString);
@@ -141,24 +123,26 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     continue;
                             }
 
-                            isCallHasNoSense = !isTypeAnnounced && isReversedCheck;
-                            if (isCallHasNoSense) {
-                                holder.registerProblem(functionCall, messageNoSense, ProblemHighlightType.WEAK_WARNING);
-                                continue;
-                            }
+                            /* cases: call makes no sense, violation of defined types set */
+                            if (!isTypeAnnounced) {
+                                final PsiElement callParent = functionCall.getParent();
+                                boolean isReversedCheck     = false;
+                                if (callParent instanceof UnaryExpression) {
+                                    final PsiElement operation = ((UnaryExpression) callParent).getOperation();
+                                    isReversedCheck
+                                        = operation != null && PhpTokenTypes.opNOT == operation.getNode().getElementType();
+                                }
 
-                            isCallViolatesDefinition = !isTypeAnnounced;
-                            if (isCallViolatesDefinition) {
-                                holder.registerProblem(functionCall, messageCheckViolatesDefinition, ProblemHighlightType.WEAK_WARNING);
-                                continue;
+                                final String message = isReversedCheck ? messageNoSense : messageCheckViolatesDefinition;
+                                holder.registerProblem(functionCall, message, ProblemHighlightType.WEAK_WARNING);
                             }
 
                             continue;
                         }
 
                         /* case: assignments violating parameter definition */
-                        if (expression instanceof AssignmentExpression) {
-                            final AssignmentExpression assignment = (AssignmentExpression) expression;
+                        if (parent instanceof AssignmentExpression) {
+                            final AssignmentExpression assignment = (AssignmentExpression) parent;
                             final PhpPsiElement variable          = assignment.getVariable();
                             final PhpPsiElement value             = assignment.getValue();
                             if (variable instanceof Variable && value instanceof PhpTypedElement) {

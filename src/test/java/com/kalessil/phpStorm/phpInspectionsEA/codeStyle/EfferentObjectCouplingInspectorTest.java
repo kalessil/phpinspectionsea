@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.EfferentObjec
 
 public class EfferentObjectCouplingInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testFalsePositives() {
-        EfferentObjectCouplingInspector inspector = new EfferentObjectCouplingInspector();
-        inspector.COUPLING_LIMIT = 2;
+        final EfferentObjectCouplingInspector inspector = new EfferentObjectCouplingInspector();
+        inspector.optionCouplingLimit = 2;
+
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("fixtures/codeStyle/efferent-object-coupling.php");
         myFixture.testHighlighting(true, false, true);

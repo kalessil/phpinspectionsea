@@ -9,10 +9,11 @@ import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+
+import org.jetbrains.annotations.NotNull;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -23,10 +24,11 @@ import java.util.HashMap;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-public class EfferentObjectCouplingInspector extends BasePhpInspection {
 
-    public int COUPLING_LIMIT = 20;
+public class EfferentObjectCouplingInspector extends BasePhpInspection {
     private static final String messagePattern = "Efferent coupling is %d.";
+
+    public int optionCouplingLimit = 20;
 
     @NotNull
     public String getShortName() {
@@ -34,31 +36,43 @@ public class EfferentObjectCouplingInspector extends BasePhpInspection {
     }
 
     @NotNull
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+    public PsiElementVisitor buildVisitor(
+        @NotNull final ProblemsHolder holder,
+        final boolean isOnTheFly
+    ) {
         return new PhpElementVisitor() {
             @Override
-            public void visitPhpClass(PhpClass clazz) {
-                PsiElement nameIdentifier = clazz.getNameIdentifier();
-                if (nameIdentifier != null) {
-                    Collection<ClassReference> items = PsiTreeUtil.findChildrenOfType(clazz, ClassReference.class);
-                    HashMap<String, Boolean> fqnReferences = new HashMap<>();
-                    fqnReferences.put(clazz.getFQN(), true);
-                    for (ClassReference reference : items) {
-                        fqnReferences.putIfAbsent(reference.getFQN(), true);
-                    }
-                    int len = fqnReferences.keySet().size() - 1;
-                    if (len >= COUPLING_LIMIT) {
-                        holder.registerProblem(
-                            nameIdentifier,
-                            String.format(messagePattern, len),
-                            ProblemHighlightType.WEAK_WARNING
-                        );
+            public void visitPhpClass(final PhpClass phpClass) {
+                final PsiElement nameIdentifier = phpClass.getNameIdentifier();
+
+                if (nameIdentifier == null) {
+                    return;
+                }
+
+                final Collection<ClassReference> classReferences = PsiTreeUtil.findChildrenOfType(phpClass, ClassReference.class);
+                final Collection<String>         fqnReferences   = new ArrayList<>();
+
+                fqnReferences.add(phpClass.getFQN());
+
+                for (final ClassReference reference : classReferences) {
+                    final String classReferenceFQN = reference.getFQN();
+
+                    if (!fqnReferences.contains(classReferenceFQN)) {
+                        fqnReferences.add(classReferenceFQN);
                     }
                 }
-                super.visitPhpClass(clazz);
+
+                final int fqnReferencesSize = fqnReferences.size() - 1;
+
+                if (fqnReferencesSize >= optionCouplingLimit) {
+                    holder.registerProblem(
+                        nameIdentifier,
+                        String.format(messagePattern, fqnReferencesSize),
+                        ProblemHighlightType.WEAK_WARNING
+                    );
+                }
             }
         };
     }
-
 }
 

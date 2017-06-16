@@ -32,7 +32,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ElementTypeUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import javax.swing.*;
 
@@ -75,7 +74,7 @@ public class MagicNumberInspector extends BasePhpInspection {
                     return;
                 }
 
-                if (Objects.equals(expression.getOperationType(), PhpTokenTypes.opMUL_ASGN)) {
+                if (expression.getOperationType() == PhpTokenTypes.opMUL_ASGN) {
                     final PhpPsiElement expressionValue = expression.getValue();
 
                     if (isNumberOneNegative(expressionValue)) {
@@ -117,7 +116,7 @@ public class MagicNumberInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpBinaryExpression(final BinaryExpression expression) {
-                if (Objects.equals(expression.getOperationType(), PhpTokenTypes.opMUL)) {
+                if (expression.getOperationType() == PhpTokenTypes.opMUL) {
                     if (!optionCheckOnMultiplier) {
                         return;
                     }

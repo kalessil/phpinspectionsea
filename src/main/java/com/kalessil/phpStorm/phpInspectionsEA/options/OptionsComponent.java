@@ -6,6 +6,7 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,10 +29,6 @@ public final class OptionsComponent {
     @NotNull
     private final JPanel optionsPanel;
 
-    private OptionsComponent() {
-        optionsPanel = new JPanel(new MigLayout());
-    }
-
     @NotNull
     public static JPanel create(@NotNull final Consumer<OptionsComponent> delegateBuilder) {
         final OptionsComponent component = new OptionsComponent();
@@ -40,13 +37,25 @@ public final class OptionsComponent {
         return component.optionsPanel;
     }
 
-    public void addCheckbox(@NotNull final String label, final boolean defaultValue, @NotNull final Consumer<Boolean> updateConsumer) {
+    private OptionsComponent() {
+        optionsPanel = new JPanel(new MigLayout());
+    }
+
+    public void addCheckbox(
+        @NotNull final String label,
+        final boolean defaultValue,
+        @NotNull final Consumer<Boolean> updateConsumer
+    ) {
         final AbstractButton createdCheckbox = new JCheckBox(label, defaultValue);
         createdCheckbox.addItemListener((itemEvent) -> updateConsumer.accept(createdCheckbox.isSelected()));
         optionsPanel.add(createdCheckbox, "wrap");
     }
 
-    public void addList(@NotNull final String label, @NotNull final List<String> items, @NotNull final Runnable updater) {
+    public void addList(
+        @NotNull final String label,
+        @NotNull final List<String> items,
+        @NotNull final Runnable updater
+    ) {
         optionsPanel.add(new JLabel(label), "wrap");
         optionsPanel.add((new PrettyListControl(items) {
             @Override
@@ -70,14 +79,17 @@ public final class OptionsComponent {
     }
 
     public class RadioComponent {
-        private final ButtonGroup buttonGroup = new ButtonGroup();
-
         List<RadioOption> radioOptions = new ArrayList<>();
+        private final ButtonGroup buttonGroup = new ButtonGroup();
 
         @Nullable
         private RadioOption selectedOption;
 
-        public void addOption(@NotNull final String label, final boolean defaultValue, @NotNull final Consumer<Boolean> updateConsumer) {
+        public void addOption(
+            @NotNull final String label,
+            final boolean defaultValue,
+            @NotNull final Consumer<Boolean> updateConsumer
+        ) {
             final RadioOption newOption = new RadioOption(label, defaultValue, updateConsumer);
             radioOptions.add(newOption);
 
@@ -87,13 +99,15 @@ public final class OptionsComponent {
         }
 
         private class RadioOption {
-            @NotNull
-            final JRadioButton radioButton;
+            @NotNull final JRadioButton radioButton;
 
-            @NotNull
-            final Consumer<Boolean> updateConsumer;
+            @NotNull final Consumer<Boolean> updateConsumer;
 
-            RadioOption(@NotNull final String label, final boolean defaultValue, @NotNull final Consumer<Boolean> updateConsumer) {
+            RadioOption(
+                @NotNull final String label,
+                final boolean defaultValue,
+                @NotNull final Consumer<Boolean> updateConsumer
+            ) {
                 this.updateConsumer = updateConsumer;
 
                 radioButton = new JRadioButton(label, defaultValue);
@@ -101,7 +115,7 @@ public final class OptionsComponent {
                     final boolean isSelected = radioButton.isSelected();
 
                     if ((selectedOption != null) &&
-                        (selectedOption != this)) {
+                        !Objects.equals(selectedOption, this)) {
                         selectedOption.updateConsumer.accept(false);
                     }
 

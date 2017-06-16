@@ -42,10 +42,11 @@ import org.jetbrains.annotations.Nullable;
 public class MagicNumberInspector extends BasePhpInspection {
     private static final String message = "Magic number should be replaced by a constant.";
 
-    boolean optionCheckOnMultiplier = true;
-    boolean optionCheckOnProperties = true;
-    boolean optionCheckOnParameters = true;
-    boolean optionCheckOnArguments  = true;
+    // Inspection options.
+    @SuppressWarnings ("WeakerAccess") public boolean optionCheckOnMultiplier = true;
+    @SuppressWarnings ("WeakerAccess") public boolean optionCheckOnProperties = true;
+    @SuppressWarnings ("WeakerAccess") public boolean optionCheckOnParameters = true;
+    @SuppressWarnings ("WeakerAccess") public boolean optionCheckOnArguments  = true;
 
     @NotNull
     public String getShortName() {
@@ -231,7 +232,11 @@ public class MagicNumberInspector extends BasePhpInspection {
                 return false;
             }
 
-            private boolean isNumeric(final PsiElement expression) {
+            private boolean isNumeric(@Nullable final PsiElement expression) {
+                if (expression == null) {
+                    return false;
+                }
+
                 PsiElement testingExpression = expression;
 
                 if (testingExpression instanceof UnaryExpression) {
@@ -248,7 +253,7 @@ public class MagicNumberInspector extends BasePhpInspection {
                        !"0".equals(value.getText());
             }
 
-            private boolean isNumberOneNegative(final PsiElement unaryExpression) {
+            private boolean isNumberOneNegative(@Nullable final PsiElement unaryExpression) {
                 if (!(unaryExpression instanceof UnaryExpression)) {
                     return false;
                 }

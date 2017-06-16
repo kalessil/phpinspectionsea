@@ -9,9 +9,12 @@ import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import javax.swing.*;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -73,6 +76,12 @@ public class EfferentObjectCouplingInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> {
+            component.addSpinner("Coupling limit:", optionCouplingLimit, (inputtedValue) -> optionCouplingLimit = inputtedValue);
+        });
     }
 }
 

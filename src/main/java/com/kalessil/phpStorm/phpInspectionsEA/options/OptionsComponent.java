@@ -3,11 +3,12 @@ package com.kalessil.phpStorm.phpInspectionsEA.options;
 import com.kalessil.phpStorm.phpInspectionsEA.gui.PrettyListControl;
 import net.miginfocom.swing.MigLayout;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+
+import javax.swing.*;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +50,18 @@ public final class OptionsComponent {
         final AbstractButton createdCheckbox = new JCheckBox(label, defaultValue);
         createdCheckbox.addItemListener((itemEvent) -> updateConsumer.accept(createdCheckbox.isSelected()));
         optionsPanel.add(createdCheckbox, "wrap");
+    }
+
+    public void addSpinner(
+        @NotNull final String label,
+        final Integer defaultValue,
+        @NotNull final Consumer<Integer> updateConsumer
+    ) {
+        final JSpinner createdSpinner = new JSpinner(new SpinnerNumberModel(defaultValue, 0, null, 1));
+        createdSpinner.addChangeListener((itemEvent) -> updateConsumer.accept((Integer) createdSpinner.getValue()));
+
+        optionsPanel.add(new JLabel(label), "");
+        optionsPanel.add(createdSpinner, "pushx, growx");
     }
 
     public void addList(

@@ -8,7 +8,20 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.Constant;
+import com.jetbrains.php.lang.psi.elements.ConstantReference;
+import com.jetbrains.php.lang.psi.elements.Field;
+import com.jetbrains.php.lang.psi.elements.Function;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.jetbrains.php.lang.psi.elements.Parameter;
+import com.jetbrains.php.lang.psi.elements.PhpCase;
+import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import com.jetbrains.php.lang.psi.elements.PhpReturn;
+import com.jetbrains.php.lang.psi.elements.PhpSwitch;
+import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
+import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -16,11 +29,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.BinaryExpressionUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ElementTypeUtil;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import javax.swing.*;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +54,10 @@ public class MagicNumberInspector extends BasePhpInspection {
 
     @Override
     @NotNull
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
+    public PsiElementVisitor buildVisitor(
+        @NotNull final ProblemsHolder problemsHolder,
+        final boolean isOnTheFly
+    ) {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpReturn(final PhpReturn returnStatement) {
@@ -49,6 +66,52 @@ public class MagicNumberInspector extends BasePhpInspection {
                 if (isNumeric(returnArgument)) {
                     registerProblem(returnArgument);
                 }
+            }
+
+            @Override
+            public void visitPhpSelfAssignmentExpression(final SelfAssignmentExpression expression) {
+                if (!optionCheckOnMultiplier) {
+                    return;
+                }
+
+                if (Objects.equals(expression.getOperationType(), PhpTokenTypes.opMUL_ASGN)) {
+                    final PhpPsiElement expressionValue = expression.getValue();
+
+                    if (isNumberOneNegative(expressionValue)) {
+                        return;
+                    }
+
+                    if (isNumeric(expressionValue)) {
+                        registerProblem(expressionValue);
+                    }
+                }
+            }
+
+            @Override
+            public void visitPhpParameter(final Parameter parameter) {
+                if (optionCheckOnParameters &&
+                    isNotZeroNumber(parameter.getDefaultValue())) {
+                    registerProblem(parameter.getDefaultValue());
+                }
+            }
+
+            @Override
+            public void visitPhpMethodReference(final MethodReference reference) {
+                testParametersValue(reference);
+            }
+
+            @Override
+            public void visitPhpField(final Field field) {
+                if (optionCheckOnProperties &&
+                    !field.isConstant() &&
+                    isNotZeroNumber(field.getDefaultValue())) {
+                    registerProblem(field.getDefaultValue());
+                }
+            }
+
+            @Override
+            public void visitPhpFunctionCall(final FunctionReference reference) {
+                testParametersValue(reference);
             }
 
             @Override
@@ -97,52 +160,6 @@ public class MagicNumberInspector extends BasePhpInspection {
                 }
             }
 
-            @Override
-            public void visitPhpField(final Field field) {
-                if (optionCheckOnProperties &&
-                    !field.isConstant() &&
-                    isNotZeroNumber(field.getDefaultValue())) {
-                    registerProblem(field.getDefaultValue());
-                }
-            }
-
-            @Override
-            public void visitPhpParameter(final Parameter parameter) {
-                if (optionCheckOnParameters &&
-                    isNotZeroNumber(parameter.getDefaultValue())) {
-                    registerProblem(parameter.getDefaultValue());
-                }
-            }
-
-            @Override
-            public void visitPhpSelfAssignmentExpression(final SelfAssignmentExpression expression) {
-                if (!optionCheckOnMultiplier) {
-                    return;
-                }
-
-                if (Objects.equals(expression.getOperationType(), PhpTokenTypes.opMUL_ASGN)) {
-                    final PhpPsiElement expressionValue = expression.getValue();
-
-                    if (isNumberOneNegative(expressionValue)) {
-                        return;
-                    }
-
-                    if (isNumeric(expressionValue)) {
-                        registerProblem(expressionValue);
-                    }
-                }
-            }
-
-            @Override
-            public void visitPhpFunctionCall(final FunctionReference reference) {
-                testParametersValue(reference);
-            }
-
-            @Override
-            public void visitPhpMethodReference(final MethodReference reference) {
-                testParametersValue(reference);
-            }
-
             private void testParametersValue(final FunctionReference functionReference) {
                 if (!optionCheckOnArguments) {
                     return;
@@ -182,7 +199,10 @@ public class MagicNumberInspector extends BasePhpInspection {
                 }
             }
 
-            private boolean isDefaultValued(@Nullable final Parameter functionParameter, final PsiElement referenceParameter) {
+            private boolean isDefaultValued(
+                @Nullable final Parameter functionParameter,
+                final PsiElement referenceParameter
+            ) {
                 if (functionParameter != null) {
                     PsiElement defaultValue = functionParameter.getDefaultValue();
 

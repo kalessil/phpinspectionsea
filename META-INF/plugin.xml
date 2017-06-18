@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.8-preview</version>
+  <version>2.3.8-preview.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -54,15 +54,19 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-(2.3.8-preview): bug-fixes and new inspections.
+Hot-fix release; you can now support us via <a href="https://www.patreon.com/kalessil">Patreon</a>
 <br/>
 <br/>
++ Callable parameter usage violates definition: resolved false-positives (annotated properties)<br/>
++ Declaration access can be weaker: resolved false-positives (protected methods used by parent classes)<br/>
++ Foreach source to iterate over: resolved false-positives (predefined _* variables)<br/>
 - Non-optimal if conditions: resolved false-positives (comparing to booleans), added options<br/>
 - Parameter/variable is not used: resolved false-positives<br/>
 - Senseless proxy function: resolved false-positives (return type changed)<br/>
 - Summer-time unsafe date manipulations: resolved false-positives (context aware now)<br/>
 - Suspicious assignments: resolved false-positives (assignment by reference)<br/>
 - Too many parameters in a callable: resolved false-positives (UTs context)<br/>
++ Unnecessary arguments specification: resolved false-positives (in_array, array_search)<br/>
 - 'isset(...)' usage: resolved false-positives (global context)<br/>
 - ::class can be used: resolved false-positives (language level considered)<br/>
 <br/>
@@ -81,6 +85,7 @@ with a laptop.
 - Declaration access can be weaker: implemented (thank you @rentalhost)<br/>
 - Mocking correctness: implemented<br/>
 - Passing arguments by reference correctness: implemented<br/>
++ PSR-compliant modifiers order: implemented<br/>
 - Unnecessary arguments specification: implemented (thank you @rentalhost)<br/>
 - 'scandir(...)' low performing usage: implemented<br/>
 - ::class constant usage correctness: implemented<br/>

@@ -3,7 +3,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
@@ -16,7 +15,6 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromSignatureResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
@@ -89,6 +87,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                         final PsiElement callCandidate = null == parent ? null : parent.getParent();
 
                         /* check if is_* functions being used according to definitions */
+                        /* TODO: method/strategy 1 */
                         if (OpenapiTypesUtil.isFunctionReference(callCandidate)) {
                             final FunctionReference functionCall = (FunctionReference) callCandidate;
                             final String functionName            = functionCall.getName();
@@ -142,6 +141,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                         }
 
                         /* case: assignments violating parameter definition */
+                        /* TODO: method/strategy 2 */
                         if (parent instanceof AssignmentExpression) {
                             final AssignmentExpression assignment = (AssignmentExpression) parent;
                             final PhpPsiElement variable          = assignment.getVariable();

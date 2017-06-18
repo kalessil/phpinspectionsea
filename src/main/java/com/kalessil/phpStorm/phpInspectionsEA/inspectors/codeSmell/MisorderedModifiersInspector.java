@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class MisorderedModifiersInspector extends BasePhpInspection {
-    private static final String message = "Misordered modifiers '%s'";
+    private static final String message = "Modifiers are misordered (according to PSRs)";
 
     @NotNull
     public String getShortName() {
@@ -53,7 +53,6 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
                 }
 
                 final PhpModifierList methodModifierList = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
-
                 if (methodModifierList == null) {
                     return;
                 }
@@ -78,8 +77,7 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
                     return;
                 }
 
-                problemsHolder.registerProblem(methodModifierList, String.format(message, modifiersOriginalOrdering), ProblemHighlightType.WEAK_WARNING,
-                                               new TheLocalFix(modifiersExpectedOrdering));
+                problemsHolder.registerProblem(methodModifierList, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(modifiersExpectedOrdering));
             }
 
             private String describeOriginalOrdering(final Collection<LeafPsiElement> methodModifiers, final Function<LeafPsiElement, String> modifierText) {

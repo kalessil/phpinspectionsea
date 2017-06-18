@@ -22,6 +22,8 @@ final public class ExpressionCostEstimateUtil {
         predefinedVars.add("_COOKIE");
         predefinedVars.add("_ENV");
         predefinedVars.add("_SERVER");
+        predefinedVars.add("GLOBALS");
+        predefinedVars.add("HTTP_RAW_POST_DATA");
     }
 
     /**

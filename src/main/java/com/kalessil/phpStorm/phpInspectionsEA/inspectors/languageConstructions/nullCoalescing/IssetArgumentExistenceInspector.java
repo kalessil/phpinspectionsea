@@ -30,6 +30,12 @@ import java.util.Set;
 public class IssetArgumentExistenceInspector extends BasePhpInspection {
     private static final String messagePattern = "'$%v%' seems to be not defined in the scope.";
 
+    private static final Set<String> magicVariables = new HashSet<>();
+    static {
+        magicVariables.add("this");
+        magicVariables.add("php_errormsg");
+    }
+
     @NotNull
     public String getShortName() {
         return "IssetArgumentExistenceInspection";
@@ -76,7 +82,7 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
                 final Function scope      = ExpressionSemanticUtil.getScope(variable);
                 final GroupStatement body = scope == null ? null : ExpressionSemanticUtil.getGroupStatement(scope);
                 final String variableName = variable.getName();
-                if (body != null && !variableName.equals("this") && !ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
+                if (body != null && !magicVariables.contains(variableName) && !ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
                     for (final Variable reference : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
                         if (reference.getName().equals(variableName)) {
                             boolean report = reference == variable;

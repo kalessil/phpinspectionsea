@@ -29,7 +29,7 @@ function download {
   cachefile=${travisCache}/${basename}
 
   if [ ! -f ${cachefile} ]; then
-      wget --secure-protocol=SSLv2 $url -P ${travisCache};
+      wget --no-check-certificate $url -P ${travisCache};
     else
       echo "Cached file `ls -sh $cachefile` - `date -r $cachefile +'%Y-%m-%d %H:%M:%S'`"
   fi

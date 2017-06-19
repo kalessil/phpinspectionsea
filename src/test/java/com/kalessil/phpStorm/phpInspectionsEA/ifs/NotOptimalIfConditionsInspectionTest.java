@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.ifs;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.NotOptimalIfConditionsInspection;
 
@@ -79,6 +80,17 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/ifs/if-instanceof-flaws.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+
+    public void testInstanceOfFalsePositives() {
+        PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP540);
+        NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
+        inspector.REPORT_INSTANCE_OF_FLAWS         = true;
+
+        myFixture.enableInspections(inspector);
+
+        myFixture.configureByFile("fixtures/ifs/if-instanceof-flaws-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }
 

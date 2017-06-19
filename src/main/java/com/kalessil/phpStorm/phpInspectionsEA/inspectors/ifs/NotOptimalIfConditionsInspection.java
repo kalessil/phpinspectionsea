@@ -6,6 +6,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -223,6 +225,9 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 // release references in the raw list
                 instanceOfExpressions.clear();
 
+                final PhpLanguageLevel phpVersion
+                        = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                final boolean isDateTimeInterfaceAvaialble = phpVersion.compareTo(PhpLanguageLevel.PHP550) >= 0;
 
                 // process entries, perform subject container clean up on each iteration
                 final Map<PhpClass, Set<PhpClass>> resolvedInheritanceChains = new HashMap<>();
@@ -250,7 +255,13 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                                 }
 
                                 // if alternative references to base class current check is ambiguous
-                                if (clazzParents.contains(instanceOf2classInner.getValue())) {
+                                final PhpClass secondClass = instanceOf2classInner.getValue();
+                                if (clazzParents.contains(secondClass)) {
+                                    /* false-positive: the interface in stubs but accessible in php 5.5+ only */
+                                    if (secondClass.getFQN().equals("\\DateTimeInterface") && !isDateTimeInterfaceAvaialble) {
+                                        continue;
+                                    }
+
                                     holder.registerProblem(instanceOfExpression, messageInstanceOfAmbiguous, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                                     break;
                                 }

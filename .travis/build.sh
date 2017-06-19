@@ -1,7 +1,5 @@
 #!/bin/bash
 
-sudo apt-get update && sudo apt-get upgrade
-
 # bash strict mode is on
 set -euo pipefail
 IFS=$'\n\t'
@@ -65,16 +63,16 @@ fi
 mkdir plugins
 
 if [ "$IDE_ID" == "2017.1" ]; then
-    download "https://plugins.jetbrains.com/files/6610/33685/php-171.3780.104.zip"
+    download "http://plugins.jetbrains.com/files/6610/33685/php-171.3780.104.zip"
     unzip -qo $travisCache/php-171.3780.104.zip -d ./plugins
 elif [ "$IDE_ID" == "2016.3" ]; then
-    download "https://plugins.jetbrains.com/files/6610/31161/php-163.10504.2.zip"
+    download "http://plugins.jetbrains.com/files/6610/31161/php-163.10504.2.zip"
     unzip -qo $travisCache/php-163.10504.2.zip -d ./plugins
 elif [ "$IDE_ID" == "2016.2" ]; then
-    download "https://plugins.jetbrains.com/files/6610/27859/php-162.1628.23.zip"
+    download "http://plugins.jetbrains.com/files/6610/27859/php-162.1628.23.zip"
     unzip -qo $travisCache/php-162.1628.23.zip -d ./plugins
 elif [ "$IDE_ID" == "eap" ]; then
-    download "https://plugins.jetbrains.com/files/6610/28510/php-163.4830.18.zip"
+    download "http://plugins.jetbrains.com/files/6610/28510/php-163.4830.18.zip"
     unzip -qo $travisCache/php-163.4830.18.zip -d ./plugins
 else
     echo "Unknown IDE_ID value: $IDE_ID"

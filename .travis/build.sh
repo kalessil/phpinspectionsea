@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo apt-get update && sudo apt-get upgrade
+
 # bash strict mode is on
 set -euo pipefail
 IFS=$'\n\t'
@@ -29,7 +31,7 @@ function download {
   cachefile=${travisCache}/${basename}
 
   if [ ! -f ${cachefile} ]; then
-      wget --no-check-certificate $url -P ${travisCache};
+      wget $url -P ${travisCache};
     else
       echo "Cached file `ls -sh $cachefile` - `date -r $cachefile +'%Y-%m-%d %H:%M:%S'`"
   fi

@@ -29,3 +29,13 @@ function AIFScope(array $x){
 
     return $x;
 }
+
+function AIFExitPoints(array $x) {
+    if (0 === count($x)) {
+        foreach ($x as &$y) {}
+        throw new RuntimeException();
+    } else {
+        foreach ($x as &$y) {}
+        return $x;
+    }
+}

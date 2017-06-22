@@ -34,7 +34,7 @@ public class DateIntervalSpecificationInspector extends BasePhpInspection {
     private static final Pattern regexRegular;
     static {
         regexDateTimeAlike = Pattern.compile("^P\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$");
-        regexRegular = Pattern.compile("^P((\\d+Y)?(\\d+M)?(\\d+D)?(\\d+W)?)?(T(\\d+H)?(\\d+M)?(\\d+S)?)?$");
+        regexRegular = Pattern.compile("^P((\\d+Y)?(\\d+M)?(\\d+D)?(\\d+W)?)?(T(?=\\d)(\\d+H)?(\\d+M)?(\\d+S)?)?$");
     }
 
     @NotNull

@@ -58,7 +58,7 @@ public class DateIntervalSpecificationInspector extends BasePhpInspection {
                     if (pattern != null && pattern.getFirstPsiChild() == null) {
                         final String input = pattern.getContents();
                         if (!regexRegular.matcher(input).find() && !regexDateTimeAlike.matcher(input).find()) {
-                            holder.registerProblem(pattern, message, ProblemHighlightType.GENERIC_ERROR);
+                            holder.registerProblem(pattern, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         }
                     }
                 }

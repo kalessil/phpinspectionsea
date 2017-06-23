@@ -39,14 +39,6 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     public boolean PREFER_YODA_STYLE    = false;
     public boolean PREFER_REGULAR_STYLE = false;
 
-    private static final Collection<IElementType> operations = new HashSet<>();
-    static {
-        operations.add(PhpTokenTypes.opEQUAL);
-        operations.add(PhpTokenTypes.opNOT_EQUAL);
-        operations.add(PhpTokenTypes.opIDENTICAL);
-        operations.add(PhpTokenTypes.opNOT_IDENTICAL);
-    }
-
     @NotNull
     public String getShortName() {
         return "ComparisonOperandsOrderInspection";
@@ -61,7 +53,7 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
                 final IElementType operator = expression.getOperationType();
                 final PsiElement left       = expression.getLeftOperand();
                 final PsiElement right      = expression.getRightOperand();
-                if (left != null && right != null && operator != null && operations.contains(operator)) {
+                if (left != null && right != null && operator != null && PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
                     final boolean isLeftConstant =
                         left instanceof StringLiteralExpression || left instanceof ConstantReference ||
                         PhpElementTypes.NUMBER == left.getNode().getElementType();

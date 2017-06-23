@@ -68,13 +68,8 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
 
                 /* Case 3: operations which might produce a value as not expected */
                 if (condition instanceof BinaryExpression && !(expression.getCondition() instanceof ParenthesizedExpression)) {
-                    final PsiElement operation = ((BinaryExpression) condition).getOperation();
-                    IElementType operationType = null;
-                    if (null != operation) {
-                        operationType = operation.getNode().getElementType();
-                    }
-
-                    if (null != operationType && !safeOperations.contains(operationType)) {
+                    final IElementType operationType = ((BinaryExpression) condition).getOperationType();
+                    if (operationType != null && !safeOperations.contains(operationType)) {
                         holder.registerProblem(condition, messagePriorities, ProblemHighlightType.WEAK_WARNING);
                     }
                 }

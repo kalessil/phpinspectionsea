@@ -50,23 +50,21 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                 /* inspect implicit booleans comparison */
                 if (reference.getParent() instanceof BinaryExpression) {
                     final BinaryExpression parent = (BinaryExpression) reference.getParent();
-                    if (null != parent.getOperation() && null != parent.getOperation().getNode()) {
-                        final IElementType operation = parent.getOperation().getNode().getElementType();
-                        if (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
-                            PsiElement secondOperand = parent.getLeftOperand();
-                            if (secondOperand == reference) {
-                                secondOperand = parent.getRightOperand();
+                    final IElementType operation  = parent.getOperationType();
+                    if (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
+                        PsiElement secondOperand = parent.getLeftOperand();
+                        if (secondOperand == reference) {
+                            secondOperand = parent.getRightOperand();
+                        }
+
+                        if (PhpLanguageUtil.isBoolean(secondOperand)) {
+                            /* should not compare with true: makes no sense as it never returned */
+                            if (PhpLanguageUtil.isTrue(secondOperand)) {
+                                holder.registerProblem(secondOperand, messageComparingWithTrue, ProblemHighlightType.GENERIC_ERROR);
+                                return;
                             }
 
-                            if (PhpLanguageUtil.isBoolean(secondOperand)) {
-                                /* should not compare with true: makes no sense as it never returned */
-                                if (PhpLanguageUtil.isTrue(secondOperand)) {
-                                    holder.registerProblem(secondOperand, messageComparingWithTrue, ProblemHighlightType.GENERIC_ERROR);
-                                    return;
-                                }
-
-                                holder.registerProblem(parent, messageUseInArray, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
-                            }
+                            holder.registerProblem(parent, messageUseInArray, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                         }
                     }
                 }

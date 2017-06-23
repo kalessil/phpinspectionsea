@@ -71,36 +71,31 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
 
                 /* check parent expression, to ensure pattern matched */
                 if (parentExpression instanceof BinaryExpression) {
-                    final BinaryExpression parent = (BinaryExpression) parentExpression;
-                    final PsiElement operation    = parent.getOperation();
-                    if (null != operation && null != operation.getNode()) {
-                        final IElementType operationType = operation.getNode().getElementType();
-                        if (
-                            operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opNOT_IDENTICAL ||
-                            operationType == PhpTokenTypes.opEQUAL     || operationType == PhpTokenTypes.opNOT_EQUAL
-                        ) {
-                            /* get second operand */
-                            PsiElement secondOperand = parent.getLeftOperand();
-                            if (secondOperand == highLevelCall) {
-                                secondOperand = parent.getRightOperand();
-                            }
+                    final BinaryExpression parent    = (BinaryExpression) parentExpression;
+                    final IElementType operationType = parent.getOperationType();
+                    if (PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operationType)) {
+                        /* get second operand */
+                        PsiElement secondOperand = parent.getLeftOperand();
+                        if (secondOperand == highLevelCall) {
+                            secondOperand = parent.getRightOperand();
+                        }
 
-                            if (null != secondOperand) {
-                                final String operator      = operation.getText();
-                                final boolean isMbFunction = functionName.equals("mb_substr");
-                                final boolean hasEncoding  = isMbFunction && 4 == params.length;
-                                final String replacement   = "%i% %o% %f%(%s%, %p%%e%)"
-                                    .replace("%e%", hasEncoding ? (", " + params[3].getText()) : "")
-                                    .replace("%p%", secondOperand.getText())
-                                    .replace("%s%", params[0].getText())
-                                    .replace("%f%", (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"))
-                                    .replace("%o%", operator.length() == 2 ? (operator + "=") : operator)
-                                    .replace("%i%", index);
-                                final String message       = messagePattern.replace("%r%", replacement);
-                                holder.registerProblem(parentExpression, message, ProblemHighlightType.WEAK_WARNING);
+                        final PsiElement operationNode = parent.getOperation();
+                        if (secondOperand != null && operationNode != null) {
+                            final String operator      = operationNode.getText();
+                            final boolean isMbFunction = functionName.equals("mb_substr");
+                            final boolean hasEncoding  = isMbFunction && 4 == params.length;
+                            final String replacement   = "%i% %o% %f%(%s%, %p%%e%)"
+                                .replace("%e%", hasEncoding ? (", " + params[3].getText()) : "")
+                                .replace("%p%", secondOperand.getText())
+                                .replace("%s%", params[0].getText())
+                                .replace("%f%", (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"))
+                                .replace("%o%", operator.length() == 2 ? (operator + "=") : operator)
+                                .replace("%i%", index);
+                            final String message       = messagePattern.replace("%r%", replacement);
+                            holder.registerProblem(parentExpression, message, ProblemHighlightType.WEAK_WARNING);
 
-                                // return;
-                            }
+                            // return;
                         }
                     }
                 }

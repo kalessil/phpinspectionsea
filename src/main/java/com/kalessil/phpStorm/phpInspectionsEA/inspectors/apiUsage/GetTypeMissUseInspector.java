@@ -71,15 +71,8 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
 
                 /* ensure valid operations being analyzed */
                 final BinaryExpression expression = (BinaryExpression) parent;
-                final PsiElement operation = expression.getOperation();
-                if (null == operation) {
-                    return;
-                }
-                final IElementType operator = operation.getNode().getElementType();
-                if (
-                    PhpTokenTypes.opEQUAL != operator && PhpTokenTypes.opNOT_EQUAL != operator &&
-                    PhpTokenTypes.opIDENTICAL != operator && PhpTokenTypes.opNOT_IDENTICAL != operator
-                ) {
+                final IElementType operator       = expression.getOperationType();
+                if (!PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
                     return;
                 }
 

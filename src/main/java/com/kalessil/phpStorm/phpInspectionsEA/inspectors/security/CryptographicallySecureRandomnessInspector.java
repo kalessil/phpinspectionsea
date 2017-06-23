@@ -129,10 +129,10 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                 Collection<BinaryExpression> checks = PsiTreeUtil.findChildrenOfType(body, BinaryExpression.class);
                 for (BinaryExpression expression : checks) {
                     /* ensure binary expression is complete */
-                    final PsiElement left      = expression.getLeftOperand();
-                    final PsiElement right     = expression.getRightOperand();
-                    final PsiElement operation = expression.getOperation();
-                    if (null == operation || null == left || null == right) {
+                    final PsiElement left       = expression.getLeftOperand();
+                    final PsiElement right      = expression.getRightOperand();
+                    final IElementType operator = expression.getOperationType();
+                    if (operator == null || left == null || right == null) {
                         continue;
                     }
 
@@ -140,7 +140,6 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                     if (!PhpLanguageUtil.isFalse(left) && !PhpLanguageUtil.isFalse(right)) {
                         continue;
                     }
-                    final IElementType operator = operation.getNode().getElementType();
                     if (PhpTokenTypes.opIDENTICAL != operator && PhpTokenTypes.opNOT_IDENTICAL != operator) {
                         continue;
                     }

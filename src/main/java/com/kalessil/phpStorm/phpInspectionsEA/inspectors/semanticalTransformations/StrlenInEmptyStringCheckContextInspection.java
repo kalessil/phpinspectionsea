@@ -43,36 +43,28 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
 
                 /* check explicit numbers comparisons */
                 if (reference.getParent() instanceof BinaryExpression) {
-                    BinaryExpression objParent = (BinaryExpression) reference.getParent();
-                    PsiElement objOperation    = objParent.getOperation();
-                    if (null != objOperation && null != objOperation.getNode()) {
-                        /* collect second operand */
-                        PsiElement secondOperand = objParent.getLeftOperand();
-                        if (secondOperand == reference) {
-                            secondOperand = objParent.getRightOperand();
+                    final BinaryExpression objParent = (BinaryExpression) reference.getParent();
+                    /* collect second operand */
+                    PsiElement secondOperand = objParent.getLeftOperand();
+                    if (secondOperand == reference) {
+                        secondOperand = objParent.getRightOperand();
+                    }
+                    /* second operand should be a number */
+                    if (secondOperand instanceof  PhpExpression && PhpElementTypes.NUMBER == secondOperand.getNode().getElementType()) {
+                        final String strNumber = secondOperand.getText();
+
+                        /* check cases when comparing with 1 */
+                        final IElementType operationType = objParent.getOperationType();
+                        if (operationType == PhpTokenTypes.opLESS || operationType == PhpTokenTypes.opGREATER_OR_EQUAL) {
+                            /* comparison with 1 supported currently in NON-yoda style TODO: yoda style support */
+                            isMatchedPattern = strNumber.equals("1") && objParent.getLeftOperand() == reference;
+                            warningTarget    = objParent;
                         }
-                        /* second operand should be a number */
-                        if (secondOperand instanceof  PhpExpression && PhpElementTypes.NUMBER == secondOperand.getNode().getElementType()) {
-                            final String strNumber = secondOperand.getText();
 
-                            /* check cases when comparing with 1 */
-                            final IElementType operationType = objOperation.getNode().getElementType();
-                            if (operationType == PhpTokenTypes.opLESS || operationType == PhpTokenTypes.opGREATER_OR_EQUAL) {
-                                /* comparison with 1 supported currently in NON-yoda style TODO: yoda style support */
-                                isMatchedPattern = strNumber.equals("1") && objParent.getLeftOperand() == reference;
-                                warningTarget    = objParent;
-                            }
-
-                            /* check cases when comparing with 0 */
-                            if (!isMatchedPattern && (
-                                operationType == PhpTokenTypes.opIDENTICAL ||
-                                operationType == PhpTokenTypes.opNOT_IDENTICAL ||
-                                operationType == PhpTokenTypes.opEQUAL ||
-                                operationType == PhpTokenTypes.opNOT_EQUAL
-                            )) {
-                                isMatchedPattern = strNumber.equals("0");
-                                warningTarget    = objParent;
-                            }
+                        /* check cases when comparing with 0 */
+                        if (!isMatchedPattern && PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operationType)) {
+                            isMatchedPattern = strNumber.equals("0");
+                            warningTarget    = objParent;
                         }
                     }
                 }

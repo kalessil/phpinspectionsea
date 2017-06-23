@@ -302,22 +302,17 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 for (final PsiElement expression : conditions) {
                     if (expression instanceof BinaryExpression) {
                         final BinaryExpression binaryExpression = (BinaryExpression) expression;
+                        final PsiElement left                   = binaryExpression.getLeftOperand();
+                        final PsiElement right                  = binaryExpression.getRightOperand();
                         if (
-                            null != binaryExpression.getOperationType() &&
-                            null != binaryExpression.getLeftOperand() &&
-                            null != binaryExpression.getRightOperand()
+                            left != null && right != null &&
+                            PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(binaryExpression.getOperationType())
                         ) {
-                            final IElementType operation = binaryExpression.getOperationType();
                             if (
-                                operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL ||
-                                operation == PhpTokenTypes.opEQUAL ||     operation == PhpTokenTypes.opNOT_EQUAL
+                                PsiEquivalenceUtil.areElementsEquivalent(testSubject, left) ||
+                                PsiEquivalenceUtil.areElementsEquivalent(testSubject, right)
                             ) {
-                                if (
-                                    PsiEquivalenceUtil.areElementsEquivalent(testSubject, binaryExpression.getLeftOperand()) ||
-                                    PsiEquivalenceUtil.areElementsEquivalent(testSubject, binaryExpression.getRightOperand())
-                                ) {
-                                    holder.registerProblem(expression, messageInstanceOfComplementarity, ProblemHighlightType.WEAK_WARNING);
-                                }
+                                holder.registerProblem(expression, messageInstanceOfComplementarity, ProblemHighlightType.WEAK_WARNING);
                             }
                         }
                     }

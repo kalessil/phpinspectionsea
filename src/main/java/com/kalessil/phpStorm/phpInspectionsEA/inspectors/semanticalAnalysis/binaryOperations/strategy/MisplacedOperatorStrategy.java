@@ -40,11 +40,9 @@ final public class MisplacedOperatorStrategy {
     }
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
-        final PsiElement operation  = expression.getOperation();
-        final IElementType operator = null == operation ? null : operation.getNode().getElementType();
-        final PsiElement parent     = expression.getParent().getParent();
+        final PsiElement parent = expression.getParent().getParent();
         /* basic operator filter */
-        if (null != operator && operations.contains(operator) && parent instanceof FunctionReference) {
+        if (parent instanceof FunctionReference && operations.contains(expression.getOperationType())) {
             final PsiElement[] params  = ((FunctionReference) parent).getParameters();
             final PsiElement candidate = params.length > 0 ? params[params.length - 1] : null;
             /* BO should be the last parameter of a call in logical contexts */
@@ -66,7 +64,7 @@ final public class MisplacedOperatorStrategy {
                             final PhpType operandTypes
                                     = ((PhpTypedElement) rightOperand).getType().global(project).filterUnknown();
                             if (allowedTypes.getTypes().containsAll(operandTypes.getTypes())) {
-                                holder.registerProblem(operation, message, ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(expression.getOperation(), message, ProblemHighlightType.GENERIC_ERROR);
                                 return true;
                             }
                         }

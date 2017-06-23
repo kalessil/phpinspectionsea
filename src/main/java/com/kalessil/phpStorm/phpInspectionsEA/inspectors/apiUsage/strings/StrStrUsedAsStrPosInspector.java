@@ -47,33 +47,28 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
 
                 /* checks implicit boolean comparison pattern */
                 if (reference.getParent() instanceof BinaryExpression) {
-                    final BinaryExpression parent = (BinaryExpression) reference.getParent();
-                    final PsiElement operation    = parent.getOperation();
-                    if (null != operation && null != operation.getNode()) {
-                        IElementType operationType = operation.getNode().getElementType();
-                        if (
-                            operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opNOT_IDENTICAL ||
-                            operationType == PhpTokenTypes.opEQUAL     || operationType == PhpTokenTypes.opNOT_EQUAL
-                        ) {
-                            /* get second operand */
-                            PsiElement secondOperand = parent.getLeftOperand();
-                            if (secondOperand == reference) {
-                                secondOperand = parent.getRightOperand();
-                            }
+                    final BinaryExpression parent    = (BinaryExpression) reference.getParent();
+                    final IElementType operationType = parent.getOperationType();
+                    if (PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operationType)) {
+                        /* get second operand */
+                        PsiElement secondOperand = parent.getLeftOperand();
+                        if (secondOperand == reference) {
+                            secondOperand = parent.getRightOperand();
+                        }
 
-                            /* verify if operand is a boolean and report an issue */
-                            if (PhpLanguageUtil.isBoolean(secondOperand)) {
-                                final String operator    = operation.getText();
-                                final String replacement = "false %o% %f%(%s%, %p%)"
-                                    .replace("%p%", params[1].getText())
-                                    .replace("%s%", params[0].getText())
-                                    .replace("%f%", mapping.get(strFunctionName))
-                                    .replace("%o%", operator.length() == 2 ? operator + "=": operator);
-                                final String message     = messagePattern.replace("%e%", replacement);
-                                holder.registerProblem(parent, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseStrposFix(replacement));
+                        /* verify if operand is a boolean and report an issue */
+                        final PsiElement operationNode = parent.getOperation();
+                        if (operationNode != null && PhpLanguageUtil.isBoolean(secondOperand)) {
+                            final String operator    = operationNode.getText();
+                            final String replacement = "false %o% %f%(%s%, %p%)"
+                                .replace("%p%", params[1].getText())
+                                .replace("%s%", params[0].getText())
+                                .replace("%f%", mapping.get(strFunctionName))
+                                .replace("%o%", operator.length() == 2 ? operator + "=": operator);
+                            final String message     = messagePattern.replace("%e%", replacement);
+                            holder.registerProblem(parent, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseStrposFix(replacement));
 
-                                return;
-                            }
+                            return;
                         }
                     }
                 }

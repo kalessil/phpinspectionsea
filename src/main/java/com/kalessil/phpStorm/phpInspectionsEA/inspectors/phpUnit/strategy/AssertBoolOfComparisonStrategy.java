@@ -29,15 +29,14 @@ public class AssertBoolOfComparisonStrategy {
             final PsiElement param = ExpressionSemanticUtil.getExpressionTroughParenthesis(params[0]);
             if (param instanceof BinaryExpression) {
                 final BinaryExpression argument = (BinaryExpression) param;
-                if (null == argument.getOperation() || null == argument.getLeftOperand() || null == argument.getRightOperand()) {
+                final PsiElement left           = argument.getLeftOperand();
+                final PsiElement right          = argument.getRightOperand();
+                if (null == left || null == right) {
                     return false;
                 }
 
-                final IElementType operation = argument.getOperation().getNode().getElementType();
-                if (
-                    operation == PhpTokenTypes.opEQUAL     || operation == PhpTokenTypes.opIDENTICAL ||
-                    operation == PhpTokenTypes.opNOT_EQUAL || operation == PhpTokenTypes.opNOT_IDENTICAL
-                ) {
+                final IElementType operation = argument.getOperationType();
+                if (PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operation)) {
                     final boolean isMethodInverting    = function.equals("assertFalse") || function.equals("assertNotTrue");
                     final boolean isOperationInverting = operation == PhpTokenTypes.opNOT_EQUAL || operation == PhpTokenTypes.opNOT_IDENTICAL;
                     final boolean isTypeStrict         = operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL;
@@ -46,7 +45,7 @@ public class AssertBoolOfComparisonStrategy {
                         (isMethodInverting == isOperationInverting ? "" : "Not") + (isTypeStrict ? "Same" : "Equals");
                     final String message = messagePattern.replace("%m%", replacementMethod);
 
-                    final TheLocalFix fixer = new TheLocalFix(replacementMethod, argument.getLeftOperand(), argument.getRightOperand());
+                    final TheLocalFix fixer = new TheLocalFix(replacementMethod, left, right);
                     holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, fixer);
 
                     return true;

@@ -19,8 +19,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Collection;
-import java.util.HashSet;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.

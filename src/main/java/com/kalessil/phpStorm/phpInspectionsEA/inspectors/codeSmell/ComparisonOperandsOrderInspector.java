@@ -46,7 +46,8 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpBinaryExpression(final BinaryExpression expression) {
+            @Override
+            public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 /* verify general structure */
                 final IElementType operator = expression.getOperationType();
                 final PsiElement left       = expression.getLeftOperand();

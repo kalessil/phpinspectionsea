@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrStr
 
 final public class StrStrUsedAsStrPosInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new StrStrUsedAsStrPosInspector());
+
         myFixture.configureByFile("fixtures/api/strstr-function.php");
-        myFixture.enableInspections(StrStrUsedAsStrPosInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

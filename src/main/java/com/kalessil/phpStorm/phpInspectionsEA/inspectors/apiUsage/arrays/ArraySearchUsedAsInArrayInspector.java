@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
@@ -21,6 +20,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
     private static final String messageUseInArray        = "'in_array(...)' should be used instead (clearer intention).";
     private static final String messageComparingWithTrue = "This makes no sense, as array_search(...) never returns true.";
@@ -34,10 +42,11 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final PsiElement[] params = reference.getParameters();
                 final String functionName = reference.getName();
-                if (params.length < 2 || StringUtil.isEmpty(functionName) || !functionName.equals("array_search")) {
+                if (params.length < 2 || functionName == null || !functionName.equals("array_search")) {
                     return;
                 }
 
@@ -56,7 +65,6 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                         if (secondOperand == reference) {
                             secondOperand = parent.getRightOperand();
                         }
-
                         if (PhpLanguageUtil.isBoolean(secondOperand)) {
                             /* should not compare with true: makes no sense as it never returned */
                             if (PhpLanguageUtil.isTrue(secondOperand)) {

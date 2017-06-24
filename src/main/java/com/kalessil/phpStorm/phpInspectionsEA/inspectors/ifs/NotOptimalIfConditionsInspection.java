@@ -281,38 +281,35 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
             /* TODO: is_* functions */
             private void inspectConditionsForInstanceOfAndIdentityOperations(@NotNull List<PsiElement> conditions, @Nullable IElementType operationType) {
-                if (operationType != PhpTokenTypes.opAND || conditions.size() < 2) {
-                    return;
-                }
-
                 PsiElement testSubject = null;
-                for (final PsiElement expression : conditions) {
-                    if (expression instanceof BinaryExpression) {
-                        final BinaryExpression instanceOfExpression = (BinaryExpression) expression;
-                        if (instanceOfExpression.getOperationType() == PhpTokenTypes.kwINSTANCEOF) {
-                            testSubject = instanceOfExpression.getLeftOperand();
-                            break;
+                if (operationType == PhpTokenTypes.opAND && conditions.size() > 1) {
+                    for (final PsiElement expression : conditions) {
+                        if (expression instanceof BinaryExpression) {
+                            final BinaryExpression instanceOfExpression = (BinaryExpression) expression;
+                            if (instanceOfExpression.getOperationType() == PhpTokenTypes.kwINSTANCEOF) {
+                                testSubject = instanceOfExpression.getLeftOperand();
+                                break;
+                            }
                         }
                     }
                 }
-                if (null == testSubject) {
-                    return;
-                }
 
-                for (final PsiElement expression : conditions) {
-                    if (expression instanceof BinaryExpression) {
-                        final BinaryExpression binaryExpression = (BinaryExpression) expression;
-                        final PsiElement left                   = binaryExpression.getLeftOperand();
-                        final PsiElement right                  = binaryExpression.getRightOperand();
-                        if (
-                            left != null && right != null &&
-                            PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(binaryExpression.getOperationType())
-                        ) {
+                if (testSubject != null) {
+                    for (final PsiElement expression : conditions) {
+                        if (expression instanceof BinaryExpression) {
+                            final BinaryExpression binaryExpression = (BinaryExpression) expression;
+                            final PsiElement left                   = binaryExpression.getLeftOperand();
+                            final PsiElement right                  = binaryExpression.getRightOperand();
                             if (
-                                PsiEquivalenceUtil.areElementsEquivalent(testSubject, left) ||
-                                PsiEquivalenceUtil.areElementsEquivalent(testSubject, right)
+                                left != null && right != null &&
+                                PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(binaryExpression.getOperationType())
                             ) {
-                                holder.registerProblem(expression, messageInstanceOfComplementarity, ProblemHighlightType.WEAK_WARNING);
+                                if (
+                                    PsiEquivalenceUtil.areElementsEquivalent(testSubject, left) ||
+                                    PsiEquivalenceUtil.areElementsEquivalent(testSubject, right)
+                                ) {
+                                    holder.registerProblem(expression, messageInstanceOfComplementarity, ProblemHighlightType.WEAK_WARNING);
+                                }
                             }
                         }
                     }

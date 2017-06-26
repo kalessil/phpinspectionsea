@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.PhpExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -102,9 +103,21 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                             .replace("%a%", params[0].getText())
                             .replace("%o%", (isEmptyString ? "=" : "!") + (isStrict ? "==" : "="));
                     final String message = messagePattern.replace("%e%", replacement);
-                    holder.registerProblem(warningTarget, message, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(warningTarget, message, ProblemHighlightType.WEAK_WARNING, new CompareToEmptyStringFix(replacement));
                 }
             }
         };
+    }
+
+    private class CompareToEmptyStringFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use empty string comparison instead";
+        }
+
+        CompareToEmptyStringFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

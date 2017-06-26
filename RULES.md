@@ -196,7 +196,7 @@ Inspections Lists (Performance)
 | Group                | Short Name                                      | Full Name                                                                                   | QF  | UTs | QFTs | Doc |
 | :------------------- | :---------------------------------------------- | :------------------------------------------------------------------------------------------ | --: | --: | ---: | --: |
 | Performance          | AmbiguousMethodsCallsInArrayMappingInspection   | Non-optimized arrays mapping                                                                | n/a | yes | n/a  | no  |
-| Performance          | StrlenInEmptyStringCheckContextInspection       | '(mb_)strlen(...)' misused                                                                  | no  | yes | no   | no  |
+| Performance          | StrlenInEmptyStringCheckContextInspection       | '(mb_)strlen(...)' misused                                                                  | yes | yes | yes  | no  |
 | Performance          | ArrayCastingEquivalentInspection                | Could be replaced with '(array) ...'                                                        | n/a |
 | Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                               | n/a | yes | n/a | no  |
 | Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                            | n/a |

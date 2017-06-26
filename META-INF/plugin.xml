@@ -57,16 +57,16 @@ with a laptop.
 Hot-fix release; you can now support us via <a href="https://www.patreon.com/kalessil">Patreon</a>
 <br/>
 <br/>
-+ Callable parameter usage violates definition: resolved false-positives (annotated properties)<br/>
-+ Declaration access can be weaker: resolved false-positives (protected methods used by parent classes)<br/>
-+ Foreach source to iterate over: resolved false-positives (predefined _* variables)<br/>
+- Callable parameter usage violates definition: resolved false-positives (annotated properties)<br/>
+- Declaration access can be weaker: resolved false-positives (protected methods used by parent classes)<br/>
+- Foreach source to iterate over: resolved false-positives (predefined _* variables)<br/>
 - Non-optimal if conditions: resolved false-positives (comparing to booleans), added options<br/>
 - Parameter/variable is not used: resolved false-positives<br/>
 - Senseless proxy function: resolved false-positives (return type changed)<br/>
 - Summer-time unsafe date manipulations: resolved false-positives (context aware now)<br/>
 - Suspicious assignments: resolved false-positives (assignment by reference)<br/>
 - Too many parameters in a callable: resolved false-positives (UTs context)<br/>
-+ Unnecessary arguments specification: resolved false-positives (in_array, array_search)<br/>
+- Unnecessary arguments specification: resolved false-positives (in_array, array_search)<br/>
 - 'isset(...)' usage: resolved false-positives (global context)<br/>
 - ::class can be used: resolved false-positives (language level considered)<br/>
 <br/>
@@ -81,11 +81,12 @@ Hot-fix release; you can now support us via <a href="https://www.patreon.com/kal
 - Class violates singleton/factory pattern definition: dropped<br/>
 - Private constructor semantics: dropped<br />
 - 'count(...)' calls on Propel collection: dropped<br/>
++ '(mb_)strlen(...)' misused: QF implemented<br/>
 <br/>
 - Declaration access can be weaker: implemented (thank you @rentalhost)<br/>
 - Mocking correctness: implemented<br/>
 - Passing arguments by reference correctness: implemented<br/>
-+ PSR-compliant modifiers order: implemented<br/>
+- PSR-compliant modifiers order: implemented<br/>
 - Unnecessary arguments specification: implemented (thank you @rentalhost)<br/>
 - 'scandir(...)' low performing usage: implemented<br/>
 - ::class constant usage correctness: implemented<br/>

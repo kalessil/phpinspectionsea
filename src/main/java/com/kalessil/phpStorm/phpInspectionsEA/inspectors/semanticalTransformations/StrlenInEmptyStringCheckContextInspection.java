@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.PhpExpression;
+import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -26,8 +27,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection {
-    private static final String messageGeneral               = "Can be replaced with ''' === $...' construction.";
-    private static final String messageObjectUsed            = "Can be replaced with ''' == $...' construction.";
+    private static final String messagePattern               = "'%e%' can be used instead.";
     private static final String patternMissingToStringMethod = "%class% miss __toString() implementation.";
 
     @NotNull
@@ -48,6 +48,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                 }
 
                 boolean isMatchedPattern = false;
+                boolean isEmptyString    = false;
                 PsiElement warningTarget = null;
 
                 /* check explicit numbers comparisons */
@@ -65,12 +66,14 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                             /* comparison with 1 supported currently in NON-yoda style TODO: yoda style support */
                             isMatchedPattern = left == reference && strNumber.equals("1");
                             warningTarget    = parent;
+                            isEmptyString    = operationType == PhpTokenTypes.opLESS;
                         }
 
                         /* check cases when comparing with 0 */
                         if (!isMatchedPattern && PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operationType)) {
                             isMatchedPattern = strNumber.equals("0");
                             warningTarget    = parent;
+                            isEmptyString    = operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opEQUAL;
                         }
                     }
                 }
@@ -79,22 +82,27 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                 if (!isMatchedPattern && ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
                     isMatchedPattern = true;
                     warningTarget    = reference;
+
+                    final PsiElement parent = reference.getParent();
+                    final PsiElement operation
+                            = parent instanceof UnaryExpression ? ((UnaryExpression) parent).getOperation() : null;
+                    if (operation != null) {
+                        isEmptyString = operation.getNode().getElementType() == PhpTokenTypes.opNOT;
+                        warningTarget = parent;
+                    }
                 }
 
                 /* investigate possible issues */
-                if (isMatchedPattern) {
-                    final PsiElement[] params = reference.getParameters();
-                    /* first evaluate if any object casting issues presented */
-                    if (
-                        params.length > 0 &&
-                        !ClassInStringContextStrategy.apply(params[0], holder, warningTarget, patternMissingToStringMethod)
-                    ) {
-                        holder.registerProblem(reference.getParent(), messageObjectUsed, ProblemHighlightType.WEAK_WARNING);
-                        return;
-                    }
+                final PsiElement[] params = reference.getParameters();
+                if (isMatchedPattern && params.length > 0) {
+                    final boolean isStrict
+                        = !ClassInStringContextStrategy.apply(params[0], holder, warningTarget, patternMissingToStringMethod);
 
-                    /* report issues */
-                    holder.registerProblem(warningTarget, messageGeneral, ProblemHighlightType.WEAK_WARNING);
+                    final String replacement = "'' %o% %a%"
+                            .replace("%a%", params[0].getText())
+                            .replace("%o%", (isEmptyString ? "=" : "!") + (isStrict ? "==" : "="));
+                    final String message = messagePattern.replace("%e%", replacement);
+                    holder.registerProblem(warningTarget, message, ProblemHighlightType.WEAK_WARNING);
                 }
             }
         };

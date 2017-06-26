@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformati
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
@@ -17,10 +16,19 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ClassInStringContextStrategy;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection {
-    private static final String strProblemDescription                      = "Can be replaced by comparing with empty string.";
-    private static final String strProblemDescriptionObjectUsed            = "Can be replaced with ''' == $...' construction.";
-    private static final String strProblemDescriptionMissingToStringMethod = "%class% miss __toString() implementation.";
+    private static final String messageGeneral               = "Can be replaced with ''' === $...' construction.";
+    private static final String messageObjectUsed            = "Can be replaced with ''' == $...' construction.";
+    private static final String patternMissingToStringMethod = "%class% miss __toString() implementation.";
 
     @NotNull
     public String getShortName() {
@@ -31,10 +39,11 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* check if it's the target function */
-                final String strFunctionName = reference.getName();
-                if (StringUtil.isEmpty(strFunctionName) || (!strFunctionName.equals("strlen") && !strFunctionName.equals("mb_strlen"))) {
+                final String functionName = reference.getName();
+                if (functionName == null || (!functionName.equals("strlen") && !functionName.equals("mb_strlen"))) {
                     return;
                 }
 
@@ -43,33 +52,30 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
 
                 /* check explicit numbers comparisons */
                 if (reference.getParent() instanceof BinaryExpression) {
-                    final BinaryExpression objParent = (BinaryExpression) reference.getParent();
-                    /* collect second operand */
-                    PsiElement secondOperand = objParent.getLeftOperand();
-                    if (secondOperand == reference) {
-                        secondOperand = objParent.getRightOperand();
-                    }
+                    final BinaryExpression parent  = (BinaryExpression) reference.getParent();
+                    final PsiElement left          = parent.getLeftOperand();
+                    final PsiElement secondOperand = left == reference ? parent.getRightOperand() : left;
                     /* second operand should be a number */
-                    if (secondOperand instanceof  PhpExpression && PhpElementTypes.NUMBER == secondOperand.getNode().getElementType()) {
+                    if (secondOperand instanceof PhpExpression && PhpElementTypes.NUMBER == secondOperand.getNode().getElementType()) {
                         final String strNumber = secondOperand.getText();
 
                         /* check cases when comparing with 1 */
-                        final IElementType operationType = objParent.getOperationType();
+                        final IElementType operationType = parent.getOperationType();
                         if (operationType == PhpTokenTypes.opLESS || operationType == PhpTokenTypes.opGREATER_OR_EQUAL) {
                             /* comparison with 1 supported currently in NON-yoda style TODO: yoda style support */
-                            isMatchedPattern = strNumber.equals("1") && objParent.getLeftOperand() == reference;
-                            warningTarget    = objParent;
+                            isMatchedPattern = left == reference && strNumber.equals("1");
+                            warningTarget    = parent;
                         }
 
                         /* check cases when comparing with 0 */
                         if (!isMatchedPattern && PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operationType)) {
                             isMatchedPattern = strNumber.equals("0");
-                            warningTarget    = objParent;
+                            warningTarget    = parent;
                         }
                     }
                 }
 
-                /* checks NON-implicit boolean comparison patternS */
+                /* checks NON-implicit boolean comparison patterns */
                 if (!isMatchedPattern && ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
                     isMatchedPattern = true;
                     warningTarget    = reference;
@@ -81,14 +87,14 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                     /* first evaluate if any object casting issues presented */
                     if (
                         params.length > 0 &&
-                        ClassInStringContextStrategy.apply(params[0], holder, warningTarget, strProblemDescriptionMissingToStringMethod)
+                        !ClassInStringContextStrategy.apply(params[0], holder, warningTarget, patternMissingToStringMethod)
                     ) {
-                        holder.registerProblem(reference.getParent(), strProblemDescriptionObjectUsed, ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(reference.getParent(), messageObjectUsed, ProblemHighlightType.WEAK_WARNING);
                         return;
                     }
 
                     /* report issues */
-                    holder.registerProblem(warningTarget, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(warningTarget, messageGeneral, ProblemHighlightType.WEAK_WARNING);
                 }
             }
         };

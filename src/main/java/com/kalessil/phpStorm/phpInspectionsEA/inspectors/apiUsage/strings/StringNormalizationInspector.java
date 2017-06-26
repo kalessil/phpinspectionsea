@@ -58,7 +58,8 @@ public class StringNormalizationInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* general structure expectation */
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
@@ -80,7 +81,7 @@ public class StringNormalizationInspector extends BasePhpInspection {
                     final String replacement  = innerCall.getText().replace(theString, newInnerCall);
 
                     final String message      = patternInvertedNesting.replace("%e%", replacement);
-                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new NormalizationFix(replacement));
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new NormalizationFix(replacement));
 
                     return;
                 }
@@ -91,7 +92,7 @@ public class StringNormalizationInspector extends BasePhpInspection {
                     }
 
                     final String message = patternSenselessNesting.replace("%i%", innerFunctionName);
-                    holder.registerProblem(innerCall, message, ProblemHighlightType.WEAK_WARNING, new NormalizationFix(innerParams[0].getText()));
+                    holder.registerProblem(innerCall, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new NormalizationFix(innerParams[0].getText()));
                 }
             }
         };

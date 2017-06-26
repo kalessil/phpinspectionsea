@@ -309,6 +309,10 @@ Hot-fix release; you can now support us via <a href="https://www.patreon.com/kal
          shortName="StringNormalizationInspection"                 displayName="Strings normalization"
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StringNormalizationInspector"/>
+  <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="StringCaseManipulationInspection"              displayName="Unnecessary string case manipulation"
+         groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StringCaseManipulationInspector"/>
 
 
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

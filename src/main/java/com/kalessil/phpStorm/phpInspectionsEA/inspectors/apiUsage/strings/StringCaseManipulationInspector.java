@@ -32,11 +32,15 @@ public class StringCaseManipulationInspector extends BasePhpInspection {
     private static final Map<String, String> functions = new HashMap<>();
     private static final Set<String> innerFunctions    = new HashSet<>();
     static {
-        functions.put("strpos", "stripos");
-        functions.put("strrpos", "strripos");
+        functions.put("strpos",     "stripos");
+        functions.put("mb_strpos",  "mb_stripos");
+        functions.put("strrpos",    "strripos");
+        functions.put("mb_strrpos", "mb_strripos");
 
         innerFunctions.add("strtolower");
+        innerFunctions.add("mb_strtolower");
         innerFunctions.add("strtoupper");
+        innerFunctions.add("mb_strtoupper");
     }
 
     @NotNull

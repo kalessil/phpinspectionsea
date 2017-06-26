@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformatio
 
 final public class NestedTernaryOperatorInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new NestedTernaryOperatorInspector());
+
         myFixture.configureByFile("fixtures/controlFlow/ternary-nested-and-suspicious.php");
-        myFixture.enableInspections(NestedTernaryOperatorInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

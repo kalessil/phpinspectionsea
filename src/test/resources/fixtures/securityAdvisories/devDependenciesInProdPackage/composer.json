@@ -3,7 +3,7 @@
   "description": "",
   "license":     "",
   "require":     {
-    "kalessil/something-else":   "*",
+    <warning descr="Dev-packages have no security guaranties, invoke the package via require-dev instead.">"phpunit/phpunit"</warning>: "*",
     "roave/security-advisories": "dev-master"
   }
 }

@@ -472,7 +472,7 @@ Hot-fix release; you can now support us via <a href="https://www.patreon.com/kal
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.UntrustedInclusionInspector"/>
     <localInspection language="JSON" groupPath="PHP,Php Inspections (EA Extended)"
-         shortName="SecurityAdvisoriesInspection"                  displayName="Security advisories for Composer packages (Components Firewall)"
+         shortName="SecurityAdvisoriesInspection"                  displayName="Security advisories for Composer packages"
          groupName="Security"                                      enabledByDefault="true" level="WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.SecurityAdvisoriesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

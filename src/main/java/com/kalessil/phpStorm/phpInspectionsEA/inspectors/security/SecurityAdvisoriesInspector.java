@@ -107,11 +107,11 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
                 /* if advisories already there, verify usage of dev-master */
                 final JsonProperty dependency  = (JsonProperty) component;
-                final String packageName       = dependency.getName();
+                final String packageName       = dependency.getName().toLowerCase();
                 final JsonValue packageVersion = dependency.getValue();
 
                 if (packageName.equals("roave/security-advisories") && packageVersion instanceof JsonStringLiteral) {
-                    if (!packageVersion.getText().equals("\"dev-master\"")) {
+                    if (!packageVersion.getText().toLowerCase().equals("\"dev-master\"")) {
                         holder.registerProblem(packageVersion, useMaster, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }
                     continue;

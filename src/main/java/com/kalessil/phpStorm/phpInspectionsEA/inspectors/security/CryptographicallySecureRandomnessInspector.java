@@ -19,8 +19,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *

@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+
 import org.jetbrains.annotations.NotNull;
 
 public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection {
@@ -21,15 +22,19 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
 
     @Override
     @NotNull
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+    public PsiElementVisitor buildVisitor(
+        @NotNull final ProblemsHolder holder,
+        final boolean isOnTheFly
+    ) {
         return new BasePhpElementVisitor() {
-            public void visitPhpArrayCreationExpression(ArrayCreationExpression expression) {
+            public void visitPhpArrayCreationExpression(final ArrayCreationExpression expression) {
                 PsiElement subject = expression.getLastChild().getPrevSibling();
                 if (subject instanceof PsiWhiteSpace) {
                     subject = subject.getPrevSibling();
                 }
 
-                if (null != subject && PhpTokenTypes.opCOMMA == subject.getNode().getElementType()) {
+                if ((subject != null) &&
+                    (PhpTokenTypes.opCOMMA == subject.getNode().getElementType())) {
                     holder.registerProblem(subject, message, ProblemHighlightType.WEAK_WARNING);
                 }
             }

@@ -90,7 +90,7 @@ Inspections Lists (Code style)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
 | Code style           | UnNecessaryDoubleQuotesInspection               | Unnecessary double quotes                           | yes | yes | no   | no  |
 | Code style           | MissingOrEmptyGroupStatementInspection          | Missing or empty group statement                    | no  | yes | no   | no  |
-| Code style           | SenselessCommaInArrayDefinitionInspection       | Unnecessary last comma in array definition          | no  | yes | no   | no  |
+| Code style           | SenselessCommaInArrayDefinitionInspection       | Unnecessary last comma in array definition          | yes | yes | yes  | no  |
 | Code style           | AccessModifierPresentedInspection               | Access modifiers shall be defined                   | yes | yes | no   | no  |
 | Code style           | CallableReferenceNameMismatchInspection         | Callable name case mismatched in a call             | yes | yes | no   | no  |
 | Code style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                 | no  |

@@ -1,7 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
@@ -35,9 +38,31 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
 
                 if ((subject != null) &&
                     (PhpTokenTypes.opCOMMA == subject.getNode().getElementType())) {
-                    holder.registerProblem(subject, message, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(subject, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                 }
             }
         };
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Safely drop comma";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(
+            @NotNull final Project project,
+            @NotNull final ProblemDescriptor descriptor
+        ) {
+            descriptor.getPsiElement().delete();
+        }
     }
 }

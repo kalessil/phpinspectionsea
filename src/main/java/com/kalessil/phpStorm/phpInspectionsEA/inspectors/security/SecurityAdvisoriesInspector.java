@@ -37,12 +37,14 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("symfony/phpunit-bridge");
         /* more dev-packages  */
         developmentPackages.add("behat/behat");
+        developmentPackages.add("phpspec/phpspec");
         developmentPackages.add("composer/composer");
         developmentPackages.add("satooshi/php-coveralls");
         /* SCA tools */
         developmentPackages.add("friendsofphp/php-cs-fixer");
         developmentPackages.add("squizlabs/php_codesniffer");
         developmentPackages.add("phpstan/phpstan");
+        developmentPackages.add("vimeo/psalm");
         developmentPackages.add("jakub-onderka/php-parallel-lint");
         developmentPackages.add("slevomat/coding-standard");
         developmentPackages.add("phpmd/phpmd");

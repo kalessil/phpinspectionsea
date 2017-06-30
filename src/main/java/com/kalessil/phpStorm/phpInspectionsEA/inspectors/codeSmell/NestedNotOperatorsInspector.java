@@ -94,7 +94,7 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(value.getProject());
 
-            this.value = factory.createSmartPsiElementPointer(value, value.getContainingFile());
+            this.value = factory.createSmartPsiElementPointer(value);
         }
 
         @NotNull
@@ -127,7 +127,7 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(value.getProject());
 
-            this.value = factory.createSmartPsiElementPointer(value, value.getContainingFile());
+            this.value = factory.createSmartPsiElementPointer(value);
         }
 
         @NotNull

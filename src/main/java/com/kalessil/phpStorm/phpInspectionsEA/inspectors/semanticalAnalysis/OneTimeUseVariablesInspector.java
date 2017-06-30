@@ -212,9 +212,9 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(value.getProject());
 
-            this.assignment = factory.createSmartPsiElementPointer(assignment, assignment.getContainingFile());
-            this.variable   = factory.createSmartPsiElementPointer(variable, variable.getContainingFile());
-            this.value      = factory.createSmartPsiElementPointer(value, value.getContainingFile());
+            this.assignment = factory.createSmartPsiElementPointer(assignment);
+            this.variable   = factory.createSmartPsiElementPointer(variable);
+            this.value      = factory.createSmartPsiElementPointer(value);
         }
 
         @NotNull

@@ -88,7 +88,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(assignOperator.getProject());
 
-            this.assignOperator = factory.createSmartPsiElementPointer(assignOperator, assignOperator.getContainingFile());
+            this.assignOperator = factory.createSmartPsiElementPointer(assignOperator);
         }
 
         @NotNull
@@ -121,7 +121,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(parameter.getProject());
 
-            this.parameter = factory.createSmartPsiElementPointer(parameter, parameter.getContainingFile());
+            this.parameter = factory.createSmartPsiElementPointer(parameter);
         }
 
         @NotNull

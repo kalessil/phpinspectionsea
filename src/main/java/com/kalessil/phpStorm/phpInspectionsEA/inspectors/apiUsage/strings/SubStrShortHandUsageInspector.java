@@ -115,7 +115,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(call.getProject());
 
-            this.call = factory.createSmartPsiElementPointer(call, call.getContainingFile());
+            this.call = factory.createSmartPsiElementPointer(call);
         }
 
         @NotNull

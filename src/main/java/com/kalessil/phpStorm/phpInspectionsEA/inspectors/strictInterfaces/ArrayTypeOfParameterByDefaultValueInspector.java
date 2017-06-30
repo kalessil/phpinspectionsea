@@ -87,7 +87,7 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(param.getProject());
 
-            this.param = factory.createSmartPsiElementPointer(param, param.getContainingFile());
+            this.param = factory.createSmartPsiElementPointer(param);
         }
 
         @NotNull

@@ -100,8 +100,8 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(variable.getProject());
 
-            this.variable = factory.createSmartPsiElementPointer(variable, variable.getContainingFile());
-            this.operator = factory.createSmartPsiElementPointer(operator, operator.getContainingFile());
+            this.variable = factory.createSmartPsiElementPointer(variable);
+            this.operator = factory.createSmartPsiElementPointer(operator);
         }
 
         @NotNull

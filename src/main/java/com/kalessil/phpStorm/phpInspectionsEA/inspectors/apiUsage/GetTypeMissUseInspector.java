@@ -120,7 +120,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
             final SmartPointerManager factory = SmartPointerManager.getInstance(param.getProject());
 
             this.suggestedName = suggestedName;
-            this.param         = factory.createSmartPsiElementPointer(param, param.getContainingFile());
+            this.param         = factory.createSmartPsiElementPointer(param);
             this.isInverted    = isInverted;
         }
 

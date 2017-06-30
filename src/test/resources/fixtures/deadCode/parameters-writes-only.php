@@ -21,4 +21,26 @@ class Container {
         <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$in[]</weak_warning> = '';
         $out []= '';
     }
+
+    public function method3($a, $b, $c, &$d) {
+        $local = 0;
+
+        foreach ([] as $i => $v) {
+            <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$a[$i]</weak_warning> = ++$c;
+
+            <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">++$b</weak_warning>;
+            <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$b++</weak_warning>;
+
+            ++$d;
+        }
+
+        /* false-positives: by reference manipulations */
+        $array = [0, 0];
+
+        $local1 = &$array[0];
+        $local1 = $array[1];
+
+        $local2 = &$array[0];
+        ++$local2;
+    }
 }

@@ -10,6 +10,7 @@ import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
@@ -55,6 +56,14 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 final HashSet<String> types = new HashSet<>();
                 TypeFromPlatformResolverUtil.resolveExpressionType(container, types);
                 if (types.isEmpty()) {
+                    /* false-positives: pre-defined variables */
+                    if (container instanceof Variable) {
+                        final String variableName = ((Variable) container).getName();
+                        if (ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
+                            return;
+                        }
+                    }
+
                     holder.registerProblem(container, patternNotRecognized, ProblemHighlightType.WEAK_WARNING);
                     return;
                 }
@@ -71,7 +80,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     final PhpEntryPointInstruction start = ((Function) scope).getControlFlow().getEntryPoint();
                     final PhpAccessVariableInstruction[] uses
                             = PhpControlFlowUtil.getFollowingVariableAccessInstructions(start, parameter, false);
-                    for (PhpAccessVariableInstruction instruction : uses) {
+                    for (final PhpAccessVariableInstruction instruction : uses) {
                         final PhpPsiElement expression = instruction.getAnchor();
                         /* when matched itself, stop processing */
                         if (expression == container) {
@@ -139,7 +148,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 /* iterate rest of types */
                 if (!types.isEmpty()) {
                     final PhpIndex index = PhpIndex.getInstance(holder.getProject());
-                    for (String type : types) {
+                    for (final String type : types) {
                         /* analyze scalar types */
                         final boolean isClassType = type.startsWith("\\");
                         if (!isClassType) {
@@ -154,7 +163,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         final Collection<PhpClass> classes  = PhpIndexUtil.getObjectInterfaces(type, index, true);
                         if (!classes.isEmpty()) {
                             /* collect all interfaces*/
-                            for (PhpClass clazz : classes) {
+                            for (final PhpClass clazz : classes) {
                                 final Set<PhpClass> interfaces = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, false);
                                 if (!interfaces.isEmpty()) {
                                     poolToCheck.addAll(interfaces);
@@ -168,7 +177,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         /* analyze classes for having \Traversable in parents */
                         boolean hasTraversable = false;
                         if (!poolToCheck.isEmpty()) {
-                            for (PhpClass clazz : poolToCheck) {
+                            for (final PhpClass clazz : poolToCheck) {
                                 if (clazz.getFQN().equals("\\Traversable")) {
                                     hasTraversable = true;
                                     break;

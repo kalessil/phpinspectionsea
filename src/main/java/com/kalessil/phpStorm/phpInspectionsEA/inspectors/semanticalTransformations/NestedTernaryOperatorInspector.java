@@ -16,13 +16,23 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Set;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class NestedTernaryOperatorInspector extends BasePhpInspection {
     private static final String messageNested            = "Nested ternary operator should not be used (maintainability issues).";
     private static final String messagePriorities        = "This may not work as expected (wrap condition into '()' to specify intention).";
     private static final String messageVariantsIdentical = "True and false variants are identical, most probably this is a bug.";
 
-    private static final HashSet<IElementType> safeOperations = new HashSet<>();
+    private static final Set<IElementType> safeOperations = new HashSet<>();
     static {
         safeOperations.add(PhpTokenTypes.opAND);
         safeOperations.add(PhpTokenTypes.opOR);
@@ -46,17 +56,21 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpTernaryExpression(TernaryExpression expression) {
+            @Override
+            public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
                 /* Case 1: nested ternary operators */
-                PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+                final PsiElement condition
+                        = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
                 if (condition instanceof TernaryExpression) {
                     holder.registerProblem(condition, messageNested, ProblemHighlightType.WEAK_WARNING);
                 }
-                PsiElement trueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
+                final PsiElement trueVariant
+                        = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
                 if (trueVariant instanceof TernaryExpression) {
                     holder.registerProblem(trueVariant, messageNested, ProblemHighlightType.WEAK_WARNING);
                 }
-                PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
+                final PsiElement falseVariant
+                        = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
                 if (falseVariant instanceof TernaryExpression) {
                     holder.registerProblem(falseVariant, messageNested, ProblemHighlightType.WEAK_WARNING);
                 }
@@ -68,30 +82,17 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
 
                 /* Case 3: operations which might produce a value as not expected */
                 if (condition instanceof BinaryExpression && !(expression.getCondition() instanceof ParenthesizedExpression)) {
-                    final PsiElement operation = ((BinaryExpression) condition).getOperation();
-                    IElementType operationType = null;
-                    if (null != operation) {
-                        operationType = operation.getNode().getElementType();
-                    }
-
-                    if (null != operationType && !safeOperations.contains(operationType)) {
+                    final IElementType operationType = ((BinaryExpression) condition).getOperationType();
+                    if (operationType != null && !safeOperations.contains(operationType)) {
                         holder.registerProblem(condition, messagePriorities, ProblemHighlightType.WEAK_WARNING);
                     }
                 }
 
                 /* Case 4: literal operators priorities issue */
                 if (expression.getParent() instanceof BinaryExpression) {
-                    BinaryExpression parent = (BinaryExpression) expression.getParent();
-                    if (parent.getRightOperand() == expression) {
-                        final PsiElement parentOperation = parent.getOperation();
-                        IElementType operationType = null;
-                        if (null != parentOperation) {
-                            operationType = parentOperation.getNode().getElementType();
-                        }
-
-                        if (operationType == PhpTokenTypes.opLIT_AND || operationType == PhpTokenTypes.opLIT_OR) {
-                            holder.registerProblem(parent, messagePriorities, ProblemHighlightType.GENERIC_ERROR);
-                        }
+                    final BinaryExpression parent = (BinaryExpression) expression.getParent();
+                    if (parent.getRightOperand() == expression && PhpTokenTypes.tsLIT_OPS.contains(parent.getOperationType())) {
+                        holder.registerProblem(parent, messagePriorities, ProblemHighlightType.GENERIC_ERROR);
                     }
                 }
             }

@@ -1,7 +1,11 @@
 <?php
 
-/* base classes for the test case*/
+trait TraitWithPrivateField {
+    private $privateFromTrait;
+}
 class ClassOverridesField1 {
+    use TraitWithPrivateField;
+
     private   $privateFrom1;
     protected $protectedFrom1;
     protected $weakened;
@@ -15,18 +19,16 @@ class ClassOverridesField2 extends ClassOverridesField1 {
 }
 
 
-/* Test-cases */
 /** @property $privateFrom2 */
 class ClassOverridesField extends ClassOverridesField2 {
-    /* this suggested to be re-initialized in constructor */
-    <weak_warning descr="Field 'protectedFrom1' is already defined in \ClassOverridesField1, check our online documentation for options.">protected $protectedFrom1;</weak_warning>
-    <weak_warning descr="Field 'protectedFrom2' is already defined in \ClassOverridesField2, check our online documentation for options.">protected $protectedFrom2;</weak_warning>
+    protected <weak_warning descr="Field 'protectedFrom1' is already defined in \ClassOverridesField1, check our online documentation for options.">$protectedFrom1</weak_warning>;
+    protected <weak_warning descr="Field 'protectedFrom2' is already defined in \ClassOverridesField2, check our online documentation for options.">$protectedFrom2</weak_warning>;
 
-    /* this suggested to check if protected can be applied */
-    <weak_warning descr="Likely needs to be protected (already defined in \ClassOverridesField1).">private $privateFrom1;</weak_warning>
+    private <weak_warning descr="Likely needs to be protected (already defined in \ClassOverridesField1).">$privateFrom1</weak_warning>;
 
-    /* and this is not reported */
-    public $weakened;               // access level weakened
+    private <weak_warning descr="Likely needs to be protected (already defined in \TraitWithPrivateField).">$privateFromTrait</weak_warning>;
+
+    public $weakened;               // access level relaxed
     static protected $staticFrom1;  // static fields are not checked
     const CLAZZ = __CLASS__;        // constants are not checked
 }

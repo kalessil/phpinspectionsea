@@ -6,6 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessInstruction;
@@ -13,6 +14,7 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableI
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -103,7 +105,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         }
 
                         /* verify variable usage */
-                        analyzeAndReturnUsagesCount(variableName, (PhpScopeHolder) parentScope);
+                        this.analyzeAndReturnUsagesCount(variableName, (PhpScopeHolder) parentScope);
                     }
                 }
             }
@@ -119,7 +121,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    analyzeAndReturnUsagesCount(parameterName, scopeHolder);
+                    this.analyzeAndReturnUsagesCount(parameterName, scopeHolder);
                 }
             }
 
@@ -143,7 +145,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    final int variableUsages = analyzeAndReturnUsagesCount(parameterName, scopeHolder);
+                    final int variableUsages = this.analyzeAndReturnUsagesCount(parameterName, scopeHolder);
                     if (0 == variableUsages) {
                         holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                     }
@@ -156,18 +158,17 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     return usages.length;
                 }
 
-                final List<PsiElement> objTargetExpressions = new ArrayList<>();
+                final List<PsiElement> targetExpressions = new ArrayList<>();
 
                 boolean isReference       = false;
                 int intCountReadAccesses  = 0;
                 int intCountWriteAccesses = 0;
-                PhpAccessInstruction.Access objAccess;
-                for (PhpAccessVariableInstruction objInstruction : usages) {
-                    PsiElement objParent = objInstruction.getAnchor().getParent();
+                for (final PhpAccessVariableInstruction instruction : usages) {
+                    final PsiElement parent = instruction.getAnchor().getParent();
 
-                    if (objParent instanceof ArrayAccessExpression) {
+                    if (parent instanceof ArrayAccessExpression) {
                         /* find out which expression is holder */
-                        PsiElement objLastSemanticExpression = objInstruction.getAnchor();
+                        PsiElement objLastSemanticExpression = instruction.getAnchor();
                         PsiElement objTopSemanticExpression  = objLastSemanticExpression.getParent();
                         /* TODO: iterator for array access expression */
                         while (objTopSemanticExpression instanceof ArrayAccessExpression) {
@@ -186,18 +187,19 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                                 intCountReadAccesses++;
                             } else {
                                 /* when modifying non non-reference, register as write only access for reporting */
-                                objTargetExpressions.add(objLastSemanticExpression);
+                                targetExpressions.add(objLastSemanticExpression);
                             }
 
                             continue;
                         }
 
                         if (objTopSemanticExpression instanceof UnaryExpression) {
-                            final PsiElement objOperation = ((UnaryExpression) objTopSemanticExpression).getOperation();
-                            if (null != objOperation && ("++,--").contains(objOperation.getText())) {
-                                objTargetExpressions.add(objLastSemanticExpression);
+                            final PsiElement operation  = ((UnaryExpression) objTopSemanticExpression).getOperation();
+                            final IElementType operator = operation == null ? null : operation.getNode().getElementType();
+                            if (operator == PhpTokenTypes.opINCREMENT || operator == PhpTokenTypes.opDECREMENT) {
+                                targetExpressions.add(objLastSemanticExpression);
 
-                                intCountWriteAccesses++;
+                                ++intCountWriteAccesses;
                                 continue;
                             }
                         }
@@ -206,38 +208,62 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         continue;
                     }
 
+                    /* ++/-- operations */
+                    if (parent instanceof UnaryExpression) {
+                        final PsiElement operation  = ((UnaryExpression) parent).getOperation();
+                        final IElementType operator = operation == null ? null : operation.getNode().getElementType();
+                        if (operator == PhpTokenTypes.opINCREMENT || operator == PhpTokenTypes.opDECREMENT) {
+                            ++intCountWriteAccesses;
+                            if (isReference) {
+                                /* when modifying the reference it's link READ and linked WRITE semantics */
+                                ++intCountReadAccesses;
+                            } else {
+                                /* when modifying non non-reference, register as write only access for reporting */
+                                targetExpressions.add(parent);
+                            }
+                        }
+                        if (parent.getParent().getClass() != StatementImpl.class) {
+                            ++intCountReadAccesses;
+                        }
+
+                        continue;
+                    }
+
                     /* if variable assigned with reference, we need to preserve this information for correct checks */
-                    if (objParent instanceof AssignmentExpression) {
+                    if (parent instanceof AssignmentExpression) {
                         /* ensure variable with the same name being written */
-                        final AssignmentExpression referenceAssignmentCandidate = (AssignmentExpression) objParent;
+                        final AssignmentExpression referenceAssignmentCandidate = (AssignmentExpression) parent;
                         if (referenceAssignmentCandidate.getVariable() instanceof Variable) {
                             final Variable sameVariableCandidate = (Variable) referenceAssignmentCandidate.getVariable();
-                            final String candidateVariableName   = sameVariableCandidate.getName();
-                            if (!StringUtil.isEmpty(candidateVariableName) && candidateVariableName.equals(parameterName)) {
+                            if (sameVariableCandidate.getName().equals(parameterName)) {
+                                ++intCountWriteAccesses;
+                                if (isReference) {
+                                    /* when modifying the reference it's link READ and linked WRITE semantics */
+                                    ++intCountReadAccesses;
+                                }
+
                                 /* now ensure operation is assignment of reference */
                                 PsiElement operation = sameVariableCandidate.getNextSibling();
-                                if (operation instanceof PsiWhiteSpace) {
+                                while (operation != null && operation.getNode().getElementType() != PhpTokenTypes.opASGN) {
                                     operation = operation.getNextSibling();
                                 }
-
-                                if (null != operation && operation.getText().replaceAll("\\s+", "").equals("=&")) {
-                                    intCountWriteAccesses++;
+                                if (operation != null && operation.getText().replaceAll("\\s+", "").equals("=&")) {
                                     isReference = true;
-
-                                    continue;
                                 }
+
+                                continue;
                             }
                         }
                     }
 
                     /* local variables access wrongly reported write in some cases, so rely on custom checks */
                     if (
-                        objParent instanceof ParameterList ||
-                        objParent instanceof PhpUseList ||
-                        objParent instanceof PhpUnset ||
-                        objParent instanceof PhpEmpty ||
-                        objParent instanceof PhpIsset ||
-                        objParent instanceof ForeachStatement
+                        parent instanceof ParameterList ||
+                        parent instanceof PhpUseList ||
+                        parent instanceof PhpUnset ||
+                        parent instanceof PhpEmpty ||
+                        parent instanceof PhpIsset ||
+                        parent instanceof ForeachStatement
                     ) {
                         intCountReadAccesses++;
                         continue;
@@ -245,23 +271,22 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
 
                     /* ok variable usage works well with openapi */
-                    objAccess = objInstruction.getAccess();
-                    if (objAccess.isWrite()) {
-                        objTargetExpressions.add(objInstruction.getAnchor());
-                        intCountWriteAccesses++;
-                    }
-                    if (objAccess.isRead()) {
-                        intCountReadAccesses++;
+                    final PhpAccessInstruction.Access instructionAccess = instruction.getAccess();
+                    if (instructionAccess.isWrite()) {
+                        targetExpressions.add(instruction.getAnchor());
+                        ++intCountWriteAccesses;
+                    } else if (instructionAccess.isRead()) {
+                        ++intCountReadAccesses;
                     }
                 }
 
 
                 if (intCountReadAccesses == 0 && intCountWriteAccesses > 0) {
-                    for (PsiElement objTargetExpression : objTargetExpressions) {
-                        holder.registerProblem(objTargetExpression, messageOnlyWrites, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                    for (final PsiElement targetExpression : targetExpressions) {
+                        holder.registerProblem(targetExpression, messageOnlyWrites, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                     }
                 }
-                objTargetExpressions.clear();
+                targetExpressions.clear();
 
                 return usages.length;
             }

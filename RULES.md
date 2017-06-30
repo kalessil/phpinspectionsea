@@ -62,6 +62,7 @@ Inspections Lists (Unused)
 | Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes | yes | no   | no  |
 | Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | yes | yes | yes  | no  |
 | Unused               | UnusedGotoLabelInspection                       | Unused goto labels                                  | yes | yes | no   | no  |
+| Unused               | ArgumentEqualsDefaultValueInspection            | Unnecessary arguments specification                 | yes | yes | yes  | no  |
 
 Inspections Lists (Compatibility)
 ---
@@ -89,7 +90,7 @@ Inspections Lists (Code style)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
 | Code style           | UnNecessaryDoubleQuotesInspection               | Unnecessary double quotes                           | yes | yes | no   | no  |
 | Code style           | MissingOrEmptyGroupStatementInspection          | Missing or empty group statement                    | no  | yes | no   | no  |
-| Code style           | SenselessCommaInArrayDefinitionInspection       | Unnecessary last comma in array definition          | no  | yes | no   | no  |
+| Code style           | SenselessCommaInArrayDefinitionInspection       | Unnecessary last comma in array definition          | yes | yes | yes  | no  |
 | Code style           | AccessModifierPresentedInspection               | Access modifiers shall be defined                   | yes | yes | no   | no  |
 | Code style           | CallableReferenceNameMismatchInspection         | Callable name case mismatched in a call             | yes | yes | no   | no  |
 | Code style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                 | no  |
@@ -107,6 +108,7 @@ Inspections Lists (Code style)
 | Code style           | ComparisonOperandsOrderInspection               | Yoda/regular conditions style usage                 | yes | yes | no   | no  |
 | Code style           | UnknownInspectionInspection                     | Unknown inspection suppression                      | n/a | yes | n/a  | no  |
 | Code style           | ParameterDefaultValueIsNotNullInspection        | Non-null parameters default value                   | n/a | yes | n/a  | yes |
+| Code style           | MisorderedModifiersInspection                   | PSR-compliant modifiers order                       | yes | yes | yes  | no  |
 | Code style           | AvoidNotConditionalsInspector                   | Avoid not-operator on ifs                           | yes | yes | yes  | no  |
 
 Inspections Lists (Language level migration)
@@ -133,14 +135,13 @@ Inspections Lists (Architecture)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
 | Architecture         | BadExceptionsProcessingInspection               | Badly organized exception handling                  | n/a | yes | n/a  | no  |
 | Architecture         | MoreThanThreeArgumentsInspection                | Too many parameters in a callable                   | n/a | yes | n/a  | no  |
-| Architecture         | CallableParameterUseCaseInTypeContextInspection | Callable parameter usage violates definition        | n/a |
+| Architecture         | CallableParameterUseCaseInTypeContextInspection | Callable parameter usage violates definition        | n/a | yes | n/a  | no  |
 | Architecture         | ClassOverridesFieldOfSuperClassInspection       | Class overrides a field of a parent class           | n/a | yes | n/a  | yes |
-| Architecture         | SingletonFactoryPatternViolationInspection      | Class violates singleton/factory pattern definition | n/a |
-| Architecture         | PrivateConstructorSemanticsInspection           | Private constructor semantics                       | n/a | yes | n/a  | no  |
 | Architecture         | LongInheritanceChainInspection                  | Long inheritance chain                              | n/a | yes | n/a  | yes |
 | Architecture         | PropertyCanBeStaticInspection                   | Property could be static                            | n/a | yes | n/a  | no  |
 | Architecture         | EmptyClassInspection                            | Empty class                                         | n/a | yes | n/a  | no  |
 | Architecture         | OverridingDeprecatedMethodInspection            | Overriding deprecated methods                       | n/a | yes | n/a  | yes |
+| Architecture         | LowerAccessLevelInspection                      | Declaration access can be weaker                    | yes | yes | yes  | no  |
 
 Inspections Lists (Probable bugs)
 ---
@@ -172,7 +173,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | SuspiciousBinaryOperationInspection             | Suspicious binary operations                              | n/a | yes | n/a  | no  |
 | Probable bugs        | IncompleteThrowStatementsInspection             | Incomplete throw statements                               | yes | yes | no   | no  |
 | Probable bugs        | AutoloadingIssuesInspection                     | Class autoloading correctness                             | n/a | yes | n/a  | no  |
-| Probable bugs        | NullCoalescingArgumentExistenceInspection       | Null coalescing operator variable existence               | n/a | yes | n/a  | no  |
+| Probable bugs        | IssetArgumentExistenceInspection                | Isset operations variables existence                      | n/a | yes | n/a  | no  |
 
 Inspections Lists (Security)
 ---
@@ -196,9 +197,8 @@ Inspections Lists (Performance)
 | Group                | Short Name                                      | Full Name                                                                                   | QF  | UTs | QFTs | Doc |
 | :------------------- | :---------------------------------------------- | :------------------------------------------------------------------------------------------ | --: | --: | ---: | --: |
 | Performance          | AmbiguousMethodsCallsInArrayMappingInspection   | Non-optimized arrays mapping                                                                | n/a | yes | n/a  | no  |
-| Performance          | StrlenInEmptyStringCheckContextInspection       | '(mb_)strlen(...)' misused                                                                  | n/a |
+| Performance          | StrlenInEmptyStringCheckContextInspection       | '(mb_)strlen(...)' misused                                                                  | yes | yes | yes  | no  |
 | Performance          | ArrayCastingEquivalentInspection                | Could be replaced with '(array) ...'                                                        | n/a |
-| Performance          | CountOnPropelCollectionInspection               | 'count(...)' calls on Propel collection                                                     | n/a |
 | Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                               | n/a | yes | n/a | no  |
 | Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                            | n/a |
 | Performance          | StrStrUsedAsStrPosInspection                    | 'str(i)str(...)' could be replaced with 'str(i)pos(...)'                                    | yes | yes | no  | no  |
@@ -219,3 +219,4 @@ Inspections Lists (Performance)
 | Performance          | StaticLocalVariablesUsageInspection             | Static local variables usage                                                                | n/a | yes | n/a | yes |
 | Performance          | UnqualifiedReferenceInspection                  | Unqualified function/constant reference                                                     | yes | yes | yes | no  |
 | Performance          | ExplodeMissUseInspection                        | 'explode(...)' misused                                                                      | yes | yes | yes | no  |
+| Performance          | ScandirUsageInspection                          | 'scandir(...)' low performing usage                                                         | yes | yes | yes | no  |

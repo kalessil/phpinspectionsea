@@ -1,70 +1,47 @@
 <?php
 
-use BaseT as AliasT; //Add alias to cover all test cases
+use BaseClass as ClassAlias;
 
-class BaseT
+class BaseClass
 {
+    public static $staticProperty;
+    public static $overridden;
 
-    public static $userId = 1;
-    protected static $userName = 'Test';
-
-    public function a()
+    public function method()
     {
+        self::$staticProperty       = 'whatever';
+        static::$staticProperty     = 'whatever';
+        BaseClass::$staticProperty  = 'whatever';
+        ClassAlias::$staticProperty = 'whatever';
 
-        self::$userId = 1; // Ok
-        AliasT::$userId = 1;  // OK
-        BaseT::$userId = 1; // Ok
-        \BaseT::$userId = 1; // Ok
-        BaseT::$userName = 'Name'; // Ok
-        self::$userName = 'Name'; // Ok
-
-
-
-        <warning descr="Static property should be modified only inside the source class">static::$userId = 1</warning>;
-        <warning descr="Static property should be modified only inside the source class">static::$userName = 'Name'</warning>;
-
+        /* case with a lambda, the context is a function */
         return function () {
-            <warning descr="Static property should be modified only inside the source class">AliasT::$userId = 123</warning>;  // Error
+            <warning descr="Static properties should be modified only inside the source class.">BaseClass::$staticProperty  = 'whatever'</warning>;
+            <warning descr="Static properties should be modified only inside the source class.">ClassAlias::$staticProperty = 'whatever'</warning>;
         };
     }
-
 }
 
-class ExtendedT extends BaseT
+class ChildClass extends BaseClass
 {
+    public static $overridden = 'overridden';
 
-    public static $userName = 'ExtendedTest';
-
-    public function dfTest()
+    public function method()
     {
-        ExtendedT::$userName = 'Test'; // Ok
+        ChildClass::$overridden = 'whatever';
+        self::$overridden       = 'whatever';
+        static::$overridden     = 'whatever';
 
-        <warning descr="Static property should be modified only inside the source class">AliasT::$userId = 4333</warning>;
-        <warning descr="Static property should be modified only inside the source class">ExtendedT::$userId = 4333</warning>;
-
+        <warning descr="Static properties should be modified only inside the source class.">ClassAlias::$overridden     = 'whatever'</warning>;
+        <warning descr="Static properties should be modified only inside the source class.">ClassAlias::$staticProperty = 'whatever'</warning>;
+        <warning descr="Static properties should be modified only inside the source class.">ChildClass::$staticProperty = 'whatever'</warning>;
     }
 }
 
-class CustomClass
-{
-    public function test()
-    {
-       <warning descr="Static property should be modified only inside the source class">\BaseT::$userId = 123</warning>;
-       <warning descr="Static property should be modified only inside the source class">AliasT::$userId = 123</warning>;
-       <warning descr="Static property should be modified only inside the source class">a::$userId = 123</warning>;
-    }
-}
-
-class A {
-
-    public function test(){
-        <warning descr="Static property should be modified only inside the source class">A::$test = 123</warning>;
-    }
-}
-
-
-<warning descr="Static property should be modified only inside the source class">BaseT::$userId = 123</warning>;
-<warning descr="Static property should be modified only inside the source class">AliasT::$userId = 123</warning>;
-<warning descr="Static property should be modified only inside the source class">ExtendedT::$userId = 123</warning>;
-<warning descr="Static property should be modified only inside the source class">\ExtendedT::$userId = 123</warning>;
-<warning descr="Static property should be modified only inside the source class">CustomClassName::$test = 123</warning>;
+/* all static field writes in non-method context being reported */
+class ClassWithoutFields {}
+<warning descr="Static properties should be modified only inside the source class.">BaseClass::$staticProperty  = 'whatever'</warning>;
+<warning descr="Static properties should be modified only inside the source class.">ChildClass::$staticProperty = 'whatever'</warning>;
+<warning descr="Static properties should be modified only inside the source class.">ClassAlias::$staticProperty = 'whatever'</warning>;
+<warning descr="Static properties should be modified only inside the source class.">ClassWithoutFields::$missingField = 'whatever'</warning>;
+<warning descr="Static properties should be modified only inside the source class.">MissingClass::$missingField       = 'whatever'</warning>;

@@ -19,8 +19,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -125,33 +123,27 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                     return true;
                 }
 
-                boolean isChecked                   = false;
-                Collection<BinaryExpression> checks = PsiTreeUtil.findChildrenOfType(body, BinaryExpression.class);
-                for (BinaryExpression expression : checks) {
-                    /* ensure binary expression is complete */
-                    final PsiElement left      = expression.getLeftOperand();
-                    final PsiElement right     = expression.getRightOperand();
-                    final PsiElement operation = expression.getOperation();
-                    if (null == operation || null == left || null == right) {
-                        continue;
-                    }
+                boolean isChecked = false;
+                for (BinaryExpression expression : PsiTreeUtil.findChildrenOfType(body, BinaryExpression.class)) {
+                    final PsiElement left       = expression.getLeftOperand();
+                    final PsiElement right      = expression.getRightOperand();
+                    final IElementType operator = expression.getOperationType();
+                    if (operator != null && left != null && right != null) {
+                        /* expression should be a comparison with a false */
+                        if (!PhpLanguageUtil.isFalse(left) && !PhpLanguageUtil.isFalse(right)) {
+                            continue;
+                        }
+                        if (PhpTokenTypes.opIDENTICAL != operator && PhpTokenTypes.opNOT_IDENTICAL != operator) {
+                            continue;
+                        }
 
-                    /* expression should be a comparison with a false */
-                    if (!PhpLanguageUtil.isFalse(left) && !PhpLanguageUtil.isFalse(right)) {
-                        continue;
-                    }
-                    final IElementType operator = operation.getNode().getElementType();
-                    if (PhpTokenTypes.opIDENTICAL != operator && PhpTokenTypes.opNOT_IDENTICAL != operator) {
-                        continue;
-                    }
-
-                    final PsiElement operatorValue = PhpLanguageUtil.isFalse(left) ? right : left;
-                    if (PsiEquivalenceUtil.areElementsEquivalent(operatorValue, subject)) {
-                        isChecked = true;
-                        break;
+                        final PsiElement operatorValue = PhpLanguageUtil.isFalse(left) ? right : left;
+                        if (PsiEquivalenceUtil.areElementsEquivalent(operatorValue, subject)) {
+                            isChecked = true;
+                            break;
+                        }
                     }
                 }
-                checks.clear();
 
                 return isChecked;
             }

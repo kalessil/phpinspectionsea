@@ -112,7 +112,7 @@ final public class ExpressionSemanticUtil {
      * @return list of extracted conditions
      */
     @Nullable
-    public static LinkedList<PsiElement> getConditions(@Nullable PsiElement objCondition, @Nullable IElementType[] arrOperationHolder) {
+    public static List<PsiElement> getConditions(@Nullable PsiElement objCondition, @Nullable IElementType[] arrOperationHolder) {
         /* get through unary and parenthesis wrappers */
         if (null != objCondition) {
             objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(objCondition);
@@ -127,7 +127,7 @@ final public class ExpressionSemanticUtil {
         }
 
         /* init container */
-        LinkedList<PsiElement> objPartsCollection = new LinkedList<>();
+        List<PsiElement> objPartsCollection = new ArrayList<>();
 
         /* return non-binary expressions, eg. callable execution */
         if (!(objCondition instanceof BinaryExpression)) {
@@ -162,7 +162,7 @@ final public class ExpressionSemanticUtil {
      * @param operationType operator to take in consideration
      * @return list of sub-conditions in native order
      */
-    private static LinkedList<PsiElement> getConditions(BinaryExpression objTarget, IElementType operationType) {
+    private static List<PsiElement> getConditions(BinaryExpression objTarget, IElementType operationType) {
         LinkedList<PsiElement> objPartsCollection = new LinkedList<>();
         PsiElement objItemToAdd;
 
@@ -194,7 +194,7 @@ final public class ExpressionSemanticUtil {
             objPartsCollection.addFirst(objExpressionToExpand);
         }
 
-        return objPartsCollection;
+        return new ArrayList<>(objPartsCollection);
     }
 
     @Nullable

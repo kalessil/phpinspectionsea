@@ -37,7 +37,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
     public boolean REPORT_DEFAULTS_FLAWS = true;
     public boolean REPORT_INIT_FLAWS     = true;
 
-    private static final String messageDefaultValue    = "Null assignment can be safely removed. Define null in annotations if it's important.";
+    private static final String messageDefaultNull     = "Null assignment can be safely removed. Define null in annotations if it's important.";
     private static final String messageDefaultOverride = "The assignment can be safely removed as the constructor overrides it.";
     private static final String messageSenselessWrite  = "Written value is same as default one, consider removing this assignment.";
 
@@ -51,30 +51,25 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpField(Field field) {
-                /* configuration-based toggle */
-                if (!REPORT_DEFAULTS_FLAWS) {
-                    return;
-                }
+                if (REPORT_DEFAULTS_FLAWS && !field.isConstant()) {
+                    final PhpClass clazz       = field.getContainingClass();
+                    final PhpClass parentClazz = clazz == null ? null : clazz.getSuperClass();
+                    final Field originField    = parentClazz == null ? null : parentClazz.findFieldByName(field.getName(), false);
 
-                /* general construct requirements */
-                final PsiElement defaultValue = field.getDefaultValue();
-                if (field.isConstant() || !PhpLanguageUtil.isNull(defaultValue)) {
-                    return;
-                }
+                    final PsiElement fieldDefault  = field.getDefaultValue();
+                    final PsiElement originDefault = originField == null ? null : originField.getDefaultValue();
 
-                /* if parent has non-private field, check its' defaults (terminate if non-null defaults) */
-                final PhpClass clazz       = field.getContainingClass();
-                final PhpClass parentClazz = null == clazz ? null : clazz.getSuperClass();
-                final Field parentField    = null == parentClazz ? null : parentClazz.findFieldByName(field.getName(), false);
-                if (null != parentField && !parentField.isConstant() && !parentField.getModifier().isPrivate()) {
-                    final PsiElement parentDefaultValue = parentField.getDefaultValue();
-                    if (parentDefaultValue instanceof PhpPsiElement && !PhpLanguageUtil.isNull(parentDefaultValue)) {
-                        return;
+                    if (PhpLanguageUtil.isNull(fieldDefault)) {
+                        holder.registerProblem(fieldDefault, messageDefaultNull, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new DropFieldDefaultValueFix());
+                    } else if (fieldDefault instanceof PhpPsiElement && originDefault instanceof PhpPsiElement) {
+                        final boolean isDefaultDuplicate =
+                            !originField.getModifier().getAccess().isPrivate() &&
+                            PsiEquivalenceUtil.areElementsEquivalent(fieldDefault, originDefault);
+                        if (isDefaultDuplicate) {
+                            holder.registerProblem(fieldDefault, messageSenselessWrite, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                        }
                     }
                 }
-
-                /* fire a warning */
-                holder.registerProblem(defaultValue, messageDefaultValue, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new DropFieldDefaultValueFix());
             }
 
             public void visitPhpMethod(Method method) {
@@ -96,7 +91,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                 /* collect private properties with default values; stop inspection if none found */
                 /* protected/public properties init in __construct can be bypassed, so defaults might have sense */
                 final Map<String, PsiElement> propertiesToCheck = new HashMap<>();
-                for (Field field : clazz.getOwnFields()) {
+                for (final Field field : clazz.getOwnFields()) {
                     if (field.isConstant() || field.getModifier().isStatic() || !field.getModifier().isPrivate()) {
                         continue;
                     }
@@ -113,7 +108,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                 }
 
                 /* iterate 1st level instructions and analyze overriding properties */
-                for (PsiElement expression : body.getChildren()) {
+                for (final PsiElement expression : body.getChildren()) {
                     final PsiElement assignmentCandidate = expression.getFirstChild();
                     if (!OpenapiTypesUtil.isAssignment(assignmentCandidate)) {
                         continue;
@@ -143,7 +138,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
 
                         /* false-positive: property is involved into generating new value */
                         boolean isPropertyReused = false;
-                        for (FieldReference candidate : PsiTreeUtil.findChildrenOfType(value, FieldReference.class)) {
+                        for (final FieldReference candidate : PsiTreeUtil.findChildrenOfType(value, FieldReference.class)) {
                             if (!PsiEquivalenceUtil.areElementsEquivalent(container, candidate)) {
                                 continue;
                             }
@@ -186,8 +181,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement defaultValue = descriptor.getPsiElement();
             final Field field             = (Field) defaultValue.getParent();
-
-            final PsiElement nameNode = NamedElementUtil.getNameIdentifier(field);
+            final PsiElement nameNode     = NamedElementUtil.getNameIdentifier(field);
             if (null != nameNode) {
                 field.deleteChildRange(nameNode.getNextSibling(), defaultValue);
             }

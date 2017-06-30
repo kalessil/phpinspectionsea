@@ -13,9 +13,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -29,7 +29,7 @@ import java.util.Set;
 public class AutoloadingIssuesInspector extends BasePhpInspection {
     private static final String message = "Class autoloading might be broken: file and class names are not identical.";
 
-    private static final Set<String> ignoredFiles = new HashSet<>();
+    private static final Collection<String> ignoredFiles = new HashSet<>();
     static {
         ignoredFiles.add("index.php");
         ignoredFiles.add("actions.class.php"); // Symfony 1.*
@@ -45,23 +45,24 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFile(PhpFile file) {
-                final String fileName = file.getName();
-                if (fileName.endsWith(".php") && !ignoredFiles.contains(fileName)) {
+                final String fileName      = file.getName();
+                final boolean skipAnalysis = fileName.matches("\\d{4}_\\d{2}_\\d{2}_\\d{6}_.+_.php");
+                if (!skipAnalysis && fileName.endsWith(".php") && !ignoredFiles.contains(fileName)) {
                     /* find out how many named classes has been defined in the file */
                     final List<PhpClass> classes = new ArrayList<>();
-                    for (PhpClass clazz : PsiTreeUtil.findChildrenOfAnyType(file, PhpClass.class)) {
-                        if (null != NamedElementUtil.getNameIdentifier(clazz)) {
+                    for (final PhpClass clazz : PsiTreeUtil.findChildrenOfAnyType(file, PhpClass.class)) {
+                        if (NamedElementUtil.getNameIdentifier(clazz) != null) {
                             classes.add(clazz);
                         }
                     }
 
                     /* multiple classes defined, do nothing - this is not PSR compatible */
-                    if (1 == classes.size()) {
+                    if (classes.size() == 1) {
                         final PhpClass clazz = classes.get(0);
 
                         /* support older PSR classloading (Package_Subpackage_Class) naming */
                         String extractedClassName = clazz.getName();
-                        if (0 == clazz.getFQN().lastIndexOf('\\') && -1 != extractedClassName.indexOf('_')) {
+                        if (clazz.getFQN().lastIndexOf('\\') == 0 && extractedClassName.indexOf('_') != -1) {
                             extractedClassName = extractedClassName.substring(1 + extractedClassName.lastIndexOf('_'));
                         }
 
@@ -69,7 +70,7 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
                         final String expectedClassName = fileName.substring(0, fileName.indexOf('.'));
                         if (!expectedClassName.equals(extractedClassName) && !expectedClassName.equals(clazz.getName())) {
                             final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
-                            if (null != classNameNode) {
+                            if (classNameNode != null) {
                                 holder.registerProblem(classNameNode, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         }

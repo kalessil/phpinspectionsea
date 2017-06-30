@@ -40,4 +40,7 @@
 
         /* ensures not reporting stub-functions */
         foreach (array_rand([]) as $random) {}
+
+        /* pre-defined variables support */
+        foreach ($_REQUEST as $value) {}
     }

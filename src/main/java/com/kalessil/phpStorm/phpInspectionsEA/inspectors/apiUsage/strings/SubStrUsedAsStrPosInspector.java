@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
@@ -16,6 +15,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
     private static final String messagePattern = "'%r%' can be used instead (improves maintainability).";
 
@@ -28,12 +36,13 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* check if it's the target function: amount of parameters and name */
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
                 if (
-                    (3 != params.length && 4 != params.length) || StringUtil.isEmpty(functionName) ||
+                    (3 != params.length && 4 != params.length) || functionName == null ||
                     (!functionName.equals("substr") && !functionName.equals("mb_substr"))
                 ) {
                     return;
@@ -62,7 +71,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                     1 == ((FunctionReference) parentExpression).getParameters().length
                 ) {
                     final String parentName = ((FunctionReference) parentExpression).getName();
-                    if (!StringUtil.isEmpty(parentName) && (parentName.equals("strtoupper") || parentName.equals("strtolower"))) {
+                    if (parentName != null && (parentName.equals("strtoupper") || parentName.equals("strtolower"))) {
                         caseManipulated  = true;
                         highLevelCall    = parentExpression;
                         parentExpression = parentExpression.getParent();
@@ -71,36 +80,31 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
 
                 /* check parent expression, to ensure pattern matched */
                 if (parentExpression instanceof BinaryExpression) {
-                    final BinaryExpression parent = (BinaryExpression) parentExpression;
-                    final PsiElement operation    = parent.getOperation();
-                    if (null != operation && null != operation.getNode()) {
-                        final IElementType operationType = operation.getNode().getElementType();
-                        if (
-                            operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opNOT_IDENTICAL ||
-                            operationType == PhpTokenTypes.opEQUAL     || operationType == PhpTokenTypes.opNOT_EQUAL
-                        ) {
-                            /* get second operand */
-                            PsiElement secondOperand = parent.getLeftOperand();
-                            if (secondOperand == highLevelCall) {
-                                secondOperand = parent.getRightOperand();
-                            }
+                    final BinaryExpression parent    = (BinaryExpression) parentExpression;
+                    final IElementType operationType = parent.getOperationType();
+                    if (PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operationType)) {
+                        /* get second operand */
+                        PsiElement secondOperand = parent.getLeftOperand();
+                        if (secondOperand == highLevelCall) {
+                            secondOperand = parent.getRightOperand();
+                        }
 
-                            if (null != secondOperand) {
-                                final String operator      = operation.getText();
-                                final boolean isMbFunction = functionName.equals("mb_substr");
-                                final boolean hasEncoding  = isMbFunction && 4 == params.length;
-                                final String replacement   = "%i% %o% %f%(%s%, %p%%e%)"
-                                    .replace("%e%", hasEncoding ? (", " + params[3].getText()) : "")
-                                    .replace("%p%", secondOperand.getText())
-                                    .replace("%s%", params[0].getText())
-                                    .replace("%f%", (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"))
-                                    .replace("%o%", operator.length() == 2 ? (operator + "=") : operator)
-                                    .replace("%i%", index);
-                                final String message       = messagePattern.replace("%r%", replacement);
-                                holder.registerProblem(parentExpression, message, ProblemHighlightType.WEAK_WARNING);
+                        final PsiElement operationNode = parent.getOperation();
+                        if (secondOperand != null && operationNode != null) {
+                            final String operator      = operationNode.getText();
+                            final boolean isMbFunction = functionName.equals("mb_substr");
+                            final boolean hasEncoding  = isMbFunction && 4 == params.length;
+                            final String replacement   = "%i% %o% %f%(%s%, %p%%e%)"
+                                .replace("%e%", hasEncoding ? (", " + params[3].getText()) : "")
+                                .replace("%p%", secondOperand.getText())
+                                .replace("%s%", params[0].getText())
+                                .replace("%f%", (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"))
+                                .replace("%o%", operator.length() == 2 ? (operator + "=") : operator)
+                                .replace("%i%", index);
+                            final String message       = messagePattern.replace("%r%", replacement);
+                            holder.registerProblem(parentExpression, message, ProblemHighlightType.WEAK_WARNING);
 
-                                // return;
-                            }
+                            // return;
                         }
                     }
                 }

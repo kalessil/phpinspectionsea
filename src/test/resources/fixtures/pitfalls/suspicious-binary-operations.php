@@ -33,3 +33,16 @@ class MisplacedOperations
         if ($this->method($one > 0)) {}
     }
 }
+
+/* a bug: hardcoded booleans */
+$x = (
+    <error descr="This boolean makes no sense or enforces the operation result.">true</error> ||
+    <error descr="This boolean makes no sense or enforces the operation result.">true</error> ||
+    false === true
+);
+
+/* a bug: ternary always returns the argument */
+$y = [
+    <error descr="The operation results to '(int)$x', please add missing parenthesises.">(int)$x</error> ?? 'whatever',
+    (<error descr="The operation results to '(string)$x', please add missing parenthesises.">(string)$x</error>) ?? 'whatever'
+];

@@ -14,6 +14,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
     private static final String messagePattern = "An if-return construct can be replaced with 'return %c%'.";
 
@@ -153,28 +162,15 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 @SuppressWarnings("UnnecessaryLocalVariable")
                 boolean invertCondition = this.isInverted;
 
-                /* inverting will be needed, check if it leads to double inverting */
-                /*
-                if (this.isInverted && conditions instanceof UnaryExpression) {
-                    final PsiElement operation =((UnaryExpression) conditions).getOperation();
-                    if (null != operation && PhpTokenTypes.opNOT == operation.getNode().getElementType()) {
-                        *//* un-box condition and cancel inverting *//*
-                        final PsiElement unboxedConditions = ((UnaryExpression) conditions).getValue();
-                        if (null != unboxedConditions) {
-                            invertCondition = false;
-                            conditions = unboxedConditions;
-                        }
-                    }
-                }
-                */
-
                 final PsiElement replacement;
                 if (invertCondition) {
-                    final String pattern = "!(" + conditions.getText() + ")";
-                    replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, pattern);
+                    final String pattern = "(!(" + conditions.getText() + "))";
+                    replacement
+                        = PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, pattern).getArgument();
                 } else {
                     replacement = conditions.copy();
                 }
+
 
                 /* all good, modify code */
                 if (null != replacement) {

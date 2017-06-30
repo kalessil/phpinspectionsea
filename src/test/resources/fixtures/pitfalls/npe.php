@@ -50,8 +50,30 @@ class CasesHolder {
         }
     }
 
+    public function npeCheckArrayAccess(\stdClass $first = null) {
+        return [
+            <warning descr="Null pointer exception may occur here.">$first</warning>['whatever'],
+            $whatever[$first]
+        ];
+    }
+
     public function npeCheckConstraints(\InvokableClass $first = null) {
         $first = $first ?: null;
         $first->property = 'Obviously NPE, but we stop at re-assigning. No solution as of April 2017.';
+    }
+
+    public function npeReportingFunctionReference(?\stdClass $one, \stdClass $two = null, \stdClass $three, $four) {
+        return $this->npeReportingFunctionReference(
+            $one,
+            $one,
+            <warning descr="Null pointer exception may occur here.">$one</warning>,
+            $one,
+            $one /* an extra parameter to ensure inspection is not crashes */
+        );
+    }
+
+    public function npeReportingChainedCalls(): ?CasesHolder {
+        return $this->npeReportingChainedCalls()
+            <warning descr="Null pointer exception may occur here.">-></warning>npeReportingChainedCalls();
     }
 }

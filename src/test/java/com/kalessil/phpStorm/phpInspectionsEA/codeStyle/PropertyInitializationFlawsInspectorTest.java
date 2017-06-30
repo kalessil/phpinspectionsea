@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PropertyInitializationFlawsInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TraitsPropertiesConflictsInspector;
 
 final public class PropertyInitializationFlawsInspectorTest extends CodeInsightFixtureTestCase {
     public void testNullInitPatterns() {
@@ -9,8 +10,9 @@ final public class PropertyInitializationFlawsInspectorTest extends CodeInsightF
         inspector.REPORT_INIT_FLAWS                    = true;
         inspector.REPORT_DEFAULTS_FLAWS                = true;
 
-        myFixture.configureByFile("fixtures/codeStyle/property-null-initialization.php");
         myFixture.enableInspections(inspector);
+
+        myFixture.configureByFile("fixtures/codeStyle/property-null-initialization.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testPropertyOverridePatterns() {
@@ -18,8 +20,9 @@ final public class PropertyInitializationFlawsInspectorTest extends CodeInsightF
         inspector.REPORT_INIT_FLAWS                    = true;
         inspector.REPORT_DEFAULTS_FLAWS                = true;
 
-        myFixture.configureByFile("fixtures/codeStyle/property-initialization-override.php");
         myFixture.enableInspections(inspector);
+
+        myFixture.configureByFile("fixtures/codeStyle/property-initialization-override.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

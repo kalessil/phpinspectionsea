@@ -2,32 +2,6 @@
 
 class TestCase
 {
-    public function testNormalization()
-    {
-        $this->assertTrue(false == $x);     // <- reported assertEquals
-        $this->assertNotFalse(false === $x);// <- reported assertSame
-        $this->assertTrue(false != $x);     // <- reported assertNotEquals
-        $this->assertNotFalse(false !== $x);// <- reported assertNotSame
-
-        $this->assertFalse(false == $x);    // <- reported assertNotEquals
-        $this->assertNotTrue(false === $x); // <- reported assertNotSame
-        $this->assertFalse(false != $x);    // <- reported assertEquals
-        $this->assertNotTrue(false !== $x); // <- reported assertSame
-    }
-
-    public function testNormalizationWithMessage()
-    {
-        $this->assertTrue(false == $x, '');     // <- reported assertEquals
-        $this->assertNotFalse(false === $x, '');// <- reported assertSame
-        $this->assertTrue(false != $x, '');     // <- reported assertNotEquals
-        $this->assertNotFalse(false !== $x, '');// <- reported assertNotSame
-
-        $this->assertFalse(false == $x, '');    // <- reported assertNotEquals
-        $this->assertNotTrue(false === $x, ''); // <- reported assertNotSame
-        $this->assertFalse(false != $x, '');    // <- reported assertEquals
-        $this->assertNotTrue(false !== $x, ''); // <- reported assertSame
-    }
-
     public function test()
     {
         $this->assertEquals(2, 1);            // <- reported, assertSame    IF strict options set

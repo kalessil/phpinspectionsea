@@ -38,22 +38,23 @@ Let's start with an example demonstrating the case:
     $options = [];
     foreach ($configurationSources as $source) {
         /* more logic here */
-        
+
         $options = array_merge($options, $source->getOptions());
     }
 ```
 
 In order to reduce execution time we can modify the code and perform the merge operation only once:
 ```php
-    $options = [];
+    /* the inner empty array covers cases when no loops were made */
+    $options = [[]];
     foreach ($configurationSources as $source) {
         /* more logic here */
-        
-        $options []= $source->getOptions(); // <- yes, we'll use a little bit more memory
+
+        $options[] = $source->getOptions(); // <- yes, we'll use a little bit more memory
     }
     /* PHP below 5.6 */
     $options = call_user_func_array('array_merge', $options);
-    
+
     /* PHP 5.6+: more friendly to refactoring as less magic involved */
     $options = array_merge(...$options);
 ```

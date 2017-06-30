@@ -6,6 +6,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -23,36 +25,43 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     // Inspection options.
-    public boolean REPORT_LITERAL_OPERATORS = true;
+    public boolean REPORT_LITERAL_OPERATORS      = true;
+    public boolean REPORT_DUPLICATE_CONDITIONS   = true;
+    public boolean REPORT_MISSING_PARENTHESISES  = true;
+    public boolean REPORT_INSTANCE_OF_FLAWS      = true;
+    public boolean REPORT_ISSET_FLAWS            = true;
+    public boolean SUGGEST_MERGING_ISSET         = true;
+    public boolean SUGGEST_OPTIMIZING_CONDITIONS = true;
 
-    private static final String strProblemDescriptionInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
-
-    private static final String strProblemDescriptionInstanceOfAmbiguous      = "This condition is ambiguous and can be safely removed.";
-    private static final String messageOrdering                               = "This condition execution costs less than the previous one.";
-    private static final String strProblemDescriptionDuplicateConditions      = "This condition is duplicated in another if/elseif branch.";
-    private static final String messageBooleansUsed                           = "This boolean in condition makes no sense or enforces condition result.";
-    private static final String strProblemDescriptionDuplicateConditionPart   = "This call is duplicated in conditions set.";
-    private static final String strProblemDescriptionIssetCanBeMergedAndCase  = "This can be merged into the previous 'isset(..., ...[, ...])'.";
-    private static final String strProblemDescriptionIssetCanBeMergedOrCase   = "This can be merged into the previous '!isset(..., ...[, ...])'.";
-    private static final String strProblemDescriptionConditionShouldBeWrapped = "Confusing conditions structure: please wrap needed with '(...)'.";
+    private static final String messageInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
+    private static final String messageInstanceOfAmbiguous       = "This condition is ambiguous and can be safely removed.";
+    private static final String messageOrdering                  = "This condition execution costs less than the previous one.";
+    private static final String messageDuplicateConditions       = "This condition is duplicated in another if/elseif branch.";
+    private static final String messageDuplicateConditionPart    = "This call is duplicated in conditions set.";
+    private static final String messageIssetCanBeMergedAndCase   = "This can be merged into the previous 'isset(..., ...[, ...])'.";
+    private static final String messageIssetCanBeMergedOrCase    = "This can be merged into the previous '!isset(..., ...[, ...])'.";
+    private static final String messageConditionShouldBeWrapped  = "Confusing conditions structure: please wrap needed with '(...)'.";
 
     @NotNull
     public String getShortName() {
         return "NotOptimalIfConditionsInspection";
     }
 
-    private HashSet<String> functionsSet = null;
-    private HashSet<String> getFunctionsSet() {
-        if (null == functionsSet) {
-            functionsSet = new HashSet<>();
-
+    final private static Set<String> functionsSet = new HashSet<>();
+    static {
             functionsSet.add("array_key_exists");
             functionsSet.add("defined");
             functionsSet.add("is_array");
@@ -64,9 +73,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             functionsSet.add("is_numeric");
             functionsSet.add("is_scalar");
             functionsSet.add("is_object");
-        }
-
-        return functionsSet;
     }
 
     @Override
@@ -74,21 +80,29 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpIf(If ifStatement) {
-                LinkedList<PsiElement> objAllConditions = new LinkedList<>();
+                List<PsiElement> objAllConditions = new ArrayList<>();
                 IElementType[] arrOperationHolder = { null };
 
-                LinkedList<PsiElement> objConditionsFromStatement = this.inspectExpressionsOrder(ifStatement.getCondition(), arrOperationHolder);
+                List<PsiElement> objConditionsFromStatement = this.inspectExpressionsOrder(ifStatement.getCondition(), arrOperationHolder);
                 if (null != objConditionsFromStatement) {
                     objAllConditions.addAll(objConditionsFromStatement);
 
-                    this.inspectConditionsWithBooleans(objConditionsFromStatement);
-                    this.inspectConditionsForMissingParenthesis(objConditionsFromStatement);
-                    this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
-                    this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
-                    this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
-
-                    this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
-                    IssetAndNullComparisonStrategy.apply(objConditionsFromStatement, holder);
+                    if (REPORT_MISSING_PARENTHESISES) {
+                        this.inspectConditionsForMissingParenthesis(objConditionsFromStatement);
+                    }
+                    if (REPORT_DUPLICATE_CONDITIONS) {
+                        this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
+                    }
+                    if (SUGGEST_MERGING_ISSET) {
+                        this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
+                    }
+                    if (REPORT_INSTANCE_OF_FLAWS) {
+                        this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
+                        this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
+                    }
+                    if (REPORT_ISSET_FLAWS) {
+                        IssetAndNullComparisonStrategy.apply(objConditionsFromStatement, holder);
+                    }
 
                     objConditionsFromStatement.clear();
 
@@ -99,16 +113,25 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                 for (ElseIf objElseIf : ifStatement.getElseIfBranches()) {
                     objConditionsFromStatement = this.inspectExpressionsOrder(objElseIf.getCondition(), arrOperationHolder);
-                    if (null != objConditionsFromStatement) {
+                    if (objConditionsFromStatement != null) {
                         objAllConditions.addAll(objConditionsFromStatement);
 
-                        this.inspectConditionsWithBooleans(objConditionsFromStatement);
-                        this.inspectConditionsForMissingParenthesis(objConditionsFromStatement);
-                        this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
-                        this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
-                        this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
-
-                        this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
+                        if (REPORT_MISSING_PARENTHESISES) {
+                            this.inspectConditionsForMissingParenthesis(objConditionsFromStatement);
+                        }
+                        if (REPORT_DUPLICATE_CONDITIONS) {
+                            this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
+                        }
+                        if (SUGGEST_MERGING_ISSET) {
+                            this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
+                        }
+                        if (REPORT_INSTANCE_OF_FLAWS) {
+                            this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
+                            this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
+                        }
+                        if (REPORT_ISSET_FLAWS) {
+                            IssetAndNullComparisonStrategy.apply(objConditionsFromStatement, holder);
+                        }
 
                         objConditionsFromStatement.clear();
 
@@ -118,7 +141,9 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     }
                 }
 
-                this.inspectDuplicatedConditions(objAllConditions, ifStatement);
+                if (REPORT_DUPLICATE_CONDITIONS) {
+                    this.inspectDuplicatedConditions(objAllConditions, ifStatement);
+                }
                 /* TODO: If not binary/ternary/assignment/array access expression,  */
                 /* TODO: perform types lookup - nullable core types/classes should be compared with null.  */
                 /* TODO: Inversion should be un-boxed to get expression. */
@@ -126,43 +151,34 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 objAllConditions.clear();
             }
 
-            private void inspectConditionsForMissingParenthesis(@NotNull LinkedList<PsiElement> objBranchConditions) {
-                for (PsiElement objCondition : objBranchConditions) {
-                    if (!(objCondition instanceof BinaryExpression)) {
+            private void inspectConditionsForMissingParenthesis(@NotNull List<PsiElement> conditions) {
+                for (final PsiElement condition : conditions) {
+                    if (!(condition instanceof BinaryExpression)) {
                         continue;
                     }
-
-                    PsiElement objOperation = ((BinaryExpression) objCondition).getOperation();
-                    if (null == objOperation) {
-                        continue;
-                    }
-                    IElementType operationType = objOperation.getNode().getElementType();
+                    final IElementType operationType = ((BinaryExpression) condition).getOperationType();
                     if (operationType != PhpTokenTypes.opAND && operationType != PhpTokenTypes.opOR) {
                         continue;
                     }
 
-                    if (!(objCondition.getParent() instanceof ParenthesizedExpression)) {
-                        holder.registerProblem(objCondition, strProblemDescriptionConditionShouldBeWrapped, ProblemHighlightType.ERROR);
+                    if (!(condition.getParent() instanceof ParenthesizedExpression)) {
+                        holder.registerProblem(condition, messageConditionShouldBeWrapped, ProblemHighlightType.ERROR);
                     }
                 }
             }
 
             // reports $value instanceof \DateTime OP $value instanceof \DateTimeInterface
-            private void inspectConditionsForAmbiguousInstanceOf(@NotNull LinkedList<PsiElement> objBranchConditions) {
-                if (objBranchConditions.size() < 2) {
+            private void inspectConditionsForAmbiguousInstanceOf(@NotNull List<PsiElement> conditions) {
+                if (conditions.size() < 2) {
                     return;
                 }
 
                 // find all instanceof expressions
-                LinkedList<BinaryExpression> instanceOfExpressions = new LinkedList<>();
-                for (PsiElement objExpression : objBranchConditions) {
-                    if (objExpression instanceof BinaryExpression) {
-                        PsiElement objOperation = ((BinaryExpression) objExpression).getOperation();
-                        if (
-                            null != objOperation && null != objOperation.getNode() &&
-                            PhpTokenTypes.kwINSTANCEOF == objOperation.getNode().getElementType()
-                        ) {
-                            instanceOfExpressions.add((BinaryExpression) objExpression);
+                final List<BinaryExpression> instanceOfExpressions = new ArrayList<>();
+                for (final PsiElement expression : conditions) {
+                    if (expression instanceof BinaryExpression) {
+                        if (PhpTokenTypes.kwINSTANCEOF == ((BinaryExpression) expression).getOperationType()) {
+                            instanceOfExpressions.add((BinaryExpression) expression);
                         }
                     }
                 }
@@ -173,31 +189,25 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
                 // now we need to build up following structure:
-                /*
-                    'subject' => [
-                                    condition => class,
-                                    condition => class,
-                                    condition => class
-                                ]
-                 */
-                HashMap<PsiElement, HashMap<PsiElement, PhpClass>> mappedChecks = new HashMap<>();
-                for (BinaryExpression instanceOfExpression : instanceOfExpressions) {
+                /* 'subject' => [ condition => class, ... ] */
+                final Map<PsiElement, Map<PsiElement, PhpClass>> mappedChecks = new HashMap<>();
+                for (final BinaryExpression instanceOfExpression : instanceOfExpressions) {
                     // ensure expression is well-formed
-                    PsiElement subject = instanceOfExpression.getLeftOperand();
+                    final PsiElement subject = instanceOfExpression.getLeftOperand();
                     if (null == subject || !(instanceOfExpression.getRightOperand() instanceof ClassReference)) {
                         continue;
                     }
 
                     // ensure resolvable
-                    ClassReference reference = (ClassReference) instanceOfExpression.getRightOperand();
+                    final ClassReference reference = (ClassReference) instanceOfExpression.getRightOperand();
                     if (!(reference.resolve() instanceof PhpClass)) {
                         continue;
                     }
-                    PhpClass clazz = (PhpClass) reference.resolve();
+                    final PhpClass clazz = (PhpClass) reference.resolve();
 
                     // push subject properly, as expressions can be different objects with the same semantics
                     PsiElement registeredSubject = null;
-                    for (PsiElement testSubject : mappedChecks.keySet()) {
+                    for (final PsiElement testSubject : mappedChecks.keySet()) {
                         if (PsiEquivalenceUtil.areElementsEquivalent(subject, testSubject)) {
                             registeredSubject = testSubject;
                             break;
@@ -215,10 +225,13 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 // release references in the raw list
                 instanceOfExpressions.clear();
 
+                final PhpLanguageLevel phpVersion
+                        = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                final boolean isDateTimeInterfaceAvaialble = phpVersion.compareTo(PhpLanguageLevel.PHP550) >= 0;
 
                 // process entries, perform subject container clean up on each iteration
-                HashMap<PhpClass, HashSet<PhpClass>> resolvedInheritanceChains = new HashMap<>();
-                for (HashMap<PsiElement, PhpClass> subjectContainer : mappedChecks.values()) {
+                final Map<PhpClass, Set<PhpClass>> resolvedInheritanceChains = new HashMap<>();
+                for (final Map<PsiElement, PhpClass> subjectContainer : mappedChecks.values()) {
                     // investigate one subject when it has multiple instanceof-expressions
                     if (subjectContainer.size() > 1) {
                         // walk through conditions
@@ -228,7 +241,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                             final PsiElement instanceOfExpression = instanceOf2class.getKey();
 
                             // extract current condition details
-                            HashSet<PhpClass> clazzParents = resolvedInheritanceChains.get(clazz);
+                            Set<PhpClass> clazzParents = resolvedInheritanceChains.get(clazz);
                             if (null == clazzParents) {
                                 clazzParents = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true);
                                 resolvedInheritanceChains.put(clazz, clazzParents);
@@ -242,8 +255,14 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                                 }
 
                                 // if alternative references to base class current check is ambiguous
-                                if (clazzParents.contains(instanceOf2classInner.getValue())) {
-                                    holder.registerProblem(instanceOfExpression, strProblemDescriptionInstanceOfAmbiguous, ProblemHighlightType.WEAK_WARNING);
+                                final PhpClass secondClass = instanceOf2classInner.getValue();
+                                if (clazzParents.contains(secondClass)) {
+                                    /* false-positive: the interface in stubs but accessible in php 5.5+ only */
+                                    if (secondClass.getFQN().equals("\\DateTimeInterface") && !isDateTimeInterfaceAvaialble) {
+                                        continue;
+                                    }
+
+                                    holder.registerProblem(instanceOfExpression, messageInstanceOfAmbiguous, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                                     break;
                                 }
                             }
@@ -252,7 +271,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     subjectContainer.clear();
                 }
                 // release inheritance cache as well
-                for (HashSet<PhpClass> resolvedInheritance: resolvedInheritanceChains.values()) {
+                for (final Set<PhpClass> resolvedInheritance: resolvedInheritanceChains.values()) {
                     resolvedInheritance.clear();
                 }
                 resolvedInheritanceChains.clear();
@@ -261,51 +280,35 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             }
 
             /* TODO: is_* functions */
-            private void inspectConditionsForInstanceOfAndIdentityOperations(@NotNull LinkedList<PsiElement> objBranchConditions, @Nullable IElementType operationType) {
-                if (operationType != PhpTokenTypes.opAND || objBranchConditions.size() < 2) {
-                    return;
-                }
-
-                PsiElement objTestSubject = null;
-                for (PsiElement objExpression : objBranchConditions) {
-                    if (objExpression instanceof BinaryExpression) {
-                        BinaryExpression objInstanceOfExpression = (BinaryExpression) objExpression;
-                        if (
-                            null != objInstanceOfExpression.getOperation() &&
-                            null != objInstanceOfExpression.getOperation().getNode() &&
-                            objInstanceOfExpression.getOperation().getNode().getElementType() == PhpTokenTypes.kwINSTANCEOF
-                        ) {
-                            objTestSubject = objInstanceOfExpression.getLeftOperand();
-                            break;
+            private void inspectConditionsForInstanceOfAndIdentityOperations(@NotNull List<PsiElement> conditions, @Nullable IElementType operationType) {
+                PsiElement testSubject = null;
+                if (operationType == PhpTokenTypes.opAND && conditions.size() > 1) {
+                    for (final PsiElement expression : conditions) {
+                        if (expression instanceof BinaryExpression) {
+                            final BinaryExpression instanceOfExpression = (BinaryExpression) expression;
+                            if (instanceOfExpression.getOperationType() == PhpTokenTypes.kwINSTANCEOF) {
+                                testSubject = instanceOfExpression.getLeftOperand();
+                                break;
+                            }
                         }
                     }
                 }
-                if (null == objTestSubject) {
-                    return;
-                }
 
-                for (PsiElement objExpression : objBranchConditions) {
-                    if (objExpression instanceof BinaryExpression) {
-                        BinaryExpression objBinaryExpression = (BinaryExpression) objExpression;
-                        if (
-                            null != objBinaryExpression.getOperation() &&
-                            null != objBinaryExpression.getOperation().getNode() &&
-                            null != objBinaryExpression.getLeftOperand() &&
-                            null != objBinaryExpression.getRightOperand()
-
-                        ) {
-                            IElementType objConditionOperation = objBinaryExpression.getOperation().getNode().getElementType();
+                if (testSubject != null) {
+                    for (final PsiElement expression : conditions) {
+                        if (expression instanceof BinaryExpression) {
+                            final BinaryExpression binaryExpression = (BinaryExpression) expression;
+                            final PsiElement left                   = binaryExpression.getLeftOperand();
+                            final PsiElement right                  = binaryExpression.getRightOperand();
                             if (
-                                objConditionOperation == PhpTokenTypes.opIDENTICAL ||
-                                objConditionOperation == PhpTokenTypes.opNOT_IDENTICAL ||
-                                objConditionOperation == PhpTokenTypes.opEQUAL ||
-                                objConditionOperation == PhpTokenTypes.opNOT_EQUAL
+                                left != null && right != null &&
+                                PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(binaryExpression.getOperationType())
                             ) {
                                 if (
-                                    PsiEquivalenceUtil.areElementsEquivalent(objTestSubject, objBinaryExpression.getLeftOperand()) ||
-                                    PsiEquivalenceUtil.areElementsEquivalent(objTestSubject, objBinaryExpression.getRightOperand())
+                                    PsiEquivalenceUtil.areElementsEquivalent(testSubject, left) ||
+                                    PsiEquivalenceUtil.areElementsEquivalent(testSubject, right)
                                 ) {
-                                    holder.registerProblem(objExpression, strProblemDescriptionInstanceOfComplementarity, ProblemHighlightType.WEAK_WARNING);
+                                    holder.registerProblem(expression, messageInstanceOfComplementarity, ProblemHighlightType.WEAK_WARNING);
                                 }
                             }
                         }
@@ -313,18 +316,18 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
             }
 
-            private void inspectConditionsForMultipleIsSet(@NotNull LinkedList<PsiElement> objBranchConditions, @Nullable IElementType operationType) {
+            private void inspectConditionsForMultipleIsSet(@NotNull List<PsiElement> conditions, @Nullable IElementType operationType) {
                 /* handle isset && isset ... */
                 if (operationType == PhpTokenTypes.opAND) {
-                    int intIssetCallsCount = 0;
-                    for (PsiElement objExpression : objBranchConditions) {
-                        if (!(objExpression instanceof PhpIsset)) {
+                    int issetCallsCount = 0;
+                    for (final PsiElement expression : conditions) {
+                        if (!(expression instanceof PhpIsset)) {
                             continue;
                         }
 
-                        ++intIssetCallsCount;
-                        if (intIssetCallsCount > 1) {
-                            holder.registerProblem(objExpression, strProblemDescriptionIssetCanBeMergedAndCase, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        ++issetCallsCount;
+                        if (issetCallsCount > 1) {
+                            holder.registerProblem(expression, messageIssetCanBeMergedAndCase, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         }
                     }
 
@@ -333,85 +336,67 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                 /* handle !isset || !isset ... */
                 if (operationType == PhpTokenTypes.opOR) {
-                    int intIssetCallsCount = 0;
-                    for (PsiElement objExpression : objBranchConditions) {
-                        if (!(objExpression instanceof UnaryExpression)) {
+                    int issetCallsCount = 0;
+                    for (PsiElement expression : conditions) {
+                        if (!(expression instanceof UnaryExpression)) {
                             continue;
                         }
-                        objExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(((UnaryExpression) objExpression).getValue());
-                        if (!(objExpression instanceof PhpIsset)) {
+                        expression = ExpressionSemanticUtil.getExpressionTroughParenthesis(((UnaryExpression) expression).getValue());
+                        if (!(expression instanceof PhpIsset)) {
                             continue;
                         }
 
-                        ++intIssetCallsCount;
-                        if (intIssetCallsCount > 1) {
-                            holder.registerProblem(objExpression, strProblemDescriptionIssetCanBeMergedOrCase, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        ++issetCallsCount;
+                        if (issetCallsCount > 1) {
+                            holder.registerProblem(expression, messageIssetCanBeMergedOrCase, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         }
                     }
                 }
             }
 
-            private void inspectConditionsForDuplicatedCalls(@NotNull LinkedList<PsiElement> objBranchConditions) {
-                if (objBranchConditions.size() < 2) {
+            private void inspectConditionsForDuplicatedCalls(@NotNull List<PsiElement> conditions) {
+                if (conditions.size() < 2) {
                     return;
                 }
 
                 /* extract calls */
-                LinkedList<PsiElement> objCallsExtracted = new LinkedList<>();
-                for (PsiElement objCondition : objBranchConditions) {
-                    if (!(objCondition instanceof BinaryExpression)) {
+                final List<PsiElement> callsExtracted = new ArrayList<>();
+                for (final PsiElement condition : conditions) {
+                    if (!(condition instanceof BinaryExpression)) {
                         continue;
                     }
 
-                    PsiElement tempExpression = ((BinaryExpression) objCondition).getLeftOperand();
+                    PsiElement tempExpression = ((BinaryExpression) condition).getLeftOperand();
                     if (tempExpression instanceof FunctionReference) {
-                        objCallsExtracted.add(tempExpression);
+                        callsExtracted.add(tempExpression);
                     }
-
-                    tempExpression = ((BinaryExpression) objCondition).getRightOperand();
+                    tempExpression = ((BinaryExpression) condition).getRightOperand();
                     if (tempExpression instanceof FunctionReference) {
-                        objCallsExtracted.add(tempExpression);
+                        callsExtracted.add(tempExpression);
                     }
                 }
 
                 /* scan for duplicates */
-                for (PsiElement objExpression : objCallsExtracted) {
-                    if (null == objExpression) {
+                for (final PsiElement expression : callsExtracted) {
+                    if (null == expression) {
                         continue;
                     }
 
                     /* put a stub */
-                    int intOuterIndex = objCallsExtracted.indexOf(objExpression);
-                    objCallsExtracted.set(intOuterIndex, null);
-
+                    callsExtracted.set(callsExtracted.indexOf(expression), null);
                     /* search duplicates in current scope */
-                    for (PsiElement objInnerLoopExpression : objCallsExtracted) {
-                        if (null == objInnerLoopExpression) {
+                    for (final PsiElement innerLoopExpression : callsExtracted) {
+                        if (null == innerLoopExpression) {
                             continue;
                         }
 
-                        boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objInnerLoopExpression, objExpression);
-                        if (isDuplicate) {
-                            holder.registerProblem(objInnerLoopExpression, strProblemDescriptionDuplicateConditionPart, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-
-                            int intInnerIndex = objCallsExtracted.indexOf(objInnerLoopExpression);
-                            objCallsExtracted.set(intInnerIndex, null);
+                        if (PsiEquivalenceUtil.areElementsEquivalent(innerLoopExpression, expression)) {
+                            holder.registerProblem(innerLoopExpression, messageDuplicateConditionPart, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            callsExtracted.set(callsExtracted.indexOf(innerLoopExpression), null);
                         }
                     }
                 }
 
-            }
-
-            /**
-             * Checks if any of conditions is boolean
-             * @param branchConditions to check
-             */
-            private void inspectConditionsWithBooleans(@NotNull LinkedList<PsiElement> branchConditions) {
-                for (PsiElement expression : branchConditions) {
-                    if (PhpLanguageUtil.isBoolean(expression)) {
-                        holder.registerProblem(expression, messageBooleansUsed, ProblemHighlightType.GENERIC_ERROR);
-                    }
-                }
             }
 
             /**
@@ -419,14 +404,14 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
              * @param objAllConditions to check
              * @param ifStatement current scope
              */
-            private void inspectDuplicatedConditions(LinkedList<PsiElement> objAllConditions, If ifStatement) {
-                LinkedList<PsiElement> objParentConditions = new LinkedList<>();
+            private void inspectDuplicatedConditions(List<PsiElement> objAllConditions, If ifStatement) {
+                List<PsiElement> objParentConditions = new ArrayList<>();
 
                 /* collect parent scopes conditions */
                 PsiElement objParent = ifStatement.getParent();
                 while (null != objParent && !(objParent instanceof PhpFile)) {
                     if (objParent instanceof If) {
-                        LinkedList<PsiElement> tempList = ExpressionSemanticUtil.getConditions(((If) objParent).getCondition(), null);
+                        List<PsiElement> tempList = ExpressionSemanticUtil.getConditions(((If) objParent).getCondition(), null);
                         if (null != tempList) {
                             objParentConditions.addAll(tempList);
                             tempList.clear();
@@ -470,6 +455,16 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                             variableCandidate = invertedValue;
                         }
                     }
+                    /* ignore variables (even if compared with booleans) */
+                    if (variableCandidate instanceof BinaryExpression) {
+                        final PsiElement left  = ((BinaryExpression) variableCandidate).getLeftOperand();
+                        final PsiElement right = ((BinaryExpression) variableCandidate).getRightOperand();
+                        if (PhpLanguageUtil.isBoolean(right)) {
+                            variableCandidate = left;
+                        } else if (PhpLanguageUtil.isBoolean(left)) {
+                            variableCandidate = right;
+                        }
+                    }
                     if (
                         variableCandidate instanceof Variable ||
                         variableCandidate instanceof ConstantReference ||
@@ -488,7 +483,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                         boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objInnerLoopExpression, objExpression);
                         if (isDuplicate) {
-                            holder.registerProblem(objInnerLoopExpression, strProblemDescriptionDuplicateConditions, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(objInnerLoopExpression, messageDuplicateConditions, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
 
                             int intInnerIndex = objAllConditions.indexOf(objInnerLoopExpression);
                             objAllConditions.set(intInnerIndex, null);
@@ -503,7 +498,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                         boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objOuterScopeExpression, objExpression);
                         if (isDuplicate) {
-                            holder.registerProblem(objExpression, strProblemDescriptionDuplicateConditions, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(objExpression, messageDuplicateConditions, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
 
                             int intOuterScopeIndex = objParentConditions.indexOf(objOuterScopeExpression);
                             objParentConditions.set(intOuterScopeIndex, null);
@@ -518,44 +513,48 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
              * @param objCondition to inspect
              */
             @Nullable
-            private LinkedList<PsiElement> inspectExpressionsOrder(PsiElement objCondition, @Nullable IElementType[] arrOperationHolder) {
-                LinkedList<PsiElement> objPartsCollection = ExpressionSemanticUtil.getConditions(objCondition, arrOperationHolder);
-                if (null == objPartsCollection) {
+            private List<PsiElement> inspectExpressionsOrder(PsiElement objCondition, @Nullable IElementType[] arrOperationHolder) {
+                final List<PsiElement> conditions = ExpressionSemanticUtil.getConditions(objCondition, arrOperationHolder);
+                if (null == conditions) {
                     return null;
                 }
 
                 /* one item only, skip costs estimation */
-                if (objPartsCollection.size() < 2) {
-                    return objPartsCollection;
+                if (!SUGGEST_OPTIMIZING_CONDITIONS || conditions.size() < 2) {
+                    return conditions;
                 }
 
                 /* verify if costs estimated are optimal */
-                int intPreviousCost                 = 0;
-                PsiElement objPreviousCond          = null;
-                HashSet<String> functionsSetToAllow = getFunctionsSet();
-
-                for (PsiElement condition : objPartsCollection) {
-                    int intLoopCurrentCost = ExpressionCostEstimateUtil.getExpressionCost(condition, functionsSetToAllow);
+                int intPreviousCost     = 0;
+                PsiElement previousCond = null;
+                for (final PsiElement condition : conditions) {
+                    int intLoopCurrentCost = ExpressionCostEstimateUtil.getExpressionCost(condition, functionsSet);
 
                     if (
-                        null != objPreviousCond && intLoopCurrentCost < intPreviousCost &&
-                        !ExpressionsCouplingCheckUtil.isSecondCoupledWithFirst(objPreviousCond, condition)
+                        null != previousCond && intLoopCurrentCost < intPreviousCost &&
+                        !ExpressionsCouplingCheckUtil.isSecondCoupledWithFirst(previousCond, condition)
                     ) {
                         holder.registerProblem(condition, messageOrdering, ProblemHighlightType.WEAK_WARNING);
                     }
 
                     intPreviousCost = intLoopCurrentCost;
-                    objPreviousCond = condition;
+                    previousCond = condition;
                 }
 
-                return objPartsCollection;
+                return conditions;
             }
         };
     }
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
+            component.addCheckbox("Report confusing conditions", REPORT_MISSING_PARENTHESISES, (isSelected) -> REPORT_MISSING_PARENTHESISES = isSelected);
+            component.addCheckbox("Report duplicate conditions", REPORT_DUPLICATE_CONDITIONS, (isSelected) -> REPORT_DUPLICATE_CONDITIONS = isSelected);
+            component.addCheckbox("Report instanceof usage flaws", REPORT_INSTANCE_OF_FLAWS, (isSelected) -> REPORT_INSTANCE_OF_FLAWS = isSelected);
+            component.addCheckbox("Report isset usage flaws", REPORT_ISSET_FLAWS, (isSelected) -> REPORT_ISSET_FLAWS = isSelected);
             component.addCheckbox("Report literal and/or operators", REPORT_LITERAL_OPERATORS, (isSelected) -> REPORT_LITERAL_OPERATORS = isSelected);
+            component.addCheckbox("Suggest merging isset constructs", SUGGEST_MERGING_ISSET, (isSelected) -> SUGGEST_MERGING_ISSET = isSelected);
+            component.addCheckbox("Suggest optimizing conditions", SUGGEST_OPTIMIZING_CONDITIONS, (isSelected) -> SUGGEST_OPTIMIZING_CONDITIONS = isSelected);
         });
     }
 }

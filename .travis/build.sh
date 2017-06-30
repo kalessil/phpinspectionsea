@@ -6,13 +6,13 @@ IFS=$'\n\t'
 
 ideaVersion="2017.1"
 if [ "$IDE_ID" == "2017.1" ]; then
-    ideaVersion="2017.1"
+    ideaVersion="2017.1.3"
 elif [ "$IDE_ID" == "2016.3" ]; then
     ideaVersion="2016.3.6"
 elif [ "$IDE_ID" == "2016.2" ]; then
     ideaVersion="2016.2.5"
 elif [ "$IDE_ID" == "eap" ]; then
-    ideaVersion="171.4424.37"
+    ideaVersion="172.2827.15"
 fi
 
 travisCache=".cache"
@@ -63,16 +63,16 @@ fi
 mkdir plugins
 
 if [ "$IDE_ID" == "2017.1" ]; then
-    download "https://plugins.jetbrains.com/files/6610/33685/php-171.3780.104.zip"
+    download "http://plugins.jetbrains.com/files/6610/33685/php-171.3780.104.zip"
     unzip -qo $travisCache/php-171.3780.104.zip -d ./plugins
 elif [ "$IDE_ID" == "2016.3" ]; then
-    download "https://plugins.jetbrains.com/files/6610/31161/php-163.10504.2.zip"
+    download "http://plugins.jetbrains.com/files/6610/31161/php-163.10504.2.zip"
     unzip -qo $travisCache/php-163.10504.2.zip -d ./plugins
 elif [ "$IDE_ID" == "2016.2" ]; then
-    download "https://plugins.jetbrains.com/files/6610/27859/php-162.1628.23.zip"
+    download "http://plugins.jetbrains.com/files/6610/27859/php-162.1628.23.zip"
     unzip -qo $travisCache/php-162.1628.23.zip -d ./plugins
 elif [ "$IDE_ID" == "eap" ]; then
-    download "https://plugins.jetbrains.com/files/6610/28510/php-163.4830.18.zip"
+    download "http://plugins.jetbrains.com/files/6610/28510/php-163.4830.18.zip"
     unzip -qo $travisCache/php-163.4830.18.zip -d ./plugins
 else
     echo "Unknown IDE_ID value: $IDE_ID"

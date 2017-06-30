@@ -1,38 +1,22 @@
 <?php
 
-
-class BaseClass
+class ExistingClass
 {
+    public static $staticProperty;
 
-    public static $userId = 1;
-    protected static $userName = 'Test';
-    protected static $users = [];
-
-    public function a()
+    public function method()
     {
+        echo self::$staticProperty;
+        echo static::$staticProperty;
 
-        foreach (self::$users as $user) {
-
-        }
-
-        <warning descr="Static property should not be modified">self::$userId = 1</warning>;
-        <warning descr="Static property should not be modified">BaseClass::$userId = 1</warning>;
-
-        echo self::$userId;
-
-
-
-        <warning descr="Static property should not be modified">static::$userId = 1</warning>;
-
-        return function () {
-            <warning descr="Static property should not be modified">AliasT::$userId = 123</warning>;
-        };
+        <warning descr="Static properties should not be modified.">self::$staticProperty          = 'whatever'</warning>;
+        <warning descr="Static properties should not be modified.">ExistingClass::$staticProperty = 'whatever'</warning>;
+        <warning descr="Static properties should not be modified.">static::$staticProperty        = 'whatever'</warning>;
     }
-
 }
 
 
-<warning descr="Static property should not be modified">BaseClass::$userId = 123</warning>;
-<warning descr="Static property should not be modified">CustomClassName::$test = 123</warning>;
+<warning descr="Static properties should not be modified.">ExistingClass::$staticProperty = 'whatever'</warning>;
+<warning descr="Static properties should not be modified.">MissingClass::$staticProperty  = 'whatever'</warning>;
 
-echo BaseClass::$userId;
+echo ExistingClass::$staticProperty;

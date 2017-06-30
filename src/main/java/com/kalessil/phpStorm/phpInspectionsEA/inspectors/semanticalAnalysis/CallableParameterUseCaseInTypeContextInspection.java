@@ -2,10 +2,9 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.PhpClassHierarchyUtils;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
@@ -15,16 +14,13 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromSignatureResolvingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -36,9 +32,9 @@ import java.util.LinkedList;
  */
 
 public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInspection {
-    private static final String strProblemNoSense                      = "Makes no sense, because it's always true according to annotations.";
-    private static final String strProblemCheckViolatesDefinition      = "Makes no sense, because this type is not defined in annotations.";
-    private static final String strProblemAssignmentViolatesDefinition = "New value type (%s%) is not in annotated types.";
+    private static final String messageNoSense                      = "Makes no sense, because it's always true according to annotations.";
+    private static final String messageCheckViolatesDefinition      = "Makes no sense, because this type is not defined in annotations.";
+    private static final String patternAssignmentViolatesDefinition = "New value type (%s%) is not in annotated types.";
 
     @NotNull
     public String getShortName() {
@@ -49,229 +45,156 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 this.inspectUsages(method.getParameters(), method);
             }
 
-            public void visitPhpFunction(Function function) {
+            @Override
+            public void visitPhpFunction(@NotNull Function function) {
                 this.inspectUsages(function.getParameters(), function);
             }
 
-            private void inspectUsages(Parameter[] arrParameters, PhpScopeHolder objScopeHolder) {
-                PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
-                PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
+            private void inspectUsages(@NotNull Parameter[] parameters, @NotNull PhpScopeHolder scopeHolder) {
+                final Project project                     = holder.getProject();
+                final PhpIndex index                      = PhpIndex.getInstance(project);
+                final PhpEntryPointInstruction entryPoint = scopeHolder.getControlFlow().getEntryPoint();
 
-                for (Parameter objParameter : arrParameters) {
-                    String strParameterName = objParameter.getName();
-                    String strParameterType = objParameter.getType().toString();
-                    if (
-                        StringUtil.isEmpty(strParameterName) ||
-                        StringUtil.isEmpty(strParameterType) ||
-                        strParameterType.contains("mixed") ||   /* fair enough */
-                        strParameterType.contains("#")          /* TODO: types lookup */
-                    ) {
-                        continue;
-                    }
-                    /* too lazy to do anything more elegant */
-                    strParameterType = strParameterType.replace(Types.strCallable, "array|string|callable");
-
-
-                    /* resolve types for parameter */
-                    HashSet<String> objParameterTypesResolved = new HashSet<>();
-                    TypeFromSignatureResolvingUtil.resolveSignature(strParameterType, (Function) objScopeHolder, objIndex, objParameterTypesResolved);
-
-                    PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, strParameterName, false);
-                    if (arrUsages.length == 0) {
-                        continue;
-                    }
-
-                    PsiElement objExpression;
-                    FunctionReference objFunctionCall;
-                    /* TODO: dedicate to method */
-                    for (PhpAccessVariableInstruction objInstruction : arrUsages) {
-                        objExpression = objInstruction.getAnchor().getParent();
-
-                        /* inspect type checks are used */
-                        if (
-                            objExpression instanceof ParameterList &&
-                            objExpression.getParent() instanceof FunctionReference
-                        ) {
-                            objFunctionCall = (FunctionReference) objExpression.getParent();
-                            String strFunctionName = objFunctionCall.getName();
-                            if (StringUtil.isEmpty(strFunctionName)) {
-                                continue;
-                            }
-
-                            boolean isReversedCheck = false;
-                            if (objFunctionCall.getParent() instanceof UnaryExpression) {
-                                UnaryExpression objCallWrapper = (UnaryExpression) objFunctionCall.getParent();
-                                isReversedCheck = (
-                                    null != objCallWrapper.getOperation() &&
-                                    null != objCallWrapper.getOperation().getNode() &&
-                                    PhpTokenTypes.opNOT == objCallWrapper.getOperation().getNode().getElementType()
-                                );
-                            }
-
-                            boolean isCallHasNoSense;
-                            boolean isCallViolatesDefinition;
-                            boolean isTypeAnnounced;
-
-                            if (strFunctionName.equals("is_array"))
-                                isTypeAnnounced = (
-                                    strParameterType.contains(Types.strArray) ||
-                                    strParameterType.contains(Types.strIterable) ||
-                                    strParameterType.contains("[]")
-                                );
-                            else if (strFunctionName.equals("is_string"))
-                                isTypeAnnounced = strParameterType.contains(Types.strString);
-                            else if (strFunctionName.equals("is_bool"))
-                                isTypeAnnounced = strParameterType.contains(Types.strBoolean);
-                            else if (strFunctionName.equals("is_int"))
-                                isTypeAnnounced = strParameterType.contains(Types.strInteger);
-                            else if (strFunctionName.equals("is_float"))
-                                isTypeAnnounced = strParameterType.contains(Types.strFloat);
-                            else if (strFunctionName.equals("is_resource"))
-                                isTypeAnnounced = strParameterType.contains(Types.strResource);
-                            else
-                                continue;
-
-                            isCallHasNoSense = !isTypeAnnounced && isReversedCheck;
-                            if (isCallHasNoSense) {
-                                holder.registerProblem(objFunctionCall, strProblemNoSense, ProblemHighlightType.WEAK_WARNING);
-                                continue;
-                            }
-
-                            isCallViolatesDefinition = !isTypeAnnounced;
-                            if (isCallViolatesDefinition) {
-                                holder.registerProblem(objFunctionCall, strProblemCheckViolatesDefinition, ProblemHighlightType.WEAK_WARNING);
-                                continue;
-                            }
-
-                            continue;
+                for (final Parameter parameter : parameters) {
+                    /* normalize parameter types, skip analysis when mixed or object appears */
+                    final Set<String> parameterTypes = new HashSet<>();
+                    for (final String type : parameter.getType().global(project).filterUnknown().getTypes()) {
+                        final String typeNormalized = Types.getType(type);
+                        if (typeNormalized.equals(Types.strMixed) || typeNormalized.equals(Types.strObject)) {
+                            parameterTypes.clear();
+                            break;
+                        } else if (typeNormalized.equals(Types.strCallable)) {
+                            parameterTypes.add(Types.strArray);
+                            parameterTypes.add(Types.strString);
                         }
+                        parameterTypes.add(typeNormalized);
+                    }
+                    if (parameterTypes.isEmpty()) {
+                        continue;
+                    }
 
-                        /* check if assignments not violating defined interfaces */
-                        /* TODO: dedicate to method */
-                        if (objExpression instanceof AssignmentExpression) {
-                            AssignmentExpression objAssignment = (AssignmentExpression) objExpression;
+                    /* now find instructions operating on the parameter and perform analysis */
+                    final String parameterName = parameter.getName();
+                    final PhpAccessVariableInstruction[] usages
+                        = PhpControlFlowUtil.getFollowingVariableAccessInstructions(entryPoint, parameterName, false);
+                    for (final PhpAccessVariableInstruction instruction : usages) {
+                        final PsiElement parent        = instruction.getAnchor().getParent();
+                        final PsiElement callCandidate = null == parent ? null : parent.getParent();
 
-                            PhpPsiElement objVariable = objAssignment.getVariable();
-                            PhpPsiElement objValue = objAssignment.getValue();
-                            if (null == objVariable || null == objValue) {
+                        /* check if is_* functions being used according to definitions */
+                        /* TODO: method/strategy 1 */
+                        if (OpenapiTypesUtil.isFunctionReference(callCandidate)) {
+                            final FunctionReference functionCall = (FunctionReference) callCandidate;
+                            final String functionName            = functionCall.getName();
+                            if (functionName == null) {
                                 continue;
                             }
 
-                            if (
-                                objVariable instanceof Variable &&
-                                null != objVariable.getName() && objVariable.getName().equals(strParameterName)
-                            ) {
-                                final HashSet<String> objTypesResolved = new HashSet<>();
-                                TypeFromPlatformResolverUtil.resolveExpressionType(objValue, objTypesResolved);
+                            /* we expect that aliases usage has been fixed already */
+                            final boolean isTypeAnnounced;
+                            switch (functionName) {
+                                case "is_array":
+                                    isTypeAnnounced =
+                                        parameterTypes.contains(Types.strArray) ||
+                                        parameterTypes.contains(Types.strIterable)
+                                    ;
+                                    break;
+                                case "is_string":
+                                    isTypeAnnounced = parameterTypes.contains(Types.strString);
+                                    break;
+                                case "is_bool":
+                                    isTypeAnnounced = parameterTypes.contains(Types.strBoolean);
+                                    break;
+                                case "is_int":
+                                    isTypeAnnounced = parameterTypes.contains(Types.strInteger);
+                                    break;
+                                case "is_float":
+                                    isTypeAnnounced = parameterTypes.contains(Types.strFloat);
+                                    break;
+                                case "is_resource":
+                                    isTypeAnnounced = parameterTypes.contains(Types.strResource);
+                                    break;
+                                default:
+                                    continue;
+                            }
 
-                                boolean isCallViolatesDefinition;
-                                for (String strType : objTypesResolved) {
-                                    if (
-                                        /* custom resolving artifacts */
-                                        strType.equals(Types.strResolvingAbortedOnPsiLevel) ||
-                                        strType.equals(Types.strClassNotResolved) ||
-                                        /* we should not report mixed, bad annotation => bad analysis */
-                                        strType.equals(Types.strMixed) ||
-                                        /* sometimes types containing both keyword and resolved class */
-                                        strType.equals(Types.strStatic) ||
-                                        strType.equals(Types.strSelf)
-                                    ) {
-                                        continue;
-                                    }
-
-                                    isCallViolatesDefinition = (!this.isTypeCompatibleWith(strType, objParameterTypesResolved, objIndex));
-                                    if (isCallViolatesDefinition) {
-                                        final String message = strProblemAssignmentViolatesDefinition.replace("%s%", strType);
-                                        holder.registerProblem(objValue, message, ProblemHighlightType.WEAK_WARNING);
-
-                                        break;
-                                    }
+                            /* cases: call makes no sense, violation of defined types set */
+                            if (!isTypeAnnounced) {
+                                final PsiElement callParent = functionCall.getParent();
+                                boolean isReversedCheck     = false;
+                                if (callParent instanceof UnaryExpression) {
+                                    final PsiElement operation = ((UnaryExpression) callParent).getOperation();
+                                    isReversedCheck
+                                        = operation != null && PhpTokenTypes.opNOT == operation.getNode().getElementType();
                                 }
-                                objTypesResolved.clear();
+
+                                final String message = isReversedCheck ? messageNoSense : messageCheckViolatesDefinition;
+                                holder.registerProblem(functionCall, message, ProblemHighlightType.WEAK_WARNING);
                             }
-                        }
 
-                        /* TODO: can be analysed comparison operations */
-                    }
-
-                    objParameterTypesResolved.clear();
-                }
-            }
-
-            private boolean isTypeCompatibleWith(String strType, HashSet<String> listAllowedTypes, PhpIndex objIndex) {
-                /* identical definitions */
-                for (String strPossibleType: listAllowedTypes) {
-                    if (strPossibleType.equals(strType)) {
-                        return true;
-                    }
-                }
-
-                /* classes/interfaces */
-                if (strType.length() > 0 && strType.charAt(0) == '\\') {
-                    /* collect classes/interfaces for type we going to analyse for compatibility */
-                    Collection<PhpClass> classesToTest = PhpIndexUtil.getObjectInterfaces(strType, objIndex, false);
-                    if (classesToTest.size() == 0) {
-                        return false;
-                    }
-
-                    /* collect parent classes/interfaces for bulk check */
-                    LinkedList<PhpClass> classesAllowed = new LinkedList<>();
-                    for (String strAllowedType: listAllowedTypes) {
-                        if (
-                            strAllowedType.length() == 0 || strAllowedType.charAt(0) != '\\' ||
-                            strAllowedType.equals(Types.strClassNotResolved)
-                        ) {
                             continue;
                         }
 
-                        classesAllowed.addAll(PhpIndexUtil.getObjectInterfaces(strAllowedType, objIndex, false));
-                    }
+                        /* case: assignments violating parameter definition */
+                        /* TODO: method/strategy 2 */
+                        if (parent instanceof AssignmentExpression) {
+                            final AssignmentExpression assignment = (AssignmentExpression) parent;
+                            final PhpPsiElement variable          = assignment.getVariable();
+                            final PhpPsiElement value             = assignment.getValue();
+                            if (variable instanceof Variable && value instanceof PhpTypedElement) {
+                                final String variableName = variable.getName();
+                                if (variableName != null && variableName.equals(parameterName)) {
+                                    for (final String type : ((PhpTypedElement) value).getType().global(project).filterUnknown().getTypes()) {
+                                        final String normalizedType = Types.getType(type);
+                                        if (normalizedType.equals(Types.strMixed)) {
+                                            continue;
+                                        }
 
-                    /* run test through 2 sets */
-                    for (PhpClass testSubject: classesToTest) {
-                        /* collect hierarchy chain for interface inheritance checks */
-                        LinkedList<PhpClass> testSubjectInheritanceChain = new LinkedList<>();
-                        testSubjectInheritanceChain.add(testSubject);
-                        Collections.addAll(testSubjectInheritanceChain, testSubject.getSupers());
-
-                        for (PhpClass testAgainst: classesAllowed) {
-                            /* TODO: not clear why, but isSuperClass receives a null on VCS commit */
-                            if (null == testAgainst || null == testSubject) {
-                                continue;
-                            }
-
-                            /* interface implementation checks */
-                            if (testAgainst.isInterface()) {
-                                /*
-                                 * PhpClassHierarchyUtils.isSuperClass not handling interfaces,
-                                 * so scan complete inheritance tree
-                                 */
-                                for (PhpClass oneClassForInterfaceCheck : testSubjectInheritanceChain) {
-                                    for (PhpClass objInterface : oneClassForInterfaceCheck.getImplementedInterfaces()) {
-                                        if (objInterface.getFQN().equals(testAgainst.getFQN())) {
-                                            return true;
+                                        final boolean isDefinitionViolation
+                                            = !this.isTypeCompatibleWith(normalizedType, parameterTypes, index);
+                                        if (isDefinitionViolation) {
+                                            final String message
+                                                = patternAssignmentViolatesDefinition.replace("%s%", normalizedType);
+                                            holder.registerProblem(value, message, ProblemHighlightType.WEAK_WARNING);
+                                            break;
                                         }
                                     }
                                 }
                             }
-
-                            /* class-hierarchy checks */
-                            if (PhpClassHierarchyUtils.isSuperClass(testAgainst, testSubject, true)) {
-                                return true;
-                            }
                         }
 
-                        testSubjectInheritanceChain.clear();
+                        /* TODO: analyze comparison operations */
                     }
 
-                    return false;
+                    parameterTypes.clear();
+                }
+            }
+
+            private boolean isTypeCompatibleWith(@NotNull String type, @NotNull Set<String> allowedTypes, @NotNull PhpIndex index) {
+                /* first case: implicit match */
+                if (allowedTypes.contains(type)) {
+                    return true;
                 }
 
-                return false;
+                /* second case: inherited classes/interfaces */
+                final Set<String> possibleTypes = new HashSet<>();
+                if (type.startsWith("\\")) {
+                    final Set<PhpClass> foundClasses = new HashSet<>();
+                    foundClasses.addAll(index.getClassesByFQN(type));
+                    foundClasses.addAll(index.getInterfacesByFQN(type));
+                    for (final PhpClass clazz : foundClasses) {
+                        for (final PhpClass parent : InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true)) {
+                            possibleTypes.add(parent.getFQN());
+                        }
+                    }
+                }
+
+                return !possibleTypes.isEmpty() && allowedTypes.stream().anyMatch(possibleTypes::contains);
             }
         };
     }

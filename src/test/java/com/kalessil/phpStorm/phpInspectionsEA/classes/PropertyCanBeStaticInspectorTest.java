@@ -5,14 +5,16 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 
 final public class PropertyCanBeStaticInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new PropertyCanBeStaticInspector());
+
         myFixture.configureByFile("fixtures/classes/property-can-be-static.php");
-        myFixture.enableInspections(PropertyCanBeStaticInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 
     public void testFalsePositives() {
+        myFixture.enableInspections(new PropertyCanBeStaticInspector());
+
         myFixture.configureByFile("fixtures/classes/property-can-be-static-false-positives.php");
-        myFixture.enableInspections(PropertyCanBeStaticInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

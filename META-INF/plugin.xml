@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.7</version>
+  <version>2.3.8-preview.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -21,14 +21,14 @@
   -->
 
   <description><![CDATA[
-For support and donations please visit <a href="https://github.com/kalessil/phpinspectionsea">Github</a> | <a href="https://github.com/kalessil/phpinspectionsea/issues">Issues</a> | <a href="https://www.paypal.me/VReznichenko">PayPal</a>.<br />
+For support and donations please visit <a href="https://github.com/kalessil/phpinspectionsea">Github</a> | <a href="https://github.com/kalessil/phpinspectionsea/issues">Issues</a> | <a href="https://www.paypal.me/VReznichenko">PayPal</a> | <a href="https://www.patreon.com/kalessil">Patreon</a>.<br />
 <br />
 Please follow me at <a href="https://twitter.com/kalessil">twitter</a> for status updates.<br />
 <br />
 This plugin is a Static Code Analysis tool for PHP (aka inspections in JetBrains products).<br />
 <br />
 It covers:<br />
-- architecture related issues (e.g. design pattern violations)<br />
+- architecture related issues<br />
 - weak types control and possible code construct simplifications<br />
 - performance issues<br />
 - non-optimal, duplicate and suspicious "if" conditions<br />
@@ -54,31 +54,43 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Thank you for supporting our crowdfunding campaign!
-We keep delivering funded results =)
+Hot-fix release; you can now support us via <a href="https://www.patreon.com/kalessil">Patreon</a>
 <br/>
 <br/>
-- Documentation and reporting enhancements<br/>
-- Callable parameter usage violates definition: resolved false-positives (iterable)<br/>
-- Foreach source to iterate over: resolved false-positives (iterable type)<br/>
-- Long inheritance chain: resolved false-positives (DDD-named exceptions, Phalcon framework)<br/>
-- 'substr(...)' used as index-based access: resolved false-positives (mb_substr)<br/>
+- Callable parameter usage violates definition: resolved false-positives (annotated properties)<br/>
+- Declaration access can be weaker: resolved false-positives (protected methods used by parent classes)<br/>
+- Foreach source to iterate over: resolved false-positives (predefined _* variables)<br/>
+- Non-optimal if conditions: resolved false-positives (comparing to booleans), added options<br/>
+- Parameter/variable is not used: resolved false-positives<br/>
+- Senseless proxy function: resolved false-positives (return type changed)<br/>
+- Summer-time unsafe date manipulations: resolved false-positives (context aware now)<br/>
+- Suspicious assignments: resolved false-positives (assignment by reference)<br/>
+- Too many parameters in a callable: resolved false-positives (UTs context)<br/>
+- Unnecessary arguments specification: resolved false-positives (in_array, array_search)<br/>
+- 'isset(...)' usage: resolved false-positives (global context)<br/>
+- ::class can be used: resolved false-positives (language level considered)<br/>
 <br/>
-- Child method is exactly the same: implemented QFes<br/>
-- Insecure 'uniqid(...)' usage: new patterns<br/>
-- General '\Exception' is thrown: QF implemented<br/>
-- PDO API usage: re-worked, added QFes<br/>
-- Suspicious returns: new patterns<br/>
+- Callable calls in loops termination condition: QF implemented (thank you @rentalhost)<br/>
+- Class overrides a field of a parent class: new patterns<br/>
+- Class property initialization flaws: new patterns<br/>
+- If-return-return could be simplified: QF bug-fix (condition parts were lost)<br/>
+- Isset operations variables existence: new patterns<br/>
+- Null reference: new patterns<br/>
+- Parameter/variable is not used: new patterns<br/>
+- Security advisories for Composer packages: new patterns<br/>
 - Suspicious binary operations: new patterns<br/>
-- 'array_unique(...)' low performing usage: added QFes<br/>
-- 'file_put_contents(...)' misused: added QF<br/>
-- 'strtotime(...)' misused: added QFes<br/>
-- ::class can be used: new patterns<br/>
+- Class violates singleton/factory pattern definition: dropped<br/>
+- Private constructor semantics: dropped<br />
+- 'count(...)' calls on Propel collection: dropped<br/>
++ '(mb_)strlen(...)' misused: QF implemented<br/>
 <br/>
-- Callable methods validity: implemented<br/>
-- Empty/isset results correctness: implemented<br/>
-- Null coalescing operator variable existence: implemented<br/>
-- 'strncmp(...)/strncasecmp(...)' could be replaced with 'strpos(...)/stripos(...)': dropped<br/>
+- Declaration access can be weaker: implemented (thank you @rentalhost)<br/>
+- Mocking correctness: implemented<br/>
+- Passing arguments by reference correctness: implemented<br/>
+- PSR-compliant modifiers order: implemented<br/>
+- Unnecessary arguments specification: implemented (thank you @rentalhost)<br/>
+- 'scandir(...)' low performing usage: implemented<br/>
+- ::class constant usage correctness: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -102,10 +114,6 @@ We keep delivering funded results =)
         shortName="ArrayCastingEquivalentInspection"              displayName="Could be replaced with '(array) ...'"
         groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.ArrayCastingEquivalentInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="CountOnPropelCollectionInspection"             displayName="'count(...)' calls on Propel collection"
-        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.propel16.CountOnPropelCollectionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="CallableInLoopTerminationConditionInspection"  displayName="Callable calls in loops termination condition"
         groupName="Performance"                                   enabledByDefault="true" level="ERROR"
@@ -186,6 +194,11 @@ We keep delivering funded results =)
         shortName="ExplodeMissUseInspection"                      displayName="'explode(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ExplodeMissUseInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ScandirUsageInspection"                        displayName="'scandir(...)' low performing usage"
+        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ScandirUsageInspector"/>
+
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="IsEmptyFunctionUsageInspection"                displayName="'empty(...)' usage"
@@ -297,6 +310,10 @@ We keep delivering funded results =)
          shortName="StringNormalizationInspection"                 displayName="Strings normalization"
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StringNormalizationInspector"/>
+  <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="StringCaseManipulationInspection"              displayName="Unnecessary string case manipulation"
+         groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StringCaseManipulationInspector"/>
 
 
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -410,13 +427,13 @@ We keep delivering funded results =)
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.AutoloadingIssuesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="NullPointerExceptionInspection"                displayName="Null pointer exceptions prevention (beta)"
+        shortName="NullPointerExceptionInspection"                displayName="Null reference"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.NullPointerExceptionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="NullCoalescingArgumentExistenceInspection"     displayName="Null coalescing operator variable existence"
+        shortName="IssetArgumentExistenceInspection"              displayName="Isset operations variables existence"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.NullCoalescingArgumentExistenceInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.IssetArgumentExistenceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MissingIssetImplementationInspection"          displayName="Empty/isset results correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
@@ -429,6 +446,14 @@ We keep delivering funded results =)
         shortName="PassingByReferenceCorrectnessInspection"       displayName="Passing arguments by reference correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.byReference.PassingByReferenceCorrectnessInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="MockingFinalClassesInspection"                 displayName="Mocking correctness"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.MockingFinalClassesInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ClassConstantUsageCorrectnessInspection"       displayName="::class constant usage correctness"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ClassConstantUsageCorrectnessInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -448,7 +473,7 @@ We keep delivering funded results =)
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.UntrustedInclusionInspector"/>
     <localInspection language="JSON" groupPath="PHP,Php Inspections (EA Extended)"
-         shortName="SecurityAdvisoriesInspection"                  displayName="Security advisories for Composer packages (Components Firewall)"
+         shortName="SecurityAdvisoriesInspection"                  displayName="Security advisories for Composer packages"
          groupName="Security"                                      enabledByDefault="true" level="WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.SecurityAdvisoriesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -541,6 +566,10 @@ We keep delivering funded results =)
         shortName="UnusedGotoLabelInspection"                     displayName="Unused goto labels"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnusedGotoLabelInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ArgumentEqualsDefaultValueInspection"          displayName="Unnecessary arguments specification"
+        groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ArgumentEqualsDefaultValueInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -617,7 +646,7 @@ We keep delivering funded results =)
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ShortOpenTagUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ComparisonOperandsOrderInspection"             displayName="Yoda/regular conditions style usage"
-        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ComparisonOperandsOrderInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ParameterDefaultValueIsNotNullInspection"      displayName="Non-null parameters default value"
@@ -631,6 +660,10 @@ We keep delivering funded results =)
         shortName="UsageOfSilenceOperatorInspection"              displayName="Usage of the silence operator"
         groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UsageOfSilenceOperatorInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="MisorderedModifiersInspection"                 displayName="PSR-compliant modifiers order"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MisorderedModifiersInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="AvoidNotConditionalsInspector"                 displayName="Avoid not-operator on ifs"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
@@ -694,7 +727,6 @@ We keep delivering funded results =)
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ReturnTypeCanBeDeclaredInspector"/>
 
-
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="BadExceptionsProcessingInspection"               displayName="Badly organized exception handling"
         groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
@@ -711,14 +743,6 @@ We keep delivering funded results =)
         shortName="ClassOverridesFieldOfSuperClassInspection"       displayName="Class overrides a field of a parent class"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassOverridesFieldOfSuperClassInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="SingletonFactoryPatternViolationInspection"      displayName="Class violates singleton/factory pattern definition"
-        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.SingletonFactoryPatternViolationInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="PrivateConstructorSemanticsInspection"           displayName="Private constructor semantics"
-        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.PrivateConstructorSemanticsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="LongInheritanceChainInspection"                  displayName="Long inheritance chain"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
@@ -743,6 +767,10 @@ We keep delivering funded results =)
          shortName="ClassReImplementsParentInterfaceInspection"     displayName="Class implements interfaces multiple times"
          groupName="Architecture"                                   enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassReImplementsParentInterfaceInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="LowerAccessLevelInspection"                      displayName="Declaration access can be weaker"
+        groupName="Architecture"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.LowerAccessLevelInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

@@ -149,7 +149,7 @@ curl_setopt($curlHandler, CURLOPT_CAPATH , '<path>/');
 > Best practices: consider adding `composer update` into your CI/CD to get informed about security issues early.
 
 Security Advisories is a Vulnerability Database from SensioLabs (https://security.sensiolabs.org/database) which can 
-be integrated with your workflows in several ways.
+be integrated with your workflow in several ways.
 
 One way is to use a Components Firewall (https://github.com/Roave/SecurityAdvisories) by adding just one line into 
 your composer.json file. The firewall declares vulnerable components as conflicting and prevents their installation via 
@@ -158,3 +158,6 @@ Composer.
 Php Inspection (EA Extended) suggests adding the firewall only if third-party components are being used: e.g. if 
 composer.json declares "name" property as "your-company/product" all non-dev packages not starting with "your-company/" 
 are considered third-party.
+
+Php Inspection (EA Extended) also checks if dev-packages (e.g. PhpUnit) have been defined in "require" section instead of 
+"require-dev".

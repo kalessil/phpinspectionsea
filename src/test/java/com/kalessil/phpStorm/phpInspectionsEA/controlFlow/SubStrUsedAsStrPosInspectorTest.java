@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.SubStr
 
 final public class SubStrUsedAsStrPosInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new SubStrUsedAsStrPosInspector());
+
         myFixture.configureByFile("fixtures/controlFlow/substr-used-as-strpos.php");
-        myFixture.enableInspections(SubStrUsedAsStrPosInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

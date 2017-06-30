@@ -10,49 +10,58 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.List;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 final public class ClassInStringContextStrategy {
     public static boolean apply (
-        @Nullable PsiElement objNonStringOperand,
-        ProblemsHolder holder,
-        PsiElement objExpression,
-        String strClassHasNoToStringMessage
+        @Nullable PsiElement nonStringOperand,
+        @NotNull ProblemsHolder holder,
+        @NotNull PsiElement expression,
+        @NotNull String classHasNoToStringMessage
     ) {
-        if (null == objNonStringOperand) {
+        if (null == nonStringOperand) {
             return false;
         }
 
-        PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
-        Function objScope = ExpressionSemanticUtil.getScope(objNonStringOperand);
+        final PhpIndex index = PhpIndex.getInstance(holder.getProject());
+        final Function scope = ExpressionSemanticUtil.getScope(nonStringOperand);
 
-        HashSet<String> objResolvedTypes = new HashSet<>();
-        TypeFromPsiResolvingUtil.resolveExpressionType(objNonStringOperand, objScope, objIndex, objResolvedTypes);
-        if (!TypesSemanticsUtil.isNullableObjectInterface(objResolvedTypes)) {
+        final HashSet<String> resolvedTypes = new HashSet<>();
+        TypeFromPsiResolvingUtil.resolveExpressionType(nonStringOperand, scope, index, resolvedTypes);
+        if (!TypesSemanticsUtil.isNullableObjectInterface(resolvedTypes)) {
             return false;
         }
 
         /* collect classes to check if __toString() is there */
-        LinkedList<PhpClass> listClasses = new LinkedList<>();
-        for (String strClass : objResolvedTypes) {
-            if (strClass.charAt(0) == '\\') {
-                listClasses.addAll(PhpIndexUtil.getObjectInterfaces(strClass, objIndex, false));
+        final List<PhpClass> listClasses = new ArrayList<>();
+        for (final String classFqn : resolvedTypes) {
+            if (classFqn.charAt(0) == '\\') {
+                listClasses.addAll(PhpIndexUtil.getObjectInterfaces(classFqn, index, false));
             }
         }
 
         /* check methods, error on first one violated requirements */
-        for (PhpClass objClass : listClasses) {
-            if (null == objClass.findMethodByName("__toString")) {
-                String strError = strClassHasNoToStringMessage.replace("%class%", objClass.getFQN());
-                holder.registerProblem(objExpression, strError, ProblemHighlightType.ERROR);
+        for (final PhpClass clazz : listClasses) {
+            if (clazz.findMethodByName("__toString") == null) {
+                final String message = classHasNoToStringMessage.replace("%class%", clazz.getFQN());
+                holder.registerProblem(expression, message, ProblemHighlightType.ERROR);
 
-                listClasses.clear();
-                return true;
+                break;
             }
-
         }
 
         /* terminate inspection, php will call __toString() */

@@ -33,7 +33,9 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
                     EqualsInAssignmentContextStrategy.apply(expression, holder) ||
                     GreaterOrEqualInHashElementStrategy.apply(expression, holder) ||
                     IdenticalOperandsStrategy.apply(expression, holder) ||
-                    MisplacedOperatorStrategy.apply(expression, holder)
+                    MisplacedOperatorStrategy.apply(expression, holder) ||
+                    HardcodedBooleansStrategy.apply(expression, holder) ||
+                    NullCoalescingOperatorCorrectnessStrategy.apply(expression, holder)
                 ) {
                     return;
                 }

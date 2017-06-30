@@ -2,17 +2,19 @@ package com.kalessil.phpStorm.phpInspectionsEA.options;
 
 import com.kalessil.phpStorm.phpInspectionsEA.gui.PrettyListControl;
 import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
+ * (c) David Rodrigues <david.proweb@gmail.com>
  * (c) Vladimir Reznichenko <kalessil@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -22,7 +24,7 @@ import java.util.function.Consumer;
 /**
  * Helps on constructions of a normalized inspection options list for IntelliJ's IDE.
  */
-public class OptionsComponent {
+public final class OptionsComponent {
     @NotNull
     private final JPanel optionsPanel;
 
@@ -31,24 +33,20 @@ public class OptionsComponent {
     }
 
     @NotNull
-    static public JPanel create(@NotNull Consumer<OptionsComponent> delegateBuilder) {
+    public static JPanel create(@NotNull final Consumer<OptionsComponent> delegateBuilder) {
         final OptionsComponent component = new OptionsComponent();
         delegateBuilder.accept(component);
 
         return component.optionsPanel;
     }
 
-    public void refresh() {
-        optionsPanel.revalidate();
-    }
-
-    public void addCheckbox(@NotNull String label, boolean defaultValue, @NotNull Consumer<Boolean> updateConsumer) {
-        final JCheckBox createdCheckbox = new JCheckBox(label, defaultValue);
+    public void addCheckbox(@NotNull final String label, final boolean defaultValue, @NotNull final Consumer<Boolean> updateConsumer) {
+        final AbstractButton createdCheckbox = new JCheckBox(label, defaultValue);
         createdCheckbox.addItemListener((itemEvent) -> updateConsumer.accept(createdCheckbox.isSelected()));
         optionsPanel.add(createdCheckbox, "wrap");
     }
 
-    public void addList(@NotNull String label, @NotNull List<String> items, @NotNull Runnable updater) {
+    public void addList(@NotNull final String label, @NotNull final List<String> items, @NotNull final Runnable updater) {
         optionsPanel.add(new JLabel(label), "wrap");
         optionsPanel.add((new PrettyListControl(items) {
             @Override
@@ -59,20 +57,30 @@ public class OptionsComponent {
         }).getComponent(), "pushx, growx");
     }
 
-    public void delegateRadioCreation(@NotNull Consumer<RadioComponent> delegate) {
-        delegate.accept(new RadioComponent());
+    public void delegateRadioCreation(@NotNull final Consumer<RadioComponent> delegate) {
+        final RadioComponent radioComponent = new RadioComponent();
+        delegate.accept(radioComponent);
+
+        if ((radioComponent.selectedOption == null) &&
+            (radioComponent.radioOptions.size() >= 1)) {
+            final RadioComponent.RadioOption firstWidget = radioComponent.radioOptions.get(0);
+            firstWidget.radioButton.setSelected(true);
+            firstWidget.updateConsumer.accept(true);
+        }
     }
 
     public class RadioComponent {
-        @NotNull
-        final List<RadioOption> radioOptions = new ArrayList<>();
+        private final ButtonGroup buttonGroup = new ButtonGroup();
+
+        List<RadioOption> radioOptions = new ArrayList<>();
 
         @Nullable
         private RadioOption selectedOption;
 
-        public void addOption(@NotNull String label, boolean defaultValue, @NotNull Consumer<Boolean> updateConsumer) {
+        public void addOption(@NotNull final String label, final boolean defaultValue, @NotNull final Consumer<Boolean> updateConsumer) {
             final RadioOption newOption = new RadioOption(label, defaultValue, updateConsumer);
             radioOptions.add(newOption);
+
             if (defaultValue) {
                 selectedOption = newOption;
             }
@@ -80,30 +88,29 @@ public class OptionsComponent {
 
         private class RadioOption {
             @NotNull
-            private final JCheckBox checkbox;
+            final JRadioButton radioButton;
 
             @NotNull
-            private final Consumer<Boolean> updateConsumer;
+            final Consumer<Boolean> updateConsumer;
 
-            RadioOption(@NotNull String label, boolean defaultValue, @NotNull Consumer<Boolean> updateConsumer) {
+            RadioOption(@NotNull final String label, final boolean defaultValue, @NotNull final Consumer<Boolean> updateConsumer) {
                 this.updateConsumer = updateConsumer;
 
-                checkbox = new JCheckBox(label, defaultValue);
-                checkbox.addItemListener((itemEvent) -> {
-                    final boolean isSelected = checkbox.isSelected();
-                    if (selectedOption != null && selectedOption != this) {
-                        selectedOption.setSelected(false);
+                radioButton = new JRadioButton(label, defaultValue);
+                radioButton.addItemListener((itemEvent) -> {
+                    final boolean isSelected = radioButton.isSelected();
+
+                    if ((selectedOption != null) &&
+                        (selectedOption != this)) {
+                        selectedOption.updateConsumer.accept(false);
                     }
+
                     updateConsumer.accept(isSelected);
                     selectedOption = isSelected ? this : null;
                 });
 
-                optionsPanel.add(checkbox, "wrap");
-            }
-
-            private void setSelected(boolean isSelected) {
-                checkbox.setSelected(isSelected);
-                updateConsumer.accept(isSelected);
+                optionsPanel.add(radioButton, "wrap");
+                buttonGroup.add(radioButton);
             }
         }
     }

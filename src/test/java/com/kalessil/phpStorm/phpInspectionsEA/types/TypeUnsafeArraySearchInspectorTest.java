@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.TypeUns
 
 final public class TypeUnsafeArraySearchInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(TypeUnsafeArraySearchInspector.class);
+        myFixture.enableInspections(new TypeUnsafeArraySearchInspector());
 
         myFixture.configureByFile("fixtures/api/strict-array-search.php");
         myFixture.testHighlighting(true, false, true);

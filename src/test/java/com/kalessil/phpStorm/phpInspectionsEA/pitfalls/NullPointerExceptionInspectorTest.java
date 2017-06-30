@@ -8,7 +8,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.
 final public class NullPointerExceptionInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
-        myFixture.enableInspections(NullPointerExceptionInspector.class);
+        myFixture.enableInspections(new NullPointerExceptionInspector());
 
         myFixture.configureByFile("fixtures/pitfalls/npe.php");
         myFixture.testHighlighting(true, false, true);

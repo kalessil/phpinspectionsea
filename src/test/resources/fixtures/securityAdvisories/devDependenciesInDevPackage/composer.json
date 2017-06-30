@@ -1,0 +1,8 @@
+{
+  "name":        "symfony/phpunit-bridge",
+  "description": "",
+  "license":     "",
+  "require":     {
+    "phpunit/phpunit": "*"
+  }
+}

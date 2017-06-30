@@ -55,9 +55,8 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                 final PsiElement condition
                     = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
                 if (condition instanceof BinaryExpression) {
-                    final BinaryExpression binary  = (BinaryExpression) condition;
-                    final PsiElement operation     = binary.getOperation();
-                    final IElementType operator    = null == operation ? null : operation.getNode().getElementType();
+                    final BinaryExpression binary = (BinaryExpression) condition;
+                    final IElementType operator   = binary.getOperationType();
                     if (null == operator) {
                         return;
                     }

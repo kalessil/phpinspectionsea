@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
@@ -23,6 +22,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class GetTypeMissUseInspector extends BasePhpInspection {
     private static final String messagePattern     = "'%i%%f%(%p%)' construction is more compact and easier to read.";
@@ -53,7 +61,8 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /* verify amount of parameters at first */
                 final PsiElement[] params = reference.getParameters();
-                if (1 != params.length) {
+                final String functionName = reference.getName();
+                if (1 != params.length || functionName == null || !functionName.equals("gettype")) {
                     return;
                 }
 
@@ -63,23 +72,10 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* ensure the target function has been invoked */
-                final String functionName = reference.getName();
-                if (StringUtil.isEmpty(functionName) || !functionName.equals("gettype")) {
-                    return;
-                }
-
                 /* ensure valid operations being analyzed */
                 final BinaryExpression expression = (BinaryExpression) parent;
-                final PsiElement operation = expression.getOperation();
-                if (null == operation) {
-                    return;
-                }
-                final IElementType operator = operation.getNode().getElementType();
-                if (
-                    PhpTokenTypes.opEQUAL != operator && PhpTokenTypes.opNOT_EQUAL != operator &&
-                    PhpTokenTypes.opIDENTICAL != operator && PhpTokenTypes.opNOT_IDENTICAL != operator
-                ) {
+                final IElementType operator       = expression.getOperationType();
+                if (!PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
                     return;
                 }
 

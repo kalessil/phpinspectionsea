@@ -15,22 +15,21 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 final public class IssetAndNullComparisonStrategy {
     private final static String messagePattern = "It seems like '%e%' is already covered by 'isset(...)'.";
 
-    static public boolean apply(@NotNull LinkedList<PsiElement> conditions, @NotNull ProblemsHolder holder) {
+    static public boolean apply(@NotNull List<PsiElement> conditions, @NotNull ProblemsHolder holder) {
         /* first ensure that we have null identity checks at all */
-        final HashMap<PsiElement, PsiElement> nullTestSubjects = new HashMap<>();
-        for (PsiElement oneCondition : conditions) {
+        final Map<PsiElement, PsiElement> nullTestSubjects = new HashMap<>();
+        for (final PsiElement oneCondition : conditions) {
             if (oneCondition instanceof BinaryExpression) {
                 final BinaryExpression expression = (BinaryExpression) oneCondition;
 
                 /* we need only !== and === operations */
-                final PsiElement operation  = expression.getOperation();
-                final IElementType operator = null == operation ? null : operation.getNode().getElementType();
+                final IElementType operator = expression.getOperationType();
                 if (operator != PhpTokenTypes.opIDENTICAL && operator != PhpTokenTypes.opNOT_IDENTICAL) {
                     continue;
                 }
@@ -62,7 +61,7 @@ final public class IssetAndNullComparisonStrategy {
         }
 
         boolean hasReportedExpressions = false;
-        for (PsiElement oneCondition : conditions) {
+        for (final PsiElement oneCondition : conditions) {
             /* do not process null identity checks */
             if (nullTestSubjects.containsKey(oneCondition)) {
                 continue;
@@ -87,9 +86,9 @@ final public class IssetAndNullComparisonStrategy {
             }
 
             /* process isset constructions */
-            for (PsiElement issetArgument : ((PhpIsset) issetCandidate).getVariables()) {
+            for (final PsiElement issetArgument : ((PhpIsset) issetCandidate).getVariables()) {
                 /* compare with know null identity checked subjects */
-                for (Map.Entry<PsiElement, PsiElement> nullTestPair : nullTestSubjects.entrySet()) {
+                for (final Map.Entry<PsiElement, PsiElement> nullTestPair : nullTestSubjects.entrySet()) {
                     if (!PsiEquivalenceUtil.areElementsEquivalent(nullTestPair.getValue(), issetArgument)) {
                         continue;
                     }

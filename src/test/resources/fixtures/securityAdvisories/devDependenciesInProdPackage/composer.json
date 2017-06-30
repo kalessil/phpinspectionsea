@@ -1,0 +1,9 @@
+{
+  "name":        "kalessil/whatever",
+  "description": "",
+  "license":     "",
+  "require":     {
+    <warning descr="Dev-packages have no security guaranties, invoke the package via require-dev instead.">"phpunit/PHPUnit"</warning>: "*",
+    "roave/security-advisories": "dev-master"
+  }
+}

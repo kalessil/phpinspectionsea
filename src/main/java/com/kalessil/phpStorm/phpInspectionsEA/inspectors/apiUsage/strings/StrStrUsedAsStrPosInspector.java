@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
@@ -18,6 +17,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
     private static final String messagePattern = "'%e%' should be used instead (saves memory).";
@@ -37,43 +45,39 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* check if it's the target function */
-                final String strFunctionName = reference.getName();
-                final PsiElement[] params    = reference.getParameters();
-                if (params.length < 2 || StringUtil.isEmpty(strFunctionName) || !mapping.containsKey(strFunctionName)) {
+                final String functionName = reference.getName();
+                final PsiElement[] params = reference.getParameters();
+                if (params.length < 2 || functionName == null || !mapping.containsKey(functionName)) {
                     return;
                 }
 
                 /* checks implicit boolean comparison pattern */
                 if (reference.getParent() instanceof BinaryExpression) {
-                    final BinaryExpression parent = (BinaryExpression) reference.getParent();
-                    final PsiElement operation    = parent.getOperation();
-                    if (null != operation && null != operation.getNode()) {
-                        IElementType operationType = operation.getNode().getElementType();
-                        if (
-                            operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opNOT_IDENTICAL ||
-                            operationType == PhpTokenTypes.opEQUAL     || operationType == PhpTokenTypes.opNOT_EQUAL
-                        ) {
-                            /* get second operand */
-                            PsiElement secondOperand = parent.getLeftOperand();
-                            if (secondOperand == reference) {
-                                secondOperand = parent.getRightOperand();
-                            }
+                    final BinaryExpression parent    = (BinaryExpression) reference.getParent();
+                    final IElementType operationType = parent.getOperationType();
+                    if (PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operationType)) {
+                        /* get second operand */
+                        PsiElement secondOperand = parent.getLeftOperand();
+                        if (secondOperand == reference) {
+                            secondOperand = parent.getRightOperand();
+                        }
 
-                            /* verify if operand is a boolean and report an issue */
-                            if (PhpLanguageUtil.isBoolean(secondOperand)) {
-                                final String operator    = operation.getText();
-                                final String replacement = "false %o% %f%(%s%, %p%)"
-                                    .replace("%p%", params[1].getText())
-                                    .replace("%s%", params[0].getText())
-                                    .replace("%f%", mapping.get(strFunctionName))
-                                    .replace("%o%", operator.length() == 2 ? operator + "=": operator);
-                                final String message     = messagePattern.replace("%e%", replacement);
-                                holder.registerProblem(parent, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseStrposFix(replacement));
+                        /* verify if operand is a boolean and report an issue */
+                        final PsiElement operationNode = parent.getOperation();
+                        if (operationNode != null && PhpLanguageUtil.isBoolean(secondOperand)) {
+                            final String operator    = operationNode.getText();
+                            final String replacement = "false %o% %f%(%s%, %p%)"
+                                .replace("%p%", params[1].getText())
+                                .replace("%s%", params[0].getText())
+                                .replace("%f%", mapping.get(functionName))
+                                .replace("%o%", operator.length() == 2 ? operator + "=": operator);
+                            final String message     = messagePattern.replace("%e%", replacement);
+                            holder.registerProblem(parent, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseStrposFix(replacement));
 
-                                return;
-                            }
+                            return;
                         }
                     }
                 }
@@ -86,7 +90,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                     final String replacement = "false %o% %f%(%s%, %p%)"
                         .replace("%p%", params[1].getText())
                         .replace("%s%", params[0].getText())
-                        .replace("%f%", mapping.get(strFunctionName))
+                        .replace("%f%", mapping.get(functionName))
                         .replace("%o%", reference.getParent() instanceof UnaryExpression ? "===": "!==");
                     final String message     = messagePattern.replace("%e%", replacement);
                     holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseStrposFix(replacement));

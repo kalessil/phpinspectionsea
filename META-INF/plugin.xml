@@ -320,7 +320,7 @@ Hot-fix release; you can now support us via <a href="https://www.patreon.com/kal
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StringCaseManipulationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-         shortName="AvoidNotConditionalsInspector"                 displayName="Inverted 'if-else' constructs"
+         shortName="InvertedIfElseConstructsInspection"            displayName="Inverted 'if-else' constructs"
          groupName="Control Flow"                                  enabledByDefault="false" level="WEAK WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.InvertedIfElseConstructsInspector"/>
 

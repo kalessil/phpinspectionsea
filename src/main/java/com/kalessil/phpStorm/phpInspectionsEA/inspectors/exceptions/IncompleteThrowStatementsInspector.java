@@ -93,7 +93,7 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
         }
     }
 
-    private class AddMissingThrowFix implements LocalQuickFix {
+    private static class AddMissingThrowFix implements LocalQuickFix {
         @NotNull
         @Override
         public String getName() {

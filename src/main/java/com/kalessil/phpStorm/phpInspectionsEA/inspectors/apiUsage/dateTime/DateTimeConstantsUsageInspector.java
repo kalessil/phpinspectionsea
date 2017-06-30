@@ -60,7 +60,7 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
         };
     }
 
-    static private class TheLocalFix implements LocalQuickFix {
+    private static class TheLocalFix implements LocalQuickFix {
         @NotNull
         @Override
         public String getName() {

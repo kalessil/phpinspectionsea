@@ -120,7 +120,7 @@ public class PrefixedIncDecrementEquivalentInspector extends BasePhpInspection {
         };
     }
 
-    static private class TheLocalFix implements LocalQuickFix {
+    private static class TheLocalFix implements LocalQuickFix {
         @Nullable final String operation;
 
         @NotNull

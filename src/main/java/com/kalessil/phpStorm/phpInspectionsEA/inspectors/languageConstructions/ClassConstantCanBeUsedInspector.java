@@ -162,7 +162,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
         }
     }
 
-    private class TheLocalFix implements LocalQuickFix {
+    private static class TheLocalFix implements LocalQuickFix {
         final String fqn;
         final boolean importClasses;
         final boolean useRelativeQN;

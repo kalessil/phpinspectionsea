@@ -96,7 +96,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
         };
     }
 
-    private class TheLocalFix implements LocalQuickFix {
+    private static class TheLocalFix implements LocalQuickFix {
         private final SmartPsiElementPointer<PsiElement> dropFrom;
         private final SmartPsiElementPointer<PsiElement> dropTo;
 

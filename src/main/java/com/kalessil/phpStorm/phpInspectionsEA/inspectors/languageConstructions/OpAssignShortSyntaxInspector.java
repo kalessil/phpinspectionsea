@@ -79,7 +79,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
         };
     }
 
-    static private class TheLocalFix implements LocalQuickFix {
+    private static class TheLocalFix implements LocalQuickFix {
         final private String suggestedReplacement;
 
         TheLocalFix(@NotNull String suggestedReplacement) {

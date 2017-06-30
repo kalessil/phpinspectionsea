@@ -103,7 +103,7 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
         };
     }
 
-    private static final class TheLocalFix implements LocalQuickFix {
+    private static class TheLocalFix implements LocalQuickFix {
         private final String methodModifiers;
 
         private TheLocalFix(final String methodModifiers) {

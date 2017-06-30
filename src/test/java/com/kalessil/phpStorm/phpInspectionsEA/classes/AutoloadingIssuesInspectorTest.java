@@ -25,5 +25,8 @@ final public class AutoloadingIssuesInspectorTest extends CodeInsightFixtureTest
 
         myFixture.configureByFile("fixtures/classes/brokenAutoloading/ValidCase.multiple.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.configureByFile("fixtures/classes/brokenAutoloading/0000_00_00_000000_Version000000_.php");
+        myFixture.testHighlighting(true, false, true);
     }
 }

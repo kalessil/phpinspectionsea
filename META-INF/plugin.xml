@@ -664,6 +664,10 @@ Hot-fix release; you can now support us via <a href="https://www.patreon.com/kal
         shortName="MisorderedModifiersInspection"                 displayName="PSR-compliant modifiers order"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MisorderedModifiersInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="AvoidNotConditionalsInspector"                 displayName="Avoid not-operator on ifs"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.AvoidNotConditionalsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

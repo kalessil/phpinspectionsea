@@ -76,4 +76,9 @@ class CasesHolder {
         return $this->npeReportingChainedCalls()
             <warning descr="Null pointer exception may occur here.">-></warning>npeReportingChainedCalls();
     }
+    public function npeSafeChainedCalls(): ?CasesHolder {
+        if ($this->npeReportingChainedCalls() !== null) {
+            return $this->npeReportingChainedCalls()->npeReportingChainedCalls();
+        }
+    }
 }

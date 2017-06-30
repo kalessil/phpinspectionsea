@@ -1,7 +1,8 @@
 <?php
 
 /** @return null|bool */
-function functions_not_supported() { return null; }
+function functions_now_supported(): ?bool
+{ return null; }
 
 interface InterfaceCasesHolder {
     /* case 1: handling of abstract methods */

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class InvertedIfElseConstructsInspector extends BasePhpInspection {
-    private static final String suggestionMessage = "The if-else workflow is driven by inverted conditions, consider avoiding invertions.";
+    private static final String message = "The if-else workflow is driven by inverted conditions, consider avoiding invertions.";
 
     @NotNull
     public String getShortName() {
@@ -56,7 +56,7 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
                         if (operation != null && operation.getNode().getElementType() == PhpTokenTypes.opNOT) {
                             problemsHolder.registerProblem(
                                 elseStatement.getFirstChild(),
-                                suggestionMessage,
+                                    message,
                                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                                 new TheLocalQuickFix((GroupStatement) ifBody, (GroupStatement) elseBody, (UnaryExpression) condition)
                             );

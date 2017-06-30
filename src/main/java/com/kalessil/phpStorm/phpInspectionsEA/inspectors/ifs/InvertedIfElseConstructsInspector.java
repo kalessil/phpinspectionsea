@@ -56,9 +56,9 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
                         if (operation != null && operation.getNode().getElementType() == PhpTokenTypes.opNOT) {
                             problemsHolder.registerProblem(
                                 elseStatement.getFirstChild(),
-                                    message,
+                                message,
                                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                new TheLocalQuickFix((GroupStatement) ifBody, (GroupStatement) elseBody, (UnaryExpression) condition)
+                                new NormalizeWorkflowFix((GroupStatement) ifBody, (GroupStatement) elseBody, (UnaryExpression) condition)
                             );
                         }
                     }
@@ -67,12 +67,12 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalQuickFix implements LocalQuickFix {
+    private static class NormalizeWorkflowFix implements LocalQuickFix {
         private final SmartPsiElementPointer<GroupStatement> ifBody;
         private final SmartPsiElementPointer<GroupStatement> elseBody;
         private final SmartPsiElementPointer<UnaryExpression> condition;
 
-        TheLocalQuickFix(@NotNull GroupStatement ifBody, @NotNull GroupStatement elseBody, @NotNull UnaryExpression condition) {
+        NormalizeWorkflowFix(@NotNull GroupStatement ifBody, @NotNull GroupStatement elseBody, @NotNull UnaryExpression condition) {
             final SmartPointerManager factory = SmartPointerManager.getInstance(condition.getProject());
 
             this.ifBody    = factory.createSmartPsiElementPointer(ifBody);

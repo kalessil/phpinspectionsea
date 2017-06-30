@@ -16,7 +16,7 @@ if (!true)
 else if (false) { e(); f(); }
 else { c(); d(); }
 
-if ((true === true)) { c(); d(); }
+if (true === true) { c(); d(); }
 else { a(); b(); }
 
 /* not supported: must follow PSR and use `{}` */

@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -98,7 +99,7 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
             final UnaryExpression condition = this.condition.getElement();
 
             if (ifBody != null && elseBody != null && condition != null) {
-                final PsiElement unwrappedCondition = condition.getValue();
+                final PsiElement unwrappedCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(condition.getValue());
                 if (unwrappedCondition != null) {
                     condition.replace(unwrappedCondition);
 

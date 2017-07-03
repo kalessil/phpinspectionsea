@@ -29,5 +29,8 @@ namespace {
 
         /** @covers ::trim */
         public function testOffsetUnset5() {}
+
+        /** @covers MyIterator::<!private> */
+        public function testOffsetUnset6() {}
     }
 }

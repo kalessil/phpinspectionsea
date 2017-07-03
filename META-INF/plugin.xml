@@ -63,6 +63,7 @@ Hot-fix release; you can now support us via <a href="https://www.patreon.com/kal
 - Foreach source to iterate over: resolved false-positives (predefined _* variables)<br/>
 + Non-optimal if conditions: resolved false-positives (multiple cases), added options<br/>
 - Parameter/variable is not used: resolved false-positives<br/>
++ PhpUnit: bugs and best practices: fixed OOB exception<br/>
 - Senseless proxy function: resolved false-positives (return type changed)<br/>
 + Slow alter in foreach: resolved false-positives (intermediate throw)<br/>
 - Summer-time unsafe date manipulations: resolved false-positives (context aware now)<br/>

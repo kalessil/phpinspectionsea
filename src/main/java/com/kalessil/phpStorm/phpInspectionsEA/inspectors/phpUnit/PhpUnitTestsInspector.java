@@ -95,17 +95,18 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         boolean hasCallableReference = false;
                         boolean hasClassReference    = false;
 
-                        final boolean callableNeeded = referenceText.contains("::") && !referenceText.contains("::<");
+                        final boolean callableNeeded = referenceText.contains("::");
                         if (references.size() > 0 && !WORKAROUND_COVERS_REFERENCES) {
-                            for (PsiReference ref : references) {
+                            for (final PsiReference ref : references) {
                                 final PsiElement resolved = ref.resolve();
                                 if (resolved instanceof PhpClass) {
-                                    hasClassReference = true;
+                                    hasClassReference    = true;
+                                    hasCallableReference = referenceText.endsWith("::");
                                     break;
                                 }
                                 if (resolved instanceof Function) {
                                     hasCallableReference = true;
-                                    hasClassReference  = resolved instanceof Method;
+                                    hasClassReference    = resolved instanceof Method;
                                     break;
                                 }
                             }
@@ -119,17 +120,27 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                             final String[] refParts = referenceText.replace("()", "").trim().split("::");
 
                             /* find classes: aliases, FQNs, non-FQNs */
-                            Collection<PhpClass> classes = new ArrayList<>(index.getAnyByFQN(refParts[0]));
-                            for (PhpUse used : index.getUseAliasesByName(refParts[0])) {
+                            final Collection<PhpClass> classes = new ArrayList<>(index.getAnyByFQN(refParts[0]));
+                            for (final PhpUse used : index.getUseAliasesByName(refParts[0])) {
                                 final PhpReference importedReference = used.getTargetReference();
-                                final PsiElement importedClass       = null == importedReference ? null : importedReference.resolve();
+                                final PsiElement importedClass       = importedReference == null ? null : importedReference.resolve();
                                 if (importedClass instanceof PhpClass) {
                                     classes.add((PhpClass) importedClass);
                                 }
                             }
                             /* check if any of found has the method */
-                            for (PhpClass foundClazz : classes) {
-                                if (null != foundClazz.findMethodByName(refParts[1])) {
+                            if (refParts.length == 2) {
+                                /* method name has been specified: ensure the method exists */
+                                final String methodName = refParts[1];
+                                for (final PhpClass foundClazz : classes) {
+                                    if (foundClazz.findMethodByName(methodName) != null) {
+                                        classes.clear();
+                                        return;
+                                    }
+                                }
+                            } else {
+                                /* pattern used for method definition: just ensure class is resolved */
+                                if (!classes.isEmpty()) {
                                     classes.clear();
                                     return;
                                 }

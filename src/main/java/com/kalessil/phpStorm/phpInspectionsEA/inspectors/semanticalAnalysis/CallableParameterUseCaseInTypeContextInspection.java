@@ -142,7 +142,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                         /* case: assignments violating parameter definition */
                         /* TODO: method/strategy 2 */
-                        if (parent instanceof AssignmentExpression) {
+                        if (OpenapiTypesUtil.isAssignment(parent)) {
                             final AssignmentExpression assignment = (AssignmentExpression) parent;
                             final PhpPsiElement variable          = assignment.getVariable();
                             final PhpPsiElement value             = assignment.getValue();

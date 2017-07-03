@@ -38,6 +38,14 @@
     }
 
 
+    /** @var string $string */
+    function stringTypeMagic ($string) {
+        $string .= null;
+        $string = $string . null;
+        return $string;
+    }
+
+
     interface ParentInterface                        {}
     interface ChildInterface extends ParentInterface {}
     class Clazz implements ChildInterface            {}

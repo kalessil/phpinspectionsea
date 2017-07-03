@@ -57,7 +57,7 @@ with a laptop.
 Hot-fix release; you can now support us via <a href="https://www.patreon.com/kalessil">Patreon</a>
 <br/>
 <br/>
-- Callable parameter usage violates definition: resolved false-positives (annotated properties)<br/>
++ Callable parameter usage violates definition: resolved false-positives (multiple cases)<br/>
 + Class autoloading correctness: resolved false-positives (laravel migrations)<br/>
 - Declaration access can be weaker: resolved false-positives (protected methods used by parent classes)<br/>
 - Foreach source to iterate over: resolved false-positives (predefined _* variables)<br/>

@@ -9,7 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.R
 final public class ReturnTypeCanBeDeclaredInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
-        myFixture.enableInspections(ReturnTypeCanBeDeclaredInspector.class);
+        myFixture.enableInspections(new ReturnTypeCanBeDeclaredInspector());
 
         myFixture.configureByFile("fixtures/lang/typeHints/return-type-hints.ns.php");
         myFixture.testHighlighting(true, false, true);

@@ -14,6 +14,7 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -93,16 +94,22 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 @NotNull PsiElement target,
                 boolean supportNullableTypes
             ) {
+                /* suggest nothing when the type is only partially resolved */
+                final PhpType resolvedReturnType  = method.getType().global(holder.getProject());
+                if (resolvedReturnType.hasUnknown()) {
+                    return;
+                }
+
                 /* ignore DocBlock, resolve and normalize types instead (DocBlock is involved, but nevertheless) */
                 final Set<String> normalizedTypes = new HashSet<>();
-                for (String type : method.getType().global(holder.getProject()).filterUnknown().getTypes()) {
+                for (String type : resolvedReturnType.filterUnknown().getTypes()) {
                     normalizedTypes.add(Types.getType(type));
                 }
                 checkNonImplicitNullReturn(method, normalizedTypes);
 
                 final int typesCount = normalizedTypes.size();
                 /* case 1: offer using void */
-                if (0 == typesCount && supportNullableTypes) {
+                if (supportNullableTypes && 0 == typesCount) {
                     final String suggestedType = Types.strVoid;
                     final String message       = messagePattern.replace("%t%", suggestedType);
                     holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(suggestedType));
@@ -121,7 +128,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     }
                 }
                 /* case 3: offer using nullable type */
-                if (2 == typesCount && supportNullableTypes && normalizedTypes.contains(Types.strNull)) {
+                if (supportNullableTypes && 2 == typesCount && normalizedTypes.contains(Types.strNull)) {
                     normalizedTypes.remove(Types.strNull);
 
                     final String nullableType = normalizedTypes.iterator().next();

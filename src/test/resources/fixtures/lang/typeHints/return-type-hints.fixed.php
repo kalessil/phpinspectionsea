@@ -87,4 +87,10 @@ abstract class ClassCasesHolder {
             return new \stdClass();
         }
     }
+
+    /* false-positive: mixed types leads to no warning */
+    private function mixedReturnType($input) {
+        $result = json_decode($input);
+        return $result['property'];
+    }
 }

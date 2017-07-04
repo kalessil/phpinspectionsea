@@ -24,5 +24,3 @@ class ArrayCastingEquivalents
         return $array;
     }
 }
-
-

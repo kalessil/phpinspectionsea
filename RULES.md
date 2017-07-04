@@ -198,25 +198,25 @@ Inspections Lists (Performance)
 | :------------------- | :---------------------------------------------- | :------------------------------------------------------------------------------------------ | --: | --: | ---: | --: |
 | Performance          | AmbiguousMethodsCallsInArrayMappingInspection   | Non-optimized arrays mapping                                                                | n/a | yes | n/a  | no  |
 | Performance          | StrlenInEmptyStringCheckContextInspection       | '(mb_)strlen(...)' misused                                                                  | yes | yes | yes  | no  |
-| Performance          | ArrayCastingEquivalentInspection                | Could be replaced with '(array) ...'                                                        | n/a |
-| Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                               | n/a | yes | n/a | no  |
+| Performance          | ArrayCastingEquivalentInspection                | Could be replaced with '(array) ...'                                                        | yes | yes | yes  | no  |
+| Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                               | n/a | yes | n/a  | no  |
 | Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                            | n/a |
-| Performance          | StrStrUsedAsStrPosInspection                    | 'str(i)str(...)' could be replaced with 'str(i)pos(...)'                                    | yes | yes | no  | no  |
-| Performance          | AlterInForeachInspection                        | Slow alter in foreach                                                                       | n/a | yes | n/a | no  |
-| Performance          | LowPerformanceArrayUniqueUsageInspection        | 'array_unique()' low performing usage                                                       | yes | yes | yes | no  |
-| Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused"                                                                  | yes | yes | no  | no  |
-| Performance          | FileFunctionMissUseInspection                   | 'file(...)' misused                                                                         | yes | yes | no  | no  |
+| Performance          | StrStrUsedAsStrPosInspection                    | 'str(i)str(...)' could be replaced with 'str(i)pos(...)'                                    | yes | yes | no   | no  |
+| Performance          | AlterInForeachInspection                        | Slow alter in foreach                                                                       | n/a | yes | n/a  | no  |
+| Performance          | LowPerformanceArrayUniqueUsageInspection        | 'array_unique()' low performing usage                                                       | yes | yes | yes  | no  |
+| Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused"                                                                  | yes | yes | no   | no  |
+| Performance          | FileFunctionMissUseInspection                   | 'file(...)' misused                                                                         | yes | yes | no   | no  |
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                              | n/a |
-| Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                    | yes | yes | yes | no  |
-| Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                              | yes | yes | no  | no  |
-| Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | yes | yes | no  | no  |
-| Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes | yes | no  | no  |
-| Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes | yes | yes | no  |
-| Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | no  | yes | no  | no  |
-| Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                    | yes | yes | yes | no  |
-| Performance          | FilePutContentsMissUseInspection                | 'file_put_contents(...)' misused                                                            | yes | yes | yes | no  |
-| Performance          | PackedHashtableOptimizationInspection           | Packed hashtable optimizations                                                              | no  | yes | no  | yes |
-| Performance          | StaticLocalVariablesUsageInspection             | Static local variables usage                                                                | n/a | yes | n/a | yes |
-| Performance          | UnqualifiedReferenceInspection                  | Unqualified function/constant reference                                                     | yes | yes | yes | no  |
-| Performance          | ExplodeMissUseInspection                        | 'explode(...)' misused                                                                      | yes | yes | yes | no  |
-| Performance          | ScandirUsageInspection                          | 'scandir(...)' low performing usage                                                         | yes | yes | yes | no  |
+| Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                    | yes | yes | yes  | no  |
+| Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                              | yes | yes | no   | no  |
+| Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                     | yes | yes | no   | no  |
+| Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos()/strripos()' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes | yes | no   | no  |
+| Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                    | yes | yes | yes  | no  |
+| Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                          | no  | yes | no   | no  |
+| Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                    | yes | yes | yes  | no  |
+| Performance          | FilePutContentsMissUseInspection                | 'file_put_contents(...)' misused                                                            | yes | yes | yes  | no  |
+| Performance          | PackedHashtableOptimizationInspection           | Packed hashtable optimizations                                                              | no  | yes | no   | yes |
+| Performance          | StaticLocalVariablesUsageInspection             | Static local variables usage                                                                | n/a | yes | n/a  | yes |
+| Performance          | UnqualifiedReferenceInspection                  | Unqualified function/constant reference                                                     | yes | yes | yes  | no  |
+| Performance          | ExplodeMissUseInspection                        | 'explode(...)' misused                                                                      | yes | yes | yes  | no  |
+| Performance          | ScandirUsageInspection                          | 'scandir(...)' low performing usage                                                         | yes | yes | yes  | no  |

@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
@@ -46,48 +47,50 @@ final public class ChainedCallsStrategy {
         @NotNull ProblemsHolder holder
     ) {
         final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
-        final PsiElement base     = operator == null ? null : reference.getFirstPsiChild();
-        final PsiElement parent   = operator == null ? null : reference.getParent();
-
-        /* inspect NPEs */
-        if (base instanceof FunctionReference && PhpTokenTypes.ARROW == operator.getNode().getElementType()) {
-            final FunctionReference baseReference = (FunctionReference) base;
-            final String methodName              = baseReference.getName();
-            final PhpType types                  = baseReference.getType().global(holder.getProject()).filterUnknown();
-            for (final String resolvedType : types.getTypes()) {
-                final String type = Types.getType(resolvedType);
-                if (type.equals(Types.strNull) || type.equals(Types.strVoid)) {
-                    boolean isNullTested = false;
-                    for (final MethodReference nullTestedReference : nullTestedReferences.keySet()) {
-                        final String nullTestedMethodName = nullTestedReferences.get(nullTestedReference);
-                        if (
-                            nullTestedMethodName != null && nullTestedMethodName.equals(methodName) &&
-                            PsiEquivalenceUtil.areElementsEquivalent(nullTestedReference, baseReference)
-                        ) {
-                            isNullTested = true;
+        if (operator != null && PhpTokenTypes.ARROW == operator.getNode().getElementType()) {
+            final PsiElement base = reference.getFirstPsiChild();
+            if (base instanceof FunctionReference) {
+                final FunctionReference baseReference = (FunctionReference) base;
+                final String methodName               = baseReference.getName();
+                final PhpType types                   = baseReference.getType().global(holder.getProject()).filterUnknown();
+                for (final String resolvedType : types.getTypes()) {
+                    final String type = Types.getType(resolvedType);
+                    if (type.equals(Types.strNull) || type.equals(Types.strVoid)) {
+                        boolean isNullTested = false;
+                        for (final MethodReference nullTestedReference : nullTestedReferences.keySet()) {
+                            final String nullTestedMethodName = nullTestedReferences.get(nullTestedReference);
+                            if (
+                                nullTestedMethodName != null && nullTestedMethodName.equals(methodName) &&
+                                PsiEquivalenceUtil.areElementsEquivalent(nullTestedReference, baseReference)
+                            ) {
+                                isNullTested = true;
+                                break;
+                            }
+                        }
+                        if (!isNullTested) {
+                            holder.registerProblem(operator, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             break;
                         }
                     }
-                    if (!isNullTested) {
-                        holder.registerProblem(operator, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                        break;
-                    }
                 }
             }
-        }
 
-        /* collect null-tested references: only after main inspection! */
-        if (parent instanceof BinaryExpression && PhpTokenTypes.ARROW == operator.getNode().getElementType()) {
-            final BinaryExpression parentExpression = (BinaryExpression) parent;
-            final IElementType parentOperation      = parentExpression.getOperationType();
-            if (PhpTokenTypes.tsCOMPARE_OPS.contains(parentOperation)) {
-                PsiElement secondOperand = parentExpression.getLeftOperand();
-                if (secondOperand == reference) {
-                    secondOperand = parentExpression.getRightOperand();
+            /* collect null-tested references: only after main inspection! */
+            final PsiElement parent = reference.getParent();
+            if (parent instanceof BinaryExpression) {
+                final BinaryExpression parentExpression = (BinaryExpression) parent;
+                final IElementType parentOperation      = parentExpression.getOperationType();
+                if (PhpTokenTypes.tsCOMPARE_OPS.contains(parentOperation)) {
+                    PsiElement secondOperand = parentExpression.getLeftOperand();
+                    if (secondOperand == reference) {
+                        secondOperand = parentExpression.getRightOperand();
+                    }
+                    if (PhpLanguageUtil.isNull(secondOperand)) {
+                        nullTestedReferences.put(reference, reference.getName());
+                    }
                 }
-                if (PhpLanguageUtil.isNull(secondOperand)) {
-                    nullTestedReferences.put(reference, reference.getName());
-                }
+            } else if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
+                nullTestedReferences.put(reference, reference.getName());
             }
         }
     }

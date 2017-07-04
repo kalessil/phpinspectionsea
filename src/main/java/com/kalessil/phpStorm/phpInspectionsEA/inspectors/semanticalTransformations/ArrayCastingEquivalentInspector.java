@@ -16,7 +16,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import org.jaxen.expr.UnaryExpr;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -44,43 +43,40 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpIf(If expression) {
-                if (ExpressionSemanticUtil.hasAlternativeBranches(expression)){
-                    return;
-                }
+                if (!ExpressionSemanticUtil.hasAlternativeBranches(expression)){
+                    /* body has only assignment, which to be extracted */
+                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
+                    if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) == 1) {
+                        PsiElement candidate = ExpressionSemanticUtil.getLastStatement(body);
+                        candidate            = (candidate == null ? null : candidate.getFirstChild());
+                        if (!OpenapiTypesUtil.isAssignment(candidate)) {
+                            return;
+                        }
 
-                /* body has only assignment, which to be extracted */
-                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
-                if (body == null || ExpressionSemanticUtil.countExpressionsInGroup(body) != 1) {
-                    return;
-                }
-                PsiElement action = ExpressionSemanticUtil.getLastStatement(body);
-                action            = (action == null ? null : action.getFirstChild());
-                if (action == null || !OpenapiTypesUtil.isAssignment(action)) {
-                    return;
-                }
+                        /* expecting !function(...) in condition */
+                        PsiElement condition   = null;
+                        IElementType operation = null;
+                        if (expression.getCondition() instanceof UnaryExpression) {
+                            final UnaryExpression inversion = (UnaryExpression) expression.getCondition();
+                            operation                       = inversion.getOperation().getNode().getElementType();
+                            condition                       = ExpressionSemanticUtil.getExpressionTroughParenthesis(inversion.getValue());
+                        }
+                        if (operation != PhpTokenTypes.opNOT || !OpenapiTypesUtil.isFunctionReference(condition)) {
+                            return;
+                        }
 
-                /* expecting !function(...) in condition */
-                PsiElement condition   = null;
-                IElementType operation = null;
-                if (expression.getCondition() instanceof UnaryExpression) {
-                    final UnaryExpression inversion = (UnaryExpression) expression.getCondition();
-                    operation                       = inversion.getOperation().getNode().getElementType();
-                    condition                       = ExpressionSemanticUtil.getExpressionTroughParenthesis(inversion.getValue());
-                }
-                if (operation != PhpTokenTypes.opNOT || !OpenapiTypesUtil.isFunctionReference(condition)) {
-                    return;
-                }
-
-                /* inspect expression */
-                final AssignmentExpression assignment = (AssignmentExpression) action;
-                final PsiElement trueExpression       = assignment.getVariable();
-                final PsiElement falseExpression      = assignment.getValue();
-                if (
-                    trueExpression != null && falseExpression != null &&
-                    this.isArrayCasting((FunctionReference) condition, trueExpression, falseExpression)
-                ) {
-                    final String replacement = trueExpression.getText() + " = (array) " + trueExpression.getText();
-                    holder.registerProblem(expression.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new SimplifyFix(replacement));
+                        /* inspect expression */
+                        final AssignmentExpression assignment = (AssignmentExpression) candidate;
+                        final PsiElement trueExpression       = assignment.getVariable();
+                        final PsiElement falseExpression      = assignment.getValue();
+                        if (
+                            trueExpression != null && falseExpression != null &&
+                            this.isArrayCasting((FunctionReference) condition, trueExpression, falseExpression)
+                        ) {
+                            final String replacement = trueExpression.getText() + " = (array) " + trueExpression.getText();
+                            holder.registerProblem(expression.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new SimplifyFix(replacement));
+                        }
+                    }
                 }
             }
 
@@ -99,11 +95,8 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
                     }
                 }
 
-                if (trueExpression != null && falseExpression != null && condition != null) {
-                    if (
-                        OpenapiTypesUtil.isFunctionReference(condition) &&
-                        this.isArrayCasting((FunctionReference) condition, trueExpression, falseExpression)
-                    ) {
+                if (trueExpression != null && falseExpression != null && OpenapiTypesUtil.isFunctionReference(condition)) {
+                    if (this.isArrayCasting((FunctionReference) condition, trueExpression, falseExpression)) {
                         final String replacement  = "(array) " + trueExpression.getText();
                         holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new SimplifyFix(replacement));
                     }
@@ -165,13 +158,12 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof TernaryExpression) {
-                super.applyFix(project, descriptor);
-            } else if (expression != null) {
-                final String pattern = "(" + this.expression + ")";
+            if (expression != null) {
+                final PsiElement target = expression instanceof TernaryExpression ? expression : expression.getParent();
+                final String pattern    = "(" + this.expression + ")";
                 final ParenthesizedExpression replacement
                         = PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, pattern);
-                expression.getParent().replace(replacement.getArgument());
+                target.replace(replacement.getArgument());
             }
         }
     }

@@ -19,4 +19,9 @@ class ArrayCastingEquivalents
         $array = (array)$array;
         return $array;
     }
+
+    /* false-positives */
+    public function objectCasting(\stdClass $subject) {
+        $result = !is_array($subject) ? [$subject] : $subject;
+    }
 }

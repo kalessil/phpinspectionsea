@@ -38,8 +38,7 @@ import java.util.*;
 
 public class PhpUnitTestsInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean SUGGEST_TO_USE_ASSERTSAME    = false;
-    public boolean WORKAROUND_COVERS_REFERENCES = false;
+    public boolean SUGGEST_TO_USE_ASSERTSAME = false;
 
     private final static String messageDepends = "@depends referencing to a non-existing entity.";
     private final static String messageCovers  = "@covers referencing to a non-existing entity";
@@ -96,56 +95,18 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         boolean hasClassReference    = false;
 
                         final boolean callableNeeded = referenceText.contains("::");
-                        if (references.size() > 0 && !WORKAROUND_COVERS_REFERENCES) {
-                            for (final PsiReference ref : references) {
-                                final PsiElement resolved = ref.resolve();
-                                if (resolved instanceof PhpClass) {
-                                    hasClassReference    = true;
-                                    hasCallableReference = referenceText.endsWith("::");
-                                    break;
-                                }
-                                if (resolved instanceof Function) {
-                                    hasCallableReference = true;
-                                    hasClassReference    = resolved instanceof Method;
-                                    break;
-                                }
+                        for (final PsiReference ref : references) {
+                            final PsiElement resolved = ref.resolve();
+                            if (resolved instanceof PhpClass) {
+                                hasClassReference    = true;
+                                hasCallableReference = referenceText.endsWith("::");
+                                break;
                             }
-                        } else {
-                            /* only try resolving method references - the general case */
-                            if (!callableNeeded || referenceText.startsWith("::")) {
-                                return;
+                            if (resolved instanceof Function) {
+                                hasCallableReference = true;
+                                hasClassReference    = resolved instanceof Method;
+                                break;
                             }
-
-                            final PhpIndex index    = PhpIndex.getInstance(method.getProject());
-                            final String[] refParts = referenceText.replace("()", "").trim().split("::");
-
-                            /* find classes: aliases, FQNs, non-FQNs */
-                            final Collection<PhpClass> classes = new ArrayList<>(index.getAnyByFQN(refParts[0]));
-                            for (final PhpUse used : index.getUseAliasesByName(refParts[0])) {
-                                final PhpReference importedReference = used.getTargetReference();
-                                final PsiElement importedClass       = importedReference == null ? null : importedReference.resolve();
-                                if (importedClass instanceof PhpClass) {
-                                    classes.add((PhpClass) importedClass);
-                                }
-                            }
-                            /* check if any of found has the method */
-                            if (refParts.length == 2) {
-                                /* method name has been specified: ensure the method exists */
-                                final String methodName = refParts[1];
-                                for (final PhpClass foundClazz : classes) {
-                                    if (foundClazz.findMethodByName(methodName) != null) {
-                                        classes.clear();
-                                        return;
-                                    }
-                                }
-                            } else {
-                                /* pattern used for method definition: just ensure class is resolved */
-                                if (!classes.isEmpty()) {
-                                    classes.clear();
-                                    return;
-                                }
-                            }
-                            classes.clear();
                         }
 
                         if ((callableNeeded && !hasCallableReference) || (!callableNeeded && hasClassReference)) {

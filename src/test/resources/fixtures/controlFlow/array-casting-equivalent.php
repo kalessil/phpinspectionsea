@@ -23,4 +23,9 @@ class ArrayCastingEquivalents
         $array = <weak_warning descr="'(array) ...' construct can probably be used (can change code behaviour).">!is_array($array) ? [$array] : $array</weak_warning>;
         return $array;
     }
+
+    /* false-positives */
+    public function objectCasting(\stdClass $subject) {
+        $result = !is_array($subject) ? [$subject] : $subject;
+    }
 }

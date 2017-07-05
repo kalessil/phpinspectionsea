@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
@@ -35,7 +36,7 @@ import java.util.Set;
  */
 
 public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
-    private static final String messagePattern = "': %t%' can be declared as return type hint.";
+    private static final String messagePattern = "': %t%' can be declared as return type hint%n%.";
 
     private static final Set<String> returnTypes = new HashSet<>();
     private static final Set<String> voidTypes   = new HashSet<>();
@@ -111,8 +112,12 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 /* case 1: offer using void */
                 if (supportNullableTypes && 0 == typesCount) {
                     final String suggestedType = Types.strVoid;
-                    final String message       = messagePattern.replace("%t%", suggestedType);
-                    holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(suggestedType));
+                    final LocalQuickFix fixer  = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(suggestedType);
+                    final String message       = messagePattern
+                        .replace("%t%", suggestedType)
+                        .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "")
+                    ;
+                    holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixer);
                 }
                 /* case 2: offer using type */
                 if (1 == typesCount) {
@@ -123,8 +128,12 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     final boolean isLegitBasic = singleType.startsWith("\\") || returnTypes.contains(singleType);
                     final boolean isLegitVoid  = supportNullableTypes && suggestedType.equals(Types.strVoid);
                     if (isLegitBasic || isLegitVoid) {
-                        final String message = messagePattern.replace("%t%", suggestedType);
-                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(suggestedType));
+                        final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(suggestedType);
+                        final String message      = messagePattern
+                            .replace("%t%", suggestedType)
+                            .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "")
+                        ;
+                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixer);
                     }
                 }
                 /* case 3: offer using nullable type */
@@ -138,11 +147,32 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     final boolean isLegitNullable = nullableType.startsWith("\\") || returnTypes.contains(nullableType);
                     final boolean isLegitVoid     = suggestedType.equals(Types.strVoid);
                     if (isLegitNullable || isLegitVoid) {
-                        final String typeHint = isLegitVoid ? suggestedType : "?" + suggestedType;
-                        final String message  = messagePattern.replace("%t%", typeHint);
-                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DeclareReturnTypeFix(typeHint));
+                        final String typeHint     = isLegitVoid ? suggestedType : "?" + suggestedType;
+                        final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(typeHint);
+                        final String message      = messagePattern
+                            .replace("%t%", typeHint)
+                            .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "")
+                        ;
+                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixer);
                     }
                 }
+            }
+
+            /* use change signature intention promoter */
+            private boolean isMethodOverridden(@NotNull Method method) {
+                boolean result       = false;
+                final PhpClass clazz = method.getContainingClass();
+                if (clazz != null && !clazz.isFinal() && !method.isFinal() && !method.getAccess().isPrivate()) {
+                    final String methodName = method.getName();
+                    final PhpIndex index    = PhpIndex.getInstance(method.getProject());
+                    for (final PhpClass childClass : index.getAllSubclasses(clazz.getFQN())) {
+                        if (childClass.findOwnMethodByName(methodName) != null) {
+                            result = true;
+                            break;
+                        }
+                    }
+                }
+                return result;
             }
 
             private String compactType(@NotNull String type, @NotNull Method method) {

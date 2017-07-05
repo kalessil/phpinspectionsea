@@ -70,9 +70,17 @@ abstract class ClassCasesHolder {
         }
     }
 
+    /* case: QF injection */
+    /** @param $x string */
+    public function <weak_warning descr="': string' can be declared as return type hint (please use change signature intention to fix this).">overriddenReturnString</weak_warning>($x) { return $x; }
+
     /* false-positive: mixed types leads to no warning */
     private function mixedReturnType($input) {
         $result = json_decode($input);
         return $result['property'];
     }
+}
+
+class ClassCasesHolderImplementation extends ClassCasesHolder {
+    public function <weak_warning descr="': string' can be declared as return type hint.">overriddenReturnString</weak_warning>($x) { return $x; }
 }

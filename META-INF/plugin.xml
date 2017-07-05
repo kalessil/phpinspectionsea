@@ -64,7 +64,7 @@ Hot-fix release; you can now support us via <a href="https://www.patreon.com/kal
 + Non-optimal if conditions: resolved false-positives (multiple cases), added options<br/>
 + Non-optimal regular expression: resolved false-positives (explode usage suggestion when \R is in pattern)<br/>
 - Parameter/variable is not used: resolved false-positives<br/>
-+ PhpUnit: bugs and best practices: fixed OOB exception<br/>
++ PhpUnit: bugs and best practices: fixed OOB exception, resolved false-positives (assert[Not]Same for array/object)<br/>
 + Return type hint can be used: resolved false-positives (incomplete types resolving)<br/>
 - Senseless proxy function: resolved false-positives (return type changed)<br/>
 + Slow alter in foreach: resolved false-positives (intermediate throw)<br/>

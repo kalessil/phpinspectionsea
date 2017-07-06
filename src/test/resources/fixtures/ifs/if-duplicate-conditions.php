@@ -1,7 +1,7 @@
 <?php
 
-    if ($a || !$a || $a === true || true === $a) {
-        if ($a && !$a && $a === true && true === $a) {}
+    if ($a || !$a || $a === true || true === $a || $a === null || null === $a) {
+        if ($a && !$a && $a === true && true === $a || $a === null || null === $a) {}
     }
 
     if (empty($a)) {

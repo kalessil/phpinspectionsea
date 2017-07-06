@@ -459,9 +459,9 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     if (variableCandidate instanceof BinaryExpression) {
                         final PsiElement left  = ((BinaryExpression) variableCandidate).getLeftOperand();
                         final PsiElement right = ((BinaryExpression) variableCandidate).getRightOperand();
-                        if (PhpLanguageUtil.isBoolean(right)) {
+                        if (PhpLanguageUtil.isBoolean(right) || PhpLanguageUtil.isNull(right)) {
                             variableCandidate = left;
-                        } else if (PhpLanguageUtil.isBoolean(left)) {
+                        } else if (PhpLanguageUtil.isBoolean(left) || PhpLanguageUtil.isNull(left)) {
                             variableCandidate = right;
                         }
                     }

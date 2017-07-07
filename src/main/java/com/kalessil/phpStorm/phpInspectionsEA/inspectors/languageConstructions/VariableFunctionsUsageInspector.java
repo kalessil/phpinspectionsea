@@ -10,6 +10,7 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -18,6 +19,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class VariableFunctionsUsageInspector extends BasePhpInspection {
     private static final String patternInlineArgs = "'%e%' should be used instead (enables further analysis).";
@@ -124,8 +134,8 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                     if (null != firstParam) {
                         if (firstPart instanceof StringLiteralExpression) {
                             final StringLiteralExpression firstPartExpression = (StringLiteralExpression) firstPart;
-                            if (null == firstPartExpression.getFirstPsiChild()) {
-                                firstAsString = firstPartExpression.getContents();
+                            if (firstPartExpression.getFirstPsiChild() == null) {
+                                firstAsString = PhpStringUtil.unescapeText(firstPartExpression.getContents(), firstPartExpression.isSingleQuote());
                             }
                         }
                         if (firstPart instanceof Variable) {

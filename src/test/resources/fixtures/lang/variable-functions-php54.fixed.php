@@ -5,3 +5,5 @@
 
     call_user_func($callable, 1, 2, 3);
     call_user_func($callable, $a, $b, &$c);
+
+    Namespace\Clazz::method($a);

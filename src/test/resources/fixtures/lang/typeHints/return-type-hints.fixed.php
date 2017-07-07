@@ -88,9 +88,18 @@ abstract class ClassCasesHolder {
         }
     }
 
+    /* case: QF injection */
+    /** @param $x string */
+    public function overriddenReturnString($x) { return $x; }
+
     /* false-positive: mixed types leads to no warning */
     private function mixedReturnType($input) {
         $result = json_decode($input);
         return $result['property'];
     }
+}
+
+class ClassCasesHolderImplementation extends ClassCasesHolder {
+    public function overriddenReturnString($x): string
+    { return $x; }
 }

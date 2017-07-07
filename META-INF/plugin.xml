@@ -62,20 +62,24 @@ Hot-fix release; you can now support us via <a href="https://www.patreon.com/kal
 - Declaration access can be weaker: resolved false-positives (protected methods used by parent classes)<br/>
 - Foreach source to iterate over: resolved false-positives (predefined _* variables)<br/>
 + Non-optimal if conditions: resolved false-positives (multiple cases), added options<br/>
++ Non-optimal regular expression: resolved false-positives (explode usage suggestion when \R is in pattern)<br/>
 - Parameter/variable is not used: resolved false-positives<br/>
-+ PhpUnit: bugs and best practices: fixed OOB exception<br/>
++ PhpUnit: bugs and best practices: fixed OOB exception, resolved false-positives (assert[Not]Same for array/object)<br/>
++ Return type hint can be used: resolved false-positives (incomplete types resolving)<br/>
 - Senseless proxy function: resolved false-positives (return type changed)<br/>
 + Slow alter in foreach: resolved false-positives (intermediate throw)<br/>
 - Summer-time unsafe date manipulations: resolved false-positives (context aware now)<br/>
 - Suspicious assignments: resolved false-positives (assignment by reference)<br/>
 - Too many parameters in a callable: resolved false-positives (UTs context)<br/>
 - Unnecessary arguments specification: resolved false-positives (in_array, array_search)<br/>
++ Variable functions usage: QF bug-fix<br/>
 - 'isset(...)' usage: resolved false-positives (global context)<br/>
 - ::class can be used: resolved false-positives (language level considered)<br/>
 <br/>
 - Callable calls in loops termination condition: QF implemented (thank you @rentalhost)<br/>
 - Class overrides a field of a parent class: new patterns<br/>
 - Class property initialization flaws: new patterns<br/>
++ Could be replaced with '(array) ...': QF implemented, new patterns<br/>
 - If-return-return could be simplified: QF bug-fix (condition parts were lost)<br/>
 - Isset operations variables existence: new patterns<br/>
 - Null reference: new patterns<br/>
@@ -777,6 +781,10 @@ Hot-fix release; you can now support us via <a href="https://www.patreon.com/kal
         shortName="LowerAccessLevelInspection"                      displayName="Declaration access can be weaker"
         groupName="Architecture"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.LowerAccessLevelInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="EfferentObjectCouplingInspection"                displayName="Efferent Coupling Between Objects"
+        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.EfferentObjectCouplingInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

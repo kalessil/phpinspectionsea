@@ -4,20 +4,19 @@ import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitTestsInspector;
 
 final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCase {
-    public void testIfFindsCoversAnnotationPatterns() {
-        PhpUnitTestsInspector inspector = new PhpUnitTestsInspector();
-        inspector.WORKAROUND_COVERS_REFERENCES = false;
+    public void testIfFindsSameNotSamePatterns() {
+        PhpUnitTestsInspector inspector     = new PhpUnitTestsInspector();
+        inspector.SUGGEST_TO_USE_ASSERTSAME = true;
 
-        myFixture.configureByFile("fixtures/phpUnit/covers-annotation.php");
+        myFixture.configureByFile("fixtures/phpUnit/assert-same-not-same.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }
-    public void testIfFindsCoversAnnotationPatternsResolveRefsByOwn() {
-        PhpUnitTestsInspector inspector = new PhpUnitTestsInspector();
-        inspector.WORKAROUND_COVERS_REFERENCES = true;
+
+    public void testIfFindsCoversAnnotationPatterns() {
+        myFixture.enableInspections(new PhpUnitTestsInspector());
 
         myFixture.configureByFile("fixtures/phpUnit/covers-annotation.php");
-        myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }
 
@@ -34,12 +33,14 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.configureByFile("fixtures/phpUnit/assert-null-not-null.php");
         myFixture.testHighlighting(true, false, true);
     }
+
     public void testIfFindsAssetTrueNotTruePatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
 
         myFixture.configureByFile("fixtures/phpUnit/assert-true-not-true.php");
         myFixture.testHighlighting(true, false, true);
     }
+
     public void testIfFindsAssetFalseNotFalsePatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
 

@@ -95,6 +95,7 @@ Hot-fix release; you can now support us via <a href="https://www.patreon.com/kal
 + '(mb_)strlen(...)' misused: QF implemented<br/>
 <br/>
 - Declaration access can be weaker: implemented (thank you @rentalhost)<br/>
++ Declare directive correctness: implemented<br/>
 + Inverted 'if-else' constructs: implemented (needs activation; thank you @rentalhost)<br/>
 - Mocking correctness: implemented<br/>
 - Passing arguments by reference correctness: implemented<br/>
@@ -470,6 +471,14 @@ Hot-fix release; you can now support us via <a href="https://www.patreon.com/kal
         shortName="ClassConstantUsageCorrectnessInspection"       displayName="::class constant usage correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ClassConstantUsageCorrectnessInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ClassConstantUsageCorrectnessInspection"       displayName="::class constant usage correctness"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ClassConstantUsageCorrectnessInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="DeclareDirectiveCorrectnessInspection"         displayName="Declare directive correctness"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.DeclareDirectiveCorrectnessInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

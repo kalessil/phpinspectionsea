@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ThrowRawExcept
 
 final public class ThrowRawExceptionInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(ThrowRawExceptionInspector.class);
+        myFixture.enableInspections(new ThrowRawExceptionInspector());
 
         myFixture.configureByFile("fixtures/codeStyle/throw-raw-exception.php");
         myFixture.testHighlighting(true, false, true);

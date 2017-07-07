@@ -24,7 +24,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ThrowRawExceptionInspector extends BasePhpInspection {
-    private static final String message = "\\Exception is too general. Consider throwing one of SPL exceptions instead.";
+    private static final String messageRawException = "\\Exception is too general. Consider throwing one of SPL exceptions instead.";
+    private static final String messageNoArguments  = "The exception is throw with any message, please make a favor to yourself and add it.";
 
     @NotNull
     public String getShortName() {
@@ -38,10 +39,15 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
             public void visitPhpThrow(PhpThrow throwStatement) {
                 final PsiElement argument = throwStatement.getArgument();
                 if (argument instanceof NewExpression) {
-                    final ClassReference classReference = ((NewExpression) argument).getClassReference();
+                    final NewExpression newExpression   = (NewExpression) argument;
+                    final ClassReference classReference = newExpression.getClassReference();
                     final String classFqn               = null == classReference ? null : classReference.getFQN();
-                    if (null != classFqn && classFqn.equals("\\Exception")) {
-                        holder.registerProblem(classReference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
+                    if (classFqn != null) {
+                        if (classFqn.equals("\\Exception")) {
+                            holder.registerProblem(classReference, messageRawException, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
+                        } else if (newExpression.getParameters().length == 0) {
+                            holder.registerProblem(newExpression, messageNoArguments, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        }
                     }
                 }
             }

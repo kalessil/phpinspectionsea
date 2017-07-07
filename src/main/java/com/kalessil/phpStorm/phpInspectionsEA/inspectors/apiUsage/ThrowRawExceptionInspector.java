@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ThrowRawExceptionInspector extends BasePhpInspection {
     private static final String messageRawException = "\\Exception is too general. Consider throwing one of SPL exceptions instead.";
-    private static final String messageNoArguments  = "The exception is throw with any message, please make a favor to yourself and add it.";
+    private static final String messageNoArguments  = "The exception is throw without any message, please make a favor to yourself and add it.";
 
     @NotNull
     public String getShortName() {

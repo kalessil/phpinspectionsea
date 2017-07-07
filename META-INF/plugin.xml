@@ -76,10 +76,12 @@ Hot-fix release; you can now support us via <a href="https://www.patreon.com/kal
 - 'isset(...)' usage: resolved false-positives (global context)<br/>
 - ::class can be used: resolved false-positives (language level considered)<br/>
 <br/>
++ Badly organized exception handling: new patterns<br/>
 - Callable calls in loops termination condition: QF implemented (thank you @rentalhost)<br/>
 - Class overrides a field of a parent class: new patterns<br/>
 - Class property initialization flaws: new patterns<br/>
 + Could be replaced with '(array) ...': QF implemented, new patterns<br/>
++ General '\Exception' is thrown: new patterns<br/>
 - If-return-return could be simplified: QF bug-fix (condition parts were lost)<br/>
 - Isset operations variables existence: new patterns<br/>
 - Null reference: new patterns<br/>

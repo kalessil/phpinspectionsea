@@ -739,7 +739,7 @@ Hot-fix release; you can now support us via <a href="https://www.patreon.com/kal
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="BadExceptionsProcessingInspection"               displayName="Badly organized exception handling"
-        groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
+        groupName="Architecture"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.BadExceptionsProcessingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MoreThanThreeArgumentsInspection"                displayName="Too many parameters in a callable"

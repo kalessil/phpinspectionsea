@@ -43,7 +43,7 @@ public class BadExceptionsProcessingInspector extends BasePhpInspection {
                 final int expressionsCount = body == null ? 0 : ExpressionSemanticUtil.countExpressionsInGroup(body);
                 if (expressionsCount > 3) {
                     final String message = messagePattern.replace("%c%", String.valueOf(expressionsCount));
-                    holder.registerProblem(tryStatement.getFirstChild(), message, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(tryStatement.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }
 
@@ -62,9 +62,9 @@ public class BadExceptionsProcessingInspector extends BasePhpInspection {
                     }
                     if (!isVariableUsed) {
                         if (ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
-                            holder.registerProblem(variable, messageFailSilently, ProblemHighlightType.WEAK_WARNING);
+                            holder.registerProblem(variable, messageFailSilently, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         } else {
-                            holder.registerProblem(variable, messageChainedException, ProblemHighlightType.WEAK_WARNING);
+                            holder.registerProblem(variable, messageChainedException, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         }
                     }
                 }

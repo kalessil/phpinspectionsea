@@ -69,7 +69,7 @@ Hot-fix release; you can now support us via <a href="https://www.patreon.com/kal
 - Senseless proxy function: resolved false-positives (return type changed)<br/>
 + Slow alter in foreach: resolved false-positives (intermediate throw)<br/>
 - Summer-time unsafe date manipulations: resolved false-positives (context aware now)<br/>
-- Suspicious assignments: resolved false-positives (assignment by reference)<br/>
++ Suspicious assignments: resolved false-positives (multiple cases)<br/>
 - Too many parameters in a callable: resolved false-positives (UTs context)<br/>
 - Unnecessary arguments specification: resolved false-positives (in_array, array_search)<br/>
 + Variable functions usage: QF bug-fix<br/>

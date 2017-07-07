@@ -45,9 +45,14 @@ final public class SequentialAssignmentsStrategy {
 
     static private boolean isArrayPush(@NotNull PsiElement container) {
         boolean result = false;
-        if (container instanceof ArrayAccessExpression) {
-            final ArrayIndex index = ((ArrayAccessExpression) container).getIndex();
-            result = null != index && null == index.getValue();
+        while (container instanceof ArrayAccessExpression) {
+            final ArrayAccessExpression expression = (ArrayAccessExpression) container;
+            final ArrayIndex index                 = expression.getIndex();
+            if (index != null && index.getValue() == null) {
+                result = true;
+                break;
+            }
+            container = expression.getValue();
         }
         return result;
     }

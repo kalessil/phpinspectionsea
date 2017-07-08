@@ -51,9 +51,9 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                             /* the resolved class will accumulate case issue in it's FQN */
                             final String clazzFqn       = clazz.getFQN();
                             final List<String> variants = this.getVariants(clazz, (PhpClass) resolved);
-                            if (!variants.isEmpty() && clazzFqn != null) {
+                            if (clazzFqn != null && !variants.isEmpty()) {
                                 final String implicitQn = variants.iterator().next();
-                                if (!implicitQn.equals(referencedQn) && !clazzFqn.endsWith(implicitQn)) {
+                                if (!implicitQn.equals(referencedQn)) {
                                     holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                                 }
                             }
@@ -85,17 +85,20 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                         current = current.getParent();
                     }
 
+                    final String classFqn = clazz.getFQN();
                     if (referenceText.contains("\\")) {
                         /* RQN specified, check if resolved class in the same NS */
-                        if (namespace != null && !namespace.getFQN().equals("\\")) {
-                            final String NsFqn = namespace.getFQN();
-                            if (clazz.getFQN().toLowerCase().startsWith(NsFqn.toLowerCase())) {
-                                result.add(NsFqn + "\\" + referenceText);
+                        final String NsFqn = namespace == null ? null : namespace.getFQN();
+                        if (NsFqn != null && !NsFqn.equals("\\")) {
+                            final String classFqnLowercase = classFqn.toLowerCase();
+                            if (classFqnLowercase.startsWith(NsFqn.toLowerCase())) {
+                                result.add(classFqn.substring(classFqn.length() - referenceText.length()));
+                            } else if (classFqnLowercase.endsWith("\\" + referenceText.toLowerCase())) {
+                                result.add(classFqn.substring(classFqn.length() - referenceText.length()));
                             }
                         }
                     } else {
                         /* imports (incl. aliases) */
-                        final String classFqn = clazz.getFQN();
                         for (final PhpUse use : PsiTreeUtil.findChildrenOfType(current, PhpUse.class)) {
                             if (use.getFQN().equalsIgnoreCase(classFqn)) {
                                 final String alias    = use.getAliasName();

@@ -1,15 +1,11 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -36,49 +32,31 @@ public class MktimeUsageInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
-                /* check parameters amount and name */
-                final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (
-                    StringUtil.isEmpty(functionName) ||
-                    !(
-                        (0 == params.length ||  7 == params.length) &&
-                        (functionName.equals("mktime") || functionName.equals("gmmktime"))
-                    )
-                ) {
-                    return;
-                }
-
-                /* report the issue */
-                if (0 == params.length) {
-                    holder.registerProblem(reference, messageUseTime, ProblemHighlightType.WEAK_WARNING, new UseTimeFunctionLocalFix());
-                } else {
-                    holder.registerProblem(params[6], messageParameterDeprecated, ProblemHighlightType.LIKE_DEPRECATED);
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                final String functionName       = reference.getName();
+                final PsiElement[] params       = reference.getParameters();
+                final boolean neededParamsCount = 0 == params.length || params.length == 7;
+                if (neededParamsCount && functionName != null && (functionName.equals("mktime") || functionName.equals("gmmktime"))) {
+                    if (params.length == 0) {
+                        holder.registerProblem(reference, messageUseTime, ProblemHighlightType.WEAK_WARNING, new UseTimeFunctionLocalFix("time()"));
+                    } else {
+                        holder.registerProblem(params[6], messageParameterDeprecated, ProblemHighlightType.LIKE_DEPRECATED);
+                    }
                 }
             }
         };
     }
 
-    private static class UseTimeFunctionLocalFix implements LocalQuickFix {
+    private static class UseTimeFunctionLocalFix extends UseSuggestedReplacementFixer {
         @NotNull
         @Override
         public String getName() {
-            return "Use time()";
+            return "Use time() instead";
         }
 
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return getName();
-        }
-
-        @Override
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference) {
-                expression.replace(PhpPsiElementFactory.createFunctionReference(project, "time()"));
-            }
+        UseTimeFunctionLocalFix(@NotNull String expression) {
+            super(expression);
         }
     }
 }

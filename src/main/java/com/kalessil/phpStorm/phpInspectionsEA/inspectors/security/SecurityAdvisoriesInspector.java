@@ -38,9 +38,11 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         /* more dev-packages  */
         developmentPackages.add("mockery/mockery");
         developmentPackages.add("behat/behat");
+        developmentPackages.add("phpspec/prophecy");
         developmentPackages.add("phpspec/phpspec");
         developmentPackages.add("composer/composer");
         developmentPackages.add("satooshi/php-coveralls");
+        developmentPackages.add("phpro/grumphp");
         /* SCA tools */
         developmentPackages.add("friendsofphp/php-cs-fixer");
         developmentPackages.add("squizlabs/php_codesniffer");
@@ -51,6 +53,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("phpmd/phpmd");
         developmentPackages.add("pdepend/pdepend");
         developmentPackages.add("sebastian/phpcpd");
+        developmentPackages.add("povils/phpmnd");
     }
 
     @NotNull

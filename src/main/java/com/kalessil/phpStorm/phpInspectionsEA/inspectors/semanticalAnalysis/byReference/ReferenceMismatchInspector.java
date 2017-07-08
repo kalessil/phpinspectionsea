@@ -22,6 +22,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ReferenceMismatchInspector extends BasePhpInspection {
@@ -69,7 +70,8 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
              */
 
             /* parameters by reference */
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 /* PHP7 seems to be ref mismatch free */
                 final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (phpVersion.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
@@ -79,7 +81,9 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                 /* older versions are still affected */
                 this.checkParameters(method.getParameters(), method);
             }
-            public void visitPhpFunction(Function function) {
+
+            @Override
+            public void visitPhpFunction(@NotNull Function function) {
                 /* PHP7 seems to be ref mismatch free */
                 final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (phpVersion.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
@@ -109,7 +113,8 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
             }
 
             /* = & variable/property patterns */
-            public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
+            @Override
+            public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
                 /* PHP7 seems to be ref mismatch free */
                 final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (phpVersion.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
@@ -144,7 +149,8 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
             }
 
             /* assign reference from function */
-            public void visitPhpMethodReference(MethodReference reference) {
+            @Override
+            public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 /* PHP7 seems to be ref mismatch free */
                 final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (phpVersion.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
@@ -154,7 +160,9 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                 /* older versions are still affected */
                 this.checkReferenceReturnedByCallable(reference);
             }
-            public void visitPhpFunctionCall(FunctionReference reference) {
+
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* PHP7 seems to be ref mismatch free */
                 final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (phpVersion.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
@@ -164,10 +172,10 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                 /* older versions are still affected */
                 this.checkReferenceReturnedByCallable(reference);
             }
-
 
             /* aggressive foreach optimization when value is reference */
-            public void visitPhpForeach(ForeachStatement foreach) {
+            @Override
+            public void visitPhpForeach(@NotNull ForeachStatement foreach) {
                 /* PHP7 seems to be ref mismatch free */
                 final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (phpVersion.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
@@ -198,20 +206,27 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
 
 
             private void inspectScopeForReferenceMissUsages(
-                    PhpEntryPointInstruction objEntryPoint,
-                    String strParameterName,
-                    HashSet<PsiElement> reportedItemsRegistry
+                @NotNull PhpEntryPointInstruction objEntryPoint,
+                @NotNull String strParameterName,
+                @NotNull Set<PsiElement> reportedItemsRegistry
             ) {
+                PsiElement previous;
+                PsiElement objExpression = null;
+
                 /* find usage inside scope */
                 PhpAccessVariableInstruction[] arrUsages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, strParameterName, false);
-                for (PhpAccessVariableInstruction objInstruction : arrUsages) {
-                    PsiElement objExpression = objInstruction.getAnchor().getParent();
+                for (final PhpAccessVariableInstruction objInstruction : arrUsages) {
+                    previous      = objExpression;
+                    objExpression = objInstruction.getAnchor().getParent();
 
                     /* collided with foreach index/value => bug */
                     if (objExpression instanceof ForeachStatement) {
-                        ForeachStatement foreach = (ForeachStatement) objExpression;
+                        final ForeachStatement foreach = (ForeachStatement) objExpression;
+                        if (previous instanceof PhpUnset) {
+                            break;
+                        }
 
-                        Variable foreachValue = foreach.getValue();
+                        final Variable foreachValue = foreach.getValue();
                         if (null != foreachValue && !StringUtil.isEmpty(foreachValue.getName()) && foreachValue.getName().equals(strParameterName)) {
                             if (!reportedItemsRegistry.contains(foreachValue)) {
                                 reportedItemsRegistry.add(foreachValue);
@@ -220,7 +235,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                             continue;
                         }
 
-                        Variable foreachKey = foreach.getKey();
+                        final Variable foreachKey = foreach.getKey();
                         if (null != foreachKey && !StringUtil.isEmpty(foreachKey.getName()) && foreachKey.getName().equals(strParameterName)) {
                             if (!reportedItemsRegistry.contains(foreachKey)) {
                                 reportedItemsRegistry.add(foreachKey);

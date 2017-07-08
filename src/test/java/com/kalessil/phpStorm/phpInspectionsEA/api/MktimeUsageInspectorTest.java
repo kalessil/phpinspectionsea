@@ -16,6 +16,5 @@ final public class MktimeUsageInspectorTest extends CodeInsightFixtureTestCase {
         }
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/api/mktime.fixed.php");
-
     }
 }

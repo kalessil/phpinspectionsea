@@ -10,13 +10,11 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-
-import java.util.ArrayList;
-import java.util.Collection;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-
-import org.jetbrains.annotations.NotNull;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.

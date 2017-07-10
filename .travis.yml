@@ -6,7 +6,7 @@ notifications:
 language: java
 addons:
   apt_packages:
-    - php5
+    - php5-cli
 
 matrix:
   include:

@@ -9,7 +9,7 @@
     }
 
     /* collect documented rules */
-    $documentedRules = [];
+    $documentedRules = array();
     foreach ($rules as $lineNumber => $lineContent) {
         $lineContent = trim($lineContent);
         if (false !== stripos($lineContent, 'inspect') && false !== strpos($lineContent, '|')) {
@@ -30,7 +30,7 @@
     }
 
     /* collect manifest rules */
-    $definedRules = [];
+    $definedRules = array();
     foreach ($manifest->xpath('//localInspection') as $inspectionDefinition) {
         $attributes  = $inspectionDefinition->attributes();
 
@@ -59,7 +59,7 @@
         exit(-1);
     }
     /* step 3: report outdated documentation */
-    $outdated = [];
+    $outdated = array();
     foreach ($definedRules as $shortName => $valueObject) {
         if ((array)$valueObject != (array)$documentedRules[$shortName]) {
             $outdated []= $shortName;

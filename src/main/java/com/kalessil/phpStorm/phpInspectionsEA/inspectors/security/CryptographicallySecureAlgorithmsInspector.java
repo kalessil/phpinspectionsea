@@ -64,7 +64,7 @@ public class CryptographicallySecureAlgorithmsInspector extends BasePhpInspectio
 
     @NotNull
     public String getShortName() {
-        return "CryptographicallySecureAlgorithms";
+        return "CryptographicallySecureAlgorithmsInspection";
     }
 
     @Override

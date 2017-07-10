@@ -429,10 +429,6 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ClassConstantUsageCorrectnessInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="ClassConstantUsageCorrectnessInspection"       displayName="::class constant usage correctness"
-        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ClassConstantUsageCorrectnessInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DeclareDirectiveCorrectnessInspection"         displayName="Declare directive correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.DeclareDirectiveCorrectnessInspector"/>
@@ -479,7 +475,7 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.CryptographicallySecureRandomnessInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-         shortName="CryptographicallySecureAlgorithms"             displayName="Cryptographically secure algorithms"
+         shortName="CryptographicallySecureAlgorithmsInspection"   displayName="Cryptographically secure algorithms"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.CryptographicallySecureAlgorithmsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

@@ -18,7 +18,13 @@ namespace SecondNamespace {
     ];
 }
 namespace SecondNamespace\SubSpace {
+    use FirstNamespace\TestClass;
+
     class SubSpaceClass {}
+
+    return [
+        TestClass::class
+    ];
 }
 
 namespace ThirdNamespace {

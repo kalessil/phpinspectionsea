@@ -110,7 +110,11 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                                     /* resolve the imported class, as it's the source for correct naming */
                                     final PsiElement resolved = ((ClassReference) what).resolve();
                                     if (resolved instanceof PhpClass) {
-                                        result.add(((PhpClass) resolved).getFQN());
+                                        final PhpClass resolvedImport = (PhpClass) resolved;
+                                        final boolean importPrecise   = resolvedImport.getFQN().endsWith(what.getText());
+                                        if (!importPrecise || !resolvedImport.getName().equals(referenceText)) {
+                                            result.add(resolvedImport.getFQN());
+                                        }
                                     }
                                 }
                                 break;

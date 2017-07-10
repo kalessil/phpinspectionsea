@@ -81,5 +81,5 @@ fi
 
 # run tests
 echo "Running from: " `pwd`
-php ./.travis/rules-list-check.php || { echo "RULES.md is out of date, please check logs below"; exit 1; }
+php -f ./.travis/rules-list-check.php || { echo "RULES.md is out of date, please check logs below"; exit 1; }
 ant -f ./.travis/ant-build.xml -DIDEA_HOME=./idea || { echo "Build has failed, please check logs below"; exit 1; }

@@ -1,9 +1,13 @@
-sudo:     false
+sudo:     true
 
 notifications:
   email:  false
 
 language: java
+addons:
+  apt_packages:
+    - php5
+    - php5-simplexml
 
 matrix:
   include:

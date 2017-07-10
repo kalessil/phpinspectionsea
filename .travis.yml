@@ -4,6 +4,9 @@ notifications:
   email:  false
 
 language: java
+addons:
+  apt_packages:
+    - php5-cli
 
 matrix:
   include:

@@ -44,7 +44,7 @@ Inspections Lists (Control flow)
 | Control Flow         | StringNormalizationInspection                   | Strings normalization                                                             | yes | yes | no   | no  |
 | Control Flow         | RedundantElseClauseInspection                   | Redundant 'else' keyword                                                          | yes | yes | no   | no  |
 | Control Flow         | InvertedIfElseConstructsInspection              | Inverted 'if-else' constructs                                                     | yes | yes | yes  | no  |
-| Control Flow         | StringCaseManipulationInspection                | Unnecessary string case manipulation                                              | |
+| Control Flow         | StringCaseManipulationInspection                | Unnecessary string case manipulation                                              | yes | yes | yes  | yes |
 
 Inspections Lists (PhpUnit)
 ---
@@ -110,8 +110,8 @@ Inspections Lists (Code style)
 | Code Style           | UnknownInspectionInspection                     | Unknown inspection suppression                      | n/a | yes | n/a  | no  |
 | Code Style           | ParameterDefaultValueIsNotNullInspection        | Non-null parameters default value                   | n/a | yes | n/a  | yes |
 | Code Style           | MisorderedModifiersInspection                   | PSR-compliant modifiers order                       | yes | yes | yes  | no  |
-| Code Style           | DisallowWritingIntoStaticPropertiesInspection   | Disallow writing into static properties             | |
-| Code Style           | UsageOfSilenceOperatorInspection                | Usage of the silence operator                       | |
+| Code Style           | DisallowWritingIntoStaticPropertiesInspection   | Disallow writing into static properties             | n/a | yes | n/a  | no  |
+| Code Style           | UsageOfSilenceOperatorInspection                | Usage of the silence operator                       | yes | yes | no   | yes |
 
 Inspections Lists (Language level migration)
 ---
@@ -130,7 +130,7 @@ Inspections Lists (Language level migration)
 | Language level migration | PowerOperatorCanBeUsedInspection                | Power operator can be used                          | yes | yes | no   | no  |
 | Language level migration | ConstantCanBeUsedInspection                     | A constant can be used                              | yes | yes | yes  | no  |
 | Language level migration | ArgumentUnpackingCanBeUsedInspection            | Argument unpacking can be used                      | yes | yes | no   | no  |
-| Language level migration | ReturnTypeCanBeDeclaredInspection               | Return type hint can be used                        | |
+| Language level migration | ReturnTypeCanBeDeclaredInspection               | Return type hint can be used                        | yes | yes | yes  | no  |
 
 Inspections Lists (Architecture)
 ---
@@ -146,8 +146,8 @@ Inspections Lists (Architecture)
 | Architecture         | OverridingDeprecatedMethodInspection            | Overriding deprecated methods                       | n/a | yes | n/a  | yes |
 | Architecture         | LowerAccessLevelInspection                      | Declaration access can be weaker                    | yes | yes | yes  | no  |
 | Architecture         | ClassReImplementsParentInterfaceInspection      | Class implements interfaces multiple times          | yes | yes | no   | no  |
-| Architecture         | MultipleReturnStatementsInspection              | Multiple return statements usage                    | |
-| Architecture         | EfferentObjectCouplingInspection                | Efferent coupling between objects                   | |
+| Architecture         | MultipleReturnStatementsInspection              | Multiple return statements usage                    | n/a | yes | n/a  | yes |
+| Architecture         | EfferentObjectCouplingInspection                | Efferent coupling between objects                   | n/a | yes | n/a  | no  |
 
 Inspections Lists (Probable bugs)
 ---
@@ -179,14 +179,14 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | IncompleteThrowStatementsInspection             | Incomplete throw statements                               | yes | yes | no   | no  |
 | Probable bugs        | AutoloadingIssuesInspection                     | Class autoloading correctness                             | n/a | yes | n/a  | no  |
 | Probable bugs        | IssetArgumentExistenceInspection                | Isset operations variables existence                      | n/a | yes | n/a  | no  |
-| Probable bugs        | TraitsPropertiesConflictsInspection             | Traits properties conflicts resolution                    | |
-| Probable bugs        | NullPointerExceptionInspection                  | Null reference                                            | |
-| Probable bugs        | MissingIssetImplementationInspection            | Empty/isset results correctness                           | |
-| Probable bugs        | CallableMethodValidityInspection                | Callable methods validity                                 | |
-| Probable bugs        | PassingByReferenceCorrectnessInspection         | Passing arguments by reference correctness                | |
-| Probable bugs        | MockingFinalClassesInspection                   | Mocking correctness                                       | |
-| Probable bugs        | ClassConstantUsageCorrectnessInspection         | ::class constant usage correctness                        | |
-| Probable bugs        | DeclareDirectiveCorrectnessInspection           | Declare directive correctness                             | |
+| Probable bugs        | TraitsPropertiesConflictsInspection             | Traits properties conflicts resolution                    | n/a | yes | n/a  | no  |
+| Probable bugs        | NullPointerExceptionInspection                  | Null reference                                            | n/a | yes | n/a  | yes |
+| Probable bugs        | MissingIssetImplementationInspection            | Empty/isset results correctness                           | n/a | yes | n/a  | no  |
+| Probable bugs        | CallableMethodValidityInspection                | Callable methods validity                                 | n/a | yes | n/a  | no  |
+| Probable bugs        | PassingByReferenceCorrectnessInspection         | Passing arguments by reference correctness                | n/a | yes | n/a  | no  |
+| Probable bugs        | MockingFinalClassesInspection                   | Mocking correctness                                       | n/a | yes | n/a  | no  |
+| Probable bugs        | ClassConstantUsageCorrectnessInspection         | ::class constant usage correctness                        | n/a | yes | n/a  | no  |
+| Probable bugs        | DeclareDirectiveCorrectnessInspection           | Declare directive correctness                             | n/a | yes | n/a  | no  |
 
 Inspections Lists (Security)
 ---

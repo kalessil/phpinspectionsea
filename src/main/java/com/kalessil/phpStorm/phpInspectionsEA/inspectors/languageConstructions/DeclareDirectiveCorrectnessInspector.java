@@ -46,7 +46,7 @@ public class DeclareDirectiveCorrectnessInspector extends BasePhpInspection {
                 final String declarationText = declaration == null ? null : declaration.getText();
                 if (declarationText != null && declarationText.indexOf('=') != -1) {
                     final String directive = declarationText.split("=")[0];
-                    if (!directives.contains(directive)) {
+                    if (!directives.contains(directive.trim())) {
                         final String message = messagePattern.replace("%d%", directive);
                         holder.registerProblem(declare, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                     }

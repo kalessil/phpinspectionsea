@@ -14,6 +14,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class SenselessTernaryOperatorInspector extends BasePhpInspection {
     private static final String patternUseOperands = "Can be replaced with '%o%'.";
 
@@ -26,47 +35,36 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpTernaryExpression(TernaryExpression expression) {
-                final PsiElement trueVariant  = expression.getTrueVariant();
-                final PsiElement falseVariant = expression.getFalseVariant();
-                final PsiElement condition    = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
-                /* TODO: resolve type of other expressions */
-                if (null == trueVariant || null == falseVariant || !(condition instanceof BinaryExpression)) {
-                    return;
+            @Override
+            public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
+                final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+                if (condition instanceof BinaryExpression) {
+                    final BinaryExpression binary    = (BinaryExpression) condition;
+                    final IElementType operationType = binary.getOperationType();
+                    final boolean isTargetOperation
+                        = operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opNOT_IDENTICAL;
+                    if (isTargetOperation) {
+                        final boolean isInverted      = operationType == PhpTokenTypes.opNOT_IDENTICAL;
+                        final PsiElement trueVariant  = isInverted ? expression.getFalseVariant() : expression.getTrueVariant();
+                        final PsiElement falseVariant = isInverted ? expression.getTrueVariant() : expression.getFalseVariant();
+                        final PsiElement value        = binary.getRightOperand();
+                        final PsiElement subject      = binary.getLeftOperand();
+                        if (trueVariant != null && falseVariant != null && value != null && subject != null) {
+                            final boolean isLeftPartReturned = (
+                                PsiEquivalenceUtil.areElementsEquivalent(value, trueVariant) ||
+                                PsiEquivalenceUtil.areElementsEquivalent(value, falseVariant)
+                            );
+                            final boolean isRightPartReturned = (isLeftPartReturned && (
+                                PsiEquivalenceUtil.areElementsEquivalent(subject, falseVariant) ||
+                                PsiEquivalenceUtil.areElementsEquivalent(subject, trueVariant)
+                            ));
+                            if (isLeftPartReturned && isRightPartReturned) {
+                                final String message = patternUseOperands.replace("%o%", falseVariant.getText());
+                                holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING);
+                            }
+                        }
+                    }
                 }
-
-                final BinaryExpression binaryExpression = (BinaryExpression) condition;
-                final PsiElement operation              = binaryExpression.getOperation();
-                if (null == operation) {
-                    return;
-                }
-
-                final IElementType operationType = operation.getNode().getElementType();
-                final boolean isTargetOperation  = operationType == PhpTokenTypes.opEQUAL || operationType == PhpTokenTypes.opIDENTICAL;
-                if (!isTargetOperation) {
-                    return;
-                }
-
-                final PsiElement leftOperand  = binaryExpression.getLeftOperand();
-                final PsiElement rightOperand = binaryExpression.getRightOperand();
-                if (null == leftOperand || null == rightOperand) {
-                    return;
-                }
-
-                final boolean isLeftPartReturned = (
-                    PsiEquivalenceUtil.areElementsEquivalent(leftOperand, trueVariant) ||
-                    PsiEquivalenceUtil.areElementsEquivalent(leftOperand, falseVariant)
-                );
-                final boolean isRightPartReturned = (isLeftPartReturned && (
-                    PsiEquivalenceUtil.areElementsEquivalent(rightOperand, falseVariant) ||
-                    PsiEquivalenceUtil.areElementsEquivalent(rightOperand, trueVariant)
-                ));
-                if (!isLeftPartReturned || !isRightPartReturned) {
-                    return;
-                }
-
-                final String message = patternUseOperands.replace("%o%", rightOperand.getText());
-                holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING);
             }
         };
     }

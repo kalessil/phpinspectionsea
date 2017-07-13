@@ -60,7 +60,7 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
                             ));
                             if (isLeftPartReturned && isRightPartReturned) {
                                 final String message = patternUseOperands.replace("%o%", falseVariant.getText());
-                                holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING);
+                                holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                             }
                         }
                     }

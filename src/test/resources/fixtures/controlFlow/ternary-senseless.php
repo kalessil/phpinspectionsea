@@ -1,14 +1,14 @@
 <?php
 
-    <weak_warning descr="Can be replaced with '$y'.">$x === $y ? $x : $y</weak_warning>;
-    <weak_warning descr="Can be replaced with '$x'.">$x !== $y ? $x : $y</weak_warning>;
+    <warning descr="Can be replaced with '$y'.">$x === $y ? $x : $y</warning>;
+    <warning descr="Can be replaced with '$x'.">$x !== $y ? $x : $y</warning>;
 
-    <weak_warning descr="Can be replaced with '$x'.">$x === 0 ? 0 : $x</weak_warning>;
-    <weak_warning descr="Can be replaced with '$x'.">$x !== 0 ? $x : 0</weak_warning>;
-    <weak_warning descr="Can be replaced with '0'.">$x === 0 ? $x : 0</weak_warning>;
-    <weak_warning descr="Can be replaced with '0'.">$x !== 0 ? 0 : $x</weak_warning>;
+    <warning descr="Can be replaced with '$x'.">$x === 0 ? 0 : $x</warning>;
+    <warning descr="Can be replaced with '$x'.">$x !== 0 ? $x : 0</warning>;
+    <warning descr="Can be replaced with '0'.">$x === 0 ? $x : 0</warning>;
+    <warning descr="Can be replaced with '0'.">$x !== 0 ? 0 : $x</warning>;
 
-    <weak_warning descr="Can be replaced with '$x'.">$x === '' ? '' : $x</weak_warning>;
+    <warning descr="Can be replaced with '$x'.">$x === '' ? '' : $x</warning>;
 
     /* false-positives */
     $x == $y ? $x : $y;

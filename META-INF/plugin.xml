@@ -492,7 +492,7 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SenselessTernaryOperatorInspection"            displayName="Suspicious ternary operator"
-        groupName="Confusing constructs"                          enabledByDefault="true" level="ERROR"
+        groupName="Confusing constructs"                          enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.SenselessTernaryOperatorInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ClassMethodNameMatchesFieldNameInspection"     displayName="Method name matches existing field name"

@@ -23,12 +23,7 @@ import java.util.regex.Pattern;
  */
 
 final public class PlainApiUseCheckStrategy {
-    private static final String patternStringIdentical   = "'%e%' can be used instead.";
-    private static final String patternStartsWith        = "'%e%' can be used instead.";
-    private static final String patternContains          = "'%e%' can be used instead.";
-    private static final String patternStringReplace     = "'%e%' can be used instead.";
-    private static final String patternExplodeCanBeUsed  = "'%e%' can be used instead.";
-    private static final String patternTrim              = "'%e%' can be used instead.";
+    private static final String messagePattern = "'%e%' can be used instead.";
 
     final static private Pattern regexTextSearch;
     static {
@@ -72,32 +67,32 @@ final public class PlainApiUseCheckStrategy {
                 final boolean endsWith   = !StringUtil.isEmpty(regexMatcher.group(3));
 
                 /* analyse if pattern is the one strategy targeting */
-                String messagePattern = null;
-                LocalQuickFix fixer   = null;
+                String message      = null;
+                LocalQuickFix fixer = null;
 
                 if (parametersCount == 2 && functionName.equals("preg_match")) {
                     if (startWith && endsWith && !ignoreCase) {
                         final String replacement = "\"%p%\" === %s%"
                             .replace("%p%", regexMatcher.group(2))
                             .replace("%s%", params[1].getText());
-                        messagePattern = patternStringIdentical.replace("%e%", replacement);
-                        fixer          = new UseStringComparisonFix(replacement);
+                        message = messagePattern.replace("%e%", replacement);
+                        fixer   = new UseStringComparisonFix(replacement);
                     } else if (startWith && !endsWith) {
                         // mixed strpos ( string $haystack , mixed $needle [, int $offset = 0 ] )
                         final String replacement = "0 === %f%(%s%, \"%p%\")"
                             .replace("%p%", regexMatcher.group(2))
                             .replace("%s%", params[1].getText())
                             .replace("%f%", ignoreCase ? "stripos" : "strpos");
-                        messagePattern = patternStartsWith.replace("%e%", replacement);
-                        fixer          = new UseStringPositionFix(replacement);
+                        message = messagePattern.replace("%e%", replacement);
+                        fixer   = new UseStringPositionFix(replacement);
                     } else if (!startWith && !endsWith) {
                         // mixed strpos ( string $haystack , mixed $needle [, int $offset = 0 ] )
                         final String replacement = "false !== %f%(%s%, \"%p%\")"
                             .replace("%p%", regexMatcher.group(2))
                             .replace("%s%", params[1].getText())
                             .replace("%f%", ignoreCase ? "stripos" : "strpos");
-                        messagePattern = patternContains.replace("%e%", replacement);
-                        fixer          = new UseStringPositionFix(replacement);
+                        message = messagePattern.replace("%e%", replacement);
+                        fixer   = new UseStringPositionFix(replacement);
                     }
                 } else if (parametersCount == 3 && functionName.equals("preg_replace") && !startWith && !endsWith) {
                     // mixed str_replace ( mixed $search , mixed $replace , mixed $subject [, int &$count ] )
@@ -106,17 +101,12 @@ final public class PlainApiUseCheckStrategy {
                         .replace("%r%", params[1].getText())
                         .replace("%p%", regexMatcher.group(2))
                         .replace("%f%", ignoreCase ? "str_ireplace" : "str_replace");
-                    messagePattern = patternStringReplace.replace("%e%", replacement);
-                    fixer          = new UseStringReplaceFix(replacement);
+                    message = messagePattern.replace("%e%", replacement);
+                    fixer   = new UseStringReplaceFix(replacement);
                 }
 
-                if (messagePattern != null) {
-                    holder.registerProblem(
-                        reference,
-                        messagePattern.replace("%t%", regexMatcher.group(2)),
-                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                        fixer
-                    );
+                if (message != null) {
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixer);
                     return;
                 }
             }
@@ -146,7 +136,7 @@ final public class PlainApiUseCheckStrategy {
                     .replace("%f%", function);
                 holder.registerProblem(
                     reference,
-                    patternTrim.replace("%e%", replacement),
+                    messagePattern.replace("%e%", replacement),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     new UseTrimFix(replacement)
                 );
@@ -164,7 +154,7 @@ final public class PlainApiUseCheckStrategy {
                     .replace("%p%", patternAdapted);
                 holder.registerProblem(
                     reference,
-                    patternExplodeCanBeUsed.replace("%e%", replacement),
+                    messagePattern.replace("%e%", replacement),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     new UseExplodeFix(replacement)
                 );

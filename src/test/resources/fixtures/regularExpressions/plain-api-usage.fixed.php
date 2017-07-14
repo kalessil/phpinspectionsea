@@ -20,5 +20,9 @@
     preg_match('/^whatever.+/', $string);
     preg_match('/^whatever/',   $string, $matches);
     preg_match('/^whatever/i',  $string, $matches);
-    preg_match('/^whatever$/',  $string);
-    preg_match('/^whatever$/i', $string);
+
+    /* case: string comparison */
+    "whatever" === $string;
+    /* false-positives */
+    preg_match('/^whatever.+$/', $string);
+    preg_match('/^whatever$/i',  $string);

@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
  */
 
 final public class PlainApiUseCheckStrategy {
+    private static final String patternStringIdentical   = "'%e%' can be used instead.";
     private static final String patternStartsWith        = "'%e%' can be used instead.";
     private static final String patternContains          = "'%e%' can be used instead.";
     private static final String patternStringReplace     = "'%e%' can be used instead.";
@@ -31,7 +32,7 @@ final public class PlainApiUseCheckStrategy {
 
     final static private Pattern regexTextSearch;
     static {
-        regexTextSearch = Pattern.compile("^(\\^?)([\\w-]+)$");
+        regexTextSearch = Pattern.compile("^(\\^?)([\\w-]+)(\\$?)$");
     }
 
     final static private Pattern regexHasRegexAttributes;
@@ -68,12 +69,19 @@ final public class PlainApiUseCheckStrategy {
             if (regexMatcher.find()) {
                 final boolean ignoreCase = !StringUtil.isEmpty(modifiers) && modifiers.indexOf('i') != -1;
                 final boolean startWith  = !StringUtil.isEmpty(regexMatcher.group(1));
+                final boolean endsWith   = !StringUtil.isEmpty(regexMatcher.group(3));
 
                 /* analyse if pattern is the one strategy targeting */
                 String messagePattern = null;
                 LocalQuickFix fixer   = null;
-                // TODO: preg_match('/^whatever$/',  $string) -> "whatever" === $string
-                if (functionName.equals("preg_match") && startWith && params.length == 2) {
+
+                if (functionName.equals("preg_match") && startWith && endsWith && !ignoreCase && params.length == 2) {
+                    final String replacement = "\"%p%\" === %s%"
+                        .replace("%p%", regexMatcher.group(2))
+                        .replace("%s%", params[1].getText());
+                    messagePattern = patternStringIdentical.replace("%e%", replacement);
+                    fixer          = new UseStringComparisonFix(replacement);
+                } else if (functionName.equals("preg_match") && startWith && !endsWith && params.length == 2) {
                     // mixed strpos ( string $haystack , mixed $needle [, int $offset = 0 ] )
                     final String replacement = "0 === %f%(%s%, \"%p%\")"
                         .replace("%p%", regexMatcher.group(2))
@@ -81,7 +89,7 @@ final public class PlainApiUseCheckStrategy {
                         .replace("%f%", ignoreCase ? "stripos" : "strpos");
                     messagePattern = patternStartsWith.replace("%e%", replacement);
                     fixer          = new UseStringPositionFix(replacement);
-                } else if (functionName.equals("preg_match") && !startWith && params.length == 2) {
+                } else if (functionName.equals("preg_match") && !startWith && !endsWith && params.length == 2) {
                     // mixed strpos ( string $haystack , mixed $needle [, int $offset = 0 ] )
                     final String replacement = "false !== %f%(%s%, \"%p%\")"
                         .replace("%p%", regexMatcher.group(2))
@@ -89,7 +97,7 @@ final public class PlainApiUseCheckStrategy {
                         .replace("%f%", ignoreCase ? "stripos" : "strpos");
                     messagePattern = patternContains.replace("%e%", replacement);
                     fixer          = new UseStringPositionFix(replacement);
-                } else if (functionName.equals("preg_replace") && !startWith && params.length == 3) {
+                } else if (functionName.equals("preg_replace") && !startWith && !endsWith && params.length == 3) {
                     // mixed str_replace ( mixed $search , mixed $replace , mixed $subject [, int &$count ] )
                     final String replacement = "%f%(\"%p%\", %r%, %s%)"
                         .replace("%s%", params[2].getText())
@@ -158,6 +166,18 @@ final public class PlainApiUseCheckStrategy {
         }
 
         UseStringPositionFix(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private static class UseStringComparisonFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use string comparison instead";
+        }
+
+        UseStringComparisonFix(@NotNull String expression) {
             super(expression);
         }
     }

@@ -4,10 +4,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.jetbrains.php.lang.psi.elements.Variable;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.FunctionCallCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.PlainApiUseCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.classesStrategy.ShortClassDefinitionStrategy;
@@ -55,7 +53,8 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Deprecated
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String strFunctionName = reference.getName();
                 if (StringUtil.isEmpty(strFunctionName) || !functions.contains(strFunctionName)) {
                     return;
@@ -73,12 +72,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 }
 
                 final String regex = pattern.getContents();
-                if (!StringUtil.isEmpty(regex)) {
-                    /* do not process patterns with inline variables */
-                    if (regex.indexOf('$') >= 0 && PsiTreeUtil.findChildrenOfType(pattern, Variable.class).size() > 0) {
-                        return;
-                    }
-
+                if (!StringUtil.isEmpty(regex) && pattern.getFirstPsiChild() == null) {
                     Matcher regexMatcher = regexWithModifiers.matcher(regex);
                     if (regexMatcher.find()) {
                         final String phpRegexPattern   = regexMatcher.group(2);

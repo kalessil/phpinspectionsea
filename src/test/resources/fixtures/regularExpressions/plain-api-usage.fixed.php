@@ -26,3 +26,21 @@
     /* false-positives */
     preg_match('/^whatever.+$/', $string);
     preg_match('/^whatever$/i',  $string);
+
+    /* case: trim */
+    preg_replace('/^a+/', '', $string);
+    preg_replace('/^a*/', '', $string);
+    preg_replace('/a+$/', '', $string);
+    preg_replace('/a*$/', '', $string);
+    preg_replace('/^a+|a*$/', '', $string);
+    preg_replace('/^a*|a+$/', '', $string);
+    /* false-positives */
+    preg_replace('/^a+/', 'b', $string);
+    preg_replace('/a+$/', 'b', $string);
+    preg_replace('/^.+/', '', $string);
+    preg_replace('/^.*/', '', $string);
+    preg_replace('/.+$/', '', $string);
+    preg_replace('/.*$/', '', $string);
+    preg_replace('/^.+|a*$/', '', $string);
+    preg_replace('/^a*|.+$/', '', $string);
+    preg_replace('/^a*|b+$/', '', $string);

@@ -28,7 +28,7 @@ final public class PlainApiUseCheckStrategy {
     private static final String patternContains          = "'%e%' can be used instead.";
     private static final String patternStringReplace     = "'%e%' can be used instead.";
     private static final String patternExplodeCanBeUsed  = "'explode(\"...\", %s%%l%)' can be used instead.";
-    private static final String strProblemTrimsCanBeUsed = "'%f%(%s%, \"...\")' can be used instead.";
+    private static final String patternTrim              = "'%f%(%s%, \"...\")' can be used instead.";
 
     final static private Pattern regexTextSearch;
     static {
@@ -49,8 +49,8 @@ final public class PlainApiUseCheckStrategy {
 
     final static private Pattern trimPatterns;
     static {
-        // 	^((\^[^\.][\+\*])|([^\.][\+\*]\$)|(\^[^\.][\+\*]\|[^\.][\+\*]\$))$
-        trimPatterns = Pattern.compile("^((\\^[^\\.][\\+\\*])|([^\\.][\\+\\*]\\$)|(\\^[^\\.][\\+\\*]\\|[^\\.][\\+\\*]\\$))$");
+        // 	^((\^([^\.])[\+\*])|(([^\.])[\+\*]\$)|(\^([^\.])[\+\*]\|\7[\+\*]\$))$
+        trimPatterns = Pattern.compile("^((\\^([^\\.])[\\+\\*])|(([^\\.])[\\+\\*]\\$)|(\\^([^\\.])[\\+\\*]\\|\\7[\\+\\*]\\$))$");
     }
 
     static public void apply(
@@ -113,25 +113,28 @@ final public class PlainApiUseCheckStrategy {
                 if (messagePattern != null) {
                     final String message = messagePattern.replace("%t%", regexMatcher.group(2));
                     holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixer);
+                    return;
                 }
             }
 
             /* investigate using *trim(...) instead */
             if (
-                parametersCount == 3 && functionName.equals("preg_replace") && params[1] instanceof StringLiteralExpression &&
-                ((StringLiteralExpression) params[1]).getContents().length() == 0 && trimPatterns.matcher(patternAdapted).find()
+                parametersCount == 3 && functionName.equals("preg_replace") &&
+                params[1] instanceof StringLiteralExpression && params[1].getText().length() == 2 &&
+                trimPatterns.matcher(pattern).find()
             ) {
+                // mixed preg_replace ( mixed $pattern , mixed $replacement , mixed $subject [, int $limit = -1 [, int &$count ]] )
                 String function = "trim";
                 if (!pattern.startsWith("^")) {
                     function = "rtrim";
-                }
-                if (!pattern.endsWith("$")) {
+                } else if (!pattern.endsWith("$")) {
                     function = "ltrim";
                 }
+                // group(7) is the char to trim
 
-                final String message = strProblemTrimsCanBeUsed
-                        .replace("%f%", function)
-                        .replace("%s%", params[2].getText());
+                final String message = patternTrim
+                    .replace("%f%", function)
+                    .replace("%s%", params[2].getText());
                 holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
 

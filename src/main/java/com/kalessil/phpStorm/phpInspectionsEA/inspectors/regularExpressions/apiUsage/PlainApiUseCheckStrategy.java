@@ -23,13 +23,11 @@ import java.util.regex.Pattern;
  */
 
 final public class PlainApiUseCheckStrategy {
-    private static final String patternStartTreatCase     = "'0 === strpos(\"...\", \"%t%\")' can be used instead.";
-    private static final String patternStartIgnoreCase    = "'0 === stripos(\"...\", \"%t%\")' can be used instead.";
-    private static final String patternContainsTreatCase  = "'false !== strpos(\"...\", \"%t%\")' can be used instead.";
-    private static final String patternContainsIgnoreCase = "'false !== stripos(\"...\", \"%t%\")' can be used instead.";
-    private static final String patternStringReplace      = "'%e%' can be used instead.";
-    private static final String patternExplodeCanBeUsed   = "'explode(\"...\", %s%%l%)' can be used instead.";
-    private static final String strProblemTrimsCanBeUsed  = "'%f%(%s%, \"...\")' can be used instead.";
+    private static final String patternStartsWith        = "'%e%' can be used instead.";
+    private static final String patternContains          = "'%e%' can be used instead.";
+    private static final String patternStringReplace     = "'%e%' can be used instead.";
+    private static final String patternExplodeCanBeUsed  = "'explode(\"...\", %s%%l%)' can be used instead.";
+    private static final String strProblemTrimsCanBeUsed = "'%f%(%s%, \"...\")' can be used instead.";
 
     final static private Pattern regexTextSearch;
     static {
@@ -68,17 +66,31 @@ final public class PlainApiUseCheckStrategy {
 
             final Matcher regexMatcher = regexTextSearch.matcher(patternAdapted);
             if (regexMatcher.find()) {
-                final boolean ignoreCase = !StringUtil.isEmpty(modifiers) && modifiers.indexOf('i') >= 0;
+                final boolean ignoreCase = !StringUtil.isEmpty(modifiers) && modifiers.indexOf('i') != -1;
                 final boolean startWith  = !StringUtil.isEmpty(regexMatcher.group(1));
 
                 /* analyse if pattern is the one strategy targeting */
                 String messagePattern = null;
                 LocalQuickFix fixer   = null;
-                if (functionName.equals("preg_match") && startWith) {
-                    messagePattern = ignoreCase ? patternStartIgnoreCase : patternStartTreatCase;
-                } else if (functionName.equals("preg_match") && !startWith) {
-                    messagePattern = ignoreCase ? patternContainsIgnoreCase : patternContainsTreatCase;
+                // TODO: preg_match('/^whatever$/',  $string) -> "whatever" === $string
+                if (functionName.equals("preg_match") && startWith && params.length == 2) {
+                    // mixed strpos ( string $haystack , mixed $needle [, int $offset = 0 ] )
+                    final String replacement = "0 === %f%(%s%, \"%p%\")"
+                        .replace("%p%", regexMatcher.group(2))
+                        .replace("%s%", params[1].getText())
+                        .replace("%f%", ignoreCase ? "stripos" : "strpos");
+                    messagePattern = patternStartsWith.replace("%e%", replacement);
+                    fixer          = new UseStringPositionFix(replacement);
+                } else if (functionName.equals("preg_match") && !startWith && params.length == 2) {
+                    // mixed strpos ( string $haystack , mixed $needle [, int $offset = 0 ] )
+                    final String replacement = "false !== %f%(%s%, \"%p%\")"
+                        .replace("%p%", regexMatcher.group(2))
+                        .replace("%s%", params[1].getText())
+                        .replace("%f%", ignoreCase ? "stripos" : "strpos");
+                    messagePattern = patternContains.replace("%e%", replacement);
+                    fixer          = new UseStringPositionFix(replacement);
                 } else if (functionName.equals("preg_replace") && !startWith && params.length == 3) {
+                    // mixed str_replace ( mixed $search , mixed $replace , mixed $subject [, int &$count ] )
                     final String replacement = "%f%(\"%p%\", %r%, %s%)"
                         .replace("%s%", params[2].getText())
                         .replace("%r%", params[1].getText())
@@ -134,6 +146,18 @@ final public class PlainApiUseCheckStrategy {
         }
 
         UseStringReplaceFix(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private static class UseStringPositionFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use plain string search instead";
+        }
+
+        UseStringPositionFix(@NotNull String expression) {
             super(expression);
         }
     }

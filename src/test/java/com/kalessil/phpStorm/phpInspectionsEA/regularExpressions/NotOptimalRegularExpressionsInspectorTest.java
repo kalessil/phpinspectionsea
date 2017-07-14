@@ -47,16 +47,16 @@ final public class NotOptimalRegularExpressionsInspectorTest extends CodeInsight
         myFixture.testHighlighting(true, false, true);
     }
 
-    public void testPossibleStringReplaceUsages() {
+    public void testPossiblePlainApiUsages() {
         myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
 
-        myFixture.configureByFile("fixtures/regularExpressions/str-replace-usage.php");
+        myFixture.configureByFile("fixtures/regularExpressions/plain-api-usage.php");
         myFixture.testHighlighting(true, false, true);
 
         for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/regularExpressions/str-replace-usage.fixed.php");
+        myFixture.checkResultByFile("fixtures/regularExpressions/plain-api-usage.fixed.php");
     }
 }

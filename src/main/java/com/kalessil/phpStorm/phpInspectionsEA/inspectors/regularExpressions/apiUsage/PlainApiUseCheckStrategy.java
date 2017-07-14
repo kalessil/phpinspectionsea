@@ -11,14 +11,22 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PlainApiUseCheckStrategy {
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+final public class PlainApiUseCheckStrategy {
     private static final String strProblemStartTreatCase     = "'0 === strpos(\"...\", \"%t%\")' can be used instead.";
     private static final String strProblemStartIgnoreCase    = "'0 === stripos(\"...\", \"%t%\")' can be used instead.";
     private static final String strProblemContainsTreatCase  = "'false !== strpos(\"...\", \"%t%\")' can be used instead.";
     private static final String strProblemContainsIgnoreCase = "'false !== stripos(\"...\", \"%t%\")' can be used instead.";
-    private static final String strProblemReplaceTreatCase   = "'str_replace(\"%t%\", ...)' can be used instead.";
-    private static final String strProblemReplaceIgnoreCase  = "'str_ireplace(\"%t%\", ...)' can be used instead.";
-    private static final String strProblemCtypeCanBeUsed     = "'%r%((string) %p%)' can be used instead.";
+    private static final String patternReplaceRespectCase    = "'str_replace(\"%t%\", ...)' can be used instead.";
+    private static final String patternReplaceIgnoreCase     = "'str_ireplace(\"%t%\", ...)' can be used instead.";
     private static final String strProblemExplodeCanBeUsed   = "'explode(\"...\", %s%%l%)' can be used instead.";
     private static final String strProblemTrimsCanBeUsed     = "'%f%(%s%, \"...\")' can be used instead.";
 
@@ -57,7 +65,7 @@ public class PlainApiUseCheckStrategy {
                     .replace("a-zA-Z",    "A-Za-z")
                     .replace("0-9A-Za-z", "A-Za-z0-9");
 
-            Matcher regexMatcher = regexTextSearch.matcher(patternAdapted);
+            final Matcher regexMatcher = regexTextSearch.matcher(patternAdapted);
             if (regexMatcher.find()) {
                 final boolean ignoreCase = !StringUtil.isEmpty(modifiers) && modifiers.indexOf('i') >= 0;
                 final boolean startWith  = !StringUtil.isEmpty(regexMatcher.group(1));
@@ -70,8 +78,8 @@ public class PlainApiUseCheckStrategy {
                 if (functionName.equals("preg_match") && !startWith) {
                     strProblemDescription = ignoreCase ? strProblemContainsIgnoreCase : strProblemContainsTreatCase;
                 }
-                if (functionName.equals("preg_replace") && !startWith) {
-                    strProblemDescription = ignoreCase ? strProblemReplaceIgnoreCase : strProblemReplaceTreatCase;
+                if (functionName.equals("preg_replace") && !startWith && params.length == 3) {
+                    strProblemDescription = ignoreCase ? patternReplaceIgnoreCase : patternReplaceRespectCase;
                 }
 
                 if (null != strProblemDescription) {

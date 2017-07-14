@@ -75,29 +75,31 @@ final public class PlainApiUseCheckStrategy {
                 String messagePattern = null;
                 LocalQuickFix fixer   = null;
 
-                if (functionName.equals("preg_match") && startWith && endsWith && !ignoreCase && params.length == 2) {
-                    final String replacement = "\"%p%\" === %s%"
-                        .replace("%p%", regexMatcher.group(2))
-                        .replace("%s%", params[1].getText());
-                    messagePattern = patternStringIdentical.replace("%e%", replacement);
-                    fixer          = new UseStringComparisonFix(replacement);
-                } else if (functionName.equals("preg_match") && startWith && !endsWith && params.length == 2) {
-                    // mixed strpos ( string $haystack , mixed $needle [, int $offset = 0 ] )
-                    final String replacement = "0 === %f%(%s%, \"%p%\")"
-                        .replace("%p%", regexMatcher.group(2))
-                        .replace("%s%", params[1].getText())
-                        .replace("%f%", ignoreCase ? "stripos" : "strpos");
-                    messagePattern = patternStartsWith.replace("%e%", replacement);
-                    fixer          = new UseStringPositionFix(replacement);
-                } else if (functionName.equals("preg_match") && !startWith && !endsWith && params.length == 2) {
-                    // mixed strpos ( string $haystack , mixed $needle [, int $offset = 0 ] )
-                    final String replacement = "false !== %f%(%s%, \"%p%\")"
-                        .replace("%p%", regexMatcher.group(2))
-                        .replace("%s%", params[1].getText())
-                        .replace("%f%", ignoreCase ? "stripos" : "strpos");
-                    messagePattern = patternContains.replace("%e%", replacement);
-                    fixer          = new UseStringPositionFix(replacement);
-                } else if (functionName.equals("preg_replace") && !startWith && !endsWith && params.length == 3) {
+                if (params.length == 2 && functionName.equals("preg_match")) {
+                    if (startWith && endsWith && !ignoreCase) {
+                        final String replacement = "\"%p%\" === %s%"
+                            .replace("%p%", regexMatcher.group(2))
+                            .replace("%s%", params[1].getText());
+                        messagePattern = patternStringIdentical.replace("%e%", replacement);
+                        fixer          = new UseStringComparisonFix(replacement);
+                    } else if (startWith && !endsWith) {
+                        // mixed strpos ( string $haystack , mixed $needle [, int $offset = 0 ] )
+                        final String replacement = "0 === %f%(%s%, \"%p%\")"
+                            .replace("%p%", regexMatcher.group(2))
+                            .replace("%s%", params[1].getText())
+                            .replace("%f%", ignoreCase ? "stripos" : "strpos");
+                        messagePattern = patternStartsWith.replace("%e%", replacement);
+                        fixer          = new UseStringPositionFix(replacement);
+                    } else if (!startWith && !endsWith) {
+                        // mixed strpos ( string $haystack , mixed $needle [, int $offset = 0 ] )
+                        final String replacement = "false !== %f%(%s%, \"%p%\")"
+                            .replace("%p%", regexMatcher.group(2))
+                            .replace("%s%", params[1].getText())
+                            .replace("%f%", ignoreCase ? "stripos" : "strpos");
+                        messagePattern = patternContains.replace("%e%", replacement);
+                        fixer          = new UseStringPositionFix(replacement);
+                    }
+                } else if (params.length == 3 && functionName.equals("preg_replace") && !startWith && !endsWith) {
                     // mixed str_replace ( mixed $search , mixed $replace , mixed $subject [, int &$count ] )
                     final String replacement = "%f%(\"%p%\", %r%, %s%)"
                         .replace("%s%", params[2].getText())

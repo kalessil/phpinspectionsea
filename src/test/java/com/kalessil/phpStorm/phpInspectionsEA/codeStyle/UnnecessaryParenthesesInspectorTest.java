@@ -8,9 +8,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessaryPa
 final public class UnnecessaryParenthesesInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
+        myFixture.enableInspections(new UnnecessaryParenthesesInspector());
 
         myFixture.configureByFile("fixtures/codeStyle/unnecessary-parentheses.php");
-        myFixture.enableInspections(UnnecessaryParenthesesInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

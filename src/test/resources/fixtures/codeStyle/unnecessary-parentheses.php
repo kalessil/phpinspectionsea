@@ -29,4 +29,4 @@
 
     (function(){})();
 
-
+    $x = !($first = $x->prop)->with('data');

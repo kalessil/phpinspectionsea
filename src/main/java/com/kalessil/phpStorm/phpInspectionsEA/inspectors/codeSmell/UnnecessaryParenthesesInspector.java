@@ -91,6 +91,10 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                 if (!knowsLegalCases && isMemberReference && argument instanceof TernaryExpression) {
                     knowsLegalCases = true;
                 }
+                /* ( = )->...: allow method/property access on ternary operator */
+                if (!knowsLegalCases && isMemberReference && argument instanceof AssignmentExpression) {
+                    knowsLegalCases = true;
+                }
 
                 /* (...->property)(...), (...->method())(...), (function(){})(...): allow callable/__invoke calls */
                 if (

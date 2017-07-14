@@ -507,10 +507,6 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
         groupName="Confusing constructs"                          enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UselessReturnInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="ParameterByRefWithDefaultInspection"           displayName="Parameter passed by reference has default value"
-        groupName="Confusing constructs"                          enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.byReference.ParameterByRefWithDefaultInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ReferencingObjectsInspection"                  displayName="Referencing objects"
         groupName="Confusing constructs"                          enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ReferencingObjectsInspector"/>

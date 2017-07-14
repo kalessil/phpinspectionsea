@@ -75,7 +75,7 @@ final public class PlainApiUseCheckStrategy {
                 String messagePattern = null;
                 LocalQuickFix fixer   = null;
 
-                if (params.length == 2 && functionName.equals("preg_match")) {
+                if (parametersCount == 2 && functionName.equals("preg_match")) {
                     if (startWith && endsWith && !ignoreCase) {
                         final String replacement = "\"%p%\" === %s%"
                             .replace("%p%", regexMatcher.group(2))
@@ -99,7 +99,7 @@ final public class PlainApiUseCheckStrategy {
                         messagePattern = patternContains.replace("%e%", replacement);
                         fixer          = new UseStringPositionFix(replacement);
                     }
-                } else if (params.length == 3 && functionName.equals("preg_replace") && !startWith && !endsWith) {
+                } else if (parametersCount == 3 && functionName.equals("preg_replace") && !startWith && !endsWith) {
                     // mixed str_replace ( mixed $search , mixed $replace , mixed $subject [, int &$count ] )
                     final String replacement = "%f%(\"%p%\", %r%, %s%)"
                         .replace("%s%", params[2].getText())
@@ -118,7 +118,7 @@ final public class PlainApiUseCheckStrategy {
 
             /* investigate using *trim(...) instead */
             if (
-                3 == parametersCount && functionName.equals("preg_replace") && params[1] instanceof StringLiteralExpression &&
+                parametersCount == 3 && functionName.equals("preg_replace") && params[1] instanceof StringLiteralExpression &&
                 ((StringLiteralExpression) params[1]).getContents().length() == 0 && trimPatterns.matcher(patternAdapted).find()
             ) {
                 String function = "trim";
@@ -141,7 +141,7 @@ final public class PlainApiUseCheckStrategy {
                 (regexSingleCharSet.matcher(patternAdapted).find() || !regexHasRegexAttributes.matcher(patternAdapted).find())
             ) {
                 final String message = patternExplodeCanBeUsed
-                        .replace("%l%", params.length > 2 ? ", " + params[2].getText() : "")
+                        .replace("%l%", parametersCount > 2 ? ", " + params[2].getText() : "")
                         .replace("%s%", params[1].getText());
                 holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }

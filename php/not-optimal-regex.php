@@ -15,21 +15,6 @@ class aClass {
     }
 }
 
-    preg_match('/^start-with/',  '');                 //report
-    preg_match('/^starts-with/i', '');                //report
-    preg_match('/^start-with$/',  '');                //ok
-    preg_match('/^starts-with$/i', '');               //ok
-
-    preg_match('/contains/',  '');                    //report
-    preg_match('/contains/i', '');                    //report
-    preg_match('/contains$/',  '');                   //ok
-    preg_match('/contains$/i', '');                   //ok
-
-    preg_replace('/contains/',  '', '');              //report
-    preg_replace('/contains/i', '', '');              //report
-    preg_replace('/^contains/',  '', '');             //ok
-    preg_replace('/^contains/i', '', '');             //ok
-
     preg_match_all('/regex/', '');                    //ok
     if (preg_match_all('/regex/', '')) {}             //report
     if (preg_match_all("/regex$x/", '')) {}           //ok, due to inline var

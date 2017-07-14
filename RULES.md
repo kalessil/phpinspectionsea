@@ -78,7 +78,7 @@ Inspections Lists (Confusing constructs)
 ---
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
-| Confusing constructs | SenselessTernaryOperatorInspection              | Suspicious ternary operator                         | n/a | yes | n/a  | no  |
+| Confusing constructs | SenselessTernaryOperatorInspection              | Suspicious ternary operator                         | yes | yes | yes  | no  |
 | Confusing constructs | ClassMethodNameMatchesFieldNameInspection       | Method name matches existing field name             | n/a | yes | n/a  | no  |
 | Confusing constructs | NestedTernaryOperatorInspection                 | Nested ternary operator                             | no  | yes | no   | no  |
 | Confusing constructs | UselessReturnInspection                         | Useless return                                      | n/a | yes | n/a  | no  |

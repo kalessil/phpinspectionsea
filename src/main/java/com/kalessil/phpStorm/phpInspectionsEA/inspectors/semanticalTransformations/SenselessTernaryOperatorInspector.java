@@ -9,6 +9,7 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -59,13 +60,30 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
                                 PsiEquivalenceUtil.areElementsEquivalent(subject, trueVariant)
                             ));
                             if (isLeftPartReturned && isRightPartReturned) {
-                                final String message = patternUseOperands.replace("%o%", falseVariant.getText());
-                                holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                final String replacement = falseVariant.getText();
+                                holder.registerProblem(
+                                    expression,
+                                    patternUseOperands.replace("%o%", replacement),
+                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                                    new SimplifyFix(replacement)
+                                );
                             }
                         }
                     }
                 }
             }
         };
+    }
+
+    private class SimplifyFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Simplify the expression";
+        }
+
+        SimplifyFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

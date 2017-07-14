@@ -28,12 +28,15 @@
     preg_match('/^whatever$/i',  $string);
 
     /* case: trim */
-    preg_replace('/^a+/', '', $string);
-    preg_replace('/^a*/', '', $string);
-    preg_replace('/a+$/', '', $string);
-    preg_replace('/a*$/', '', $string);
-    preg_replace('/^a+|a*$/', '', $string);
-    preg_replace('/^a*|a+$/', '', $string);
+    ltrim($string, 'a');
+    ltrim($string, 'a');
+    rtrim($string, 'a');
+    rtrim($string, 'a');
+    trim($string, 'a');
+    trim($string, 'a');
+    ltrim($string);
+    rtrim($string);
+    trim($string);
     /* false-positives */
     preg_replace('/^a+/', 'b', $string);
     preg_replace('/a+$/', 'b', $string);

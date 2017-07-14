@@ -28,7 +28,7 @@ final public class PlainApiUseCheckStrategy {
     private static final String patternContains          = "'%e%' can be used instead.";
     private static final String patternStringReplace     = "'%e%' can be used instead.";
     private static final String patternExplodeCanBeUsed  = "'explode(\"...\", %s%%l%)' can be used instead.";
-    private static final String patternTrim              = "'%f%(%s%, \"...\")' can be used instead.";
+    private static final String patternTrim              = "'%e%' can be used instead.";
 
     final static private Pattern regexTextSearch;
     static {
@@ -49,8 +49,8 @@ final public class PlainApiUseCheckStrategy {
 
     final static private Pattern trimPatterns;
     static {
-        // 	^((\^([^\.])[\+\*])|(([^\.])[\+\*]\$)|(\^([^\.])[\+\*]\|\7[\+\*]\$))$
-        trimPatterns = Pattern.compile("^((\\^([^\\.])[\\+\\*])|(([^\\.])[\\+\\*]\\$)|(\\^([^\\.])[\\+\\*]\\|\\7[\\+\\*]\\$))$");
+        // ^((\^([^\.]|\\s)[\+\*])|(([^\.]|\\s)[\+\*]\$)|(\^([^\.]|\\s)[\+\*]\|\7[\+\*]\$))$
+        trimPatterns = Pattern.compile("^((\\^([^\\.]|\\\\s)[\\+\\*])|(([^\\.]|\\\\s)[\\+\\*]\\$)|(\\^([^\\.]|\\\\s)[\\+\\*]\\|\\7[\\+\\*]\\$))$");
     }
 
     static public void apply(
@@ -111,17 +111,22 @@ final public class PlainApiUseCheckStrategy {
                 }
 
                 if (messagePattern != null) {
-                    final String message = messagePattern.replace("%t%", regexMatcher.group(2));
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixer);
+                    holder.registerProblem(
+                        reference,
+                        messagePattern.replace("%t%", regexMatcher.group(2)),
+                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                        fixer
+                    );
                     return;
                 }
             }
 
             /* investigate using *trim(...) instead */
+            final Matcher trimMatcher = trimPatterns.matcher(pattern);
             if (
                 parametersCount == 3 && functionName.equals("preg_replace") &&
                 params[1] instanceof StringLiteralExpression && params[1].getText().length() == 2 &&
-                trimPatterns.matcher(pattern).find()
+                trimMatcher.find()
             ) {
                 // mixed preg_replace ( mixed $pattern , mixed $replacement , mixed $subject [, int $limit = -1 [, int &$count ]] )
                 String function = "trim";
@@ -130,12 +135,22 @@ final public class PlainApiUseCheckStrategy {
                 } else if (!pattern.endsWith("$")) {
                     function = "ltrim";
                 }
-                // group(7) is the char to trim
 
-                final String message = patternTrim
-                    .replace("%f%", function)
-                    .replace("%s%", params[2].getText());
-                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                String characterToTrim = trimMatcher.group(7);
+                characterToTrim        = characterToTrim == null ? trimMatcher.group(5) : characterToTrim;
+                characterToTrim        = characterToTrim == null ? trimMatcher.group(3) : characterToTrim;
+                final String replacement = "%f%(%s%, '%p%')"
+                    .replace(", '%p%'", characterToTrim.equals("\\s") ? "" : ", '%p%'")
+                    .replace("%p%", characterToTrim)
+                    .replace("%s%", params[2].getText())
+                    .replace("%f%", function);
+                holder.registerProblem(
+                    reference,
+                    patternTrim.replace("%e%", replacement),
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    new UseTrimFix(replacement)
+                );
+                return;
             }
 
             /* investigate using explode(...) instead */
@@ -183,6 +198,18 @@ final public class PlainApiUseCheckStrategy {
         }
 
         UseStringComparisonFix(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private static class UseTrimFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use trim instead";
+        }
+
+        UseTrimFix(@NotNull String expression) {
             super(expression);
         }
     }

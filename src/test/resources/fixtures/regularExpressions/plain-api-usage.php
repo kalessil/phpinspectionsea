@@ -28,12 +28,15 @@
     preg_match('/^whatever$/i',  $string);
 
     /* case: trim */
-    <warning descr="'ltrim($string, \"...\")' can be used instead.">preg_replace</warning>('/^a+/', '', $string);
-    <warning descr="'ltrim($string, \"...\")' can be used instead.">preg_replace</warning>('/^a*/', '', $string);
-    <warning descr="'rtrim($string, \"...\")' can be used instead.">preg_replace</warning>('/a+$/', '', $string);
-    <warning descr="'rtrim($string, \"...\")' can be used instead.">preg_replace</warning>('/a*$/', '', $string);
-    <warning descr="'trim($string, \"...\")' can be used instead.">preg_replace</warning>('/^a+|a*$/', '', $string);
-    <warning descr="'trim($string, \"...\")' can be used instead.">preg_replace</warning>('/^a*|a+$/', '', $string);
+    <warning descr="'ltrim($string, 'a')' can be used instead.">preg_replace('/^a+/', '', $string)</warning>;
+    <warning descr="'ltrim($string, 'a')' can be used instead.">preg_replace('/^a*/', '', $string)</warning>;
+    <warning descr="'rtrim($string, 'a')' can be used instead.">preg_replace('/a+$/', '', $string)</warning>;
+    <warning descr="'rtrim($string, 'a')' can be used instead.">preg_replace('/a*$/', '', $string)</warning>;
+    <warning descr="'trim($string, 'a')' can be used instead.">preg_replace('/^a+|a*$/', '', $string)</warning>;
+    <warning descr="'trim($string, 'a')' can be used instead.">preg_replace('/^a*|a+$/', '', $string)</warning>;
+    <warning descr="'ltrim($string)' can be used instead.">preg_replace('/^\s*/', '', $string)</warning>;
+    <warning descr="'rtrim($string)' can be used instead.">preg_replace('/\s*$/', '', $string)</warning>;
+    <warning descr="'trim($string)' can be used instead.">preg_replace('/^\s*|\s*$/', '', $string)</warning>;
     /* false-positives */
     preg_replace('/^a+/', 'b', $string);
     preg_replace('/a+$/', 'b', $string);

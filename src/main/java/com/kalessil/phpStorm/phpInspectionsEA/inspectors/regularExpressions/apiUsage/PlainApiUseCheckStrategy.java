@@ -1,11 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage;
 
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -21,14 +23,13 @@ import java.util.regex.Pattern;
  */
 
 final public class PlainApiUseCheckStrategy {
-    private static final String strProblemStartTreatCase     = "'0 === strpos(\"...\", \"%t%\")' can be used instead.";
-    private static final String strProblemStartIgnoreCase    = "'0 === stripos(\"...\", \"%t%\")' can be used instead.";
-    private static final String strProblemContainsTreatCase  = "'false !== strpos(\"...\", \"%t%\")' can be used instead.";
-    private static final String strProblemContainsIgnoreCase = "'false !== stripos(\"...\", \"%t%\")' can be used instead.";
-    private static final String patternReplaceRespectCase    = "'str_replace(\"%t%\", ...)' can be used instead.";
-    private static final String patternReplaceIgnoreCase     = "'str_ireplace(\"%t%\", ...)' can be used instead.";
-    private static final String strProblemExplodeCanBeUsed   = "'explode(\"...\", %s%%l%)' can be used instead.";
-    private static final String strProblemTrimsCanBeUsed     = "'%f%(%s%, \"...\")' can be used instead.";
+    private static final String patternStartTreatCase     = "'0 === strpos(\"...\", \"%t%\")' can be used instead.";
+    private static final String patternStartIgnoreCase    = "'0 === stripos(\"...\", \"%t%\")' can be used instead.";
+    private static final String patternContainsTreatCase  = "'false !== strpos(\"...\", \"%t%\")' can be used instead.";
+    private static final String patternContainsIgnoreCase = "'false !== stripos(\"...\", \"%t%\")' can be used instead.";
+    private static final String patternStringReplace      = "'%e%' can be used instead.";
+    private static final String patternExplodeCanBeUsed   = "'explode(\"...\", %s%%l%)' can be used instead.";
+    private static final String strProblemTrimsCanBeUsed  = "'%f%(%s%, \"...\")' can be used instead.";
 
     final static private Pattern regexTextSearch;
     static {
@@ -71,20 +72,25 @@ final public class PlainApiUseCheckStrategy {
                 final boolean startWith  = !StringUtil.isEmpty(regexMatcher.group(1));
 
                 /* analyse if pattern is the one strategy targeting */
-                String strProblemDescription = null;
+                String messagePattern = null;
+                LocalQuickFix fixer   = null;
                 if (functionName.equals("preg_match") && startWith) {
-                    strProblemDescription = ignoreCase ? strProblemStartIgnoreCase : strProblemStartTreatCase;
-                }
-                if (functionName.equals("preg_match") && !startWith) {
-                    strProblemDescription = ignoreCase ? strProblemContainsIgnoreCase : strProblemContainsTreatCase;
-                }
-                if (functionName.equals("preg_replace") && !startWith && params.length == 3) {
-                    strProblemDescription = ignoreCase ? patternReplaceIgnoreCase : patternReplaceRespectCase;
+                    messagePattern = ignoreCase ? patternStartIgnoreCase : patternStartTreatCase;
+                } else if (functionName.equals("preg_match") && !startWith) {
+                    messagePattern = ignoreCase ? patternContainsIgnoreCase : patternContainsTreatCase;
+                } else if (functionName.equals("preg_replace") && !startWith && params.length == 3) {
+                    final String replacement = "%f%(\"%p%\", %r%, %s%)"
+                        .replace("%s%", params[2].getText())
+                        .replace("%r%", params[1].getText())
+                        .replace("%p%", regexMatcher.group(2))
+                        .replace("%f%", ignoreCase ? "str_ireplace" : "str_replace");
+                    messagePattern = patternStringReplace.replace("%e%", replacement);
+                    fixer          = new UseStringReplaceFix(replacement);
                 }
 
-                if (null != strProblemDescription) {
-                    String strError = strProblemDescription.replace("%t%", regexMatcher.group(2));
-                    holder.registerProblem(reference, strError, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                if (messagePattern != null) {
+                    final String message = messagePattern.replace("%t%", regexMatcher.group(2));
+                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixer);
                 }
             }
 
@@ -112,11 +118,23 @@ final public class PlainApiUseCheckStrategy {
                 (parametersCount == 2 || parametersCount == 3) && functionName.equals("preg_split") && StringUtil.isEmpty(modifiers) &&
                 (regexSingleCharSet.matcher(patternAdapted).find() || !regexHasRegexAttributes.matcher(patternAdapted).find())
             ) {
-                final String message = strProblemExplodeCanBeUsed
+                final String message = patternExplodeCanBeUsed
                         .replace("%l%", params.length > 2 ? ", " + params[2].getText() : "")
                         .replace("%s%", params[1].getText());
                 holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
+        }
+    }
+
+    private static class UseStringReplaceFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use plain string replacement instead";
+        }
+
+        UseStringReplaceFix(@NotNull String expression) {
+            super(expression);
         }
     }
 }

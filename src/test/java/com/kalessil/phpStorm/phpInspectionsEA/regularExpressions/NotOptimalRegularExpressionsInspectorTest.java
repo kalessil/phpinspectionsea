@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.regularExpressions;
 
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.NotOptimalRegularExpressionsInspector;
 
@@ -51,5 +52,11 @@ final public class NotOptimalRegularExpressionsInspectorTest extends CodeInsight
 
         myFixture.configureByFile("fixtures/regularExpressions/str-replace-usage.php");
         myFixture.testHighlighting(true, false, true);
+
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
+            myFixture.launchAction(fix);
+        }
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/regularExpressions/str-replace-usage.fixed.php");
     }
 }

@@ -27,7 +27,7 @@ final public class PlainApiUseCheckStrategy {
     private static final String patternStartsWith        = "'%e%' can be used instead.";
     private static final String patternContains          = "'%e%' can be used instead.";
     private static final String patternStringReplace     = "'%e%' can be used instead.";
-    private static final String patternExplodeCanBeUsed  = "'explode(\"...\", %s%%l%)' can be used instead.";
+    private static final String patternExplodeCanBeUsed  = "'%e%' can be used instead.";
     private static final String patternTrim              = "'%e%' can be used instead.";
 
     final static private Pattern regexTextSearch;
@@ -122,7 +122,7 @@ final public class PlainApiUseCheckStrategy {
             }
 
             /* investigate using *trim(...) instead */
-            final Matcher trimMatcher = trimPatterns.matcher(pattern);
+            final Matcher trimMatcher = trimPatterns.matcher(patternAdapted);
             if (
                 parametersCount == 3 && functionName.equals("preg_replace") &&
                 params[1] instanceof StringLiteralExpression && params[1].getText().length() == 2 &&
@@ -158,10 +158,16 @@ final public class PlainApiUseCheckStrategy {
                 (parametersCount == 2 || parametersCount == 3) && functionName.equals("preg_split") && StringUtil.isEmpty(modifiers) &&
                 (regexSingleCharSet.matcher(patternAdapted).find() || !regexHasRegexAttributes.matcher(patternAdapted).find())
             ) {
-                final String message = patternExplodeCanBeUsed
-                        .replace("%l%", parametersCount > 2 ? ", " + params[2].getText() : "")
-                        .replace("%s%", params[1].getText());
-                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                final String replacement = "explode(\"%p%\", %s%%l%)"
+                    .replace("%l%", parametersCount > 2 ? ", " + params[2].getText() : "")
+                    .replace("%s%", params[1].getText())
+                    .replace("%p%", patternAdapted);
+                holder.registerProblem(
+                    reference,
+                    patternExplodeCanBeUsed.replace("%e%", replacement),
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    new UseExplodeFix(replacement)
+                );
             }
         }
     }
@@ -210,6 +216,18 @@ final public class PlainApiUseCheckStrategy {
         }
 
         UseTrimFix(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private static class UseExplodeFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use explode instead";
+        }
+
+        UseExplodeFix(@NotNull String expression) {
             super(expression);
         }
     }

@@ -47,3 +47,10 @@
     preg_replace('/^.+|a*$/', '', $string);
     preg_replace('/^a*|.+$/', '', $string);
     preg_replace('/^a*|b+$/', '', $string);
+
+    /* case: explode */
+    explode(",", '');
+    explode("text", '');
+    explode(",", '', 2);
+    /* false-positives */
+    preg_split('/.+/', '');

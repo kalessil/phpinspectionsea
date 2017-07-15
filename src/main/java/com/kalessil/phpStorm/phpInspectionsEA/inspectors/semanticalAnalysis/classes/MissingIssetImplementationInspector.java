@@ -42,11 +42,13 @@ public class MissingIssetImplementationInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpEmpty(PhpEmpty expression) {
+            @Override
+            public void visitPhpEmpty(@NotNull PhpEmpty expression) {
                 analyzeDispatchedExpressions(expression.getVariables());
             }
 
-            public void visitPhpIsset(PhpIsset expression) {
+            @Override
+            public void visitPhpIsset(@NotNull PhpIsset expression) {
                 analyzeDispatchedExpressions(expression.getVariables());
             }
 
@@ -72,11 +74,12 @@ public class MissingIssetImplementationInspector extends BasePhpInspection {
                         final Set<String> resolvedTypes = variable.getType().global(project).filterUnknown().getTypes();
                         for (final String type : resolvedTypes) {
                             final String normalizedType = Types.getType(type);
-                            /* false-positives: SimpleXMLElement */
+                            /* false-positives: SimpleXMLElement, stdClass */
                             if (normalizedType.startsWith("\\") && !magicClasses.contains(normalizedType)) {
                                 final Collection<PhpClass> classes = projectIndex.getClassesByFQN(normalizedType);
-                                if (!classes.isEmpty()) {
-                                    final PhpClass clazz   = classes.iterator().next();
+                                final PhpClass clazz               = classes.isEmpty() ? null : classes.iterator().next();
+                                /* resolved class FQN might differ from what type states */
+                                if (clazz != null && !magicClasses.contains(clazz.getFQN())) {
                                     final boolean hasField = null != clazz.findFieldByName(parameter.getName(), false);
                                     if (!hasField && null == clazz.findMethodByName("__isset")) {
                                         final String message = messagePattern.replace("%c%", normalizedType);

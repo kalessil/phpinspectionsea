@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 
 final public class MissingIssetImplementationInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsInconsistentGetsSetsPatterns() {
-        myFixture.enableInspections(MissingIssetImplementationInspector.class);
+        myFixture.enableInspections(new MissingIssetImplementationInspector());
 
         myFixture.configureByFile("fixtures/classes/empty-isset-results-correctness.php");
         myFixture.testHighlighting(true, false, true);

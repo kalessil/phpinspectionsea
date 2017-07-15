@@ -29,4 +29,10 @@ class ClassWithoutIsset
             empty(<error descr="\ClassWithoutIsset needs to implement __isset to properly work here.">$invalidObject->property</error>)
         ];
     }
+
+    public function falsePositivesHolder()
+    {
+        $stdObject = new \StdClass();
+        return isset($stdObject->property);
+    }
 }

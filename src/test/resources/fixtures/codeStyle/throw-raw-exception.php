@@ -6,3 +6,8 @@
     throw <weak_warning descr="This exception is thrown without a message. Consider adding one to help clarify or troubleshoot the exception.">new RuntimeException()</weak_warning>;
 
     throw new RuntimeException('...');
+
+    class CustomizedException extends \RuntimeException {
+        public function __construct() {}
+    }
+    throw new CustomizedException();

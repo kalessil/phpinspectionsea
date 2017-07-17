@@ -7,9 +7,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.ClassReference;
-import com.jetbrains.php.lang.psi.elements.NewExpression;
-import com.jetbrains.php.lang.psi.elements.PhpThrow;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -44,9 +42,15 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
                     final String classFqn               = null == classReference ? null : classReference.getFQN();
                     if (classFqn != null) {
                         if (classFqn.equals("\\Exception")) {
-                            holder.registerProblem(classReference, messageRawException, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
+                            holder.registerProblem(classReference, messageRawException, new TheLocalFix());
                         } else if (newExpression.getParameters().length == 0) {
-                            holder.registerProblem(newExpression, messageNoArguments, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            final PsiElement resolved = classReference.resolve();
+                            if (resolved instanceof PhpClass) {
+                                final Method constructor = ((PhpClass) resolved).getConstructor();
+                                if (constructor != null && constructor.getParameters().length == 3) {
+                                    holder.registerProblem(newExpression, messageNoArguments);
+                                }
+                            }
                         }
                     }
                 }

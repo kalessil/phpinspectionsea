@@ -1,83 +1,88 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils.phpDoc;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocReturnTag;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 final public class ThrowsResolveUtil {
+    static public boolean resolveThrownExceptions(
+        @NotNull Method method,
+        @NotNull Collection<PhpClass> exceptionsRegistry
+    ) {
+        final Set<Method> processedMethods = new HashSet<>(); /* SOE was reported, hence the this was introduced */
+        final boolean result               = collectThrownAndInherited(method, exceptionsRegistry, processedMethods);
+        processedMethods.clear();
+        return result;
+    }
 
-    public enum ResolveType { RESOLVED, RESOLVED_INHERIT_DOC, NOT_RESOLVED }
-
-    /**
-     * Return false if doc-block is not defined
-     */
-    static public ResolveType resolveThrownExceptions(@NotNull final Method method, @NotNull HashSet<PhpClass> declaredExceptions) {
-        /* TODO: use method.getDocComment() */
-        PhpPsiElement previous = method.getPrevPsiSibling();
-        if (!(previous instanceof PhpDocComment)) {
-            return ResolveType.NOT_RESOLVED;
-        }
-
-        // find all @throws and remember FQNs, @throws can be combined with @throws
-        Collection<PhpDocReturnTag> returns = PsiTreeUtil.findChildrenOfType(previous, PhpDocReturnTag.class);
-        if (returns.size() > 0) {
-            for (PhpDocReturnTag returnOrThrow : returns) {
-                if (returnOrThrow.getName().equals("@throws")) {
+    static private boolean collectThrownAndInherited(
+        @NotNull Method method,
+        @NotNull Collection<PhpClass> exceptionsRegistry,
+        @NotNull Collection<Method> processedMethods
+    ) {
+        processedMethods.add(method);
+        boolean result                  = false;
+        final PhpDocComment annotations = method.getDocComment();
+        if (annotations != null) {
+            /* find all @throws and remember FQNs, @throws can be combined with @inheritdoc */
+            for (final PhpDocReturnTag candidate : PsiTreeUtil.findChildrenOfType(annotations, PhpDocReturnTag.class)) {
+                if (candidate.getName().equalsIgnoreCase("@throws")) {
                     /* definition styles can differ: single tags, pipe concatenated or combined  */
-                    Collection<PhpDocType> exceptions = PsiTreeUtil.findChildrenOfType(returnOrThrow, PhpDocType.class);
-
-                    if (exceptions.size() > 0) {
-                        for (PhpDocType type : exceptions) {
-                            PsiElement typeResolved = type.resolve();
-                            if (typeResolved instanceof PhpClass) {
-                                declaredExceptions.add((PhpClass) typeResolved);
-                            }
+                    for (final PhpDocType type : PsiTreeUtil.findChildrenOfType(candidate, PhpDocType.class)) {
+                        final PsiElement resolved = type.resolve();
+                        if (resolved instanceof PhpClass) {
+                            exceptionsRegistry.add((PhpClass) resolved);
                         }
-                        exceptions.clear();
                     }
                 }
             }
-            returns.clear();
-        }
-
-        // resolve inherit doc tags
-        Collection<PhpDocTag> tags = PsiTreeUtil.findChildrenOfType(previous, PhpDocTag.class);
-        if (tags.size() > 0) {
-            for (PhpDocTag tag : tags) {
-                /* TODO: check if we can use phpDoc.hasInheritDocTag() - string search based */
-                if (tag.getName().toLowerCase().equals("@inheritdoc")) {
-                    resolveInheritDoc(method, declaredExceptions);
-                    return ResolveType.RESOLVED_INHERIT_DOC;
-                }
+            /* resolve inherit doc tags */
+            if (annotations.hasInheritDocTag()) {
+                collectInherited(method, exceptionsRegistry, processedMethods);
             }
-            tags.clear();
+            result = true;
         }
-
-        return ResolveType.RESOLVED;
+        return result;
     }
 
-    /**
-     * Resolves inherit doc recursively checking supers of the method owner.
-     */
-    private static void resolveInheritDoc(@NotNull final Method method, @NotNull HashSet<PhpClass> declaredExceptions) {
-        PhpClass clazz = method.getContainingClass();
-        String methodName = method.getName();
-        if (null != clazz && !StringUtil.isEmpty(methodName)) {
-            for (PhpClass parent : clazz.getSupers()) {
-                Method parentMethod = parent.findMethodByName(methodName);
-                if (null != parentMethod) {
-                    resolveThrownExceptions(parentMethod, declaredExceptions);
+    private static void collectInherited(
+        @NotNull Method method,
+        @NotNull Collection<PhpClass> exceptionsRegistry,
+        @NotNull Collection<Method> processedMethods
+    ) {
+        final PhpClass clazz = method.getContainingClass();
+        if (clazz != null) {
+            /* inherited methods */
+            final PhpClass parent = clazz.getSuperClass();
+            if (parent != null) {
+                final Method parentMethod = parent.findMethodByName(method.getName());
+                if (parentMethod != null && !processedMethods.contains(parentMethod)) {
+                    collectThrownAndInherited(parentMethod, exceptionsRegistry, processedMethods);
+                }
+            }
+            /* contract methods */
+            for (final PhpClass implementedInterface : clazz.getImplementedInterfaces()) {
+                final Method requiredMethod = implementedInterface.findMethodByName(method.getName());
+                if (requiredMethod != null && !processedMethods.contains(requiredMethod)) {
+                    collectThrownAndInherited(requiredMethod, exceptionsRegistry, processedMethods);
                 }
             }
         }

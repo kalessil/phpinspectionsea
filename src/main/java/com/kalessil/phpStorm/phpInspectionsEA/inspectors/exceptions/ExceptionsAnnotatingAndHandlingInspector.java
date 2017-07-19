@@ -99,7 +99,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
                 /* collect announced cases */
                 final HashSet<PhpClass> annotatedExceptions = new HashSet<>();
-                if (ThrowsResolveUtil.ResolveType.NOT_RESOLVED == ThrowsResolveUtil.resolveThrownExceptions(method, annotatedExceptions)) {
+                if (!ThrowsResolveUtil.resolveThrownExceptions(method, annotatedExceptions)) {
                     return;
                 }
 
@@ -182,8 +182,8 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                             final String thrown  = unhandledExceptionsPair.getKey().getFQN();
                             final String message = messagePattern.replace("%c%", thrown);
 
-                            final HashSet<PsiElement> blamedExpressions = unhandledExceptionsPair.getValue();
-                            for (PsiElement blame : blamedExpressions) {
+                            final Set<PsiElement> blamedExpressions = unhandledExceptionsPair.getValue();
+                            for (final PsiElement blame : blamedExpressions) {
                                 if (suggestQuickFix) {
                                     final MissingThrowAnnotationLocalFix fix = new MissingThrowAnnotationLocalFix(method, thrown);
                                     holder.registerProblem(blame, message, ProblemHighlightType.WEAK_WARNING, fix);

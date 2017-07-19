@@ -22,31 +22,26 @@ final public class InterfacesExtractUtil {
     }
 
     private static void processClass(@NotNull PhpClass clazz, @NotNull Set<PhpClass> processedItems, boolean withClasses) {
-        if (clazz.isInterface()) {
-            throw new InvalidParameterException("Interface should not be provided");
-        }
+        if (!clazz.isInterface()) {
+            if (withClasses) {
+                processedItems.add(clazz);
+            }
 
-        if (withClasses) {
-            processedItems.add(clazz);
-        }
+            /* re-delegate interface handling */
+            for (final PhpClass interfacee : clazz.getImplementedInterfaces()) {
+                processInterface(interfacee, processedItems);
+            }
 
-        /* re-delegate interface handling */
-        for (final PhpClass interfacee : clazz.getImplementedInterfaces()) {
-            processInterface(interfacee, processedItems);
-        }
-
-        /* handle parent class */
-        if (clazz.getSuperClass() != null) {
-            processClass(clazz.getSuperClass(), processedItems, withClasses);
+            /* handle parent class */
+            final PhpClass parent = clazz.getSuperClass();
+            if (parent != null) {
+                processClass(parent, processedItems, withClasses);
+            }
         }
     }
 
     private static void processInterface(@NotNull PhpClass clazz, @NotNull Set<PhpClass> processedItems) {
-        if (!clazz.isInterface()) {
-            throw new InvalidParameterException("Class should not be provided");
-        }
-
-        if (processedItems.add(clazz)) {
+        if (clazz.isInterface() && processedItems.add(clazz)) {
             for (final PhpClass parentInterface : clazz.getImplementedInterfaces()) {
                 processInterface(parentInterface, processedItems);
             }

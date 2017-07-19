@@ -164,7 +164,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         if (!classes.isEmpty()) {
                             /* collect all interfaces*/
                             for (final PhpClass clazz : classes) {
-                                final Set<PhpClass> interfaces = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, false);
+                                final Set<PhpClass> interfaces = InterfacesExtractUtil.getCrawlInheritanceTree(clazz, false);
                                 if (!interfaces.isEmpty()) {
                                     poolToCheck.addAll(interfaces);
                                     interfaces.clear();

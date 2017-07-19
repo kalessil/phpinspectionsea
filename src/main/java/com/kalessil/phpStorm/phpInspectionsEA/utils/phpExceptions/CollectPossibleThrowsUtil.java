@@ -236,7 +236,7 @@ final public class CollectPossibleThrowsUtil {
 
                 for (PhpClass unhandled : unhandledInTry.keySet()) {
                     /* each potential exception can be caught as a parent as well */
-                    HashSet<PhpClass> unhandledVariants = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(unhandled, true);
+                    HashSet<PhpClass> unhandledVariants = InterfacesExtractUtil.getCrawlInheritanceTree(unhandled, true);
                     unhandledVariants.add(unhandled);
 //holder.registerProblem(catchInTry.getFirstChild(), "Match against: " + unhandledVariants.toString(), ProblemHighlightType.WEAK_WARNING);
                     if (unhandledVariants.contains(caughtClass)) {

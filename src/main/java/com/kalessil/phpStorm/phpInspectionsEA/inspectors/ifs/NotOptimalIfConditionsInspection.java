@@ -243,7 +243,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                             // extract current condition details
                             Set<PhpClass> clazzParents = resolvedInheritanceChains.get(clazz);
                             if (null == clazzParents) {
-                                clazzParents = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true);
+                                clazzParents = InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true);
                                 resolvedInheritanceChains.put(clazz, clazzParents);
                             }
 

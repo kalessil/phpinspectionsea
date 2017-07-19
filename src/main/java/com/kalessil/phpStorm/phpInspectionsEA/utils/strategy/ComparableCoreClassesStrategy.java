@@ -65,7 +65,7 @@ final public class ComparableCoreClassesStrategy {
 
         /* inspect classes for being a/child of special once */
         for (PhpClass clazz : operandClasses) {
-            final HashSet<PhpClass> hierarchy = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true);
+            final HashSet<PhpClass> hierarchy = InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true);
             for (PhpClass oneClass : hierarchy){
                 if (comparableObjects.contains(oneClass.getFQN())) {
                     return true;

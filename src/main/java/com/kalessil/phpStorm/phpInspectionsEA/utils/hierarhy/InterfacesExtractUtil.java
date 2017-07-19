@@ -9,7 +9,7 @@ import java.util.Set;
 
 final public class InterfacesExtractUtil {
     @NotNull
-    public static HashSet<PhpClass> getCrawlCompleteInheritanceTree(@NotNull PhpClass clazz, boolean withClasses) {
+    public static HashSet<PhpClass> getCrawlInheritanceTree(@NotNull PhpClass clazz, boolean withClasses) {
         final HashSet<PhpClass> processedItems = new HashSet<>();
 
         if (clazz.isInterface()) {

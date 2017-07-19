@@ -188,7 +188,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     foundClasses.addAll(index.getClassesByFQN(type));
                     foundClasses.addAll(index.getInterfacesByFQN(type));
                     for (final PhpClass clazz : foundClasses) {
-                        for (final PhpClass parent : InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true)) {
+                        for (final PhpClass parent : InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true)) {
                             possibleTypes.add(parent.getFQN());
                         }
                     }

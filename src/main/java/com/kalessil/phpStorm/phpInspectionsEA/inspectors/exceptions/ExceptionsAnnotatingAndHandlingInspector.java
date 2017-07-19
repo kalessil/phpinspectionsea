@@ -153,7 +153,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                                 }
 
                                 /* check thrown parents, as annotated not processed here */
-                                final HashSet<PhpClass> thrownVariants = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(thrown, true);
+                                final HashSet<PhpClass> thrownVariants = InterfacesExtractUtil.getCrawlInheritanceTree(thrown, true);
                                 if (!thrownVariants.contains(annotated)) {
                                     unhandledExceptions.put(thrown, throwsExceptionsPair.getValue());
                                     throwsExceptions.put(thrown, null);

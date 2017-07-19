@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -8,7 +7,17 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class EmptyClassInspector extends BasePhpInspection {
     private static final String message = "Class does not contain any properties or methods.";
@@ -22,25 +31,39 @@ public class EmptyClassInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpClass(PhpClass clazz) {
-                /* require class with name which can be targeted by warning */
-                final String className    = clazz.getName();
+            @Override
+            public void visitPhpClass(@NotNull PhpClass clazz) {
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
-                if (null == nameNode || clazz.isInterface() || clazz.isTrait() || className.endsWith("Exception")) {
-                    return;
-                }
-
-                /* check if class is empty, take into account used traits and deprecation */
-                final boolean isEmpty = (0 == clazz.getOwnFields().length + clazz.getOwnMethods().length);
-                if (isEmpty && !clazz.isDeprecated() && 0 == clazz.getTraits().length) {
-                    /* false-positive: inheriting abstract classes */
-                    final PhpClass parentClass = clazz.getSuperClass();
-                    if (null != parentClass && parentClass.isAbstract()) {
-                        return;
+                if (nameNode != null) {
+                    final boolean isEmpty = (clazz.getOwnFields().length + clazz.getOwnMethods().length == 0);
+                    if (isEmpty && !this.canBeEmpty(clazz)) {
+                        holder.registerProblem(nameNode, message);
                     }
-
-                    holder.registerProblem(nameNode, message, ProblemHighlightType.WEAK_WARNING);
                 }
+            }
+
+            private boolean canBeEmpty(@NotNull PhpClass clazz) {
+                boolean result = false;
+                if (clazz.isInterface() || clazz.isDeprecated() || clazz.getTraits().length > 0) {
+                    result = true;
+                } else {
+                    final PhpClass parent = clazz.getSuperClass();
+                    if (parent != null) {
+                        if (parent.isAbstract()) {
+                            /* inheriting abstract classes - we can be forced to have it empty */
+                            result = true;
+                        } else {
+                            /* an exception */
+                            for (final PhpClass candidate : InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true)) {
+                                if (candidate.getFQN().equals("\\Exception")) {
+                                    result = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                return result;
             }
         };
     }

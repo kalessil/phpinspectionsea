@@ -66,7 +66,7 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
             private boolean isExceptionClass(@NotNull ClassReference reference) {
                 final PsiElement resolved = reference.resolve();
                 if (resolved instanceof PhpClass) {
-                    final Set<PhpClass> inheritanceChain = InterfacesExtractUtil.getCrawlCompleteInheritanceTree((PhpClass) resolved, true);
+                    final Set<PhpClass> inheritanceChain = InterfacesExtractUtil.getCrawlInheritanceTree((PhpClass) resolved, true);
                     for (PhpClass clazz : inheritanceChain) {
                         if (clazz.getFQN().equals("\\Exception")) {
                             inheritanceChain.clear();

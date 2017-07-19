@@ -5,14 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 
 final public class EmptyClassInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.configureByFile("fixtures/classes/empty-class.php");
-        myFixture.enableInspections(EmptyClassInspector.class);
-        myFixture.testHighlighting(true, false, true);
-    }
+        myFixture.enableInspections(new EmptyClassInspector());
 
-    public void testFalsePositives() {
-        myFixture.configureByFile("fixtures/classes/empty-class-false-positives.php");
-        myFixture.enableInspections(EmptyClassInspector.class);
+        myFixture.configureByFile("fixtures/classes/empty-class.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

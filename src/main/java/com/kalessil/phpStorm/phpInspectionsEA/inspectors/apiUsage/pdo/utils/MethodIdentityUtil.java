@@ -36,7 +36,7 @@ final public class MethodIdentityUtil {
                 if (!result) {
                     final PhpClass clazz = method.getContainingClass();
                     if (clazz != null && !clazz.isTrait()) {
-                        final Set<PhpClass> parents = InterfacesExtractUtil.getCrawlCompleteInheritanceTree(clazz, true);
+                        final Set<PhpClass> parents = InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true);
                         for (final PhpClass parent : parents) {
                             if (parent.getFQN().equals(classFqn)) {
                                 result = true;

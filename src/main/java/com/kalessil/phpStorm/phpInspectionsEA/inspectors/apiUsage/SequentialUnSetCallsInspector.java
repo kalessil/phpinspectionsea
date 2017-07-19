@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SequentialUnSetCallsInspector extends BasePhpInspection {
     private static final String message = "Can be safely replaced with 'unset(..., ...[, ...])' construction.";
@@ -87,10 +88,7 @@ public class SequentialUnSetCallsInspector extends BasePhpInspection {
                     Collections.addAll(params, unset.getArguments());
 
                     /* generate target expression */
-                    final List<String> paramsAsString = new ArrayList<>();
-                    for (PsiElement param : params) {
-                        paramsAsString.add(param.getText());
-                    }
+                    final List<String> paramsAsString = params.stream().map(PsiElement::getText).collect(Collectors.toList());
                     final String pattern = "unset(%p%);".replace("%p%", String.join(", ", paramsAsString));
                     paramsAsString.clear();
                     params.clear();

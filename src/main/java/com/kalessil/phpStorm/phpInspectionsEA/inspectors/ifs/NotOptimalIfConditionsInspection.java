@@ -271,9 +271,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     subjectContainer.clear();
                 }
                 // release inheritance cache as well
-                for (final Set<PhpClass> resolvedInheritance: resolvedInheritanceChains.values()) {
-                    resolvedInheritance.clear();
-                }
+                resolvedInheritanceChains.values().forEach(Set::clear);
                 resolvedInheritanceChains.clear();
                 // release mapping as well
                 mappedChecks.clear();

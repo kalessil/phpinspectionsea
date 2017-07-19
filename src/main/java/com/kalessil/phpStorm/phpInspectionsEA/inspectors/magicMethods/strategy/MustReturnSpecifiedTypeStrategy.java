@@ -45,9 +45,7 @@ public class MustReturnSpecifiedTypeStrategy {
                  */
                 final PhpType argumentType = new PhpType();
                 if (resolvedArgumentType.size() > 0) {
-                    for (String oneType : resolvedArgumentType) {
-                        argumentType.add(oneType);
-                    }
+                    resolvedArgumentType.forEach(argumentType::add);
                     resolvedArgumentType.clear();
                 }
 

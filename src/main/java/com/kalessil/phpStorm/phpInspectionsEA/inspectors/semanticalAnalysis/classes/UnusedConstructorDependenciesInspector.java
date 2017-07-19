@@ -119,9 +119,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                         }
 
                         /* release references found in the method as they in common container now */
-                        for (List<FieldReference> references : innerReferences.values()) {
-                            references.clear();
-                        }
+                        innerReferences.values().forEach(List::clear);
                         innerReferences.clear();
                     }
                 }
@@ -170,15 +168,11 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                     }
 
                     /* release references found in the methods */
-                    for (List<FieldReference> references : otherReferences.values()) {
-                        references.clear();
-                    }
+                    otherReferences.values().forEach(List::clear);
                     otherReferences.clear();
 
                     /* release references found in the constructor */
-                    for (List<FieldReference> references : constructorsReferences.values()) {
-                        references.clear();
-                    }
+                    constructorsReferences.values().forEach(List::clear);
                     constructorsReferences.clear();
                 }
             }

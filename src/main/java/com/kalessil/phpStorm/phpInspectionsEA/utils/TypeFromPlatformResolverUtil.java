@@ -8,7 +8,6 @@ import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.

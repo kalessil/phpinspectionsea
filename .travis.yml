@@ -18,10 +18,6 @@ matrix:
       env: IDE_ID=2016.3
     - jdk: oraclejdk8
       env: IDE_ID=2016.2
-    - jdk: oraclejdk8
-      env: IDE_ID=eap
-  allow_failures:
-    - env: IDE_ID=eap
 
 script: ".travis/build.sh"
 

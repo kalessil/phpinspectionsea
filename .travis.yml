@@ -11,7 +11,7 @@ addons:
 matrix:
   include:
     - jdk: oraclejdk8
-      env: IDE_ID=2017.1
+      env: IDE_ID=2017.2
     - jdk: oraclejdk8
       env: IDE_ID=2016.3
     - jdk: oraclejdk8

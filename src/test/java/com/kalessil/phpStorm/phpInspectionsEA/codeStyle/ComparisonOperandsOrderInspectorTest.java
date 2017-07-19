@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ComparisonOperandsOrderInspector;
 
-final public class ComparisonOperandsOrderInspectorTest extends CodeInsightFixtureTestCase {
+final public class ComparisonOperandsOrderInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsYodaPatterns() {
         ComparisonOperandsOrderInspector inspector = new ComparisonOperandsOrderInspector();
         inspector.PREFER_YODA_STYLE                = true;

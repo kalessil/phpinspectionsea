@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MissingOrEmptyGroupStatementInspector;
 
-final public class MissingOrEmptyGroupStatementInspectorTest extends CodeInsightFixtureTestCase {
+final public class MissingOrEmptyGroupStatementInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsMissingStatements() {
         myFixture.configureByFile("fixtures/codeStyle/group-statements-missing.php");
         myFixture.enableInspections(MissingOrEmptyGroupStatementInspector.class);

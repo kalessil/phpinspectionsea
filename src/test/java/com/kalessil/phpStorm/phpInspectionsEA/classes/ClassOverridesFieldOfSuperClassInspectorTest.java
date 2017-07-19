@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.classes;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassOverridesFieldOfSuperClassInspector;
 
-final public class ClassOverridesFieldOfSuperClassInspectorTest extends CodeInsightFixtureTestCase {
+final public class ClassOverridesFieldOfSuperClassInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         ClassOverridesFieldOfSuperClassInspector inspector = new ClassOverridesFieldOfSuperClassInspector();
         inspector.REPORT_PRIVATE_REDEFINITION              = true;

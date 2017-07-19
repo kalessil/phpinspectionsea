@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.security;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureCryptUsageInspector;
 
-final public class NonSecureCryptUsageInspectorTest extends CodeInsightFixtureTestCase {
+final public class NonSecureCryptUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/security/crypt.php");
         myFixture.enableInspections(NonSecureCryptUsageInspector.class);

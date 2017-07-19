@@ -1,10 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PropertyInitializationFlawsInspector;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TraitsPropertiesConflictsInspector;
 
-final public class PropertyInitializationFlawsInspectorTest extends CodeInsightFixtureTestCase {
+final public class PropertyInitializationFlawsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testNullInitPatterns() {
         PropertyInitializationFlawsInspector inspector = new PropertyInitializationFlawsInspector();
         inspector.REPORT_INIT_FLAWS                    = true;

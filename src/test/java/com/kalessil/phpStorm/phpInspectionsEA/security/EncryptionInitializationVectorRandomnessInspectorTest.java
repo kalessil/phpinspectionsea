@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.security;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.EncryptionInitializationVectorRandomnessInspector;
 
-final public class EncryptionInitializationVectorRandomnessInspectorTest extends CodeInsightFixtureTestCase {
+final public class EncryptionInitializationVectorRandomnessInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/security/iv-randomness.php");
         myFixture.enableInspections(EncryptionInitializationVectorRandomnessInspector.class);

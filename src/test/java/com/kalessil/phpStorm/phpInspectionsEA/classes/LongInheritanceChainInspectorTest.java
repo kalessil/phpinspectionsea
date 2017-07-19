@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.classes;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.LongInheritanceChainInspector;
 
-final public class LongInheritanceChainInspectorTest extends CodeInsightFixtureTestCase {
+final public class LongInheritanceChainInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(LongInheritanceChainInspector.class);
 

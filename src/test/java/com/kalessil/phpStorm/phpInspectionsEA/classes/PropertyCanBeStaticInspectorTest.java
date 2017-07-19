@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.classes;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.PropertyCanBeStaticInspector;
 
-final public class PropertyCanBeStaticInspectorTest extends CodeInsightFixtureTestCase {
+final public class PropertyCanBeStaticInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new PropertyCanBeStaticInspector());
 

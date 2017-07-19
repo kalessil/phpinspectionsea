@@ -1,9 +1,8 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.byReference.ReferenceMismatchInspector;
 
-final public class ReferenceMismatchInspectorTest extends CodeInsightFixtureTestCase {
+final public class ReferenceMismatchInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ReferenceMismatchInspector());
 

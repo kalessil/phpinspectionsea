@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.GetTypeMissUseInspector;
 
-final public class GetTypeMissUseInspectorTest extends CodeInsightFixtureTestCase {
+final public class GetTypeMissUseInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new GetTypeMissUseInspector());
 

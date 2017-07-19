@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.debug.ForgottenDebugOutputInspector;
 
-final public class ForgottenDebugOutputInspectorTest extends CodeInsightFixtureTestCase {
+final public class ForgottenDebugOutputInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         ForgottenDebugOutputInspector inspector = new ForgottenDebugOutputInspector();
         inspector.migratedIntoUserSpace         = false;

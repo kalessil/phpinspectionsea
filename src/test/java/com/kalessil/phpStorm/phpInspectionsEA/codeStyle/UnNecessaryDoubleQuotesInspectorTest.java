@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnNecessaryDoubleQuotesInspector;
 
-final public class UnNecessaryDoubleQuotesInspectorTest extends CodeInsightFixtureTestCase {
+final public class UnNecessaryDoubleQuotesInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/codeStyle/double-quotes.php");
         myFixture.enableInspections(UnNecessaryDoubleQuotesInspector.class);

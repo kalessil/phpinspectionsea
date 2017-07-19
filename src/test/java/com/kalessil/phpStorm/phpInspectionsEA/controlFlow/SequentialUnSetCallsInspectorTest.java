@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.controlFlow;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SequentialUnSetCallsInspector;
 
-final public class SequentialUnSetCallsInspectorTest extends CodeInsightFixtureTestCase {
+final public class SequentialUnSetCallsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/controlFlow/unset-sequential.php");
         myFixture.enableInspections(SequentialUnSetCallsInspector.class);

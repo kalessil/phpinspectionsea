@@ -1,10 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.MktimeUsageInspector;
 
-final public class MktimeUsageInspectorTest extends CodeInsightFixtureTestCase {
+final public class MktimeUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new MktimeUsageInspector());
 

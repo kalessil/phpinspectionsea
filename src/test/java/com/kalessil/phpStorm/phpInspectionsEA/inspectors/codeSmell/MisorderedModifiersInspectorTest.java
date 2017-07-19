@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 
-public class MisorderedModifiersInspectorTest extends CodeInsightFixtureTestCase {
+public class MisorderedModifiersInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new MisorderedModifiersInspector());
 

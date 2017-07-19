@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.controlFlow;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.NestedTernaryOperatorInspector;
 
-final public class NestedTernaryOperatorInspectorTest extends CodeInsightFixtureTestCase {
+final public class NestedTernaryOperatorInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new NestedTernaryOperatorInspector());
 

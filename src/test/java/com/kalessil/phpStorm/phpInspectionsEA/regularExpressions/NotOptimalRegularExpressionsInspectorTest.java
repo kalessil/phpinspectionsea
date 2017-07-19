@@ -1,10 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.regularExpressions;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.NotOptimalRegularExpressionsInspector;
 
-final public class NotOptimalRegularExpressionsInspectorTest extends CodeInsightFixtureTestCase {
+final public class NotOptimalRegularExpressionsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testFindGreedyCharacterSets() {
         myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
 

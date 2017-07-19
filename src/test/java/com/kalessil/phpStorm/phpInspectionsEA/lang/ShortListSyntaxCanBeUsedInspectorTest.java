@@ -1,11 +1,11 @@
 package com.kalessil.phpStorm.phpInspectionsEA.lang;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ShortListSyntaxCanBeUsedInspector;
 
-final public class ShortListSyntaxCanBeUsedInspectorTest extends CodeInsightFixtureTestCase {
+final public class ShortListSyntaxCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
 

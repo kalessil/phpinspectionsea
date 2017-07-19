@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.pitfalls;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SuspiciousReturnInspector;
 
-final public class SuspiciousReturnInspectorTest extends CodeInsightFixtureTestCase {
+final public class SuspiciousReturnInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(SuspiciousReturnInspector.class);
 

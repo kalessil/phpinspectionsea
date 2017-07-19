@@ -2,15 +2,15 @@ package com.kalessil.phpStorm.phpInspectionsEA.internal.utils;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 
 import java.util.HashSet;
 import java.util.Set;
 
-final public class PossibleValuesDiscoveryUtilTest extends CodeInsightFixtureTestCase {
+final public class PossibleValuesDiscoveryUtilTest extends PhpCodeInsightFixtureTestCase {
     public void testTernaryDiscovery() {
         String pattern        = "$x ? true : false;";
         PsiElement expression = PhpPsiElementFactory.createFromText(myFixture.getProject(), TernaryExpression.class, pattern);

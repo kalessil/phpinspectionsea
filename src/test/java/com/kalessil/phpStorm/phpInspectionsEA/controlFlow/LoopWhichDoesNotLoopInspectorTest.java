@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.controlFlow;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.LoopWhichDoesNotLoopInspector;
 
-final public class LoopWhichDoesNotLoopInspectorTest extends CodeInsightFixtureTestCase {
+final public class LoopWhichDoesNotLoopInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/controlFlow/loop-does-not-loop.php");
         myFixture.enableInspections(LoopWhichDoesNotLoopInspector.class);

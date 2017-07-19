@@ -1,10 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.controlFlow;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ExplodeMissUseInspector;
 
-final public class ExplodeMissUseInspectorTest extends CodeInsightFixtureTestCase {
+final public class ExplodeMissUseInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(ExplodeMissUseInspector.class);
 

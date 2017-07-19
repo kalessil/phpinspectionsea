@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.lang;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.AdditionOperationOnArraysInspection;
 
-final public class AdditionOperationOnArraysInspectionTest extends CodeInsightFixtureTestCase {
+final public class AdditionOperationOnArraysInspectionTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new AdditionOperationOnArraysInspection());
 

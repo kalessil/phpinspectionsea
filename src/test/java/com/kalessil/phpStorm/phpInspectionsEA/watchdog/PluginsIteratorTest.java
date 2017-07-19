@@ -2,11 +2,11 @@ package com.kalessil.phpStorm.phpInspectionsEA.watchdog;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 
 import java.util.Set;
 
-final public class PluginsIteratorTest extends CodeInsightFixtureTestCase {
+final public class PluginsIteratorTest extends PhpCodeInsightFixtureTestCase {
     public void testPluginsIterator() {
         final Set<Pair<String, String>> plugins = Sets.newHashSet(new PluginsIterator());
 

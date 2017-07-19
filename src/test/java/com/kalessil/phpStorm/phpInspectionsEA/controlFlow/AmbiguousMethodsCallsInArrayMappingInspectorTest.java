@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.controlFlow;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.AmbiguousMethodsCallsInArrayMappingInspector;
 
-final public class AmbiguousMethodsCallsInArrayMappingInspectorTest extends CodeInsightFixtureTestCase {
+final public class AmbiguousMethodsCallsInArrayMappingInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new AmbiguousMethodsCallsInArrayMappingInspector());
 

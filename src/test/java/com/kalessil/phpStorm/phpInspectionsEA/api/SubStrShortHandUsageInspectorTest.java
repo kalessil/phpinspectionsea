@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.SubStrShortHandUsageInspector;
 
-final public class SubStrShortHandUsageInspectorTest extends CodeInsightFixtureTestCase {
+final public class SubStrShortHandUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/api/substr-short-hand.php");
         myFixture.enableInspections(SubStrShortHandUsageInspector.class);

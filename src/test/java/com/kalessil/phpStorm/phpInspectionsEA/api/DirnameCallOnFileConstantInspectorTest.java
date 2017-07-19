@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.DirnameCallOnFileConstantInspector;
 
-final public class DirnameCallOnFileConstantInspectorTest extends CodeInsightFixtureTestCase {
+final public class DirnameCallOnFileConstantInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/api/dirname-on-file-const.php");
         myFixture.enableInspections(DirnameCallOnFileConstantInspector.class);

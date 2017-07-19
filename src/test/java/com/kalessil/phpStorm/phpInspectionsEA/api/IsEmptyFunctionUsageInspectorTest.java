@@ -1,10 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsEmptyFunctionUsageInspector;
 
-final public class IsEmptyFunctionUsageInspectorTest extends CodeInsightFixtureTestCase {
+final public class IsEmptyFunctionUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         final IsEmptyFunctionUsageInspector inspector = new IsEmptyFunctionUsageInspector();
         inspector.SUGGEST_TO_USE_COUNT_CHECK          = true;

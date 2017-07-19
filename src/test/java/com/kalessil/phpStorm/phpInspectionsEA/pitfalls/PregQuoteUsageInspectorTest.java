@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.pitfalls;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PregQuoteUsageInspector;
 
-final public class PregQuoteUsageInspectorTest extends CodeInsightFixtureTestCase {
+final public class PregQuoteUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/pitfalls/preg-quote.php");
         myFixture.enableInspections(PregQuoteUsageInspector.class);

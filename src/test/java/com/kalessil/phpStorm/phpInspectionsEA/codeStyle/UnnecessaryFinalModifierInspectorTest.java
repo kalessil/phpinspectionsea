@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessaryFinalModifierInspector;
 
-final public class UnnecessaryFinalModifierInspectorTest extends CodeInsightFixtureTestCase {
+final public class UnnecessaryFinalModifierInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/codeStyle/unnecessary-final-modifier.php");
         myFixture.enableInspections(UnnecessaryFinalModifierInspector.class);

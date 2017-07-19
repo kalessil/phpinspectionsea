@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FopenBinaryUnsafeUsageInspector;
 
-final public class FopenBinaryUnsafeUsageInspectorTest extends CodeInsightFixtureTestCase {
+final public class FopenBinaryUnsafeUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/api/fopen-binary-unsafe.php");
         myFixture.enableInspections(FopenBinaryUnsafeUsageInspector.class);

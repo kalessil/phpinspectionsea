@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.security;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureExtractUsageInspector;
 
-final public class NonSecureExtractUsageInspectorTest extends CodeInsightFixtureTestCase {
+final public class NonSecureExtractUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/security/extract.php");
         myFixture.enableInspections(NonSecureExtractUsageInspector.class);

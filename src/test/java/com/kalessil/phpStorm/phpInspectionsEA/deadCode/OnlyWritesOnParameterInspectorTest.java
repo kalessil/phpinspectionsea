@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.deadCode;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OnlyWritesOnParameterInspector;
 
-final public class OnlyWritesOnParameterInspectorTest extends CodeInsightFixtureTestCase {
+final public class OnlyWritesOnParameterInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new OnlyWritesOnParameterInspector());
 

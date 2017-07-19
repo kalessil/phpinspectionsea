@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.IncorrectRandomRangeInspector;
 
-final public class IncorrectRandomRangeInspectorTest extends CodeInsightFixtureTestCase {
+final public class IncorrectRandomRangeInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/pitfalls/incorrect-random-range.php");
         myFixture.enableInspections(IncorrectRandomRangeInspector.class);

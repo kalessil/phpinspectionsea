@@ -1,10 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.semanticalAnalysis;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.CallableInLoopTerminationConditionInspector;
 
-public class CallableInLoopTerminationConditionInspectorTest extends CodeInsightFixtureTestCase {
+public class CallableInLoopTerminationConditionInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new CallableInLoopTerminationConditionInspector());
 

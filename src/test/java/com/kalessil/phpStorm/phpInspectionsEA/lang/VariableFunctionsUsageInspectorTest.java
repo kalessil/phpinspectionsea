@@ -1,13 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.lang;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.VariableFunctionsUsageInspector;
 
 /* Test the same scenario, but for different language levels */
-final public class VariableFunctionsUsageInspectorTest extends CodeInsightFixtureTestCase {
+final public class VariableFunctionsUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatternsPhp53() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP530);
         myFixture.enableInspections(new VariableFunctionsUsageInspector());

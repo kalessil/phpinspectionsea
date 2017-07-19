@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.DynamicInvocationViaScopeResolutionInspector;
 
-final public class DynamicInvocationViaScopeResolutionInspectorTest extends CodeInsightFixtureTestCase {
+final public class DynamicInvocationViaScopeResolutionInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/classes/dynamic-method-invocation-via-scope-resolution.php");
         myFixture.enableInspections(DynamicInvocationViaScopeResolutionInspector.class);

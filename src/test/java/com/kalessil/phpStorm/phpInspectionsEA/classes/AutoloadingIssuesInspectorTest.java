@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.classes;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.AutoloadingIssuesInspector;
 
-final public class AutoloadingIssuesInspectorTest extends CodeInsightFixtureTestCase {
+final public class AutoloadingIssuesInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsPatterns() {
         myFixture.enableInspections(new AutoloadingIssuesInspector());
 

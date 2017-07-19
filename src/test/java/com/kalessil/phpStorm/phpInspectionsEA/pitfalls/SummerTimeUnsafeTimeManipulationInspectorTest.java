@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.pitfalls;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SummerTimeUnsafeTimeManipulationInspector;
 
-final public class SummerTimeUnsafeTimeManipulationInspectorTest extends CodeInsightFixtureTestCase {
+final public class SummerTimeUnsafeTimeManipulationInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new SummerTimeUnsafeTimeManipulationInspector());
 

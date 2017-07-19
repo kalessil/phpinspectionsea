@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.classes;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.MissingIssetImplementationInspector;
 
-final public class MissingIssetImplementationInspectorTest extends CodeInsightFixtureTestCase {
+final public class MissingIssetImplementationInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsInconsistentGetsSetsPatterns() {
         myFixture.enableInspections(new MissingIssetImplementationInspector());
 

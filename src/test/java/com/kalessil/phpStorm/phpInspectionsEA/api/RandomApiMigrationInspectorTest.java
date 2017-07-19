@@ -1,11 +1,11 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RandomApiMigrationInspector;
 
-final public class RandomApiMigrationInspectorTest extends CodeInsightFixtureTestCase {
+final public class RandomApiMigrationInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsMtPatterns() {
         RandomApiMigrationInspector inspector = new RandomApiMigrationInspector();
         inspector.SUGGEST_USING_RANDOM_INT    = false;

@@ -1,10 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api.strings;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StringCaseManipulationInspector;
 
-public class StringCaseManipulationInspectorTest extends CodeInsightFixtureTestCase {
+public class StringCaseManipulationInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new StringCaseManipulationInspector());
 

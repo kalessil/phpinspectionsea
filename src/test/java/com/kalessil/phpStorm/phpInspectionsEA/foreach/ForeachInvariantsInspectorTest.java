@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.foreach;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachInvariantsInspector;
 
-final public class ForeachInvariantsInspectorTest extends CodeInsightFixtureTestCase {
+final public class ForeachInvariantsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/foreach/foreach-invariants.php");
         myFixture.enableInspections(ForeachInvariantsInspector.class);

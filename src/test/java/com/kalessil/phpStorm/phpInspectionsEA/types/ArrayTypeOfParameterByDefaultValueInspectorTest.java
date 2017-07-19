@@ -1,10 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.types;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayTypeOfParameterByDefaultValueInspector;
 
-final public class ArrayTypeOfParameterByDefaultValueInspectorTest extends CodeInsightFixtureTestCase {
+final public class ArrayTypeOfParameterByDefaultValueInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ArrayTypeOfParameterByDefaultValueInspector());
 

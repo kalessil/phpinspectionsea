@@ -1,10 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.deadCode;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.SenselessMethodDuplicationInspector;
 
-final public class SenselessMethodDuplicationInspectorTest extends CodeInsightFixtureTestCase {
+final public class SenselessMethodDuplicationInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         SenselessMethodDuplicationInspector inspector = new SenselessMethodDuplicationInspector();
         inspector.MAX_METHOD_SIZE = 20;

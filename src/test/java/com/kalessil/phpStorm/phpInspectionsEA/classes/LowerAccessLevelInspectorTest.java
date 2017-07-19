@@ -1,12 +1,12 @@
 package com.kalessil.phpStorm.phpInspectionsEA.classes;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.LowerAccessLevelInspector;
 
-public class LowerAccessLevelInspectorTest extends CodeInsightFixtureTestCase {
+public class LowerAccessLevelInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testProtectedMembersOfFinalClass() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new LowerAccessLevelInspector());

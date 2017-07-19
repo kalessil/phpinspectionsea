@@ -2,13 +2,13 @@ package com.kalessil.phpStorm.phpInspectionsEA.internal.utils;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.PhpReturn;
+import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 
-final public class PhpLanguageUtilTest extends CodeInsightFixtureTestCase {
+final public class PhpLanguageUtilTest extends PhpCodeInsightFixtureTestCase {
     public void testIsNull() {
         Project project = myFixture.getProject();
         PsiElement statement;

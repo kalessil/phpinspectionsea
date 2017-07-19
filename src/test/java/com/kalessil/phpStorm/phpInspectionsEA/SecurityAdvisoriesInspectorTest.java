@@ -1,9 +1,8 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.SecurityAdvisoriesInspector;
 
-final public class SecurityAdvisoriesInspectorTest extends CodeInsightFixtureTestCase {
+final public class SecurityAdvisoriesInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testHasAdvisory() {
         myFixture.enableInspections(new SecurityAdvisoriesInspector());
 

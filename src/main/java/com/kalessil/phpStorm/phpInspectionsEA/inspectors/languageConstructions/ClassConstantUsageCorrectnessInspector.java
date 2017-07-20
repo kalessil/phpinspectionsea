@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -13,8 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -27,6 +25,13 @@ import java.util.List;
 
 public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
     private static final String message = "::class result and the class qualified name are not identical (case mismatch).";
+
+    final private static Set<String> validReferences = new HashSet<>();
+    static {
+        validReferences.add("self");
+        validReferences.add("static");
+        validReferences.add("parent");
+    }
 
     @NotNull
     public String getShortName() {
@@ -45,8 +50,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                     final String referencedQn  = reference == null ? null : reference.getText();
                     if (reference instanceof ClassReference) {
                         final ClassReference clazz = (ClassReference) reference;
-                        final boolean isTarget     = !referencedQn.equals("self") && !referencedQn.equals("static");
-                        final PsiElement resolved  = isTarget ? clazz.resolve() : null;
+                        final PsiElement resolved  = validReferences.contains(referencedQn) ? null : clazz.resolve();
                         if (resolved instanceof PhpClass) {
                             /* the resolved class will accumulate case issue in it's FQN */
                             final String clazzFqn       = clazz.getFQN();
@@ -54,7 +58,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                             if (clazzFqn != null && !variants.isEmpty()) {
                                 final String implicitQn = variants.iterator().next();
                                 if (!implicitQn.equals(referencedQn)) {
-                                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                    holder.registerProblem(reference, message);
                                 }
                             }
                             variants.clear();
@@ -69,10 +73,10 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                 final String referenceText = reference.getText();
                 if (referenceText.startsWith("\\")) {
                     /* FQN specified, resolve as we might have case issues there */
-                    final Project project = reference.getProject();
-                    for (final PhpClass resolved : PhpIndex.getInstance(project).getClassesByFQN(referenceText)) {
-                        result.add(resolved.getFQN());
-                        break;
+                    final Project project               = reference.getProject();
+                    final Collection<PhpClass> resolved = PhpIndex.getInstance(project).getClassesByFQN(referenceText);
+                    if (!resolved.isEmpty()) {
+                        result.add(resolved.iterator().next().getFQN());
                     }
                 } else {
                     PhpNamespace namespace = null;

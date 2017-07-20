@@ -2,12 +2,13 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -35,7 +36,8 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpParenthesizedExpression(ParenthesizedExpression expression) {
+            @Override
+            public void visitPhpParenthesizedExpression(@NotNull ParenthesizedExpression expression) {
                 if (holder.getFile().getName().endsWith(".blade.php")) {
                     /* syntax injection there is not done properly for elseif, causing false-positives */
                     return;
@@ -73,35 +75,33 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     (parent instanceof ParameterList && argument instanceof TernaryExpression)
                 ;
 
-                final boolean isMemberReference = parent instanceof MethodReference || parent instanceof FieldReference;
-                /* (new ...)->...: allow method/property access on newly created objects */
-                if (!knowsLegalCases && isMemberReference && argument instanceof NewExpression) {
-                    knowsLegalCases = true;
-                }
-                /* (clone ...)->...: allow method/property access on cloned objects */
-                if (!knowsLegalCases && isMemberReference && argument instanceof UnaryExpression) {
-                    final PsiElement operator = ((UnaryExpression) argument).getOperation();
-                    knowsLegalCases = null != operator && PhpTokenTypes.kwCLONE == operator.getNode().getElementType();
-                }
-                /* ( ?? )->...: allow method/property access on null coallesing operator */
-                if (!knowsLegalCases && isMemberReference && argument instanceof BinaryExpression) {
-                    knowsLegalCases = PhpTokenTypes.opCOALESCE == ((BinaryExpression) argument).getOperationType();
-                }
-                /* ( ?: )->...: allow method/property access on ternary operator */
-                if (!knowsLegalCases && isMemberReference && argument instanceof TernaryExpression) {
-                    knowsLegalCases = true;
-                }
-                /* ( = )->...: allow method/property access on assigned variable */
-                if (!knowsLegalCases && isMemberReference && argument instanceof AssignmentExpression) {
-                    knowsLegalCases = true;
+                if (!knowsLegalCases && parent instanceof MemberReference) {
+                    if (argument instanceof NewExpression) {
+                        /* (new ...)->...: allow method/property access on newly created objects */
+                        knowsLegalCases = true;
+                    } else if (argument instanceof UnaryExpression) {
+                        /* (clone ...)->...: allow method/property access on cloned objects */
+                        final PsiElement operator = ((UnaryExpression) argument).getOperation();
+                        knowsLegalCases = null != operator && operator.getNode().getElementType() == PhpTokenTypes.kwCLONE;
+                    } else if (argument instanceof BinaryExpression) {
+                        /* ( ?? )->...: allow method/property access on null coallesing operator */
+                        knowsLegalCases = ((BinaryExpression) argument).getOperationType() == PhpTokenTypes.opCOALESCE;
+                    } else if (argument instanceof TernaryExpression) {
+                        /* ( ?: )->...: allow method/property access on ternary operator */
+                        knowsLegalCases = true;
+                    } else if (argument instanceof AssignmentExpression) {
+                        /* ( = )->...: allow method/property access on assigned variable */
+                        knowsLegalCases = true;
+                    }
                 }
 
                 /* (...->property)(...), (...->method())(...), (function(){})(...): allow callable/__invoke calls */
                 if (
                     !knowsLegalCases && OpenapiTypesUtil.isFunctionReference(parent) &&
                     (
-                        argument instanceof FieldReference || argument instanceof MethodReference ||
-                        argument instanceof UnaryExpression || argument instanceof NewExpression ||
+                        argument instanceof MemberReference ||
+                        argument instanceof UnaryExpression ||
+                        argument instanceof NewExpression ||
                         OpenapiTypesUtil.isLambda(argument)
                     )
                 ) {
@@ -109,7 +109,7 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                 }
 
                 if (!knowsLegalCases) {
-                    holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                    holder.registerProblem(expression, message, new TheLocalFix());
                 }
             }
         };
@@ -132,7 +132,22 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof ParenthesizedExpression) {
-                expression.replace(((ParenthesizedExpression) expression).getArgument());
+                PsiElement target      = expression;
+                PsiElement replacement = ((ParenthesizedExpression) expression).getArgument();
+                /* clone replacement is a special case */
+                final PsiElement parent = expression.getParent();
+                if (parent instanceof UnaryExpression) {
+                    final PsiElement operation = ((UnaryExpression) parent).getOperation();
+                    if (operation != null && operation.getNode().getElementType() == PhpTokenTypes.kwCLONE) {
+                        target             = parent;
+                        final String clone = "clone " + replacement.getText();
+                        replacement        = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, clone);
+                    }
+                }
+                /* replace now */
+                if (replacement != null) {
+                    target.replace(replacement);
+                }
             }
         }
     }

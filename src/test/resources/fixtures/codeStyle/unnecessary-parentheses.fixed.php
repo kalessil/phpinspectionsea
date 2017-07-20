@@ -1,9 +1,9 @@
 <?php
 
-    require_once <weak_warning descr="Unnecessary parentheses.">('whatever.php')</weak_warning>;
-    $x = <weak_warning descr="Unnecessary parentheses.">($x)</weak_warning> + 1;
-    $x = <weak_warning descr="Unnecessary parentheses.">(file_get_contents())</weak_warning>;
-    $x = clone<weak_warning descr="Unnecessary parentheses.">($object)</weak_warning>;
+    require_once 'whatever.php';
+    $x = $x + 1;
+    $x = file_get_contents();
+    $x = clone $object;
 
     $x = ($x + 1) / 2;
 

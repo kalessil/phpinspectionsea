@@ -20,3 +20,11 @@
 
         <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(integer) ($integer + 1)</weak_warning>
     ];
+
+    /** @var string $string */
+    function withWeakParameter($string) {
+        return (string) $string;
+    }
+    function withStrictParameter(string $string) {
+        return <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string) $string</weak_warning>;
+    }

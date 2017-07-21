@@ -5,12 +5,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
-import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,9 +58,26 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                     final PhpType resolved  = ((PhpTypedElement) argument).getType().global(expression.getProject());
                     final Set<String> types = resolved.hasUnknown() ? new HashSet<>() : resolved.getTypes();
                     if (types.size() == 1 && typesMapping.get(operator).equals(Types.getType(types.iterator().next()))) {
-                        holder.registerProblem(expression, message, new ReplaceWithArgumentFix(argument.getText()));
+                        if (!(argument instanceof Variable) || !this.isWeakTypedParameter((Variable) argument)) {
+                            holder.registerProblem(expression, message, new ReplaceWithArgumentFix(argument.getText()));
+                        }
                     }
                 }
+            }
+
+            private boolean isWeakTypedParameter(@NotNull Variable variable) {
+                boolean result = false;
+                final Function scope = ExpressionSemanticUtil.getScope(variable);
+                if (scope != null) {
+                    final String variableName = variable.getName();
+                    for (final Parameter parameter : scope.getParameters()) {
+                        if (parameter.getName().equals(variableName)) {
+                            result = parameter.getDeclaredType().isEmpty();
+                            break;
+                        }
+                    }
+                }
+                return result;
             }
         };
     }

@@ -20,3 +20,11 @@
 
         ($integer + 1)
     ];
+
+    /** @var string $string */
+    function withWeakParameter($string) {
+        return (string) $string;
+    }
+    function withStrictParameter(string $string) {
+        return $string;
+    }

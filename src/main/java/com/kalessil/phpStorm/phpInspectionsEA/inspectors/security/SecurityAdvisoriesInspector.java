@@ -5,7 +5,6 @@ import com.intellij.json.psi.JsonObject;
 import com.intellij.json.psi.JsonProperty;
 import com.intellij.json.psi.JsonStringLiteral;
 import com.intellij.json.psi.JsonValue;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -80,9 +79,9 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                 if (propertyName.equals("name")) {
                     final JsonValue nameValue = ((JsonProperty) option).getValue();
                     if (nameValue instanceof JsonStringLiteral) {
-                        ownPackageName = ownPackagePrefix = ((JsonStringLiteral) nameValue).getValue();
-                        ownPackagePrefix = 0 == ownPackagePrefix.length() ? null : ownPackagePrefix;
-                        if (null != ownPackagePrefix && -1 != ownPackagePrefix.indexOf('/')) {
+                        ownPackageName   = ownPackagePrefix = ((JsonStringLiteral) nameValue).getValue();
+                        ownPackagePrefix = ownPackagePrefix.length() == 0 ? null : ownPackagePrefix;
+                        if (ownPackagePrefix != null && ownPackagePrefix.indexOf('/') != -1) {
                             ownPackagePrefix = ownPackagePrefix.substring(0, 1 + ownPackagePrefix.indexOf('/'));
                         }
                     }
@@ -113,7 +112,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                 final String packageName       = dependency.getName().toLowerCase();
                 final JsonValue packageVersion = dependency.getValue();
 
-                if (packageName.equals("roave/security-advisories") && packageVersion instanceof JsonStringLiteral) {
+                if (packageVersion instanceof JsonStringLiteral && packageName.equals("roave/security-advisories")) {
                     if (!packageVersion.getText().toLowerCase().equals("\"dev-master\"")) {
                         holder.registerProblem(packageVersion, useMaster);
                     }

@@ -72,19 +72,18 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
 
                     /* TODO: dedicated method */
                     /* === nested calls check === */
-                    if (3 == params.length && OpenapiTypesUtil.isFunctionReference(params[2])) {
+                    if (params.length == 3 && OpenapiTypesUtil.isFunctionReference(params[2])) {
                         /* ensure 3rd argument is nested call of str_replace */
                         final String functionName = ((FunctionReference) params[2]).getName();
                         if (functionName != null && functionName.equals("str_replace")) {
-                            holder.registerProblem(params[2], messageNesting, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(params[2], messageNesting);
                         }
                     }
 
                     /* TODO: dedicated method */
                     /* === replacements uniqueness check === */
-                    if (3 == params.length && params[1] instanceof ArrayCreationExpression) {
-                        final HashSet<String> replacements = new HashSet<>();
-
+                    if (params.length == 3 && params[1] instanceof ArrayCreationExpression) {
+                        final Set<String> replacements = new HashSet<>();
                         for (final PsiElement oneReplacement : params[1].getChildren()) {
                             if (oneReplacement instanceof PhpPsiElement) {
                                 final PhpPsiElement item = ((PhpPsiElement) oneReplacement).getFirstPsiChild();
@@ -92,18 +91,13 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                                 if (!(item instanceof StringLiteralExpression)) {
                                     return;
                                 }
-
                                 replacements.add(item.getText());
                             }
                         }
-
-                        /* count unique replacements */
-                        final int uniqueReplacements = replacements.size();
-                        replacements.clear();
-
-                        if (uniqueReplacements == 1) {
+                        if (replacements.size() == 1) {
                             holder.registerProblem(params[1], messageReplacements, ProblemHighlightType.WEAK_WARNING);
                         }
+                        replacements.clear();
                     }
                 }
             }

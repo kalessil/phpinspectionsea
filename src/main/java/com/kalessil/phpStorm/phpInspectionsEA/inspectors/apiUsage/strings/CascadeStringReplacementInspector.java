@@ -17,6 +17,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class CascadeStringReplacementInspector extends BasePhpInspection {
     private static final String messageNesting      = "This str_replace(...) call can be merged with its parent.";
     private static final String messageCascading    = "This str_replace(...) call can be merged with the previous.";
@@ -33,71 +42,81 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
-                /* try getting function reference, indicating pattern match */
                 final FunctionReference functionCall = getStrReplaceReference(assignmentExpression);
                 if (functionCall != null) {
-                    /* get previous non-comment, non-php-doc expression */
-                    PsiElement previous = assignmentExpression.getParent().getPrevSibling();
-                    while (null != previous && !(previous instanceof PhpPsiElement)) {
-                        previous = previous.getPrevSibling();
-                    }
-                    while (previous instanceof PhpDocComment) {
-                        previous = ((PhpDocComment) previous).getPrevPsiSibling();
-                    }
                     final PsiElement[] params = functionCall.getParameters();
-
-                    /* TODO: dedicated method */
-                    /* === cascade calls check === */
-                    /* previous assignment should be inspected, probably we can merge this one into it */
-                    if (
-                        null != previous && previous.getFirstChild() instanceof AssignmentExpression &&
-                        null != getStrReplaceReference((AssignmentExpression) previous.getFirstChild())
-                    ) {
-                        /* ensure linking variable discoverable and call contains all params */
-                        final PsiElement glueVariable = ((AssignmentExpression) previous.getFirstChild()).getVariable();
-                        if (3 == params.length && glueVariable instanceof Variable && params[2] instanceof Variable) {
-                            /* ensure previous, used and result storage is the same variable */
-                            final String previousVariableName  = ((Variable) glueVariable).getName();
-                            final String callSubjectName       = ((Variable) params[2]).getName();
-                            final PsiElement callResultStorage = assignmentExpression.getVariable();
-                            if (
-                                callResultStorage != null && callSubjectName.equals(previousVariableName) &&
-                                PsiEquivalenceUtil.areElementsEquivalent(glueVariable, callResultStorage)
-                            ) {
-                                holder.registerProblem(functionCall, messageCascading);
-                            }
-                        }
-                    }
-
-
-                    /* TODO: dedicated method */
-                    /* === nested calls check === */
-                    if (params.length == 3 && OpenapiTypesUtil.isFunctionReference(params[2])) {
-                        /* ensure 3rd argument is nested call of str_replace */
-                        final String functionName = ((FunctionReference) params[2]).getName();
-                        if (functionName != null && functionName.equals("str_replace")) {
-                            holder.registerProblem(params[2], messageNesting);
-                        }
-                    }
-
-                    /* TODO: dedicated method */
-                    /* === replacements uniqueness check === */
-                    if (params.length == 3 && params[1] instanceof ArrayCreationExpression) {
-                        final Set<String> replacements = new HashSet<>();
-                        for (final PsiElement oneReplacement : params[1].getChildren()) {
-                            if (oneReplacement instanceof PhpPsiElement) {
-                                final PhpPsiElement item = ((PhpPsiElement) oneReplacement).getFirstPsiChild();
-                                /* abort on non-string entries  */
-                                if (!(item instanceof StringLiteralExpression)) {
-                                    return;
+                    if (params.length == 3) {
+                        /* case: cascading replacements */
+                        final AssignmentExpression previous = this.getPreviousAssignment(assignmentExpression);
+                        if (previous != null && getStrReplaceReference(previous) != null) {
+                            final PsiElement transitionVariable = previous.getVariable();
+                            if (transitionVariable instanceof Variable && params[2] instanceof Variable) {
+                                /* ensure previous, used and result storage is the same variable */
+                                final String previousVariableName  = ((Variable) transitionVariable).getName();
+                                final String callSubjectName       = ((Variable) params[2]).getName();
+                                final PsiElement callResultStorage = assignmentExpression.getVariable();
+                                if (
+                                    callResultStorage != null && callSubjectName.equals(previousVariableName) &&
+                                    PsiEquivalenceUtil.areElementsEquivalent(transitionVariable, callResultStorage)
+                                ) {
+                                    holder.registerProblem(functionCall, messageCascading);
                                 }
-                                replacements.add(item.getText());
                             }
                         }
-                        if (replacements.size() == 1) {
-                            holder.registerProblem(params[1], messageReplacements, ProblemHighlightType.WEAK_WARNING);
+
+                        /* other cases */
+                        this.checkNestedCalls(params[2]);
+                        this.checkReplacementSimplification(params[1]);
+                    }
+                }
+            }
+
+            @Nullable
+            private AssignmentExpression getPreviousAssignment(@NotNull AssignmentExpression assignmentExpression) {
+                /* get previous non-comment, non-php-doc expression */
+                PsiElement previous = assignmentExpression.getParent().getPrevSibling();
+                while (previous != null && !(previous instanceof PhpPsiElement)) {
+                    previous = previous.getPrevSibling();
+                }
+                while (previous instanceof PhpDocComment) {
+                    previous = ((PhpDocComment) previous).getPrevPsiSibling();
+                }
+                /* grab the target assignment */
+                final AssignmentExpression result;
+                if (previous != null && previous.getFirstChild() instanceof AssignmentExpression) {
+                    result = (AssignmentExpression) previous.getFirstChild();
+                } else {
+                    result = null;
+                }
+                return result;
+            }
+
+            private void checkReplacementSimplification(@NotNull PsiElement replacementExpression) {
+                if (replacementExpression instanceof ArrayCreationExpression) {
+                    final Set<String> replacements = new HashSet<>();
+                    for (final PsiElement oneReplacement : replacementExpression.getChildren()) {
+                        if (oneReplacement instanceof PhpPsiElement) {
+                            final PhpPsiElement item = ((PhpPsiElement) oneReplacement).getFirstPsiChild();
+                            /* abort on non-string entries  */
+                            if (!(item instanceof StringLiteralExpression)) {
+                                return;
+                            }
+                            replacements.add(item.getText());
                         }
-                        replacements.clear();
+                    }
+                    if (replacements.size() == 1) {
+                        holder.registerProblem(replacementExpression, messageReplacements, ProblemHighlightType.WEAK_WARNING);
+                    }
+                    replacements.clear();
+                }
+            }
+
+            private void checkNestedCalls(@NotNull PsiElement callCandidate) {
+                if (OpenapiTypesUtil.isFunctionReference(callCandidate)) {
+                    /* ensure 3rd argument is nested call of str_replace */
+                    final String functionName = ((FunctionReference) callCandidate).getName();
+                    if (functionName != null && functionName.equals("str_replace")) {
+                        holder.registerProblem(callCandidate, messageNesting);
                     }
                 }
             }

@@ -77,24 +77,20 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         for (final PsiElement option : config.getChildren()) {
             if (option instanceof JsonProperty) {
                 final String propertyName = ((JsonProperty) option).getName();
-                if (!StringUtil.isEmpty(propertyName)) {
-                    if (propertyName.equals("name")) {
-                        final JsonValue nameValue = ((JsonProperty) option).getValue();
-                        if (nameValue instanceof JsonStringLiteral) {
-                            ownPackageName = ownPackagePrefix = ((JsonStringLiteral) nameValue).getValue();
-                            ownPackagePrefix = 0 == ownPackagePrefix.length() ? null : ownPackagePrefix;
-                            if (null != ownPackagePrefix && -1 != ownPackagePrefix.indexOf('/')) {
-                                ownPackagePrefix = ownPackagePrefix.substring(0, 1 + ownPackagePrefix.indexOf('/'));
-                            }
+                if (propertyName.equals("name")) {
+                    final JsonValue nameValue = ((JsonProperty) option).getValue();
+                    if (nameValue instanceof JsonStringLiteral) {
+                        ownPackageName = ownPackagePrefix = ((JsonStringLiteral) nameValue).getValue();
+                        ownPackagePrefix = 0 == ownPackagePrefix.length() ? null : ownPackagePrefix;
+                        if (null != ownPackagePrefix && -1 != ownPackagePrefix.indexOf('/')) {
+                            ownPackagePrefix = ownPackagePrefix.substring(0, 1 + ownPackagePrefix.indexOf('/'));
                         }
-
-                        continue;
                     }
-
-                    if (propertyName.equals("require")) {
-                        requireProperty = (JsonProperty) option;
-                        break;
-                    }
+                    continue;
+                }
+                if (propertyName.equals("require")) {
+                    requireProperty = (JsonProperty) option;
+                    break;
                 }
             }
         }
@@ -104,6 +100,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         final ProblemsHolder holder          = new ProblemsHolder(manager, file, isOnTheFly);
         final JsonValue requiredPackagesList = requireProperty == null ? null : requireProperty.getValue();
         if (requiredPackagesList instanceof JsonObject && !developmentPackages.contains(ownPackageName)) {
+            boolean hasAdvisories       = false;
             int thirdPartyPackagesCount = 0;
             for (final PsiElement component : requiredPackagesList.getChildren()) {
                 /* we expect certain structure for package definition */
@@ -118,13 +115,13 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
                 if (packageName.equals("roave/security-advisories") && packageVersion instanceof JsonStringLiteral) {
                     if (!packageVersion.getText().toLowerCase().equals("\"dev-master\"")) {
-                        holder.registerProblem(packageVersion, useMaster, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(packageVersion, useMaster);
                     }
-                    continue;
+                    hasAdvisories = true;
                 }
 
                 if (developmentPackages.contains(packageName)) {
-                    holder.registerProblem(dependency.getFirstChild(), useRequireDev, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(dependency.getFirstChild(), useRequireDev);
                 } else if (packageName.indexOf('/') != -1) {
                     if (ownPackagePrefix == null || !packageName.startsWith(ownPackagePrefix)) {
                         ++thirdPartyPackagesCount;
@@ -133,8 +130,8 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
             }
 
             /* fire error message if we have any of 3rd-party packages */
-            if (thirdPartyPackagesCount > 0) {
-                holder.registerProblem(requireProperty.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+            if (thirdPartyPackagesCount > 0 && !hasAdvisories) {
+                holder.registerProblem(requireProperty.getFirstChild(), message);
             }
         }
 

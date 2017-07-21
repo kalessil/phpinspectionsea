@@ -2,8 +2,11 @@
   "name":        "kalessil/whatever",
   "description": "",
   "license":     "",
-  "require":     {
-    "kalessil/something-else":   "*",
-    "roave/security-advisories": "dev-master"
+  "require": {
+    "vendor/one":                "*",
+    "vendor/two":                "*",
+    "roave/security-advisories": "dev-master",
+    "vendor/three":              "*",
+    "vendor/four":               "*"
   }
 }

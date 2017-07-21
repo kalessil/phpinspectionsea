@@ -42,13 +42,13 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
-                final FunctionReference functionCall = getStrReplaceReference(assignmentExpression);
+                final FunctionReference functionCall = this.getStrReplaceReference(assignmentExpression);
                 if (functionCall != null) {
                     final PsiElement[] params = functionCall.getParameters();
                     if (params.length == 3) {
                         /* case: cascading replacements */
                         final AssignmentExpression previous = this.getPreviousAssignment(assignmentExpression);
-                        if (previous != null && getStrReplaceReference(previous) != null) {
+                        if (previous != null && this.getStrReplaceReference(previous) != null) {
                             final PsiElement transitionVariable = previous.getVariable();
                             if (transitionVariable instanceof Variable && params[2] instanceof Variable) {
                                 /* ensure previous, used and result storage is the same variable */
@@ -69,26 +69,6 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                         this.checkReplacementSimplification(params[1]);
                     }
                 }
-            }
-
-            @Nullable
-            private AssignmentExpression getPreviousAssignment(@NotNull AssignmentExpression assignmentExpression) {
-                /* get previous non-comment, non-php-doc expression */
-                PsiElement previous = assignmentExpression.getParent().getPrevSibling();
-                while (previous != null && !(previous instanceof PhpPsiElement)) {
-                    previous = previous.getPrevSibling();
-                }
-                while (previous instanceof PhpDocComment) {
-                    previous = ((PhpDocComment) previous).getPrevPsiSibling();
-                }
-                /* grab the target assignment */
-                final AssignmentExpression result;
-                if (previous != null && previous.getFirstChild() instanceof AssignmentExpression) {
-                    result = (AssignmentExpression) previous.getFirstChild();
-                } else {
-                    result = null;
-                }
-                return result;
             }
 
             private void checkReplacementSimplification(@NotNull PsiElement replacementExpression) {
@@ -113,26 +93,46 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
 
             private void checkNestedCalls(@NotNull PsiElement callCandidate) {
                 if (OpenapiTypesUtil.isFunctionReference(callCandidate)) {
-                    /* ensure 3rd argument is nested call of str_replace */
                     final String functionName = ((FunctionReference) callCandidate).getName();
                     if (functionName != null && functionName.equals("str_replace")) {
                         holder.registerProblem(callCandidate, messageNesting);
                     }
                 }
             }
-        };
-    }
 
-    @Nullable
-    private FunctionReference getStrReplaceReference(@NotNull AssignmentExpression assignment) {
-        FunctionReference result = null;
-        final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
-        if (OpenapiTypesUtil.isFunctionReference(value)) {
-            final String functionName = ((FunctionReference) value).getName();
-            if (functionName != null && functionName.equals("str_replace")) {
-                result = (FunctionReference) value;
+            @Nullable
+            private FunctionReference getStrReplaceReference(@NotNull AssignmentExpression assignment) {
+                FunctionReference result = null;
+                final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
+                if (OpenapiTypesUtil.isFunctionReference(value)) {
+                    final String functionName = ((FunctionReference) value).getName();
+                    if (functionName != null && functionName.equals("str_replace")) {
+                        result = (FunctionReference) value;
+                    }
+                }
+                return result;
             }
-        }
-        return result;
+
+
+            @Nullable
+            private AssignmentExpression getPreviousAssignment(@NotNull AssignmentExpression assignmentExpression) {
+                /* get previous non-comment, non-php-doc expression */
+                PsiElement previous = assignmentExpression.getParent().getPrevSibling();
+                while (previous != null && !(previous instanceof PhpPsiElement)) {
+                    previous = previous.getPrevSibling();
+                }
+                while (previous instanceof PhpDocComment) {
+                    previous = ((PhpDocComment) previous).getPrevPsiSibling();
+                }
+                /* grab the target assignment */
+                final AssignmentExpression result;
+                if (previous != null && previous.getFirstChild() instanceof AssignmentExpression) {
+                    result = (AssignmentExpression) previous.getFirstChild();
+                } else {
+                    result = null;
+                }
+                return result;
+            }
+        };
     }
 }

@@ -12,8 +12,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public class CascadeStringReplacementInspector extends BasePhpInspection {
     private static final String messageNesting      = "This str_replace(...) call can be merged with its parent.";
@@ -29,8 +31,6 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            /* TODO: support mb_* function */
-
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
                 /* try getting function reference, indicating pattern match */
@@ -110,6 +110,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         };
     }
 
+    @Nullable
     private FunctionReference getStrReplaceReference(@NotNull AssignmentExpression assignment) {
         FunctionReference result = null;
         final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());

@@ -55,7 +55,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                 final PsiElement operation  = expression.getOperation();
                 final IElementType operator = operation == null ? null : operation.getNode().getElementType();
                 if (argument instanceof PhpTypedElement && typesMapping.containsKey(operator)) {
-                    final PhpType resolved  = ((PhpTypedElement) argument).getType().global(expression.getProject());
+                    final PhpType resolved  = this.resolveStrictly((PhpTypedElement) argument);
                     final Set<String> types = resolved.hasUnknown() ? new HashSet<>() : resolved.getTypes();
                     if (types.size() == 1 && typesMapping.get(operator).equals(Types.getType(types.iterator().next()))) {
                         if (!(argument instanceof Variable) || !this.isWeakTypedParameter((Variable) argument)) {
@@ -63,6 +63,24 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                         }
                     }
                 }
+            }
+
+            @NotNull
+            private PhpType resolveStrictly(@NotNull PhpTypedElement expression) {
+                PhpType result = PhpType.EMPTY;
+                if (expression instanceof MethodReference) {
+                    final PsiElement resolved = ((FunctionReference) expression).resolve();
+                    if (resolved instanceof Function) {
+                        final Function referencedFunction = (Function) resolved;
+                        final PsiElement returnedType     = referencedFunction.getReturnType();
+                        if (returnedType != null) {
+                            result = referencedFunction.getType().global(holder.getProject());
+                        }
+                    }
+                } else {
+                    result = expression.getType().global(holder.getProject());
+                }
+                return result;
             }
 
             private boolean isWeakTypedParameter(@NotNull Variable variable) {

@@ -28,3 +28,18 @@
     function withStrictParameter(string $string) {
         return <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string) $string</weak_warning>;
     }
+
+    class ClassWithSomeMethods {
+        /** @return string */
+        function withWeakReturn() {
+            return '';
+        }
+        function withStrictReturn(): string {
+            return '';
+        }
+    }
+    $instance = new ClassWithSomeMethods();
+    return [
+        (string) $instance->withWeakReturn(),
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string) $instance->withStrictReturn()</weak_warning>
+    ];

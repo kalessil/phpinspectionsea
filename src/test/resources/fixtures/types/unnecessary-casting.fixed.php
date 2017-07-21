@@ -28,3 +28,18 @@
     function withStrictParameter(string $string) {
         return $string;
     }
+
+    class ClassWithSomeMethods {
+        /** @return string */
+        function withWeakReturn() {
+            return '';
+        }
+        function withStrictReturn(): string {
+            return '';
+        }
+    }
+    $instance = new ClassWithSomeMethods();
+    return [
+        (string) $instance->withWeakReturn(),
+        $instance->withStrictReturn()
+    ];

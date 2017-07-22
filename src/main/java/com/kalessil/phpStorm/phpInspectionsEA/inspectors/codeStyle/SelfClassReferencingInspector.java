@@ -131,12 +131,6 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                         return;
                     }
 
-                    final String classReferenceText = classReference.getText();
-
-                    if ("__CLASS__".equals(classReferenceText)) {
-                        registerProblem(classReference.getParent(), className + "::class", classReferenceText);
-                    }
-
                     final String classReferenceName = classReference.getName();
 
                     if (classReferenceName == null) {

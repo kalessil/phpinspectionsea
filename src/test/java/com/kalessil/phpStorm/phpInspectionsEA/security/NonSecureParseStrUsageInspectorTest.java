@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureParse
 
 final public class NonSecureParseStrUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new NonSecureParseStrUsageInspector());
+
         myFixture.configureByFile("fixtures/security/parse-str.php");
-        myFixture.enableInspections(NonSecureParseStrUsageInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureCrypt
 
 final public class NonSecureCryptUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new NonSecureCryptUsageInspector());
+
         myFixture.configureByFile("fixtures/security/crypt.php");
-        myFixture.enableInspections(NonSecureCryptUsageInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

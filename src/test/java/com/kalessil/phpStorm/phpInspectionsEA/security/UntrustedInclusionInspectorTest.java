@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.UntrustedInclu
 
 final public class UntrustedInclusionInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new UntrustedInclusionInspector());
+
         myFixture.configureByFile("fixtures/security/untrusted-inclusion.php");
-        myFixture.enableInspections(UntrustedInclusionInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

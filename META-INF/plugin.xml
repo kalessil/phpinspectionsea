@@ -87,7 +87,7 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="CallableInLoopTerminationConditionInspection"  displayName="Callable calls in loops termination condition"
         groupName="Performance"                                   enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.CallableInLoopTerminationConditionInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.CallableInLoopTerminationConditionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SlowArrayOperationsInLoopInspection"           displayName="Slow array function used in loop"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
@@ -219,7 +219,7 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="LoopWhichDoesNotLoopInspection"                displayName="Loop which does not loop"
         groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.LoopWhichDoesNotLoopInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.LoopWhichDoesNotLoopInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ThrowRawExceptionInspection"                   displayName="General '\Exception' is thrown"
         groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
@@ -311,7 +311,7 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SuspiciousLoopInspection"                      displayName="Suspicious loop"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SuspiciousLoopInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.SuspiciousLoopInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ReferenceMismatchInspection"                   displayName="Reference mismatch"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"

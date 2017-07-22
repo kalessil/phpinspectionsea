@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;

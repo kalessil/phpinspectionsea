@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.controlFlow;
 
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.LoopWhichDoesNotLoopInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.LoopWhichDoesNotLoopInspector;
 
 final public class LoopWhichDoesNotLoopInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

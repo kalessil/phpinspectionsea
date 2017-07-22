@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.controlFlow;
 
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SuspiciousLoopInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.SuspiciousLoopInspector;
 
 final public class SuspiciousLoopInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsBasicPatterns() {

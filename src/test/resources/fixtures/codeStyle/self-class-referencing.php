@@ -9,4 +9,18 @@ class MyClass {
 
         <weak_warning descr="Class reference \"MyClass::class\" could be replaced by \"__CLASS__\"">MyClass::class</weak_warning>;
     }
+
+    // Not applicable: anonymous class is another context.
+    public function anonymousClass() {
+        return new class {
+            public function method() {
+                new MyClass;
+                MyClass::CONSTANT;
+                MyClass::staticMethod();
+                MyClass::$staticProperty;
+
+                MyClass::class;
+            }
+        };
+    }
 }

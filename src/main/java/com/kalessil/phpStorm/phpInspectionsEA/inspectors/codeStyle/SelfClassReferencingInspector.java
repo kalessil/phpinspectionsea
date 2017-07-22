@@ -86,9 +86,8 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                     return false;
                 }
 
-                if (optionPreferClass &&
-                    "self".equals(classReference.getName())) {
-                    return true;
+                if (optionPreferClass) {
+                    return "self".equals(classReference.getName());
                 }
 
                 final String classReferenceName = classReference.getName();

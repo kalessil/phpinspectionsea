@@ -11,6 +11,13 @@ class MyClass
 
         MyClass::class;
         MyClass::class;
+
+        // False-positives: already fixed.
+        new MyClass;
+        MyClass::CONSTANT;
+        MyClass::staticMethod();
+        MyClass::$staticProperty;
+        MyClass::class;
     }
 
     // Not applicable: anonymous class is another context.

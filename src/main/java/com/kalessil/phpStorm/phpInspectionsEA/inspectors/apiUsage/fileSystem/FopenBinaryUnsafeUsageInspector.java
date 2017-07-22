@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
+    private static final String messageMisplacedBinaryMode   = "The 'b' modifier needs to be the last one (e.g 'wb', 'wb+').";
     private static final String messageUseBinaryMode         = "The mode is not binary-safe ('b' is missing).";
     private static final String messageReplaceWithBinaryMode = "The mode is not binary-safe (replace 't' with 'b').";
 
@@ -37,29 +39,35 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* verify expected structure */
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if (params.length < 2 || StringUtil.isEmpty(functionName) || !functionName.equals("fopen")) {
+                if (params.length < 2 || functionName == null || !functionName.equals("fopen")) {
                     return;
                 }
 
                 /* verify if mode provided and has no 'b' already */
                 final StringLiteralExpression mode = ExpressionSemanticUtil.resolveAsStringLiteral(params[1]);
-                if (null == mode) {
-                    return;
+                final String modeText              = mode == null ? null : mode.getContents();
+                if (!StringUtil.isEmpty(modeText)) {
+                    if (modeText.indexOf('b') != -1) {
+                        final boolean isCorrectlyPlaced = modeText.endsWith("b") || modeText.endsWith("b+");
+                        if (!isCorrectlyPlaced) {
+                            holder.registerProblem(
+                                params[1],
+                                messageMisplacedBinaryMode,
+                                ProblemHighlightType.GENERIC_ERROR,
+                                new TheLocalFix()
+                            );
+                        }
+                    } else if (modeText.indexOf('t') != -1) {
+                        holder.registerProblem(params[1], messageReplaceWithBinaryMode, new TheLocalFix());
+                    } else {
+                        holder.registerProblem(params[1], messageUseBinaryMode, new TheLocalFix());
+                    }
                 }
-                final String modeText = mode.getContents();
-                if (StringUtil.isEmpty(modeText) || modeText.indexOf('b') != -1) {
-                    return;
-                }
-
-                if (modeText.indexOf('t') != -1) {
-                    holder.registerProblem(params[1], messageReplaceWithBinaryMode, new FopenBinaryUnsafeUsageInspector.TheLocalFix());
-                    return;
-                }
-                holder.registerProblem(params[1], messageUseBinaryMode, new FopenBinaryUnsafeUsageInspector.TheLocalFix());
             }
         };
     }
@@ -86,6 +94,9 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
                 if (StringUtil.isEmpty(modeFlags)) {
                     return;
                 }
+
+                /* get rid of mis-placed b-flag, to apply QF */
+                modeFlags = modeFlags.replace("b", "");
 
                 /* get rid of 't' modifier */
                 if (modeFlags.indexOf('t') != -1) {

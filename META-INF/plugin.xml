@@ -486,6 +486,10 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
          shortName="NonSecureCryptUsageInspection"                 displayName="Insecure 'crypt(...)' usage (Cryptographically weak algorithms)"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureCryptUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="HostnameSubstitutionInspection"                displayName="Hostname substitution"
+         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.HostnameSubstitutionInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

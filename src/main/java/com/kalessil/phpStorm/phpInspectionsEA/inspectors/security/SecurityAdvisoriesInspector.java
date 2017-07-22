@@ -56,6 +56,8 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("pdepend/pdepend");
         developmentPackages.add("sebastian/phpcpd");
         developmentPackages.add("povils/phpmnd");
+        /* build tools */
+        developmentPackages.add("phing/phing");
     }
 
     @NotNull

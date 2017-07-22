@@ -112,6 +112,7 @@ Inspections Lists (Code style)
 | Code Style           | DisallowWritingIntoStaticPropertiesInspection   | Disallow writing into static properties             | n/a | yes | n/a  | no  |
 | Code Style           | UsageOfSilenceOperatorInspection                | Usage of the silence operator                       | yes | yes | no   | yes |
 | Code Style           | UnnecessaryCastingInspection                    | Unnecessary type casting                            | yes | yes | yes  | no  |
+| Code Style           | SelfClassReferencingInspection                  | Self class referencing                              | no  | yes | no   | no  |
 
 Inspections Lists (Language level migration)
 ---

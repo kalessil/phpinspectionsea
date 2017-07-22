@@ -81,10 +81,11 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                 if (left instanceof ConcatenationExpression) {
                     left = ((ConcatenationExpression) left).getRightOperand();
                 }
-                if (left instanceof StringLiteralExpression) {
+                final PsiElement right = context.getRightOperand();
+                if (right != null && left instanceof StringLiteralExpression) {
                     final boolean isEmailLike = ((StringLiteralExpression) left).getContents().endsWith("@");
                     if (isEmailLike) {
-                        holder.registerProblem(expression, messageGeneral);
+                        holder.registerProblem(right, messageGeneral);
                     }
                 }
             }
@@ -103,6 +104,7 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                         }
                     }
                     /* TODO: in case of variable - find usages, incl. invoking inspectConcatenationContext */
+                    /* TODO: in case of variable - ensure used in in_array */
                 }
             }
         };

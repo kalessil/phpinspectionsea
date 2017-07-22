@@ -121,8 +121,31 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
 
             private void validateClassConstantComponent(@NotNull final PsiElement constantReference, @Nullable final PhpReference classReference) {
                 if (isSameFQN(constantReference, classReference)) {
-                    registerProblem(classReference.getParent(), getClassName(classReference) + "::class", "__CLASS__");
+                    if (!optionPreferClass) {
+                        registerProblem(classReference.getParent(), getClassName(classReference) + "::class", "__CLASS__");
+                        return;
                     }
+
+                    final String className = getClassName(classReference);
+
+                    if ((className == null) || (className.isEmpty())) {
+                        return;
+                    }
+
+                    final String classReferenceText = classReference.getText();
+
+                    if ("__CLASS__".equals(classReferenceText)) {
+                        registerProblem(classReference.getParent(), className + "::class", classReferenceText);
+                    }
+
+                    final String classReferenceName = classReference.getName();
+
+                    if (classReferenceName == null) {
+                        return;
+                    }
+
+                    registerProblem(classReference, className, classReferenceName);
+                }
             }
 
             private void validateCommonComponent(final PsiElement expression, @Nullable final PhpReference classReference) {

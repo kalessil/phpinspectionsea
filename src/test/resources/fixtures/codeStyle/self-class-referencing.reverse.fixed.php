@@ -10,6 +10,7 @@ class MyClass
         MyClass::$staticProperty;
 
         MyClass::class;
+        MyClass::class;
     }
 
     // Not applicable: anonymous class is another context.

@@ -68,7 +68,15 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
             @NotNull
             private PhpType resolveStrictly(@NotNull PhpTypedElement expression) {
                 PhpType result = PhpType.EMPTY;
-                if (expression instanceof MethodReference) {
+                if (expression instanceof FieldReference) { /* fields has no type hints, hence private only */
+                    final PsiElement resolved = ((FieldReference) expression).resolve();
+                    if (resolved instanceof Field) {
+                        final Field referencedField = (Field) resolved;
+                        if (referencedField.getModifier().isPrivate()) {
+                            result = referencedField.getType().global(holder.getProject());
+                        }
+                    }
+                } else if (expression instanceof MethodReference) { /* requires implicit return type declaration */
                     final PsiElement resolved = ((FunctionReference) expression).resolve();
                     if (resolved instanceof Function) {
                         final Function referencedFunction = (Function) resolved;

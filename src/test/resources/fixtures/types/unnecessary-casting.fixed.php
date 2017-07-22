@@ -30,12 +30,17 @@
     }
 
     class ClassWithSomeMethods {
+        /** @var string */
+        private $private;
+        /** @var string */
+        protected $protected;
+
         /** @return string */
         function withWeakReturn() {
-            return '';
+            return (string) $this->protected;
         }
         function withStrictReturn(): string {
-            return '';
+            return $this->private;
         }
     }
     $instance = new ClassWithSomeMethods();

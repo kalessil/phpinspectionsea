@@ -30,12 +30,17 @@
     }
 
     class ClassWithSomeMethods {
+        /** @var string */
+        private $private;
+        /** @var string */
+        protected $protected;
+
         /** @return string */
         function withWeakReturn() {
-            return '';
+            return (string) $this->protected;
         }
         function withStrictReturn(): string {
-            return '';
+            return <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string) $this->private</weak_warning>;
         }
     }
     $instance = new ClassWithSomeMethods();

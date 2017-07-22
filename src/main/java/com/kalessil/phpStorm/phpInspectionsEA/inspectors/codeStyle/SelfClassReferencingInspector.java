@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class SelfClassReferencingInspector extends BasePhpInspection {
     private static final String messageSelfReplacement  = "Class reference \"%s\" could be replaced by \"self\"";
+    private static final String messageClassReplacement = "Class reference \"%s::class\" could be replaced by \"__CLASS__\"";
 
     @NotNull
     public String getShortName() {
@@ -42,6 +43,11 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpClassConstantReference(final ClassConstantReference constantReference) {
+                if ("class".equals(constantReference.getName())) {
+                    validateClassConstantComponent(constantReference, (PhpReference) constantReference.getClassReference());
+                    return;
+                }
+
                 validateCommonComponent(constantReference, (PhpReference) constantReference.getClassReference());
             }
 
@@ -61,6 +67,12 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
 
                 return (expressionParentClass != null) &&
                        (expressionParentClass.getFQN().equals(classReference.getFQN()));
+            }
+
+            private void validateClassConstantComponent(@NotNull final PsiElement constantReference, @Nullable final PhpReference classReference) {
+                if (isSameFQN(constantReference, classReference)) {
+                    problemsHolder.registerProblem(classReference.getParent(), String.format(messageClassReplacement, classReference.getName()));
+                }
             }
 
             private void validateCommonComponent(final PsiElement expression, @Nullable final PhpReference classReference) {

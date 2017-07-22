@@ -6,5 +6,7 @@ class MyClass {
         <weak_warning descr="Class reference \"MyClass\" could be replaced by \"self\"">MyClass</weak_warning>::CONSTANT;
         <weak_warning descr="Class reference \"MyClass\" could be replaced by \"self\"">MyClass</weak_warning>::staticMethod();
         <weak_warning descr="Class reference \"MyClass\" could be replaced by \"self\"">MyClass</weak_warning>::$staticProperty;
+
+        <weak_warning descr="Class reference \"MyClass::class\" could be replaced by \"__CLASS__\"">MyClass::class</weak_warning>;
     }
 }

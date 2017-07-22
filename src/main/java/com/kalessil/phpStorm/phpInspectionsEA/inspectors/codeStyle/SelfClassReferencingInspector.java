@@ -91,6 +91,13 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                     return true;
                 }
 
+                final String classReferenceName = classReference.getName();
+
+                if ("self".equals(classReferenceName) ||
+                    "static".equals(classReferenceName)) {
+                    return false;
+                }
+
                 final PhpClass expressionParentClass = PsiTreeUtil.getParentOfType(psiElement, PhpClass.class);
 
                 return (expressionParentClass != null) &&
@@ -115,16 +122,18 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
             private void validateClassConstantComponent(@NotNull final PsiElement constantReference, @Nullable final PhpReference classReference) {
                 if (isSameFQN(constantReference, classReference)) {
                     registerProblem(classReference.getParent(), getClassName(classReference) + "::class", "__CLASS__");
-                }
+                    }
             }
 
             private void validateCommonComponent(final PsiElement expression, @Nullable final PhpReference classReference) {
                 if (isSameFQN(expression, classReference)) {
                     final String className = getClassName(classReference);
 
-                    if ((className != null) && (!className.isEmpty())) {
-                        registerProblem(classReference, className, "self");
+                    if ((className == null) || (className.isEmpty())) {
+                        return;
                     }
+
+                    registerProblem(classReference, className, "self");
                 }
             }
 

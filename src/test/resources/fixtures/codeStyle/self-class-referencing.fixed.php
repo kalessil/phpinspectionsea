@@ -8,6 +8,10 @@ class MyClass {
         self::$staticProperty;
 
         __CLASS__;
+
+        // False-positives:
+        self::class;
+        static::class;
     }
 
     // Not applicable: anonymous class is another context.

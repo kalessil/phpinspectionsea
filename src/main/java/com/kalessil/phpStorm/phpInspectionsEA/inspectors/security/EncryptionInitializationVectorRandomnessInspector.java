@@ -43,7 +43,8 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* verify general requirements to the call */
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();

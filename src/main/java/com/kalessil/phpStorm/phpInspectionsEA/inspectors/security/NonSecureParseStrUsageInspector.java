@@ -31,7 +31,8 @@ public class NonSecureParseStrUsageInspector  extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String strFunction  = reference.getName();
                 final PsiElement[] params = reference.getParameters();
                 if (

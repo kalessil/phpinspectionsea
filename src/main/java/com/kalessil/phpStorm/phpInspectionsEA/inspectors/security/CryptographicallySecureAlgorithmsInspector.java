@@ -71,7 +71,8 @@ public class CryptographicallySecureAlgorithmsInspector extends BasePhpInspectio
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpConstantReference(ConstantReference reference) {
+            @Override
+            public void visitPhpConstantReference(@NotNull ConstantReference reference) {
                 final String constantName = reference.getName();
                 if (constantName != null && constants.containsKey(constantName)) {
                     /* ignore test classes */

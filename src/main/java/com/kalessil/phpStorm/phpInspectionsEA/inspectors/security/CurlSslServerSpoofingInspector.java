@@ -40,7 +40,8 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpConstantReference(ConstantReference reference) {
+            @Override
+            public void visitPhpConstantReference(@NotNull ConstantReference reference) {
                 final String constantName = reference.getName();
                 if (StringUtil.isEmpty(constantName) || !constantName.startsWith("CURLOPT_")) {
                     return;

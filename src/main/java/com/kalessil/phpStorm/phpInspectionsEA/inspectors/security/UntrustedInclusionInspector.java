@@ -31,7 +31,8 @@ public class UntrustedInclusionInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpInclude(Include include) {
+            @Override
+            public void visitPhpInclude(@NotNull Include include) {
                 final PsiElement argument = include.getArgument();
                 final PsiElement file     = ExpressionSemanticUtil.resolveAsStringLiteral(argument);
                 if (null != file) {

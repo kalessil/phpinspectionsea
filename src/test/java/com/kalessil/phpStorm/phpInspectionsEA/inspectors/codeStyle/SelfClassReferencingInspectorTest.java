@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 
 public class SelfClassReferencingInspectorTest extends PhpCodeInsightFixtureTestCase {
@@ -11,6 +12,13 @@ public class SelfClassReferencingInspectorTest extends PhpCodeInsightFixtureTest
 
         myFixture.configureByFile("fixtures/codeStyle/self-class-referencing.php");
         myFixture.testHighlighting(true, false, true);
+
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
+            myFixture.launchAction(fix);
+        }
+
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/codeStyle/self-class-referencing.fixed.php");
     }
 
     public void testReverse() {
@@ -21,5 +29,12 @@ public class SelfClassReferencingInspectorTest extends PhpCodeInsightFixtureTest
 
         myFixture.configureByFile("fixtures/codeStyle/self-class-referencing.reverse.php");
         myFixture.testHighlighting(true, false, true);
+
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
+            myFixture.launchAction(fix);
+        }
+
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/codeStyle/self-class-referencing.reverse.fixed.php");
     }
 }

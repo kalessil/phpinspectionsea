@@ -1,9 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ClassConstantReference;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FieldReference;
@@ -126,16 +130,61 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
 
             private void registerProblem(@NotNull final PsiElement psiElement, @NotNull final String originalName, @NotNull final String replacementName) {
                 if (optionPreferClass) {
-                    problemsHolder.registerProblem(psiElement, String.format(messageReplacement, replacementName, originalName));
+                    problemsHolder.registerProblem(psiElement, String.format(messageReplacement, replacementName, originalName),
+                                                   new TheLocalFix(originalName));
                     return;
                 }
 
-                problemsHolder.registerProblem(psiElement, String.format(messageReplacement, originalName, replacementName));
+                problemsHolder.registerProblem(psiElement, String.format(messageReplacement, originalName, replacementName),
+                                               new TheLocalFix(replacementName));
             }
         };
     }
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> component.addCheckbox("Prefer class name referencing", optionPreferClass, (isSelected) -> optionPreferClass = isSelected));
+    }
+
+    private static final class TheLocalFix implements LocalQuickFix {
+        private final String replacementName;
+
+        private TheLocalFix(@NotNull final String replacementName) {
+            this.replacementName = replacementName;
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Replace to \"" + replacementName + '"';
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+            final PsiElement operator = descriptor.getPsiElement();
+
+            if (operator == null) {
+                return;
+            }
+
+            // Applicable from __CLASS__ to MyClass::class.
+            if (replacementName.endsWith("::class")) {
+                final ClassConstantReference createdElement = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, replacementName + ';');
+
+                if (createdElement == null) {
+                    return;
+                }
+
+                operator.replace(createdElement);
+                return;
+            }
+
+            operator.replace(PhpPsiElementFactory.createClassReference(project, replacementName));
+        }
     }
 }

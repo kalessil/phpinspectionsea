@@ -24,6 +24,17 @@ import javax.swing.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) David Rodrigues <david.proweb@gmail.com>
+ * (c) Funivan <alotofall@gmail.com>
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class SelfClassReferencingInspector extends BasePhpInspection {
     private static final String messageReplacement = "Class reference \"%s\" could be replaced by \"%s\"";
 

@@ -12,13 +12,13 @@
         (object) $object,
         (string) $mixed,
 
-        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string) $string</weak_warning>,
-        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(array) $array</weak_warning>,
-        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(boolean) $boolean</weak_warning>,
-        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(float) $float</weak_warning>,
-        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(integer) $integer</weak_warning>,
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string)</weak_warning> $string,
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(array)</weak_warning> $array,
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(boolean)</weak_warning> $boolean,
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(float)</weak_warning> $float,
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(integer)</weak_warning> $integer,
 
-        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(integer) ($integer + 1)</weak_warning>
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(integer)</weak_warning> ($integer + 1)
     ];
 
     /** @var string $string */
@@ -26,7 +26,7 @@
         return (string) $string;
     }
     function withStrictParameter(string $string) {
-        return <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string) $string</weak_warning>;
+        return <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string)</weak_warning> $string;
     }
 
     class ClassWithSomeMethods {
@@ -40,11 +40,11 @@
             return (string) $this->protected;
         }
         function withStrictReturn(): string {
-            return <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string) $this->private</weak_warning>;
+            return <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string)</weak_warning> $this->private;
         }
     }
     $instance = new ClassWithSomeMethods();
     return [
         (string) $instance->withWeakReturn(),
-        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string) $instance->withStrictReturn()</weak_warning>
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string)</weak_warning> $instance->withStrictReturn()
     ];

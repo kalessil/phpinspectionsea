@@ -1,6 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
@@ -59,7 +63,13 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                     final Set<String> types = resolved.hasUnknown() ? new HashSet<>() : resolved.getTypes();
                     if (types.size() == 1 && typesMapping.get(operator).equals(Types.getType(types.iterator().next()))) {
                         if (!(argument instanceof Variable) || !this.isWeakTypedParameter((Variable) argument)) {
-                            holder.registerProblem(expression, message, new ReplaceWithArgumentFix(argument.getText()));
+                            //noinspection ConstantConditions ; at this point operation is not null
+                            holder.registerProblem(
+                                operation,
+                                message,
+                                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                new ReplaceWithArgumentFix()
+                            );
                         }
                     }
                 }
@@ -108,15 +118,28 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
         };
     }
 
-    private static class ReplaceWithArgumentFix extends UseSuggestedReplacementFixer {
+    private static class ReplaceWithArgumentFix implements LocalQuickFix {
         @NotNull
         @Override
         public String getName() {
             return "Remove unnecessary casting";
         }
 
-        ReplaceWithArgumentFix(@NotNull String expression) {
-            super(expression);
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement().getParent();
+            if (expression instanceof UnaryExpression) {
+                final PsiElement argument = ((UnaryExpression) expression).getValue();
+                if (argument != null) {
+                    expression.replace(argument.copy());
+                }
+            }
         }
     }
 }

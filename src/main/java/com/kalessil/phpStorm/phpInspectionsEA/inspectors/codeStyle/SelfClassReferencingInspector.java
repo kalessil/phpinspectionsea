@@ -122,7 +122,8 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
 
                 final PhpClass expressionParentClass = PsiTreeUtil.getParentOfType(psiElement, PhpClass.class);
 
-                if (expressionParentClass == null) {
+                if ((expressionParentClass == null) ||
+                    (expressionParentClass.isAnonymous())) {
                     return null;
                 }
 

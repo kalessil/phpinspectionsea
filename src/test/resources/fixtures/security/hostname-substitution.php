@@ -9,6 +9,6 @@
     $email  = strtolower(<error descr="...">$_SERVER['HTTP_HOST']</error>);
 
     function cases_holder() {
-        $container = $_SERVER['HTTP_HOST'];
-        echo '' . '@' . <error descr="...">$container</error>;
+        // $container = $_SERVER['HTTP_HOST'];
+        // echo '' . '@' . [error descr="..."]$container[/error];
     }

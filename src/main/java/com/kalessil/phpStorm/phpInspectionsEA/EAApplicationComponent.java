@@ -38,27 +38,6 @@ public class EAApplicationComponent implements ApplicationComponent {
     public void disposeComponent() {
     }
 
-/*    public void MonitorPerformance() {
-        final ThreadMXBean threadManager = ManagementFactory.getThreadMXBean();
-        for (final long threadId : threadManager.getAllThreadIds()) {
-            final long threadTimeOccupied = threadManager.getThreadUserTime(threadId);
-            final long time               = threadTimeOccupied == -1 ? -1 : threadTimeOccupied / 1000000;
-
-            final ThreadInfo info                = threadManager.getThreadInfo(threadId, Byte.MAX_VALUE);
-            final StackTraceElement[] stacktrace = info.getStackTrace();
-            if (null != stacktrace && stacktrace.length > 0) {
-                final StackTraceElement topElement = stacktrace[stacktrace.length - 1];
-                System.out.println(String.format(
-                        "#%s: ut %s ms; %s; %s",
-                        info.getThreadName() + "#" + threadId,
-                        time,
-                        topElement.getClassName() + "::" + topElement.getMethodName(),
-                        topElement.getFileName() + ":" + topElement.getLineNumber()
-                ));
-            }
-        }
-    }*/
-
     @NotNull
     @Override
     public String getComponentName() {

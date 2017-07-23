@@ -650,6 +650,10 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
         shortName="UnnecessaryCastingInspection"                  displayName="Unnecessary type casting"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessaryCastingInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="SelfClassReferencingInspection"                displayName="Self class referencing"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.SelfClassReferencingInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

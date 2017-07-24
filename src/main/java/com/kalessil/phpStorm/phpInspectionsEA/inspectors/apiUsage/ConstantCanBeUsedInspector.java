@@ -2,8 +2,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -26,10 +28,11 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
 
     static private final Map<String, String> functions = new HashMap<>();
     static {
-        functions.put("phpversion", "PHP_VERSION");
+        functions.put("phpversion",    "PHP_VERSION");
         functions.put("php_sapi_name", "PHP_SAPI");
-        functions.put("get_class", "__CLASS__");
-        functions.put("pi", "M_PI");
+        functions.put("get_class",     "__CLASS__");
+        functions.put("pi",            "M_PI");
+        functions.put("php_uname",     "PHP_OS");
     }
 
     @NotNull
@@ -41,15 +44,26 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
-                final String functionName = reference.getName();
-                if (null == functionName || 0 != reference.getParameters().length || !functions.containsKey(functionName)) {
-                    return;
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                final String functionName    = reference.getName();
+                final PsiElement[] arguments = reference.getParameters();
+                if (functionName != null && functions.containsKey(functionName)) {
+                    /* classification part */
+                    boolean canUseConstant = false;
+                    if (arguments.length == 0) {
+                        canUseConstant = true;
+                    } else if (arguments.length == 1 && functionName.equals("php_uname")) {
+                        canUseConstant = arguments[0] instanceof StringLiteralExpression &&
+                                ((StringLiteralExpression) arguments[0]).getContents().equals("s");
+                    }
+                    /* reporting part */
+                    if (canUseConstant) {
+                        final String constant = functions.get(functionName);
+                        final String message  = messagePattern.replace("%c%", constant);
+                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseConstantFix(constant));
+                    }
                 }
-
-                final String constant = functions.get(functionName);
-                final String message  = messagePattern.replace("%c%", constant);
-                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseConstantFix(constant));
             }
         };
     }

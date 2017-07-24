@@ -54,14 +54,15 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
                     if (arguments.length == 0) {
                         canUseConstant = true;
                     } else if (arguments.length == 1 && functionName.equals("php_uname")) {
-                        canUseConstant = arguments[0] instanceof StringLiteralExpression &&
+                        canUseConstant =
+                                arguments[0] instanceof StringLiteralExpression &&
                                 ((StringLiteralExpression) arguments[0]).getContents().equals("s");
                     }
                     /* reporting part */
                     if (canUseConstant) {
                         final String constant = functions.get(functionName);
                         final String message  = messagePattern.replace("%c%", constant);
-                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseConstantFix(constant));
+                        holder.registerProblem(reference, message, new UseConstantFix(constant));
                     }
                 }
             }

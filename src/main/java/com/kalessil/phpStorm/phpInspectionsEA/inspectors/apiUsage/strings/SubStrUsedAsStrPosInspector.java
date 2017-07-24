@@ -3,16 +3,15 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParameterList;
-import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
-import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -39,10 +38,10 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* check if it's the target function: amount of parameters and name */
-                final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
+                final String functionName    = reference.getName();
+                final PsiElement[] arguments = reference.getParameters();
                 if (
-                    (3 != params.length && 4 != params.length) || functionName == null ||
+                    (3 != arguments.length && 4 != arguments.length) || functionName == null ||
                     (!functionName.equals("substr") && !functionName.equals("mb_substr"))
                 ) {
                     return;
@@ -52,8 +51,8 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                  *   - 2nd re-used as it is (should be a positive number!)
                  *   - 3rd is not important, as we'll rely on parent comparison operand instead
                  */
-                final String index = params[1].getText();
-                if (!(params[1] instanceof PhpExpressionImpl) || !index.trim().equals("0")) {
+                final String index = arguments[1].getText();
+                if (arguments[1].getNode().getElementType() != PhpElementTypes.NUMBER || !index.equals("0")) {
                     return;
                 }
 
@@ -66,12 +65,14 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
 
                 /* if the call wrapped with case manipulation, propose to use stripos */
                 boolean caseManipulated = false;
-                if (
-                    parentExpression instanceof FunctionReferenceImpl &&
-                    1 == ((FunctionReference) parentExpression).getParameters().length
-                ) {
-                    final String parentName = ((FunctionReference) parentExpression).getName();
-                    if (parentName != null && (parentName.equals("strtoupper") || parentName.equals("strtolower"))) {
+                if (OpenapiTypesUtil.isFunctionReference(parentExpression)) {
+                    final FunctionReference parentCall = (FunctionReference) parentExpression;
+                    final PsiElement[] parentArguments = parentCall.getParameters();
+                    final String parentName            = parentCall.getName();
+                    if (
+                        parentName != null && parentArguments.length == 1 &&
+                        (parentName.equals("strtoupper") || parentName.equals("strtolower"))
+                    ) {
                         caseManipulated  = true;
                         highLevelCall    = parentExpression;
                         parentExpression = parentExpression.getParent();
@@ -80,9 +81,8 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
 
                 /* check parent expression, to ensure pattern matched */
                 if (parentExpression instanceof BinaryExpression) {
-                    final BinaryExpression parent    = (BinaryExpression) parentExpression;
-                    final IElementType operationType = parent.getOperationType();
-                    if (PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operationType)) {
+                    final BinaryExpression parent = (BinaryExpression) parentExpression;
+                    if (PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(parent.getOperationType())) {
                         /* get second operand */
                         PsiElement secondOperand = parent.getLeftOperand();
                         if (secondOperand == highLevelCall) {
@@ -93,18 +93,16 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                         if (secondOperand != null && operationNode != null) {
                             final String operator      = operationNode.getText();
                             final boolean isMbFunction = functionName.equals("mb_substr");
-                            final boolean hasEncoding  = isMbFunction && 4 == params.length;
+                            final boolean hasEncoding  = isMbFunction && 4 == arguments.length;
                             final String replacement   = "%i% %o% %f%(%s%, %p%%e%)"
-                                .replace("%e%", hasEncoding ? (", " + params[3].getText()) : "")
+                                .replace("%e%", hasEncoding ? (", " + arguments[3].getText()) : "")
                                 .replace("%p%", secondOperand.getText())
-                                .replace("%s%", params[0].getText())
+                                .replace("%s%", arguments[0].getText())
                                 .replace("%f%", (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"))
                                 .replace("%o%", operator.length() == 2 ? (operator + "=") : operator)
                                 .replace("%i%", index);
                             final String message       = messagePattern.replace("%r%", replacement);
                             holder.registerProblem(parentExpression, message, new UseStringSearchFix(replacement));
-
-                            // return;
                         }
                     }
                 }

@@ -4,9 +4,11 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,7 +64,7 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                         /* at function/method/class level we can stop */
                         break;
                     } else if (parent instanceof ConcatenationExpression){
-                        this.inspectConcatenationContext(expression, (ConcatenationExpression) parent);
+                        this.inspectConcatenationContext((ConcatenationExpression) parent);
                         break;
                     } else if (OpenapiTypesUtil.isAssignment(parent)) {
                         this.inspectAssignmentContext(expression, (AssignmentExpression) parent);
@@ -73,18 +75,14 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
             }
 
             /* direct/decorated concatenation with "...@" */
-            private void inspectConcatenationContext(
-                @NotNull ArrayAccessExpression expression,
-                @NotNull ConcatenationExpression context
-            ) {
+            private void inspectConcatenationContext(@NotNull ConcatenationExpression context) {
                 PsiElement left = context.getLeftOperand();
                 if (left instanceof ConcatenationExpression) {
                     left = ((ConcatenationExpression) left).getRightOperand();
                 }
                 final PsiElement right = context.getRightOperand();
                 if (right != null && left instanceof StringLiteralExpression) {
-                    final boolean isEmailLike = ((StringLiteralExpression) left).getContents().endsWith("@");
-                    if (isEmailLike) {
+                    if (((StringLiteralExpression) left).getContents().endsWith("@")) {
                         holder.registerProblem(right, messageGeneral);
                     }
                 }
@@ -95,7 +93,7 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                 @NotNull AssignmentExpression context
             ) {
                 final PsiElement storage = context.getVariable();
-                if (storage instanceof Variable || storage instanceof FieldReference) {
+                if (storage instanceof FieldReference) {
                     final String storageName = ((PhpNamedElement) storage).getName();
                     if (!storageName.isEmpty()) {
                         final Matcher matcher = regexTargetNames.matcher(storageName);
@@ -103,11 +101,32 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                             holder.registerProblem(expression, messageNaming);
                         }
                     }
-                    /* TODO: in case of variable - find usages, incl. invoking inspectConcatenationContext */
+                } else if (storage instanceof Variable) {
+                    final Function scope = ExpressionSemanticUtil.getScope(storage);
+                    if (scope != null) {
+                        boolean reachedExpression = false;
+                        for (final Variable candidate : PsiTreeUtil.findChildrenOfType(scope, Variable.class)) {
+                            if (!reachedExpression) {
+                                reachedExpression = candidate == storage;
+                            } else {
+                                final PsiElement parent = candidate.getParent();
+                                if (parent instanceof ConcatenationExpression) {
+                                    this.inspectConcatenationContext((ConcatenationExpression) parent);
+                                }
+                            }
+                        }
+                    } else {
+                        final String storageName = ((PhpNamedElement) storage).getName();
+                        if (!storageName.isEmpty()) {
+                            final Matcher matcher = regexTargetNames.matcher(storageName);
+                            if (matcher.matches()) {
+                                holder.registerProblem(expression, messageNaming);
+                            }
+                        }
+                    }
                     /* TODO: in case of variable - ensure used in in_array */
                 }
             }
         };
     }
-
 }

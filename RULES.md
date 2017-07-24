@@ -206,6 +206,7 @@ Inspections Lists (Security)
 | Security             | CryptographicallySecureRandomnessInspection        | Cryptographically secure randomness                               | n/a | yes | n/a  | yes |
 | Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage (Cryptographically weak algorithms)   | n/a | yes | n/a  | no  |
 | Security             | CryptographicallySecureAlgorithmsInspection        | Cryptographically secure algorithms                               | n/a | yes | n/a  | no  |
+| Security             | HostnameSubstitutionInspection                     | Hostname substitution                                             | n/a | yes | n/a  | no  |
 
 Inspections Lists (Performance)
 ---

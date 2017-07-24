@@ -189,6 +189,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | ClassConstantUsageCorrectnessInspection         | ::class constant usage correctness                        | n/a | yes | n/a  | no  |
 | Probable bugs        | DeclareDirectiveCorrectnessInspection           | Declare directive correctness                             | n/a | yes | n/a  | no  |
 | Probable bugs        | InfinityLoopInspection                          | Infinity loop detection                                   | n/a | yes | n/a  | no  |
+| Probable bugs        | StringsFirstCharactersCompareInspection         | Strings N-character comparison flaws                      | no  | no  | no   | no  |
 
 Inspections Lists (Security)
 ---

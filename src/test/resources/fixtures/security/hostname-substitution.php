@@ -8,7 +8,11 @@
     $domain = strtolower(<error descr="...">$_SERVER['SERVER_NAME']</error>);
     $email  = strtolower(<error descr="...">$_SERVER['HTTP_HOST']</error>);
 
-    function cases_holder() {
-        $container = $_SERVER['HTTP_HOST'];
-        echo '' . '@' . <error descr="...">$container</error>;
+    function cases_holder_second() {
+        if (isset($_SERVER['HTTP_HOST'])) {
+            $domain = $_SERVER['HTTP_HOST'];
+        } else {
+            $domain = $_SERVER['SERVER_NAME'];
+        }
+        echo '' . '@' . <error descr="...">$domain</error>;
     }

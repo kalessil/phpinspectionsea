@@ -94,6 +94,7 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
             ) {
                 final PsiElement storage = context.getVariable();
                 if (storage instanceof FieldReference) {
+                    /* fields processing is too complex, just report it when naming matches */
                     final String storageName = ((PhpNamedElement) storage).getName();
                     if (!storageName.isEmpty()) {
                         final Matcher matcher = regexTargetNames.matcher(storageName);
@@ -102,6 +103,7 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                         }
                     }
                 } else if (storage instanceof Variable) {
+                    /* variables can be processed in scope only */
                     final Function scope = ExpressionSemanticUtil.getScope(storage);
                     if (scope != null) {
                         boolean reachedExpression = false;
@@ -116,6 +118,7 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                             }
                         }
                     } else {
+                        /* variables in global context processing is too complex, just report it when naming matches */
                         final String storageName = ((PhpNamedElement) storage).getName();
                         if (!storageName.isEmpty()) {
                             final Matcher matcher = regexTargetNames.matcher(storageName);
@@ -124,7 +127,6 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                             }
                         }
                     }
-                    /* TODO: in case of variable - ensure used in in_array */
                 }
             }
         };

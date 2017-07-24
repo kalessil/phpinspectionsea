@@ -31,6 +31,7 @@ public class MissingIssetImplementationInspector extends BasePhpInspection {
     static {
         magicClasses.add("\\SimpleXMLElement");
         magicClasses.add("\\stdClass");
+        magicClasses.add("\\DOMDocument");
     }
 
     @NotNull

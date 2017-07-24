@@ -129,7 +129,8 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 }
             }
 
-            public void visitPhpReturn(PhpReturn returnStatement) {
+            @Override
+            public void visitPhpReturn(@NotNull PhpReturn returnStatement) {
                 /* if function returning reference, do not inspect returns */
                 final Function callable   = ExpressionSemanticUtil.getScope(returnStatement);
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(callable);
@@ -154,7 +155,8 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 }
             }
 
-            public void visitPhpMultiassignmentExpression(MultiassignmentExpression multiassignmentExpression) {
+            @Override
+            public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression multiassignmentExpression) {
                 final PsiElement firstChild = multiassignmentExpression.getFirstChild();
                 final IElementType nodeType = null == firstChild ? null : firstChild.getNode().getElementType();
                 if (null != nodeType && (PhpTokenTypes.kwLIST == nodeType || PhpTokenTypes.chLBRACKET == nodeType)) {
@@ -166,7 +168,10 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 }
             }
 
-            public void visitPhpThrow(PhpThrow throwStatement) {
+            /* TODO: once got bored, add foreach source pattern here =) I'm naive but nevertheless ^_^ */
+
+            @Override
+            public void visitPhpThrow(@NotNull PhpThrow throwStatement) {
                 final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(throwStatement.getArgument());
                 if (argument instanceof PhpPsiElement) {
                     final Variable variable = this.getVariable((PhpPsiElement) argument);

@@ -113,6 +113,7 @@ Inspections Lists (Code style)
 | Code Style           | UsageOfSilenceOperatorInspection                | Usage of the silence operator                       | yes | yes | no   | yes |
 | Code Style           | UnnecessaryCastingInspection                    | Unnecessary type casting                            | yes | yes | yes  | no  |
 | Code Style           | SelfClassReferencingInspection                  | Self class referencing                              | yes | yes | yes  | no  |
+| Code Style           | ImplicitMagicMethodCallInspection               | Implicit magic method calls                         | yes | yes |  no  | no  |
 
 Inspections Lists (Language level migration)
 ---
@@ -159,7 +160,6 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | MagicMethodsValidityInspection                  | Magic methods validity                                    | n/a |
 | Probable bugs        | SuspiciousLoopInspection                        | Suspicious loop                                           | n/a | yes | n/a  | no  |
 | Probable bugs        | ReferenceMismatchInspection                     | Reference mismatch                                        | n/a |
-| Probable bugs        | ImplicitMagicMethodCallInspection               | Implicit magic method calls                               | yes | yes |  no  | no  |
 | Probable bugs        | PrintfScanfArgumentsInspection                  | *printf/*scanf arguments count mismatches                 | n/a | yes | n/a  | no  |
 | Probable bugs        | RealpathInSteamContextInspection                | Phar-incompatible 'realpath(...)' usage                   | yes | yes | yes  | yes |
 | Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | n/a | yes | n/a  | no  |

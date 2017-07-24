@@ -317,10 +317,6 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.byReference.ReferenceMismatchInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="ImplicitMagicMethodCallInspection"             displayName="Implicit magic method calls"
-        groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.ImplicitMagicMethodCallInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SwitchContinuationInLoopInspection"            displayName="Continue misbehaviour in switch"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.SwitchContinuationInLoopInspector"/>
@@ -654,6 +650,10 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
         shortName="SelfClassReferencingInspection"                displayName="Self class referencing"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.SelfClassReferencingInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ImplicitMagicMethodCallInspection"             displayName="Implicit magic method calls"
+        groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.ImplicitMagicMethodCallInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

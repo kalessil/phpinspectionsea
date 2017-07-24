@@ -36,20 +36,30 @@ public class StringsFirstCharactersCompareInspector extends BasePhpInspection {
                 final PsiElement[] arguments = reference.getParameters();
                 if (
                     functionName != null && arguments.length == 3 &&
-                    arguments[1] instanceof StringLiteralExpression &&
                     (functionName.equals("strncmp") || functionName.equals("strncasecmp")) &&
                     arguments[2].getNode().getElementType() == PhpElementTypes.NUMBER
                 ) {
-                    final StringLiteralExpression literal = (StringLiteralExpression) arguments[1];
-                    boolean isTarget;
-                    try {
-                        final String string = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
-                        isTarget            = Integer.valueOf(arguments[2].getText()) != string.length();
-                    } catch (NumberFormatException lengthParsingHasFailed) {
-                        isTarget = false;
+                    /* find out if we have a string literal in arguments */
+                    final StringLiteralExpression literal;
+                    if (arguments[1] instanceof StringLiteralExpression) {
+                        literal = (StringLiteralExpression) arguments[1];
+                    } else if (arguments[0] instanceof StringLiteralExpression) {
+                        literal = (StringLiteralExpression) arguments[0];
+                    } else {
+                        literal = null;
                     }
-                    if (isTarget) {
-                        holder.registerProblem(arguments[2], "The specified length doesn't match the string length.");
+                    /* if so, do deeper inspection */
+                    if (literal != null) {
+                        boolean isTarget;
+                        try {
+                            final String string = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
+                            isTarget            = Integer.valueOf(arguments[2].getText()) != string.length();
+                        } catch (NumberFormatException lengthParsingHasFailed) {
+                            isTarget = false;
+                        }
+                        if (isTarget) {
+                            holder.registerProblem(arguments[2], "The specified length doesn't match the string length.");
+                        }
                     }
                 }
             }

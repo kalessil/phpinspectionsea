@@ -106,11 +106,12 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                     /* variables can be processed in scope only */
                     final Function scope = ExpressionSemanticUtil.getScope(storage);
                     if (scope != null) {
+                        final String variableName = ((Variable) storage).getName();
                         boolean reachedExpression = false;
                         for (final Variable candidate : PsiTreeUtil.findChildrenOfType(scope, Variable.class)) {
                             if (!reachedExpression) {
                                 reachedExpression = candidate == storage;
-                            } else {
+                            } else if (candidate.getName().equals(variableName)) {
                                 final PsiElement parent = candidate.getParent();
                                 if (parent instanceof ConcatenationExpression) {
                                     this.inspectConcatenationContext((ConcatenationExpression) parent);

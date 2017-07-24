@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -11,6 +10,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -102,7 +102,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                                 .replace("%o%", operator.length() == 2 ? (operator + "=") : operator)
                                 .replace("%i%", index);
                             final String message       = messagePattern.replace("%r%", replacement);
-                            holder.registerProblem(parentExpression, message, ProblemHighlightType.WEAK_WARNING);
+                            holder.registerProblem(parentExpression, message, new UseStringSearchFix(replacement));
 
                             // return;
                         }
@@ -110,5 +110,17 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    private class UseStringSearchFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use substring search instead";
+        }
+
+        UseStringSearchFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

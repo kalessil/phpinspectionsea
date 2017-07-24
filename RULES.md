@@ -40,7 +40,7 @@ Inspections Lists (Control flow)
 | Control Flow         | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)'                          | yes | yes | no   | no  |
 | Control Flow         | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                | yes | yes | no   | no  |
 | Control Flow         | StrTrUsageAsStrReplaceInspection                | 'strtr(...)' could be replaced with 'str_replace(...)'                            | no  | yes | no   | no  |
-| Control Flow         | SubStrUsedAsStrPosInspection                    | 'substr(...)' could be replaced with 'strpos(...)'                                | no  | yes | no   | no  |
+| Control Flow         | SubStrUsedAsStrPosInspection                    | 'substr(...)' could be replaced with 'strpos(...)'                                | yes | yes | yes  | no  |
 | Control Flow         | StringNormalizationInspection                   | Strings normalization                                                             | yes | yes | no   | no  |
 | Control Flow         | RedundantElseClauseInspection                   | Redundant 'else' keyword                                                          | yes | yes | no   | no  |
 | Control Flow         | InvertedIfElseConstructsInspection              | Inverted 'if-else' constructs                                                     | yes | yes | yes  | no  |

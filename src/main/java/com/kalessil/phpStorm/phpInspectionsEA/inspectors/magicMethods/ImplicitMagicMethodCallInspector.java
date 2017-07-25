@@ -2,10 +2,8 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
@@ -37,7 +35,7 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
     public boolean SUGGEST_USING_STRING_CASTING = false;
 
     private static final String message              = "Implicit magic method calls should be avoided as these methods are used by PHP internals.";
-    private static final String patternStringCasting = "Please use (string) %o% instead.";
+    private static final String patternStringCasting = "Please use '(string) %o%' instead.";
 
     private static final Set<String> methods = new HashSet<>();
     static {
@@ -67,45 +65,45 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMethodReference(MethodReference reference) {
+            @Override
+            public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 final String methodName = reference.getName();
-                if (!StringUtil.isEmpty(methodName) && methods.contains(methodName)) {
+                if (methodName != null && methods.contains(methodName)) {
                     /* Pattern 1: direct calls ob objects */
                     final String referenceObject = reference.getFirstChild().getText().trim();
-                    if (
-                        !(reference.getFirstChild() instanceof ClassReference) &&
-                        !referenceObject.equals("$this") && !referenceObject.equals("parent")
-                    ) {
-                        /* __toString is a special case */
-                        if (SUGGEST_USING_STRING_CASTING && methodName.equals("__toString")) {
-                            final String message = patternStringCasting.replace("%o%", referenceObject);
-                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseStringCastingLocalFix());
+                    if (!referenceObject.equals("$this")) {
+                        if (!(reference.getFirstChild() instanceof ClassReference) && !referenceObject.equals("parent")) {
+                            /* __toString is a special case */
+                            if (SUGGEST_USING_STRING_CASTING && methodName.equals("__toString")) {
+                                final String message = patternStringCasting.replace("%o%", referenceObject);
+                                holder.registerProblem(reference, message, new UseStringCastingLocalFix());
 
-                            return;
-                        }
-                        /* allow calling __toString, as a developer don't want hints on this */
-                        if (!SUGGEST_USING_STRING_CASTING && methodName.equals("__toString")) {
-                            return;
-                        }
+                                return;
+                            }
+                            /* allow calling __toString, as a developer don't want hints on this */
+                            if (!SUGGEST_USING_STRING_CASTING && methodName.equals("__toString")) {
+                                return;
+                            }
 
-                        /* generally reported cases */
-                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                        return;
-                    }
-
-                    /* Pattern 2: internal calls inside class methods */
-                    final Function method = ExpressionSemanticUtil.getScope(reference);
-                    if (null != method && !method.getName().equals(methodName)) {
-                        /* allow __construct inside unserialize */
-                        if (methodName.equals("__construct") && method.getName().equals("unserialize")) {
-                            return;
-                        }
-                        /* allow calling __toString, as a developer don't want hints on this */
-                        if (!SUGGEST_USING_STRING_CASTING && methodName.equals("__toString")) {
+                            /* generally reported cases */
+                            holder.registerProblem(reference, message);
                             return;
                         }
 
-                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        /* Pattern 2: internal calls inside class methods */
+                        final Function method = ExpressionSemanticUtil.getScope(reference);
+                        if (null != method && !method.getName().equals(methodName)) {
+                            /* allow __construct inside unserialize */
+                            if (methodName.equals("__construct") && method.getName().equals("unserialize")) {
+                                return;
+                            }
+                            /* allow calling __toString, as a developer don't want hints on this */
+                            if (!SUGGEST_USING_STRING_CASTING && methodName.equals("__toString")) {
+                                return;
+                            }
+
+                            holder.registerProblem(reference, message);
+                        }
                     }
                 }
             }
@@ -139,8 +137,7 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) -> {
-            component.addCheckbox("Suggest using (string)...", SUGGEST_USING_STRING_CASTING, (isSelected) -> SUGGEST_USING_STRING_CASTING = isSelected);
-        });
+        return OptionsComponent.create((component)
+            -> component.addCheckbox("Suggest using (string)...", SUGGEST_USING_STRING_CASTING, (isSelected) -> SUGGEST_USING_STRING_CASTING = isSelected));
     }
 }

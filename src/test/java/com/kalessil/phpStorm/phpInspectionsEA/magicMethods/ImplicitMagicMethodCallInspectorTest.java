@@ -7,9 +7,9 @@ final public class ImplicitMagicMethodCallInspectorTest extends PhpCodeInsightFi
     public void testIfFindsAllPatterns() {
         ImplicitMagicMethodCallInspector inspector = new ImplicitMagicMethodCallInspector();
         inspector.SUGGEST_USING_STRING_CASTING     = true;
+        myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/magicMethods/magic-methods-implicit-call.php");
-        myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }
 }

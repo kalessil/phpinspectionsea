@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.util.PhpStringUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class StringsFirstCharactersCompareInspector extends BasePhpInspection {
+    private static final String message = "The specified length doesn't match the string length.";
+
     @NotNull
     public String getShortName() {
         return "StringsFirstCharactersCompareInspection";
@@ -51,18 +54,33 @@ public class StringsFirstCharactersCompareInspector extends BasePhpInspection {
                     /* if so, do deeper inspection */
                     if (literal != null) {
                         boolean isTarget;
+                        int stringLength;
                         try {
                             final String string = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
-                            isTarget            = Integer.valueOf(arguments[2].getText()) != string.length();
+                            stringLength        = string.length();
+                            isTarget            = stringLength != Integer.valueOf(arguments[2].getText());
                         } catch (NumberFormatException lengthParsingHasFailed) {
-                            isTarget = false;
+                            isTarget     = false;
+                            stringLength = 0;
                         }
-                        if (isTarget) {
-                            holder.registerProblem(arguments[2], "The specified length doesn't match the string length.");
+                        if (isTarget && stringLength > 0) {
+                            holder.registerProblem(arguments[2], message, new LengthFix(String.valueOf(stringLength)));
                         }
                     }
                 }
             }
         };
+    }
+
+    private class LengthFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use array_key_exists() instead";
+        }
+
+        LengthFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

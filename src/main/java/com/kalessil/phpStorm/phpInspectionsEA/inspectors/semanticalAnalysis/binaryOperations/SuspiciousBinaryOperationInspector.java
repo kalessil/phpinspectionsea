@@ -8,6 +8,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.function.BooleanSupplier;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -27,21 +31,24 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpBinaryExpression(BinaryExpression expression) {
-                if (
-                    InstanceOfTraitStrategy.apply(expression, holder) ||
-                    EqualsInAssignmentContextStrategy.apply(expression, holder) ||
-                    GreaterOrEqualInHashElementStrategy.apply(expression, holder) ||
-                    IdenticalOperandsStrategy.apply(expression, holder) ||
-                    MisplacedOperatorStrategy.apply(expression, holder) ||
-                    HardcodedBooleansStrategy.apply(expression, holder) ||
-                    NullCoalescingOperatorCorrectnessStrategy.apply(expression, holder)
-                ) {
-                    return;
-                }
+            @Override
+            public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
+                final Collection<BooleanSupplier> callbacks = new ArrayList<>();
+                callbacks.add(() -> InstanceOfTraitStrategy.apply(expression, holder));
+                callbacks.add(() -> EqualsInAssignmentContextStrategy.apply(expression, holder));
+                callbacks.add(() -> GreaterOrEqualInHashElementStrategy.apply(expression, holder));
+                callbacks.add(() -> IdenticalOperandsStrategy.apply(expression, holder));
+                callbacks.add(() -> MisplacedOperatorStrategy.apply(expression, holder));
+                callbacks.add(() -> HardcodedBooleansStrategy.apply(expression, holder));
+                callbacks.add(() -> UnclearOperationsPriorityStrategy.apply(expression, holder));
+                callbacks.add(() -> NullCoalescingOperatorCorrectnessStrategy.apply(expression, holder));
 
-                //noinspection UnnecessaryReturnStatement
-                return;
+                /* run through strategies until the first one fired something */
+                for (final BooleanSupplier strategy: callbacks) {
+                    if (strategy.getAsBoolean()) {
+                        break;
+                    }
+                }
             }
         };
     }

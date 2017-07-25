@@ -49,15 +49,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         myFixture.testHighlighting(true, false, true);
     }
 
-    public void testMissingParenthesises() {
-        NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
-        inspector.REPORT_MISSING_PARENTHESISES     = true;
-        myFixture.enableInspections(inspector);
-
-        myFixture.configureByFile("fixtures/ifs/if-missing-parenthesises.php");
-        myFixture.testHighlighting(true, false, true);
-    }
-
     public void testMergeIsset() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.SUGGEST_MERGING_ISSET            = true;

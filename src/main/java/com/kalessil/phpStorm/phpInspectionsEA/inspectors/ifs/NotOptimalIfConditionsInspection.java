@@ -19,7 +19,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +40,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     // Inspection options.
     public boolean REPORT_LITERAL_OPERATORS      = true;
     public boolean REPORT_DUPLICATE_CONDITIONS   = true;
-    public boolean REPORT_MISSING_PARENTHESISES  = true;
     public boolean REPORT_INSTANCE_OF_FLAWS      = true;
     public boolean REPORT_ISSET_FLAWS            = true;
     public boolean SUGGEST_MERGING_ISSET         = true;
@@ -54,7 +52,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String messageDuplicateConditionPart    = "This call is duplicated in conditions set.";
     private static final String messageIssetCanBeMergedAndCase   = "This can be merged into the previous 'isset(..., ...[, ...])'.";
     private static final String messageIssetCanBeMergedOrCase    = "This can be merged into the previous '!isset(..., ...[, ...])'.";
-    private static final String messageConditionShouldBeWrapped  = "Operations priority might differ from what you expect: please wrap needed with '(...)'.";
 
     @NotNull
     public String getShortName() {
@@ -88,9 +85,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 if (null != objConditionsFromStatement) {
                     objAllConditions.addAll(objConditionsFromStatement);
 
-                    if (REPORT_MISSING_PARENTHESISES) {
-                        this.inspectConditionsForMissingParenthesis(objConditionsFromStatement);
-                    }
                     if (REPORT_DUPLICATE_CONDITIONS) {
                         this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
                     }
@@ -117,9 +111,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     if (objConditionsFromStatement != null) {
                         objAllConditions.addAll(objConditionsFromStatement);
 
-                        if (REPORT_MISSING_PARENTHESISES) {
-                            this.inspectConditionsForMissingParenthesis(objConditionsFromStatement);
-                        }
                         if (REPORT_DUPLICATE_CONDITIONS) {
                             this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
                         }
@@ -150,30 +141,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 /* TODO: Inversion should be un-boxed to get expression. */
 
                 objAllConditions.clear();
-            }
-
-            private void inspectConditionsForMissingParenthesis(@NotNull List<PsiElement> conditions) {
-                for (final PsiElement condition : conditions) {
-                    final PsiElement parent = condition.getParent();
-                    /* binary expressions, already wrapped into parenthesises can be skipped */
-                    if (condition instanceof BinaryExpression && !(parent instanceof ParenthesizedExpression)) {
-                        final IElementType operator = ((BinaryExpression) condition).getOperationType();
-                        if (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR) {
-                            holder.registerProblem(condition, messageConditionShouldBeWrapped, ProblemHighlightType.ERROR);
-                        }
-                    }
-                    /* assignment dramatically changing precedence */
-                    else if (OpenapiTypesUtil.isAssignment(condition)) {
-                        final PsiElement binaryCandidate = ((AssignmentExpression) condition).getValue();
-                        if (binaryCandidate instanceof BinaryExpression) {
-                            final BinaryExpression binary = (BinaryExpression) binaryCandidate;
-                            final IElementType operator   = binary.getOperationType();
-                            if (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR) {
-                                holder.registerProblem(binary, messageConditionShouldBeWrapped, ProblemHighlightType.ERROR);
-                            }
-                        }
-                    }
-                }
             }
 
             // reports $value instanceof \DateTime OP $value instanceof \DateTimeInterface
@@ -555,7 +522,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.addCheckbox("Report confusing conditions", REPORT_MISSING_PARENTHESISES, (isSelected) -> REPORT_MISSING_PARENTHESISES = isSelected);
             component.addCheckbox("Report duplicate conditions", REPORT_DUPLICATE_CONDITIONS, (isSelected) -> REPORT_DUPLICATE_CONDITIONS = isSelected);
             component.addCheckbox("Report instanceof usage flaws", REPORT_INSTANCE_OF_FLAWS, (isSelected) -> REPORT_INSTANCE_OF_FLAWS = isSelected);
             component.addCheckbox("Report isset usage flaws", REPORT_ISSET_FLAWS, (isSelected) -> REPORT_ISSET_FLAWS = isSelected);

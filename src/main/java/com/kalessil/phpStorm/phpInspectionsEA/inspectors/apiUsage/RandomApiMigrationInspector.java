@@ -111,7 +111,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use newer function";
+            return "Use the recommended function";
         }
 
         @NotNull

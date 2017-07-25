@@ -2,12 +2,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
@@ -73,7 +71,8 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new PhpElementVisitor() {
-            public void visitPhpUnaryExpression(UnaryExpression unaryExpression) {
+            @Override
+            public void visitPhpUnaryExpression(@NotNull UnaryExpression unaryExpression) {
                 /* general structure expectations */
                 final PsiElement suppressionCandidate = unaryExpression.getOperation();
                 if (null == suppressionCandidate || PhpTokenTypes.opSILENCE != suppressionCandidate.getNode().getElementType()) {
@@ -95,7 +94,7 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
                 final PsiElement suppressedExpression = unaryExpression.getValue();
                 if (!OpenapiTypesUtil.isFunctionReference(suppressedExpression)) {
                     if (null != suppressedExpression) {
-                        holder.registerProblem(suppressionCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
+                        holder.registerProblem(suppressionCandidate, message, new RemoveSuppressionFix());
                     }
 
                     return;
@@ -112,13 +111,12 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
                     /* valid context: ` false === @... `, ` false !== @... ` */
                     if (parent instanceof BinaryExpression) {
                         final BinaryExpression parentExpression = (BinaryExpression) parent;
-                        final IElementType operator             = parentExpression.getOperationType();
-                        if (PhpTokenTypes.opIDENTICAL == operator || PhpTokenTypes.opNOT_IDENTICAL == operator) {
+                        if (PhpTokenTypes.tsCOMPARE_OPS.contains(parentExpression.getOperationType())) {
                             PsiElement falseCandidate = parentExpression.getLeftOperand();
                             if (falseCandidate == unaryExpression) {
                                 falseCandidate = parentExpression.getRightOperand();
                             }
-                            if (PhpLanguageUtil.isFalse(falseCandidate)) {
+                            if (PhpLanguageUtil.isBoolean(falseCandidate)) {
                                 return;
                             }
                         }
@@ -129,18 +127,17 @@ public class UsageOfSilenceOperatorInspector extends BasePhpInspection {
                     }
                 }
 
-                holder.registerProblem(suppressionCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
+                holder.registerProblem(suppressionCandidate, message, new RemoveSuppressionFix());
             }
         };
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) -> {
-            component.addCheckbox("Content aware reporting", RESPECT_CONTEXT, (isSelected) -> RESPECT_CONTEXT = isSelected);
-        });
+        return OptionsComponent.create((component)
+            -> component.addCheckbox("Content aware reporting", RESPECT_CONTEXT, (isSelected) -> RESPECT_CONTEXT = isSelected));
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static class RemoveSuppressionFix implements LocalQuickFix {
         @NotNull
         @Override
         public String getName() {

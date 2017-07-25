@@ -76,7 +76,7 @@ public class StringsFirstCharactersCompareInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use array_key_exists() instead";
+            return "Set correct value for the length parameter";
         }
 
         LengthFix(@NotNull String expression) {

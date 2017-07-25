@@ -16,7 +16,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
     public void testBasicPatterns() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.SUGGEST_OPTIMIZING_CONDITIONS    = true;
-
         myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/ifs/if-optimal-conditions.php");
@@ -26,7 +25,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
     public void testIssetAndNullComparisonPatterns() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_ISSET_FLAWS               = true;
-
         myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/ifs/if-isset-not-null.php");
@@ -36,7 +34,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
     public void testLiteralOperatorsPatterns() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_LITERAL_OPERATORS         = true;
-
         myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/ifs/if-literal-operators.php");
@@ -46,7 +43,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
     public void testDuplicateConditions() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_DUPLICATE_CONDITIONS      = true;
-
         myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/ifs/if-duplicate-conditions.php");
@@ -56,7 +52,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
     public void testMissingParenthesises() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_MISSING_PARENTHESISES     = true;
-
         myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/ifs/if-missing-parenthesises.php");
@@ -66,7 +61,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
     public void testMergeIsset() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.SUGGEST_MERGING_ISSET            = true;
-
         myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/ifs/if-merge-isset.php");
@@ -76,7 +70,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
     public void testInstanceOfFlaws() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_INSTANCE_OF_FLAWS         = true;
-
         myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/ifs/if-instanceof-flaws.php");
@@ -87,7 +80,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP540);
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_INSTANCE_OF_FLAWS         = true;
-
         myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/ifs/if-instanceof-flaws-false-positives.php");
@@ -97,7 +89,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
     public void testIssetFlaws() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_ISSET_FLAWS               = true;
-
         myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/ifs/if-isset-flaws.php");

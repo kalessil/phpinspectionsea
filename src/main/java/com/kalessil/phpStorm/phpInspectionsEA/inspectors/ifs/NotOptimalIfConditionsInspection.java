@@ -19,6 +19,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +54,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String messageDuplicateConditionPart    = "This call is duplicated in conditions set.";
     private static final String messageIssetCanBeMergedAndCase   = "This can be merged into the previous 'isset(..., ...[, ...])'.";
     private static final String messageIssetCanBeMergedOrCase    = "This can be merged into the previous '!isset(..., ...[, ...])'.";
-    private static final String messageConditionShouldBeWrapped  = "Confusing conditions structure: please wrap needed with '(...)'.";
+    private static final String messageConditionShouldBeWrapped  = "Operations priority might differ from what you expect: please wrap needed with '(...)'.";
 
     @NotNull
     public String getShortName() {
@@ -153,16 +154,24 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
             private void inspectConditionsForMissingParenthesis(@NotNull List<PsiElement> conditions) {
                 for (final PsiElement condition : conditions) {
-                    if (!(condition instanceof BinaryExpression)) {
-                        continue;
+                    final PsiElement parent = condition.getParent();
+                    /* binary expressions, already wrapped into parenthesises can be skipped */
+                    if (condition instanceof BinaryExpression && !(parent instanceof ParenthesizedExpression)) {
+                        final IElementType operator = ((BinaryExpression) condition).getOperationType();
+                        if (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR) {
+                            holder.registerProblem(condition, messageConditionShouldBeWrapped, ProblemHighlightType.ERROR);
+                        }
                     }
-                    final IElementType operationType = ((BinaryExpression) condition).getOperationType();
-                    if (operationType != PhpTokenTypes.opAND && operationType != PhpTokenTypes.opOR) {
-                        continue;
-                    }
-
-                    if (!(condition.getParent() instanceof ParenthesizedExpression)) {
-                        holder.registerProblem(condition, messageConditionShouldBeWrapped, ProblemHighlightType.ERROR);
+                    /* assignment dramatically changing precedence */
+                    else if (OpenapiTypesUtil.isAssignment(condition)) {
+                        final PsiElement binaryCandidate = ((AssignmentExpression) condition).getValue();
+                        if (binaryCandidate instanceof BinaryExpression) {
+                            final BinaryExpression binary = (BinaryExpression) binaryCandidate;
+                            final IElementType operator   = binary.getOperationType();
+                            if (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR) {
+                                holder.registerProblem(binary, messageConditionShouldBeWrapped, ProblemHighlightType.ERROR);
+                            }
+                        }
                     }
                 }
             }

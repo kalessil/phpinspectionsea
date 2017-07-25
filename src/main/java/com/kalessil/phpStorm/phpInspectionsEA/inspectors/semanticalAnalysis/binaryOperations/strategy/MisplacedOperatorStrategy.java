@@ -64,7 +64,7 @@ final public class MisplacedOperatorStrategy {
                             final PhpType operandTypes
                                     = ((PhpTypedElement) rightOperand).getType().global(project).filterUnknown();
                             if (allowedTypes.getTypes().containsAll(operandTypes.getTypes())) {
-                                holder.registerProblem(expression.getOperation(), message, ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(expression.getOperation(), message);
                                 return true;
                             }
                         }

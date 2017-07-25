@@ -28,7 +28,7 @@ final public class NullCoalescingOperatorCorrectnessStrategy {
             final PsiElement operation = left instanceof UnaryExpression ? ((UnaryExpression) left).getOperation() : null;
             if (operation != null && PhpTokenTypes.tsCAST_OPS.contains(operation.getNode().getElementType())) {
                 final String message = messagePattern.replace("%e%", left.getText());
-                holder.registerProblem(left, message, ProblemHighlightType.GENERIC_ERROR);
+                holder.registerProblem(left, message);
                 result = true;
             }
         }

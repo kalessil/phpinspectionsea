@@ -55,4 +55,4 @@ if ($a = <error descr="Operations priority might differ from what you expect: pl
 if ($a = <error descr="Operations priority might differ from what you expect: please wrap needed with '(...)'.">function1() && $b && $c = function2()</error>) {}
 if ($a || ($b && $c)) {}
 if ($a && ($b || $c)) {}
-
+$z = $x && $b;

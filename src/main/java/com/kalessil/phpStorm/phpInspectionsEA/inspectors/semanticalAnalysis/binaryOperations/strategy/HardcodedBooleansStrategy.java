@@ -30,12 +30,12 @@ final public class HardcodedBooleansStrategy {
         ) {
             final PsiElement left  = expression.getLeftOperand();
             if (PhpLanguageUtil.isBoolean(left)) {
-                holder.registerProblem(left, message, ProblemHighlightType.GENERIC_ERROR);
+                holder.registerProblem(left, message);
                 result = true;
             }
             final PsiElement right = expression.getRightOperand();
             if (PhpLanguageUtil.isBoolean(right)) {
-                holder.registerProblem(right, message, ProblemHighlightType.GENERIC_ERROR);
+                holder.registerProblem(right, message);
                 result = true;
             }
         }

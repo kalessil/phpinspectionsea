@@ -30,7 +30,7 @@ final public class EqualsInAssignmentContextStrategy {
         /* analysis itself */
         final PsiElement parent = expression.getParent();
         if (null != parent && StatementImpl.class == parent.getClass()) {
-            holder.registerProblem(operation, message, ProblemHighlightType.GENERIC_ERROR);
+            holder.registerProblem(operation, message);
             return true;
         }
 

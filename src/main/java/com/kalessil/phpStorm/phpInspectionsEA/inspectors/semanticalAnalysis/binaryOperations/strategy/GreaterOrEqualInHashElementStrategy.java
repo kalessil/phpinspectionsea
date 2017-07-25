@@ -34,7 +34,7 @@ final public class GreaterOrEqualInHashElementStrategy {
 
         /* analysis itself */
         if (null != expression.getParent() && expression.getParent().getParent() instanceof ArrayCreationExpression) {
-            holder.registerProblem(operation, message, ProblemHighlightType.GENERIC_ERROR);
+            holder.registerProblem(operation, message);
             return true;
         }
 

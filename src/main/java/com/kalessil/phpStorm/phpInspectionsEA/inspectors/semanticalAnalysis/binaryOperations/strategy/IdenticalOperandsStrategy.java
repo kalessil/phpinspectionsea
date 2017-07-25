@@ -47,7 +47,7 @@ final public class IdenticalOperandsStrategy {
 
         final IElementType operation = expression.getOperationType();
         if (operationsToCheck.contains(operation) && PsiEquivalenceUtil.areElementsEquivalent(left, right)) {
-            holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR);
+            holder.registerProblem(expression, message);
             return true;
         }
 

@@ -12,6 +12,7 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -63,7 +65,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 final Project project      = holder.getProject();
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
                 if (php.hasFeature(PhpLanguageFeature.RETURN_TYPES) && null == method.getReturnType()) {
@@ -85,7 +88,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 @NotNull PsiElement target,
                 boolean supportNullableTypes
             ) {
-                if (null != method.getDocComment()) {
+                final PhpDocComment docBlock = method.getDocComment();
+                if (docBlock != null && docBlock.getReturnTag() != null) {
                     handleMethod(method, target, supportNullableTypes);
                 }
             }
@@ -102,10 +106,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 }
 
                 /* ignore DocBlock, resolve and normalize types instead (DocBlock is involved, but nevertheless) */
-                final Set<String> normalizedTypes = new HashSet<>();
-                for (String type : resolvedReturnType.filterUnknown().getTypes()) {
-                    normalizedTypes.add(Types.getType(type));
-                }
+                final Set<String> normalizedTypes = resolvedReturnType.filterUnknown().getTypes().stream().
+                        map(Types::getType).collect(Collectors.toSet());
                 checkNonImplicitNullReturn(method, normalizedTypes);
 
                 final int typesCount = normalizedTypes.size();

@@ -1,12 +1,12 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,16 +30,29 @@ final public class UnclearOperationsPriorityStrategy {
             if (parent instanceof BinaryExpression) {
                 final IElementType parentOperator = ((BinaryExpression) parent).getOperationType();
                 if (parentOperator != operator && (parentOperator == PhpTokenTypes.opAND || parentOperator == PhpTokenTypes.opOR)) {
-                    holder.registerProblem(expression, message);
+                    holder.registerProblem(expression, message, new WrapItAsItIsFix(expression));
                     return true;
                 }
             }
             /* assignment dramatically changing precedence */
             else if (OpenapiTypesUtil.isAssignment(parent) && parent.getParent().getClass() != StatementImpl.class) {
-                holder.registerProblem(expression, message);
+                holder.registerProblem(expression, message, new WrapItAsItIsFix(expression));
                 return true;
             }
         }
         return false;
     }
+
+    private static class WrapItAsItIsFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Wrap with parenthesises as it's";
+        }
+
+        WrapItAsItIsFix(@NotNull PsiElement expression) {
+            super("(" + expression.getText() + ")");
+        }
+    }
+
 }

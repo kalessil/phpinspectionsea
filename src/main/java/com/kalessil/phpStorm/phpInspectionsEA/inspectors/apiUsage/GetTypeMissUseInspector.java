@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -22,6 +21,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -41,7 +41,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
         return "GetTypeMissUseInspection";
     }
 
-    private static final HashMap<String, String> mapping = new HashMap<>();
+    private static final Map<String, String> mapping = new HashMap<>();
     static {
         mapping.put("boolean",  "is_bool");
         mapping.put("integer",  "is_int");
@@ -58,11 +58,12 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* verify amount of parameters at first */
-                final PsiElement[] params = reference.getParameters();
-                final String functionName = reference.getName();
-                if (1 != params.length || functionName == null || !functionName.equals("gettype")) {
+                final PsiElement[] arguments = reference.getParameters();
+                final String functionName    = reference.getName();
+                if (arguments.length != 1 || functionName == null || !functionName.equals("gettype")) {
                     return;
                 }
 
@@ -83,7 +84,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
                 final PsiElement type =
                         expression.getLeftOperand() == reference ? expression.getRightOperand() : expression.getLeftOperand();
                 final StringLiteralExpression typeLiteral = ExpressionSemanticUtil.resolveAsStringLiteral(type);
-                if (null == typeLiteral) {
+                if (typeLiteral == null) {
                     return;
                 }
                 final String typeString = typeLiteral.getContents();
@@ -91,7 +92,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
                     /* edge case: compared string is wrong xD - bug */
                     if (!typeString.equals("unknown type")) {
                         final String message = messageInvalidType.replace("%t%", typeString);
-                        holder.registerProblem(type, message, ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(type, message);
                     }
 
                     return;
@@ -101,11 +102,10 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
                 final String suggestedName = mapping.get(typeString);
                 final boolean isInverted   = PhpTokenTypes.opNOT_EQUAL == operator || PhpTokenTypes.opNOT_IDENTICAL == operator;
                 final String message = messagePattern
-                        .replace("%p%", params[0].getText())
+                        .replace("%p%", arguments[0].getText())
                         .replace("%f%", suggestedName)
                         .replace("%i%", isInverted ? "!" : "");
-                holder.registerProblem(parent, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                        new TheLocalFix(suggestedName, params[0], isInverted));
+                holder.registerProblem(parent, message, new TheLocalFix(suggestedName, arguments[0], isInverted));
             }
         };
     }
@@ -140,7 +140,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             final PsiElement param      = this.param.getElement();
-            if (null != param && expression instanceof BinaryExpression) {
+            if (param != null && expression instanceof BinaryExpression) {
                 final String pattern =
                         (isInverted ? "!" : "") +
                         (suggestedName + "(%p%)".replace("%p%", param.getText()));
@@ -152,7 +152,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
                     replacement = PhpPsiElementFactory.createFromText(project, FunctionReference.class, pattern);
                 }
 
-                if (null != replacement) {
+                if (replacement != null) {
                     expression.replace(replacement);
                 }
             }

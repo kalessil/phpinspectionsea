@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.8.1</version>
+  <version>2.3.9</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -54,13 +54,37 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>! Hot-fixes:
+Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>! Bug-fixes:
 <br/>
 <br/>
-- Declare directive correctness: resolved false-positives (directives decorated with spaces)<br/>
-- Security advisories for Composer packages: added some missing packages<br/>
-- ::class constant usage correctness: resolved false-positives (refactoring bug)<br/>
-+ see <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/36728">2.3.8 changelog</a><br/>
+- ReturnTypeCanBeDeclaredInspector: resolved false positives (abstract methods with PhpDoc without return tag)<br/>
+- UsageOfSilenceOperatorInspector: resolved false-positives (boolean comparisons)<br/>
+- SecurityAdvisoriesInspector: resolved false-positives (implementation bug)<br/>
+- CascadeStringReplacementInspector: resolved false-positives (used/stored expressions are not matching)<br/>
+- ClassConstantUsageCorrectnessInspector: resolved false-positives (parent reference)<br/>
+- EmptyClassInspector: resolved false-positives (multiple cases)<br/>
+- SenselessTernaryOperatorInspector: resolved false-positives (incorrect suggestions in some cases)<br/>
+- ThrowRawExceptionInspector: resolved false-positives (respect overridden constructors)<br/>
+- MissingIssetImplementationInspector: resolved false-positives (multiple cases)<br/>
+- NotOptimalRegularExpressionsInspector: resolved false-positives (suggesting str_replace)<br/>
+- UnnecessaryParenthesesInspector: resolved false-positives (member reference on assignment)<br/>
+- BadExceptionsProcessingInspector: fixed "Empty PSI element" exception<br/>
+- ExceptionsAnnotatingAndHandlingInspector: prevent SOE exception when processing PhpDoc<br/>
+- ThrowRawExceptionInspector: fix message grammar (thank you Kevin Laude)<br/>
+<br/>
+- ConstantCanBeUsedInspector: new pattern<br/>
+- FopenBinaryUnsafeUsageInspector: new patterns (misplaced b-modifier)<br/>
+- SuspiciousBinaryOperationInspector: new pattern (priority issues, own QF available)<br/>
+- SubStrUsedAsStrPosInspector: QF implemented<br/>
+- NotOptimalRegularExpressionsInspector: QFes implemented (plain API usage)<br/>
+- SenselessTernaryOperatorInspector: QF implemented<br/>
+<br/>
+- StringsFirstCharactersCompareInspector: implemented<br/>
+- SelfClassReferencingInspector: implemented (thank you David Rodrigues)<br/>
+- HostnameSubstitutionInspector: implemented (experimental, feedback is welcome)<br/>
+- InfinityLoopInspector: implemented (currently only infinite recursion)<br/>
+- UnnecessaryCastingInspector: implemented<br/>
+- ParameterByRefWithDefaultInspector: dropped<br/>
 <br/>
 <hr/>
   ]]></change-notes>

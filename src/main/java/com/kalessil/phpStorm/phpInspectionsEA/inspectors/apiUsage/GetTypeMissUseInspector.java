@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -92,7 +93,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
                     /* edge case: compared string is wrong xD - bug */
                     if (!typeString.equals("unknown type")) {
                         final String message = messageInvalidType.replace("%t%", typeString);
-                        holder.registerProblem(type, message);
+                        holder.registerProblem(type, message, ProblemHighlightType.GENERIC_ERROR);
                     }
 
                     return;

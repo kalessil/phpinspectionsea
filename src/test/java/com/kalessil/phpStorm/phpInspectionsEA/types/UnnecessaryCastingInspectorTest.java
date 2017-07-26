@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.types;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessaryCastingInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessaryCastingInspector;
 
 final public class UnnecessaryCastingInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UsageOfSilenceOperatorInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UsageOfSilenceOperatorInspector;
 
 final public class UsageOfSilenceOperatorInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

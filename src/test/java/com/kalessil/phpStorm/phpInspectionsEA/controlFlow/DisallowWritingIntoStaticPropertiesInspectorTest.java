@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.controlFlow;
 
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DisallowWritingIntoStaticPropertiesInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.DisallowWritingIntoStaticPropertiesInspector;
 
 final public class DisallowWritingIntoStaticPropertiesInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testAllowWriteFromSourceClassOnly() {

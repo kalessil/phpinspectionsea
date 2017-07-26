@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.

@@ -75,7 +75,7 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="AmbiguousMethodsCallsInArrayMappingInspection" displayName="Non-optimized arrays mapping"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.AmbiguousMethodsCallsInArrayMappingInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.AmbiguousMethodsCallsInArrayMappingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="StrlenInEmptyStringCheckContextInspection"     displayName="'(mb_)strlen(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
@@ -517,7 +517,7 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ReferencingObjectsInspection"                  displayName="Referencing objects"
         groupName="Confusing constructs"                          enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ReferencingObjectsInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ReferencingObjectsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -547,25 +547,25 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnusedGotoLabelInspection"                     displayName="Unused goto labels"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnusedGotoLabelInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnusedGotoLabelInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ArgumentEqualsDefaultValueInspection"          displayName="Unnecessary arguments specification"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ArgumentEqualsDefaultValueInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ArgumentEqualsDefaultValueInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnNecessaryDoubleQuotesInspection"             displayName="Unnecessary double quotes"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnNecessaryDoubleQuotesInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnNecessaryDoubleQuotesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MissingOrEmptyGroupStatementInspection"        displayName="Missing or empty conditionals group statement"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MissingOrEmptyGroupStatementInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.MissingOrEmptyGroupStatementInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SenselessCommaInArrayDefinitionInspection"     displayName="Unnecessary last comma in array definition"
         groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.SenselessCommaInArrayDefinitionInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.SenselessCommaInArrayDefinitionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="AccessModifierPresentedInspection"             displayName="Access modifiers shall be defined"
         groupName="Code Style"                                    enabledByDefault="true" level="ERROR"
@@ -577,7 +577,7 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="CallableReferenceNameMismatchInspection"       displayName="Callable name case mismatched in a call"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.CallableReferenceNameMismatchInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.CallableReferenceNameMismatchInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="NestedPositiveIfStatementsInspection"          displayName="Nested positive ifs"
         groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
@@ -593,23 +593,23 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="NestedNotOperatorsInspection"                  displayName="Nested not operators usage"
         groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.NestedNotOperatorsInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.NestedNotOperatorsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnnecessaryParenthesesInspection"              displayName="Unnecessary parentheses"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessaryParenthesesInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessaryParenthesesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnnecessarySemicolonInspection"                displayName="Unnecessary semicolon"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessarySemicolonInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessarySemicolonInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnnecessaryUseAliasInspection"                 displayName="Unnecessary use aliases"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessaryUseAliasInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessaryUseAliasInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UsingInclusionReturnValueInspection"           displayName="Usage of inclusion return value"
         groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UsingInclusionReturnValueInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UsingInclusionReturnValueInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="OpAssignShortSyntaxInspection"                 displayName="Short syntax for applied operation"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
@@ -617,7 +617,7 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnnecessaryFinalModifierInspection"            displayName="Unnecessary final modifiers"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessaryFinalModifierInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessaryFinalModifierInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnknownInspectionInspection"                   displayName="Unknown inspection suppression"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
@@ -625,31 +625,31 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ShortOpenTagUsageInspection"                   displayName="PHP short open tag usage"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ShortOpenTagUsageInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ShortOpenTagUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ComparisonOperandsOrderInspection"             displayName="Yoda/regular conditions style usage"
         groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ComparisonOperandsOrderInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ComparisonOperandsOrderInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ParameterDefaultValueIsNotNullInspection"      displayName="Non-null parameters default value"
         groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.ParameterDefaultValueIsNotNullInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ParameterDefaultValueIsNotNullInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DisallowWritingIntoStaticPropertiesInspection" displayName="Disallow writing into static properties"
         groupName="Code Style"                                    enabledByDefault="false" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DisallowWritingIntoStaticPropertiesInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.DisallowWritingIntoStaticPropertiesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UsageOfSilenceOperatorInspection"              displayName="Usage of the silence operator"
         groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UsageOfSilenceOperatorInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UsageOfSilenceOperatorInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MisorderedModifiersInspection"                 displayName="PSR-compliant modifiers order"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MisorderedModifiersInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.MisorderedModifiersInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnnecessaryCastingInspection"                  displayName="Unnecessary type casting"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.UnnecessaryCastingInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessaryCastingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SelfClassReferencingInspection"                displayName="Self class referencing"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
@@ -720,11 +720,11 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="BadExceptionsProcessingInspection"               displayName="Badly organized exception handling"
         groupName="Architecture"                                    enabledByDefault="false" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.BadExceptionsProcessingInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.BadExceptionsProcessingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MoreThanThreeArgumentsInspection"                displayName="Too many parameters in a callable"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MoreThanThreeArgumentsInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.MoreThanThreeArgumentsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="CallableParameterUseCaseInTypeContextInspection" displayName="Callable parameter usage violates definition"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
@@ -752,7 +752,7 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MultipleReturnStatementsInspection"              displayName="Multiple return statements usage"
         groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.MultipleReturnStatementsInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.MultipleReturnStatementsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="ClassReImplementsParentInterfaceInspection"     displayName="Class implements interfaces multiple times"
          groupName="Architecture"                                   enabledByDefault="true" level="ERROR"
@@ -764,13 +764,13 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="EfferentObjectCouplingInspection"                displayName="Efferent coupling between objects"
         groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.EfferentObjectCouplingInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.EfferentObjectCouplingInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DeprecatedIniOptionsInspection"                  displayName="Deprecated configuration options"
         groupName="Compatibility"                                   enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.DeprecatedIniOptionsInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.DeprecatedIniOptionsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="RandomApiMigrationInspection"                    displayName="Random API migration"
         groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"

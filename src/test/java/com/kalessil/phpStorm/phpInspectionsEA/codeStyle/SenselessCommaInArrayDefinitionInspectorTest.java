@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell.SenselessCommaInArrayDefinitionInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.SenselessCommaInArrayDefinitionInspector;
 
 public final class SenselessCommaInArrayDefinitionInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

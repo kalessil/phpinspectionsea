@@ -14,10 +14,7 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.Finally;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.Try;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
@@ -30,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection {
     // Inspection options.
@@ -60,14 +58,14 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
                 /* report individual statements */
                 if (exceptions.size() > 0) {
-                    final HashSet<PsiElement> reportedExpressions = new HashSet<>();
-                    for (HashSet<PsiElement> pool : exceptions.values()) {
-                        for (PsiElement expression : pool) {
-                            if (!reportedExpressions.contains(expression)) {
-                                holder.registerProblem(expression, messageFinallyExceptions, ProblemHighlightType.GENERIC_ERROR);
-                                reportedExpressions.add(expression);
-                            }
-                        }
+                    final Set<PsiElement> reportedExpressions = new HashSet<>();
+                    for (final Set<PsiElement> pool : exceptions.values()) {
+                        pool.stream()
+                                .filter(expression -> !reportedExpressions.contains(expression))
+                                .forEach(expression -> {
+                                    holder.registerProblem(expression, messageFinallyExceptions, ProblemHighlightType.GENERIC_ERROR);
+                                    reportedExpressions.add(expression);
+                                });
                         pool.clear();
                     }
                     reportedExpressions.clear();
@@ -76,11 +74,11 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
                 /* report try-blocks */
                 if (processedRegistry.size() > 0) {
-                    for (PsiElement statement : processedRegistry) {
-                        if (statement instanceof Try) {
+                    processedRegistry.stream()
+                        .filter(statement -> statement instanceof Try)
+                        .forEach(statement -> {
                             holder.registerProblem(statement.getFirstChild(), messageFinallyExceptions, ProblemHighlightType.GENERIC_ERROR);
-                        }
-                    }
+                        });
                     processedRegistry.clear();
                 }
             }
@@ -112,23 +110,23 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 /* exclude annotated exceptions, identify which has not been thrown */
                 final Set<PhpClass> annotatedButNotThrownExceptions = new HashSet<>();
                 annotatedButNotThrownExceptions.addAll(annotatedExceptions);
-                for (PhpClass annotated: annotatedExceptions) {
-                    if (throwsExceptions.containsKey(annotated)) {
-                        /* release bundled expressions */
-                        throwsExceptions.get(annotated).clear();
-                        throwsExceptions.remove(annotated);
-                        /* actualize un-thrown exceptions registry */
-                        annotatedButNotThrownExceptions.remove(annotated);
-                    }
-                }
-
+                /* release bundled expressions *//* actualize un-thrown exceptions registry */
+                annotatedExceptions.stream()
+                        .filter(throwsExceptions::containsKey)
+                        .forEach(annotated -> {
+                            /* release bundled expressions */
+                            throwsExceptions.get(annotated).clear();
+                            throwsExceptions.remove(annotated);
+                            /* actualize un-thrown exceptions registry */
+                            annotatedButNotThrownExceptions.remove(annotated);
+                        });
 
                 /* do reporting now: exceptions annotated, but not thrown */
                 if (REPORT_NON_THROWN_EXCEPTIONS && annotatedButNotThrownExceptions.size() > 0) {
-                    List<String> toReport = new ArrayList<>();
-                    for (PhpClass notThrown : annotatedButNotThrownExceptions) {
-                        toReport.add(notThrown.getFQN());
-                    }
+                    final List<String> toReport =
+                            annotatedButNotThrownExceptions.stream()
+                                    .map(PhpNamedElement::getFQN)
+                                    .collect(Collectors.toList());
 
                     final String message = messagePatternUnthrown.replace("%c%", String.join(", ", toReport));
                     holder.registerProblem(objMethodName, message, ProblemHighlightType.WEAK_WARNING);

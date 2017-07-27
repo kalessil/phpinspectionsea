@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -188,9 +189,11 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     foundClasses.addAll(index.getClassesByFQN(type));
                     foundClasses.addAll(index.getInterfacesByFQN(type));
                     for (final PhpClass clazz : foundClasses) {
-                        for (final PhpClass parent : InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true)) {
-                            possibleTypes.add(parent.getFQN());
-                        }
+                        possibleTypes.addAll(
+                                InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream()
+                                        .map(PhpNamedElement::getFQN)
+                                        .collect(Collectors.toList())
+                        );
                     }
                 }
 

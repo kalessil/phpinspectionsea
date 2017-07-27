@@ -21,6 +21,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -172,10 +173,10 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 for (Parameter parameter: method.getParameters()) {
                     parameters.add("$" + parameter.getName());
                 }
-                final Set<String> types = new HashSet<>();
-                for (String type : method.getType().global(project).filterUnknown().getTypes()) {
-                    types.add(Types.getType(type));
-                }
+                final Set<String> types =
+                        method.getType().global(project).filterUnknown().getTypes().stream()
+                                .map(Types::getType)
+                                .collect(Collectors.toSet());
                 types.remove(Types.strVoid);
 
                 /* generate replacement and release resources */

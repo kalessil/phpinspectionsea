@@ -151,13 +151,14 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                 // find all instanceof expressions
                 final List<BinaryExpression> instanceOfExpressions = new ArrayList<>();
-                for (final PsiElement expression : conditions) {
-                    if (expression instanceof BinaryExpression) {
-                        if (PhpTokenTypes.kwINSTANCEOF == ((BinaryExpression) expression).getOperationType()) {
-                            instanceOfExpressions.add((BinaryExpression) expression);
-                        }
-                    }
-                }
+                conditions.stream()
+                        .filter(expression -> expression instanceof BinaryExpression)
+                        .forEach(expression -> {
+                            final BinaryExpression binary = (BinaryExpression) expression;
+                            if (PhpTokenTypes.kwINSTANCEOF == binary.getOperationType()) {
+                                instanceOfExpressions.add(binary);
+                            }
+                        });
                 // terminate processing if not enough entries for analysis
                 if (instanceOfExpressions.size() < 2) {
                     instanceOfExpressions.clear();

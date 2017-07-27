@@ -12,10 +12,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -49,12 +49,10 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
                 final boolean skipAnalysis = fileName.matches("\\d{4}_\\d{2}_\\d{2}_\\d{6}_.+_.php");
                 if (!skipAnalysis && fileName.endsWith(".php") && !ignoredFiles.contains(fileName)) {
                     /* find out how many named classes has been defined in the file */
-                    final List<PhpClass> classes = new ArrayList<>();
-                    for (final PhpClass clazz : PsiTreeUtil.findChildrenOfAnyType(file, PhpClass.class)) {
-                        if (NamedElementUtil.getNameIdentifier(clazz) != null) {
-                            classes.add(clazz);
-                        }
-                    }
+                    final List<PhpClass> classes =
+                            PsiTreeUtil.findChildrenOfAnyType(file, PhpClass.class).stream()
+                                    .filter(clazz -> NamedElementUtil.getNameIdentifier(clazz) != null)
+                                    .collect(Collectors.toList());
 
                     /* multiple classes defined, do nothing - this is not PSR compatible */
                     if (classes.size() == 1) {

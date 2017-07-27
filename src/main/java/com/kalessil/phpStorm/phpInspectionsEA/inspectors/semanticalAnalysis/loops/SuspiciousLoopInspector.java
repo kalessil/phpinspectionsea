@@ -15,6 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SuspiciousLoopInspector extends BasePhpInspection {
     private static final String messageMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
@@ -121,14 +122,14 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                         parameters.add(param.getName());
                     }
 
-                    for (String variable : loopVariables) {
-                        if (parameters.contains(variable)) {
-                            final String message = patternOverridesParameter
+                    loopVariables.stream()
+                            .filter(parameters::contains)
+                            .forEach(variable -> {
+                                final String message = patternOverridesParameter
                                     .replace("%v%", variable)
                                     .replace("%t%", function instanceof Method ? "method" : "function");
-                            holder.registerProblem(loop.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                        }
-                    }
+                                holder.registerProblem(loop.getFirstChild(), message);
+                            });
                     parameters.clear();
                 }
 
@@ -137,13 +138,13 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                 while (null != parent && ! (parent instanceof Function) && ! (parent instanceof PhpFile)) {
                     /* inspect parent loops for conflicted variables */
                     if (parent instanceof For || parent instanceof ForeachStatement) {
-                        final HashSet<String> parentVariables = getLoopVariables((PhpPsiElement) parent);
-                        for (String variable : loopVariables) {
-                            if (parentVariables.contains(variable)) {
-                                final String message = patternOverridesLoopVars.replace("%v%", variable);
-                                holder.registerProblem(loop.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                            }
-                        }
+                        final Set<String> parentVariables = getLoopVariables((PhpPsiElement) parent);
+                        loopVariables.stream()
+                                .filter(parentVariables::contains)
+                                .forEach(variable -> {
+                                    final String message = patternOverridesLoopVars.replace("%v%", variable);
+                                    holder.registerProblem(loop.getFirstChild(), message);
+                                });
                         parentVariables.clear();
                     }
 
@@ -170,9 +171,11 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
 
                 if (loop instanceof ForeachStatement) {
                     /* just extract variables which created by foreach */
-                    for (Variable variable : ((ForeachStatement) loop).getVariables()) {
-                        loopVariables.add(variable.getName());
-                    }
+                    loopVariables.addAll(
+                            ((ForeachStatement) loop).getVariables().stream()
+                                    .map(PhpNamedElement::getName)
+                                    .collect(Collectors.toList())
+                    );
                 }
 
                 return loopVariables;

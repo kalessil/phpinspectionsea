@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -50,11 +51,11 @@ final public class MisplacedOperatorStrategy {
                 if (resolved instanceof Function) {
                     /* resolve the last parameter types: if bool not defined implicitly, continue */
                     final Function function   = (Function) resolved;
-                    final Parameter parameter = (function).getParameters()[params.length - 1];
-                    final Set<String> types   = new HashSet<>();
-                    for (final String type : parameter.getType().filterUnknown().getTypes()) {
-                        types.add(Types.getType(type));
-                    }
+                    final Parameter parameter = function.getParameters()[params.length - 1];
+                    final Set<String> types   =
+                            parameter.getType().filterUnknown().getTypes().stream()
+                                    .map(Types::getType)
+                                    .collect(Collectors.toSet());
                     if (!types.contains(Types.strBoolean)) {
                         final PsiElement rightOperand = expression.getRightOperand();
                         if (rightOperand instanceof PhpTypedElement) {

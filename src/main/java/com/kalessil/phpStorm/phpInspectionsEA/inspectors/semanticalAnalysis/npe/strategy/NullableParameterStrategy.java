@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -41,10 +42,10 @@ final public class NullableParameterStrategy {
     public static void apply(@NotNull Method method, @NotNull ProblemsHolder holder) {
         final PhpEntryPointInstruction controlFlowStart = method.getControlFlow().getEntryPoint();
         for (final Parameter parameter : method.getParameters()) {
-            final Set<String> declaredTypes = new HashSet<>();
-            for (final String type: parameter.getDeclaredType().getTypes()) {
-                declaredTypes.add(Types.getType(type));
-            }
+            final Set<String> declaredTypes =
+                    parameter.getDeclaredType().getTypes().stream()
+                            .map(Types::getType)
+                            .collect(Collectors.toSet());
             if (declaredTypes.contains(Types.strNull) || PhpLanguageUtil.isNull(parameter.getDefaultValue())) {
                 declaredTypes.remove(Types.strNull);
 
@@ -147,11 +148,11 @@ final public class NullableParameterStrategy {
                     }
 
                     /* lookup types, if no null declarations - report class-only declarations */
-                    final Parameter parameter = parameters[position];
-                    final Set<String> declaredTypes = new HashSet<>();
-                    for (final String type: parameter.getDeclaredType().getTypes()) {
-                        declaredTypes.add(Types.getType(type));
-                    }
+                    final Parameter parameter       = parameters[position];
+                    final Set<String> declaredTypes =
+                            parameter.getDeclaredType().getTypes().stream()
+                                    .map(Types::getType)
+                                    .collect(Collectors.toSet());
                     if (!declaredTypes.contains(Types.strNull) && !PhpLanguageUtil.isNull(parameter.getDefaultValue())) {
                         declaredTypes.remove(Types.strNull);
 

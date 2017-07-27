@@ -3,7 +3,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.NotNull;
 
-import java.security.InvalidParameterException;
 import java.util.HashSet;
 import java.util.Set;
 

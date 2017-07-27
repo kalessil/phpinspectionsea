@@ -71,12 +71,12 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                     }
 
                     /* analyze and report suspicious parameters, release refs afterwards */
-                    for (String subject : variablesCompacted) {
-                        if (!variablesDeclared.contains(subject)) {
-                            final String message = messagePattern.replace("%v%", subject);
-                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
-                        }
-                    }
+                    variablesCompacted.stream()
+                            .filter(subject -> !variablesDeclared.contains(subject))
+                            .forEach(subject -> {
+                                final String message = messagePattern.replace("%v%", subject);
+                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                            });
                     variablesDeclared.clear();
                     variablesCompacted.clear();
                 }

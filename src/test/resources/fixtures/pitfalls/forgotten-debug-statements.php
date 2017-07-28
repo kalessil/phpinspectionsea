@@ -18,3 +18,7 @@
     <error descr="Please ensure this is not a forgotten debug statement.">phpinfo</error>();
 
     <error descr="Please ensure this is not a forgotten debug statement.">my_debug_function</error>();
+
+    // Laravel related.
+    <error descr="Please ensure this is not a forgotten debug statement.">dd</error>();
+    <error descr="Please ensure this is not a forgotten debug statement.">dump</error>();

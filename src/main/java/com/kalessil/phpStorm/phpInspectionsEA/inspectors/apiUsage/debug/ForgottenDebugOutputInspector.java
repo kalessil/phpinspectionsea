@@ -185,6 +185,9 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             migrated.add("print_r");
             migrated.add("var_export");
             migrated.add("var_dump");
+            // Laravel related.
+            migrated.add("dd");
+            migrated.add("dump");
             migrated.addAll(configuration);
 
             /* migrate the list */

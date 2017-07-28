@@ -3,10 +3,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.api;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.debug.ForgottenDebugOutputInspector;
 
-final public class ForgottenDebugOutputInspectorTest extends PhpCodeInsightFixtureTestCase {
+public final class ForgottenDebugOutputInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        ForgottenDebugOutputInspector inspector = new ForgottenDebugOutputInspector();
-        inspector.migratedIntoUserSpace         = false;
+        final ForgottenDebugOutputInspector inspector = new ForgottenDebugOutputInspector();
+        inspector.migratedIntoUserSpace = false;
 
         inspector.registerCustomDebugMethod("my_debug_function");
 
@@ -16,8 +16,8 @@ final public class ForgottenDebugOutputInspectorTest extends PhpCodeInsightFixtu
     }
 
     public void testMethodsNameCollision() {
-        ForgottenDebugOutputInspector inspector = new ForgottenDebugOutputInspector();
-        inspector.migratedIntoUserSpace         = false;
+        final ForgottenDebugOutputInspector inspector = new ForgottenDebugOutputInspector();
+        inspector.migratedIntoUserSpace = false;
 
         inspector.registerCustomDebugMethod("\\DebugClass1::debug");
         inspector.registerCustomDebugMethod("\\DebugClass2::debug");
@@ -28,8 +28,8 @@ final public class ForgottenDebugOutputInspectorTest extends PhpCodeInsightFixtu
     }
 
     public void testFalsePositives() {
-        ForgottenDebugOutputInspector inspector = new ForgottenDebugOutputInspector();
-        inspector.migratedIntoUserSpace         = false;
+        final ForgottenDebugOutputInspector inspector = new ForgottenDebugOutputInspector();
+        inspector.migratedIntoUserSpace = false;
 
         inspector.registerCustomDebugMethod(""); // to force userspace FQNs extension
 

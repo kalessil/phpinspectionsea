@@ -72,21 +72,21 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
 - ExceptionsAnnotatingAndHandlingInspector: prevent SOE exception when processing PhpDoc<br/>
 - ThrowRawExceptionInspector: fix message grammar (thank you Kevin Laude)<br/>
 <br/>
-- ConstantCanBeUsedInspector: new patterns<br/>
-- FopenBinaryUnsafeUsageInspector: new patterns (misplaced b-modifier)<br/>
-- ForgottenDebugOutputInspector: new patterns<br/>
-- SuspiciousBinaryOperationInspector: new patterns (priority issues, own QF available)<br/>
-- SubStrUsedAsStrPosInspector: QF implemented<br/>
-- NotOptimalRegularExpressionsInspector: QFes implemented (plain API usage)<br/>
-- SenselessTernaryOperatorInspector: QF implemented<br/>
-- StrTrUsageAsStrReplaceInspector: QF implemented<br/>
+- A constant can be used: new patterns<br/>
+- Binary-unsafe 'fopen(...)' usage: new patterns (misplaced b-modifier)<br/>
+- Forgotten debug statements: new patterns (thank you David Rodrigues)<br/>
+- Non-optimal regular expression: QFes implemented (plain API usage)<br/>
+- Suspicious binary operations: new patterns (priority issues, own QF available)<br/>
+- Suspicious ternary operator: QF implemented<br/>
+- 'strtr(...)' could be replaced with 'str_replace(...)': QF implemented<br/>
+- 'substr(...)' could be replaced with 'strpos(...)': QF implemented<br/>
 <br/>
-- StringsFirstCharactersCompareInspector: implemented<br/>
-- SelfClassReferencingInspector: implemented (thank you David Rodrigues)<br/>
-- HostnameSubstitutionInspector: implemented (experimental, feedback is welcome)<br/>
-- InfinityLoopInspector: implemented (currently only infinite recursion)<br/>
-- UnnecessaryCastingInspector: implemented<br/>
-- ParameterByRefWithDefaultInspector: dropped<br/>
+- Infinity loop detection: implemented (infinite recursion)<br/>
+- Hostname substitution: implemented (experimental, feedback is welcome)<br/>
+- Parameter passed by reference has default value: dropped<br/>
+- Self class referencing: implemented (thank you David Rodrigues)<br/>
+- Strings N-character comparison flaws: implemented<br/>
+- Unnecessary type casting: implemented (implicit type hints based)<br/>
 <br/>
 <hr/>
   ]]></change-notes>

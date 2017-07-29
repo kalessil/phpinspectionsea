@@ -11,7 +11,7 @@ final public class ScandirUsageInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.configureByFile("fixtures/api/scandir-function.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

@@ -11,7 +11,7 @@ final public class FopenBinaryUnsafeUsageInspectorTest extends PhpCodeInsightFix
         myFixture.configureByFile("fixtures/api/fopen-binary-unsafe.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

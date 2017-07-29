@@ -16,7 +16,7 @@ final public class ClassConstantCanBeUsedInspectorTest extends PhpCodeInsightFix
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

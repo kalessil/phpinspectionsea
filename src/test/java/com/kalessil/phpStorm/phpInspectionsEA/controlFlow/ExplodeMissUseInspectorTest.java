@@ -11,7 +11,7 @@ final public class ExplodeMissUseInspectorTest extends PhpCodeInsightFixtureTest
         myFixture.configureByFile("fixtures/controlFlow/explode-misuse.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

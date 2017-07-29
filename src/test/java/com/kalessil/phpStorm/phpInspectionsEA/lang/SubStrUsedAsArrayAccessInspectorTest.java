@@ -11,7 +11,7 @@ final public class SubStrUsedAsArrayAccessInspectorTest extends PhpCodeInsightFi
         myFixture.configureByFile("fixtures/lang/substr-used-as-index-access.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

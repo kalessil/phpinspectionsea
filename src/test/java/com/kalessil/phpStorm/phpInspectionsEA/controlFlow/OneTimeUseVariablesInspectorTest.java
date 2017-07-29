@@ -11,7 +11,7 @@ final public class OneTimeUseVariablesInspectorTest extends PhpCodeInsightFixtur
         myFixture.configureByFile("fixtures/controlFlow/one-time-use-variables.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

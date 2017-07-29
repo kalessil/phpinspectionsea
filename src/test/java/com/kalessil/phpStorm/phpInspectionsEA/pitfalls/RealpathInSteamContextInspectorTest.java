@@ -10,7 +10,7 @@ final public class RealpathInSteamContextInspectorTest extends PhpCodeInsightFix
         myFixture.enableInspections(RealpathInSteamContextInspector.class);
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

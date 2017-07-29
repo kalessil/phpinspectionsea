@@ -11,7 +11,7 @@ final public class TypeUnsafeArraySearchInspectorTest extends PhpCodeInsightFixt
         myFixture.configureByFile("fixtures/api/strict-array-search.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

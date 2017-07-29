@@ -14,7 +14,7 @@ final public class AliasFunctionsUsageInspectorTest extends PhpCodeInsightFixtur
         myFixture.configureByFile("fixtures/api/alias-functions.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

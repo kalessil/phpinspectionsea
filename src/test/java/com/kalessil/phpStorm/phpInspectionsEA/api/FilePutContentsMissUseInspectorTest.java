@@ -11,7 +11,7 @@ final public class FilePutContentsMissUseInspectorTest extends PhpCodeInsightFix
         myFixture.configureByFile("fixtures/api/file_put_contents-misuse.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

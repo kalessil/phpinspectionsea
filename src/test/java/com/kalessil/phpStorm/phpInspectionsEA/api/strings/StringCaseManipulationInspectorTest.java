@@ -11,7 +11,7 @@ public class StringCaseManipulationInspectorTest extends PhpCodeInsightFixtureTe
         myFixture.configureByFile("fixtures/api/strings/unnecessary-case-manipulation.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

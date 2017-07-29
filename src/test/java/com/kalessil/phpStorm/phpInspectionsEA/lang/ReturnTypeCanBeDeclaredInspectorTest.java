@@ -17,7 +17,7 @@ final public class ReturnTypeCanBeDeclaredInspectorTest extends PhpCodeInsightFi
         myFixture.configureByFile("fixtures/lang/typeHints/return-type-hints.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

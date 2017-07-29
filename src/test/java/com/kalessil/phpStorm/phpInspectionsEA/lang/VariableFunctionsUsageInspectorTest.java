@@ -23,7 +23,7 @@ final public class VariableFunctionsUsageInspectorTest extends PhpCodeInsightFix
         myFixture.configureByFile("fixtures/lang/variable-functions-php54.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

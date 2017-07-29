@@ -10,7 +10,7 @@ final public class TypeUnsafeComparisonInspectorTest extends PhpCodeInsightFixtu
         myFixture.enableInspections(TypeUnsafeComparisonInspector.class);
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

@@ -11,7 +11,7 @@ final public class ArrayCastingEquivalentInspectorTest extends PhpCodeInsightFix
         myFixture.configureByFile("fixtures/controlFlow/array-casting-equivalent.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

@@ -11,7 +11,7 @@ final public class LowPerformanceArrayUniqueUsageInspectorTest extends PhpCodeIn
         myFixture.configureByFile("fixtures/api/array-unique.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

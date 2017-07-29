@@ -11,7 +11,7 @@ final public class IfReturnReturnSimplificationInspectorTest extends PhpCodeInsi
         myFixture.configureByFile("fixtures/controlFlow/if-return-return-simplify.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

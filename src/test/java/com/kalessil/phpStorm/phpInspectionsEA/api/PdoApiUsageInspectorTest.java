@@ -11,7 +11,7 @@ final public class PdoApiUsageInspectorTest extends PhpCodeInsightFixtureTestCas
         myFixture.configureByFile("fixtures/api/pdo.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

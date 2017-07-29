@@ -11,7 +11,7 @@ final public class SubStrUsedAsStrPosInspectorTest extends PhpCodeInsightFixture
         myFixture.configureByFile("fixtures/controlFlow/substr-used-as-strpos.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

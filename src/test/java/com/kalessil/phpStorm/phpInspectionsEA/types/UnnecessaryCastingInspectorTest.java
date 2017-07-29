@@ -11,7 +11,7 @@ final public class UnnecessaryCastingInspectorTest extends PhpCodeInsightFixture
         myFixture.configureByFile("fixtures/types/unnecessary-casting.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

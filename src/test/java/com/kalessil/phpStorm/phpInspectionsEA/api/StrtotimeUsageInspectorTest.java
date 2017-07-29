@@ -11,7 +11,7 @@ final public class StrtotimeUsageInspectorTest extends PhpCodeInsightFixtureTest
         myFixture.configureByFile("fixtures/api/strtotime-function-misuse.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

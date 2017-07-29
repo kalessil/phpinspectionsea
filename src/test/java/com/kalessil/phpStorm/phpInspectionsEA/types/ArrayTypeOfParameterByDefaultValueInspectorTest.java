@@ -11,7 +11,7 @@ final public class ArrayTypeOfParameterByDefaultValueInspectorTest extends PhpCo
         myFixture.configureByFile("fixtures/types/type-can-be-array.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

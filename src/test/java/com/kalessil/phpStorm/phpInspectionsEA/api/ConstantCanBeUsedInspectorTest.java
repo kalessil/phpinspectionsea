@@ -11,7 +11,7 @@ final public class ConstantCanBeUsedInspectorTest extends PhpCodeInsightFixtureT
         myFixture.configureByFile("fixtures/api/constants-usage.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

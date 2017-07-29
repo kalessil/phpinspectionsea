@@ -13,7 +13,7 @@ final public class UnqualifiedReferenceInspectorTest extends PhpCodeInsightFixtu
         myFixture.configureByFile("fixtures/unqualified-function-refs-ns.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

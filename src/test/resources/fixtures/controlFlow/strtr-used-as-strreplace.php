@@ -1,8 +1,9 @@
 <?php
 
     /* Main case: characters replacement */
-    <weak_warning descr="This construct behaves as str_replace(' ', '_', ...), consider refactoring (improves maintainability).">strtr</weak_warning> ('string to fix', ' ', '_');
-    <weak_warning descr="This construct behaves as str_replace(\" \", \"_\", ...), consider refactoring (improves maintainability).">strtr</weak_warning> ('string to fix', " ", "_");
+    <weak_warning descr="'str_replace(' ', '_', 'string to fix')' can be used instead (improves maintainability).">strtr('string to fix', ' ', '_')</weak_warning>;
+    <weak_warning descr="'str_replace(\" \", \"_\", 'string to fix')' can be used instead (improves maintainability).">strtr('string to fix', " ", "_")</weak_warning>;
+    <weak_warning descr="'str_replace('\\', '_', 'string to fix')' can be used instead (improves maintainability).">strtr('string to fix', '\\', '_')</weak_warning>;
 
     /* False-positives */
     strtr('string to fix', 'string', 'int');

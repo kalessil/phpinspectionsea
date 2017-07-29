@@ -78,6 +78,7 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
 - SubStrUsedAsStrPosInspector: QF implemented<br/>
 - NotOptimalRegularExpressionsInspector: QFes implemented (plain API usage)<br/>
 - SenselessTernaryOperatorInspector: QF implemented<br/>
+- StrTrUsageAsStrReplaceInspector: QF implemented<br/>
 <br/>
 - StringsFirstCharactersCompareInspector: implemented<br/>
 - SelfClassReferencingInspector: implemented (thank you David Rodrigues)<br/>

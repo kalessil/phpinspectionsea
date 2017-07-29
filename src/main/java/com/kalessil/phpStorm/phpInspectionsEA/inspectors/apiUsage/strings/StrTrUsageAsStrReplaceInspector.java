@@ -1,19 +1,28 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class StrTrUsageAsStrReplaceInspector extends BasePhpInspection {
-    private static final String messagePattern = "This construct behaves as str_replace(%p%, ...), consider refactoring (improves maintainability).";
+    private static final String messagePattern = "'%e%' can be used instead (improves maintainability).";
 
     @NotNull
     public String getShortName() {
@@ -24,29 +33,39 @@ public class StrTrUsageAsStrReplaceInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
-                /* check if it's the target function */
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (3 != params.length || StringUtil.isEmpty(functionName) || !functionName.equals("strtr")) {
-                    return;
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length == 3 && functionName != null && functionName.equals("strtr")) {
+                    /* ensure multiple search-replace are not packed into strings */
+                    final StringLiteralExpression search = ExpressionSemanticUtil.resolveAsStringLiteral(arguments[1]);
+                    if (search != null && !StringUtils.isEmpty(search.getContents())) {
+                        final String searchContent = search.getContents().replaceAll("\\\\(.)", "$1");
+                        if (searchContent.length() == 1) {
+                            final String replacement = "str_replace(%s%, %r%, %t%)"
+                                    .replace("%t%", arguments[0].getText())
+                                    .replace("%r%", arguments[2].getText())
+                                    .replace("%s%", arguments[1].getText());
+                            final String message = messagePattern.replace("%e%", replacement);
+                            holder.registerProblem(reference, message, new UseStringReplaceFix(replacement));
+                        }
+                    }
                 }
-
-                /* ensure multiple search-replace are not packed into strings */
-                final StringLiteralExpression search = ExpressionSemanticUtil.resolveAsStringLiteral(params[1]);
-                if (null == search || StringUtil.isEmpty(search.getContents())) {
-                    return;
-                }
-                final String searchContent = search.getContents().replaceAll("\\\\(.)", "$1");
-                if (searchContent.length() > 1) {
-                    return;
-                }
-
-                /* report the case */
-                final String message = messagePattern.replace("%p%", params[1].getText()+", "+params[2].getText());
-                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
             }
         };
+    }
+
+    private class UseStringReplaceFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use str_replace(...) instead";
+        }
+
+        UseStringReplaceFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }
 

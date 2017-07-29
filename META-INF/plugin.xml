@@ -10,12 +10,10 @@
   <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
   <idea-version since-build="162.1889" />
   <!-- SDKs:
-     162.1889                           -> PhpStorm 2016.2.1
-
+    162.1889                           -> PhpStorm 2016.2.1
     141.2462 — 141.2462  PS 9.0.2      -> 1.3.9   [ok]
     143.382  — 143.382   PS 10.0.1     -> 1.3.9.1 [ok]
     143.1184 — 143.1184  PS 10.0.2     -> 1.3.9.2 [ok]
-
     143.1480 — *         PS 10.0.3/EAP -> 1.3.10  [ok]
     138.2001 — 138.2001  PS 8.0.3      -> not supported anymore (PHP 7 related classes)
   -->
@@ -57,20 +55,20 @@ with a laptop.
 Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>! Bug-fixes:
 <br/>
 <br/>
-- ReturnTypeCanBeDeclaredInspector: resolved false positives (abstract methods with PhpDoc without return tag)<br/>
-- UsageOfSilenceOperatorInspector: resolved false-positives (boolean comparisons)<br/>
-- SecurityAdvisoriesInspector: resolved false-positives (implementation bug)<br/>
-- CascadeStringReplacementInspector: resolved false-positives (used/stored expressions are not matching)<br/>
-- ClassConstantUsageCorrectnessInspector: resolved false-positives (parent reference)<br/>
-- EmptyClassInspector: resolved false-positives (multiple cases)<br/>
-- SenselessTernaryOperatorInspector: resolved false-positives (incorrect suggestions in some cases)<br/>
-- ThrowRawExceptionInspector: resolved false-positives (respect overridden constructors)<br/>
-- MissingIssetImplementationInspector: resolved false-positives (multiple cases)<br/>
-- NotOptimalRegularExpressionsInspector: resolved false-positives (suggesting str_replace)<br/>
-- UnnecessaryParenthesesInspector: resolved false-positives (member reference on assignment)<br/>
-- BadExceptionsProcessingInspector: fixed "Empty PSI element" exception<br/>
-- ExceptionsAnnotatingAndHandlingInspector: prevent SOE exception when processing PhpDoc<br/>
-- ThrowRawExceptionInspector: fix message grammar (thank you Kevin Laude)<br/>
+- Badly organized exception handling: fixed "Empty PSI element" exception<br/>
+- Cascading 'str_replace(...)' calls: resolved false-positives (used/stored expressions are not matching)<br/>
+- Empty class: resolved false-positives (multiple cases)<br/>
+- Empty/isset results correctness: resolved false-positives (multiple cases)<br/>
+- Exceptions handling and annotating: prevent SOE exception when processing PhpDoc<br/>
+- General '\Exception' is thrown: resolved false-positives (respect overridden constructors)<br/>
+- General '\Exception' is thrown: fix message grammar (thank you Kevin Laude)<br/>
+- Non-optimal regular expression: resolved false-positives (suggesting str_replace)<br/>
+- Return type hint can be used: resolved false positives (abstract methods with PhpDoc without return tag)<br/>
+- Security advisories for Composer packages: resolved false-positives (implementation bug)<br/>
+- Suspicious ternary operator: resolved false-positives (incorrect suggestions in some cases)<br/>
+- Unnecessary parentheses: resolved false-positives (member reference on assignment)<br/>
+- Usage of the silence operator: resolved false-positives (boolean comparisons)<br/>
+- ::class constant usage correctness: resolved false-positives (parent reference)<br/>
 <br/>
 - A constant can be used: new patterns<br/>
 - Binary-unsafe 'fopen(...)' usage: new patterns (misplaced b-modifier)<br/>
@@ -90,12 +88,6 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
 <br/>
 <hr/>
   ]]></change-notes>
-
-  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
-       on how to target different products -->
-  <!-- uncomment to enable plugin in all products
-  <depends>com.intellij.modules.lang</depends>
-  -->
 
   <extensions defaultExtensionNs="com.intellij">
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

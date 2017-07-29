@@ -72,9 +72,10 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
 - ExceptionsAnnotatingAndHandlingInspector: prevent SOE exception when processing PhpDoc<br/>
 - ThrowRawExceptionInspector: fix message grammar (thank you Kevin Laude)<br/>
 <br/>
-- ConstantCanBeUsedInspector: new pattern<br/>
+- ConstantCanBeUsedInspector: new patterns<br/>
 - FopenBinaryUnsafeUsageInspector: new patterns (misplaced b-modifier)<br/>
-- SuspiciousBinaryOperationInspector: new pattern (priority issues, own QF available)<br/>
+- ForgottenDebugOutputInspector: new patterns<br/>
+- SuspiciousBinaryOperationInspector: new patterns (priority issues, own QF available)<br/>
 - SubStrUsedAsStrPosInspector: QF implemented<br/>
 - NotOptimalRegularExpressionsInspector: QFes implemented (plain API usage)<br/>
 - SenselessTernaryOperatorInspector: QF implemented<br/>

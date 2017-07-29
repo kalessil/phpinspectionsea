@@ -71,6 +71,8 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             migrated.add("\\Symfony\\Component\\Debug\\DebugClassLoader::enable");
             migrated.add("\\Zend\\Debug\\Debug::dump");
             migrated.add("\\Zend\\Di\\Display\\Console::export");
+            migrated.add("\\Illuminate\\Support\\Debug\\Dumper::dump");
+            migrated.add("dd");
             migrated.add("debug_print_backtrace");
             migrated.add("debug_zval_dump");
             migrated.add("error_log");

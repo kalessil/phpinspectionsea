@@ -5,7 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.MultipleRetur
 
 final public class MultipleReturnStatementsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(MultipleReturnStatementsInspector.class);
+        myFixture.enableInspections(new MultipleReturnStatementsInspector());
 
         myFixture.configureByFile("fixtures/controlFlow/multiple-returns.php");
         myFixture.testHighlighting(true, false, true);

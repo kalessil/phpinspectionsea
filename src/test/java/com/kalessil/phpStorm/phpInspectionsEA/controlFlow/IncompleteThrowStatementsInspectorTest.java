@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptions.IncompleteTh
 
 final public class IncompleteThrowStatementsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new IncompleteThrowStatementsInspector());
+
         myFixture.configureByFile("fixtures/controlFlow/incomplete-throw-statements.php");
-        myFixture.enableInspections(IncompleteThrowStatementsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

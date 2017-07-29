@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SequentialUnSe
 
 final public class SequentialUnSetCallsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new SequentialUnSetCallsInspector());
+
         myFixture.configureByFile("fixtures/controlFlow/unset-sequential.php");
-        myFixture.enableInspections(SequentialUnSetCallsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

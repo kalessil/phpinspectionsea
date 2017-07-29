@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OneT
 
 final public class OneTimeUseVariablesInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(OneTimeUseVariablesInspector.class);
+        myFixture.enableInspections(new OneTimeUseVariablesInspector());
 
         myFixture.configureByFile("fixtures/controlFlow/one-time-use-variables.php");
         myFixture.testHighlighting(true, false, true);
@@ -19,8 +19,9 @@ final public class OneTimeUseVariablesInspectorTest extends PhpCodeInsightFixtur
     }
 
     public void testFalsePositives() {
+        myFixture.enableInspections(new OneTimeUseVariablesInspector());
+
         myFixture.configureByFile("fixtures/controlFlow/one-time-use-variables-false-positives.php");
-        myFixture.enableInspections(OneTimeUseVariablesInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

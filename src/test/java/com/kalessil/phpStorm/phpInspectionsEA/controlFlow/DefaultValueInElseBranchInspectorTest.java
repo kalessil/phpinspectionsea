@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformatio
 
 final public class DefaultValueInElseBranchInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new DefaultValueInElseBranchInspector());
+
         myFixture.configureByFile("fixtures/controlFlow/default-value-in-else.php");
-        myFixture.enableInspections(DefaultValueInElseBranchInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

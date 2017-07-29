@@ -5,13 +5,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loop
 
 final public class SuspiciousLoopInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsBasicPatterns() {
+        myFixture.enableInspections(new SuspiciousLoopInspector());
+
         myFixture.configureByFile("fixtures/controlFlow/suspicious-loop-general.php");
-        myFixture.enableInspections(SuspiciousLoopInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
     public void testIfFindsBoundaryPatterns() {
+        myFixture.enableInspections(new SuspiciousLoopInspector());
+
         myFixture.configureByFile("fixtures/controlFlow/suspicious-loop-boundaries.php");
-        myFixture.enableInspections(SuspiciousLoopInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

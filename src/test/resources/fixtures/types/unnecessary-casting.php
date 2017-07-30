@@ -21,6 +21,8 @@
         <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(integer)</weak_warning> ($integer + 1),
 
         /* workaround for WI-37466 */
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(float)</weak_warning> (0.99 * 1),
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(float)</weak_warning> (1 * 0.99),
         (int)(1 * 0.99),
         (int)(1 * 0.99 * 1)
     ];

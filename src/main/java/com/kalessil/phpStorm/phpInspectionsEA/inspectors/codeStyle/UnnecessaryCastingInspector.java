@@ -109,7 +109,11 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                                 final PhpType resolved  = ((PhpTypedElement) right).getType().global(project);
                                 final Set<String> types = resolved.hasUnknown() ? new HashSet<>() : resolved.getTypes();
                                 if (types.stream().map(Types::getType).collect(Collectors.toSet()).contains(Types.strFloat)) {
-                                    result = PhpType.EMPTY;
+                                    final Set<String> patchedTypes = result.getTypes();
+                                    patchedTypes.addAll(PhpType.FLOAT.getTypes());
+                                    patchedTypes.removeAll(PhpType.INT.getTypes());
+                                    result = new PhpType();
+                                    patchedTypes.forEach(result::add);
                                     break;
                                 }
                             }

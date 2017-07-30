@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
@@ -63,7 +63,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
                 final String strMethodName     = method.getName();
                 final PsiElement objMethodName = NamedElementUtil.getNameIdentifier(method);
-                if (null == objMethodName || StringUtil.isEmpty(strMethodName)) {
+                if (null == objMethodName || StringUtils.isEmpty(strMethodName)) {
                     return;
                 }
                 final boolean isMethodNamedAsTest = strMethodName.startsWith("test");
@@ -126,7 +126,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
             public void visitPhpMethodReference(MethodReference reference) {
                 final String methodName = reference.getName();
-                if (StringUtil.isEmpty(methodName) || !methodName.startsWith("assert") || methodName.equals("assert")) {
+                if (StringUtils.isEmpty(methodName) || !methodName.startsWith("assert") || methodName.equals("assert")) {
                     return;
                 }
 

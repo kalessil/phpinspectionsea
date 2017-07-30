@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
@@ -74,7 +74,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                         final List<Variable> variables = ((ForeachStatement) parent).getVariables();
                         for (Variable variable : variables) {
                             final String variableName = variable.getName();
-                            if (!StringUtil.isEmpty(variableName) && variableName.equals(containerName)) {
+                            if (!StringUtils.isEmpty(variableName) && variableName.equals(containerName)) {
                                 stopAnalysis = true;
 
                                 holder.registerProblem(multiassignmentExpression, messageImplicitList, ProblemHighlightType.WEAK_WARNING);

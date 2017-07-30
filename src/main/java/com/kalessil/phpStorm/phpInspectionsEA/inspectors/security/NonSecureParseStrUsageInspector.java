@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.security;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
@@ -36,7 +36,7 @@ public class NonSecureParseStrUsageInspector  extends BasePhpInspection {
                 final String strFunction  = reference.getName();
                 final PsiElement[] params = reference.getParameters();
                 if (
-                    1 == params.length && !StringUtil.isEmpty(strFunction) &&
+                    1 == params.length && !StringUtils.isEmpty(strFunction) &&
                     (strFunction.equals("parse_str") || strFunction.equals("mb_parse_str"))
                 ) {
                     holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);

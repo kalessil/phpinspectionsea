@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.byR
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
@@ -102,7 +102,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                 for (Parameter parameter : arrParameters) {
                     /* skip un-discoverable and non-reference parameters */
                     String strParameterName = parameter.getName();
-                    if (!parameter.isPassByRef() || StringUtil.isEmpty(strParameterName)) {
+                    if (!parameter.isPassByRef() || StringUtils.isEmpty(strParameterName)) {
                         continue;
                     }
 
@@ -136,7 +136,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                     if (operation instanceof PsiWhiteSpace) {
                         operation = operation.getPrevSibling();
                     }
-                    if (!StringUtil.isEmpty(strVariable) && null != operation && operation.getText().replaceAll("\\s+","").equals("=&")) {
+                    if (!StringUtils.isEmpty(strVariable) && null != operation && operation.getText().replaceAll("\\s+","").equals("=&")) {
                         /* the case, scan for miss-usages assuming variable is unique */
                         Function scope = ExpressionSemanticUtil.getScope(assignmentExpression);
                         if (null != scope) {
@@ -191,7 +191,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                     if (prevElement instanceof PsiWhiteSpace) {
                         prevElement = prevElement.getPrevSibling();
                     }
-                    if (!StringUtil.isEmpty(strVariable) && null != prevElement && PhpTokenTypes.opBIT_AND == prevElement.getNode().getElementType()) {
+                    if (!StringUtils.isEmpty(strVariable) && null != prevElement && PhpTokenTypes.opBIT_AND == prevElement.getNode().getElementType()) {
                         /* the case, scan for miss-usages assuming value is unique */
                         Function scope = ExpressionSemanticUtil.getScope(foreach);
                         if (null != scope) {
@@ -227,7 +227,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                         }
 
                         final Variable foreachValue = foreach.getValue();
-                        if (null != foreachValue && !StringUtil.isEmpty(foreachValue.getName()) && foreachValue.getName().equals(strParameterName)) {
+                        if (null != foreachValue && !StringUtils.isEmpty(foreachValue.getName()) && foreachValue.getName().equals(strParameterName)) {
                             if (!reportedItemsRegistry.contains(foreachValue)) {
                                 reportedItemsRegistry.add(foreachValue);
                                 holder.registerProblem(foreachValue, strErrorForeachIntoReference, ProblemHighlightType.ERROR);
@@ -236,7 +236,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                         }
 
                         final Variable foreachKey = foreach.getKey();
-                        if (null != foreachKey && !StringUtil.isEmpty(foreachKey.getName()) && foreachKey.getName().equals(strParameterName)) {
+                        if (null != foreachKey && !StringUtils.isEmpty(foreachKey.getName()) && foreachKey.getName().equals(strParameterName)) {
                             if (!reportedItemsRegistry.contains(foreachKey)) {
                                 reportedItemsRegistry.add(foreachKey);
                                 holder.registerProblem(foreachKey, strErrorForeachIntoReference, ProblemHighlightType.ERROR);
@@ -254,7 +254,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                             continue;
                         }
                         String strCallableName = ((Function) callable).getName();
-                        if (!StringUtil.isEmpty(strCallableName) && legalizedMismatchingFunctions.contains(strCallableName)) {
+                        if (!StringUtils.isEmpty(strCallableName) && legalizedMismatchingFunctions.contains(strCallableName)) {
                             continue;
                         }
 
@@ -267,7 +267,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                             if (callArgument instanceof Variable) {
                                 Variable argument   = (Variable) callArgument;
                                 String argumentName = argument.getName();
-                                if (!StringUtil.isEmpty(argumentName) && argumentName.equals(strParameterName)) {
+                                if (!StringUtils.isEmpty(argumentName) && argumentName.equals(strParameterName)) {
                                     providedAsArgument = true;
                                     break;
                                 }
@@ -306,7 +306,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                             Variable variable = (Variable) assignment.getValue();
                             String strVariable = variable.getName();
                             /* references parameter */
-                            if (!StringUtil.isEmpty(strVariable) && strVariable.equals(strParameterName)) {
+                            if (!StringUtils.isEmpty(strVariable) && strVariable.equals(strParameterName)) {
                                 /* check if assignments states reference usage */
                                 PsiElement operation = variable.getPrevSibling();
                                 if (operation instanceof PsiWhiteSpace) {

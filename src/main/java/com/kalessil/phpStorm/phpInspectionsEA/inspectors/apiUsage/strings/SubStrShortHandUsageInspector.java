@@ -6,7 +6,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
@@ -50,7 +50,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                 final PsiElement[] params = reference.getParameters();
                 if (
                     (3 != params.length && 4 != params.length) || !(params[2] instanceof BinaryExpression) ||
-                    StringUtil.isEmpty(functionName) || (!functionName.equals("substr") && !functionName.equals("mb_substr"))
+                    StringUtils.isEmpty(functionName) || (!functionName.equals("substr") && !functionName.equals("mb_substr"))
                 ) {
                     return;
                 }
@@ -80,7 +80,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                     final String leftCallName         = leftCall.getName();
                     final PsiElement[] leftCallParams = leftCall.getParameters();
                     if (
-                        1 == leftCallParams.length && !StringUtil.isEmpty(leftCallName) &&
+                        1 == leftCallParams.length && !StringUtils.isEmpty(leftCallName) &&
                         (leftCallName.equals("strlen") || leftCallName.equals("mb_strlen")) &&
                         PsiEquivalenceUtil.areElementsEquivalent(leftCallParams[0], params[0])
                     ) {

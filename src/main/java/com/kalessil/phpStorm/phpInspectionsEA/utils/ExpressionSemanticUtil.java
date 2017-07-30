@@ -1,6 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -307,7 +307,7 @@ final public class ExpressionSemanticUtil {
 
         if (expression instanceof Variable) {
             final String variable = ((Variable) expression).getName();
-            if (!StringUtil.isEmpty(variable)) {
+            if (!StringUtils.isEmpty(variable)) {
                 final Function scope = ExpressionSemanticUtil.getScope(expression);
                 if (null != scope) {
                     final Set<AssignmentExpression> matched = new HashSet<>();
@@ -318,7 +318,7 @@ final public class ExpressionSemanticUtil {
                     for (AssignmentExpression assignment : assignments) {
                         if (assignment.getVariable() instanceof Variable && assignment.getValue() instanceof StringLiteralExpression) {
                             final String name = assignment.getVariable().getName();
-                            if (!StringUtil.isEmpty(name) && name.equals(variable)) {
+                            if (!StringUtils.isEmpty(name) && name.equals(variable)) {
                                 matched.add(assignment);
                             }
                         }

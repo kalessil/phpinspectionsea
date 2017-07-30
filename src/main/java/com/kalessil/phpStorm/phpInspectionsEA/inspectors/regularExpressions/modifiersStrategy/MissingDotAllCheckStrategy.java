@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,8 +19,8 @@ public class MissingDotAllCheckStrategy {
 
     static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
         if (
-            (StringUtil.isEmpty(modifiers) || modifiers.indexOf('s') == -1) &&
-            !StringUtil.isEmpty(pattern) && pattern.indexOf('?') != -1
+            (StringUtils.isEmpty(modifiers) || modifiers.indexOf('s') == -1) &&
+            !StringUtils.isEmpty(pattern) && pattern.indexOf('?') != -1
         ) {
             Matcher regexMatcher = regexTagContentPattern.matcher(pattern);
             if (regexMatcher.matches()) {

@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
@@ -16,7 +16,7 @@ public class NormallyCallsParentMethodStrategy {
     static public void apply(final Method method, final ProblemsHolder holder) {
         final String strMethodName = method.getName();
         final PhpClass ownerClass  = method.getContainingClass();
-        if (StringUtil.isEmpty(strMethodName) || null == ownerClass || null == method.getNameIdentifier()) {
+        if (StringUtils.isEmpty(strMethodName) || null == ownerClass || null == method.getNameIdentifier()) {
             return;
         }
 
@@ -42,7 +42,7 @@ public class NormallyCallsParentMethodStrategy {
         boolean isParentCallFound = false;
         for (MethodReference call : callStatements) {
             String strName = call.getName();
-            if (!StringUtil.isEmpty(strName) && strName.equals(strMethodName)) {
+            if (!StringUtils.isEmpty(strName) && strName.equals(strMethodName)) {
                 isParentCallFound = true;
                 break;
             }

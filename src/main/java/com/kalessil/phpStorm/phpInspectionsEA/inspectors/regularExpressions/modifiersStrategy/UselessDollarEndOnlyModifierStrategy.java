@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +12,7 @@ public class UselessDollarEndOnlyModifierStrategy {
     private static final String strProblemIgnored     = "'D' modifier will be ignored because of 'm'.";
 
     static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
-        if (!StringUtil.isEmpty(modifiers) && !StringUtil.isEmpty(pattern) && modifiers.indexOf('D') >= 0) {
+        if (!StringUtils.isEmpty(modifiers) && !StringUtils.isEmpty(pattern) && modifiers.indexOf('D') >= 0) {
             if (modifiers.indexOf('m') >= 0) {
                 holder.registerProblem(target, strProblemIgnored, ProblemHighlightType.WEAK_WARNING);
                 return;

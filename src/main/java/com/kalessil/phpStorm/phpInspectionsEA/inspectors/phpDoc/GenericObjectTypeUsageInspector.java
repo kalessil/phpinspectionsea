@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -23,7 +23,7 @@ public class GenericObjectTypeUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpDocType(PhpDocType type) {
                 final String typeFqn = type.getFQN();
-                if (!StringUtil.isEmpty(typeFqn) && typeFqn.equals("\\object")) {
+                if (!StringUtils.isEmpty(typeFqn) && typeFqn.equals("\\object")) {
                     holder.registerProblem(type, message, ProblemHighlightType.WEAK_WARNING);
                 }
             }

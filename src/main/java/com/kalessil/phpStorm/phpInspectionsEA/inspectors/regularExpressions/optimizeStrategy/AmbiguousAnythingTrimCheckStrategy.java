@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.opt
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.apache.commons.lang.StringUtils;
@@ -19,8 +19,8 @@ public class AmbiguousAnythingTrimCheckStrategy {
     ) {
         if (
             2 == reference.getParameters().length &&
-            !StringUtil.isEmpty(pattern) &&
-            !StringUtil.isEmpty(functionName) && functionName.startsWith("preg_match")
+            !StringUtils.isEmpty(pattern) &&
+            !StringUtils.isEmpty(functionName) && functionName.startsWith("preg_match")
         ) {
             int countBackRefs = StringUtils.countMatches(pattern, "\\0") - StringUtils.countMatches(pattern, "\\\\0");
             if (countBackRefs > 0) {

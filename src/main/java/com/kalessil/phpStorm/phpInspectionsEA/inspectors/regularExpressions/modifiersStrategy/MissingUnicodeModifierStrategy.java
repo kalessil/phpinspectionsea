@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ public class MissingUnicodeModifierStrategy {
     }
 
     static public void apply(String modifiers, String pattern, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {
-        if (null == modifiers || modifiers.indexOf('u') != -1 || StringUtil.isEmpty(pattern)) {
+        if (null == modifiers || modifiers.indexOf('u') != -1 || StringUtils.isEmpty(pattern)) {
             return;
         }
 

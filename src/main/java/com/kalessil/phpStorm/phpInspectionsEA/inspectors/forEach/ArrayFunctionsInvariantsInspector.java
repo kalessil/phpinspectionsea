@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -31,7 +31,7 @@ public class ArrayFunctionsInvariantsInspector extends BasePhpInspection {
                 /* evaluate code structure requirements */
                 if (
                     null == body || null == key || null == value ||
-                    StringUtil.isEmpty(key.getName()) || StringUtil.isEmpty(value.getName())
+                    StringUtils.isEmpty(key.getName()) || StringUtils.isEmpty(value.getName())
                 ) {
                     return;
                 }

@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.cla
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,8 +30,8 @@ public class ShortClassDefinitionStrategy {
     }
 
     static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
-        if (!StringUtil.isEmpty(pattern)) {
-            final boolean isUnicodeMode = !StringUtil.isEmpty(modifiers) && modifiers.indexOf('u') != -1;
+        if (!StringUtils.isEmpty(pattern)) {
+            final boolean isUnicodeMode = !StringUtils.isEmpty(modifiers) && modifiers.indexOf('u') != -1;
             final String safetyHint     = isUnicodeMode ? "risky, will match extended sets due to /u" : "safe in non-unicode mode";
 
             /* normalize only first found cases - sufficient for reporting */

@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
@@ -45,7 +45,7 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
                 /* validate parameters amount and function name (file) */
                 final PsiElement[] params = reference.getParameters();
                 final String functionName = reference.getName();
-                if (params.length != 1 || StringUtil.isEmpty(functionName) || !functionName.equals("file")) {
+                if (params.length != 1 || StringUtils.isEmpty(functionName) || !functionName.equals("file")) {
                     return;
                 }
 
@@ -66,14 +66,14 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
                 final PsiElement[] parentParams         = parentReference.getParameters();
                 final String parentFunctionName         = parentReference.getName();
                 if (
-                    parentParams.length != 2 || StringUtil.isEmpty(parentFunctionName) ||
+                    parentParams.length != 2 || StringUtils.isEmpty(parentFunctionName) ||
                     (!parentFunctionName.equals("implode") && !parentFunctionName.equals("join"))) {
                     return;
                 }
 
                 /* validate if glue is not empty */
                 final StringLiteralExpression glue = ExpressionSemanticUtil.resolveAsStringLiteral(parentParams[0]);
-                if (null != glue && !StringUtil.isEmpty(glue.getContents())) {
+                if (null != glue && !StringUtils.isEmpty(glue.getContents())) {
                     return;
                 }
 

@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
@@ -42,7 +42,7 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
                 final PsiElement[] params   = reference.getParameters();
                 final String functionName   = reference.getName();
                 final int intArgumentsCount = params.length;
-                if ((intArgumentsCount != 1 && intArgumentsCount != 2) || StringUtil.isEmpty(functionName)) {
+                if ((intArgumentsCount != 1 && intArgumentsCount != 2) || StringUtils.isEmpty(functionName)) {
                     return;
                 }
                 if (intArgumentsCount == 2 && !functionName.equals("settype")) {

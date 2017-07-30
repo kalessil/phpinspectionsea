@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.*;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
@@ -38,7 +38,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
 
                 final PsiReference objReference = reference.getReference();
                 final String methodName         = reference.getName();
-                if (null != objReference && !StringUtil.isEmpty(methodName)) {
+                if (null != objReference && !StringUtils.isEmpty(methodName)) {
                     final PsiElement objResolvedRef = objReference.resolve();
                     /* resolved method is static but called with $ this*/
                     if (objResolvedRef instanceof Method) {

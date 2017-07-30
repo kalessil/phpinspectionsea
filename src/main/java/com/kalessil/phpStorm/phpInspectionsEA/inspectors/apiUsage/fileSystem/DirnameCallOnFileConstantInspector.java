@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
@@ -40,7 +40,7 @@ public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
                 /* check requirements */
                 final PsiElement[] params = reference.getParameters();
                 final String name         = reference.getName();
-                if (1 != params.length || StringUtil.isEmpty(name) || !name.equals("dirname")) {
+                if (1 != params.length || StringUtils.isEmpty(name) || !name.equals("dirname")) {
                     return;
                 }
                 final PsiElement firstParameter = params[0];
@@ -50,7 +50,7 @@ public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
 
                 /* inspect given construct */
                 final String constant = ((ConstantReference) firstParameter).getName();
-                if (!StringUtil.isEmpty(constant) && constant.equals("__FILE__")) {
+                if (!StringUtils.isEmpty(constant) && constant.equals("__FILE__")) {
                     holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
                 }
             }

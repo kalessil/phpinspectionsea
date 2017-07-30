@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
@@ -34,7 +34,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (StringUtil.isEmpty(functionName) || !functionName.equals("mkdir")) {
+                if (StringUtils.isEmpty(functionName) || !functionName.equals("mkdir")) {
                     return;
                 }
 
@@ -72,7 +72,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     Collection<FunctionReferenceImpl> calls = PsiTreeUtil.findChildrenOfType(binary.getRightOperand(), FunctionReferenceImpl.class);
                     for (FunctionReferenceImpl call : calls) {
                         final String name = call.getName();
-                        if (StringUtil.isEmpty(name)) {
+                        if (StringUtils.isEmpty(name)) {
                             continue;
                         }
 

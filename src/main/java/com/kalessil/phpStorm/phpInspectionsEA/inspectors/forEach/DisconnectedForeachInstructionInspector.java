@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -63,7 +63,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     final Set<String> allModifiedVariables = new HashSet<>();
                     for (Variable variable : variables) {
                         final String variableName = variable.getName();
-                        if (!StringUtil.isEmpty(variableName)) {
+                        if (!StringUtils.isEmpty(variableName)) {
                             allModifiedVariables.add(variableName);
                         }
                     }
@@ -157,7 +157,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
             ) {
                 for (PsiElement variable : PsiTreeUtil.findChildrenOfType(oneInstruction, Variable.class)) {
                     final String variableName = ((Variable) variable).getName();
-                    if (!StringUtil.isEmpty(variableName)) {
+                    if (!StringUtils.isEmpty(variableName)) {
                         PsiElement valueContainer = variable;
                         PsiElement parent         = variable.getParent();
                         while (parent instanceof FieldReference) {
@@ -212,7 +212,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             // TODO: array_pop, array_shift, next, current, fwrite... -> use mapping function => argument modified
                             if (
                                 3 == parameters.length && parameters[2] == variable &&
-                                !StringUtil.isEmpty(functionName) && functionName.startsWith("preg_match")
+                                !StringUtils.isEmpty(functionName) && functionName.startsWith("preg_match")
                             ) {
                                 allModifiedVariables.add(variableName);
                                 continue;
@@ -283,11 +283,11 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                         if (value instanceof MethodReference) {
                             final MethodReference call = (MethodReference) value;
                             final String methodName    = call.getName();
-                            if (!StringUtil.isEmpty(methodName) && methodName.equals("createElement")) {
+                            if (!StringUtils.isEmpty(methodName) && methodName.equals("createElement")) {
                                 final PsiElement resolved = call.resolve();
                                 if (resolved instanceof Method) {
                                     final String fqn = ((Method) resolved).getFQN();
-                                    if (!StringUtil.isEmpty(fqn) && fqn.equals("\\DOMDocument.createElement")) {
+                                    if (!StringUtils.isEmpty(fqn) && fqn.equals("\\DOMDocument.createElement")) {
                                         return ExpressionType.DOM_ELEMENT_CREATE;
                                     }
                                 }

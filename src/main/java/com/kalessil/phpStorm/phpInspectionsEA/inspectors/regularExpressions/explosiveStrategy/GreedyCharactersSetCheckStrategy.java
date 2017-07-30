@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.exp
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +19,7 @@ public class GreedyCharactersSetCheckStrategy {
     }
 
     static public void apply(final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
-        if (!StringUtil.isEmpty(pattern) && pattern.indexOf('[') >= 0) {
+        if (!StringUtils.isEmpty(pattern) && pattern.indexOf('[') >= 0) {
             final Matcher regexMatcher = regexGreedyCharacterSet.matcher(pattern);
             while (regexMatcher.find()) {
                 final String set = regexMatcher.group(1);

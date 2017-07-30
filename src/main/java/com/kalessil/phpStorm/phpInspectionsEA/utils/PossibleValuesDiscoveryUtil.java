@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -65,7 +65,7 @@ public class PossibleValuesDiscoveryUtil {
             @NotNull Variable variable, @NotNull Set<PsiElement> result, @NotNull Set<PsiElement> processed
     ) {
         final String variableName = variable.getName();
-        final Function callable   = StringUtil.isEmpty(variableName) ? null : ExpressionSemanticUtil.getScope(variable);
+        final Function callable   = StringUtils.isEmpty(variableName) ? null : ExpressionSemanticUtil.getScope(variable);
         if (null == callable) {
             return;
         }
@@ -105,7 +105,7 @@ public class PossibleValuesDiscoveryUtil {
             @NotNull ClassConstantReference reference, @NotNull Set<PsiElement> result, @NotNull Set<PsiElement> processed
     ) {
         final String constantName          = reference.getName();
-        final PsiElement resolvedReference = StringUtil.isEmpty(constantName) ? null : reference.resolve();
+        final PsiElement resolvedReference = StringUtils.isEmpty(constantName) ? null : reference.resolve();
         if (resolvedReference instanceof Field) {
             final PsiElement value = ((Field) resolvedReference).getDefaultValue();
             if (null != value) {
@@ -118,7 +118,7 @@ public class PossibleValuesDiscoveryUtil {
             @NotNull FieldReference reference, @NotNull Set<PsiElement> result, @NotNull Set<PsiElement> processed
     ) {
         final String fieldName             = reference.getName();
-        final PsiElement resolvedReference = StringUtil.isEmpty(fieldName) ? null : reference.resolve();
+        final PsiElement resolvedReference = StringUtils.isEmpty(fieldName) ? null : reference.resolve();
         if (resolvedReference instanceof Field) {
             /* TODO: properties without defaults returning variable as default are difficult to identify */
             /* TODO: multi-assignments */

@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
@@ -54,7 +54,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 final PsiElement previous = construct.getPrevPsiSibling();
                 /* verify preceding expression (assignment needed) */
                 if (
-                    null != previous && !StringUtil.isEmpty(variableName) &&
+                    null != previous && !StringUtils.isEmpty(variableName) &&
                     OpenapiTypesUtil.isAssignment(previous.getFirstChild())
                 ) {
                     final AssignmentExpression assign = (AssignmentExpression) previous.getFirstChild();
@@ -64,7 +64,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                     final PsiElement assignValue       = ExpressionSemanticUtil.getExpressionTroughParenthesis(assign.getValue());
                     if (null != assignValue && assignVariable instanceof Variable) {
                         final String assignVariableName = assignVariable.getName();
-                        if (StringUtil.isEmpty(assignVariableName) || !assignVariableName.equals(variableName)) {
+                        if (StringUtils.isEmpty(assignVariableName) || !assignVariableName.equals(variableName)) {
                             return;
                         }
 

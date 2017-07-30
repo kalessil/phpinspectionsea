@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,7 +10,7 @@ public class AllowedModifierCheckStrategy {
     private static final String strProblemDescription = "Unknown modifier '%m%'.";
 
     static public void apply(final String modifiers, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
-        if (!StringUtil.isEmpty(modifiers)) {
+        if (!StringUtils.isEmpty(modifiers)) {
             for (char modifier : modifiers.toCharArray()) {
                 if (-1 == "eimsuxADJSUX".indexOf(modifier)) {
                     String strError = strProblemDescription.replace("%m%", String.valueOf(modifier));

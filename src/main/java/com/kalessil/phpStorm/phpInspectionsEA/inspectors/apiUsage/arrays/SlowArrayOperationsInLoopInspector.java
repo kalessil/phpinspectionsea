@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpFile;
@@ -40,7 +40,7 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final String strFunctionName = reference.getName();
-                if (StringUtil.isEmpty(strFunctionName) || !functionsSet.contains(strFunctionName)) {
+                if (StringUtils.isEmpty(strFunctionName) || !functionsSet.contains(strFunctionName)) {
                     return;
                 }
 

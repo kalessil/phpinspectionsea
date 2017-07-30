@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
@@ -170,7 +170,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                     }
 
                     /* some of possible types are scalars, what's wrong */
-                    if (!StringUtil.isEmpty(typeToCheck) && typeToCheck.charAt(0) != '\\') {
+                    if (!StringUtils.isEmpty(typeToCheck) && typeToCheck.charAt(0) != '\\') {
                         supportsOffsets = false;
                         break;
                     }

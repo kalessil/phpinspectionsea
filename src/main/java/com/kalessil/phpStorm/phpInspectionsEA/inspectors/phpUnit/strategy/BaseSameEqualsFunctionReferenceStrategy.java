@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
@@ -35,12 +35,12 @@ abstract class BaseSameEqualsFunctionReferenceStrategy {
         boolean isTargetFirst = false;
         if (OpenapiTypesUtil.isFunctionReference(params[0])) {
             final String referenceName = ((FunctionReference) params[0]).getName();
-            isTargetFirst = !StringUtil.isEmpty(referenceName) && referenceName.equals(functionName);
+            isTargetFirst = !StringUtils.isEmpty(referenceName) && referenceName.equals(functionName);
         }
         boolean isTargetSecond = false;
         if (OpenapiTypesUtil.isFunctionReference(params[1])) {
             final String referenceName = ((FunctionReference) params[1]).getName();
-            isTargetSecond = !StringUtil.isEmpty(referenceName) && referenceName.equals(functionName);
+            isTargetSecond = !StringUtils.isEmpty(referenceName) && referenceName.equals(functionName);
         }
 
         /* fire assertCount warning when needed */

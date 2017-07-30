@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
@@ -31,7 +31,7 @@ public class UnnecessaryUseAliasInspector extends BasePhpInspection {
                 }
 
                 final String alias = expression.getAliasName();
-                if (!StringUtil.isEmpty(alias) && expression.getFQN().endsWith("\\" + alias)) {
+                if (!StringUtils.isEmpty(alias) && expression.getFQN().endsWith("\\" + alias)) {
                     final String message = messagePattern.replace("%a%", alias);
                     holder.registerProblem(expression.getLastChild(), message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new TheLocalFix());
                 }

@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 
@@ -12,7 +12,7 @@ public class HasAlsoMethodStrategy {
     static public void apply(final Method method, final String pair, final ProblemsHolder holder) {
         final String methodName = method.getName();
         final PhpClass clazz    = method.getContainingClass();
-        if (StringUtil.isEmpty(methodName) || null == clazz || null == method.getNameIdentifier()) {
+        if (StringUtils.isEmpty(methodName) || null == clazz || null == method.getNameIdentifier()) {
             return;
         }
 

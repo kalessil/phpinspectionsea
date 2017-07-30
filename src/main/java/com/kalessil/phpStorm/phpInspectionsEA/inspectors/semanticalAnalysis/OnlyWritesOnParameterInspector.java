@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
@@ -65,7 +65,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 /* check assignments containing variable as container */
                 if (objVariable instanceof Variable) {
                     final String variableName = ((Variable) objVariable).getName();
-                    if (StringUtil.isEmpty(variableName) || ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
+                    if (StringUtils.isEmpty(variableName) || ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
                         return;
                     }
 
@@ -75,7 +75,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         /* ensure it's not parameter, as it checked anyway */
                         for (Parameter objParameter : ((Function) parentScope).getParameters()) {
                             final String parameterName = objParameter.getName();
-                            if (StringUtil.isEmpty(parameterName)) {
+                            if (StringUtils.isEmpty(parameterName)) {
                                 continue;
                             }
 
@@ -91,7 +91,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                             /* use-list is found */
                             for (Variable useVariable : useList) {
                                 final String useVariableName = useVariable.getName();
-                                if (StringUtil.isEmpty(useVariableName)) {
+                                if (StringUtils.isEmpty(useVariableName)) {
                                     continue;
                                 }
 
@@ -117,7 +117,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     }
 
                     final String parameterName = parameter.getName();
-                    if (StringUtil.isEmpty(parameterName)) {
+                    if (StringUtils.isEmpty(parameterName)) {
                         continue;
                     }
 
@@ -128,7 +128,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
             private void checkUseVariables(@NotNull List<Variable> variables, @NotNull PhpScopeHolder scopeHolder) {
                 for (Variable variable : variables) {
                     final String parameterName = variable.getName();
-                    if (StringUtil.isEmpty(parameterName)) {
+                    if (StringUtils.isEmpty(parameterName)) {
                         continue;
                     }
 

@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions;
 
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
@@ -56,7 +56,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
             @Deprecated
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String strFunctionName = reference.getName();
-                if (StringUtil.isEmpty(strFunctionName) || !functions.contains(strFunctionName)) {
+                if (StringUtils.isEmpty(strFunctionName) || !functions.contains(strFunctionName)) {
                     return;
                 }
 
@@ -72,7 +72,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 }
 
                 final String regex = pattern.getContents();
-                if (!StringUtil.isEmpty(regex) && pattern.getFirstPsiChild() == null) {
+                if (!StringUtils.isEmpty(regex) && pattern.getFirstPsiChild() == null) {
                     Matcher regexMatcher = regexWithModifiers.matcher(regex);
                     if (regexMatcher.find()) {
                         final String phpRegexPattern   = regexMatcher.group(2);

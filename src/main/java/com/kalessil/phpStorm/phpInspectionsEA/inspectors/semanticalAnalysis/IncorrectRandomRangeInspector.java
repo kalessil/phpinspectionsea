@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
@@ -37,7 +37,7 @@ public class IncorrectRandomRangeInspector extends BasePhpInspection {
                 /* check call structure */
                 final PsiElement[] params = reference.getParameters();
                 final String name         = reference.getName();
-                if (2 != params.length || StringUtil.isEmpty(name) || !functions.contains(name)) {
+                if (2 != params.length || StringUtils.isEmpty(name) || !functions.contains(name)) {
                     return;
                 }
 

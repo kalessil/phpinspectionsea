@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
@@ -169,7 +169,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             }
 
             // some of possible types are scalars, what's wrong
-            if (!StringUtil.isEmpty(typeToCheck) && typeToCheck.charAt(0) != '\\') {
+            if (!StringUtils.isEmpty(typeToCheck) && typeToCheck.charAt(0) != '\\') {
                 supportsOffsets = false;
                 break;
             }
@@ -248,7 +248,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 continue;
             }
 
-            if (isAnyObjectAllowed && !StringUtil.isEmpty(possibleType) && possibleType.charAt(0) == '\\') {
+            if (isAnyObjectAllowed && !StringUtils.isEmpty(possibleType) && possibleType.charAt(0) == '\\') {
                 continue;
             }
 

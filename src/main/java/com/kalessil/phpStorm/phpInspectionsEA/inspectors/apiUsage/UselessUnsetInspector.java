@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
@@ -44,7 +44,7 @@ public class UselessUnsetInspector extends BasePhpInspection {
 
                 for (Parameter parameter : parameters) {
                     final String parameterName = parameter.getName();
-                    if (StringUtil.isEmpty(parameterName)) {
+                    if (StringUtils.isEmpty(parameterName)) {
                         continue;
                     }
 

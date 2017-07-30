@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
@@ -23,12 +23,12 @@ public class AssertNotCountStrategy {
             boolean isFirstCount = false;
             if (OpenapiTypesUtil.isFunctionReference(params[0])) {
                 final String referenceName = ((FunctionReference) params[0]).getName();
-                isFirstCount = !StringUtil.isEmpty(referenceName) && referenceName.equals("count");
+                isFirstCount = !StringUtils.isEmpty(referenceName) && referenceName.equals("count");
             }
             boolean isSecondCount = false;
             if (OpenapiTypesUtil.isFunctionReference(params[1])) {
                 final String referenceName = ((FunctionReference) params[1]).getName();
-                isSecondCount = !StringUtil.isEmpty(referenceName) && referenceName.equals("count");
+                isSecondCount = !StringUtils.isEmpty(referenceName) && referenceName.equals("count");
             }
             /* fire assertNotCount warning when needed */
             if ((isFirstCount && !isSecondCount) || (!isFirstCount && isSecondCount)) {

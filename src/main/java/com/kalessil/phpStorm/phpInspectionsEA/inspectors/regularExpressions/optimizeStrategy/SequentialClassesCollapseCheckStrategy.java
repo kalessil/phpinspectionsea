@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.opt
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ public class SequentialClassesCollapseCheckStrategy {
     }
 
     static public void apply(final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
-        if (!StringUtil.isEmpty(pattern) && pattern.indexOf('[') >= 0) {
+        if (!StringUtils.isEmpty(pattern) && pattern.indexOf('[') >= 0) {
             Matcher regexMatcher = regexRepeatedClasses.matcher(pattern);
             if (regexMatcher.find()) {
                 String strError = strProblemDescription

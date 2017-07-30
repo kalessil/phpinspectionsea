@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
@@ -74,7 +74,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                             }
                             /* check unset is applied to value-variable */
                             final String foreachValueName = objForeachValue.getName();
-                            if (nextExpression instanceof PhpUnset && !StringUtil.isEmpty(foreachValueName)) {
+                            if (nextExpression instanceof PhpUnset && !StringUtils.isEmpty(foreachValueName)) {
                                 for (PhpPsiElement unsetArgument : ((PhpUnset) nextExpression).getArguments()) {
                                     // skip non-variable expressions
                                     if (!(unsetArgument instanceof Variable)) {
@@ -83,7 +83,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
 
                                     // check argument matched foreach value name
                                     final String unsetArgumentName = unsetArgument.getName();
-                                    if (!StringUtil.isEmpty(unsetArgumentName) && unsetArgumentName.equals(foreachValueName)) {
+                                    if (!StringUtils.isEmpty(unsetArgumentName) && unsetArgumentName.equals(foreachValueName)) {
                                         isRequirementFullFilled = true;
                                         break;
                                     }
@@ -119,8 +119,8 @@ public class AlterInForeachInspector extends BasePhpInspection {
 
                                         final String unsetArgumentName = unsetExpression.getName();
                                         if (
-                                            !StringUtil.isEmpty(unsetArgumentName) &&
-                                            !StringUtil.isEmpty(foreachValueName) &&
+                                            !StringUtils.isEmpty(unsetArgumentName) &&
+                                            !StringUtils.isEmpty(foreachValueName) &&
                                             unsetArgumentName.equals(foreachValueName)
                                         ) {
                                             final String message = patternAmbiguousUnset.replace("%v%", foreachValueName);
@@ -196,7 +196,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                             PsiEquivalenceUtil.areElementsEquivalent(objForeachArray, objForeachSourceCandidate)
                         ) {
                             final String strName = objForeachValue.getName();
-                            if (!StringUtil.isEmpty(strName)) {
+                            if (!StringUtils.isEmpty(strName)) {
                                 final String message = patternSuggestReference
                                         .replace("%c%", strName)
                                         .replace("%v%", strName);

@@ -1,6 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.gui;
 
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.DoubleClickListener;
@@ -51,7 +51,7 @@ public class PrettyListControl {
                 public void run(AnActionButton addButton) {
                     String defaultValue = "";
                     String newEntry = (String) JOptionPane.showInputDialog(null, dialogTitle, dialogHint, JOptionPane.PLAIN_MESSAGE, null, null, defaultValue);
-                    if (!StringUtil.isEmpty(newEntry)) {
+                    if (!StringUtils.isEmpty(newEntry)) {
                         model.addElement(newEntry.trim());
                         model.fireContentsChanged();
                     }
@@ -136,7 +136,7 @@ public class PrettyListControl {
 
         if (null != selectedValue) {
             String newValue = (String) JOptionPane.showInputDialog(null, dialogTitle, dialogHint, JOptionPane.PLAIN_MESSAGE, null, null, selectedValue);
-            if (!StringUtil.isEmpty(newValue)) {
+            if (!StringUtils.isEmpty(newValue)) {
                 this.model.setElementAt(selectedPosition, newValue.trim());
                 this.model.fireContentsChanged();
             }

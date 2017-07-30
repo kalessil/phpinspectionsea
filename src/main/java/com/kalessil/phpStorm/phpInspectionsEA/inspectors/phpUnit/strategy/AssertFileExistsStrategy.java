@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
@@ -25,7 +25,7 @@ public class AssertFileExistsStrategy {
 
                 final PsiElement[] callParams = call.getParameters();
                 final String callName         = call.getName();
-                if (1 != callParams.length || StringUtil.isEmpty(callName) || !callName.equals("file_exists")) {
+                if (1 != callParams.length || StringUtils.isEmpty(callName) || !callName.equals("file_exists")) {
                     return false;
                 }
 

@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.api
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
@@ -55,16 +55,16 @@ final public class PlainApiUseCheckStrategy {
     ) {
         final PsiElement[] params = reference.getParameters();
         final int parametersCount = params.length;
-        if (parametersCount >= 2 && !StringUtil.isEmpty(pattern)) {
+        if (parametersCount >= 2 && !StringUtils.isEmpty(pattern)) {
             final String patternAdapted = pattern
                     .replace("a-zA-Z",    "A-Za-z")
                     .replace("0-9A-Za-z", "A-Za-z0-9");
 
             final Matcher regexMatcher = regexTextSearch.matcher(patternAdapted);
             if (regexMatcher.find()) {
-                final boolean ignoreCase = !StringUtil.isEmpty(modifiers) && modifiers.indexOf('i') != -1;
-                final boolean startWith  = !StringUtil.isEmpty(regexMatcher.group(1));
-                final boolean endsWith   = !StringUtil.isEmpty(regexMatcher.group(3));
+                final boolean ignoreCase = !StringUtils.isEmpty(modifiers) && modifiers.indexOf('i') != -1;
+                final boolean startWith  = !StringUtils.isEmpty(regexMatcher.group(1));
+                final boolean endsWith   = !StringUtils.isEmpty(regexMatcher.group(3));
 
                 /* analyse if pattern is the one strategy targeting */
                 String message      = null;
@@ -145,7 +145,7 @@ final public class PlainApiUseCheckStrategy {
 
             /* investigate using explode(...) instead */
             if (
-                (parametersCount == 2 || parametersCount == 3) && functionName.equals("preg_split") && StringUtil.isEmpty(modifiers) &&
+                (parametersCount == 2 || parametersCount == 3) && functionName.equals("preg_split") && StringUtils.isEmpty(modifiers) &&
                 (regexSingleCharSet.matcher(patternAdapted).find() || !regexHasRegexAttributes.matcher(patternAdapted).find())
             ) {
                 final String replacement = "explode(\"%p%\", %s%%l%)"

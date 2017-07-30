@@ -11,7 +11,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.security;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
@@ -49,7 +49,7 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
                 /* general structure requirements */
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if ((1 != params.length && 2 != params.length) || StringUtil.isEmpty(functionName) || !functionName.equals("crypt")) {
+                if ((1 != params.length && 2 != params.length) || StringUtils.isEmpty(functionName) || !functionName.equals("crypt")) {
                     return;
                 }
                 /* avoid complaining to imported functions */

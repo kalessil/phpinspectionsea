@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.api
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -13,7 +13,7 @@ public class FunctionCallCheckStrategy {
     private static final String strProblemMatchAll = "'preg_match()' can be used instead.";
 
     static public void apply(final String functionName, @NotNull final FunctionReference reference, @NotNull final ProblemsHolder holder) {
-        if (!StringUtil.isEmpty(functionName)) {
+        if (!StringUtils.isEmpty(functionName)) {
             final PsiElement[] params = reference.getParameters();
 
             if (1 == params.length && functionName.equals("preg_quote")) {

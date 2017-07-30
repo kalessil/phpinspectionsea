@@ -1,6 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +32,7 @@ final public class TypeFromSignatureResolvingUtil {
             @NotNull Set<String> processedSignatures
     ) {
         /* do nothing with empty signatures and already processed signatures */
-        if (StringUtil.isEmpty(strSignatureToResolve) || processedSignatures.contains(strSignatureToResolve)) {
+        if (StringUtils.isEmpty(strSignatureToResolve) || processedSignatures.contains(strSignatureToResolve)) {
             return;
         }
         processedSignatures.add(strSignatureToResolve);
@@ -177,7 +177,7 @@ final public class TypeFromSignatureResolvingUtil {
 
                 /* break on poly-variant/no-variant in middle of chain */
                 isPolyVariant = (intCountNotMixedTypes > 1);
-                if (!isLastPair && (isPolyVariant || StringUtil.isEmpty(strClassResolved))) {
+                if (!isLastPair && (isPolyVariant || StringUtils.isEmpty(strClassResolved))) {
                     typesOfSlotSet.add(Types.strClassNotResolved);
                     return;
                 }
@@ -206,7 +206,7 @@ final public class TypeFromSignatureResolvingUtil {
 
         /* try resolving an object interface */
         Collection<PhpClass> objClasses = PhpIndexUtil.getObjectInterfaces(strClass, objIndex, false);
-        if (0 == objClasses.size() || StringUtil.isEmpty(strSlot)) {
+        if (0 == objClasses.size() || StringUtils.isEmpty(strSlot)) {
             resolvedTypesSet.add(Types.strClassNotResolved);
             return resolvedTypesSet;
         }
@@ -224,7 +224,7 @@ final public class TypeFromSignatureResolvingUtil {
                     String strMethodName = objMethod.getName();
 
                     /* match first chars and then complete names */
-                    if (!StringUtil.isEmpty(strMethodName) && strMethodName.charAt(0) == charSlotFirst && strMethodName.equals(strSlot)) {
+                    if (!StringUtils.isEmpty(strMethodName) && strMethodName.charAt(0) == charSlotFirst && strMethodName.equals(strSlot)) {
                          /* exclude recursive definition in own signature */
                         strTypeExtracted = objMethod
                                 .getType().toString()
@@ -246,7 +246,7 @@ final public class TypeFromSignatureResolvingUtil {
                     String strFieldName = objField.getName();
 
                     /* match first chars and then complete names */
-                    if (!StringUtil.isEmpty(strFieldName) && strFieldName.charAt(0) == charSlotFirst && strFieldName.equals(strSlot)) {
+                    if (!StringUtils.isEmpty(strFieldName) && strFieldName.charAt(0) == charSlotFirst && strFieldName.equals(strSlot)) {
                         /* exclude recursive definition in own signature */
                         strTypeExtracted = objField
                                 .getType().toString()

@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
@@ -64,7 +64,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
                 }
 
                 final String patternString = pattern.getContents();
-                if (!StringUtil.isEmpty(patternString) && !patternString.matches(".*\\p{L}.*")) {
+                if (!StringUtils.isEmpty(patternString) && !patternString.matches(".*\\p{L}.*")) {
                     final String replacementFunctionName = mapping.get(functionName);
                     final String message                 = messagePattern.replace("%f%", replacementFunctionName);
                     holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(replacementFunctionName));

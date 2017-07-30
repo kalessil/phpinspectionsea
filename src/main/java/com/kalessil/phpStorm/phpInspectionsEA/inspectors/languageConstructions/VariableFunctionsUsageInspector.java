@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
@@ -46,7 +46,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                 /* general requirements for calls */
                 final String function         = reference.getName();
                 final PsiElement[] parameters = reference.getParameters();
-                if (0 == parameters.length || StringUtil.isEmpty(function) || !function.startsWith("call_user_func")) {
+                if (0 == parameters.length || StringUtils.isEmpty(function) || !function.startsWith("call_user_func")) {
                     return;
                 }
 

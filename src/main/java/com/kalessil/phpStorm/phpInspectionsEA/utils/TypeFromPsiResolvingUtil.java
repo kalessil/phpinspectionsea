@@ -1,6 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
@@ -27,7 +27,7 @@ final public class TypeFromPsiResolvingUtil {
             return;
         }
 
-        if (StringUtil.isEmpty(typeToImport) || typeToImport.equals("?")) {
+        if (StringUtils.isEmpty(typeToImport) || typeToImport.equals("?")) {
             return;
         }
 
@@ -80,7 +80,7 @@ final public class TypeFromPsiResolvingUtil {
         if (objSubjectExpression instanceof Variable) {
             String strVariableName = ((Variable) objSubjectExpression).getName();
             if (
-                !StringUtil.isEmpty(strVariableName) && strVariableName.charAt(0) == '_' &&
+                !StringUtils.isEmpty(strVariableName) && strVariableName.charAt(0) == '_' &&
                 ExpressionCostEstimateUtil.predefinedVars.contains(strVariableName)
             ) {
                 storeAsTypeWithSignaturesImport(Types.strArray, objScope, objIndex, objTypesSet);

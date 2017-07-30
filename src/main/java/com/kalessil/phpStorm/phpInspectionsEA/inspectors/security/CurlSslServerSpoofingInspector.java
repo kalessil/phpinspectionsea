@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.security;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
@@ -43,7 +43,7 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
             @Override
             public void visitPhpConstantReference(@NotNull ConstantReference reference) {
                 final String constantName = reference.getName();
-                if (StringUtil.isEmpty(constantName) || !constantName.startsWith("CURLOPT_")) {
+                if (StringUtils.isEmpty(constantName) || !constantName.startsWith("CURLOPT_")) {
                     return;
                 }
 
@@ -69,7 +69,7 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                     final String functionName    = call.getName();
                     if (
                         3 != params.length || null == params[2] ||
-                        StringUtil.isEmpty(functionName) || !functionName.equals("curl_setopt")
+                        StringUtils.isEmpty(functionName) || !functionName.equals("curl_setopt")
                     ) {
                         return;
                     }

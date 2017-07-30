@@ -6,7 +6,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -37,7 +37,7 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final PsiElement[] parameters = reference.getParameters();
                 final String function         = reference.getName();
-                if (1 == parameters.length && !StringUtil.isEmpty(function) && function.equals("ksort")) {
+                if (1 == parameters.length && !StringUtils.isEmpty(function) && function.equals("ksort")) {
                     // pre-condition satisfied, now check if http_build_query used in the scope
 
                     final Function scope = ExpressionSemanticUtil.getScope(reference);
@@ -52,7 +52,7 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
 
                                 /* skip non-target function */
                                 final String currentFunction = oneCall.getName();
-                                if (StringUtil.isEmpty(currentFunction) || !currentFunction.equals("http_build_query")) {
+                                if (StringUtils.isEmpty(currentFunction) || !currentFunction.equals("http_build_query")) {
                                     continue;
                                 }
 

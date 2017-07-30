@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
@@ -51,7 +51,7 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
                 /* verify if mode provided and has no 'b' already */
                 final StringLiteralExpression mode = ExpressionSemanticUtil.resolveAsStringLiteral(params[1]);
                 final String modeText              = mode == null ? null : mode.getContents();
-                if (!StringUtil.isEmpty(modeText)) {
+                if (!StringUtils.isEmpty(modeText)) {
                     if (modeText.indexOf('b') != -1) {
                         final boolean isCorrectlyPlaced = modeText.endsWith("b") || modeText.endsWith("b+");
                         if (!isCorrectlyPlaced) {
@@ -91,7 +91,7 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
             final StringLiteralExpression mode = ExpressionSemanticUtil.resolveAsStringLiteral(expression);
             if (null != mode) {
                 String modeFlags = mode.getContents();
-                if (StringUtil.isEmpty(modeFlags)) {
+                if (StringUtils.isEmpty(modeFlags)) {
                     return;
                 }
 

@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
@@ -78,7 +78,7 @@ public class AssertNotInstanceOfStrategy {
                         this.classIdentity = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, pattern);
                     } else {
                         final String fqn = ((ClassReference) this.classIdentity).getFQN();
-                        if (!StringUtil.isEmpty(fqn)) {
+                        if (!StringUtils.isEmpty(fqn)) {
                             final String pattern = "'" + fqn.replaceAll("\\\\", "\\\\\\\\") + "'";
                             this.classIdentity = PhpPsiElementFactory.createFromText(project, StringLiteralExpression.class, pattern);
                         }

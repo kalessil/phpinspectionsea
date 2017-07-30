@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
@@ -36,7 +36,7 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
                 /* check requirements */
                 final PsiElement[] params = reference.getParameters();
                 final String function     = reference.getName();
-                if (2 != params.length || StringUtil.isEmpty(function) || !function.equals("array_push")) {
+                if (2 != params.length || StringUtils.isEmpty(function) || !function.equals("array_push")) {
                     return;
                 }
 

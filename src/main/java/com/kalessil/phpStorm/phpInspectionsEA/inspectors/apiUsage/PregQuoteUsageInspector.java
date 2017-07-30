@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
@@ -34,7 +34,7 @@ public class PregQuoteUsageInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if (1 != params.length || StringUtil.isEmpty(functionName) || !functionName.equals("preg_quote")) {
+                if (1 != params.length || StringUtils.isEmpty(functionName) || !functionName.equals("preg_quote")) {
                     return;
                 }
 

@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
@@ -48,7 +48,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                 final PsiElement[] params = reference.getParameters();
                 if (
                     (1 != params.length && 2 != params.length) ||
-                    StringUtil.isEmpty(functionName) || !functionName.equals("dirname")
+                    StringUtils.isEmpty(functionName) || !functionName.equals("dirname")
                 ) {
                     return;
                 }
@@ -67,7 +67,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                     final PsiElement[] parentParams = parentReference.getParameters();
                     if (
                         (1 == parentParams.length || 2 == parentParams.length) &&
-                        !StringUtil.isEmpty(parentName) && parentName.equals("dirname")
+                        !StringUtils.isEmpty(parentName) && parentName.equals("dirname")
                     ) {
                         return;
                     }
@@ -82,7 +82,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                 //noinspection ConstantConditions - due to better readability
                 while (current instanceof FunctionReference) {
                     final String currentName = current.getName();
-                    if (StringUtil.isEmpty(currentName) || !currentName.equals("dirname")) {
+                    if (StringUtils.isEmpty(currentName) || !currentName.equals("dirname")) {
                         break;
                     }
 

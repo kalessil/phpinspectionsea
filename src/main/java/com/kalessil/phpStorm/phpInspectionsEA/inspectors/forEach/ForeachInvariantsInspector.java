@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -42,7 +42,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 if (values instanceof FunctionReferenceImpl) {
                     final FunctionReference eachCandidate = (FunctionReference) values;
                     final String function                 = eachCandidate.getName();
-                    if (!StringUtil.isEmpty(function) && function.equals("each")) {
+                    if (!StringUtils.isEmpty(function) && function.equals("each")) {
                         final PsiElement parent = multiassignmentExpression.getParent();
                         if (parent instanceof While || parent instanceof For) {
                             holder.registerProblem(parent.getFirstChild(), strEachBehavesAsForeach, ProblemHighlightType.GENERIC_ERROR);

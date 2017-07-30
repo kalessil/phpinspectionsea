@@ -1,6 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils;
 
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -73,7 +73,7 @@ final public class ExpressionCostEstimateUtil {
             if (arrayAccess.getValue() instanceof Variable) {
                 final String variableName = arrayAccess.getValue().getName();
                 if (
-                    !StringUtil.isEmpty(variableName) && variableName.charAt(0) == '_' &&
+                    !StringUtils.isEmpty(variableName) && variableName.charAt(0) == '_' &&
                     predefinedVars.contains(variableName)
                 ) {
                     additionalCosts = 0;
@@ -126,7 +126,7 @@ final public class ExpressionCostEstimateUtil {
             } else {
                 final String strFunctionName = ((FunctionReference) objExpression).getName();
                 /* type-check functions and rest functions */
-                if (!StringUtil.isEmpty(strFunctionName) && functionsSetToAllow.contains(strFunctionName)) {
+                if (!StringUtils.isEmpty(strFunctionName) && functionsSetToAllow.contains(strFunctionName)) {
                     intArgumentsCost += 0;
                 } else {
                     intArgumentsCost += 5;

@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
@@ -68,14 +68,14 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                 final String strFunctionName  = reference.getName();
                 final PsiElement[] parameters = reference.getParameters();
                 if (
-                    parameters.length == 0 || StringUtil.isEmpty(strFunctionName) ||
+                    parameters.length == 0 || StringUtils.isEmpty(strFunctionName) ||
                     !INI_FUNCTIONS.contains(strFunctionName) || !(parameters[0] instanceof StringLiteralExpression)
                 ) {
                     return;
                 }
 
                 final String optionName = ((StringLiteralExpression) parameters[0]).getContents();
-                if (StringUtil.isEmpty(optionName) || !INI_OPTIONS.containsKey(optionName)) {
+                if (StringUtils.isEmpty(optionName) || !INI_OPTIONS.containsKey(optionName)) {
                     return;
                 }
 

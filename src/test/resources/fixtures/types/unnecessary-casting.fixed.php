@@ -18,7 +18,11 @@
         $float,
         $integer,
 
-        ($integer + 1)
+        ($integer + 1),
+
+        /* workaround for WI-37466 */
+        (int)(1 * 0.99),
+        (int)(1 * 0.99 * 1)
     ];
 
     /** @var string $string */

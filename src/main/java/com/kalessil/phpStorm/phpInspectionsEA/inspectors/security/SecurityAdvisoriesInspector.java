@@ -74,36 +74,31 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     @Nullable
     public ProblemDescriptor[] checkFile(@NotNull final PsiFile file, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
         /* verify file name and it's validity */
-        final PsiElement config = file.getFirstChild();
-
-        if (!"composer.json".equals(file.getName()) || !(config instanceof JsonObject)) {
+        if (!"composer.json".equals(file.getName()) || !(file.getFirstChild() instanceof JsonObject)) {
             return null;
         }
 
+        final JsonObject config = (JsonObject) file.getFirstChild();
+
         /* find "require" and "name" sections */
-        JsonProperty requireProperty  = null;
-        String       ownPackageName   = null;
-        String       ownPackagePrefix = null;
+        final JsonProperty requireProperty  = config.findProperty("require");
+        String             ownPackageName   = null;
+        String             ownPackagePrefix = null;
 
         for (final PsiElement option : config.getChildren()) {
             if (option instanceof JsonProperty) {
                 final String propertyName = ((PsiNamedElement) option).getName();
+
                 if ("name".equals(propertyName)) {
                     final JsonValue nameValue = ((JsonProperty) option).getValue();
 
                     if (nameValue instanceof JsonStringLiteral) {
-                        ownPackageName = ownPackagePrefix = ((JsonStringLiteral) nameValue).getValue();
-                        ownPackagePrefix = ownPackagePrefix.length() == 0 ? null : ownPackagePrefix;
+                        ownPackageName = ((JsonStringLiteral) nameValue).getValue();
 
-                        if ((ownPackagePrefix != null) && (ownPackagePrefix.indexOf('/') != -1)) {
-                            ownPackagePrefix = ownPackagePrefix.substring(0, 1 + ownPackagePrefix.indexOf('/'));
+                        if (ownPackageName.indexOf('/') != -1) {
+                            ownPackagePrefix = ownPackageName.substring(0, 1 + ownPackageName.indexOf('/'));
                         }
                     }
-                    continue;
-                }
-                if ("require".equals(propertyName)) {
-                    requireProperty = (JsonProperty) option;
-                    break;
                 }
             }
         }

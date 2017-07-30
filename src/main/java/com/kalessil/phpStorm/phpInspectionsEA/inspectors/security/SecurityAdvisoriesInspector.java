@@ -10,7 +10,6 @@ import com.intellij.json.psi.JsonStringLiteral;
 import com.intellij.json.psi.JsonValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiNamedElement;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -80,32 +79,32 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         final JsonObject config = (JsonObject) file.getFirstChild();
 
-        /* find "require" and "name" sections */
-        final JsonProperty requireProperty  = config.findProperty("require");
+        /* find "require" section, it is required here */
+        final JsonProperty requireProperty = config.findProperty("require");
+
+        if (requireProperty == null) {
+            return null;
+        }
+
+        final JsonProperty nameProperty     = config.findProperty("name");
         String             ownPackageName   = null;
         String             ownPackagePrefix = null;
 
-        for (final PsiElement option : config.getChildren()) {
-            if (option instanceof JsonProperty) {
-                final String propertyName = ((PsiNamedElement) option).getName();
+        if (nameProperty != null) {
+            final JsonValue namePropertyValue = nameProperty.getValue();
 
-                if ("name".equals(propertyName)) {
-                    final JsonValue nameValue = ((JsonProperty) option).getValue();
+            if (namePropertyValue instanceof JsonStringLiteral) {
+                ownPackageName = ((JsonStringLiteral) namePropertyValue).getValue();
 
-                    if (nameValue instanceof JsonStringLiteral) {
-                        ownPackageName = ((JsonStringLiteral) nameValue).getValue();
-
-                        if (ownPackageName.indexOf('/') != -1) {
-                            ownPackagePrefix = ownPackageName.substring(0, 1 + ownPackageName.indexOf('/'));
-                        }
-                    }
+                if (ownPackageName.indexOf('/') != -1) {
+                    ownPackagePrefix = ownPackageName.substring(0, ownPackageName.indexOf('/') + 1);
                 }
             }
         }
 
         /* inspect packages, they should be by other owner */
         final ProblemsHolder holder               = new ProblemsHolder(manager, file, isOnTheFly);
-        final JsonValue      requiredPackagesList = (requireProperty == null) ? null : requireProperty.getValue();
+        final JsonValue      requiredPackagesList = requireProperty.getValue();
 
         if ((requiredPackagesList instanceof JsonObject) && !developmentPackages.contains(ownPackageName)) {
             boolean hasAdvisories           = false;

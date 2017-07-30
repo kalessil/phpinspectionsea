@@ -25,6 +25,7 @@
 
     /* false-positives: condition is specified well */
     echo ($a + $b) ? 0 : 1;
+
     /* false-positives: conditions intentions are clear */
     echo $a > $b ? 0 : 1;
     echo $a >= $b ? 0 : 1;
@@ -37,3 +38,6 @@
     echo $a === $b ? 0 : 1;
     echo $a !== $b ? 0 : 1;
     echo $a instanceof stdClass ? 0 : 1;
+
+    /* false-positives: sequential elvis operators */
+    $x = $a ?: $b ?: $c;

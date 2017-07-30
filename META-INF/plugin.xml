@@ -62,6 +62,7 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
 - Exceptions handling and annotating: prevent SOE exception when processing PhpDoc<br/>
 - General '\Exception' is thrown: resolved false-positives (respect overridden constructors)<br/>
 - General '\Exception' is thrown: fix message grammar (thank you Kevin Laude)<br/>
+- Nested ternary operator: resolved false-positives ('$x ?: $y ?: $z ...' constructs)<br/>
 - Non-optimal regular expression: resolved false-positives (suggesting str_replace)<br/>
 - Return type hint can be used: resolved false positives (abstract methods with PhpDoc without return tag)<br/>
 - Security advisories for Composer packages: resolved false-positives (implementation bug)<br/>

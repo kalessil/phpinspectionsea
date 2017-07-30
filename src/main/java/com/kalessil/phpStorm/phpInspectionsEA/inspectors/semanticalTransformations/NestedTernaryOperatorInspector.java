@@ -69,14 +69,22 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
                 if (trueVariant instanceof TernaryExpression) {
                     holder.registerProblem(trueVariant, messageNested, ProblemHighlightType.WEAK_WARNING);
                 }
-                final PsiElement falseVariant
-                        = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
-                if (falseVariant instanceof TernaryExpression) {
-                    holder.registerProblem(falseVariant, messageNested, ProblemHighlightType.WEAK_WARNING);
+                final PsiElement falseVariant          = expression.getFalseVariant();
+                final PsiElement extractedFalseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(falseVariant);
+                if (extractedFalseVariant instanceof TernaryExpression) {
+                    final boolean allow =
+                            expression.isShort() && falseVariant instanceof TernaryExpression &&
+                            ((TernaryExpression) falseVariant).isShort();
+                    if (!allow) {
+                        holder.registerProblem(extractedFalseVariant, messageNested, ProblemHighlightType.WEAK_WARNING);
+                    }
                 }
 
                 /* Case 2: identical variants */
-                if (null != trueVariant && null != falseVariant && PsiEquivalenceUtil.areElementsEquivalent(trueVariant, falseVariant)) {
+                if (
+                    trueVariant != null && extractedFalseVariant != null &&
+                    PsiEquivalenceUtil.areElementsEquivalent(trueVariant, extractedFalseVariant)
+                ) {
                     holder.registerProblem(expression, messageVariantsIdentical, ProblemHighlightType.GENERIC_ERROR);
                 }
 
@@ -89,10 +97,11 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
                 }
 
                 /* Case 4: literal operators priorities issue */
-                if (expression.getParent() instanceof BinaryExpression) {
-                    final BinaryExpression parent = (BinaryExpression) expression.getParent();
-                    if (parent.getRightOperand() == expression && PhpTokenTypes.tsLIT_OPS.contains(parent.getOperationType())) {
-                        holder.registerProblem(parent, messagePriorities, ProblemHighlightType.GENERIC_ERROR);
+                final PsiElement parent = expression.getParent();
+                if (parent instanceof BinaryExpression) {
+                    final BinaryExpression binary = (BinaryExpression) parent;
+                    if (binary.getRightOperand() == expression && PhpTokenTypes.tsLIT_OPS.contains(binary.getOperationType())) {
+                        holder.registerProblem(binary, messagePriorities, ProblemHighlightType.GENERIC_ERROR);
                     }
                 }
             }

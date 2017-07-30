@@ -32,27 +32,31 @@ public class UselessReturnInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpReturn(PhpReturn returnStatement) {
+            @Override
+            public void visitPhpReturn(@NotNull PhpReturn returnStatement) {
                 final PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue(returnStatement);
                 if (returnValue instanceof AssignmentExpression) {
                     final AssignmentExpression assignment = (AssignmentExpression) returnValue;
                     if (assignment.getVariable() instanceof Variable) {
-                        holder.registerProblem(returnStatement, messageConfusing, ProblemHighlightType.WEAK_WARNING);
+                        /* TODO: not static, not param/use variable  */
+                        holder.registerProblem(returnStatement, messageConfusing);
                     }
                 }
             }
 
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 this.inspectForSenselessReturn(method);
             }
 
-            public void visitPhpFunction(Function function) {
+            @Override
+            public void visitPhpFunction(@NotNull Function function) {
                 this.inspectForSenselessReturn(function);
             }
 
             private void inspectForSenselessReturn(@NotNull Function callable) {
                 final GroupStatement body      = ExpressionSemanticUtil.getGroupStatement(callable);
-                final PsiElement lastStatement = null == body ? null : ExpressionSemanticUtil.getLastStatement(body);
+                final PsiElement lastStatement = body == null ? null : ExpressionSemanticUtil.getLastStatement(body);
                 if (lastStatement instanceof PhpReturn) {
                     final PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue((PhpReturn) lastStatement);
                     if (null == returnValue) {

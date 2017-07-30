@@ -108,15 +108,20 @@ public class OffsetOperationsInspector extends BasePhpInspection {
 
         // TODO: report to JB and get rid of this workarounds, move workaround into TypeFromPlatformResolverUtil.resolveExpressionType
         final HashSet<String> containerTypes = new HashSet<>();
-        if (isWrongResolvedArrayPush) {
-            TypeFromPsiResolvingUtil.resolveExpressionType(
-                    container,
-                    ExpressionSemanticUtil.getScope(expression),
-                    PhpIndex.getInstance(expression.getProject()),
-                    containerTypes
-            );
-        } else {
-            TypeFromPlatformResolverUtil.resolveExpressionType(container, containerTypes);
+        if (container instanceof PhpTypedElement) {
+            if (isWrongResolvedArrayPush) {
+                TypeFromPsiResolvingUtil.resolveExpressionType(
+                        container,
+                        ExpressionSemanticUtil.getScope(expression),
+                        PhpIndex.getInstance(expression.getProject()),
+                        containerTypes
+                );
+            } else {
+                ((PhpTypedElement) container).getType()
+                        .global(container.getProject()).filterUnknown().getTypes().stream()
+                        .map(Types::getType)
+                        .forEach(containerTypes::add);
+            }
         }
 
 

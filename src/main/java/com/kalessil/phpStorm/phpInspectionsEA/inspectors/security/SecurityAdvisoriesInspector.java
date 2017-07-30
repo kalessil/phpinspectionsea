@@ -8,7 +8,6 @@ import com.intellij.json.psi.JsonObject;
 import com.intellij.json.psi.JsonProperty;
 import com.intellij.json.psi.JsonStringLiteral;
 import com.intellij.json.psi.JsonValue;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 
 import java.util.Collection;
@@ -86,15 +85,24 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
             return null;
         }
 
+        final JsonValue requiredPackagesList = requireProperty.getValue();
+
+        if (!(requiredPackagesList instanceof JsonObject)) {
+            return null;
+        }
+
         final JsonProperty nameProperty     = config.findProperty("name");
-        String             ownPackageName   = null;
         String             ownPackagePrefix = null;
 
         if (nameProperty != null) {
             final JsonValue namePropertyValue = nameProperty.getValue();
 
             if (namePropertyValue instanceof JsonStringLiteral) {
-                ownPackageName = ((JsonStringLiteral) namePropertyValue).getValue();
+                final String ownPackageName = ((JsonStringLiteral) namePropertyValue).getValue();
+
+                if (developmentPackages.contains(ownPackageName)) {
+                    return null;
+                }
 
                 if (ownPackageName.indexOf('/') != -1) {
                     ownPackagePrefix = ownPackageName.substring(0, ownPackageName.indexOf('/') + 1);
@@ -103,46 +111,44 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         }
 
         /* inspect packages, they should be by other owner */
-        final ProblemsHolder holder               = new ProblemsHolder(manager, file, isOnTheFly);
-        final JsonValue      requiredPackagesList = requireProperty.getValue();
+        final ProblemsHolder holder                = new ProblemsHolder(manager, file, isOnTheFly);
+        boolean              hasAdvisories         = false;
+        boolean              hasThirdPartyPackages = false;
 
-        if ((requiredPackagesList instanceof JsonObject) && !developmentPackages.contains(ownPackageName)) {
-            boolean hasAdvisories           = false;
-            int     thirdPartyPackagesCount = 0;
+        for (final JsonProperty component : ((JsonObject) requiredPackagesList).getPropertyList()) {
+            final JsonValue packageVersion = component.getValue();
 
-            for (final PsiElement component : requiredPackagesList.getChildren()) {
-                /* we expect certain structure for package definition */
-                if (!(component instanceof JsonProperty)) {
-                    continue;
-                }
-
-                /* if advisories already there, verify usage of dev-master */
-                final JsonProperty dependency     = (JsonProperty) component;
-                final String       packageName    = dependency.getName().toLowerCase();
-                final JsonValue    packageVersion = dependency.getValue();
-
-                if ((packageVersion instanceof JsonStringLiteral) && "roave/security-advisories".equals(packageName)) {
-                    if (!"\"dev-master\"".equals(packageVersion.getText().toLowerCase())) {
-                        holder.registerProblem(packageVersion, useMaster);
-                    }
-
-                    hasAdvisories = true;
-                }
-
-                if (developmentPackages.contains(packageName)) {
-                    holder.registerProblem(dependency.getFirstChild(), useRequireDev);
-                }
-                else if (packageName.indexOf('/') != -1) {
-                    if ((ownPackagePrefix == null) || !packageName.startsWith(ownPackagePrefix)) {
-                        ++thirdPartyPackagesCount;
-                    }
-                }
+            if (!(packageVersion instanceof JsonStringLiteral)) {
+                continue;
             }
 
-            /* fire error message if we have any of 3rd-party packages */
-            if ((thirdPartyPackagesCount > 0) && !hasAdvisories) {
-                holder.registerProblem(requireProperty.getFirstChild(), message);
+            /* if advisories already there, verify usage of dev-master */
+            final String packageName = component.getName().toLowerCase();
+
+            if ("roave/security-advisories".equals(packageName)) {
+                if (!"dev-master".equals(((JsonStringLiteral) packageVersion).getValue().toLowerCase())) {
+                    holder.registerProblem(packageVersion, useMaster);
+                }
+
+                hasAdvisories = true;
+                break;
             }
+
+            if (developmentPackages.contains(packageName)) {
+                holder.registerProblem(component.getFirstChild(), useRequireDev);
+                continue;
+            }
+
+            if (packageName.indexOf('/') != -1) {
+                if ((ownPackagePrefix == null) || !packageName.startsWith(ownPackagePrefix)) {
+                    hasThirdPartyPackages = true;
+                }
+            }
+        }
+
+        /* fire error message if we have any of 3rd-party packages */
+        if (hasThirdPartyPackages && !hasAdvisories) {
+            holder.registerProblem(requireProperty.getFirstChild(), message);
         }
 
         return holder.getResultsArray();

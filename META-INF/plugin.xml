@@ -471,7 +471,7 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureExtractUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="UntrustedInclusionInspection"                  displayName="Untrusted files inclusion"
-         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         groupName="Security"                                      enabledByDefault="false" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.UntrustedInclusionInspector"/>
     <localInspection language="JSON" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="SecurityAdvisoriesInspection"                  displayName="Security advisories for Composer packages"

@@ -211,7 +211,7 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachSourceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="GenericObjectTypeUsageInspection"              displayName="Usage of object type in PhpDoc"
-        groupName="Type compatibility"                            enabledByDefault="true" level="WEAK WARNING"
+        groupName="Type compatibility"                            enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc.GenericObjectTypeUsageInspector"/>
 
 

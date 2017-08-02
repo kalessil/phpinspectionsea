@@ -5,19 +5,30 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.MagicMetho
 
 final public class MagicMethodsValidityInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsInconsistentGetsSetsPatterns() {
-        myFixture.configureByFile("fixtures/classes/magic-methods-get-set.php");
-        myFixture.enableInspections(MagicMethodsValidityInspector.class);
+        myFixture.enableInspections(new MagicMethodsValidityInspector());
+
+        myFixture.configureByFile("fixtures/classes/magicMethods/magic-methods-get-set.php");
         myFixture.testHighlighting(true, false, true);
     }
+
     public void testIfFindsSetStatePatterns() {
-        myFixture.configureByFile("fixtures/classes/magic-methods-set-state.php");
-        myFixture.enableInspections(MagicMethodsValidityInspector.class);
+        myFixture.enableInspections(new MagicMethodsValidityInspector());
+
+        myFixture.configureByFile("fixtures/classes/magicMethods/magic-methods-set-state.php");
         myFixture.testHighlighting(true, false, true);
     }
 
     public void testAbstractMethods() {
-        myFixture.configureByFile("fixtures/classes/magic-methods-abstract.php");
-        myFixture.enableInspections(MagicMethodsValidityInspector.class);
+        myFixture.enableInspections(new MagicMethodsValidityInspector());
+
+        myFixture.configureByFile("fixtures/classes/magicMethods/magic-methods-abstract.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+
+    public void testCallsParentMethods() {
+        myFixture.enableInspections(new MagicMethodsValidityInspector());
+
+        myFixture.configureByFile("fixtures/classes/magicMethods/magic-methods-calls-parent.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

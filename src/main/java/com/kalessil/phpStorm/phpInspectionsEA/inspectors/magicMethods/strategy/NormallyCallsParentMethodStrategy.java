@@ -50,6 +50,6 @@ public class NormallyCallsParentMethodStrategy {
         final String message = messagePattern
             .replace("%m%", methodName)
             .replace("%c%", methodHolder.getName());
-        holder.registerProblem(nameNode, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+        holder.registerProblem(nameNode, message);
     }
 }

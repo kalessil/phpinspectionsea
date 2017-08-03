@@ -36,10 +36,10 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     private static final String useRequireDev = "Dev-packages have no security guaranties, invoke the package via require-dev instead.";
 
     // Inspection options.
-    @SuppressWarnings ("WeakerAccess") public final List<String> optionConfiguration = new ArrayList<>();
-    @SuppressWarnings ("WeakerAccess") public boolean optionConfigurationMigrated;
+    public final List<String> optionConfiguration = new ArrayList<>();
+    public boolean optionConfigurationMigrated;
 
-    private static Collection<String> optionConfigurationDefaults() {
+    public static Collection<String> optionConfigurationDefaults() {
         final Collection<String> developmentPackages = new TreeSet<>();
 
         /* PhpUnit */

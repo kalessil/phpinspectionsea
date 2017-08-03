@@ -9,9 +9,12 @@ import com.intellij.json.psi.JsonProperty;
 import com.intellij.json.psi.JsonStringLiteral;
 import com.intellij.json.psi.JsonValue;
 import com.intellij.psi.PsiFile;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import org.jdom.Element;
 
-import java.util.Collection;
-import java.util.HashSet;
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,42 +33,62 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     private static final String useMaster     = "Please use dev-master instead.";
     private static final String useRequireDev = "Dev-packages have no security guaranties, invoke the package via require-dev instead.";
 
-    private static final Collection<String> developmentPackages = new HashSet<>();
-    static {
-        /* PhpUnit */
-        developmentPackages.add("phpunit/phpunit");
-        developmentPackages.add("phpunit/dbunit");
-        developmentPackages.add("johnkary/phpunit-speedtrap");
-        developmentPackages.add("symfony/phpunit-bridge");
-
-        /* more dev-packages  */
-        developmentPackages.add("mockery/mockery");
-        developmentPackages.add("behat/behat");
-        developmentPackages.add("phpspec/prophecy");
-        developmentPackages.add("phpspec/phpspec");
-        developmentPackages.add("composer/composer");
-        developmentPackages.add("satooshi/php-coveralls");
-        developmentPackages.add("phpro/grumphp");
-
-        /* SCA tools */
-        developmentPackages.add("friendsofphp/php-cs-fixer");
-        developmentPackages.add("squizlabs/php_codesniffer");
-        developmentPackages.add("phpstan/phpstan");
-        developmentPackages.add("vimeo/psalm");
-        developmentPackages.add("jakub-onderka/php-parallel-lint");
-        developmentPackages.add("slevomat/coding-standard");
-        developmentPackages.add("phpmd/phpmd");
-        developmentPackages.add("pdepend/pdepend");
-        developmentPackages.add("sebastian/phpcpd");
-        developmentPackages.add("povils/phpmnd");
-
-        /* build tools */
-        developmentPackages.add("phing/phing");
-    }
+    // Inspection options.
+    public final List<String> optionConfiguration = new ArrayList<>();
+    public boolean optionConfigurationMigrated;
 
     @NotNull
     public String getShortName() {
         return "SecurityAdvisoriesInspection";
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create(
+            (component) -> component.addList("Development packages:",
+                                             optionConfiguration, null,
+                                             "Adding custom development package...", "Examples: \"phpunit/phpunit\"")
+        );
+    }
+
+    @Override
+    public void readSettings(@NotNull final Element node) {
+        super.readSettings(node);
+
+        if (!optionConfigurationMigrated) {
+            optionConfiguration.clear();
+
+            /* PhpUnit */
+            optionConfiguration.add("phpunit/phpunit");
+            optionConfiguration.add("phpunit/dbunit");
+            optionConfiguration.add("johnkary/phpunit-speedtrap");
+            optionConfiguration.add("symfony/phpunit-bridge");
+
+            /* more dev-packages  */
+            optionConfiguration.add("mockery/mockery");
+            optionConfiguration.add("behat/behat");
+            optionConfiguration.add("phpspec/prophecy");
+            optionConfiguration.add("phpspec/phpspec");
+            optionConfiguration.add("composer/composer");
+            optionConfiguration.add("satooshi/php-coveralls");
+            optionConfiguration.add("phpro/grumphp");
+
+            /* SCA tools */
+            optionConfiguration.add("friendsofphp/php-cs-fixer");
+            optionConfiguration.add("squizlabs/php_codesniffer");
+            optionConfiguration.add("phpstan/phpstan");
+            optionConfiguration.add("vimeo/psalm");
+            optionConfiguration.add("jakub-onderka/php-parallel-lint");
+            optionConfiguration.add("slevomat/coding-standard");
+            optionConfiguration.add("phpmd/phpmd");
+            optionConfiguration.add("pdepend/pdepend");
+            optionConfiguration.add("sebastian/phpcpd");
+            optionConfiguration.add("povils/phpmnd");
+
+            /* build tools */
+            optionConfiguration.add("phing/phing");
+
+            optionConfigurationMigrated = true;
+        }
     }
 
     @Override
@@ -100,7 +123,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
             if (namePropertyValue instanceof JsonStringLiteral) {
                 final String ownPackageName = ((JsonStringLiteral) namePropertyValue).getValue();
 
-                if (developmentPackages.contains(ownPackageName)) {
+                if (optionConfiguration.contains(ownPackageName)) {
                     return null;
                 }
 
@@ -134,7 +157,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                 break;
             }
 
-            if (developmentPackages.contains(packageName)) {
+            if (optionConfiguration.contains(packageName)) {
                 holder.registerProblem(component.getFirstChild(), useRequireDev);
                 continue;
             }

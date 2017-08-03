@@ -66,7 +66,7 @@ public final class OptionsComponent {
     public void addList(
         @NotNull final String label,
         @NotNull final List<String> items,
-        @NotNull final Runnable updater,
+        @Nullable final Runnable updater,
         @NotNull final String dialogTitle,
         @NotNull final String dialogMessage
     ) {
@@ -74,7 +74,10 @@ public final class OptionsComponent {
         optionsPanel.add((new PrettyListControl(items, dialogTitle, dialogMessage) {
             @Override
             protected void fireContentsChanged() {
-                updater.run();
+                if (updater != null) {
+                    updater.run();
+                }
+
                 super.fireContentsChanged();
             }
         }).getComponent(), "pushx, growx");

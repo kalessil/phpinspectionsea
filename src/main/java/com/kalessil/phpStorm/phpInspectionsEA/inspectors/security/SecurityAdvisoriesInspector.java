@@ -8,6 +8,7 @@ import com.intellij.json.psi.JsonObject;
 import com.intellij.json.psi.JsonProperty;
 import com.intellij.json.psi.JsonStringLiteral;
 import com.intellij.json.psi.JsonValue;
+import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.psi.PsiFile;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import org.jdom.Element;
@@ -89,8 +90,9 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         );
     }
 
+    @SuppressWarnings ("ThrowsRuntimeException")
     @Override
-    public void readSettings(@NotNull final Element node) {
+    public void readSettings(@NotNull final Element node) throws InvalidDataException {
         super.readSettings(node);
 
         if (!optionConfigurationMigrated) {

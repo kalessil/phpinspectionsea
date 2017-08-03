@@ -1,187 +1,165 @@
 package com.kalessil.phpStorm.phpInspectionsEA.gui;
 
-import org.apache.commons.lang.StringUtils;
-import com.intellij.ui.AnActionButton;
-import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
-import org.jetbrains.annotations.Nullable;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PrettyListControl {
-    static private final String dialogHint = "Adding custom debug function";
-    static private final String dialogTitle = "Example formats: function_name, \\Full\\Namespace\\Class::method     ";
+    private final PrettyListModel model;
+    private final String          dialogTitle;
+    private final String          dialogMessage;
+    private final JBList          list;
 
-    @SuppressWarnings("CanBeFinal")
-    private PrettyListModel model;
+    protected PrettyListControl(final List<String> list, final String dialogTitle, final String dialogMessage) {
+        this.dialogTitle = dialogTitle;
+        this.dialogMessage = dialogMessage;
 
-    @SuppressWarnings("CanBeFinal")
-    private JBList list;
+        model = new PrettyListModel(list);
 
-    public PrettyListControl(List<String> list) {
-        this.model = new PrettyListModel(list);
-
-        this.list = new JBList(this.model);
+        this.list = new JBList(model);
         this.list.setCellRenderer(new DefaultListCellRenderer() {
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                JLabel textContainer = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                textContainer.setText(model.getElementAt(index));
+            public Component getListCellRendererComponent(final JList jList, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
+                final JLabel textContainer = (JLabel) super.getListCellRendererComponent(jList, value, index, isSelected, cellHasFocus);
+                textContainer.setText(model.get(index));
+
                 return textContainer;
             }
         });
     }
 
-    protected void fireContentsChanged() {
-        /* injection point for implementation classes */
-    }
-
     public JPanel getComponent() {
         final JPanel listComponent = new JPanel(new BorderLayout());
-        listComponent.add(new JLabel(""));
 
-        // handle add button
-        listComponent
-            .add(ToolbarDecorator.createDecorator(this.list)
-            .setAddAction(new AnActionButtonRunnable() {
-                public void run(AnActionButton addButton) {
-                    String defaultValue = "";
-                    String newEntry = (String) JOptionPane.showInputDialog(null, dialogTitle, dialogHint, JOptionPane.PLAIN_MESSAGE, null, null, defaultValue);
-                    if (!StringUtils.isEmpty(newEntry)) {
-                        model.addElement(newEntry.trim());
-                        model.fireContentsChanged();
-                    }
-                }
-            })
-            // handle edit button
-            .setEditAction(new AnActionButtonRunnable() {
-                public void run(AnActionButton editButton) {
-                    doEditEntry();
-                }
-            })
-            // handle remove button
-            .setRemoveAction(new AnActionButtonRunnable() {
-                public void run(AnActionButton removeButton) {
-                    //noinspection deprecation
-                    for (Object selectedValue : list.getSelectedValues()) {
-                        model.removeElement((String) selectedValue);
-                    }
+        listComponent.add(
+            ToolbarDecorator.createDecorator(list)
+                            .setAddAction(addButton -> {
+                                String newEntry = (String) JOptionPane.showInputDialog(null, dialogMessage, dialogTitle, JOptionPane.PLAIN_MESSAGE, null, null, "");
 
-                    model.fireContentsChanged();
-                }
-            })
-            // handle positioning adjustments
-            .setMoveUpAction(new AnActionButtonRunnable() {
-                public void run(AnActionButton upButton) {
-                    rearrange(false);
-                }
-            }).setMoveDownAction(new AnActionButtonRunnable() {
-                public void run(AnActionButton downButton) {
-                    rearrange(true);
-                }
-            })
-        .createPanel());
+                                if (!StringUtils.isEmpty(newEntry)) {
+                                    model.addElement(newEntry.trim());
+                                }
+                            })
+                            .setEditAction(editButton -> doEditEntry())
+                            .setRemoveAction(removeButton -> {
+                                for (Object selectedValue : list.getSelectedValuesList()) {
+                                    model.removeElement(selectedValue);
+                                }
+                            })
+                            .setMoveUpAction(upButton -> rearrange(-1))
+                            .setMoveDownAction(downButton -> rearrange(1))
+                            .createPanel()
+        );
 
-        // handle double clicks
         (new DoubleClickListener() {
-            protected boolean onDoubleClick(MouseEvent var1) {
-                PrettyListControl.this.doEditEntry();
+            protected boolean onDoubleClick(final MouseEvent var1) {
+                doEditEntry();
                 return true;
             }
-        }).installOn(this.list);
+        }).installOn(list);
+
         return listComponent;
     }
 
-    private void rearrange(boolean moveDown) {
-        int[] selectedIndices = this.list.getSelectedIndices();
+    protected void fireContentsChanged() {
+    }
+
+    private void rearrange(final int moveDelta) {
+        final int[] selectedIndices = list.getSelectedIndices();
+
         if (selectedIndices.length != 0) {
-            int increment = moveDown ? 1 : -1;
-            this.list.removeSelectionInterval(0, this.model.getSize() - 1);
-            int boundary = moveDown ? selectedIndices[selectedIndices.length - 1] : 0;
+            list.clearSelection();
 
-            while (true) {
-                if (moveDown) {
-                    if (boundary < 0) {
-                        break;
-                    }
-                } else if (boundary >= selectedIndices.length) {
-                    break;
-                }
-
-                int indexToMove = selectedIndices[boundary];
-                String valueToMove = this.model.getElementAt(indexToMove);
-
-                this.model.setElementAt(indexToMove, this.model.getElementAt(indexToMove + increment));
-                this.model.setElementAt(indexToMove + increment, valueToMove);
-                this.list.addSelectionInterval(indexToMove + increment, indexToMove + increment);
-
-                boundary -= increment;
+            if (moveDelta == 1) {
+                ArrayUtils.reverse(selectedIndices);
             }
 
-            boundary = moveDown ? this.list.getMaxSelectionIndex() : this.list.getMinSelectionIndex();
-            Rectangle cellBounds = this.list.getCellBounds(boundary, boundary);
+            for (final int selectedIndex : selectedIndices) {
+                model.moveElement(selectedIndex, moveDelta);
+
+                list.addSelectionInterval(selectedIndex + moveDelta, selectedIndex + moveDelta);
+            }
+
+            final int       boundary   = list.getMinSelectionIndex();
+            final Rectangle cellBounds = list.getCellBounds(boundary, boundary);
+
             if (cellBounds != null) {
-                this.list.scrollRectToVisible(cellBounds);
+                list.scrollRectToVisible(cellBounds);
             }
         }
     }
 
     private void doEditEntry() {
-        final String selectedValue = (String) this.list.getSelectedValue();
-        final int selectedPosition = this.model.indexOf(selectedValue);
+        final String selectedValue    = (String) list.getSelectedValue();
+        final int    selectedPosition = model.indexOf(selectedValue);
 
-        if (null != selectedValue) {
-            String newValue = (String) JOptionPane.showInputDialog(null, dialogTitle, dialogHint, JOptionPane.PLAIN_MESSAGE, null, null, selectedValue);
+        if (selectedValue != null) {
+            final String newValue = (String) JOptionPane.showInputDialog(null, dialogMessage, dialogTitle, JOptionPane.PLAIN_MESSAGE, null, null, selectedValue);
+
             if (!StringUtils.isEmpty(newValue)) {
-                this.model.setElementAt(selectedPosition, newValue.trim());
-                this.model.fireContentsChanged();
+                model.setElementAt(newValue.trim(), selectedPosition);
             }
         }
     }
 
     // list prototype
-    private class PrettyListModel extends AbstractListModel {
-        @SuppressWarnings("CanBeFinal")
-        private List<String> entries;
+    private final class PrettyListModel extends DefaultListModel<String> {
+        private final List<String> referenceList;
 
-        private PrettyListModel(List<String> entries) {
-            this.entries = entries;
-        }
+        PrettyListModel(final List<String> referenceItems) {
+            final Iterable originalItems = new ArrayList<>(referenceItems);
 
-        public void addElement (String element) {
-            this.entries.add(element);
-        }
+            referenceList = referenceItems;
 
-        public void removeElement (String element) {
-            if (this.entries.contains(element)) {
-                this.entries.remove(element);
+            for (final Object item : originalItems) {
+                addElement((String) item);
             }
         }
 
-        public int getSize() {
-            return this.entries.size();
+        @Override
+        protected void fireContentsChanged(final Object source, final int index0, final int index1) {
+            super.fireContentsChanged(source, index0, index1);
+            updateReference();
         }
 
-        @Nullable
-        public String getElementAt(int position) {
-            return position < this.entries.size() ? this.entries.get(position) : null;
+        @Override
+        protected void fireIntervalAdded(final Object source, final int index0, final int index1) {
+            super.fireIntervalAdded(source, index0, index1);
+            updateReference();
         }
 
-        public void setElementAt(int position, String element) {
-            this.entries.set(position, element);
+        @Override
+        protected void fireIntervalRemoved(final Object source, final int index0, final int index1) {
+            super.fireIntervalRemoved(source, index0, index1);
+            updateReference();
         }
 
-        public int indexOf(String element) {
-            return this.entries.indexOf(element);
+        void moveElement(final int selectedIndex, final int moveDelta) {
+            final String previous = get(selectedIndex + moveDelta);
+
+            set(selectedIndex + moveDelta, get(selectedIndex));
+            set(selectedIndex, previous);
+
+            fireContentsChanged();
         }
 
-        public void fireContentsChanged() {
+        void fireContentsChanged() {
+            fireContentsChanged(list, -1, -1);
+        }
+
+        void updateReference() {
+            referenceList.clear();
+            referenceList.addAll(Collections.list(elements()));
+
             PrettyListControl.this.fireContentsChanged();
-            this.fireContentsChanged(list, -1, -1);
         }
     }
 }

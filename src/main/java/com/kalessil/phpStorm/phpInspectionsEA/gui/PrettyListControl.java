@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
@@ -88,6 +89,10 @@ public class PrettyListControl {
                 }
             });
             popupMenu.add(resetOption);
+
+            final JMenuItem mergeOption = new JMenuItem("Merge with default");
+            mergeOption.addActionListener(e -> model.addAll(defaultItems.get()));
+            popupMenu.add(mergeOption);
 
             list.addMouseListener(new MouseAdapter() {
                 @Override
@@ -210,7 +215,7 @@ public class PrettyListControl {
             }
 
             referenceList.clear();
-            referenceList.addAll(Collections.list(elements()));
+            referenceList.addAll(new TreeSet<>(Collections.list(elements())));
 
             PrettyListControl.this.fireContentsChanged();
         }

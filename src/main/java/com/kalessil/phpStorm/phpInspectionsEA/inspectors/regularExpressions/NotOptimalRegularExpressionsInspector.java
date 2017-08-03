@@ -55,8 +55,8 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Deprecated
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final String strFunctionName = reference.getName();
-                if (StringUtils.isEmpty(strFunctionName) || !functions.contains(strFunctionName)) {
+                final String functionName = reference.getName();
+                if (functionName == null || !functions.contains(functionName)) {
                     return;
                 }
 
@@ -78,7 +78,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                         final String phpRegexPattern   = regexMatcher.group(2);
                         final String phpRegexModifiers = regexMatcher.group(3);
 
-                        checkCall(strFunctionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
+                        checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
                         return;
                     }
 
@@ -87,7 +87,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                         final String phpRegexPattern   = regexMatcher.group(1);
                         final String phpRegexModifiers = regexMatcher.group(2);
 
-                        checkCall(strFunctionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
+                        checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
                         // return;
                     }
                 }

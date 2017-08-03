@@ -73,24 +73,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         final List<String> customDebugFQNs = new ArrayList<>();
         if (!this.migratedIntoUserSpace) {
             /* prepare migrated list */
-            final Set<String> migrated = new TreeSet<>();
-            migrated.add("\\Codeception\\Util\\Debug::pause");
-            migrated.add("\\Codeception\\Util\\Debug::debug");
-            migrated.add("\\Symfony\\Component\\Debug\\Debug::enable");
-            migrated.add("\\Symfony\\Component\\Debug\\ErrorHandler::register");
-            migrated.add("\\Symfony\\Component\\Debug\\ExceptionHandler::register");
-            migrated.add("\\Symfony\\Component\\Debug\\DebugClassLoader::enable");
-            migrated.add("\\Zend\\Debug\\Debug::dump");
-            migrated.add("\\Zend\\Di\\Display\\Console::export");
-            migrated.add("\\Illuminate\\Support\\Debug\\Dumper::dump");
-            migrated.add("dd");
-            migrated.add("debug_print_backtrace");
-            migrated.add("debug_zval_dump");
-            migrated.add("error_log");
-            migrated.add("phpinfo");
-            migrated.add("print_r");
-            migrated.add("var_export");
-            migrated.add("var_dump");
+            final Set<String> migrated = optionConfigurationDefaults();
             migrated.addAll(this.configuration);
 
             /* migrate the list */
@@ -118,6 +101,30 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             );
             customMethodsNames.add(disassembledDescriptor[1]);
         }
+    }
+
+    @NotNull
+    private static Set<String> optionConfigurationDefaults() {
+        final Set<String> migrated = new TreeSet<>();
+        migrated.add("\\Codeception\\Util\\Debug::pause");
+        migrated.add("\\Codeception\\Util\\Debug::debug");
+        migrated.add("\\Symfony\\Component\\Debug\\Debug::enable");
+        migrated.add("\\Symfony\\Component\\Debug\\ErrorHandler::register");
+        migrated.add("\\Symfony\\Component\\Debug\\ExceptionHandler::register");
+        migrated.add("\\Symfony\\Component\\Debug\\DebugClassLoader::enable");
+        migrated.add("\\Zend\\Debug\\Debug::dump");
+        migrated.add("\\Zend\\Di\\Display\\Console::export");
+        migrated.add("\\Illuminate\\Support\\Debug\\Dumper::dump");
+        migrated.add("dd");
+        migrated.add("debug_print_backtrace");
+        migrated.add("debug_zval_dump");
+        migrated.add("error_log");
+        migrated.add("phpinfo");
+        migrated.add("print_r");
+        migrated.add("var_export");
+        migrated.add("var_dump");
+
+        return migrated;
     }
 
     @NotNull
@@ -202,7 +209,8 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     public JComponent createOptionsPanel() {
         return OptionsComponent.create(
             (component) -> component.addList("Custom debug methods:",
-                                             configuration, this::recompileConfiguration,
+                                             configuration, ForgottenDebugOutputInspector::optionConfigurationDefaults,
+                                             this::recompileConfiguration,
                                              "Adding custom debug function...", "Examples: \"function_name\" or \"\\Namespace\\Class::method\"")
         );
     }

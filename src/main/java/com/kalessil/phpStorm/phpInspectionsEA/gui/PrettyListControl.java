@@ -8,20 +8,27 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
+
+import org.jetbrains.annotations.Nullable;
 
 public class PrettyListControl {
-    private final PrettyListModel model;
-    private final String          dialogTitle;
-    private final String          dialogMessage;
-    private final JBList          list;
+    private final           PrettyListModel              model;
+    @Nullable private final Supplier<Collection<String>> defaultItems;
+    private final           String                       dialogTitle;
+    private final           String                       dialogMessage;
+    private final           JBList                       list;
 
-    protected PrettyListControl(final List<String> list, final String dialogTitle, final String dialogMessage) {
+    protected PrettyListControl(final List<String> list, @Nullable final Supplier<Collection<String>> defaultItems, final String dialogTitle, final String dialogMessage) {
         this.dialogTitle = dialogTitle;
         this.dialogMessage = dialogMessage;
+        this.defaultItems = defaultItems;
 
         model = new PrettyListModel(list);
 
@@ -65,6 +72,34 @@ public class PrettyListControl {
                 return true;
             }
         }).installOn(list);
+
+        if (defaultItems != null) {
+            final JPopupMenu popupMenu = new JPopupMenu();
+
+            final JMenuItem resetOption = new JMenuItem("Reset to default");
+            resetOption.addActionListener(e -> {
+                final int dialogResult =
+                    JOptionPane.showConfirmDialog(list.getComponent(0),
+                                                  "Are you sure you want to reset this list to its original values?", "Reset to default...", JOptionPane.YES_NO_OPTION);
+
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    model.clear();
+                    model.addAll(defaultItems.get());
+                }
+            });
+            popupMenu.add(resetOption);
+
+            list.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(final MouseEvent event) {
+                    if (!SwingUtilities.isRightMouseButton(event)) {
+                        return;
+                    }
+
+                    popupMenu.show(event.getComponent(), event.getX(), event.getY());
+                }
+            });
+        }
 
         return listComponent;
     }
@@ -113,6 +148,7 @@ public class PrettyListControl {
     // list prototype
     private final class PrettyListModel extends DefaultListModel<String> {
         private final List<String> referenceList;
+        private boolean updateImmediately = true;
 
         PrettyListModel(final List<String> referenceItems) {
             final Iterable originalItems = new ArrayList<>(referenceItems);
@@ -122,6 +158,19 @@ public class PrettyListControl {
             for (final Object item : originalItems) {
                 addElement((String) item);
             }
+        }
+
+        public void addAll(final Iterable<String> defaultItemsReference) {
+            updateImmediately = false;
+
+            // We can't update ${delegate} directly, so we need avoid
+            // that the original reference be updated for every added element.
+            for (final String defaultItem : defaultItemsReference) {
+                addElement(defaultItem);
+            }
+
+            updateImmediately = true;
+            updateReference();
         }
 
         @Override
@@ -156,6 +205,10 @@ public class PrettyListControl {
         }
 
         void updateReference() {
+            if (!updateImmediately) {
+                return;
+            }
+
             referenceList.clear();
             referenceList.addAll(Collections.list(elements()));
 

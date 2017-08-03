@@ -1,17 +1,17 @@
 <?php
 
-    echo '' . '@' . <error descr="...">$_SERVER['SERVER_NAME']</error>;
-    echo '@' . <error descr="...">$_SERVER['HTTP_HOST']</error>;
-    echo '@' . <error descr="...">strtolower($_SERVER['HTTP_HOST'])</error>;
+    echo '' . '@' . <error descr="The email generation can be compromised, consider introducing whitelists.">$_SERVER['SERVER_NAME']</error>;
+    echo '@' . <error descr="The email generation can be compromised, consider introducing whitelists.">$_SERVER['HTTP_HOST']</error>;
+    echo '@' . <error descr="The email generation can be compromised, consider introducing whitelists.">strtolower($_SERVER['HTTP_HOST'])</error>;
 
     /* false-positives: there are no email-alike criterion matched */
     echo $_SERVER['HTTP_HOST'];
     echo 'HTTP_HOST: ' . $_SERVER['HTTP_HOST'];
     echo 'SERVER_NAME: ' . $_SERVER['SERVER_NAME'];
 
-    $host   = strtolower(<error descr="...">$_SERVER['HTTP_HOST']</error>);
-    $domain = strtolower(<error descr="...">$_SERVER['SERVER_NAME']</error>);
-    $email  = strtolower(<error descr="...">$_SERVER['HTTP_HOST']</error>);
+    $host   = strtolower(<error descr="The domain here can be compromised, consider introducing whitelists.">$_SERVER['HTTP_HOST']</error>);
+    $domain = strtolower(<error descr="The domain here can be compromised, consider introducing whitelists.">$_SERVER['SERVER_NAME']</error>);
+    $email  = strtolower(<error descr="The domain here can be compromised, consider introducing whitelists.">$_SERVER['HTTP_HOST']</error>);
 
     function cases_holder_second() {
         if (isset($_SERVER['HTTP_HOST'])) {
@@ -19,7 +19,7 @@
         } else {
             $domain = $_SERVER['SERVER_NAME'];
         }
-        echo '' . '@' . <error descr="...">$domain</error>;
+        echo '' . '@' . <error descr="The email generation can be compromised, consider introducing whitelists.">$domain</error>;
     }
 
     function valid_cases() {
@@ -35,5 +35,5 @@
         if (strpos($server,'www.') === 0) {
             $server = substr($server, 4);
         }
-        return 'me@' . <error descr="...">$server</error>;
+        return 'me@' . <error descr="The email generation can be compromised, consider introducing whitelists.">$server</error>;
     }

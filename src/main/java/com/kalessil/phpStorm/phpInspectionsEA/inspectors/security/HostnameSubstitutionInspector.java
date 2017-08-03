@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -25,8 +26,8 @@ import java.util.regex.Pattern;
  */
 
 public class HostnameSubstitutionInspector extends BasePhpInspection {
-    private static final String messageGeneral = "...";
-    private static final String messageNaming  = "...";
+    private static final String messageGeneral = "The email generation can be compromised, consider introducing whitelists.";
+    private static final String messageNaming  = "The domain here can be compromised, consider introducing whitelists.";
 
     private static final Pattern regexTargetNames;
     static {
@@ -95,8 +96,8 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                 final PsiElement storage = context.getVariable();
                 if (storage instanceof FieldReference) {
                     /* fields processing is too complex, just report it when naming matches */
-                    final String storageName = ((PhpNamedElement) storage).getName();
-                    if (!storageName.isEmpty()) {
+                    final String storageName = ((FieldReference) storage).getName();
+                    if (!StringUtils.isEmpty(storageName)) {
                         final Matcher matcher = regexTargetNames.matcher(storageName);
                         if (matcher.matches()) {
                             holder.registerProblem(expression, messageNaming);

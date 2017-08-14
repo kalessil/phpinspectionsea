@@ -83,9 +83,9 @@ again the issue with comparisons against loose typed variables?
 ## Generic objects
 
 The generic type `object` is too much of that: **Generic**. How do you get into more specificity from
-it? Take a look and the [seudo types](http://php.net/manual/en/language.pseudo-types.php) documentation.
+it? Take a look and the [pseudo types](http://php.net/manual/en/language.pseudo-types.php) documentation.
 
-Put your self as user of an API which use the `object` seudo type as return types or parameter types. How do
+Put your self as user of an API which use the `object` pseudo type as return types or parameter types. How do
 you know what is really being return or passed to method? Using `object` would be the same as saying any class
 instance can be returned, thats too general, users of your API (many time yourself after couple of months) will
 be forced to read the code and try to understand every part of it before using it.

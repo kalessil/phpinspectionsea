@@ -12,6 +12,8 @@ class MyClass
         <weak_warning descr="Class reference \"__CLASS__\" could be replaced by \"MyClass::class\"">__CLASS__</weak_warning>;
         <weak_warning descr="Class reference \"self\" could be replaced by \"MyClass\"">self</weak_warning>::class;
 
+        (new MyClass)::staticMethod();
+
         // False-positives: already fixed.
         new MyClass;
         MyClass::CONSTANT;

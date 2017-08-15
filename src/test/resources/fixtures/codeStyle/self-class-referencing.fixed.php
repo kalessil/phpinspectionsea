@@ -9,6 +9,8 @@ class MyClass {
 
         __CLASS__;
 
+        (new self)::staticMethod();
+
         // False-positives:
         self::class;
         static::class;

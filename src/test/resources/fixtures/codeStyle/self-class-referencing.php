@@ -9,6 +9,8 @@ class MyClass {
 
         <weak_warning descr="Class reference \"MyClass::class\" could be replaced by \"__CLASS__\"">MyClass::class</weak_warning>;
 
+        (new self)::staticMethod();
+
         // False-positives:
         self::class;
         static::class;

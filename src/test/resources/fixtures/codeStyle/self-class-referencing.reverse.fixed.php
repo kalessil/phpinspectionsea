@@ -12,6 +12,8 @@ class MyClass
         MyClass::class;
         MyClass::class;
 
+        (new MyClass)::staticMethod();
+
         // False-positives: already fixed.
         new MyClass;
         MyClass::CONSTANT;

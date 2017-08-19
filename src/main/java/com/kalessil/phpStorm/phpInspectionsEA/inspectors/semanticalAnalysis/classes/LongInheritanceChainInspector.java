@@ -29,6 +29,9 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
         showStoppers.add("\\yii\\base\\Component");
         showStoppers.add("\\yii\\base\\Behavior");
 
+        /* prevents over-inheritance in user space; Yii 1.* */
+        showStoppers.add("\\CComponent");
+
         /* prevents over-inheritance in user space; Zend Framework 2+ */
         showStoppers.add("\\Zend\\Form\\Form");
 

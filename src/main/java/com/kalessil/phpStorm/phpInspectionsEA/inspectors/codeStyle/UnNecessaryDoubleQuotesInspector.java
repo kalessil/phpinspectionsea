@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -17,6 +16,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
     private static final String message = "Safely use single quotes instead.";
 
@@ -29,9 +37,10 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpStringLiteralExpression(StringLiteralExpression expression) {
+            @Override
+            public void visitPhpStringLiteralExpression(@NotNull StringLiteralExpression expression) {
                 /* skip processing single-quoted and strings with injections */
-                if (expression.isSingleQuote() || expression.isHeredoc() || null != expression.getFirstPsiChild()) {
+                if (expression.isSingleQuote() || expression.isHeredoc() || expression.getFirstPsiChild() != null) {
                     return;
                 }
                 /* annotation is doc-blocks must not be analyzed */
@@ -46,7 +55,7 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
                     return;
                 }
 
-                holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                holder.registerProblem(expression, message, new TheLocalFix());
             }
         };
     }
@@ -68,10 +77,12 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement literal = descriptor.getPsiElement();
             if (literal instanceof StringLiteralExpression) {
-                String unescaped      = PhpStringUtil.unescapeText(((StringLiteralExpression) literal).getContents(), false);
-                String textExpression = "'" + PhpStringUtil.escapeText(unescaped, true) + "'";
+                final String rawText        = ((StringLiteralExpression) literal).getContents();
+                final String unescapedText  = PhpStringUtil.unescapeText(rawText, false);
+                final String textExpression = "'" + PhpStringUtil.escapeText(unescapedText, true) + "'";
 
-                PhpPsiElement replacement = PhpPsiElementFactory.createPhpPsiFromText(project, StringLiteralExpression.class, textExpression);
+                final PhpPsiElement replacement
+                    = PhpPsiElementFactory.createPhpPsiFromText(project, StringLiteralExpression.class, textExpression);
                 literal.replace(replacement);
             }
         }

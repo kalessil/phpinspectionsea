@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnNecessaryDo
 
 final public class UnNecessaryDoubleQuotesInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new UnNecessaryDoubleQuotesInspector());
+
         myFixture.configureByFile("fixtures/codeStyle/double-quotes.php");
-        myFixture.enableInspections(UnNecessaryDoubleQuotesInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

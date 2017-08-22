@@ -7,7 +7,14 @@
 
     throw new RuntimeException('...');
 
-    class CustomizedException extends \RuntimeException {
+    /* false-positive: custom constructor */
+    class CustomizedConstructorException extends \RuntimeException {
         public function __construct() {}
     }
-    throw new CustomizedException();
+    throw new CustomizedConstructorException();
+
+    /* false-positive: message override */
+    class CustomizedMessageException extends \RuntimeException {
+        protected $message = '...';
+    }
+    throw new CustomizedMessageException();

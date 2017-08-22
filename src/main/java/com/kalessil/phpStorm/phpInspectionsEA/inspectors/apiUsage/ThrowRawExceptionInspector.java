@@ -33,7 +33,8 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpThrow(PhpThrow throwStatement) {
+            @Override
+            public void visitPhpThrow(@NotNull PhpThrow throwStatement) {
                 final PsiElement argument = throwStatement.getArgument();
                 if (argument instanceof NewExpression) {
                     final NewExpression newExpression   = (NewExpression) argument;
@@ -44,15 +45,18 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
                             holder.registerProblem(classReference, messageRawException, new TheLocalFix());
                         } else if (newExpression.getParameters().length == 0) {
                             final PsiElement resolved = classReference.resolve();
-                            if (resolved instanceof PhpClass) {
-                                final Method constructor = ((PhpClass) resolved).getConstructor();
-                                if (constructor != null && constructor.getParameters().length == 3) {
-                                    holder.registerProblem(newExpression, messageNoArguments);
-                                }
+                            if (resolved instanceof PhpClass && this.isTarget((PhpClass) resolved)) {
+                                holder.registerProblem(newExpression, messageNoArguments);
                             }
                         }
                     }
                 }
+            }
+
+            private boolean isTarget(@NotNull PhpClass clazz) {
+                final Method constructor = clazz.getConstructor();
+                return constructor != null && constructor.getParameters().length == 3 &&
+                    clazz.findOwnFieldByName("message", false) == null;
             }
         };
     }

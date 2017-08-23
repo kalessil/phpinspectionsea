@@ -455,6 +455,10 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
         shortName="StringsFirstCharactersCompareInspection"       displayName="Strings N-character comparison flaws"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StringsFirstCharactersCompareInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="SimpleXmlLoadFileUsageInspection"              displayName="'simplexml_load_file(...)' usage correctness"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SimpleXmlLoadFileUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

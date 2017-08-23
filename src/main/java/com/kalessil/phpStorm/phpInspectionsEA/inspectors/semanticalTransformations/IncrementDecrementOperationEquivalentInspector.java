@@ -10,11 +10,13 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.HashSet;
 
 /*
@@ -29,6 +31,10 @@ import java.util.HashSet;
 public class IncrementDecrementOperationEquivalentInspector extends BasePhpInspection {
     private static final String patternMessage = "Can be safely replaced with '%e%'.";
 
+    // Inspection options.
+    public boolean PREFER_PREFIX_STYLE = true;
+    public boolean PREFER_SUFFIX_STYLE = false;
+
     @NotNull
     public String getShortName() {
         return "IncrementDecrementOperationEquivalentInspection";
@@ -41,12 +47,16 @@ public class IncrementDecrementOperationEquivalentInspector extends BasePhpInspe
             /* ensures we are not touching arrays only, not strings and not objects */
             private boolean isArrayAccessOrString(@Nullable PhpPsiElement variable) {
                 if (variable instanceof ArrayAccessExpression) {
-                    final HashSet<String> containerTypes = new HashSet<>();
-                    TypeFromPlatformResolverUtil.resolveExpressionType(((ArrayAccessExpression) variable).getValue(), containerTypes);
-                    boolean isArray = containerTypes.contains(Types.strArray) && !containerTypes.contains(Types.strString);
+                    final PsiElement container = ((ArrayAccessExpression) variable).getValue();
+                    if (container != null) {
+                        final HashSet<String> containerTypes = new HashSet<>();
+                        TypeFromPlatformResolverUtil.resolveExpressionType(container, containerTypes);
 
-                    containerTypes.clear();
-                    return !isArray;
+                        boolean isArray = containerTypes.contains(Types.strArray) && !containerTypes.contains(Types.strString);
+                        containerTypes.clear();
+
+                        return !isArray;
+                    }
                 }
 
                 return false;
@@ -60,14 +70,16 @@ public class IncrementDecrementOperationEquivalentInspector extends BasePhpInspe
                 if (null != value && null != operation && null != variable) {
                     if (operation == PhpTokenTypes.opPLUS_ASGN) {
                         if (value.getText().equals("1") && !isArrayAccessOrString(variable)) {
-                            final String replacement = "++" + variable.getText();
-                            final String message     = patternMessage.replace("%e%", replacement);
+                            final String replacement
+                                    = PREFER_PREFIX_STYLE ? ("++" + variable.getText()) : (variable.getText() + "++");
+                            final String message = patternMessage.replace("%e%", replacement);
                             holder.registerProblem(expression, message, new UseIncrementFix(replacement));
                         }
                     } else if (operation == PhpTokenTypes.opMINUS_ASGN) {
                         if (value.getText().equals("1") && !isArrayAccessOrString(variable)) {
-                            final String replacement = "--" + variable.getText();
-                            final String message     = patternMessage.replace("%e%", replacement);
+                            final String replacement
+                                    = PREFER_PREFIX_STYLE ? ("--" + variable.getText()) : (variable.getText() + "--");
+                            final String message = patternMessage.replace("%e%", replacement);
                             holder.registerProblem(expression, message, new UseDecrementFix(replacement));
                         }
                     }
@@ -95,8 +107,9 @@ public class IncrementDecrementOperationEquivalentInspector extends BasePhpInspe
                             (rightOperand.getText().equals("1") && PsiEquivalenceUtil.areElementsEquivalent(leftOperand, variable))
                         ) {
                             if (!isArrayAccessOrString(variable)) {
-                                final String replacement = "++" + variable.getText();
-                                final String message     = patternMessage.replace("%e%", replacement);
+                                final String replacement
+                                        = PREFER_PREFIX_STYLE ? ("++" + variable.getText()) : (variable.getText() + "++");
+                                final String message = patternMessage.replace("%e%", replacement);
                                 holder.registerProblem(assignmentExpression, message, new UseIncrementFix(replacement));
                             }
                         }
@@ -107,8 +120,9 @@ public class IncrementDecrementOperationEquivalentInspector extends BasePhpInspe
                             PsiEquivalenceUtil.areElementsEquivalent(leftOperand, variable) &&
                             !isArrayAccessOrString(variable)
                         ) {
-                            final String replacement = "--" + variable.getText();
-                            final String message     = patternMessage.replace("%e%", replacement);
+                            final String replacement
+                                    = PREFER_PREFIX_STYLE ? ("--" + variable.getText()) : (variable.getText() + "--");
+                            final String message = patternMessage.replace("%e%", replacement);
                             holder.registerProblem(assignmentExpression, message, new UseDecrementFix(replacement));
                         }
                     }
@@ -116,6 +130,14 @@ public class IncrementDecrementOperationEquivalentInspector extends BasePhpInspe
             }
         };
     }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> component.delegateRadioCreation((radioComponent) -> {
+            radioComponent.addOption("Fix with prefix operation", PREFER_PREFIX_STYLE, (isSelected) -> PREFER_PREFIX_STYLE = isSelected);
+            radioComponent.addOption("Fix with suffix operation", PREFER_SUFFIX_STYLE, (isSelected) -> PREFER_SUFFIX_STYLE = isSelected);
+        }));
+    }
+
 
     private class UseIncrementFix extends UseSuggestedReplacementFixer {
         @NotNull

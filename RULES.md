@@ -100,7 +100,7 @@ Inspections Lists (Code style)
 | Code Style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes | yes | no   | no  |
 | Code Style           | UnnecessaryUseAliasInspection                   | Unnecessary use aliases                             | yes | yes | yes  | no  |
 | Code Style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes | yes | no   | no  |
-| Code Style           | PrefixedIncDecrementEquivalentInspection        | Increment/decrement operation equivalent            | yes | yes | no   | no  |
+| Code Style           | IncrementDecrementOperationEquivalentInspection | Increment/decrement operation equivalent            | yes | yes | no   | no  |
 | Code Style           | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                  | yes | yes | no   | no  |
 | Code Style           | UnnecessaryFinalModifierInspection              | Unnecessary final modifiers                         | yes | yes | no   | no  |
 | Code Style           | UsingInclusionReturnValueInspection             | Usage of inclusion return value                     | n/a | yes | n/a  | no  |

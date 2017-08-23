@@ -26,12 +26,12 @@ import java.util.HashSet;
  * file that was distributed with this source code.
  */
 
-public class PrefixedIncDecrementEquivalentInspector extends BasePhpInspection {
+public class IncrementDecrementOperationEquivalentInspector extends BasePhpInspection {
     private static final String patternMessage = "Can be safely replaced with '%e%'.";
 
     @NotNull
     public String getShortName() {
-        return "PrefixedIncDecrementEquivalentInspection";
+        return "IncrementDecrementOperationEquivalentInspection";
     }
 
     @Override

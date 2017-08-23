@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.9.1</version>
+  <version>2.3.10-preview</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -52,40 +52,19 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>! Bug-fixes:
+Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>! Hot-fixes:
 <br/>
 <br/>
-- Badly organized exception handling: fixed "Empty PSI element" exception<br/>
-- Cascading 'str_replace(...)' calls: resolved false-positives (used/stored expressions are not matching)<br/>
-- Empty class: resolved false-positives (multiple cases)<br/>
-- Empty/isset results correctness: resolved false-positives (multiple cases)<br/>
-- Exceptions handling and annotating: prevent SOE exception when processing PhpDoc<br/>
-- General '\Exception' is thrown: resolved false-positives (respect overridden constructors)<br/>
-- General '\Exception' is thrown: fix message grammar (thank you Kevin Laude)<br/>
-- Nested ternary operator: resolved false-positives ('$x ?: $y ?: $z ...' constructs)<br/>
-- Non-optimal regular expression: resolved false-positives (suggesting str_replace)<br/>
-- Return type hint can be used: resolved false positives (abstract methods with PhpDoc without return tag)<br/>
-- Security advisories for Composer packages: resolved false-positives (implementation bug)<br/>
-- Suspicious ternary operator: resolved false-positives (incorrect suggestions in some cases)<br/>
-- Unnecessary parentheses: resolved false-positives (member reference on assignment)<br/>
-- Usage of the silence operator: resolved false-positives (boolean comparisons)<br/>
-- ::class constant usage correctness: resolved false-positives (parent reference)<br/>
+- General '\Exception' is thrown: resolved false-positives (overridden message property)<br/>
+- Increment/decrement operation equivalent: QF bug-fix, added fix style options<br/>
+- Hostname substitution: fixed casting exceptions, messages<br/>
+- Magic methods validity: resolved false-positives (missing parent call, parent is abstract)<br/>
+- Self class referencing: fixed casting exceptions (thank you David Rodrigues)<br/>
 <br/>
-- A constant can be used: new patterns<br/>
-- Binary-unsafe 'fopen(...)' usage: new patterns (misplaced b-modifier)<br/>
-- Forgotten debug statements: new patterns (thank you David Rodrigues)<br/>
-- Non-optimal regular expression: QFes implemented (plain API usage)<br/>
-- Suspicious binary operations: new patterns (priority issues, own QF available)<br/>
-- Suspicious ternary operator: QF implemented<br/>
-- 'strtr(...)' could be replaced with 'str_replace(...)': QF implemented<br/>
-- 'substr(...)' could be replaced with 'strpos(...)': QF implemented<br/>
+- Long inheritance chain: support Yii1 (thank you Anatoly Pashin)<br/>
+- Non-optimal regular expression: new patterns (missing u-modifier)<br/>
 <br/>
-- Infinity loop detection: implemented (infinite recursion)<br/>
-- Hostname substitution: implemented (experimental, feedback is welcome)<br/>
-- Parameter passed by reference has default value: dropped<br/>
-- Self class referencing: implemented (thank you David Rodrigues)<br/>
-- Strings N-character comparison flaws: implemented<br/>
-- Unnecessary type casting: implemented (implicit type hints based)<br/>
+- 'simplexml_load_file(...)' usage correctness: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>

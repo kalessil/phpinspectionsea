@@ -1,17 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
@@ -21,9 +17,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class PrefixedIncDecrementEquivalentInspector extends BasePhpInspection {
-    private static final String patternIncrementEquivalent = "Can be safely replaced with '++%s%'.";
-    private static final String patternDecrementEquivalent = "Can be safely replaced with '--%s%'.";
+    private static final String patternMessage = "Can be safely replaced with '%e%'.";
 
     @NotNull
     public String getShortName() {
@@ -39,7 +43,7 @@ public class PrefixedIncDecrementEquivalentInspector extends BasePhpInspection {
                 if (variable instanceof ArrayAccessExpression) {
                     final HashSet<String> containerTypes = new HashSet<>();
                     TypeFromPlatformResolverUtil.resolveExpressionType(((ArrayAccessExpression) variable).getValue(), containerTypes);
-                    boolean isArray = !containerTypes.contains(Types.strString) && containerTypes.contains(Types.strArray);
+                    boolean isArray = containerTypes.contains(Types.strArray) && !containerTypes.contains(Types.strString);
 
                     containerTypes.clear();
                     return !isArray;
@@ -48,35 +52,32 @@ public class PrefixedIncDecrementEquivalentInspector extends BasePhpInspection {
                 return false;
             }
 
-            /** self assignments */
-            public void visitPhpSelfAssignmentExpression(SelfAssignmentExpression expression) {
+            @Override
+            public void visitPhpSelfAssignmentExpression(@NotNull SelfAssignmentExpression expression) {
                 final IElementType operation = expression.getOperationType();
                 final PhpPsiElement value    = expression.getValue();
                 final PhpPsiElement variable = expression.getVariable();
                 if (null != value && null != operation && null != variable) {
                     if (operation == PhpTokenTypes.opPLUS_ASGN) {
                         if (value.getText().equals("1") && !isArrayAccessOrString(variable)) {
-                            final String message = patternIncrementEquivalent.replace("%s%", variable.getText());
-                            holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(operation));
+                            final String replacement = "++" + variable.getText();
+                            final String message     = patternMessage.replace("%e%", replacement);
+                            holder.registerProblem(expression, message, new UseIncrementFix(replacement));
                         }
-
-                        return;
-                    }
-
-                    if (operation == PhpTokenTypes.opMINUS_ASGN) {
+                    } else if (operation == PhpTokenTypes.opMINUS_ASGN) {
                         if (value.getText().equals("1") && !isArrayAccessOrString(variable)) {
-                            final String message = patternDecrementEquivalent.replace("%s%", variable.getText());
-                            holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(operation));
+                            final String replacement = "--" + variable.getText();
+                            final String message     = patternMessage.replace("%e%", replacement);
+                            holder.registerProblem(expression, message, new UseDecrementFix(replacement));
                         }
-                        //return;
                     }
                 }
             }
 
-            /** assignments expressions inspection*/
-            public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
+            @Override
+            public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
                 final PhpPsiElement variable = assignmentExpression.getVariable();
-                if (null != variable && assignmentExpression.getValue() instanceof BinaryExpression) {
+                if (variable != null && assignmentExpression.getValue() instanceof BinaryExpression) {
                     final BinaryExpression value = (BinaryExpression) assignmentExpression.getValue();
 
                     /* operation and operands provided */
@@ -93,75 +94,50 @@ public class PrefixedIncDecrementEquivalentInspector extends BasePhpInspection {
                             (leftOperand.getText().equals("1") && PsiEquivalenceUtil.areElementsEquivalent(rightOperand, variable)) ||
                             (rightOperand.getText().equals("1") && PsiEquivalenceUtil.areElementsEquivalent(leftOperand, variable))
                         ) {
-                            if (!isArrayAccessOrString(assignmentExpression.getVariable())) {
-                                final String message = patternIncrementEquivalent.replace("%s%", variable.getText());
-                                holder.registerProblem(assignmentExpression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(operation));
+                            if (!isArrayAccessOrString(variable)) {
+                                final String replacement = "++" + variable.getText();
+                                final String message     = patternMessage.replace("%e%", replacement);
+                                holder.registerProblem(assignmentExpression, message, new UseIncrementFix(replacement));
                             }
                         }
-
-                        return;
-                    }
-
-                    if (operation == PhpTokenTypes.opMINUS) {
+                    } else if (operation == PhpTokenTypes.opMINUS) {
                         /* minus operation: operand position IS important */
                         if (
                             rightOperand.getText().equals("1") &&
                             PsiEquivalenceUtil.areElementsEquivalent(leftOperand, variable) &&
-                            !isArrayAccessOrString(assignmentExpression.getVariable())
+                            !isArrayAccessOrString(variable)
                         ) {
-                            final String message = patternDecrementEquivalent.replace("%s%", variable.getText());
-                            holder.registerProblem(assignmentExpression, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(operation));
+                            final String replacement = "--" + variable.getText();
+                            final String message     = patternMessage.replace("%e%", replacement);
+                            holder.registerProblem(assignmentExpression, message, new UseDecrementFix(replacement));
                         }
-
-                        //return;
                     }
                 }
             }
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
-        @Nullable final String operation;
-
+    private class UseIncrementFix extends UseSuggestedReplacementFixer {
         @NotNull
         @Override
         public String getName() {
-            return "Use suggested replacement";
+            return "Use increment operation instead";
         }
 
+        UseIncrementFix(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private class UseDecrementFix extends UseSuggestedReplacementFixer {
         @NotNull
         @Override
-        public String getFamilyName() {
-            return getName();
+        public String getName() {
+            return "Use decrement operation instead";
         }
 
-        public TheLocalFix (@NotNull IElementType operation) {
-            super();
-
-            if (PhpTokenTypes.opMINUS == operation || PhpTokenTypes.opMINUS_ASGN == operation) {
-                this.operation = "--";
-                return;
-            }
-            if (PhpTokenTypes.opPLUS == operation || PhpTokenTypes.opPLUS_ASGN == operation) {
-                this.operation = "++";
-                return;
-            }
-            this.operation = null;
-        }
-
-        @Override
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement assignment = descriptor.getPsiElement();
-            if (null != this.operation && assignment instanceof AssignmentExpression) {
-                final PsiElement variable = ((AssignmentExpression) assignment).getVariable();
-                if (null != variable) {
-                    final String pattern         = this.operation + variable.getText();
-                    final PsiElement replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, pattern);
-                    if (null != replacement) {
-                        assignment.replace(replacement);
-                    }
-                }
-            }
+        UseDecrementFix(@NotNull String expression) {
+            super(expression);
         }
     }
 }

@@ -5,14 +5,16 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformatio
 
 final public class PrefixedIncDecrementEquivalentInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new PrefixedIncDecrementEquivalentInspector());
+
         myFixture.configureByFile("fixtures/codeStyle/prefixed-increment-decrement.php");
-        myFixture.enableInspections(PrefixedIncDecrementEquivalentInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 
     public void testFalsePositives() {
+        myFixture.enableInspections(new PrefixedIncDecrementEquivalentInspector());
+
         myFixture.configureByFile("fixtures/codeStyle/prefixed-increment-decrement-false-positives.php");
-        myFixture.enableInspections(PrefixedIncDecrementEquivalentInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

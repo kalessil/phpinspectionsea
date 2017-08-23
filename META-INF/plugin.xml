@@ -594,8 +594,8 @@ Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>!
         groupName="Code Style"                                    enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.AccessModifierPresentedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="PrefixedIncDecrementEquivalentInspection"      displayName="Prefixed increment/decrement equivalent"
-        groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
+        shortName="PrefixedIncDecrementEquivalentInspection"      displayName="Increment/decrement operation equivalent"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.PrefixedIncDecrementEquivalentInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="CallableReferenceNameMismatchInspection"       displayName="Callable name case mismatched in a call"

@@ -43,11 +43,10 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpBinaryExpression(BinaryExpression expression) {
-                /* verify operation is as expected */
-                final PsiElement operation  = expression.getOperation();
-                final IElementType operator = null == operation ? null : operation.getNode().getElementType();
-                if (PhpTokenTypes.opEQUAL == operator || PhpTokenTypes.opNOT_EQUAL == operator) {
+            @Override
+            public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
+                final IElementType operator = expression.getOperationType();
+                if (operator != null && (operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opNOT_EQUAL)) {
                     this.triggerProblem(expression, operator);
                 }
             }
@@ -73,10 +72,10 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                         return;
                     }
 
-                    /* string literal is numeric, no strict compare possible */
-                    if (!literalValue.matches("^[0-9+-]+$")) {
+                    /* string literal is numeric or empty, no strict compare possible */
+                    if (!literalValue.isEmpty() && !literalValue.matches("^[0-9+-]+$")) {
                         final String messageCompareStrict = patternCompareStrict.replace("%o%", targetOperator);
-                        holder.registerProblem(subject, messageCompareStrict, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new CompareStrictFix(targetOperator));
+                        holder.registerProblem(subject, messageCompareStrict, new CompareStrictFix(targetOperator));
 
                         return;
                     }
@@ -109,7 +108,6 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
         }
 
         CompareStrictFix(@NotNull String operator) {
-            super();
             this.operator = operator;
         }
 

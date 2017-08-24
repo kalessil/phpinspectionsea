@@ -1,9 +1,9 @@
 <?php
 
     /* patterns, incl. un-escaping */
-    echo <weak_warning descr="Please consider using more strict '!==' here (hidden types casting will not be applied anymore).">"string"</weak_warning>;
-    echo <weak_warning descr="Please consider using more strict '!==' here (hidden types casting will not be applied anymore).">"\$\""</weak_warning>;
-    echo <weak_warning descr="Please consider using more strict '!==' here (hidden types casting will not be applied anymore).">""</weak_warning>;
+    echo <weak_warning descr="Safely use single quotes instead.">"string"</weak_warning>;
+    echo <weak_warning descr="Safely use single quotes instead.">"\$\""</weak_warning>;
+    echo <weak_warning descr="Safely use single quotes instead.">""</weak_warning>;
 
     /* false-positives */
     echo '123';

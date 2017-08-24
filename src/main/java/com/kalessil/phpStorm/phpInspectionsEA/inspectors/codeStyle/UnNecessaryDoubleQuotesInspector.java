@@ -26,8 +26,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
-    private static final String message
-            = "Please consider using more strict '!==' here (hidden types casting will not be applied anymore).";
+    private static final String message = "Safely use single quotes instead.";
 
     @NotNull
     public String getShortName() {

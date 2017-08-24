@@ -9,13 +9,13 @@
     $result = $object <> '...';
 
     /* pattern: safe comparison */
-    $result = $x === '';
-    $result = $x !== '';
-    $result = $x !== '';
     $result = $x === '...';
+    $result = $x !== '...';
     $result = $x !== '...';
 
     /* pattern: needs hardening */
+    $result = $x == '';
+    $result = $x != '';
     $result = $x == '0';
     $result = $x != '0';
     $result = $x == $y;

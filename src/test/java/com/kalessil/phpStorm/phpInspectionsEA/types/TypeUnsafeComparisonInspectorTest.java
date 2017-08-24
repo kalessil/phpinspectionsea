@@ -6,8 +6,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.T
 
 final public class TypeUnsafeComparisonInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new TypeUnsafeComparisonInspector());
+
         myFixture.configureByFile("fixtures/types/type-unsafe-comparison.php");
-        myFixture.enableInspections(TypeUnsafeComparisonInspector.class);
         myFixture.testHighlighting(true, false, true);
 
         for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
@@ -17,8 +18,9 @@ final public class TypeUnsafeComparisonInspectorTest extends PhpCodeInsightFixtu
         myFixture.checkResultByFile("fixtures/types/type-unsafe-comparison.fixed.php");
     }
     public void testFalsePositives() {
+        myFixture.enableInspections(new TypeUnsafeComparisonInspector());
+
         myFixture.configureByFile("fixtures/types/type-unsafe-comparison-false-positives.php");
-        myFixture.enableInspections(TypeUnsafeComparisonInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

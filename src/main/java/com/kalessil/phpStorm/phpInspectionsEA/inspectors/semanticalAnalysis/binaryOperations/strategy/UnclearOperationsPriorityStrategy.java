@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.If;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -24,8 +25,8 @@ final public class UnclearOperationsPriorityStrategy {
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         final IElementType operator = expression.getOperationType();
+        final PsiElement parent     = expression.getParent();
         if (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR) {
-            final PsiElement parent = expression.getParent();
             /* binary expressions, already wrapped into parenthesises can be skipped */
             if (parent instanceof BinaryExpression) {
                 final IElementType parentOperator = ((BinaryExpression) parent).getOperationType();
@@ -37,6 +38,11 @@ final public class UnclearOperationsPriorityStrategy {
             /* assignment dramatically changing precedence */
             else if (OpenapiTypesUtil.isAssignment(parent) && parent.getParent().getClass() != StatementImpl.class) {
                 holder.registerProblem(expression, message, new WrapItAsItIsFix(expression));
+                return true;
+            }
+        } else if (PhpTokenTypes.tsCOMPARE_OPS.contains(operator)) {
+            if (OpenapiTypesUtil.isAssignment(parent) && parent.getParent() instanceof If) {
+                holder.registerProblem(parent, message, new WrapItAsItIsFix(expression));
                 return true;
             }
         }

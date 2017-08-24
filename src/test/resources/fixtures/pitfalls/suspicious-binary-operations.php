@@ -48,6 +48,7 @@ $y = [
 ];
 
 /* operations priority issues */
+if (<error descr="Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a = $b !== $c</error>) {}
 if ($a || <error descr="Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b && $c</error>) {}
 if (<error descr="Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a && $b</error> || $c) {}
 if ($a = <error descr="Operations priority might differ from what you expect: please wrap needed with '(...)'.">function1() && $b</error>)                     {}

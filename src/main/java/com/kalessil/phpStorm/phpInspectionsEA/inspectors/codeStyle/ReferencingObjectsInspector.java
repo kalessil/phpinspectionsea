@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
@@ -14,6 +13,17 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class ReferencingObjectsInspector extends BasePhpInspection {
     private static final String messageParameter  = "Objects are always passed by reference; please correct '& $%p%'.";
@@ -38,31 +48,31 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             /* re-dispatch to inspector */
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 this.inspectCallable(method);
             }
-            public void visitPhpFunction(Function function) {
+            @Override
+            public void visitPhpFunction(@NotNull Function function) {
                 this.inspectCallable(function);
             }
 
             private void inspectCallable (@NotNull Function callable) {
-                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(callable);
-                if (null == nameNode) {
-                    return;
-                }
-
-                for (Parameter parameter : callable.getParameters()) {
-                    if (
-                        parameter.isPassByRef() && !parameter.getDeclaredType().isEmpty() &&
-                        !PhpType.isSubType(parameter.getDeclaredType(), php7Types)
-                    ) {
-                        final String message = messageParameter.replace("%p%", parameter.getName());
-                        holder.registerProblem(parameter, message, ProblemHighlightType.WEAK_WARNING, new ParameterLocalFix(parameter));
-                    }
+                if (NamedElementUtil.getNameIdentifier(callable) != null) {
+                    Arrays.stream(callable.getParameters())
+                        .filter(p -> {
+                            final PhpType declared = p.getDeclaredType();
+                            return p.isPassByRef() && !declared.isEmpty() && !PhpType.isSubType(declared, php7Types);
+                        })
+                        .forEach(p -> {
+                            final String message = messageParameter.replace("%p%", p.getName());
+                            holder.registerProblem(p, message, new ParameterLocalFix(p));
+                        });
                 }
             }
 
-            public void visitPhpNewExpression(NewExpression expression) {
+            @Override
+            public void visitPhpNewExpression(@NotNull NewExpression expression) {
                 final PsiElement parent = expression.getParent();
                 if (parent instanceof AssignmentExpression) {
                     final AssignmentExpression assignment = (AssignmentExpression) parent;
@@ -72,8 +82,8 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
                             operation = operation.getPrevSibling();
                         }
 
-                        if (null != operation && operation.getText().replaceAll("\\s+","").equals("=&")) {
-                            holder.registerProblem(expression, messageAssignment, ProblemHighlightType.WEAK_WARNING, new InstantiationLocalFix(operation));
+                        if (operation != null && operation.getText().replaceAll("\\s+","").equals("=&")) {
+                            holder.registerProblem(expression, messageAssignment, new InstantiationLocalFix(operation));
                         }
                     }
                 }

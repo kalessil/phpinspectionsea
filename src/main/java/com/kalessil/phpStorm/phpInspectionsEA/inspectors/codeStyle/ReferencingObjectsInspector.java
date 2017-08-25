@@ -6,11 +6,13 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,6 +54,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
             public void visitPhpMethod(@NotNull Method method) {
                 this.inspectCallable(method);
             }
+
             @Override
             public void visitPhpFunction(@NotNull Function function) {
                 this.inspectCallable(function);
@@ -62,7 +65,23 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
                     Arrays.stream(callable.getParameters())
                         .filter(p -> {
                             final PhpType declared = p.getDeclaredType();
-                            return p.isPassByRef() && !declared.isEmpty() && !PhpType.isSubType(declared, php7Types);
+                            return !declared.isEmpty() && p.isPassByRef() && !PhpType.isSubType(declared, php7Types);
+                        })
+                        .filter(p -> {
+                            boolean result             = true;
+                            final String parameterName = p.getName();
+                            final GroupStatement body  = ExpressionSemanticUtil.getGroupStatement(callable);
+                            for (final Variable variable : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
+                                final PsiElement parent = variable.getParent();
+                                if (parent instanceof AssignmentExpression && parameterName.equals(variable.getName())) {
+                                    final AssignmentExpression assignment = (AssignmentExpression) parent;
+                                    if (assignment.getVariable() == variable) {
+                                        result = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            return result;
                         })
                         .forEach(p -> {
                             final String message = messageParameter.replace("%p%", p.getName());
@@ -92,6 +111,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
     }
 
     private static class InstantiationLocalFix implements LocalQuickFix {
+        @NotNull
         final private SmartPsiElementPointer<PsiElement> assignOperator;
 
         InstantiationLocalFix(@NotNull PsiElement assignOperator) {
@@ -116,7 +136,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement assignOperator = this.assignOperator.getElement();
-            if (null != assignOperator) {
+            if (assignOperator != null) {
                 LeafPsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "=");
                 //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here
                 assignOperator.replace(replacement);
@@ -125,6 +145,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
     }
 
     private static class ParameterLocalFix implements LocalQuickFix {
+        @NotNull
         final private SmartPsiElementPointer<Parameter> parameter;
 
         ParameterLocalFix(@NotNull Parameter parameter) {
@@ -150,7 +171,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final Parameter parameter = this.parameter.getElement();
             final PsiElement nameNode = NamedElementUtil.getNameIdentifier(parameter);
-            if (null != nameNode) {
+            if (nameNode != null) {
                 PsiElement previous = nameNode.getPrevSibling();
                 if (previous instanceof PsiWhiteSpace) {
                     previous = previous.getPrevSibling();

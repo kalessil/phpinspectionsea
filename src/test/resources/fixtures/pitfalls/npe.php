@@ -15,18 +15,18 @@ class CasesHolder {
         $fourth->property = 'NPE is not reported - we do not rely onto DocBlock';
 
         /* case 1: multiple reports, until nullability checked */
-        <warning descr="Null pointer exception may occur here.">$first</warning>->property = 'NPE reported';
+        <warning descr="Null pointer exception may occur here.">$first</warning>->property = '...';
         <warning descr="Null pointer exception may occur here.">$first</warning>();
         if (null !== $first) {
             return $first->property;
         }
 
-        <warning descr="Null pointer exception may occur here.">$second</warning>->property = 'NPE reported';
+        <warning descr="Null pointer exception may occur here.">$second</warning>->property = '...';
         if ($second instanceof \InvokableClass) {
             return $second->property;
         }
 
-        <warning descr="Null pointer exception may occur here.">$third</warning>->property = 'NPE reported';
+        <warning descr="Null pointer exception may occur here.">$third</warning>->property = '...';
         if ($third) {
             return $third->property;
         }
@@ -39,12 +39,12 @@ class CasesHolder {
     ) {
         $third->property = 'NPE is not reported - the parameter is not nullable';
 
-        <warning descr="Null pointer exception may occur here.">$first</warning>->property = 'NPE reported';
+        <warning descr="Null pointer exception may occur here.">$first</warning>->property = '...';
         if (isset($first)) {
             return $first->property;
         }
 
-        <warning descr="Null pointer exception may occur here.">$second</warning>->property = 'NPE reported';
+        <warning descr="Null pointer exception may occur here.">$second</warning>->property = '...';
         if (!empty($second)) {
             return $second->property;
         }
@@ -60,6 +60,11 @@ class CasesHolder {
     public function npeCheckConstraints(\InvokableClass $first = null) {
         $first = $first ?: null;
         $first->property = 'Obviously NPE, but we stop at re-assigning. No solution as of April 2017.';
+    }
+
+    public function npeCheckLocalVariables(\InvokableClass $first = null) {
+        $local = $first;
+        <warning descr="Null pointer exception may occur here.">$local</warning>->property = '...';
     }
 
     public function npeReportingFunctionReference(?\stdClass $one, \stdClass $two = null, \stdClass $three, $four) {

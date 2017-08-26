@@ -1,9 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.strategy;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
@@ -15,9 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /*
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-final public class NullableParameterStrategy {
+final public class NullableVariablesStrategy {
     private static final String message = "Null pointer exception may occur here.";
 
     private static final Set<String> objectTypes = new HashSet<>();
@@ -39,7 +38,47 @@ final public class NullableParameterStrategy {
         objectTypes.add(Types.strObject);
     }
 
-    public static void apply(@NotNull Method method, @NotNull ProblemsHolder holder) {
+    public static void applyToVariables(@NotNull Method method, @NotNull ProblemsHolder holder) {
+        final Set<String> parameters = Arrays.stream(method.getParameters()).map(Parameter::getName).collect(Collectors.toSet());
+        final GroupStatement body    = ExpressionSemanticUtil.getGroupStatement(method);
+
+        /* group variables assignments, except parameters */
+        final Map<String, List<AssignmentExpression>> assignments = new HashMap<>();
+        for (final Variable variable : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
+            final String variableName = variable.getName();
+            final PsiElement parent   = variable.getParent();
+            if (parent instanceof AssignmentExpression && !parameters.contains(variableName)) {
+                final AssignmentExpression assignment = (AssignmentExpression) parent;
+                if (assignment.getVariable() == variable) {
+                    if (!assignments.containsKey(variableName)) {
+                        assignments.put(variableName, new ArrayList<>());
+                    }
+                    assignments.get(variableName).add(assignment);
+                }
+            }
+        }
+
+        /* check if the variable has been written only once, inspect when null/void values are possible */
+        final PhpEntryPointInstruction controlFlowStart = method.getControlFlow().getEntryPoint();
+        final Project project                           = holder.getProject();
+        for (final String variableName : assignments.keySet()) {
+            final List<AssignmentExpression> variableAssignments = assignments.get(variableName);
+            if (variableAssignments.size() == 1) {
+                final AssignmentExpression assignment = variableAssignments.iterator().next();
+                final PsiElement assignmentValue      = assignment.getValue();
+                if (assignmentValue instanceof PhpTypedElement) {
+                    final Set<String> types = assignment.getType().global(project).filterUnknown().getTypes().stream()
+                            .map(Types::getType).collect(Collectors.toSet());
+                    if (types.contains(Types.strNull) || types.contains(Types.strVoid)) {
+                        apply(variableName, controlFlowStart, holder);
+                    }
+                }
+            }
+            variableAssignments.clear();
+        }
+    }
+
+    public static void applyToParameters(@NotNull Method method, @NotNull ProblemsHolder holder) {
         final PhpEntryPointInstruction controlFlowStart = method.getControlFlow().getEntryPoint();
         for (final Parameter parameter : method.getParameters()) {
             final Set<String> declaredTypes =
@@ -58,20 +97,20 @@ final public class NullableParameterStrategy {
                 }
 
                 if (isObject) {
-                    applyToParameter(parameter.getName(), controlFlowStart, holder);
+                    apply(parameter.getName(), controlFlowStart, holder);
                 }
             }
             declaredTypes.clear();
         }
     }
 
-    private static void applyToParameter(
-        @NotNull String parameterName,
+    private static void apply(
+        @NotNull String variableName,
         @NotNull PhpEntryPointInstruction controlFlowStart,
         @NotNull ProblemsHolder holder
     ) {
         final PhpAccessVariableInstruction[] uses
-                = PhpControlFlowUtil.getFollowingVariableAccessInstructions(controlFlowStart, parameterName, false);
+                = PhpControlFlowUtil.getFollowingVariableAccessInstructions(controlFlowStart, variableName, false);
         for (final PhpAccessVariableInstruction instruction : uses) {
             final PhpPsiElement variable = instruction.getAnchor();
             final PsiElement parent      = variable.getParent();
@@ -106,7 +145,7 @@ final public class NullableParameterStrategy {
             if (parent instanceof AssignmentExpression) {
                 final AssignmentExpression assignment = (AssignmentExpression) parent;
                 final PsiElement candidate            = assignment.getVariable();
-                if (candidate instanceof Variable && ((Variable) candidate).getName().equals(parameterName)) {
+                if (candidate instanceof Variable && ((Variable) candidate).getName().equals(variableName)) {
                     return;
                 }
             }
@@ -115,7 +154,7 @@ final public class NullableParameterStrategy {
             if (parent instanceof ArrayAccessExpression) {
                 final PsiElement container = ((ArrayAccessExpression) parent).getValue();
                 if (variable == container) {
-                    holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(variable, message);
                 }
                 continue;
             }
@@ -124,14 +163,14 @@ final public class NullableParameterStrategy {
             if (parent instanceof MemberReference) {
                 final MemberReference reference = (MemberReference) parent;
                 final PsiElement subject        = reference.getClassReference();
-                if (subject instanceof Variable && ((Variable) subject).getName().equals(parameterName)) {
-                    holder.registerProblem(subject, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                if (subject instanceof Variable && ((Variable) subject).getName().equals(variableName)) {
+                    holder.registerProblem(subject, message);
                 }
                 continue;
             }
             /* cases when NPE can be introduced: __invoke calls */
             if (OpenapiTypesUtil.isFunctionReference(parent) && variable == parent.getFirstChild()) {
-                holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(variable, message);
                 continue;
             }
 
@@ -164,7 +203,7 @@ final public class NullableParameterStrategy {
                             }
                         }
                         if (isObject) {
-                            holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(variable, message);
                         }
                     }
                     declaredTypes.clear();

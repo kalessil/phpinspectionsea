@@ -35,9 +35,8 @@ final public class ChainedCallsStrategy {
 
     public static void apply(@NotNull Method method, @NotNull ProblemsHolder holder) {
         final Map<MethodReference, String> nullTestedReferences = new HashMap<>();
-        for (final MethodReference reference : PsiTreeUtil.findChildrenOfType(method, MethodReference.class)) {
-            apply(reference, nullTestedReferences, holder);
-        }
+        PsiTreeUtil.findChildrenOfType(method, MethodReference.class)
+                .forEach(reference -> apply(reference, nullTestedReferences, holder));
         nullTestedReferences.clear();
     }
 
@@ -68,7 +67,7 @@ final public class ChainedCallsStrategy {
                             }
                         }
                         if (!isNullTested) {
-                            holder.registerProblem(operator, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(operator, message);
                             break;
                         }
                     }

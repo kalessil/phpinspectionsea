@@ -62,8 +62,8 @@ class CasesHolder {
         $first->property = 'Obviously NPE, but we stop at re-assigning. No solution as of April 2017.';
     }
 
-    public function npeCheckLocalVariables(\InvokableClass $first = null) {
-        $local = $first;
+    public function npeCheckLocalVariables() {
+        $local = null;
         <warning descr="Null pointer exception may occur here.">$local</warning>->property = '...';
     }
 

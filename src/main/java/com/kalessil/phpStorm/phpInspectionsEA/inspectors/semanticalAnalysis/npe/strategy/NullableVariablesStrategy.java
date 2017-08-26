@@ -15,6 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,7 +39,7 @@ final public class NullableVariablesStrategy {
         objectTypes.add(Types.strObject);
     }
 
-    public static void applyToVariables(@NotNull Method method, @NotNull ProblemsHolder holder) {
+    public static void applyToLocalVariables(@NotNull Method method, @NotNull ProblemsHolder holder) {
         final Set<String> parameters = Arrays.stream(method.getParameters()).map(Parameter::getName).collect(Collectors.toSet());
         final GroupStatement body    = ExpressionSemanticUtil.getGroupStatement(method);
 
@@ -67,15 +68,17 @@ final public class NullableVariablesStrategy {
                 final AssignmentExpression assignment = variableAssignments.iterator().next();
                 final PsiElement assignmentValue      = assignment.getValue();
                 if (assignmentValue instanceof PhpTypedElement) {
-                    final Set<String> types = assignment.getType().global(project).filterUnknown().getTypes().stream()
+                    final Set<String> types = ((PhpTypedElement) assignmentValue)
+                            .getType().global(project).filterUnknown().getTypes().stream()
                             .map(Types::getType).collect(Collectors.toSet());
                     if (types.contains(Types.strNull) || types.contains(Types.strVoid)) {
-                        apply(variableName, controlFlowStart, holder);
+                        apply(variableName, assignment, controlFlowStart, holder);
                     }
                 }
             }
             variableAssignments.clear();
         }
+        assignments.clear();
     }
 
     public static void applyToParameters(@NotNull Method method, @NotNull ProblemsHolder holder) {
@@ -97,7 +100,7 @@ final public class NullableVariablesStrategy {
                 }
 
                 if (isObject) {
-                    apply(parameter.getName(), controlFlowStart, holder);
+                    apply(parameter.getName(), null, controlFlowStart, holder);
                 }
             }
             declaredTypes.clear();
@@ -106,6 +109,7 @@ final public class NullableVariablesStrategy {
 
     private static void apply(
         @NotNull String variableName,
+        @Nullable AssignmentExpression variableDeclaration,
         @NotNull PhpEntryPointInstruction controlFlowStart,
         @NotNull ProblemsHolder holder
     ) {
@@ -141,8 +145,12 @@ final public class NullableVariablesStrategy {
                 return;
             }
 
-            /* show stoppers: overriding the variable;  */
+            /* show stoppers: overriding the variable; except the variable declarations of course */
             if (parent instanceof AssignmentExpression) {
+                if (parent == variableDeclaration) {
+                    continue;
+                }
+
                 final AssignmentExpression assignment = (AssignmentExpression) parent;
                 final PsiElement candidate            = assignment.getVariable();
                 if (candidate instanceof Variable && ((Variable) candidate).getName().equals(variableName)) {

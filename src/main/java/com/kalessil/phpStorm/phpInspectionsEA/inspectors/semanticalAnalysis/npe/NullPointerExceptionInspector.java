@@ -33,7 +33,7 @@ public class NullPointerExceptionInspector extends BasePhpInspection {
                 if (!method.isAbstract()) {
                     NullableVariablesStrategy.applyToParameters(method, holder);
                     ChainedCallsStrategy.apply(method, holder);
-                    NullableVariablesStrategy.applyToVariables(method, holder);
+                    NullableVariablesStrategy.applyToLocalVariables(method, holder);
                 }
             }
         };

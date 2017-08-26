@@ -10,6 +10,7 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableI
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
@@ -50,7 +51,7 @@ final public class NullableVariablesStrategy {
             final PsiElement parent   = variable.getParent();
             if (parent instanceof AssignmentExpression && !parameters.contains(variableName)) {
                 final AssignmentExpression assignment = (AssignmentExpression) parent;
-                if (assignment.getVariable() == variable) {
+                if (assignment.getParent() instanceof StatementImpl && assignment.getVariable() == variable) {
                     if (!assignments.containsKey(variableName)) {
                         assignments.put(variableName, new ArrayList<>());
                     }

@@ -1,4 +1,4 @@
 <?php
 
-    $x = array_keys(array_count_values([]));
-    $y = count(array_count_values([]));
+    $x = array_values(array_unique([]));
+    $y = count(array_unique([]));

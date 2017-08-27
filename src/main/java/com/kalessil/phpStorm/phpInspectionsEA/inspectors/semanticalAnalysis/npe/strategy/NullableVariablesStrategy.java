@@ -53,7 +53,11 @@ final public class NullableVariablesStrategy {
             final PsiElement parent   = variable.getParent();
             if (parent instanceof AssignmentExpression && !parameters.contains(variableName)) {
                 final AssignmentExpression assignment = (AssignmentExpression) parent;
-                if (assignment.getParent() instanceof StatementImpl && assignment.getVariable() == variable) {
+                if (
+                    assignment.getVariable() == variable &&
+                    assignment.getParent() instanceof StatementImpl &&
+                    !(assignment.getValue() instanceof FieldReference) /* TODO: strict method reference type check */
+                ) {
                     if (!assignments.containsKey(variableName)) {
                         assignments.put(variableName, new ArrayList<>());
                     }

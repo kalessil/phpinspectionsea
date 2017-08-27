@@ -9,7 +9,10 @@ import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.parser.parsing.expressions.*;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
+import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -180,6 +183,14 @@ final public class NullableVariablesStrategy {
             /* cases when NPE can be introduced: __invoke calls */
             if (OpenapiTypesUtil.isFunctionReference(parent) && variable == parent.getFirstChild()) {
                 holder.registerProblem(variable, message);
+                continue;
+            }
+            /* cases when NPE can be introduced: clone operator */
+            if (parent instanceof UnaryExpression) {
+                final PsiElement operation = ((UnaryExpression) parent).getOperation();
+                if (operation != null && operation.getNode().getElementType() == PhpTokenTypes.kwCLONE) {
+                    holder.registerProblem(variable, message);
+                }
                 continue;
             }
 

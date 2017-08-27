@@ -62,6 +62,10 @@ class CasesHolder {
         $first->property = 'Obviously NPE, but we stop at re-assigning. No solution as of April 2017.';
     }
 
+    public function npeCheckClone(?\stdClass $one) {
+        return clone <warning descr="Null pointer exception may occur here.">$one</warning>;
+    }
+
     public function npeCheckLocalVariables() {
         $local = null;
         <warning descr="Null pointer exception may occur here.">$local</warning>->property = '...';

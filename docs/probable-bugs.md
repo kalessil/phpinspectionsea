@@ -93,5 +93,6 @@ calls are not analyzed, instead we recommend to rely on null identity and instan
 that the inspection don't rely on DocBlock - types must be implicitly declared.
 
 Following cases currently supported (we'll keep extending the list):
-- method parameters (nullable objects), e.g. `public function method(?\stdClass $first, \stdClass $second = null) { ... }`
-- to be continued (when funding is found)
+- method parameters (nullable objects), e.g. `public function method(?\stdClass $first, \stdClass $second = null) { ... }`;
+- method local variables initialized with potentially nullable values;
+- to be continued (when funding is found);

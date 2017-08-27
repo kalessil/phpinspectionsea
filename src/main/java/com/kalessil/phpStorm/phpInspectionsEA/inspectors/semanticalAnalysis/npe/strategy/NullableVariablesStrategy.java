@@ -9,7 +9,6 @@ import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.parser.parsing.expressions.*;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
@@ -76,7 +75,11 @@ final public class NullableVariablesStrategy {
                             .getType().global(project).filterUnknown().getTypes().stream()
                             .map(Types::getType).collect(Collectors.toSet());
                     if (types.contains(Types.strNull) || types.contains(Types.strVoid)) {
-                        apply(variableName, assignment, controlFlowStart, holder);
+                        types.remove(Types.strNull);
+                        types.remove(Types.strVoid);
+                        if (types.stream().filter(t -> !t.startsWith("\\") && !objectTypes.contains(t)).count() == 0) {
+                            apply(variableName, assignment, controlFlowStart, holder);
+                        }
                     }
                 }
             }

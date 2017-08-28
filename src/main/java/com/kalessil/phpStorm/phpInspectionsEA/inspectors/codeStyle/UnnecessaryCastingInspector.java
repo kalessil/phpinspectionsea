@@ -17,11 +17,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -102,11 +100,16 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                     if (PhpTokenTypes.tsMATH_OPS.contains(((BinaryExpression) expression).getOperationType())) {
                         PsiElement candidate = (PsiElement) expression;
                         while (candidate instanceof BinaryExpression) {
-                            final BinaryExpression binary = (BinaryExpression) candidate;
-                            final PsiElement right
-                                    = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getRightOperand());
-                            if (right instanceof PhpTypedElement) {
-                                final PhpType resolved  = ((PhpTypedElement) right).getType().global(project);
+                            final BinaryExpression binary   = (BinaryExpression) candidate;
+                            final List<PsiElement> operands = Stream.of(
+                                ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getRightOperand()),
+                                ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getLeftOperand())
+                            )
+                                .filter(operand -> operand instanceof PhpTypedElement)
+                                .collect(Collectors.toList());
+
+                            for (final PsiElement operand : operands) {
+                                final PhpType resolved  = ((PhpTypedElement) operand).getType().global(project);
                                 final Set<String> types = resolved.hasUnknown() ? new HashSet<>() : resolved.getTypes();
                                 if (types.stream().map(Types::getType).collect(Collectors.toSet()).contains(Types.strFloat)) {
                                     final Set<String> patchedTypes = result.getTypes();
@@ -117,6 +120,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                                     break;
                                 }
                             }
+
                             candidate = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getLeftOperand());
                         }
                     }

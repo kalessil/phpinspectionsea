@@ -24,6 +24,7 @@
         <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(float)</weak_warning> (0.99 * 1),
         <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(float)</weak_warning> (1 * 0.99),
         (int)(1 * 0.99),
+        (int)(0.99 * 1),
         (int)(1 * 0.99 * 1)
     ];
 

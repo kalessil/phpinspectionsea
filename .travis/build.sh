@@ -29,7 +29,7 @@ function download {
   cachefile=${travisCache}/${basename}
 
   if [ ! -f ${cachefile} ]; then
-      wget -q $url -P ${travisCache};
+      wget --quiet --no-verbose $url -P ${travisCache};
     else
       echo "Cached file `ls -sh $cachefile` - `date -r $cachefile +'%Y-%m-%d %H:%M:%S'`"
   fi

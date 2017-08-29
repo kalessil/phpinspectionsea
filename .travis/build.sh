@@ -29,7 +29,9 @@ function download {
   cachefile=${travisCache}/${basename}
 
   if [ ! -f ${cachefile} ]; then
+      echo "travis_fold:start:SCRIPT folding starts"
       wget $url -P ${travisCache};
+      echo "travis_fold:end:SCRIPT folding ends"
     else
       echo "Cached file `ls -sh $cachefile` - `date -r $cachefile +'%Y-%m-%d %H:%M:%S'`"
   fi

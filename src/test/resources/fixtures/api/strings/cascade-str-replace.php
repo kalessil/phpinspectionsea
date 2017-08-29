@@ -29,7 +29,7 @@
     $b = str_replace('', '', $a);
 
     /* QF correctness cases */
-    function fix_correctness()
+    function fix_correctness($x, $y, $z, $t)
     {
         $one = str_replace('1', '.', '...');
         $one = <warning descr="This str_replace(...) call can be merged with the previous.">str_replace('2', '.', $one)</warning>;
@@ -44,4 +44,7 @@
 
         $seven = str_replace(['1'], 'x', <warning descr="This str_replace(...) call can be merged with its parent.">str_replace(['2'], ['y'], '...')</warning>);
         $eight = str_replace(['1', '2'], 'x', <warning descr="This str_replace(...) call can be merged with its parent.">str_replace(['3'], 'y', '...')</warning>);
+
+        $ten    = str_replace($x, $y, <warning descr="This str_replace(...) call can be merged with its parent.">str_replace('x', 'y', '...')</warning>);
+        $eleven = str_replace('x', 'y', <warning descr="This str_replace(...) call can be merged with its parent.">str_replace($z, $t, '...')</warning>);
     }

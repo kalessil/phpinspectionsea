@@ -27,7 +27,7 @@
     $b = str_replace('', '', $a);
 
     /* QF correctness cases */
-    function fix_correctness()
+    function fix_correctness($x, $y, $z, $t)
     {
         $one = str_replace(array('1', '2', '3'), array('.', '.', '_'), '...');
 
@@ -40,4 +40,7 @@
 
         $seven = str_replace(['2', '1'], array('y', 'x'), '...');
         $eight = str_replace(['3', '1', '2'], array('y', 'x', 'x'), '...');
+
+        $ten    = str_replace(array('x', $x), array('y', $y), '...');
+        $eleven = str_replace(array($z, 'x'), array($t, 'y'), '...');
     }

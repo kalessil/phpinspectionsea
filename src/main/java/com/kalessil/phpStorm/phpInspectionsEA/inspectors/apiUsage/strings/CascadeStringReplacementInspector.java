@@ -209,12 +209,9 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         private void mergeArguments(@NotNull PsiElement to, @NotNull PsiElement from) {
             final Project project  = to.getProject();
             if (to instanceof StringLiteralExpression) {
-                if (from instanceof StringLiteralExpression) {
-                    final String pattern = "array (%1%, %2%)".replace("%2%", to.getText()).replace("%1%", from.getText());
-                    to.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern));
-                } else if (from instanceof ArrayCreationExpression) {
+                if (from instanceof ArrayCreationExpression) {
                     final PsiElement comma       = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
-                    final String pattern         = "array (%1%)".replace("%1%", to.getText());
+                    final String pattern         = "array(%1%)".replace("%1%", to.getText());
                     final PsiElement replacement = PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern);
                     final PsiElement firstValue  = ((ArrayCreationExpression) replacement).getFirstPsiChild();
                     final PsiElement marker      = firstValue == null ? null : firstValue.getPrevSibling();
@@ -227,6 +224,9 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                         });
                         to.replace(replacement);
                     }
+                } else {
+                    final String pattern = "array(%1%, %2%)".replace("%2%", to.getText()).replace("%1%", from.getText());
+                    to.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern));
                 }
             } else if (to instanceof ArrayCreationExpression) {
                 final PsiElement comma      = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
@@ -245,6 +245,9 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                         });
                     }
                 }
+            } else {
+                final String pattern = "array(%1%, %2%)".replace("%2%", to.getText()).replace("%1%", from.getText());
+                to.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern));
             }
         }
 
@@ -296,7 +299,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 final int searchesCount = search.getChildren().length;
                 if (searchesCount > 1) {
                     final List<String> replaces = Collections.nCopies(searchesCount, replace.getText());
-                    final String pattern        = "array (%a%)".replace("%a%", String.join(", ", replaces));
+                    final String pattern        = "array(%a%)".replace("%a%", String.join(", ", replaces));
                     replace.replace(
                         PhpPsiElementFactory.createPhpPsiFromText(call.getProject(), ArrayCreationExpression.class, pattern)
                     );

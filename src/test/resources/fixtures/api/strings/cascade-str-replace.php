@@ -44,10 +44,10 @@
 
         $three = str_replace('1', '.', <warning descr="This str_replace(...) call can be merged with its parent.">str_replace('2', '.', '...')</warning>);
         $four  = str_replace('1', '.', <warning descr="This str_replace(...) call can be merged with its parent.">str_replace(['2'], ['.'], '...')</warning>);
-        $five  = str_replace(['1'], '.', <warning descr="This str_replace(...) call can be merged with its parent.">str_replace('2', '.', '...')</warning>);
-        $six   = str_replace(['1'], '.', <warning descr="This str_replace(...) call can be merged with its parent.">str_replace(['2'], ['.'], '...')</warning>);
+        $five  = str_replace(<weak_warning descr="Can be replaced with the string from the array.">['1']</weak_warning>, '.', <warning descr="This str_replace(...) call can be merged with its parent.">str_replace('2', '.', '...')</warning>);
+        $six   = str_replace(<weak_warning descr="Can be replaced with the string from the array.">['1']</weak_warning>, '.', <warning descr="This str_replace(...) call can be merged with its parent.">str_replace(['2'], ['.'], '...')</warning>);
 
-        $seven = str_replace(['1'], 'x', <warning descr="This str_replace(...) call can be merged with its parent.">str_replace(['2'], ['y'], '...')</warning>);
+        $seven = str_replace(<weak_warning descr="Can be replaced with the string from the array.">['1']</weak_warning>, 'x', <warning descr="This str_replace(...) call can be merged with its parent.">str_replace(['2'], ['y'], '...')</warning>);
         $eight = str_replace(['1', '2'], 'x', <warning descr="This str_replace(...) call can be merged with its parent.">str_replace(['3'], 'y', '...')</warning>);
 
         $ten    = str_replace($x, $y, <warning descr="This str_replace(...) call can be merged with its parent.">str_replace('x', 'y', '...')</warning>);

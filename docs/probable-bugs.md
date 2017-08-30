@@ -96,3 +96,30 @@ Following cases currently supported (we'll keep extending the list):
 - method parameters (nullable objects), e.g. `public function method(?\stdClass $first, \stdClass $second = null) { ... }`;
 - method local variables initialized with potentially nullable values;
 - to be continued (when funding is found);
+
+## Class autoloading correctness
+PHP´s magic [`::class`-constant](http://php.net/manual/en/language.oop5.basic.php#language.oop5.basic.class.class) will not canonical the casing of your imports.
+
+This can lead to hard to debug errors when you a using a case sensitive service  `PSR-11`-locator like `Zend\ServiceManager`.
+
+
+```php
+namespace FirstNamespace;
+
+class TestClass {}
+```
+
+```php
+namespace YetAnotherNamespace;
+
+use FirstNamespace\Testclass; // wrong case in last segment
+
+$instance = new TestClass(); // perfectly valid since php itself is not case sensitive for classnames
+
+$container->get(TestClass::class); 
+// TestClass::class expands to FirstNamespace\Testclass which is not registered in the $conainer
+```
+Discussion on Twitter: https://twitter.com/benjamincremer/status/872695045757038593  
+Demo: https://3v4l.org/9uBKU
+
+Please note that this is not a bug in PHP but expected behaviour: "The class name resolution using ::class is a compile time transformation. That means at the time the class name string is created no autoloading has happened yet. As a consequence, class names are expanded even if the class does not exist. No error is issued in that case.". See: [php.net](http://php.net/manual/en/language.oop5.basic.php#language.oop5.basic.class.class)

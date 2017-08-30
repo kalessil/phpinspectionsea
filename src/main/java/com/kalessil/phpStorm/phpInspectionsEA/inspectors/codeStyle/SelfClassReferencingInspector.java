@@ -42,7 +42,7 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
 
     @NotNull
     @Override
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean b) {
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean onTheFly) {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpClassConstantReference(@NotNull ClassConstantReference constantReference) {
@@ -77,6 +77,7 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpConstantReference(@NotNull ConstantReference constantReference) {
+                /* TODO: relocate into analyzeClassConstant */
                 if (PREFER_CLASS_NAMES) {
                     final String constantName = constantReference.getName();
                     if (constantName != null && constantName.equals("__CLASS__")) {
@@ -97,8 +98,8 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                 }
             }
 
-            private boolean isSameFQN(@NotNull final PsiElement psiElement, @NotNull final PhpReference reference) {
-                final String referenceName = reference.getName();
+            private boolean isSameFQN(@NotNull PsiElement expression, @NotNull ClassReference classReference) {
+                final String referenceName = classReference.getName();
                 if (PREFER_CLASS_NAMES) {
                     return "self".equals(referenceName);
                 } else {
@@ -106,65 +107,53 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                         return false;
                     }
 
-                    final PhpClass clazz = PsiTreeUtil.getParentOfType(psiElement, PhpClass.class);
-                    return clazz != null && clazz.getFQN().equals(reference.getFQN());
-                }
-            }
-
-            @Nullable
-            private String getClassName(@NotNull PhpReference psiElement) {
-                if (!PREFER_CLASS_NAMES) {
-                    return psiElement.getName();
-                } else {
-                    final PhpClass clazz = PsiTreeUtil.getParentOfType(psiElement, PhpClass.class);
-                    if (clazz != null && !clazz.isAnonymous()) {
-                        return clazz.getName();
-                    } else {
-                        return null;
-                    }
+                    final PhpClass clazz = PsiTreeUtil.getParentOfType(expression, PhpClass.class);
+                    return clazz != null && clazz.getFQN().equals(classReference.getFQN());
                 }
             }
 
             private void analyzeClassConstant(@NotNull ClassConstantReference constantReference, @NotNull ClassReference classReference) {
                 if (this.isSameFQN(constantReference, classReference)) {
-                    if (!PREFER_CLASS_NAMES) {
-                        final PhpClass clazz = PsiTreeUtil.getParentOfType(classReference, PhpClass.class);
-                        if (clazz != null && !clazz.isAnonymous() && !clazz.isTrait()){
-                            registerProblem(classReference.getParent(), getClassName(classReference) + "::class", "__CLASS__");
-                        }
-                    } else {
-                        final String className          = getClassName(classReference);
+                    if (PREFER_CLASS_NAMES) {
+                        final String className          = this.getClassName(classReference);
                         final String classReferenceName = classReference.getName();
                         if (!StringUtils.isEmpty(className) && !StringUtils.isEmpty(classReferenceName)) {
                             this.registerProblem(classReference, className, classReferenceName);
                         }
+                    } else {
+                        final PhpClass clazz = PsiTreeUtil.getParentOfType(classReference, PhpClass.class);
+                        if (clazz != null && !clazz.isAnonymous() && !clazz.isTrait()){
+                            this.registerProblem(classReference.getParent(), this.getClassName(classReference) + "::class", "__CLASS__");
+                        }
                     }
                 }
             }
 
-            private void analyze(@NotNull PsiElement expression, @NotNull PhpReference reference) {
-                if (this.isSameFQN(expression, reference)) {
-                    final String className = getClassName(reference);
+            private void analyze(@NotNull PsiElement expression, @NotNull ClassReference classReference) {
+                if (this.isSameFQN(expression, classReference)) {
+                    final String className = this.getClassName(classReference);
                     if (!StringUtils.isEmpty(className)) {
-                        this.registerProblem(reference, className, "self");
+                        this.registerProblem(classReference, className, "self");
                     }
                 }
+            }
+
+            @Nullable
+            private String getClassName(@NotNull ClassReference classReference) {
+                final String result;
+                if (PREFER_CLASS_NAMES) {
+                    final PhpClass clazz = PsiTreeUtil.getParentOfType(classReference, PhpClass.class);
+                    result               = (clazz == null || clazz.isAnonymous()) ? null : clazz.getName();
+                } else {
+                    result = classReference.getName();
+                }
+                return result;
             }
 
             private void registerProblem(@NotNull PsiElement target, @NotNull String className, @NotNull String replacement) {
-                if (PREFER_CLASS_NAMES) {
-                    problemsHolder.registerProblem(
-                            target,
-                            String.format(messagePattern, replacement, className),
-                            new TheLocalFix(className)
-                    );
-                } else {
-                    problemsHolder.registerProblem(
-                            target,
-                            String.format(messagePattern, className, replacement),
-                            new TheLocalFix(replacement)
-                    );
-                }
+                final String from = PREFER_CLASS_NAMES ? replacement : className;
+                final String to   = PREFER_CLASS_NAMES ? className : replacement;
+                problemsHolder.registerProblem(target, String.format(messagePattern, from, to), new TheLocalFix(to));
             }
         };
     }

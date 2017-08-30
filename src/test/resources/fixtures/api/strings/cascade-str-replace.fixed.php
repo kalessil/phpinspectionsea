@@ -40,10 +40,10 @@
 
         $three = str_replace(array('2', '1'), '.', '...');
         $four  = str_replace(array('2', '1'), '.', '...');
-        $five  = str_replace(['2', '1'], '.', '...');
-        $six   = str_replace(['2', '1'], '.', '...');
+        $five  = str_replace(array('2', '1'), '.', '...');
+        $six   = str_replace(array('2', '1'), '.', '...');
 
-        $seven = str_replace(['2', '1'], array('y', 'x'), '...');
+        $seven = str_replace(array('2', '1'), array('y', 'x'), '...');
         $eight = str_replace(['3', '1', '2'], array('y', 'x', 'x'), '...');
 
         $ten    = str_replace(array('x', $x), array('y', $y), '...');

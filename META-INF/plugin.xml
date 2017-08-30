@@ -52,7 +52,8 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Like the plugin? Become <a href="https://www.patreon.com/kalessil">a patron</a>! Hot-fixes:
+Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patreon</a> or
+<a href="https://www.paypal.me/VReznichenko">PayPal</a>. Hot-fixes:
 <br/>
 <br/>
 - General '\Exception' is thrown: resolved false-positives (overridden message property)<br/>

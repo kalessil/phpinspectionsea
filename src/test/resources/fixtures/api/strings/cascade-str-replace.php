@@ -23,6 +23,11 @@
         <weak_warning descr="Can be replaced with the string duplicated in array.">array('1', '1')</weak_warning>,
         '...'
     );
+    $simplify = str_replace(
+        <weak_warning descr="Can be replaced with the string duplicated in array.">array('1', '1')</weak_warning>,
+        '1',
+        '...'
+    );
 
     /* false-positives: source and result storage containers are not matching */
     $a = str_replace('', '', '');

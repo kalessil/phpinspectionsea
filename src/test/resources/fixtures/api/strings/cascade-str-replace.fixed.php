@@ -21,6 +21,11 @@
         '1',
         '...'
     );
+    $simplify = str_replace(
+        '1',
+        '1',
+        '...'
+    );
 
     /* false-positives: source and result storage containers are not matching */
     $a = str_replace('', '', '');

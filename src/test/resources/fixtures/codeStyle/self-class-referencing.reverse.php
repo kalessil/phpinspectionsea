@@ -4,13 +4,13 @@ class MyClass
 {
     public function method()
     {
-        new <weak_warning descr="Class reference \"self\" could be replaced by \"MyClass\"">self</weak_warning>;
-        <weak_warning descr="Class reference \"self\" could be replaced by \"MyClass\"">self</weak_warning>::CONSTANT;
-        <weak_warning descr="Class reference \"self\" could be replaced by \"MyClass\"">self</weak_warning>::staticMethod();
-        <weak_warning descr="Class reference \"self\" could be replaced by \"MyClass\"">self</weak_warning>::$staticProperty;
+        new <weak_warning descr="Class reference 'self' could be replaced by 'MyClass'">self</weak_warning>;
+        <weak_warning descr="Class reference 'self' could be replaced by 'MyClass'">self</weak_warning>::CONSTANT;
+        <weak_warning descr="Class reference 'self' could be replaced by 'MyClass'">self</weak_warning>::staticMethod();
+        <weak_warning descr="Class reference 'self' could be replaced by 'MyClass'">self</weak_warning>::$staticProperty;
 
-        <weak_warning descr="Class reference \"__CLASS__\" could be replaced by \"MyClass::class\"">__CLASS__</weak_warning>;
-        <weak_warning descr="Class reference \"self\" could be replaced by \"MyClass\"">self</weak_warning>::class;
+        <weak_warning descr="Class reference '__CLASS__' could be replaced by 'MyClass::class'">__CLASS__</weak_warning>;
+        <weak_warning descr="Class reference 'self' could be replaced by 'MyClass'">self</weak_warning>::class;
 
         (new MyClass)::staticMethod();
 
@@ -39,3 +39,10 @@ class MyClass
 
 // Not applicable: is not inside a class.
 __CLASS__;
+
+trait MyTrait
+{
+    public function method($object) {
+        Something::method(__CLASS__, $object);
+    }
+}

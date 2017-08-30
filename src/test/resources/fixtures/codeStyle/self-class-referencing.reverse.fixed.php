@@ -39,3 +39,10 @@ class MyClass
 
 // Not applicable: is not inside a class.
 __CLASS__;
+
+trait MyTrait
+{
+    public function method($object) {
+        Something::method(__CLASS__, $object);
+    }
+}

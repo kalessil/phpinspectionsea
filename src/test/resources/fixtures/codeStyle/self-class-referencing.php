@@ -1,13 +1,14 @@
 <?php
 
-class MyClass {
+class MyClass
+{
     public function method() {
-        new <weak_warning descr="Class reference \"MyClass\" could be replaced by \"self\"">MyClass</weak_warning>;
-        <weak_warning descr="Class reference \"MyClass\" could be replaced by \"self\"">MyClass</weak_warning>::CONSTANT;
-        <weak_warning descr="Class reference \"MyClass\" could be replaced by \"self\"">MyClass</weak_warning>::staticMethod();
-        <weak_warning descr="Class reference \"MyClass\" could be replaced by \"self\"">MyClass</weak_warning>::$staticProperty;
+        new <weak_warning descr="Class reference 'MyClass' could be replaced by 'self'">MyClass</weak_warning>;
+        <weak_warning descr="Class reference 'MyClass' could be replaced by 'self'">MyClass</weak_warning>::CONSTANT;
+        <weak_warning descr="Class reference 'MyClass' could be replaced by 'self'">MyClass</weak_warning>::staticMethod();
+        <weak_warning descr="Class reference 'MyClass' could be replaced by 'self'">MyClass</weak_warning>::$staticProperty;
 
-        <weak_warning descr="Class reference \"MyClass::class\" could be replaced by \"__CLASS__\"">MyClass::class</weak_warning>;
+        <weak_warning descr="Class reference 'MyClass::class' could be replaced by '__CLASS__'">MyClass::class</weak_warning>;
 
         (new self)::staticMethod();
 
@@ -28,5 +29,12 @@ class MyClass {
                 MyClass::class;
             }
         };
+    }
+}
+
+trait MyTrait
+{
+    public function method($object) {
+        Something::method(MyTrait::class, $object);
     }
 }

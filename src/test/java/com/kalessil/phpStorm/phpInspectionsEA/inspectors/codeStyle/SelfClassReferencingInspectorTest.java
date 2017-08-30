@@ -3,10 +3,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 
-public class SelfClassReferencingInspectorTest extends PhpCodeInsightFixtureTestCase {
+final public class SelfClassReferencingInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testDefault() {
         final SelfClassReferencingInspector selfClassReferencingInspector = new SelfClassReferencingInspector();
-        selfClassReferencingInspector.optionPreferClass = false;
+        selfClassReferencingInspector.PREFER_CLASS_NAMES = false;
 
         myFixture.enableInspections(selfClassReferencingInspector);
 
@@ -23,7 +23,7 @@ public class SelfClassReferencingInspectorTest extends PhpCodeInsightFixtureTest
 
     public void testReverse() {
         final SelfClassReferencingInspector selfClassReferencingInspector = new SelfClassReferencingInspector();
-        selfClassReferencingInspector.optionPreferClass = true;
+        selfClassReferencingInspector.PREFER_CLASS_NAMES = true;
 
         myFixture.enableInspections(selfClassReferencingInspector);
 

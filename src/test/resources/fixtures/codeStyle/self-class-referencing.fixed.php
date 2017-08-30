@@ -1,6 +1,7 @@
 <?php
 
-class MyClass {
+class MyClass
+{
     public function method() {
         new self;
         self::CONSTANT;
@@ -28,5 +29,12 @@ class MyClass {
                 MyClass::class;
             }
         };
+    }
+}
+
+trait MyTrait
+{
+    public function method($object) {
+        Something::method(MyTrait::class, $object);
     }
 }

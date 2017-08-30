@@ -84,7 +84,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                             this.checkForSimplification((ArrayCreationExpression) replace);
                         } else if (replace instanceof StringLiteralExpression){
                             final PsiElement search = arguments[0];
-                            if (search instanceof ArrayAccessExpression) {
+                            if (search instanceof ArrayCreationExpression) {
                                 this.checkForSimplification((ArrayCreationExpression) search);
                             }
                         }

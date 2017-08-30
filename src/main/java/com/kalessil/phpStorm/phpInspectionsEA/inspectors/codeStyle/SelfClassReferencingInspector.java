@@ -45,52 +45,59 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean b) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpNewExpression(@NotNull NewExpression expression) {
-                this.validateCommonComponent(expression, expression.getClassReference());
-            }
-
-            @Override
-            public void visitPhpMethodReference(@NotNull MethodReference reference) {
-                if (reference.isStatic()) {
-                    final PhpPsiElement classReference = reference.getClassReference();
-                    if (classReference instanceof PhpReference) {
-                        this.validateCommonComponent(reference, (PhpReference) classReference);
-                    }
-                }
-            }
-
-            @Override
             public void visitPhpClassConstantReference(@NotNull ClassConstantReference constantReference) {
-                if ("class".equals(constantReference.getName())) {
-                    validateClassConstantComponent(constantReference, (PhpReference) constantReference.getClassReference());
-                    return;
+                final String constantName = constantReference.getName();
+                if (constantName != null &&  constantName.equals("class")) {
+                    final PsiElement classReference = constantReference.getClassReference();
+                    if (classReference instanceof ClassReference) {
+                        this.analyzeClassConstant(constantReference, (ClassReference) classReference);
+                    }
+                } else {
+                    this.analyzeMemberReference(constantReference);
                 }
+            }
 
-                this.validateCommonComponent(constantReference, (PhpReference) constantReference.getClassReference());
+            @Override
+            public void visitPhpMethodReference(@NotNull MethodReference methodReference) {
+                this.analyzeMemberReference(methodReference);
             }
 
             @Override
             public void visitPhpFieldReference(@NotNull FieldReference fieldReference) {
-                if (fieldReference.isStatic()) {
-                    this.validateCommonComponent(fieldReference, (PhpReference) fieldReference.getClassReference());
+                this.analyzeMemberReference(fieldReference);
+            }
+
+            @Override
+            public void visitPhpNewExpression(@NotNull NewExpression expression) {
+                final PsiElement classReference = expression.getClassReference();
+                if (classReference != null) {
+                    this.analyze(expression, (ClassReference) classReference);
                 }
             }
 
             @Override
-            public void visitPhpConstantReference(@NotNull ConstantReference reference) {
-                if (PREFER_CLASS_NAMES && "__CLASS__".equals(reference.getName())) {
-                    final PhpClass clazz = PsiTreeUtil.getParentOfType(reference, PhpClass.class);
-                    if (clazz != null && !clazz.isAnonymous() && !clazz.isTrait()) {
-                        registerProblem(reference, clazz.getName() + "::class", "__CLASS__");
+            public void visitPhpConstantReference(@NotNull ConstantReference constantReference) {
+                if (PREFER_CLASS_NAMES) {
+                    final String constantName = constantReference.getName();
+                    if (constantName != null && constantName.equals("__CLASS__")) {
+                        final PhpClass clazz = PsiTreeUtil.getParentOfType(constantReference, PhpClass.class);
+                        if (clazz != null && !clazz.isAnonymous() && !clazz.isTrait()) {
+                            this.registerProblem(constantReference, clazz.getName() + "::class", "__CLASS__");
+                        }
                     }
                 }
             }
 
-            private boolean isSameFQN(@NotNull final PsiElement psiElement, @Nullable final PhpReference reference) {
-                if (reference == null) {
-                    return false;
+            private void analyzeMemberReference(@NotNull MemberReference memberReference) {
+                if (memberReference.isStatic()) {
+                    final PsiElement classReference = memberReference.getClassReference();
+                    if (classReference instanceof ClassReference) {
+                        this.analyze(memberReference, (ClassReference) classReference);
+                    }
                 }
+            }
 
+            private boolean isSameFQN(@NotNull final PsiElement psiElement, @NotNull final PhpReference reference) {
                 final String referenceName = reference.getName();
                 if (PREFER_CLASS_NAMES) {
                     return "self".equals(referenceName);
@@ -118,8 +125,8 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                 }
             }
 
-            private void validateClassConstantComponent(@NotNull final PsiElement constantReference, @Nullable final PhpReference classReference) {
-                if (isSameFQN(constantReference, classReference)) {
+            private void analyzeClassConstant(@NotNull ClassConstantReference constantReference, @NotNull ClassReference classReference) {
+                if (this.isSameFQN(constantReference, classReference)) {
                     if (!PREFER_CLASS_NAMES) {
                         final PhpClass clazz = PsiTreeUtil.getParentOfType(classReference, PhpClass.class);
                         if (clazz != null && !clazz.isAnonymous() && !clazz.isTrait()){
@@ -135,7 +142,7 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                 }
             }
 
-            private void validateCommonComponent(@NotNull PsiElement expression, @Nullable PhpReference reference) {
+            private void analyze(@NotNull PsiElement expression, @NotNull PhpReference reference) {
                 if (this.isSameFQN(expression, reference)) {
                     final String className = getClassName(reference);
                     if (!StringUtils.isEmpty(className)) {
@@ -179,7 +186,7 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Replace with '" + replacement + "'";
+            return "Apply configured class reference style";
         }
 
         @NotNull

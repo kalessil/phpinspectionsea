@@ -52,6 +52,8 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean onTheFly) {
         return new BasePhpElementVisitor() {
+            /* TODO: hook the method definition instead, search ClassReference do invocation smarter */
+
             @Override
             public void visitPhpClassConstantReference(@NotNull ClassConstantReference constantReference) {
                 final String constantName = constantReference.getName();

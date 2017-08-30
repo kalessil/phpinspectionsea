@@ -20,11 +20,11 @@
     /* parameters simplification pattern */
     $simplify = str_replace(
         array ('1', '1'),
-        <weak_warning descr="Can be replaced with the string duplicated in array.">array('1', '1')</weak_warning>,
+        <weak_warning descr="Can be replaced with the string from the array.">array('1', '1')</weak_warning>,
         '...'
     );
     $simplify = str_replace(
-        <weak_warning descr="Can be replaced with the string duplicated in array.">array('1', '1')</weak_warning>,
+        <weak_warning descr="Can be replaced with the string from the array.">array('1', '1')</weak_warning>,
         '1',
         '...'
     );

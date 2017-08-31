@@ -84,20 +84,6 @@ long debugging in this case.
 From time to time we name class and the file containing it with typos, or probably renaming class without renaming its' 
 file and breaking class autoloading. The inspection will spot class and file names mismatch before the issue popped up.
 
-## Null pointer exceptions prevention
-
-The inspection name is clearly taken from Java, we also actively enhancing the inspection towards similar checks in Java.
-
-Php specific is taken into account, but some limitations are exists: is_object(), is_null() and similar is_*() functions 
-calls are not analyzed, instead we recommend to rely on null identity and instanceof operators. Another limitation is 
-that the inspection don't rely on DocBlock - types must be implicitly declared.
-
-Following cases currently supported (we'll keep extending the list):
-- method parameters (nullable objects), e.g. `public function method(?\stdClass $first, \stdClass $second = null) { ... }`;
-- method local variables initialized with potentially nullable values;
-- to be continued (when funding is found);
-
-## Class autoloading correctness
 PHP´s magic [`::class`-constant](http://php.net/manual/en/language.oop5.basic.php#language.oop5.basic.class.class) will not canonical the casing of your imports.
 
 This can lead to hard to debug errors when you a using a case sensitive service  `PSR-11`-locator like `Zend\ServiceManager`.
@@ -123,3 +109,17 @@ Discussion on Twitter: https://twitter.com/benjamincremer/status/872695045757038
 Demo: https://3v4l.org/9uBKU
 
 Please note that this is not a bug in PHP but expected behaviour: "The class name resolution using ::class is a compile time transformation. That means at the time the class name string is created no autoloading has happened yet. As a consequence, class names are expanded even if the class does not exist. No error is issued in that case.". See: [php.net](http://php.net/manual/en/language.oop5.basic.php#language.oop5.basic.class.class)
+
+## Null pointer exceptions prevention
+
+The inspection name is clearly taken from Java, we also actively enhancing the inspection towards similar checks in Java.
+
+Php specific is taken into account, but some limitations are exists: is_object(), is_null() and similar is_*() functions 
+calls are not analyzed, instead we recommend to rely on null identity and instanceof operators. Another limitation is 
+that the inspection don't rely on DocBlock - types must be implicitly declared.
+
+Following cases currently supported (we'll keep extending the list):
+- method parameters (nullable objects), e.g. `public function method(?\stdClass $first, \stdClass $second = null) { ... }`;
+- method local variables initialized with potentially nullable values;
+- to be continued (when funding is found);
+

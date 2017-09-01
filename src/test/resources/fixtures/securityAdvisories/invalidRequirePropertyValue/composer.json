@@ -1,0 +1,11 @@
+{
+  "require": {
+    "invalid1": 123,
+    "invalid2": [
+      "invalid"
+    ],
+    "invalid3": false,
+    "invalid4": true,
+    "invalid5": null
+  }
+}

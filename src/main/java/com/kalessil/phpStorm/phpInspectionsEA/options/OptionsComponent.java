@@ -2,14 +2,17 @@ package com.kalessil.phpStorm.phpInspectionsEA.options;
 
 import com.kalessil.phpStorm.phpInspectionsEA.gui.PrettyListControl;
 import net.miginfocom.swing.MigLayout;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -65,13 +68,19 @@ public final class OptionsComponent {
     public void addList(
         @NotNull final String label,
         @NotNull final List<String> items,
-        @NotNull final Runnable updater
+        @Nullable final Supplier<Collection<String>> defaultItems,
+        @Nullable final Runnable updater,
+        @NotNull final String dialogTitle,
+        @NotNull final String dialogMessage
     ) {
         optionsPanel.add(new JLabel(label), "wrap");
-        optionsPanel.add((new PrettyListControl(items) {
+        optionsPanel.add((new PrettyListControl(items, defaultItems, dialogTitle, dialogMessage) {
             @Override
             protected void fireContentsChanged() {
-                updater.run();
+                if (updater != null) {
+                    updater.run();
+                }
+
                 super.fireContentsChanged();
             }
         }).getComponent(), "pushx, growx");

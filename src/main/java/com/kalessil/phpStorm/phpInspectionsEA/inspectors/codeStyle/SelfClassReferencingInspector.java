@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -35,6 +37,12 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
     // Inspection options.
     public boolean PREFER_CLASS_NAMES = false;
 
+    private static final Set<String> lateBinding = new HashSet<>();
+    static {
+        lateBinding.add("self");
+        lateBinding.add("static");
+    }
+
     @NotNull
     public String getShortName() {
         return "SelfClassReferencingInspection";
@@ -42,122 +50,115 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
 
     @NotNull
     @Override
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean b) {
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean onTheFly) {
         return new BasePhpElementVisitor() {
-            @Override
-            public void visitPhpNewExpression(@NotNull NewExpression expression) {
-                this.validateCommonComponent(expression, expression.getClassReference());
-            }
-
-            @Override
-            public void visitPhpMethodReference(@NotNull MethodReference reference) {
-                if (reference.isStatic()) {
-                    final PhpPsiElement classReference = reference.getClassReference();
-                    if (classReference instanceof PhpReference) {
-                        this.validateCommonComponent(reference, (PhpReference) classReference);
-                    }
-                }
-            }
+            /* TODO: hook the method definition instead, search ClassReference do invocation smarter */
 
             @Override
             public void visitPhpClassConstantReference(@NotNull ClassConstantReference constantReference) {
-                if ("class".equals(constantReference.getName())) {
-                    validateClassConstantComponent(constantReference, (PhpReference) constantReference.getClassReference());
-                    return;
+                final String constantName = constantReference.getName();
+                if (constantName != null &&  constantName.equals("class")) {
+                    final PsiElement classReference = constantReference.getClassReference();
+                    if (classReference instanceof ClassReference) {
+                        this.analyzeClassConstant((ClassReference) classReference);
+                    }
+                } else {
+                    this.analyzeMemberReference(constantReference);
                 }
+            }
 
-                this.validateCommonComponent(constantReference, (PhpReference) constantReference.getClassReference());
+            @Override
+            public void visitPhpMethodReference(@NotNull MethodReference methodReference) {
+                this.analyzeMemberReference(methodReference);
             }
 
             @Override
             public void visitPhpFieldReference(@NotNull FieldReference fieldReference) {
-                if (fieldReference.isStatic()) {
-                    this.validateCommonComponent(fieldReference, (PhpReference) fieldReference.getClassReference());
+                this.analyzeMemberReference(fieldReference);
+            }
+
+            @Override
+            public void visitPhpNewExpression(@NotNull NewExpression newExpression) {
+                final PsiElement classReference = newExpression.getClassReference();
+                if (classReference != null) {
+                    this.analyze((ClassReference) classReference);
                 }
             }
 
             @Override
-            public void visitPhpConstantReference(@NotNull ConstantReference reference) {
-                if (PREFER_CLASS_NAMES && "__CLASS__".equals(reference.getName())) {
-                    final PhpClass clazz = PsiTreeUtil.getParentOfType(reference, PhpClass.class);
-                    if (clazz != null && !clazz.isAnonymous() && !clazz.isTrait()) {
-                        registerProblem(reference, clazz.getName() + "::class", "__CLASS__");
+            public void visitPhpConstantReference(@NotNull ConstantReference constantReference) {
+                /* TODO: relocate into analyzeClassConstant */
+                if (PREFER_CLASS_NAMES) {
+                    final String constantName = constantReference.getName();
+                    if (constantName != null && constantName.equals("__CLASS__")) {
+                        final PhpClass clazz = PsiTreeUtil.getParentOfType(constantReference, PhpClass.class);
+                        if (clazz != null && !clazz.isAnonymous() && !clazz.isTrait()) {
+                            this.registerProblem(constantReference, clazz.getName() + "::class", "__CLASS__");
+                        }
                     }
                 }
             }
 
-            private boolean isSameFQN(@NotNull final PsiElement psiElement, @Nullable final PhpReference reference) {
-                if (reference == null) {
-                    return false;
+            private void analyzeMemberReference(@NotNull MemberReference reference) {
+                if (reference.isStatic()) {
+                    final PsiElement classReference = reference.getClassReference();
+                    if (classReference instanceof ClassReference) {
+                        this.analyze((ClassReference) classReference);
+                    }
                 }
+            }
 
+            private boolean isSameFQN(@NotNull ClassReference reference, @NotNull PhpClass clazz) {
                 final String referenceName = reference.getName();
                 if (PREFER_CLASS_NAMES) {
-                    return "self".equals(referenceName);
+                    return referenceName != null && referenceName.equals("self");
                 } else {
-                    if ("self".equals(referenceName) || "static".equals(referenceName)) {
-                        return false;
-                    }
-
-                    final PhpClass clazz = PsiTreeUtil.getParentOfType(psiElement, PhpClass.class);
-                    return clazz != null && clazz.getFQN().equals(reference.getFQN());
+                    return !lateBinding.contains(referenceName) && clazz.getFQN().equals(reference.getFQN());
                 }
             }
 
-            @Nullable
-            private String getClassName(@NotNull PhpReference psiElement) {
-                if (!PREFER_CLASS_NAMES) {
-                    return psiElement.getName();
-                } else {
-                    final PhpClass clazz = PsiTreeUtil.getParentOfType(psiElement, PhpClass.class);
-                    if (clazz != null && !clazz.isAnonymous()) {
-                        return clazz.getName();
-                    } else {
-                        return null;
-                    }
-                }
-            }
-
-            private void validateClassConstantComponent(@NotNull final PsiElement constantReference, @Nullable final PhpReference classReference) {
-                if (isSameFQN(constantReference, classReference)) {
-                    if (!PREFER_CLASS_NAMES) {
-                        final PhpClass clazz = PsiTreeUtil.getParentOfType(classReference, PhpClass.class);
-                        if (clazz != null && !clazz.isAnonymous() && !clazz.isTrait()){
-                            registerProblem(classReference.getParent(), getClassName(classReference) + "::class", "__CLASS__");
-                        }
-                    } else {
-                        final String className          = getClassName(classReference);
-                        final String classReferenceName = classReference.getName();
+            private void analyzeClassConstant(@NotNull ClassReference reference) {
+                final PhpClass clazz = PsiTreeUtil.getParentOfType(reference, PhpClass.class);
+                if (clazz != null && this.isSameFQN(reference, clazz)) {
+                    if (PREFER_CLASS_NAMES) {
+                        final String className          = this.getClassName(reference, clazz);
+                        final String classReferenceName = reference.getName();
                         if (!StringUtils.isEmpty(className) && !StringUtils.isEmpty(classReferenceName)) {
-                            this.registerProblem(classReference, className, classReferenceName);
+                            this.registerProblem(reference, className, classReferenceName);
+                        }
+                    } else {
+                        if (!clazz.isAnonymous() && !clazz.isTrait()) {
+                            this.registerProblem(reference.getParent(), this.getClassName(reference, clazz) + "::class", "__CLASS__");
                         }
                     }
                 }
             }
 
-            private void validateCommonComponent(@NotNull PsiElement expression, @Nullable PhpReference reference) {
-                if (this.isSameFQN(expression, reference)) {
-                    final String className = getClassName(reference);
+            private void analyze(@NotNull ClassReference reference) {
+                final PhpClass clazz = PsiTreeUtil.getParentOfType(reference, PhpClass.class);
+                if (clazz != null && this.isSameFQN(reference, clazz)) {
+                    final String className = this.getClassName(reference, clazz);
                     if (!StringUtils.isEmpty(className)) {
                         this.registerProblem(reference, className, "self");
                     }
                 }
             }
 
-            private void registerProblem(@NotNull PsiElement target, @NotNull String className, @NotNull String replacement) {
+            @Nullable
+            private String getClassName(@NotNull ClassReference reference, @NotNull PhpClass clazz) {
+                final String result;
                 if (PREFER_CLASS_NAMES) {
-                    problemsHolder.registerProblem(
-                            target,
-                            String.format(messagePattern, replacement, className),
-                            new TheLocalFix(className)
-                    );
+                    result = clazz.isAnonymous() ? null : clazz.getName();
                 } else {
-                    problemsHolder.registerProblem(
-                            target,
-                            String.format(messagePattern, className, replacement),
-                            new TheLocalFix(replacement)
-                    );
+                    result = reference.getName();
                 }
+                return result;
+            }
+
+            private void registerProblem(@NotNull PsiElement target, @NotNull String className, @NotNull String replacement) {
+                final String from = PREFER_CLASS_NAMES ? replacement : className;
+                final String to   = PREFER_CLASS_NAMES ? className : replacement;
+                problemsHolder.registerProblem(target, String.format(messagePattern, from, to), new TheLocalFix(to));
             }
         };
     }
@@ -179,7 +180,7 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Replace with '" + replacement + "'";
+            return "Apply configured class reference style";
         }
 
         @NotNull

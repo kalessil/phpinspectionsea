@@ -35,7 +35,7 @@ import java.util.*;
 public class CascadeStringReplacementInspector extends BasePhpInspection {
     private static final String messageNesting      = "This str_replace(...) call can be merged with its parent.";
     private static final String messageCascading    = "This str_replace(...) call can be merged with the previous.";
-    private static final String messageReplacements = "Can be replaced with the string duplicated in array.";
+    private static final String messageReplacements = "Can be replaced with the string from the array.";
 
     @NotNull
     public String getShortName() {
@@ -48,19 +48,19 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
-                final FunctionReference functionCall = this.getStrReplaceReference(assignmentExpression);
+                final FunctionReference functionCall = this.getFunctionReference(assignmentExpression);
                 if (functionCall != null) {
-                    final PsiElement[] params = functionCall.getParameters();
-                    if (params.length == 3) {
+                    final PsiElement[] arguments = functionCall.getParameters();
+                    if (arguments.length == 3) {
                         /* case: cascading replacements */
                         final AssignmentExpression previous  = this.getPreviousAssignment(assignmentExpression);
-                        final FunctionReference previousCall = previous == null ? null : this.getStrReplaceReference(previous);
+                        final FunctionReference previousCall = previous == null ? null : this.getFunctionReference(previous);
                         if (previousCall != null) {
                             final PsiElement transitionVariable = previous.getVariable();
-                            if (transitionVariable instanceof Variable && params[2] instanceof Variable) {
+                            if (transitionVariable instanceof Variable && arguments[2] instanceof Variable) {
                                 /* ensure previous, used and result storage is the same variable */
                                 final String previousVariableName  = ((Variable) transitionVariable).getName();
-                                final String callSubjectName       = ((Variable) params[2]).getName();
+                                final String callSubjectName       = ((Variable) arguments[2]).getName();
                                 final PsiElement callResultStorage = assignmentExpression.getVariable();
                                 if (
                                     callResultStorage != null && callSubjectName.equals(previousVariableName) &&
@@ -75,36 +75,44 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                             }
                         }
 
-                        /* other cases */
-                        this.checkNestedCalls(params[2], functionCall);
-                        this.checkReplacementSimplification(params[1]);
+                        /* case: nested replacements */
+                        this.checkNestedCalls(arguments[2], functionCall);
+
+                        /* case: search/replace simplification */
+                        final PsiElement replace = arguments[1];
+                        if (replace instanceof ArrayCreationExpression) {
+                            this.checkForSimplification((ArrayCreationExpression) replace);
+                        } else if (replace instanceof StringLiteralExpression){
+                            final PsiElement search = arguments[0];
+                            if (search instanceof ArrayCreationExpression) {
+                                this.checkForSimplification((ArrayCreationExpression) search);
+                            }
+                        }
                     }
                 }
             }
 
-            private void checkReplacementSimplification(@NotNull PsiElement replacementExpression) {
-                if (replacementExpression instanceof ArrayCreationExpression) {
-                    final Set<String> replacements = new HashSet<>();
-                    for (final PsiElement oneReplacement : replacementExpression.getChildren()) {
-                        if (oneReplacement instanceof PhpPsiElement) {
-                            final PhpPsiElement item = ((PhpPsiElement) oneReplacement).getFirstPsiChild();
-                            /* abort on non-string entries  */
-                            if (!(item instanceof StringLiteralExpression)) {
-                                return;
-                            }
-                            replacements.add(item.getText());
+            private void checkForSimplification(@NotNull ArrayCreationExpression candidate) {
+                final Set<String> replacements = new HashSet<>();
+                for (final PsiElement oneReplacement : candidate.getChildren()) {
+                    if (oneReplacement instanceof PhpPsiElement) {
+                        final PhpPsiElement item = ((PhpPsiElement) oneReplacement).getFirstPsiChild();
+                        if (!(item instanceof StringLiteralExpression)) {
+                            replacements.clear();
+                            return;
                         }
+                        replacements.add(item.getText());
                     }
-                    if (replacements.size() == 1) {
-                        holder.registerProblem(
-                            replacementExpression,
-                            messageReplacements,
-                            ProblemHighlightType.WEAK_WARNING,
-                            new SimplifyReplacementFix(replacements.iterator().next())
-                        );
-                    }
-                    replacements.clear();
                 }
+                if (replacements.size() == 1) {
+                    holder.registerProblem(
+                        candidate,
+                        messageReplacements,
+                        ProblemHighlightType.WEAK_WARNING,
+                        new SimplifyReplacementFix(replacements.iterator().next())
+                    );
+                }
+                replacements.clear();
             }
 
             private void checkNestedCalls(@NotNull PsiElement callCandidate, @NotNull FunctionReference parentCall) {
@@ -122,7 +130,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             }
 
             @Nullable
-            private FunctionReference getStrReplaceReference(@NotNull AssignmentExpression assignment) {
+            private FunctionReference getFunctionReference(@NotNull AssignmentExpression assignment) {
                 FunctionReference result = null;
                 final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
                 if (OpenapiTypesUtil.isFunctionReference(value)) {
@@ -161,7 +169,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Simplify replacement definition";
+            return "Simplify this argument";
         }
 
         SimplifyReplacementFix(@NotNull String expression) {

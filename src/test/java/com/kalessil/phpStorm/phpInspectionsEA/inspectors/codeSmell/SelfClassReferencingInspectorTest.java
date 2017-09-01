@@ -1,12 +1,13 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.SelfClassReferencingInspector;
 
 final public class SelfClassReferencingInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testDefault() {
-        final SelfClassReferencingInspector selfClassReferencingInspector = new SelfClassReferencingInspector();
-        selfClassReferencingInspector.PREFER_CLASS_NAMES = false;
+        SelfClassReferencingInspector selfClassReferencingInspector = new SelfClassReferencingInspector();
+        selfClassReferencingInspector.PREFER_CLASS_NAMES            = false;
 
         myFixture.enableInspections(selfClassReferencingInspector);
 
@@ -22,8 +23,8 @@ final public class SelfClassReferencingInspectorTest extends PhpCodeInsightFixtu
     }
 
     public void testReverse() {
-        final SelfClassReferencingInspector selfClassReferencingInspector = new SelfClassReferencingInspector();
-        selfClassReferencingInspector.PREFER_CLASS_NAMES = true;
+        SelfClassReferencingInspector selfClassReferencingInspector = new SelfClassReferencingInspector();
+        selfClassReferencingInspector.PREFER_CLASS_NAMES            = true;
 
         myFixture.enableInspections(selfClassReferencingInspector);
 

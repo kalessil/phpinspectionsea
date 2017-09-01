@@ -11,7 +11,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -25,7 +24,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class UnnecessaryFinalModifierInspector extends BasePhpInspection {
-    private static final String message = "Unnecessary final modifier (class is already final).";
+    private static final String message = "Unnecessary final modifier.";
 
     @NotNull
     public String getShortName() {
@@ -36,14 +35,16 @@ public class UnnecessaryFinalModifierInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 final PhpClass clazz      = method.getContainingClass();
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
-                if (null == clazz || null == nameNode || !clazz.isFinal() || !method.isFinal()) {
-                    return;
+                if (null != clazz && null != nameNode) {
+                    final boolean isTarget = method.isFinal() && (clazz.isFinal() || method.getAccess().isPrivate());
+                    if (isTarget) {
+                        holder.registerProblem(nameNode, message, new TheLocalFix());
+                    }
                 }
-
-                holder.registerProblem(nameNode, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
             }
         };
     }
@@ -65,10 +66,10 @@ public class UnnecessaryFinalModifierInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (null != expression && expression.getParent() instanceof Method) {
-                final Method target   = (Method) expression.getParent();
-                final String modifier = target.getModifier().toString().replace("final", "").replace("  ", "").trim();
-                Method replacement    = PhpPsiElementFactory.createMethod(project, modifier + " function x(){}");
-                target.getFirstChild().replace(replacement.getFirstChild());
+                final Method target    = (Method) expression.getParent();
+                final String modifiers = target.getModifier().toString().replace("final", "").replace("  ", "").trim();
+                final Method donor     = PhpPsiElementFactory.createMethod(project, modifiers + " function x(){}");
+                target.getFirstChild().replace(donor.getFirstChild());
             }
         }
     }

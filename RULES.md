@@ -103,7 +103,7 @@ Inspections Lists (Code style)
 | Code Style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes | yes | no   | no  |
 | Code Style           | IncrementDecrementOperationEquivalentInspection | Increment/decrement operation equivalent            | yes | yes | no   | no  |
 | Code Style           | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                  | yes | yes | no   | no  |
-| Code Style           | UnnecessaryFinalModifierInspection              | Unnecessary final modifiers                         | yes | yes | no   | no  |
+| Code Style           | UnnecessaryFinalModifierInspection              | Unnecessary final modifiers                         | yes | yes | yes  | no  |
 | Code Style           | UsingInclusionReturnValueInspection             | Usage of inclusion return value                     | n/a | yes | n/a  | no  |
 | Code Style           | ShortOpenTagUsageInspection                     | PHP short open tag usage                            | yes | yes | no   | no  |
 | Code Style           | ComparisonOperandsOrderInspection               | Yoda/regular conditions style usage                 | yes | yes | no   | no  |

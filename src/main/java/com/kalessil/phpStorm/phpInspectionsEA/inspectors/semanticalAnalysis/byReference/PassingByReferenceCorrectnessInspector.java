@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.byReference;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -34,11 +33,13 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 this.analyze(reference);
             }
 
-            public void visitPhpMethodReference(MethodReference reference) {
+            @Override
+            public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 this.analyze(reference);
             }
 
@@ -47,28 +48,29 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                 if (arguments.length != 0) {
                     /* lazy analysis: if all args are valid, not even bother resolving the reference */
                     boolean doAnalyze = false;
-                    for (PsiElement parameter : arguments) {
+                    for (final PsiElement parameter : arguments) {
                         boolean isRefCompatible = parameter instanceof Variable || parameter instanceof NewExpression;
                         if (!isRefCompatible) {
                             doAnalyze = true;
                             break;
                         }
                     }
+
                     final PsiElement resolved = doAnalyze ? reference.resolve() : null;
-                    if (resolved instanceof Function && ((Function) resolved).hasRefParams()) {
-                        /* iterate parameters and match references against provided arguments */
+                    if (resolved instanceof Function) {
                         final Parameter[] parameters = ((Function) resolved).getParameters();
                         for (int index = 0, max = Math.min(parameters.length, arguments.length); index < max; ++index) {
-                            if (parameters[index].isPassByRef()) {
-                                final PsiElement argument = arguments[index];
-                                if (argument instanceof FunctionReference && !this.isByReference(argument)) {
-                                    final PsiElement resolvedArgument = ((FunctionReference) argument).resolve();
-                                    if (resolvedArgument instanceof Function) {
-                                        final PsiElement name = NamedElementUtil.getNameIdentifier((Function) resolvedArgument);
-                                        if (!this.isByReference(name)) {
-                                            holder.registerProblem(argument, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                                            // continue;
-                                        }
+                            final PsiElement argument = arguments[index];
+                            if (
+                                argument instanceof FunctionReference &&
+                                parameters[index].isPassByRef() &&
+                                !this.isByReference(argument)
+                            ) {
+                                final PsiElement resolvedArgument = ((FunctionReference) argument).resolve();
+                                if (resolvedArgument instanceof Function) {
+                                    final PsiElement name = NamedElementUtil.getNameIdentifier((Function) resolvedArgument);
+                                    if (!this.isByReference(name)) {
+                                        holder.registerProblem(argument, message);
                                     }
                                 }
                             }
@@ -84,7 +86,7 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                     if (refCandidate instanceof PsiWhiteSpace) {
                         refCandidate = refCandidate.getPrevSibling();
                     }
-                    result = null != refCandidate && PhpTokenTypes.opBIT_AND == refCandidate.getNode().getElementType();
+                    result = refCandidate != null && refCandidate.getNode().getElementType() == PhpTokenTypes.opBIT_AND;
                 }
                 return result;
             }

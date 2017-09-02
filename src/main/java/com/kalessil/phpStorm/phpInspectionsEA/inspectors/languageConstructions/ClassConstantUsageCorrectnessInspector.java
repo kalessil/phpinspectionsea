@@ -47,21 +47,20 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                 final String constantName = constantReference.getName();
                 if (constantName != null && constantName.equals("class")) {
                     final PsiElement reference = constantReference.getClassReference();
-                    final String referencedQn  = reference == null ? null : reference.getText();
                     if (reference instanceof ClassReference) {
                         final ClassReference clazz = (ClassReference) reference;
+                        final String referencedQn  = reference.getText();
                         final PsiElement resolved  = validReferences.contains(referencedQn) ? null : clazz.resolve();
                         if (resolved instanceof PhpClass) {
                             /* the resolved class will accumulate case issue in it's FQN */
-                            final String clazzFqn       = clazz.getFQN();
                             final List<String> variants = this.getVariants(clazz, (PhpClass) resolved);
-                            if (clazzFqn != null && !variants.isEmpty()) {
+                            if (!variants.isEmpty()) {
                                 final String implicitQn = variants.iterator().next();
                                 if (!implicitQn.equals(referencedQn)) {
                                     holder.registerProblem(reference, message);
                                 }
+                                variants.clear();
                             }
-                            variants.clear();
                         }
                     }
                 }

@@ -12,13 +12,10 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import org.apache.commons.lang.StringUtils;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -37,12 +34,6 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
     // Inspection options.
     public boolean PREFER_CLASS_NAMES = false;
 
-    private static final Set<String> lateBinding = new HashSet<>();
-    static {
-        lateBinding.add("self");
-        lateBinding.add("static");
-    }
-
     @NotNull
     public String getShortName() {
         return "SelfClassReferencingInspection";
@@ -52,113 +43,44 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean onTheFly) {
         return new BasePhpElementVisitor() {
-            /* TODO: hook the method definition instead, search ClassReference do invocation smarter */
-
             @Override
-            public void visitPhpClassConstantReference(@NotNull ClassConstantReference constantReference) {
-                final String constantName = constantReference.getName();
-                if (constantName != null &&  constantName.equals("class")) {
-                    final PsiElement classReference = constantReference.getClassReference();
-                    if (classReference instanceof ClassReference) {
-                        this.analyzeClassConstant((ClassReference) classReference);
-                    }
-                } else {
-                    this.analyzeMemberReference(constantReference);
-                }
-            }
+            public void visitPhpMethod(@NotNull Method method) {
+                final PhpClass clazz = method.getContainingClass();
+                if (clazz != null && !clazz.isAnonymous() && !clazz.isTrait() && !method.isAbstract()) {
+                    final String targetReference   = PREFER_CLASS_NAMES ? "self" : clazz.getName();
+                    final String targetReplacement = PREFER_CLASS_NAMES ? clazz.getName() : "self";
+                    final GroupStatement body      = ExpressionSemanticUtil.getGroupStatement(method);
 
-            @Override
-            public void visitPhpMethodReference(@NotNull MethodReference methodReference) {
-                this.analyzeMemberReference(methodReference);
-            }
+                    PsiTreeUtil.findChildrenOfType(body, ClassReference.class).stream()
+                            .filter(reference  -> targetReference.equals(reference.getName()))
+                            .filter(reference  -> method == PsiTreeUtil.getParentOfType(reference, Method.class))
+                            .forEach(reference -> {
+                                final PsiElement parent = reference.getParent();
+                                if (!PREFER_CLASS_NAMES && parent instanceof ClassConstantReference) {
+                                    final String constantName = ((ClassConstantReference) parent).getName();
+                                    if (constantName != null && constantName.equals("class")) {
+                                        final String replacement = "__CLASS__";
+                                        final String message     = String.format(messagePattern, parent.getText(), replacement);
+                                        problemsHolder.registerProblem(parent, message, new TheLocalFix(replacement));
+                                        return;
+                                    }
+                                }
 
-            @Override
-            public void visitPhpFieldReference(@NotNull FieldReference fieldReference) {
-                this.analyzeMemberReference(fieldReference);
-            }
+                                final String message = String.format(messagePattern, targetReference, targetReplacement);
+                                problemsHolder.registerProblem(reference, message, new TheLocalFix(targetReplacement));
+                            });
 
-            @Override
-            public void visitPhpNewExpression(@NotNull NewExpression newExpression) {
-                final PsiElement classReference = newExpression.getClassReference();
-                if (classReference != null) {
-                    this.analyze((ClassReference) classReference);
-                }
-            }
-
-            @Override
-            public void visitPhpConstantReference(@NotNull ConstantReference constantReference) {
-                /* TODO: relocate into analyzeClassConstant */
-                if (PREFER_CLASS_NAMES) {
-                    final String constantName = constantReference.getName();
-                    if (constantName != null && constantName.equals("__CLASS__")) {
-                        final PhpClass clazz = PsiTreeUtil.getParentOfType(constantReference, PhpClass.class);
-                        if (clazz != null && !clazz.isAnonymous() && !clazz.isTrait()) {
-                            this.registerProblem(constantReference, clazz.getName() + "::class", "__CLASS__");
-                        }
-                    }
-                }
-            }
-
-            private void analyzeMemberReference(@NotNull MemberReference reference) {
-                if (reference.isStatic()) {
-                    final PsiElement classReference = reference.getClassReference();
-                    if (classReference instanceof ClassReference) {
-                        this.analyze((ClassReference) classReference);
-                    }
-                }
-            }
-
-            private boolean isSameFQN(@NotNull ClassReference reference, @NotNull PhpClass clazz) {
-                final String referenceName = reference.getName();
-                if (PREFER_CLASS_NAMES) {
-                    return referenceName != null && referenceName.equals("self");
-                } else {
-                    return !lateBinding.contains(referenceName) && clazz.getFQN().equals(reference.getFQN());
-                }
-            }
-
-            private void analyzeClassConstant(@NotNull ClassReference reference) {
-                final PhpClass clazz = PsiTreeUtil.getParentOfType(reference, PhpClass.class);
-                if (clazz != null && this.isSameFQN(reference, clazz)) {
                     if (PREFER_CLASS_NAMES) {
-                        final String className          = this.getClassName(reference, clazz);
-                        final String classReferenceName = reference.getName();
-                        if (!StringUtils.isEmpty(className) && !StringUtils.isEmpty(classReferenceName)) {
-                            this.registerProblem(reference, className, classReferenceName);
-                        }
-                    } else {
-                        if (!clazz.isAnonymous() && !clazz.isTrait()) {
-                            this.registerProblem(reference.getParent(), this.getClassName(reference, clazz) + "::class", "__CLASS__");
-                        }
+                        PsiTreeUtil.findChildrenOfType(body, ConstantReference.class).stream()
+                                .filter(reference  -> "__CLASS__".equals(reference.getName()))
+                                .filter(reference  -> method == PsiTreeUtil.getParentOfType(reference, Method.class))
+                                .forEach(reference -> {
+                                    final String replacement = targetReplacement + "::class";
+                                    final String message     = String.format(messagePattern, reference.getText(), replacement);
+                                    problemsHolder.registerProblem(reference, message, new TheLocalFix(replacement));
+                                });
                     }
                 }
-            }
-
-            private void analyze(@NotNull ClassReference reference) {
-                final PhpClass clazz = PsiTreeUtil.getParentOfType(reference, PhpClass.class);
-                if (clazz != null && this.isSameFQN(reference, clazz)) {
-                    final String className = this.getClassName(reference, clazz);
-                    if (!StringUtils.isEmpty(className)) {
-                        this.registerProblem(reference, className, "self");
-                    }
-                }
-            }
-
-            @Nullable
-            private String getClassName(@NotNull ClassReference reference, @NotNull PhpClass clazz) {
-                final String result;
-                if (PREFER_CLASS_NAMES) {
-                    result = clazz.isAnonymous() ? null : clazz.getName();
-                } else {
-                    result = reference.getName();
-                }
-                return result;
-            }
-
-            private void registerProblem(@NotNull PsiElement target, @NotNull String className, @NotNull String replacement) {
-                final String from = PREFER_CLASS_NAMES ? replacement : className;
-                final String to   = PREFER_CLASS_NAMES ? className : replacement;
-                problemsHolder.registerProblem(target, String.format(messagePattern, from, to), new TheLocalFix(to));
             }
         };
     }

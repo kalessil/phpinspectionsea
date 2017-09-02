@@ -21,15 +21,7 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
         }
     }
 
-    public void visitPhpDeclare(@NotNull Declare declare) {
-        this.visitElement(declare);
-    }
-
-    public void visitPhpEval(@NotNull PhpEval eval) {
-        this.visitElement(eval);
-    }
-
-    public void visitPhpDocTag(@NotNull PhpDocTag tag) {
-        this.visitElement(tag);
-    }
+    public void visitPhpDeclare(@NotNull Declare declare) {}
+    public void visitPhpEval(@NotNull PhpEval eval)       {}
+    public void visitPhpDocTag(@NotNull PhpDocTag tag)    {}
 }

@@ -10,6 +10,8 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.Method;
@@ -67,7 +69,29 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                 for (final Field field : clazz.getOwnFields()) {
                     final PsiElement fieldName = NamedElementUtil.getNameIdentifier(field);
 
-                    if ((fieldName == null) || field.isConstant() || !field.getModifier().isPublic()) {
+                    if (fieldName == null) {
+                        continue;
+                    }
+
+                    if (field.isConstant()) {
+                        // {const} inspection should be skipped if PHP version < 7.1.0.
+                        final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                        if (phpVersion.compareTo(PhpLanguageLevel.PHP710) < 0) {
+                            continue;
+                        }
+
+                        // {const}.isPublic() always returns true, even if visibility is not declared, so we need hardcode it.
+                        if (field.getPrevPsiSibling() != null) {
+                            continue;
+                        }
+
+                        final String message = String.format(messagePattern, field.getName());
+                        holder.registerProblem(fieldName, message, new ConstFix(field));
+
+                        continue;
+                    }
+
+                    if (!field.getModifier().isPublic()) {
                         continue;
                     }
 
@@ -93,7 +117,6 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
 
         TheLocalFix(@NotNull final PhpModifierList modifiers) {
             final SmartPointerManager manager = SmartPointerManager.getInstance(modifiers.getProject());
-
             modifiersReference = manager.createSmartPsiElementPointer(modifiers);
         }
 
@@ -124,6 +147,42 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
 
                 if (newModifiers != null) {
                     modifiers.replace(newModifiers);
+                }
+            }
+        }
+    }
+
+    private static class ConstFix implements LocalQuickFix {
+        private final SmartPsiElementPointer<Field> constFieldReference;
+
+        ConstFix(@NotNull final Field constField) {
+            final SmartPointerManager manager = SmartPointerManager.getInstance(constField.getProject());
+            constFieldReference = manager.createSmartPsiElementPointer(constField);
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Declare public";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+            final Field constField = constFieldReference.getElement();
+
+            if (constField != null) {
+                final Method          container    = PhpPsiElementFactory.createMethod(project, "public function x(){}");
+                final PhpModifierList newModifiers = PsiTreeUtil.findChildOfType(container, PhpModifierList.class);
+
+                if (newModifiers != null) {
+                    final PsiElement constKeyword = constField.getParent().getFirstChild();
+                    constKeyword.getParent().addBefore(newModifiers, constKeyword);
                 }
             }
         }

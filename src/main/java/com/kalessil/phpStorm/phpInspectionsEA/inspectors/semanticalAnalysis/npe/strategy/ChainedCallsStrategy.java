@@ -1,7 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.strategy;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -45,11 +44,12 @@ final public class ChainedCallsStrategy {
         @NotNull Map<MethodReference, String> nullTestedReferences,
         @NotNull ProblemsHolder holder
     ) {
-        final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
-        if (operator != null && PhpTokenTypes.ARROW == operator.getNode().getElementType()) {
-            final PsiElement base = reference.getFirstPsiChild();
-            if (base instanceof FunctionReference) {
+        final PsiElement base = reference.getFirstPsiChild();
+        if (base instanceof FunctionReference) {
+            final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
+            if (operator != null && PhpTokenTypes.ARROW == operator.getNode().getElementType()) {
                 final FunctionReference baseReference = (FunctionReference) base;
+                final String baseReferenceAsText      = base.getText();
                 final String methodName               = baseReference.getName();
                 final PhpType types                   = baseReference.getType().global(holder.getProject()).filterUnknown();
                 for (final String resolvedType : types.getTypes()) {
@@ -60,7 +60,10 @@ final public class ChainedCallsStrategy {
                             final String nullTestedMethodName = nullTestedReferences.get(nullTestedReference);
                             if (
                                 nullTestedMethodName != null && nullTestedMethodName.equals(methodName) &&
-                                PsiEquivalenceUtil.areElementsEquivalent(nullTestedReference, baseReference)
+                                (
+                                    nullTestedReference.getText().equals(baseReferenceAsText) ||
+                                    PsiEquivalenceUtil.areElementsEquivalent(nullTestedReference, baseReference)
+                                )
                             ) {
                                 isNullTested = true;
                                 break;

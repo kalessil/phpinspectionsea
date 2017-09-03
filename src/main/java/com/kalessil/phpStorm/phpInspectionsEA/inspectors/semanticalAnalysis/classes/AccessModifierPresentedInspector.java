@@ -89,12 +89,12 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private final SmartPsiElementPointer<PsiElement> modifiers;
+        private final SmartPsiElementPointer<PsiElement> modifiersReference;
 
         TheLocalFix(@NotNull final PsiElement modifiers) {
             final SmartPointerManager manager = SmartPointerManager.getInstance(modifiers.getProject());
 
-            this.modifiers = manager.createSmartPsiElementPointer(modifiers);
+            modifiersReference = manager.createSmartPsiElementPointer(modifiers);
         }
 
         @NotNull
@@ -111,7 +111,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
-            final PsiElement modifiers = this.modifiers.getElement();
+            final PsiElement modifiers = modifiersReference.getElement();
 
             if (modifiers != null) {
                 final String access = modifiers.getText().replace("var", "").trim();

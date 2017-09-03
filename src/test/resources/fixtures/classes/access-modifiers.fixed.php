@@ -19,8 +19,8 @@ class classAM1
 abstract class classAM2
 {
     public static function defaultVisibilityStaticMethod () {}
-    public final function defaultVisibilityFinalMethod ()  {}
-    public abstract function defaultVisibilityAbstractMethod ();
+    final public function defaultVisibilityFinalMethod ()  {}
+    abstract public function defaultVisibilityAbstractMethod ();
 }
 
 interface interfaceAM1

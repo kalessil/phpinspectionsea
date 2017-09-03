@@ -18,8 +18,8 @@ class classAM1
 
 abstract class classAM2
 {
-    static   function <error descr="'defaultVisibilityStaticMethod' should be declared with access modifier.">defaultVisibilityStaticMethod</error> () {}
-    final    function <error descr="'defaultVisibilityFinalMethod' should be declared with access modifier.">defaultVisibilityFinalMethod</error> ()  {}
+    static function <error descr="'defaultVisibilityStaticMethod' should be declared with access modifier.">defaultVisibilityStaticMethod</error> () {}
+    final function <error descr="'defaultVisibilityFinalMethod' should be declared with access modifier.">defaultVisibilityFinalMethod</error> ()  {}
     abstract function <error descr="'defaultVisibilityAbstractMethod' should be declared with access modifier.">defaultVisibilityAbstractMethod</error> ();
 }
 

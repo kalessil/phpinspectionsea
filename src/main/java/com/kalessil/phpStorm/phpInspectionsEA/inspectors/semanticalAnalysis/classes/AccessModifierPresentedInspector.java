@@ -89,9 +89,9 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private final SmartPsiElementPointer<PsiElement> modifiersReference;
+        private final SmartPsiElementPointer<PhpModifierList> modifiersReference;
 
-        TheLocalFix(@NotNull final PsiElement modifiers) {
+        TheLocalFix(@NotNull final PhpModifierList modifiers) {
             final SmartPointerManager manager = SmartPointerManager.getInstance(modifiers.getProject());
 
             modifiersReference = manager.createSmartPsiElementPointer(modifiers);
@@ -111,13 +111,13 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
-            final PsiElement modifiers = modifiersReference.getElement();
+            final PhpModifierList modifiers = modifiersReference.getElement();
 
             if (modifiers != null) {
-                final String access = modifiers.getText().replace("var", "").trim();
-                final String pattern = "public %m% function x(){}"
-                    .replace("%m% ", 0 == access.length() ? "%m%" : "%m% ")
-                    .replace("%m%", access);
+                final String modifierFinal    = modifiers.hasFinal() ? "final " : "";
+                final String modifierAbstract = modifiers.hasAbstract() ? "abstract " : "";
+                final String modifierStatic   = modifiers.hasStatic() ? " static" : "";
+                final String pattern          = String.format("%s%spublic%s function x(){}", modifierFinal, modifierAbstract, modifierStatic);
 
                 final Method          container    = PhpPsiElementFactory.createMethod(project, pattern);
                 final PhpModifierList newModifiers = PsiTreeUtil.findChildOfType(container, PhpModifierList.class);

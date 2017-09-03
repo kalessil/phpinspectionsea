@@ -44,12 +44,11 @@ final public class ChainedCallsStrategy {
         @NotNull Map<MethodReference, String> nullTestedReferences,
         @NotNull ProblemsHolder holder
     ) {
-        final PsiElement base = reference.getFirstPsiChild();
-        if (base instanceof FunctionReference) {
-            final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
-            if (operator != null && PhpTokenTypes.ARROW == operator.getNode().getElementType()) {
+        final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
+        if (operator != null && PhpTokenTypes.ARROW == operator.getNode().getElementType()) {
+            final PsiElement base = reference.getFirstPsiChild();
+            if (base instanceof FunctionReference) {
                 final FunctionReference baseReference = (FunctionReference) base;
-                final String baseReferenceAsText      = base.getText();
                 final String methodName               = baseReference.getName();
                 final PhpType types                   = baseReference.getType().global(holder.getProject()).filterUnknown();
                 for (final String resolvedType : types.getTypes()) {
@@ -60,10 +59,7 @@ final public class ChainedCallsStrategy {
                             final String nullTestedMethodName = nullTestedReferences.get(nullTestedReference);
                             if (
                                 nullTestedMethodName != null && nullTestedMethodName.equals(methodName) &&
-                                (
-                                    nullTestedReference.getText().equals(baseReferenceAsText) ||
-                                    PsiEquivalenceUtil.areElementsEquivalent(nullTestedReference, baseReference)
-                                )
+                                PsiEquivalenceUtil.areElementsEquivalent(nullTestedReference, baseReference)
                             ) {
                                 isNullTested = true;
                                 break;

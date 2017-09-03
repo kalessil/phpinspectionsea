@@ -75,7 +75,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
 
                     if ((modifiers != null) && !modifiers.getText().contains("public")) {
                         final String message = String.format(messagePattern, field.getName());
-                        holder.registerProblem(fieldName, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(modifiers));
+                        holder.registerProblem(fieldName, message, new TheLocalFix(modifiers));
                     }
                 }
             }

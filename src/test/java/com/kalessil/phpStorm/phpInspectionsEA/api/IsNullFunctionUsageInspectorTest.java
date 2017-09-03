@@ -6,7 +6,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunction
 
 final public class IsNullFunctionUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(IsNullFunctionUsageInspector.class);
+        final IsNullFunctionUsageInspector inspector = new IsNullFunctionUsageInspector();
+        inspector.PREFER_YODA_STYLE    = true;
+        inspector.PREFER_REGULAR_STYLE = false;
+        myFixture.enableInspections(inspector);
 
         myFixture.configureByFile("fixtures/api/is-null-function.php");
         myFixture.testHighlighting(true, false, true);

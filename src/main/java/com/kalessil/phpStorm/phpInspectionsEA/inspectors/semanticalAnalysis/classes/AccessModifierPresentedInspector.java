@@ -25,7 +25,7 @@ import javax.swing.*;
 import org.jetbrains.annotations.NotNull;
 
 public class AccessModifierPresentedInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s%' should be declared with access modifier.";
+    private static final String messagePattern = "'%s' should be declared with access modifier.";
 
     // Inspection options.
     public boolean ANALYZE_INTERFACES = true;
@@ -57,7 +57,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
 
                     if ((modifiers != null)) {
                         if (!modifiers.getText().contains("public")) {
-                            final String message = messagePattern.replace("%s%", method.getName());
+                            final String message = String.format(messagePattern, method.getName());
                             holder.registerProblem(methodName, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(modifiers));
                         }
                     }
@@ -74,7 +74,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                     final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(field.getParent(), PhpModifierList.class);
 
                     if ((modifiers != null) && !modifiers.getText().contains("public")) {
-                        final String message = messagePattern.replace("%s%", field.getName());
+                        final String message = String.format(messagePattern, field.getName());
                         holder.registerProblem(fieldName, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(modifiers));
                     }
                 }

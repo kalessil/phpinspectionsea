@@ -114,9 +114,11 @@ Please note that this is not a bug in PHP but expected behaviour: "The class nam
 
 The inspection name is clearly taken from Java, we also actively enhancing the inspection towards similar checks in Java.
 
-Php specific is taken into account, but some limitations are exists: is_object(), is_null() and similar is_*() functions 
-calls are not analyzed, instead we recommend to rely on null identity and instanceof operators. Another limitation is 
-that the inspection don't rely on DocBlock - types must be implicitly declared.
+Php specific is taken into account, but some limitations are exists: 
+- is_object(), is_null() and similar is_*() functions calls are not analyzed, instead we recommend to rely on null 
+  identity and instanceof operators;
+- the inspection doesn't rely on PhpDoc - types must be implicitly declared (parameters and return);
+- the inspection targets functions and methods for performance reasons;
 
 Following cases currently supported (we'll keep extending the list):
 - method parameters (nullable objects), e.g. `public function method(?\stdClass $first, \stdClass $second = null) { ... }`;

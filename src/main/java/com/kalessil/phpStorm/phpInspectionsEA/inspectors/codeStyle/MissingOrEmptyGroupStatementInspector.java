@@ -19,8 +19,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
-    private static final String messageMissingBrackets = "Wrap constructs' body within a block.";
-    private static final String messageEmptyBody       = "Empty block.";
+    private static final String messageMissingBrackets = "Wrap constructs' body within a block (PSR-2 recommendations).";
+    private static final String messageEmptyBody       = "Statement has empty block.";
 
     @NotNull
     public String getShortName() {

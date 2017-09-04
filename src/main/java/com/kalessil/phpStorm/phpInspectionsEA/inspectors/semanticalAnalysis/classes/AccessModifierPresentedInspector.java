@@ -98,7 +98,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
 
         TheLocalFix(@NotNull PsiElement modifiers) {
             super();
-            SmartPointerManager manager =  SmartPointerManager.getInstance(modifiers.getProject());
+            SmartPointerManager manager = SmartPointerManager.getInstance(modifiers.getProject());
 
             this.modifiers = manager.createSmartPsiElementPointer(modifiers);
         }

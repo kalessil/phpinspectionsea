@@ -6,8 +6,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.Rea
 
 final public class RealpathInSteamContextInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new RealpathInSteamContextInspector());
         myFixture.configureByFile("fixtures/pitfalls/realpath-in-stream-context.php");
-        myFixture.enableInspections(RealpathInSteamContextInspector.class);
         myFixture.testHighlighting(true, false, true);
 
         for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
@@ -15,6 +15,5 @@ final public class RealpathInSteamContextInspectorTest extends PhpCodeInsightFix
         }
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/pitfalls/realpath-in-stream-context.fixed.php");
-
     }
 }

@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.If;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
@@ -42,7 +43,7 @@ final public class UnclearOperationsPriorityStrategy {
             }
         } else if (PhpTokenTypes.tsCOMPARE_OPS.contains(operator)) {
             if (OpenapiTypesUtil.isAssignment(parent) && parent.getParent() instanceof If) {
-                holder.registerProblem(parent, message, new WrapItAsItIsFix(expression));
+                holder.registerProblem(parent, message, new WrapItAsItIsFix((AssignmentExpression) parent));
                 return true;
             }
         }
@@ -59,6 +60,15 @@ final public class UnclearOperationsPriorityStrategy {
         WrapItAsItIsFix(@NotNull PsiElement expression) {
             super("(" + expression.getText() + ")");
         }
-    }
 
+        /* ugly, but worth to keep for maintainable main logic */
+        WrapItAsItIsFix(@NotNull AssignmentExpression expression) {
+            //noinspection ConstantConditions ; at wraning fire point the value is there
+            super(
+                    expression.getText()
+                            .replace(expression.getValue().getText(), "(%v%)")
+                            .replace("%v%", expression.getValue().getText())
+            );
+        }
+    }
 }

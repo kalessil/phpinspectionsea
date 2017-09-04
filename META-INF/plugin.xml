@@ -685,7 +685,7 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ConstantCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="IsNullFunctionUsageInspection"                 displayName="'null === ...' can be used"
-        groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
+        groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ShortListSyntaxCanBeUsedInspection"            displayName="Short list syntax can be used"

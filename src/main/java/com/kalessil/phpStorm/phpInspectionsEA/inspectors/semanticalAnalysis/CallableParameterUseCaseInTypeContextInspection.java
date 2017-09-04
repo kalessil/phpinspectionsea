@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -135,7 +134,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 }
 
                                 final String message = isReversedCheck ? messageNoSense : messageCheckViolatesDefinition;
-                                holder.registerProblem(functionCall, message, ProblemHighlightType.WEAK_WARNING);
+                                holder.registerProblem(functionCall, message);
                             }
 
                             continue;
@@ -161,7 +160,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                         if (isDefinitionViolation) {
                                             final String message
                                                 = patternAssignmentViolatesDefinition.replace("%s%", normalizedType);
-                                            holder.registerProblem(value, message, ProblemHighlightType.WEAK_WARNING);
+                                            holder.registerProblem(value, message);
                                             break;
                                         }
                                     }

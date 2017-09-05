@@ -66,3 +66,19 @@
 
         return [ $first, $second ];
     }
+
+
+    /* case: self/static types support */
+    interface IndirectClassReference {
+        /** @return self */
+        public function returnSelf();
+        /** @return static */
+        public function returnStatic();
+    }
+    abstract class IndirectClassReferenceTest implements IndirectClassReference {
+        public function method(IndirectClassReference $parameter) {
+            $parameter = $this->returnSelf();
+            $parameter = $this->returnStatic();
+            $parameter = <weak_warning descr="New value type (null) is not in annotated types.">null</weak_warning>;
+        }
+    }

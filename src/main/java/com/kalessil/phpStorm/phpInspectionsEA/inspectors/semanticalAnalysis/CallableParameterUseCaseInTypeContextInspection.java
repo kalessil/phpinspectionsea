@@ -18,6 +18,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,9 +33,15 @@ import java.util.stream.Collectors;
  */
 
 public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInspection {
-    private static final String messageNoSense                      = "Makes no sense, because it's always true according to annotations.";
-    private static final String messageCheckViolatesDefinition      = "Makes no sense, because this type is not defined in annotations.";
-    private static final String patternAssignmentViolatesDefinition = "New value type (%s%) is not in annotated types.";
+    private static final String messageNoSense               = "Makes no sense, because it's always true according to annotations.";
+    private static final String messageViolationInCheck      = "Makes no sense, because this type is not defined in annotations.";
+    private static final String patternViolationInAssignment = "New value type (%s%) is not in annotated types.";
+
+    private static Set<String> classReferences = new HashSet<>();
+    static {
+        classReferences.add("self");
+        classReferences.add("static");
+    }
 
     @NotNull
     public String getShortName() {
@@ -133,7 +140,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                         = operation != null && PhpTokenTypes.opNOT == operation.getNode().getElementType();
                                 }
 
-                                final String message = isReversedCheck ? messageNoSense : messageCheckViolatesDefinition;
+                                final String message = isReversedCheck ? messageNoSense : messageViolationInCheck;
                                 holder.registerProblem(functionCall, message);
                             }
 
@@ -149,17 +156,28 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             if (variable instanceof Variable && value instanceof PhpTypedElement) {
                                 final String variableName = variable.getName();
                                 if (variableName != null && variableName.equals(parameterName)) {
-                                    for (final String type : ((PhpTypedElement) value).getType().global(project).filterUnknown().getTypes()) {
-                                        final String normalizedType = Types.getType(type);
-                                        if (normalizedType.equals(Types.strMixed)) {
-                                            continue;
+                                    final Set<String> resolved =
+                                            ((PhpTypedElement) value).getType().global(project)
+                                                    .filterUnknown().getTypes().stream()
+                                                        .map(Types::getType)
+                                                        .filter(type -> !type.equals(Types.strMixed))
+                                                        .collect(Collectors.toSet());
+                                    final boolean valueIsMethodCall = value instanceof MethodReference;
+                                    for (String type : resolved) {
+                                        /* translate static/self into FQNs */
+                                        if (valueIsMethodCall && classReferences.contains(type)) {
+                                            final PsiElement source = ((MethodReference) value).resolve();
+                                            if (source instanceof Method) {
+                                                final PhpClass clazz = ((Method) source).getContainingClass();
+                                                if (clazz != null && !clazz.isAnonymous()) {
+                                                    type = clazz.getFQN();
+                                                }
+                                            }
                                         }
 
-                                        final boolean isDefinitionViolation
-                                            = !this.isTypeCompatibleWith(normalizedType, parameterTypes, index);
-                                        if (isDefinitionViolation) {
-                                            final String message
-                                                = patternAssignmentViolatesDefinition.replace("%s%", normalizedType);
+                                        final boolean isViolation = !this.isTypeCompatibleWith(type, parameterTypes, index);
+                                        if (isViolation) {
+                                            final String message = patternViolationInAssignment.replace("%s%", type);
                                             holder.registerProblem(value, message);
                                             break;
                                         }
@@ -175,7 +193,11 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                 }
             }
 
-            private boolean isTypeCompatibleWith(@NotNull String type, @NotNull Set<String> allowedTypes, @NotNull PhpIndex index) {
+            private boolean isTypeCompatibleWith(
+                    @NotNull String type,
+                    @NotNull Collection<String> allowedTypes,
+                    @NotNull PhpIndex index
+            ) {
                 /* first case: implicit match */
                 if (allowedTypes.contains(type)) {
                     return true;
@@ -184,16 +206,11 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                 /* second case: inherited classes/interfaces */
                 final Set<String> possibleTypes = new HashSet<>();
                 if (type.startsWith("\\")) {
-                    final Set<PhpClass> foundClasses = new HashSet<>();
-                    foundClasses.addAll(index.getClassesByFQN(type));
-                    foundClasses.addAll(index.getInterfacesByFQN(type));
-                    for (final PhpClass clazz : foundClasses) {
-                        possibleTypes.addAll(
-                                InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream()
+                    index.getAnyByFQN(type).forEach(
+                            clazz -> InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream()
                                         .map(PhpNamedElement::getFQN)
-                                        .collect(Collectors.toList())
-                        );
-                    }
+                                        .forEach(possibleTypes::add)
+                    );
                 }
 
                 return !possibleTypes.isEmpty() && allowedTypes.stream().anyMatch(possibleTypes::contains);

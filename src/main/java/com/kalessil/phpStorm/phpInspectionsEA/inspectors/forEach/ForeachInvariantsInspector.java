@@ -3,15 +3,13 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import org.apache.commons.lang.StringUtils;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiUtil;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.AssignmentExpressionImpl;
-import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -21,8 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class ForeachInvariantsInspector extends BasePhpInspection {
-    private static final String strForBehavesAsForeach   = "Foreach can probably be used instead (easier to read and support; ensure a string is not iterated).";
-    private static final String strEachBehavesAsForeach  = "Foreach should be used instead (8x faster).";
+    private static final String foreachInvariant        = "Foreach can probably be used instead (easier to read and support; ensure a string is not iterated).";
+    private static final String strEachBehavesAsForeach = "Foreach should be used instead (8x faster).";
 
     @NotNull
     public String getShortName() {
@@ -33,17 +31,24 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMultiassignmentExpression(MultiassignmentExpression multiassignmentExpression) {
-                PhpPsiElement values = multiassignmentExpression.getValue();
+            @Override
+            public void visitPhpFor(@NotNull For forStatement) {
+                if (this.isForeachAnalog(forStatement)) {
+                    holder.registerProblem(forStatement.getFirstChild(), foreachInvariant);
+                }
+            }
+
+            @Override
+            public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression assignmentExpression) {
+                PhpPsiElement values = assignmentExpression.getValue();
                 if (values instanceof PhpExpressionImpl) {
                     values = ((PhpExpressionImpl) values).getValue();
                 }
 
-                if (values instanceof FunctionReferenceImpl) {
-                    final FunctionReference eachCandidate = (FunctionReference) values;
-                    final String function                 = eachCandidate.getName();
-                    if (!StringUtils.isEmpty(function) && function.equals("each")) {
-                        final PsiElement parent = multiassignmentExpression.getParent();
+                if (OpenapiTypesUtil.isFunctionReference(values)) {
+                    final String functionName = values.getName();
+                    if (functionName != null && functionName.equals("each")) {
+                        final PsiElement parent = assignmentExpression.getParent();
                         if (parent instanceof While || parent instanceof For) {
                             holder.registerProblem(parent.getFirstChild(), strEachBehavesAsForeach, ProblemHighlightType.GENERIC_ERROR);
                         }
@@ -51,34 +56,24 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 }
             }
 
-            public void visitPhpFor(For forStatement) {
-                if (isForeachAnalog(forStatement)) {
-                    /* report the issue */
-                    holder.registerProblem(forStatement.getFirstChild(), strForBehavesAsForeach, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                }
-            }
-
             private boolean isForeachAnalog(@NotNull For expression) {
-                // group statement needed
-                GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
-                if (null == body) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
+                if (body == null) {
                     return false;
                 }
 
-                // find first variable initialized with 0
-                Variable variable = null;
-                for (PhpPsiElement init : expression.getInitialExpressions()) {
-                    if (!(init instanceof AssignmentExpressionImpl)) {
-                        continue;
-                    }
-
-                    AssignmentExpressionImpl intiCasted = (AssignmentExpressionImpl) init;
-                    if (intiCasted.getValue() instanceof PhpExpressionImpl) {
-                        PhpExpressionImpl initValue = (PhpExpressionImpl) intiCasted.getValue();
-                        //noinspection ConstantConditions
-                        if (initValue.getText().equals("0") && intiCasted.getVariable() instanceof Variable) {
-                            variable = (Variable) intiCasted.getVariable();
-                            break;
+                /* find first variable initialized with 0 */
+                PsiElement variable = null;
+                for (final PhpPsiElement init : expression.getInitialExpressions()) {
+                    if (OpenapiTypesUtil.isAssignment(init)) {
+                        final AssignmentExpression assignment = (AssignmentExpression) init;
+                        final PsiElement value                = assignment.getValue();
+                        if (value != null) {
+                            final PsiElement candidateVariable = assignment.getVariable();
+                            if (candidateVariable instanceof Variable && value.getText().equals("0")) {
+                                variable = candidateVariable;
+                                break;
+                            }
                         }
                     }
                 }

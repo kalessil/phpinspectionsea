@@ -3,24 +3,23 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.PhpPsiUtil;
+import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
 public class ForeachInvariantsInspector extends BasePhpInspection {
-    private static final String foreachInvariant        = "Foreach can probably be used instead (easier to read and support; ensure a string is not iterated).";
-    private static final String strEachBehavesAsForeach = "Foreach should be used instead (8x faster).";
+    private static final String foreachInvariant = "Foreach can probably be used instead (easier to read and support; ensure a string is not iterated).";
+    private static final String eachFunctionUsed = "Foreach should be used instead (8x faster).";
 
     @NotNull
     public String getShortName() {
@@ -40,17 +39,17 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression assignmentExpression) {
-                PhpPsiElement values = assignmentExpression.getValue();
-                if (values instanceof PhpExpressionImpl) {
-                    values = ((PhpExpressionImpl) values).getValue();
+                PsiElement value = assignmentExpression.getValue();
+                if (OpenapiTypesUtil.is(value, PhpElementTypes.EXPRESSION)) {
+                    value = value.getFirstChild();
                 }
 
-                if (OpenapiTypesUtil.isFunctionReference(values)) {
-                    final String functionName = values.getName();
+                if (OpenapiTypesUtil.isFunctionReference(value)) {
+                    final String functionName = ((FunctionReference) value).getName();
                     if (functionName != null && functionName.equals("each")) {
                         final PsiElement parent = assignmentExpression.getParent();
                         if (parent instanceof While || parent instanceof For) {
-                            holder.registerProblem(parent.getFirstChild(), strEachBehavesAsForeach, ProblemHighlightType.GENERIC_ERROR);
+                            holder.registerProblem(parent.getFirstChild(), eachFunctionUsed, ProblemHighlightType.GENERIC_ERROR);
                         }
                     }
                 }
@@ -161,7 +160,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                             comparedElement instanceof BinaryExpression      || // e.g. mathematical operations
                             comparedElement instanceof FunctionReference     || // first the function needs to be relocated
                             comparedElement instanceof ArrayAccessExpression || // we can not analyze this anyway
-                            PhpPsiUtil.isOfType(comparedElement.getFirstChild(), PhpTokenTypes.DECIMAL_INTEGER)
+                            OpenapiTypesUtil.is(comparedElement.getFirstChild(), PhpTokenTypes.DECIMAL_INTEGER)
                         )
                     ) {
                         isComparedNotProperExpression = true;

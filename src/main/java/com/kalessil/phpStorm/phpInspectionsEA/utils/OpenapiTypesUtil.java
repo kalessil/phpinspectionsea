@@ -16,21 +16,19 @@ final public class OpenapiTypesUtil {
     }
 
     static public boolean isAssignment(@Nullable PsiElement expression) {
-        return is(expression, PhpElementTypes.ASSIGNMENT_EXPRESSION);
+        return expression != null && expression.getNode().getElementType() == PhpElementTypes.ASSIGNMENT_EXPRESSION;
     }
 
-    static public boolean is(@Nullable PsiElement subject, @NotNull IElementType type) {
-        return subject != null && subject.getNode().getElementType() == type;
-    }
-
-    /* Filters method references */
     static public boolean isFunctionReference(@Nullable PsiElement expression) {
-        return expression instanceof FunctionReference && !(expression instanceof MethodReference);
+        return expression != null && expression.getNode().getElementType() == PhpElementTypes.FUNCTION_CALL;
     }
 
-    /* Simplification detecting loops; interface already available in EAPs */
     static public boolean isLoop(@Nullable PsiElement expression) {
         return null != expression &&
             (expression instanceof ForeachStatement || expression instanceof For || expression instanceof While || expression instanceof DoWhile);
+    }
+
+    static public boolean is(@Nullable PsiElement expression, @NotNull IElementType type) {
+        return expression != null && expression.getNode().getElementType() == type;
     }
 }

@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 
+import com.android.annotations.Nullable;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -55,45 +56,46 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 }
             }
 
+            @Nullable
+            private PsiElement getCounterVariable(@NotNull For expression) {
+                PsiElement result = null;
+                for (final PhpPsiElement init : expression.getInitialExpressions()) {
+                    if (OpenapiTypesUtil.isAssignment(init)) {
+                        final AssignmentExpression assignment = (AssignmentExpression) init;
+                        final PsiElement value                = assignment.getValue();
+                        final PsiElement variable             = assignment.getVariable();
+                        if (value != null && variable instanceof Variable && value.getText().equals("0")) {
+                            result = variable;
+                            break;
+                        }
+                    }
+                }
+                return result;
+            }
+
             private boolean isForeachAnalog(@NotNull For expression) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
                 if (body == null) {
                     return false;
                 }
+                /* TODO: body is not empty */
 
                 /* find first variable initialized with 0 */
-                PsiElement variable = null;
-                for (final PhpPsiElement init : expression.getInitialExpressions()) {
-                    if (OpenapiTypesUtil.isAssignment(init)) {
-                        final AssignmentExpression assignment = (AssignmentExpression) init;
-                        final PsiElement value                = assignment.getValue();
-                        if (value != null) {
-                            final PsiElement candidateVariable = assignment.getVariable();
-                            if (candidateVariable instanceof Variable && value.getText().equals("0")) {
-                                variable = candidateVariable;
-                                break;
-                            }
-                        }
-                    }
-                }
+                final PsiElement variable = this.getCounterVariable(expression);
                 if (null == variable) {
                     return false;
                 }
 
                 // check if variable incremented
                 boolean isVariableIncremented = false;
-                for (PhpPsiElement repeat : expression.getRepeatedExpressions()) {
-                    if (!(repeat instanceof UnaryExpression)) {
-                        continue;
-                    }
-
-                    final UnaryExpression repeatCasted = (UnaryExpression) repeat;
-                    // operation applied to a variable
-                    if (null != repeatCasted.getOperation() && repeatCasted.getFirstPsiChild() instanceof Variable) {
-                        // increment on our variable
+                for (final PhpPsiElement repeat : expression.getRepeatedExpressions()) {
+                    if (repeat instanceof UnaryExpression) {
+                        final UnaryExpression incrementCandidate = (UnaryExpression) repeat;
+                        final PsiElement argument                = incrementCandidate.getValue();
                         if (
-                            repeatCasted.getOperation().getNode().getElementType() == PhpTokenTypes.opINCREMENT &&
-                            PsiEquivalenceUtil.areElementsEquivalent(variable, repeatCasted.getFirstPsiChild())
+                            argument instanceof Variable &&
+                            OpenapiTypesUtil.is(incrementCandidate.getOperation(), PhpTokenTypes.opINCREMENT) &&
+                            PsiEquivalenceUtil.areElementsEquivalent(variable, argument)
                         ) {
                             isVariableIncremented = true;
                             break;

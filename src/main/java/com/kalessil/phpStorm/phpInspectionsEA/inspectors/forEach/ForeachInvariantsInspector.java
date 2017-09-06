@@ -16,6 +16,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class ForeachInvariantsInspector extends BasePhpInspection {
     private static final String foreachInvariant = "Foreach can probably be used instead (easier to read and support; ensure a string is not iterated).";
@@ -31,17 +34,18 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpFor(@NotNull For forStatement) {
-                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(forStatement);
+            public void visitPhpFor(@NotNull For forExpression) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(forExpression);
                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
-                    final PsiElement variable = this.getCounterVariable(forStatement);
-                    if (variable != null) {
-                        final boolean result =
-                                this.isCounterVariableIncremented(forStatement, variable) &&
-                                this.isCheckedAsExpected(forStatement, variable) &&
-                                this.isUsedInArrayAccess(body, variable);
-                        if (result) {
-                            holder.registerProblem(forStatement.getFirstChild(), foreachInvariant);
+                    final PsiElement variable = this.getCounterVariable(forExpression);
+                    if (
+                        variable != null &&
+                        this.isCounterVariableIncremented(forExpression, variable) &&
+                        this.isCheckedAsExpected(forExpression, variable)
+                    ) {
+                        final PsiElement container = this.getContainerByIndex(body, variable);
+                        if (container != null) {
+                            holder.registerProblem(forExpression.getFirstChild(), foreachInvariant);
                         }
                     }
                 }
@@ -100,38 +104,46 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 return result;
             }
 
-            private boolean isUsedInArrayAccess(@NotNull GroupStatement body, @NotNull PsiElement variable) {
-                boolean result = false;
+            /* TODO: in case of multiple return null; Phing: 93/ */
+            private PsiElement getContainerByIndex(@NotNull GroupStatement body, @NotNull PsiElement variable) {
+                final Map<String, PsiElement> containers = new HashMap<>();
                 for (final ArrayAccessExpression offset : PsiTreeUtil.findChildrenOfType(body, ArrayAccessExpression.class)) {
                     final ArrayIndex index = offset.getIndex();
                     final PsiElement value = index == null ? null : index.getValue();
                     if (value instanceof Variable && PsiEquivalenceUtil.areElementsEquivalent(variable, value)) {
-                        result = true;
-                        break;
+                        final PsiElement container = offset.getValue();
+                        if (container != null) {
+                            containers.put(container.getText(), container);
+                        }
                     }
                 }
+                final PsiElement result = containers.size() == 1 ? containers.values().iterator().next().copy(): null;
+                containers.clear();
                 return result;
             }
 
             private boolean isCheckedAsExpected(@NotNull For expression, @NotNull PsiElement variable) {
-                boolean result = false;
-                for (final PsiElement check : expression.getConditionalExpressions()) {
-                    if (check instanceof BinaryExpression) {
-                        final BinaryExpression condition = (BinaryExpression) check;
-                        final PsiElement left            = condition.getLeftOperand();
-                        final PsiElement right           = condition.getRightOperand();
+                boolean result               = false;
+                final PsiElement[] conditions = expression.getConditionalExpressions();
+                if (conditions.length == 1) {
+                    for (final PsiElement check : conditions) {
+                        if (check instanceof BinaryExpression) {
+                            final BinaryExpression condition = (BinaryExpression) check;
+                            final PsiElement left            = condition.getLeftOperand();
+                            final PsiElement right           = condition.getRightOperand();
 
-                        final PsiElement value;
-                        if (left instanceof Variable && PsiEquivalenceUtil.areElementsEquivalent(variable, left)) {
-                            value = right;
-                        } else if (right instanceof Variable && PsiEquivalenceUtil.areElementsEquivalent(variable, right)) {
-                            value = left;
-                        } else {
-                            value = null;
+                            final PsiElement value;
+                            if (left instanceof Variable && PsiEquivalenceUtil.areElementsEquivalent(variable, left)) {
+                                value = right;
+                            } else if (right instanceof Variable && PsiEquivalenceUtil.areElementsEquivalent(variable, right)) {
+                                value = left;
+                            } else {
+                                value = null;
+                            }
+
+                            result = value instanceof Variable;
+                            break;
                         }
-
-                        result = value instanceof Variable;
-                        break;
                     }
                 }
                 return result;

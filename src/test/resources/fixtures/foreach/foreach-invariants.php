@@ -24,3 +24,9 @@
     for ($i = 0; $i < 10; $i++, $z = 0) {
         echo $arr[$i];
     }
+
+    /* false-positives: multiple containers */
+    $col = array();
+    for ($i = 0, $max = count($arr); $i < $max; $i++, $z = 0) {
+        echo $arr[$i], $col[$i];
+    }

@@ -16,7 +16,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 
 public class ForeachInvariantsInspector extends BasePhpInspection {
     private static final String foreachInvariant = "Foreach can probably be used instead (easier to read and support; ensure a string is not iterated).";
@@ -73,7 +72,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 return result;
             }
 
-            private boolean isCounterVariableIncremented(@NotNull For expression, @NotNull Variable variable) {
+            private boolean isCounterVariableIncremented(@NotNull For expression, @NotNull PsiElement variable) {
                 boolean result = false;
                 for (final PsiElement repeat : expression.getRepeatedExpressions()) {
                     if (repeat instanceof UnaryExpression) {
@@ -91,78 +90,68 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 return result;
             }
 
+            private boolean isUsedInArrayAccess(@NotNull GroupStatement body, @NotNull PsiElement variable) {
+                boolean result = false;
+                for (final ArrayAccessExpression offset : PsiTreeUtil.findChildrenOfType(body, ArrayAccessExpression.class)) {
+                    final ArrayIndex index = offset.getIndex();
+                    final PsiElement value = index == null ? null : index.getValue();
+                    if (value instanceof Variable && PsiEquivalenceUtil.areElementsEquivalent(variable, value)) {
+                        result = true;
+                        break;
+                    }
+                }
+                return result;
+            }
+
             private boolean isForeachAnalog(@NotNull For expression) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
                 if (body == null || ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
                     return false;
                 }
+
                 final PsiElement variable = this.getCounterVariable(expression);
-                if (variable == null || !this.isCounterVariableIncremented(expression, (Variable) variable)) {
+                if (
+                    variable == null ||
+                    !this.isCounterVariableIncremented(expression, variable) ||
+                    !this.isUsedInArrayAccess(body, variable)
+                ) {
                     return false;
                 }
 
-                // find usages as index
-                boolean isUsedAsIndex = false;
-                Collection<ArrayAccessExpression> indexStatements = PsiTreeUtil.findChildrenOfType(body, ArrayAccessExpression.class);
-                // TODO: strings, ++variable
-                for (ArrayAccessExpression offset : indexStatements) {
-                    if (
-                        null != offset.getIndex() &&
-                        offset.getIndex().getValue() instanceof Variable &&
-                        PsiEquivalenceUtil.areElementsEquivalent(variable, offset.getIndex().getValue())
-                    ) {
-                        isUsedAsIndex = true;
-                        break;
-                    }
-                }
-                indexStatements.clear();
-                if (!isUsedAsIndex) {
-                    return false;
-                }
-
-                // ensure not compared with fixed number
+                /* check conditions */
                 boolean isComparedNotProperExpression = false;
-                boolean isBinaryExpression = false;
-                for (PhpPsiElement condition : expression.getConditionalExpressions()) {
-                    isBinaryExpression = condition instanceof BinaryExpression;
-                    if (!isBinaryExpression) {
-                        continue;
+                boolean isBinaryExpression            = false;
+                for (final PsiElement check : expression.getConditionalExpressions()) {
+                    isBinaryExpression = check instanceof BinaryExpression;
+                    if (isBinaryExpression) {
+                        final PsiElement value;
+                        final BinaryExpression condition = (BinaryExpression) check;
+                        final PsiElement left            = condition.getLeftOperand();
+                        final PsiElement right           = condition.getRightOperand();
+                        if (left instanceof Variable && PsiEquivalenceUtil.areElementsEquivalent(variable, left)) {
+                            value = right;
+                        } else if (right instanceof Variable && PsiEquivalenceUtil.areElementsEquivalent(variable, right)) {
+                            value = left;
+                        } else {
+                            value = null;
+                        }
+                        if (value == null || value instanceof AssignmentExpression) {
+                            isComparedNotProperExpression = true;
+                            continue;
+                        }
+
+                        // stop analysis if unexpected expression used for comparison
+                        if (
+                            value instanceof BinaryExpression      || // e.g. mathematical operations
+                            value instanceof FunctionReference     || // first the function needs to be relocated
+                            value instanceof ArrayAccessExpression || // we can not analyze this anyway
+                            OpenapiTypesUtil.is(value.getFirstChild(), PhpTokenTypes.DECIMAL_INTEGER)
+                        ) {
+                            isComparedNotProperExpression = true;
+                            break;
+                        }
                     }
 
-                    BinaryExpression conditionCasted = (BinaryExpression) condition;
-
-                    // get compared value
-                    PsiElement comparedElement = null;
-                    if (
-                        conditionCasted.getLeftOperand() instanceof Variable &&
-                        PsiEquivalenceUtil.areElementsEquivalent(variable, conditionCasted.getLeftOperand())
-                    ) {
-                        comparedElement = conditionCasted.getRightOperand();
-                    }
-                    if (
-                        conditionCasted.getRightOperand() instanceof Variable &&
-                        PsiEquivalenceUtil.areElementsEquivalent(variable, conditionCasted.getRightOperand())
-                    ) {
-                        comparedElement = conditionCasted.getLeftOperand();
-                    }
-                    if (comparedElement instanceof AssignmentExpression) {
-                        isComparedNotProperExpression = true;
-                        continue;
-                    }
-
-                    // stop analysis if unexpected expression used for comparison
-                    if (
-                        null != comparedElement &&
-                        (
-                            comparedElement instanceof BinaryExpression      || // e.g. mathematical operations
-                            comparedElement instanceof FunctionReference     || // first the function needs to be relocated
-                            comparedElement instanceof ArrayAccessExpression || // we can not analyze this anyway
-                            OpenapiTypesUtil.is(comparedElement.getFirstChild(), PhpTokenTypes.DECIMAL_INTEGER)
-                        )
-                    ) {
-                        isComparedNotProperExpression = true;
-                        break;
-                    }
                 }
 
                 return isBinaryExpression && !isComparedNotProperExpression;

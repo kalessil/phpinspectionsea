@@ -73,36 +73,31 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 return result;
             }
 
-            private boolean isForeachAnalog(@NotNull For expression) {
-                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
-                if (body == null) {
-                    return false;
-                }
-                /* TODO: body is not empty */
-
-                /* find first variable initialized with 0 */
-                final PsiElement variable = this.getCounterVariable(expression);
-                if (null == variable) {
-                    return false;
-                }
-
-                // check if variable incremented
-                boolean isVariableIncremented = false;
-                for (final PhpPsiElement repeat : expression.getRepeatedExpressions()) {
+            private boolean isCounterVariableIncremented(@NotNull For expression, @NotNull Variable variable) {
+                boolean result = false;
+                for (final PsiElement repeat : expression.getRepeatedExpressions()) {
                     if (repeat instanceof UnaryExpression) {
                         final UnaryExpression incrementCandidate = (UnaryExpression) repeat;
                         final PsiElement argument                = incrementCandidate.getValue();
                         if (
-                            argument instanceof Variable &&
                             OpenapiTypesUtil.is(incrementCandidate.getOperation(), PhpTokenTypes.opINCREMENT) &&
-                            PsiEquivalenceUtil.areElementsEquivalent(variable, argument)
+                            argument != null && PsiEquivalenceUtil.areElementsEquivalent(variable, argument)
                         ) {
-                            isVariableIncremented = true;
+                            result = true;
                             break;
                         }
                     }
                 }
-                if (!isVariableIncremented) {
+                return result;
+            }
+
+            private boolean isForeachAnalog(@NotNull For expression) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
+                if (body == null || ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
+                    return false;
+                }
+                final PsiElement variable = this.getCounterVariable(expression);
+                if (variable == null || !this.isCounterVariableIncremented(expression, (Variable) variable)) {
                     return false;
                 }
 

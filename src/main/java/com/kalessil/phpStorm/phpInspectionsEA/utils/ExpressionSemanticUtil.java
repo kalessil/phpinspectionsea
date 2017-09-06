@@ -43,7 +43,7 @@ final public class ExpressionSemanticUtil {
      */
     public static int countExpressionsInGroup(@NotNull GroupStatement groupStatement) {
         int count = 0;
-        for (PsiElement statement : groupStatement.getChildren()) {
+        for (final PsiElement statement : groupStatement.getChildren()) {
             if (!(statement instanceof PhpPsiElement) || statement instanceof PhpDocType) {
                 continue;
             }

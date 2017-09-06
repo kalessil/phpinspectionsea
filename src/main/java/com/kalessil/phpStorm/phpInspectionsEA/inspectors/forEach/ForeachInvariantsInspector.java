@@ -119,15 +119,14 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 }
 
                 /* check conditions */
-                boolean isComparedNotProperExpression = false;
-                boolean isBinaryExpression            = false;
+                boolean result = false;
                 for (final PsiElement check : expression.getConditionalExpressions()) {
-                    isBinaryExpression = check instanceof BinaryExpression;
-                    if (isBinaryExpression) {
-                        final PsiElement value;
+                    if (check instanceof BinaryExpression) {
                         final BinaryExpression condition = (BinaryExpression) check;
                         final PsiElement left            = condition.getLeftOperand();
                         final PsiElement right           = condition.getRightOperand();
+
+                        final PsiElement value;
                         if (left instanceof Variable && PsiEquivalenceUtil.areElementsEquivalent(variable, left)) {
                             value = right;
                         } else if (right instanceof Variable && PsiEquivalenceUtil.areElementsEquivalent(variable, right)) {
@@ -135,26 +134,14 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         } else {
                             value = null;
                         }
-                        if (value == null || value instanceof AssignmentExpression) {
-                            isComparedNotProperExpression = true;
-                            continue;
-                        }
 
-                        // stop analysis if unexpected expression used for comparison
-                        if (
-                            value instanceof BinaryExpression      || // e.g. mathematical operations
-                            value instanceof FunctionReference     || // first the function needs to be relocated
-                            value instanceof ArrayAccessExpression || // we can not analyze this anyway
-                            OpenapiTypesUtil.is(value.getFirstChild(), PhpTokenTypes.DECIMAL_INTEGER)
-                        ) {
-                            isComparedNotProperExpression = true;
-                            break;
-                        }
+                        result = value instanceof Variable;
+                        break;
                     }
 
                 }
 
-                return isBinaryExpression && !isComparedNotProperExpression;
+                return result;
             }
         };
     }

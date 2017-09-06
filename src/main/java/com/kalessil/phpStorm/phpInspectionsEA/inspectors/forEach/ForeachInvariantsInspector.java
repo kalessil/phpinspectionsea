@@ -32,8 +32,18 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFor(@NotNull For forStatement) {
-                if (this.isForeachAnalog(forStatement)) {
-                    holder.registerProblem(forStatement.getFirstChild(), foreachInvariant);
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(forStatement);
+                if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
+                    final PsiElement variable = this.getCounterVariable(forStatement);
+                    if (variable != null) {
+                        final boolean result =
+                                this.isCounterVariableIncremented(forStatement, variable) &&
+                                this.isCheckedAsExpected(forStatement, variable) &&
+                                this.isUsedInArrayAccess(body, variable);
+                        if (result) {
+                            holder.registerProblem(forStatement.getFirstChild(), foreachInvariant);
+                        }
+                    }
                 }
             }
 
@@ -103,22 +113,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 return result;
             }
 
-            private boolean isForeachAnalog(@NotNull For expression) {
-                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
-                if (body == null || ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
-                    return false;
-                }
-
-                final PsiElement variable = this.getCounterVariable(expression);
-                if (
-                    variable == null ||
-                    !this.isCounterVariableIncremented(expression, variable) ||
-                    !this.isUsedInArrayAccess(body, variable)
-                ) {
-                    return false;
-                }
-
-                /* check conditions */
+            private boolean isCheckedAsExpected(@NotNull For expression, @NotNull PsiElement variable) {
                 boolean result = false;
                 for (final PsiElement check : expression.getConditionalExpressions()) {
                     if (check instanceof BinaryExpression) {
@@ -138,9 +133,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         result = value instanceof Variable;
                         break;
                     }
-
                 }
-
                 return result;
             }
         };

@@ -220,23 +220,22 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
         ) {
             final String containerText = container.getText();
             final String indexText     = index.getText();
-            for (final ArrayAccessExpression offset : PsiTreeUtil.findChildrenOfType(body, ArrayAccessExpression.class)) {
-                final PsiElement parent       = offset.getParent();
-                final boolean isTargetContext = parent instanceof MemberReference; /* keep extending here */
-                if (isTargetContext) {
-                    final ArrayIndex offsetIndex = offset.getIndex();
-                    final PsiElement usedIndex = offsetIndex == null ? null : offsetIndex.getValue();
+            PsiTreeUtil.findChildrenOfType(body, ArrayAccessExpression.class).stream()
+                .filter(offset  -> {
+                    final PsiElement parent = offset.getParent();
+                    return parent instanceof MemberReference; /* keep extending here */
+                })
+                .forEach(offset -> {
+                    final ArrayIndex offsetIndex   = offset.getIndex();
+                    final PsiElement usedIndex     = offsetIndex == null ? null : offsetIndex.getValue();
                     final PsiElement usedContainer = offset.getValue();
                     if (usedIndex != null && usedContainer != null) {
                         /* let's not use PsiEquivalenceUtil.areElementsEquivalent here for now - not always matches */
-                        final boolean isTarget
-                                = indexText.equals(usedIndex.getText()) && containerText.equals(usedContainer.getText());
-                        if (isTarget) {
+                        if (indexText.equals(usedIndex.getText()) && containerText.equals(usedContainer.getText())) {
                             offset.replace(replacement);
                         }
                     }
-                }
-            }
+                });
         }
     }
 }

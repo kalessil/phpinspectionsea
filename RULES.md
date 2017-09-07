@@ -32,7 +32,7 @@ Inspections Lists (Control flow)
 | Control Flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach                                         | n/a | yes | n/a  | no  |
 | Control Flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                                                | yes |
 | Control Flow         | DegradedSwitchInspection                        | Switch-case could be simplified                                                   | n/a |
-| Control Flow         | ForeachInvariantsInspection                     | Foreach usage possible                                                            | no  | yes | no   | no  |
+| Control Flow         | ForeachInvariantsInspection                     | Foreach usage possible                                                            | yes | yes | yes  | no  |
 | Control Flow         | PdoApiUsageInspection                           | PDO API usage                                                                     | yes | yes | yes  | yes |
 | Control Flow         | OneTimeUseVariablesInspection                   | One-time use variables                                                            | yes | yes | yes  | no  |
 | Control Flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                                                     | n/a | yes | n/a  | no  |
@@ -83,7 +83,7 @@ Inspections Lists (Confusing constructs)
 | Confusing constructs | ClassMethodNameMatchesFieldNameInspection       | Method name matches existing field name             | n/a | yes | n/a  | no  |
 | Confusing constructs | NestedTernaryOperatorInspection                 | Nested ternary operator                             | no  | yes | no   | no  |
 | Confusing constructs | UselessReturnInspection                         | Useless return                                      | n/a | yes | n/a  | no  |
-| Confusing constructs | ReferencingObjectsInspection                    | Referencing objects                                 | yes | yes | no   | no  |
+| Confusing constructs | ReferencingObjectsInspection                    | Referencing objects                                 | yes | yes | yes  | no  |
 
 Inspections Lists (Code style)
 ---

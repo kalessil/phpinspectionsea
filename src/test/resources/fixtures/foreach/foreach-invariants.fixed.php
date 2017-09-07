@@ -4,15 +4,15 @@
 
     function cases_holder($arr) {
         /* case: invariant */
-        <warning descr="Foreach can probably be used instead (easier to read and support; ensure a string is not iterated).">for</warning> ($i = 0, $max = count($arr); $i < $max; ++$i, $z = 0) {
-            echo $arr[$i], $arr[$i]->property;
+        foreach ($arr as $i => $iValue) {
+            echo $arr[$i], $iValue->property;
         }
-        <warning descr="Foreach can probably be used instead (easier to read and support; ensure a string is not iterated).">for</warning> ($i = 0, $max = count($arr); $i < $max; $i++, $z = 0) {
-            echo $arr[$i], $arr[$i]->property;
+        foreach ($arr as $i => $iValue) {
+            echo $arr[$i], $iValue->property;
         }
 
         /* case: slow loop */
-        <error descr="Foreach should be used instead (8x faster).">while</error> (list($k, $v) = each($arr)) {}
+        while (list($k, $v) = each($arr)) {}
     }
 
     /* false-positives: no subject index based access */

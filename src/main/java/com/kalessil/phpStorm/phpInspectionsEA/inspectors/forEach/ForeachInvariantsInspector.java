@@ -200,12 +200,40 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                             .replace("%i%", index.getText())
                             .replace("%i%", index.getText())
                             .replace("%c%", container.getText());
-                    final PsiElement replacement    = PhpPsiElementFactory.createPhpPsiFromText(project, ForeachStatement.class, pattern);
-                    final GroupStatement bodyHolder = ExpressionSemanticUtil.getGroupStatement(replacement);
-                    if (bodyHolder != null) {
-                        /* TODO: body find container[$index]->memberReferences an use indexMax */
+                    final ForeachStatement replacement    = PhpPsiElementFactory.createPhpPsiFromText(project, ForeachStatement.class, pattern);
+                    final PsiElement replacementContainer = replacement.getValue();
+                    final GroupStatement bodyHolder       = ExpressionSemanticUtil.getGroupStatement(replacement);
+                    if (bodyHolder != null && replacementContainer != null) {
+                        this.updateContainersUsage(body, container, index, replacementContainer);
                         bodyHolder.replace(body);
                         loop.replace(replacement);
+                    }
+                }
+            }
+        }
+
+        private void updateContainersUsage(
+            @NotNull GroupStatement body,
+            @NotNull PsiElement container,
+            @NotNull PsiElement index,
+            @NotNull PsiElement replacement
+        ) {
+            final String containerText = container.getText();
+            final String indexText     = index.getText();
+            for (final ArrayAccessExpression offset : PsiTreeUtil.findChildrenOfType(body, ArrayAccessExpression.class)) {
+                final PsiElement parent       = offset.getParent();
+                final boolean isTargetContext = parent instanceof MemberReference; /* keep extending here */
+                if (isTargetContext) {
+                    final ArrayIndex offsetIndex = offset.getIndex();
+                    final PsiElement usedIndex = offsetIndex == null ? null : offsetIndex.getValue();
+                    final PsiElement usedContainer = offset.getValue();
+                    if (usedIndex != null && usedContainer != null) {
+                        /* let's not use PsiEquivalenceUtil.areElementsEquivalent here for now - not always matches */
+                        final boolean isTarget
+                                = indexText.equals(usedIndex.getText()) && containerText.equals(usedContainer.getText());
+                        if (isTarget) {
+                            offset.replace(replacement);
+                        }
                     }
                 }
             }

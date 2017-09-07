@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -43,18 +44,18 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
             public void visitPhpFor(@NotNull For forExpression) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(forExpression);
                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
-                    final PsiElement variable = this.getCounterVariable(forExpression);
+                    final PsiElement indexVariable = this.getCounterVariable(forExpression);
                     if (
-                        variable != null &&
-                        this.isCounterVariableIncremented(forExpression, variable) &&
-                        this.isCheckedAsExpected(forExpression, variable)
+                        indexVariable != null &&
+                        this.isCounterVariableIncremented(forExpression, indexVariable) &&
+                        this.isCheckedAsExpected(forExpression, indexVariable)
                     ) {
-                        final PsiElement container = this.getContainerByIndex(body, variable);
+                        final PsiElement container = this.getContainerByIndex(body, indexVariable);
                         if (container != null) {
                             holder.registerProblem(
                                     forExpression.getFirstChild(),
                                     foreachInvariant,
-                                    new UseForeachFix(forExpression, variable, container)
+                                    new UseForeachFix(forExpression, indexVariable, null, container)
                             );
                         }
                     }
@@ -69,11 +70,26 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 }
 
                 if (OpenapiTypesUtil.isFunctionReference(value)) {
-                    final String functionName = ((FunctionReference) value).getName();
-                    if (functionName != null && functionName.equals("each")) {
+                    final FunctionReference each = (FunctionReference) value;
+                    final String functionName    = (each).getName();
+                    final PsiElement[] arguments = each.getParameters();
+                    if (arguments.length == 1 && functionName != null && functionName.equals("each")) {
                         final PsiElement parent = assignmentExpression.getParent();
                         if (parent instanceof While || parent instanceof For) {
-                            holder.registerProblem(parent.getFirstChild(), eachFunctionUsed, ProblemHighlightType.GENERIC_ERROR);
+                            final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(parent);
+                            if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
+                                UseForeachFix fixer = null;
+                                if (parent instanceof While) {
+                                    final List<PhpPsiElement> variables = assignmentExpression.getVariables();
+                                    if (variables.size() == 2) {
+                                        fixer = new UseForeachFix(parent, variables.get(0), variables.get(1), arguments[0]);
+                                    }
+                                }
+
+                                holder.registerProblem(
+                                    parent.getFirstChild(), eachFunctionUsed, ProblemHighlightType.GENERIC_ERROR, fixer
+                                );
+                            }
                         }
                     }
                 }
@@ -164,8 +180,13 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
     }
 
     private class UseForeachFix implements LocalQuickFix {
+        @NotNull
         private final SmartPsiElementPointer<PsiElement> loop;
+        @NotNull
         private final SmartPsiElementPointer<PsiElement> index;
+        @Nullable
+        private final SmartPsiElementPointer<PsiElement> value;
+        @NotNull
         private final SmartPsiElementPointer<PsiElement> container;
 
         @NotNull
@@ -180,11 +201,17 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
             return getName();
         }
 
-        UseForeachFix(@NotNull For expression, @NotNull PsiElement index, @NotNull PsiElement container) {
-            final SmartPointerManager factory = SmartPointerManager.getInstance(expression.getProject());
+        UseForeachFix(
+            @NotNull PsiElement loop,
+            @NotNull PsiElement index,
+            @Nullable PsiElement value,
+            @NotNull PsiElement container
+        ) {
+            final SmartPointerManager factory = SmartPointerManager.getInstance(loop.getProject());
 
-            this.loop      = factory.createSmartPsiElementPointer(expression);
+            this.loop      = factory.createSmartPsiElementPointer(loop);
             this.index     = factory.createSmartPsiElementPointer(index);
+            this.value     = value == null ? null : factory.createSmartPsiElementPointer(value);
             this.container = factory.createSmartPsiElementPointer(container);
         }
 
@@ -192,11 +219,13 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement loop      = this.loop.getElement();
             final PsiElement index     = this.index.getElement();
+            final PsiElement value     = this.value == null ? null : this.value.getElement();
             final PsiElement container = this.container.getElement();
             if (loop != null && index != null && container != null) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
                 if (body != null) {
                     final String pattern = "foreach (%c% as %i% => %i%Value) {}"
+                            .replace("%i%Value", value == null ? "%i%Value" : value.getText())
                             .replace("%i%", index.getText())
                             .replace("%i%", index.getText())
                             .replace("%c%", container.getText());

@@ -20,7 +20,9 @@
         }
 
         /* case: slow loop */
-        while (list($k, $v) = each($arr)) {}
+        foreach ($arr as $v) {
+            echo $v->property;
+        }
     }
 
     /* false-positives: no subject index based access */

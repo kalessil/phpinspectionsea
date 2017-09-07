@@ -20,7 +20,9 @@
         }
 
         /* case: slow loop */
-        <error descr="Foreach should be used instead (8x faster).">while</error> (list($k, $v) = each($arr)) {}
+        <error descr="Foreach should be used instead (8x faster).">while</error> (list($i, $v) = each($arr)) {
+            echo $arr[$i]->property;
+        }
     }
 
     /* false-positives: no subject index based access */

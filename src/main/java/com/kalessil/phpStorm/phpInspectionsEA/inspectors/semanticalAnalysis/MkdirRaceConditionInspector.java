@@ -51,8 +51,8 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 /* ind out expression where the call is contained - quite big set of variations */
                 final PsiElement parent = this.getCompleteExpression(reference);
 
-                // case 1: [$var =] mkdir(...); / if ([!]mkdir(...))
-                if (parent instanceof AssignmentExpression || parent instanceof If || OpenapiTypesUtil.is(parent, PhpElementTypes.STATEMENT)) {
+                // case 1: if ([!]mkdir(...))
+                if (parent instanceof If || OpenapiTypesUtil.is(parent, PhpElementTypes.STATEMENT)) {
                     final PsiElement target = parent instanceof If ? ((If) parent).getCondition() : parent;
                     final String message =
                             (parent instanceof If ? patternMkdirAndCondition : patternMkdirDirectCall)

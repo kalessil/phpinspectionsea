@@ -11,7 +11,7 @@
     $result = mkdir('...');
 
     /* case: incomplete conditions */
-    if (<error descr="Some check are missing: 'mkdir('...') || is_dir('...')'.">(mkdir('...'))</error>) {}
+    // if ((mkdir('...'))) {}
     if (<error descr="Some check are missing: '!mkdir('...') && !is_dir('...')'.">(!mkdir('...'))</error>) {}
     if (<error descr="Some check are missing: '!mkdir('...') && !is_dir('...')'.">(!@mkdir('...'))</error>) {}
     if (!is_dir('...') && <error descr="Some check are missing: '!mkdir('...') && !is_dir('...')'.">!mkdir('...')</error>) {}
@@ -19,4 +19,4 @@
 
     /* false-positive: re-checked afterwards */
     if (!is_dir('...') && !mkdir('...') && !is_dir('...')) {}
-    if (is_dir('...') || mkdir('...') || is_dir('...')) {}
+    // if (is_dir('...') || mkdir('...') || is_dir('...')) {}

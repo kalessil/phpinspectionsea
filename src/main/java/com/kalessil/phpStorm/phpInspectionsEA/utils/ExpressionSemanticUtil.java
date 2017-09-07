@@ -45,8 +45,7 @@ final public class ExpressionSemanticUtil {
     public static int countExpressionsInGroup(@NotNull GroupStatement groupStatement) {
         return (int) Stream.of(groupStatement.getChildren())
                 .filter(statement -> statement instanceof PhpPsiElement)
-                .filter(statement -> !(statement instanceof PhpDocType))
-                .filter(statement -> !(statement instanceof PhpDocComment))
+                .filter(statement -> !(statement instanceof PhpDocType) && !(statement instanceof PhpDocComment))
                 .count();
     }
 

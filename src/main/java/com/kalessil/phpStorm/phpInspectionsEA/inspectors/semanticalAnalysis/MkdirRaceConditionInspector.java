@@ -18,8 +18,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class MkdirRaceConditionInspector extends BasePhpInspection {
-    private static final String patternMkdirDirectCall  = "Following construct should be used: 'if (!mkdir(%f%) && !is_dir(%f%)) { ... }'.";
-    private static final String patternMkdirInCondition = "Condition needs to be corrected (invert if needed): '!mkdir(%f%) && !is_dir(%f%)'.";
+    private static final String patternMkdirDirectCall   = "Following construct should be used: 'if (!mkdir(%f%) && !is_dir(%f%)) { ... }'.";
+    private static final String patternMkdirAndCondition = "Some check are missing: '!mkdir(%f%) && !is_dir(%f%)'.";
+    private static final String patternMkdirOrCondition  = "Some check are missing: 'mkdir(%f%) || is_dir(%f%)'.";
 
     @NotNull
     public String getShortName() {
@@ -83,7 +84,11 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
 
                     /* report when needed */
                     if (!isSecondExistenceCheckExists) {
-                        final String message = patternMkdirInCondition.replace("%f%", arguments[0].getText()).replace("%f%", arguments[0].getText());
+                        final IElementType operation = binary.getOperationType();
+                        final String message =
+                                (operation == PhpTokenTypes.opAND ? patternMkdirAndCondition : patternMkdirOrCondition)
+                                .replace("%f%", arguments[0].getText())
+                                .replace("%f%", arguments[0].getText());
                         holder.registerProblem(parent, message);
                     }
                 }

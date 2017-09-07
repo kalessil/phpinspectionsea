@@ -6,9 +6,13 @@
         /* case: invariant */
         foreach ($arr as $i => $iValue) {
             echo $arr[$i], $iValue->property;
+            $x = $iValue;
         }
         foreach ($arr as $i => $iValue) {
             echo $arr[$i], $iValue->property;
+            $x = & $arr[$i];
+            $x = &$arr[$i];
+            $x =& $arr[$i];
         }
 
         /* case: slow loop */

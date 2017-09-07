@@ -222,10 +222,24 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
             final String indexText     = index.getText();
             PsiTreeUtil.findChildrenOfType(body, ArrayAccessExpression.class).stream()
                 .filter(offset  -> {
+                    boolean result          = false;
                     final PsiElement parent = offset.getParent();
-                    return parent instanceof MemberReference; /* keep extending here */
-                })
-                .forEach(offset -> {
+                    if (parent instanceof MemberReference) {
+                        /* fields/methods access */
+                        result = true;
+                    } else if (parent instanceof AssignmentExpression) {
+                        /* assignments, but not by reference */
+                        final AssignmentExpression assignment = (AssignmentExpression) parent;
+                        if (assignment.getValue() == offset) {
+                            PsiElement operation = offset.getPrevSibling();
+                            while (operation != null && !OpenapiTypesUtil.is(operation, PhpTokenTypes.opASGN)) {
+                                operation = operation.getPrevSibling();
+                            }
+                            result = operation != null && !operation.getText().replaceAll("\\s+", "").equals("=&");
+                        }
+                    }
+                    return result;
+                }).forEach(offset -> {
                     final ArrayIndex offsetIndex   = offset.getIndex();
                     final PsiElement usedIndex     = offsetIndex == null ? null : offsetIndex.getValue();
                     final PsiElement usedContainer = offset.getValue();

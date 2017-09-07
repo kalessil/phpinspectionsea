@@ -23,8 +23,6 @@ script: ".travis/build.sh"
 
 cache:
   directories:
-    - sudo apt-get -qq update
-    - sudo apt-get install ant-optional
     - .travis/.cache
 
 before_script:

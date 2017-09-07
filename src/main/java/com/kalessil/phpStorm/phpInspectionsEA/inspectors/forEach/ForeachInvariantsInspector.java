@@ -206,8 +206,23 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                     if (bodyHolder != null && replacementContainer != null) {
                         this.updateContainersUsage(body, container, index, replacementContainer);
                         bodyHolder.replace(body);
+                        this.cleanupUnusedIndex(replacement, body);
                         loop.replace(replacement);
                     }
+                }
+            }
+        }
+
+        private void cleanupUnusedIndex(@NotNull ForeachStatement loop, @NotNull GroupStatement body) {
+            final Variable index   = loop.getKey();
+            final Variable value   = loop.getValue();
+            final String indexName = index == null ? null : index.getName();
+            if (indexName != null && value != null) {
+                final long usagesCount = PsiTreeUtil.findChildrenOfType(body, Variable.class).stream()
+                        .filter(variable -> indexName.equals(variable.getName()))
+                        .count();
+                if (usagesCount == 0) {
+                    index.getParent().deleteChildRange(index, value.getPrevSibling());
                 }
             }
         }

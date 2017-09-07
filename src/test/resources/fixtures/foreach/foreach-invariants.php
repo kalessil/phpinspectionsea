@@ -15,6 +15,9 @@
             $x = &$arr[$i];
             $x =& $arr[$i];
         }
+        <warning descr="Foreach can probably be used instead (easier to read and support; ensure a string is not iterated).">for</warning> ($i = 0, $max = count($arr); $i < $max; $i++, $z = 0) {
+            echo $arr[$i]->property;
+        }
 
         /* case: slow loop */
         <error descr="Foreach should be used instead (8x faster).">while</error> (list($k, $v) = each($arr)) {}

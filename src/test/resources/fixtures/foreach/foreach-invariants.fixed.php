@@ -15,6 +15,9 @@
             $x = &$arr[$i];
             $x =& $arr[$i];
         }
+        foreach ($arr as $iValue) {
+            echo $iValue->property;
+        }
 
         /* case: slow loop */
         while (list($k, $v) = each($arr)) {}

@@ -53,15 +53,16 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
 
                 // case 1: [$var =] mkdir(...); / if ([!]mkdir(...))
                 if (parent instanceof AssignmentExpression || parent instanceof If || OpenapiTypesUtil.is(parent, PhpElementTypes.STATEMENT)) {
-                    final PsiElement target = parent instanceof If ? parent.getFirstChild() : parent;
-                    final String message    = patternMkdirDirectCall.replace("%f%", arguments[0].getText()).replace("%f%", arguments[0].getText());
+                    final PsiElement target = parent instanceof If ? ((If) parent).getCondition() : parent;
+                    final String message =
+                            (parent instanceof If ? patternMkdirAndCondition : patternMkdirDirectCall)
+                            .replace("%f%", arguments[0].getText())
+                            .replace("%f%", arguments[0].getText());
+                    //noinspection ConstantConditions ; at this point the condition can not be null
                     holder.registerProblem(target, message);
-
-                    return;
                 }
-
                 // case 2: && and || expressions
-                if (parent.getParent() instanceof BinaryExpression) {
+                else if (parent.getParent() instanceof BinaryExpression) {
                     boolean isSecondExistenceCheckExists = false;
 
                     /* deal with nested conditions */

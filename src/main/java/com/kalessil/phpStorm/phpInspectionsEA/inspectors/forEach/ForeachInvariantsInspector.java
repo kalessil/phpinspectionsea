@@ -224,8 +224,8 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 .filter(offset  -> {
                     boolean result          = false;
                     final PsiElement parent = offset.getParent();
-                    if (parent instanceof MemberReference) {
-                        /* fields/methods access */
+                    if (parent instanceof MemberReference || parent instanceof BinaryExpression) {
+                        /* common cases which can be fixed */
                         result = true;
                     } else if (parent instanceof AssignmentExpression) {
                         /* assignments, but not by reference */

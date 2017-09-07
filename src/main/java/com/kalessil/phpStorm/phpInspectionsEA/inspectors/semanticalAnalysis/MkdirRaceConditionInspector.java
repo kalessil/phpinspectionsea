@@ -2,26 +2,26 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
 public class MkdirRaceConditionInspector extends BasePhpInspection {
-    private static final String strProblemMkdirDirectCall  = "Following construct should be used: 'if (!@mkdir(...) && !is_dir(...)) { throw ...; }'.";
-    private static final String strProblemMkdirInCondition = "Condition needs to be corrected (invert if needed): '!@mkdir(...) && !is_dir(...)'.";
+    private static final String messageMkdirDirectCall  = "Following construct should be used: 'if (!@mkdir(...) && !is_dir(...)) { throw ...; }'.";
+    private static final String messageMkdirInCondition = "Condition needs to be corrected (invert if needed): '!@mkdir(...) && !is_dir(...)'.";
 
     @NotNull
     public String getShortName() {
@@ -32,7 +32,8 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
                 if (StringUtils.isEmpty(functionName) || !functionName.equals("mkdir")) {
                     return;
@@ -53,7 +54,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 // case 1: [$var =] mkdir(...); / if ([!]mkdir(...))
                 if (parent instanceof StatementImpl || parent instanceof AssignmentExpression || parent instanceof If) {
                     final PsiElement target = parent instanceof If ? parent.getFirstChild() : parent;
-                    holder.registerProblem(target, strProblemMkdirDirectCall, ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(target, messageMkdirDirectCall, ProblemHighlightType.GENERIC_ERROR);
 
                     return;
                 }
@@ -69,14 +70,11 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     }
 
                     /* check if following expression contains is_dir */
-                    Collection<FunctionReferenceImpl> calls = PsiTreeUtil.findChildrenOfType(binary.getRightOperand(), FunctionReferenceImpl.class);
-                    for (FunctionReferenceImpl call : calls) {
+                    final Collection<FunctionReference> calls
+                            = PsiTreeUtil.findChildrenOfType(binary.getRightOperand(), FunctionReference.class);
+                    for (final FunctionReference call : calls) {
                         final String name = call.getName();
-                        if (StringUtils.isEmpty(name)) {
-                            continue;
-                        }
-
-                        if (name.equals("is_dir")) {
+                        if (name != null && name.equals("is_dir") && OpenapiTypesUtil.isFunctionReference(call)) {
                             isSecondExistenceCheckExists = true;
                             break;
                         }
@@ -85,7 +83,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
 
                     /* report when needed */
                     if (!isSecondExistenceCheckExists) {
-                        holder.registerProblem(parent, strProblemMkdirInCondition, ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(parent, messageMkdirInCondition, ProblemHighlightType.GENERIC_ERROR);
                         // return;
                     }
                 }

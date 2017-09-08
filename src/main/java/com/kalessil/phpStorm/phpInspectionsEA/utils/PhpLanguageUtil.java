@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 final public class PhpLanguageUtil {
     public static boolean isNull(@Nullable PsiElement expression) {
         if (expression instanceof ConstantReference) {
-            String name = ((ConstantReference) expression).getName();
+            final String name = ((ConstantReference) expression).getName();
             return null != name && name.equalsIgnoreCase("null");
         }
         return false;
@@ -15,7 +15,7 @@ final public class PhpLanguageUtil {
 
     public static boolean isTrue(@Nullable PsiElement expression) {
         if (expression instanceof ConstantReference) {
-            String name = ((ConstantReference) expression).getName();
+            final String name = ((ConstantReference) expression).getName();
             return null != name && name.equalsIgnoreCase("true");
         }
         return false;
@@ -23,7 +23,7 @@ final public class PhpLanguageUtil {
 
     public static boolean isFalse(@Nullable PsiElement expression) {
         if (expression instanceof ConstantReference) {
-            String name = ((ConstantReference) expression).getName();
+            final String name = ((ConstantReference) expression).getName();
             return null != name && name.equalsIgnoreCase("false");
         }
         return false;
@@ -31,7 +31,7 @@ final public class PhpLanguageUtil {
 
     public static boolean isBoolean(@Nullable PsiElement expression) {
         if (expression instanceof ConstantReference) {
-            String name = ((ConstantReference) expression).getName();
+            final String name = ((ConstantReference) expression).getName();
             return null != name && (name.equalsIgnoreCase("false") || name.equalsIgnoreCase("true"));
         }
         return false;

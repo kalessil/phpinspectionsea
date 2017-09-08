@@ -55,8 +55,7 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
                 /* variable functions are not supported, as we are checking 2 different extensions functions */
                 if (functionName.equals("openssl_encrypt") || functionName.equals("mcrypt_encrypt")) {
                     /* discover and inspect possible values */
-                    final Set<PsiElement> processed = new HashSet<>();
-                    final Set<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(params[4], processed);
+                    final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(params[4]);
                     if (values.size() > 0) {
                         List<String> reporting = new LinkedList<>();
 
@@ -87,7 +86,6 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
                             reporting.clear();
                         }
                     }
-                    processed.clear();
                 }
             }
         };

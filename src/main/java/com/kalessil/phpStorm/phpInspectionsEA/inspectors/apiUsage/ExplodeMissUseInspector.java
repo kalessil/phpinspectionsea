@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -18,7 +17,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,7 +47,8 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* general structure expectations */
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
@@ -58,9 +57,7 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                 }
 
                 /* discover possible values */
-                final Set<PsiElement> processed = new HashSet<>();
-                final Set<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(params[0], processed);
-                processed.clear();
+                final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(params[0]);
 
                 /* do not analyze invariants */
                 if (1 == values.size()) {
@@ -98,9 +95,9 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                 .replace("%s%", innerParams[1].getText());
                         final String message = messagePattern.replace("%e%", replacement);
                         if (params[0] == value) {
-                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseSuggestedReplacementFixer(replacement));
+                            holder.registerProblem(reference, message, new UseSuggestedReplacementFixer(replacement));
                         } else {
-                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(reference, message);
                         }
                     }
                 }

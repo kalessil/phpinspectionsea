@@ -15,7 +15,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /*
@@ -116,8 +115,7 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
             private boolean isHostVerifyDisabled(@NotNull PsiElement value) {
                 boolean result = false;
 
-                final Set<PsiElement> processed  = new HashSet<>();
-                final Set<PsiElement> discovered = PossibleValuesDiscoveryUtil.discover(value, processed);
+                final Set<PsiElement> discovered = PossibleValuesDiscoveryUtil.discover(value);
                 if (discovered.size() > 0) {
                     int countDisables = 0;
                     int countEnables  = 0;
@@ -145,15 +143,13 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                     result = countDisables > 0 && 0 == countEnables;
                 }
 
-                processed.clear();
                 return result;
             }
 
             private boolean isPeerVerifyDisabled(@NotNull PsiElement _value) {
                 boolean result = false;
 
-                final Set<PsiElement> processed  = new HashSet<>();
-                final Set<PsiElement> discovered = PossibleValuesDiscoveryUtil.discover(_value, processed);
+                final Set<PsiElement> discovered = PossibleValuesDiscoveryUtil.discover(_value);
                 if (discovered.size() > 0) {
                     int countDisables = 0;
                     int countEnables  = 0;
@@ -182,7 +178,6 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                     result = countDisables > 0 && 0 == countEnables;
                 }
 
-                processed.clear();
                 return result;
             }
         };

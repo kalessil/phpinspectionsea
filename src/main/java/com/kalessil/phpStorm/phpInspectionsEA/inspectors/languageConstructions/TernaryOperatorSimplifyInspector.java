@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
+import com.android.annotations.Nullable;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -43,51 +44,53 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
-                final PsiElement condition
-                        = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+                final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
                 if (condition instanceof BinaryExpression) {
                     /* check branches; if both variants are identical, nested ternary inspection will spot it */
-                    final PsiElement trueVariant
-                            = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
-                    final PsiElement falseVariant
-                            = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
-                    if (!PhpLanguageUtil.isBoolean(trueVariant) || !PhpLanguageUtil.isBoolean(falseVariant)) {
-                        return;
-                    }
-
-                    final BinaryExpression binary = (BinaryExpression) condition;
-                    final IElementType operator   = binary.getOperationType();
-                    if (null == operator) {
-                        return;
-                    }
-
-                    final String replacement;
-                    final boolean useParenthesises = !oppositeOperators.containsKey(operator);
-                    final boolean isInverted       = PhpLanguageUtil.isFalse(trueVariant);
-                    if (useParenthesises) {
-                        final boolean isLogical  = PhpTokenTypes.opAND == operator || PhpTokenTypes.opOR == operator;
-                        final String boolCasting = isLogical ? "" : "(bool)";
-                        replacement              = ((isInverted ? "!" : boolCasting) + "(%e%)").replace("%e%", binary.getText());
-                    } else {
-                        if (isInverted) {
-                            final PsiElement left  = binary.getLeftOperand();
-                            final PsiElement right = binary.getRightOperand();
-                            if (null == left || null == right) {
-                                return;
-                            }
-
-                            replacement = "%l% %o% %r%"
-                                    .replace("%r%", right.getText())
-                                    .replace("%o%", oppositeOperators.get(operator))
-                                    .replace("%l%", left.getText());
-                        } else {
-                            replacement = binary.getText();
+                    final PsiElement trueVariant  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
+                    final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
+                    if (PhpLanguageUtil.isBoolean(trueVariant) && PhpLanguageUtil.isBoolean(falseVariant)) {
+                        final String replacement = this.generateReplacement((BinaryExpression) condition, trueVariant);
+                        if (replacement != null) {
+                            final String message = messagePattern.replace("%r%", replacement);
+                            holder.registerProblem(expression, message, new SimplifyFix(replacement));
                         }
                     }
-
-                    final String message = messagePattern.replace("%r%", replacement);
-                    holder.registerProblem(expression, message, new SimplifyFix(replacement));
                 }
+            }
+
+            @Nullable
+            private String generateReplacement(@NotNull BinaryExpression binary, @NotNull PsiElement trueVariant) {
+                final IElementType operator = binary.getOperationType();
+                if (null == operator) {
+                    return null;
+                }
+
+                final String replacement;
+                final boolean useParenthesises = !oppositeOperators.containsKey(operator);
+                final boolean isInverted       = PhpLanguageUtil.isFalse(trueVariant);
+                if (useParenthesises) {
+                    final boolean isLogical  = PhpTokenTypes.opAND == operator || PhpTokenTypes.opOR == operator;
+                    final String boolCasting = isLogical ? "" : "(bool)";
+                    replacement              = ((isInverted ? "!" : boolCasting) + "(%e%)").replace("%e%", binary.getText());
+                } else {
+                    if (isInverted) {
+                        final PsiElement left  = binary.getLeftOperand();
+                        final PsiElement right = binary.getRightOperand();
+                        if (null == left || null == right) {
+                            return null;
+                        }
+
+                        replacement = "%l% %o% %r%"
+                                .replace("%r%", right.getText())
+                                .replace("%o%", oppositeOperators.get(operator))
+                                .replace("%l%", left.getText());
+                    } else {
+                        replacement = binary.getText();
+                    }
+                }
+
+                return replacement;
             }
         };
     }

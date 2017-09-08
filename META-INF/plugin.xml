@@ -53,7 +53,7 @@ with a laptop.
 
   <change-notes><![CDATA[
 Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patreon</a> or
-<a href="https://www.paypal.me/VReznichenko">PayPal</a>. Hot-fixes:
+<a href="https://www.paypal.me/VReznichenko">PayPal</a>. Enhancements:
 <br/>
 <br/>
 - Callable parameter usage violates definition: resolved false-positives (static/self interpretation)<br/>

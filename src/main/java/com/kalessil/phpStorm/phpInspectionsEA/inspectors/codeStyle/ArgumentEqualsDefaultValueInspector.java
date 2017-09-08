@@ -9,13 +9,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.Parameter;
+import com.jetbrains.php.lang.parser.PhpElementTypes;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -35,6 +35,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
 
     private static Set<String> exceptions = new HashSet<>();
     static {
+        /* in exceptions die to conflict with strict types inspection, which requires argument specification */
         exceptions.add("array_search");
         exceptions.add("in_array");
     }
@@ -49,33 +50,38 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
     public final PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean onTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpMethodReference(final MethodReference reference) {
+            public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 this.analyze(reference);
             }
 
             @Override
-            public void visitPhpFunctionCall(final FunctionReference reference) {
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 this.analyze(reference);
             }
 
             private void analyze(@NotNull FunctionReference reference) {
                 final PsiElement[] arguments = reference.getParameters();
-                final Function function      = arguments.length > 0 ? (Function) reference.resolve() : null;
-                if (function != null && !exceptions.contains(function.getName())) {
+                final String functionName    = reference.getName();
+                if (arguments.length > 0 && functionName != null && !exceptions.contains(functionName)) {
                     PsiElement reportFrom = null;
                     PsiElement reportTo   = null;
 
-                    final Parameter[] parameters = function.getParameters();
-                    for (int index = Math.min(parameters.length, arguments.length) - 1; index >= 0; --index) {
-                        final PsiElement defaultValue = parameters[index].getDefaultValue();
-                        final PsiElement argument     = arguments[index];
-                        if (defaultValue == null || !PsiEquivalenceUtil.areElementsEquivalent(defaultValue, argument)) {
-                            break;
-                        }
+                    if (this.canBeDefault(arguments[arguments.length - 1])) {
+                        final PsiElement resolved = reference.resolve();
+                        if (resolved instanceof Function) {
+                            final Parameter[] parameters = ((Function) resolved).getParameters();
+                            for (int index = Math.min(parameters.length, arguments.length) - 1; index >= 0; --index) {
+                                final PsiElement value    = parameters[index].getDefaultValue();
+                                final PsiElement argument = arguments[index];
+                                if (value == null || !PsiEquivalenceUtil.areElementsEquivalent(value, argument)) {
+                                    break;
+                                }
 
-                        reportFrom = argument;
-                        if (reportTo == null) {
-                            reportTo = argument;
+                                reportFrom = argument;
+                                if (reportTo == null) {
+                                    reportTo = argument;
+                                }
+                            }
                         }
                     }
 
@@ -92,6 +98,16 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                         );
                     }
                 }
+            }
+
+            private boolean canBeDefault(@Nullable PsiElement candidate) {
+                return
+                    candidate instanceof ConstantReference ||
+                    candidate instanceof StringLiteralExpression ||
+                    candidate instanceof ClassConstantReference ||
+                    candidate instanceof ArrayCreationExpression ||
+                    OpenapiTypesUtil.is(candidate, PhpElementTypes.NUMBER)
+                ;
             }
         };
     }

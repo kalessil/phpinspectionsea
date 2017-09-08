@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -34,30 +33,38 @@ public class PowerOperatorCanBeUsedInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* the operator was introduced in PHP 5.6 */
-                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
-                if (phpVersion.compareTo(PhpLanguageLevel.PHP560) < 0) {
-                    return;
+                final PhpLanguageLevel phpVersion
+                        = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
+                if (phpVersion.compareTo(PhpLanguageLevel.PHP560) >= 0) {
+                    final PsiElement[] params = reference.getParameters();
+                    final String functionName = reference.getName();
+                    if (functionName != null && params.length == 2 && functionName.equals("pow")) {
+                        final String replacement =
+                                (reference.getParent() instanceof BinaryExpression ? "(%b% ** %p%)" : "%b% ** %p%")
+                                        .replace("%p%", params[1] instanceof BinaryExpression ? "(%p%)" : "%p%" )
+                                        .replace("%b%", params[0] instanceof BinaryExpression ? "(%b%)" : "%b%")
+                                        .replace("%p%", params[1].getText())
+                                        .replace("%b%", params[0].getText());
+                        final String message = messagePattern.replace("%e%", replacement);
+                        holder.registerProblem(reference, message, new UseTheOperatorFix(replacement));
+                    }
                 }
-
-                /* verify the call signature */
-                final PsiElement[] params = reference.getParameters();
-                final String functionName = reference.getName();
-                if (null == functionName || 2 != params.length || !functionName.equals("pow")) {
-                    return;
-                }
-
-                /* report and suggest QF-ing */
-                final String expression =
-                        (reference.getParent() instanceof BinaryExpression ? "(%b% ** %p%)" : "%b% ** %p%")
-                        .replace("%p%", params[1] instanceof BinaryExpression ? "(%p%)" : "%p%" )
-                        .replace("%b%", params[0] instanceof BinaryExpression ? "(%b%)" : "%b%")
-                        .replace("%p%", params[1].getText())
-                        .replace("%b%", params[0].getText());
-                final String message = messagePattern.replace("%e%", expression);
-                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new UseSuggestedReplacementFixer(expression));
             }
         };
+    }
+
+    private class UseTheOperatorFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use ** operator instead";
+        }
+
+        UseTheOperatorFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

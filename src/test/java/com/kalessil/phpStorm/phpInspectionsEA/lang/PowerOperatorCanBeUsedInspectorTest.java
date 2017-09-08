@@ -5,8 +5,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.P
 
 final public class PowerOperatorCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new PowerOperatorCanBeUsedInspector());
         myFixture.configureByFile("fixtures/lang/power-operator.php");
-        myFixture.enableInspections(PowerOperatorCanBeUsedInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

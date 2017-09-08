@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -42,7 +41,8 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpTernaryExpression(TernaryExpression expression) {
+            @Override
+            public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
                 final PsiElement trueVariant  = expression.getTrueVariant();
                 final PsiElement falseVariant = expression.getFalseVariant();
                 /* if both variants are identical, nested ternary inspection will spot it */
@@ -61,13 +61,13 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                         return;
                     }
 
-                    final String suggestedExpression;
+                    final String replacement;
                     final boolean useParenthesises = !oppositeOperators.containsKey(operator);
                     final boolean isInverted       = PhpLanguageUtil.isFalse(trueVariant);
                     if (useParenthesises) {
                         final boolean isLogical  = PhpTokenTypes.opAND == operator || PhpTokenTypes.opOR == operator;
                         final String boolCasting = isLogical ? "" : "(bool)";
-                        suggestedExpression      = ((isInverted ? "!" : boolCasting) + "(%e%)").replace("%e%", binary.getText());
+                        replacement              = ((isInverted ? "!" : boolCasting) + "(%e%)").replace("%e%", binary.getText());
                     } else {
                         if (isInverted) {
                             final PsiElement left  = binary.getLeftOperand();
@@ -76,19 +76,31 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                                 return;
                             }
 
-                            suggestedExpression = "%l% %o% %r%"
+                            replacement = "%l% %o% %r%"
                                     .replace("%r%", right.getText())
                                     .replace("%o%", oppositeOperators.get(operator))
                                     .replace("%l%", left.getText());
                         } else {
-                            suggestedExpression = binary.getText();
+                            replacement = binary.getText();
                         }
                     }
 
-                    final String message = messagePattern.replace("%r%", suggestedExpression);
-                    holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new UseSuggestedReplacementFixer(suggestedExpression));
+                    final String message = messagePattern.replace("%r%", replacement);
+                    holder.registerProblem(expression, message, new SimplifyFix(replacement));
                 }
             }
         };
+    }
+
+    private class SimplifyFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Simplify the expression";
+        }
+
+        SimplifyFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

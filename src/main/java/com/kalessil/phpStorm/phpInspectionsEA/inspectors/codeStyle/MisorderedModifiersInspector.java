@@ -71,9 +71,12 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
                 }
             }
 
-            private String getOriginalOrder(@NotNull Collection<LeafPsiElement> modifiers) {
-                return modifiers.stream().map(LeafElement::getText).collect(Collectors.joining(" ")).toLowerCase();
+            @NotNull
+            private String getOriginalOrder(@NotNull Collection<LeafPsiElement> original) {
+                return original.stream().map(LeafElement::getText).collect(Collectors.joining(" ")).toLowerCase();
             }
+
+            @NotNull
             private String getExpectedOrder(@NotNull String original, @NotNull Collection<String> expected) {
                 return expected.stream().filter(original::contains).collect(Collectors.joining(" "));
             }
@@ -103,8 +106,7 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
         public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
             if (target != null) {
-                final Method replacement = PhpPsiElementFactory.createMethod(project, modifiers + " function x();");
-                target.replace(replacement.getFirstChild());
+                target.replace(PhpPsiElementFactory.createMethod(project, modifiers + " function x();").getFirstChild());
             }
         }
     }

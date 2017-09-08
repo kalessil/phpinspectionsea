@@ -43,14 +43,14 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
-                final PsiElement trueVariant  = expression.getTrueVariant();
-                final PsiElement falseVariant = expression.getFalseVariant();
+                final PsiElement trueVariant
+                        = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
+                final PsiElement falseVariant
+                        = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
                 /* if both variants are identical, nested ternary inspection will spot it */
                 if (!PhpLanguageUtil.isBoolean(trueVariant) || !PhpLanguageUtil.isBoolean(falseVariant)) {
                     return;
                 }
-
-                /* TODO: resolve type of other expressions */
 
                 final PsiElement condition
                     = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());

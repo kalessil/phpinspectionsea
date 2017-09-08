@@ -613,7 +613,7 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.DynamicInvocationViaScopeResolutionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="NestedNotOperatorsInspection"                  displayName="Nested not operators usage"
-        groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.NestedNotOperatorsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnnecessaryParenthesesInspection"              displayName="Unnecessary parentheses"

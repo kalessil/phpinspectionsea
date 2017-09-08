@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -16,6 +15,7 @@ import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class NestedNotOperatorsInspector extends BasePhpInspection {
@@ -31,22 +31,21 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpUnaryExpression(UnaryExpression expr) {
+            @Override
+            public void visitPhpUnaryExpression(@NotNull UnaryExpression expression) {
                 /* process ony not operations */
-                PsiElement operator = expr.getOperation();
-                if (null == operator || operator.getNode().getElementType() != PhpTokenTypes.opNOT) {
+                if (!OpenapiTypesUtil.is(expression.getOperation(), PhpTokenTypes.opNOT)) {
                     return;
                 }
 
                 /* process only deepest not-operator: get contained expression */
-                final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(expr.getValue());
+                final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
                 if (null == value) {
                     return;
                 }
                 /* if contained expression is also inversion, do nothing -> to not report several times */
                 if (value instanceof UnaryExpression) {
-                    operator = ((UnaryExpression) value).getOperation();
-                    if (null != operator && operator.getNode().getElementType() == PhpTokenTypes.opNOT) {
+                    if (OpenapiTypesUtil.is(((UnaryExpression) value).getOperation(), PhpTokenTypes.opNOT)) {
                         return;
                     }
                 }
@@ -54,35 +53,25 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
                 /* check nesting level */
                 PsiElement target = null;
                 int nestingLevel  = 1;
-                PsiElement parent = expr.getParent();
+                PsiElement parent = expression.getParent();
                 while (parent instanceof UnaryExpression || parent instanceof ParenthesizedExpression) {
-                    if (parent instanceof ParenthesizedExpression) {
-                        parent = parent.getParent();
-                        continue;
+                    if (!(parent instanceof ParenthesizedExpression)) {
+                        expression = (UnaryExpression) parent;
+                        if (OpenapiTypesUtil.is(expression.getOperation(), PhpTokenTypes.opNOT)) {
+                            ++nestingLevel;
+                            target = parent;
+                        }
                     }
-
-                    expr     = (UnaryExpression) parent;
-                    operator = expr.getOperation();
-
-                    if (null != operator && operator.getNode().getElementType() == PhpTokenTypes.opNOT) {
-                        ++nestingLevel;
-                        target = parent;
-                    }
-
-                    parent = expr.getParent();
-                }
-                if (nestingLevel == 1) {
-                    return;
+                    parent = parent.getParent();
                 }
 
-                /* fire warning */
-                final String message =
-                        (nestingLevel % 2 == 0 ? messageUseBoolCasting : messageUseSingleNot)
-                        .replace("%e%", value.getText());
-                final LocalQuickFix fixer =
-                        nestingLevel % 2 == 0 ? new UseCastingLocalFix(value) : new UseSingleNotLocalFix(value);
-
-                holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING, fixer);
+                if (nestingLevel > 1) {
+                    final String message =
+                            (nestingLevel % 2 == 0 ? messageUseBoolCasting : messageUseSingleNot).replace("%e%", value.getText());
+                    final LocalQuickFix fixer =
+                            nestingLevel % 2 == 0 ? new UseCastingLocalFix(value) : new UseSingleNotLocalFix(value);
+                    holder.registerProblem(target, message, fixer);
+                }
             }
         };
     }

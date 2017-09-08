@@ -111,7 +111,6 @@ Inspections Lists (Code style)
 | Code Style           | ParameterDefaultValueIsNotNullInspection        | Non-null parameters default value                   | n/a | yes | n/a  | yes |
 | Code Style           | MisorderedModifiersInspection                   | PSR-compliant modifiers order                       | yes | yes | yes  | no  |
 | Code Style           | DisallowWritingIntoStaticPropertiesInspection   | Disallow writing into static properties             | n/a | yes | n/a  | no  |
-| Code Style           | UsageOfSilenceOperatorInspection                | Usage of the silence operator                       | yes | yes | no   | yes |
 | Code Style           | UnnecessaryCastingInspection                    | Unnecessary type casting                            | yes | yes | yes  | no  |
 | Code Style           | SelfClassReferencingInspection                  | Self class referencing                              | yes | yes | yes  | no  |
 | Code Style           | ImplicitMagicMethodCallInspection               | Implicit magic method calls                         | yes | yes |  no  | no  |

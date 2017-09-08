@@ -56,15 +56,33 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
 <a href="https://www.paypal.me/VReznichenko">PayPal</a>. Hot-fixes:
 <br/>
 <br/>
+- Callable parameter usage violates definition: resolved false-positives (static/self interpretation)<br/>
+- Cascading 'str_replace(...)' calls: implemented QF<br/>
+- Foreach usage possible: implemented QF<br/>
 - General '\Exception' is thrown: resolved false-positives (overridden message property)<br/>
 - Increment/decrement operation equivalent: QF bug-fix, added fix style options<br/>
 - Hostname substitution: fixed casting exceptions, messages<br/>
 - Magic methods validity: resolved false-positives (missing parent call, parent is abstract)<br/>
+- Referencing objects: resolved false-positives (multiple cases)<br/>
+- Security advisories for Composer packages: added options (thank you David Rodrigues)<br/>
+- Self class referencing: resolved false-positives (self::class, __CLASS__ in traits)<br/>
 - Self class referencing: fixed casting exceptions (thank you David Rodrigues)<br/>
+- Suspicious binary operations: implemented QF (misplaced operations)<br/>
+- Type unsafe comparison: resolved false-positives (empty string comparison)<br/>
+- Unnecessary type casting: resolved false-positives (enhance WI-37466 workaround)<br/>
+- 'mkdir(...)' race condition: implemented QF<br/>
+- 'null === ...' can be used: added options (QF style)<br/>
 <br/>
+- Cascading 'str_replace(...)' calls: new patterns<br/>
 - Long inheritance chain: support Yii1 (thank you Anatoly Pashin)<br/>
 - Non-optimal regular expression: new patterns (missing u-modifier)<br/>
+- Null reference: new patterns<br/>
+- Suspicious binary operations: new patterns<br/>
+- Unnecessary final modifiers: new patterns<br/>
 <br/>
+- Usage of the silence operator: dropped<br/>
+- 'array_unique(...)' can be used: implemented<br/>
+- 'array_unique(...)' low performing usage: dropped<br/>
 - 'simplexml_load_file(...)' usage correctness: implemented<br/>
 <br/>
 <hr/>

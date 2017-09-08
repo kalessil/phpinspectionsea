@@ -57,13 +57,12 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 if (method.isStatic() || method.isAbstract() || method.isFinal()) {
-                    final PhpModifierList modifiersNode = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
-                    final List<LeafPsiElement> modifiers
-                            = PsiTreeUtil.findChildrenOfType(modifiersNode, LeafPsiElement.class).stream()
+                    final PhpModifierList modifiersNode  = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
+                    final List<LeafPsiElement> modifiers = PsiTreeUtil.findChildrenOfType(modifiersNode, LeafPsiElement.class).stream()
                                 .filter(element -> !(element instanceof PsiWhiteSpace))
                                 .collect(Collectors.toList());
                     if (modifiersNode != null && modifiers.size() >= 2) {
-                        final String original = this.getOriginalOrdering(modifiers);
+                        final String original = this.getOriginalOrder(modifiers);
                         final String expected = this.getExpectedOrder(original, standardOrder);
                         if (!original.equals(expected)) {
                             problemsHolder.registerProblem(modifiersNode, message, new TheLocalFix(expected));
@@ -72,10 +71,9 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
                 }
             }
 
-            private String getOriginalOrdering(@NotNull Collection<LeafPsiElement> modifiers) {
+            private String getOriginalOrder(@NotNull Collection<LeafPsiElement> modifiers) {
                 return modifiers.stream().map(LeafElement::getText).collect(Collectors.joining(" ")).toLowerCase();
             }
-
             private String getExpectedOrder(@NotNull String original, @NotNull Collection<String> expected) {
                 return expected.stream().filter(original::contains).collect(Collectors.joining(" "));
             }

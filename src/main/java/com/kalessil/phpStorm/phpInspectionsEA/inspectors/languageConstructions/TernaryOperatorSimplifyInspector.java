@@ -43,18 +43,18 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
-                final PsiElement trueVariant
-                        = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
-                final PsiElement falseVariant
-                        = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
-                /* if both variants are identical, nested ternary inspection will spot it */
-                if (!PhpLanguageUtil.isBoolean(trueVariant) || !PhpLanguageUtil.isBoolean(falseVariant)) {
-                    return;
-                }
-
                 final PsiElement condition
-                    = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+                        = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
                 if (condition instanceof BinaryExpression) {
+                    /* check branches; if both variants are identical, nested ternary inspection will spot it */
+                    final PsiElement trueVariant
+                            = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
+                    final PsiElement falseVariant
+                            = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
+                    if (!PhpLanguageUtil.isBoolean(trueVariant) || !PhpLanguageUtil.isBoolean(falseVariant)) {
+                        return;
+                    }
+
                     final BinaryExpression binary = (BinaryExpression) condition;
                     final IElementType operator   = binary.getOperationType();
                     if (null == operator) {

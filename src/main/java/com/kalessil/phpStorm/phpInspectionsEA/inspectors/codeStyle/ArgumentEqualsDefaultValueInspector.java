@@ -39,10 +39,10 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
         exceptions.add("in_array");
         /* defaults types we are processing */
         defaultTypes.add(PhpElementTypes.CONSTANT_REF);
-        defaultTypes.add(PhpElementTypes.ARRAY_CREATION_EXPRESSION);
+        defaultTypes.add(PhpElementTypes.STRING);
+        defaultTypes.add(PhpElementTypes.NUMBER);
         defaultTypes.add(PhpElementTypes.CLASS_CONSTANT_REFERENCE);
         defaultTypes.add(PhpElementTypes.ARRAY_CREATION_EXPRESSION);
-        defaultTypes.add(PhpElementTypes.NUMBER);
     }
 
     @NotNull

@@ -73,7 +73,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
             @Override
             public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression assignmentExpression) {
                 PsiElement value = assignmentExpression.getValue();
-                if (OpenapiTypesUtil.is(value, PhpElementTypes.EXPRESSION)) {
+                if (OpenapiTypesUtil.isPhpExpressionImpl(value)) {
                     value = value.getFirstChild();
                 }
 

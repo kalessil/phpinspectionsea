@@ -1,23 +1,30 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.UnaryExpression;
-import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import org.apache.commons.lang.StringUtils;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Set;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class IncorrectRandomRangeInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "The range is not defined properly.";
+    private static final String message = "The range is not defined properly.";
 
-    private static final HashSet<String> functions = new HashSet<>();
+    private static final Set<String> functions = new HashSet<>();
     static {
         functions.add("mt_rand");
         functions.add("random_int");
@@ -33,25 +40,23 @@ public class IncorrectRandomRangeInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* check call structure */
-                final PsiElement[] params = reference.getParameters();
-                final String name         = reference.getName();
-                if (2 != params.length || StringUtils.isEmpty(name) || !functions.contains(name)) {
-                    return;
-                }
-
-                if (
-                    params[1] instanceof PhpExpressionImpl && !(params[1] instanceof UnaryExpression) &&
-                    params[0] instanceof PhpExpressionImpl && !(params[0] instanceof UnaryExpression)
-                ) {
-                    try {
-                        if (Integer.parseInt(params[1].getText()) < Integer.parseInt(params[0].getText())) {
-                            holder.registerProblem(reference, strProblemDescription, ProblemHighlightType.GENERIC_ERROR);
+                final PsiElement[] arguments = reference.getParameters();
+                final String functionName    = reference.getName();
+                if (functionName != null && arguments.length == 2 && functions.contains(functionName)) {
+                    final PsiElement from = arguments[0];
+                    final PsiElement to   = arguments[1];
+                    if (OpenapiTypesUtil.isNumber(to) && OpenapiTypesUtil.isNumber(from)) {
+                        try {
+                            if (Integer.parseInt(to.getText()) < Integer.parseInt(from.getText())) {
+                                holder.registerProblem(reference, message);
+                            }
+                        } catch (NumberFormatException wrongFormat) {
+                            //noinspection UnnecessaryReturnStatement
+                            return;
                         }
-                    } catch (NumberFormatException wrongFormat) {
-                        //noinspection UnnecessaryReturnStatement
-                        return;
                     }
                 }
             }

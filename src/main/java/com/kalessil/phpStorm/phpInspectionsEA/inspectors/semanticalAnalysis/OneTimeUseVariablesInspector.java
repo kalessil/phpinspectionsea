@@ -14,13 +14,11 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,10 +49,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 final String variableName = argument.getName();
                 final PsiElement previous = construct.getPrevPsiSibling();
                 /* verify preceding expression (assignment needed) */
-                if (
-                    null != previous && !StringUtils.isEmpty(variableName) &&
-                    OpenapiTypesUtil.isAssignment(previous.getFirstChild())
-                ) {
+                if (null != previous && OpenapiTypesUtil.isAssignment(previous.getFirstChild())) {
                     final AssignmentExpression assign = (AssignmentExpression) previous.getFirstChild();
 
                     /* ensure variables are the same */
@@ -62,7 +57,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                     final PsiElement assignValue       = ExpressionSemanticUtil.getExpressionTroughParenthesis(assign.getValue());
                     if (null != assignValue && assignVariable instanceof Variable) {
                         final String assignVariableName = assignVariable.getName();
-                        if (StringUtils.isEmpty(assignVariableName) || !assignVariableName.equals(variableName)) {
+                        if (assignVariableName == null || !assignVariableName.equals(variableName)) {
                             return;
                         }
 
@@ -197,7 +192,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 }
 
                 /* instanceof passes child classes as well, what isn't correct */
-                if (expression.getClass() == PhpExpressionImpl.class) {
+                if (OpenapiTypesUtil.isPhpExpressionImpl(expression)) {
                     return getVariable(expression.getFirstPsiChild());
                 }
 

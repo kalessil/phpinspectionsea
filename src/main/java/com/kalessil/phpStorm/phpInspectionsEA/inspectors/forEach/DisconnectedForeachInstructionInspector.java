@@ -8,18 +8,17 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.PhpPsiElementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -59,14 +58,8 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 /* ensure foreach structure is ready for inspection */
                 if (null != foreachBody && variables.size() > 0) {
                     /* pre-collect introduced and internally used variables */
-                    final Set<String> allModifiedVariables = new HashSet<>();
-                    for (Variable variable : variables) {
-                        final String variableName = variable.getName();
-                        if (!StringUtils.isEmpty(variableName)) {
-                            allModifiedVariables.add(variableName);
-                        }
-                    }
-                    variables.clear();
+                    final Set<String> allModifiedVariables
+                            = variables.stream().map(PhpNamedElement::getName).collect(Collectors.toSet());
 
                     final Map<PsiElement, Set<String>> instructionDependencies = new HashMap<>();
                     /* iteration 1 - investigate what are dependencies and influence */
@@ -120,7 +113,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                                     : oneInstruction;
 
                                     /* secure exceptions with '<?= ?>' constructions, false-positives with html */
-                                    if (PhpPsiElementImpl.class != oneInstruction.getClass() && oneInstruction.getTextLength() > 0) {
+                                    if (!OpenapiTypesUtil.isPhpExpressionImpl(oneInstruction) && oneInstruction.getTextLength() > 0) {
                                         /* inner looping termination/continuation should be taken into account */
                                         final PsiElement loopInterrupter
                                             = PsiTreeUtil.findChildOfAnyType(oneInstruction, true, PhpBreak.class, PhpContinue.class, PhpThrow.class, PhpReturn.class);
@@ -156,7 +149,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
             ) {
                 for (PsiElement variable : PsiTreeUtil.findChildrenOfType(oneInstruction, Variable.class)) {
                     final String variableName = ((Variable) variable).getName();
-                    if (!StringUtils.isEmpty(variableName)) {
+                    if (variableName != null) {
                         PsiElement valueContainer = variable;
                         PsiElement parent         = variable.getParent();
                         while (parent instanceof FieldReference) {
@@ -211,7 +204,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             // TODO: array_pop, array_shift, next, current, fwrite... -> use mapping function => argument modified
                             if (
                                 3 == parameters.length && parameters[2] == variable &&
-                                !StringUtils.isEmpty(functionName) && functionName.startsWith("preg_match")
+                                functionName != null && functionName.startsWith("preg_match")
                             ) {
                                 allModifiedVariables.add(variableName);
                                 continue;
@@ -282,13 +275,13 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                         if (value instanceof MethodReference) {
                             final MethodReference call = (MethodReference) value;
                             final String methodName    = call.getName();
-                            if (!StringUtils.isEmpty(methodName) && methodName.equals("createElement")) {
+                            if (methodName != null && methodName.equals("createElement")) {
                                 final PsiElement resolved = call.resolve();
-                                if (resolved instanceof Method) {
-                                    final String fqn = ((Method) resolved).getFQN();
-                                    if (!StringUtils.isEmpty(fqn) && fqn.equals("\\DOMDocument.createElement")) {
-                                        return ExpressionType.DOM_ELEMENT_CREATE;
-                                    }
+                                if (
+                                    resolved instanceof Method &&
+                                    ((Method) resolved).getFQN().equals("\\DOMDocument.createElement")
+                                ) {
+                                    return ExpressionType.DOM_ELEMENT_CREATE;
                                 }
                             }
                         }
@@ -312,8 +305,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) -> {
-            component.addCheckbox("Suggest using clone", SUGGEST_USING_CLONE, (isSelected) -> SUGGEST_USING_CLONE = isSelected);
-        });
+        return OptionsComponent.create((component)
+                -> component.addCheckbox("Suggest using clone", SUGGEST_USING_CLONE, (isSelected) -> SUGGEST_USING_CLONE = isSelected));
     }
 }

@@ -263,7 +263,7 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.PdoApiUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MultiAssignmentUsageInspection"                 displayName="'list(...) = ' usage possible"
-        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.MultiAssignmentUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="GetTypeMissUseInspection"                      displayName="'gettype(...)' could be replaced with 'is_*(...)'"

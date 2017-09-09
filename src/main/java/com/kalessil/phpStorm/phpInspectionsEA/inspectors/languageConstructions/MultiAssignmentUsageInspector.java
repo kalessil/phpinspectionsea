@@ -1,7 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -14,12 +13,11 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.AssignmentExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import org.apache.commons.lang.StringUtils;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,12 +70,11 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                 while (null != parent && ! (parent instanceof Function) && ! (parent instanceof PhpFile)) {
                     if (parent instanceof ForeachStatement) {
                         final List<Variable> variables = ((ForeachStatement) parent).getVariables();
-                        for (Variable variable : variables) {
-                            final String variableName = variable.getName();
-                            if (!StringUtils.isEmpty(variableName) && variableName.equals(containerName)) {
+                        for (final Variable variable : variables) {
+                            if (variable.getName().equals(containerName)) {
                                 stopAnalysis = true;
 
-                                holder.registerProblem(multiassignmentExpression, messageImplicitList, ProblemHighlightType.WEAK_WARNING);
+                                holder.registerProblem(multiassignmentExpression, messageImplicitList);
                                 break;
                             }
                         }
@@ -110,7 +107,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                     return;
                 }
                 final PhpPsiElement previousExpression = ((StatementImpl) previous).getFirstPsiChild();
-                if (!(previousExpression instanceof AssignmentExpressionImpl)) {
+                if (!OpenapiTypesUtil.isAssignment(previousExpression)) {
                     return;
                 }
 
@@ -120,7 +117,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                     final PsiElement previousContainer = getContainer((AssignmentExpression) previousExpression);
                     if (null != previousContainer && PsiEquivalenceUtil.areElementsEquivalent(ownContainer, previousContainer)) {
                         final String message = messagePattern.replace("%a%", ownContainer.getText());
-                        holder.registerProblem(assignmentExpression, message, ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(assignmentExpression, message);
                     }
                 }
             }

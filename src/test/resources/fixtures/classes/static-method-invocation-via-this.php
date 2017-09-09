@@ -17,4 +17,4 @@ class staticObjectsKeeper {
 }
 
 $o = new staticObjectsKeeper();
-$o-><warning descr="'...::y(...)' should be used instead.">y</warning>();
+<warning descr="'...::y(...)' should be used instead.">$o->y()</warning>;

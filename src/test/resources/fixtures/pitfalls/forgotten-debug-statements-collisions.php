@@ -14,5 +14,5 @@ class DebugClass2
     }
 }
 
-DebugClass1::<error descr="Please ensure this is not a forgotten debug statement.">debug</error>();
-DebugClass2::<error descr="Please ensure this is not a forgotten debug statement.">debug</error>();
+<error descr="Please ensure this is not a forgotten debug statement.">DebugClass1::debug()</error>;
+<error descr="Please ensure this is not a forgotten debug statement.">DebugClass2::debug()</error>;

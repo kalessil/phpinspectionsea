@@ -14,7 +14,6 @@ import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -45,7 +44,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
 
                 /* verify if it's dedicated statement and it's the list(...) construction */
                 PsiElement parent = multiassignmentExpression.getParent();
-                if (!(parent instanceof StatementImpl)) {
+                if (!OpenapiTypesUtil.isStatementImpl(parent)) {
                     return;
                 }
                 final PsiElement listKeyword = multiassignmentExpression.getFirstChild();
@@ -96,17 +95,17 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
 
                 /* ensure that preceding expression is also an assignment */
                 final PsiElement parent = assignmentExpression.getParent();
-                if (!(parent instanceof StatementImpl)) {
+                if (!OpenapiTypesUtil.isStatementImpl(parent)) {
                     return;
                 }
-                PsiElement previous = ((StatementImpl) parent).getPrevPsiSibling();
+                PsiElement previous = ((Statement) parent).getPrevPsiSibling();
                 while (previous instanceof PhpDocComment) {
                     previous = ((PhpDocComment) previous).getPrevPsiSibling();
                 }
-                if (!(previous instanceof StatementImpl)) {
+                if (!OpenapiTypesUtil.isStatementImpl(previous)) {
                     return;
                 }
-                final PhpPsiElement previousExpression = ((StatementImpl) previous).getFirstPsiChild();
+                final PhpPsiElement previousExpression = ((Statement) previous).getFirstPsiChild();
                 if (!OpenapiTypesUtil.isAssignment(previousExpression)) {
                     return;
                 }

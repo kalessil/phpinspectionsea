@@ -15,7 +15,6 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -161,7 +160,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 if (null != nodeType && (PhpTokenTypes.kwLIST == nodeType || PhpTokenTypes.chLBRACKET == nodeType)) {
                     final Variable variable = this.getVariable(multiassignmentExpression.getValue());
                     final PsiElement parent = multiassignmentExpression.getParent();
-                    if (null != variable && parent instanceof StatementImpl) {
+                    if (null != variable && OpenapiTypesUtil.isStatementImpl(parent)) {
                         checkOneTimeUse((PhpPsiElement) parent, variable);
                     }
                 }
@@ -243,7 +242,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             }
 
             /* delete preceding PhpDoc */
-            final PhpPsiElement previous = ((StatementImpl) assignment).getPrevPsiSibling();
+            final PhpPsiElement previous = ((Statement) assignment).getPrevPsiSibling();
             if (previous instanceof PhpDocComment) {
                 previous.delete();
             }

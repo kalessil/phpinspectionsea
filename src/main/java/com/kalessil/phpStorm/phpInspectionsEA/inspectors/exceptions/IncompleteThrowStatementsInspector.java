@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +57,7 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
                 }
 
                 /* pattern 'new Exception(...);' */
-                if (parent.getClass() == StatementImpl.class && isExceptionClass(argument)) {
+                if (OpenapiTypesUtil.isStatementImpl(parent) && this.isExceptionClass(argument)) {
                     holder.registerProblem(expression, messageThrow, new AddMissingThrowFix());
                 }
             }

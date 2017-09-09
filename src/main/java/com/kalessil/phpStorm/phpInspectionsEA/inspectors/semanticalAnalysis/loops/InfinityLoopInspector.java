@@ -4,10 +4,10 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -51,8 +51,8 @@ public class InfinityLoopInspector extends BasePhpInspection {
                         PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
                         if (last instanceof PhpReturn) {
                             last = ((PhpReturn) last).getArgument();
-                        } else if (last instanceof StatementImpl) {
-                            last = ((StatementImpl) last).getFirstPsiChild();
+                        } else if (OpenapiTypesUtil.isStatementImpl(last)) {
+                            last = ((Statement) last).getFirstPsiChild();
                         }
                         /* now check for harmful recursion */
                         if (last instanceof MethodReference) {

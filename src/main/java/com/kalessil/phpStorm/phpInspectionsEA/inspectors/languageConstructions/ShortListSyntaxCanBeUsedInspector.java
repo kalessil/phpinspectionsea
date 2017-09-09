@@ -18,9 +18,9 @@ import com.jetbrains.php.lang.psi.elements.ForeachStatement;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.MultiassignmentExpression;
 import com.jetbrains.php.lang.psi.elements.Variable;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -47,7 +47,7 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
 
                 /* verify if it's dedicated statement and it's the list(...) construction */
                 final PsiElement parent = multiassignmentExpression.getParent();
-                if (!(parent instanceof StatementImpl)) {
+                if (!OpenapiTypesUtil.isStatementImpl(parent)) {
                     return;
                 }
                 final PsiElement listKeyword = multiassignmentExpression.getFirstChild();

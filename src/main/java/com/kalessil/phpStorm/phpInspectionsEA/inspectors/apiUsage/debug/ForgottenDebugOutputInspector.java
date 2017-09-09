@@ -8,7 +8,6 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
@@ -178,8 +177,8 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                     }
                 }
                 /* ensure it's not prepended with 'ob_start();' */
-                if (parent instanceof StatementImpl) {
-                    final PsiElement preceding = ((StatementImpl) parent).getPrevPsiSibling();
+                if (OpenapiTypesUtil.isStatementImpl(parent)) {
+                    final PsiElement preceding = ((Statement) parent).getPrevPsiSibling();
                     if (preceding != null && OpenapiTypesUtil.isFunctionReference(preceding.getFirstChild())) {
                         final FunctionReference precedingCall = (FunctionReference) preceding.getFirstChild();
                         final String precedingFunctionName    = precedingCall.getName();

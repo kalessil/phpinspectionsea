@@ -12,9 +12,9 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Include;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.impl.ControlStatementImpl;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class UsingInclusionOnceReturnValueInspector extends BasePhpInspection {
@@ -31,7 +31,7 @@ public class UsingInclusionOnceReturnValueInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpInclude(Include include) {
                 final PsiElement parent = include.getParent();
-                if (parent instanceof ControlStatementImpl || !(parent instanceof StatementImpl)) {
+                if (parent instanceof ControlStatementImpl || !OpenapiTypesUtil.isStatementImpl(parent)) {
                     if (null == include.getArgument() || !include.getFirstChild().getText().endsWith("_once")) {
                         return;
                     }

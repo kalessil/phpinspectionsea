@@ -7,8 +7,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +29,7 @@ final public class SequentialAssignmentsStrategy {
         final PsiElement parent    = expression.getParent();
         final PsiElement container = expression.getVariable();
         if (
-            null != container && StatementImpl.class == parent.getClass() &&
+            null != container && OpenapiTypesUtil.isStatementImpl(parent) &&
             !isArrayPush(container) && !isContainerUsed(container, expression)
         ) {
             final PhpPsiElement previous = ((PhpPsiElement) parent).getPrevPsiSibling();

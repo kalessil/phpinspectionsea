@@ -6,8 +6,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.utils.MethodIdentityUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -30,7 +30,7 @@ final public class ExecUsageStrategy {
         }
 
         if (
-            reference.getParent().getClass() == StatementImpl.class &&
+            OpenapiTypesUtil.isStatementImpl(reference.getParent()) &&
             MethodIdentityUtil.isReferencingMethod(reference, "\\PDO", "query")
         ) {
             holder.registerProblem(reference, message, new UseExecFix());

@@ -9,11 +9,11 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.elements.impl.PhpPsiElementImpl;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -242,8 +242,8 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 }
 
                 /* regular '...;' statements */
-                if (expression instanceof StatementImpl) {
-                    return getExpressionType(((StatementImpl) expression).getFirstPsiChild());
+                if (OpenapiTypesUtil.isStatementImpl(expression)) {
+                    return getExpressionType(((Statement) expression).getFirstPsiChild());
                 }
 
                 /* unary operations */

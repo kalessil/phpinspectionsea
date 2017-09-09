@@ -12,8 +12,9 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
+import com.jetbrains.php.lang.psi.elements.Statement;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.utils.MethodIdentityUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -39,8 +40,8 @@ final public class QueryUsageStrategy {
         /* inspect preceding and succeeding statement */
         final PsiElement parent = reference.getParent();
         PsiElement predecessor  = null;
-        if (parent instanceof StatementImpl) {
-            predecessor = ((StatementImpl) parent).getPrevPsiSibling();
+        if (OpenapiTypesUtil.isStatementImpl(parent)) {
+            predecessor = ((Statement) parent).getPrevPsiSibling();
             while (predecessor instanceof PhpDocComment) {
                 predecessor = ((PhpDocComment) predecessor).getPrevPsiSibling();
             }

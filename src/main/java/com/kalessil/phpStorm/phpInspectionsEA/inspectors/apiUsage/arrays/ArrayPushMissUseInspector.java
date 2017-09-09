@@ -14,9 +14,9 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
 import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +41,7 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
                 }
 
                 /* inspect given call: single instruction, 2nd parameter is not variadic */
-                if (reference.getParent() instanceof StatementImpl) {
+                if (OpenapiTypesUtil.isStatementImpl(reference.getParent())) {
                     PsiElement variadicCandidate = params[1].getPrevSibling();
                     if (variadicCandidate instanceof PsiWhiteSpace) {
                         variadicCandidate = variadicCandidate.getPrevSibling();

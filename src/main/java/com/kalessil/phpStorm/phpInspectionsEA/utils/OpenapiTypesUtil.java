@@ -28,6 +28,10 @@ final public class OpenapiTypesUtil {
             (expression instanceof ForeachStatement || expression instanceof For || expression instanceof While || expression instanceof DoWhile);
     }
 
+    static public boolean isStatementImpl(@Nullable PsiElement expression) {
+        return expression != null && expression.getNode().getElementType() == PhpElementTypes.STATEMENT;
+    }
+
     static public boolean is(@Nullable PsiElement expression, @NotNull IElementType type) {
         return expression != null && expression.getNode().getElementType() == type;
     }

@@ -13,9 +13,7 @@ import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,10 +32,17 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
     private static final String message = "The argument can be safely dropped, as it's identical to the default value.";
 
     private static Set<String> exceptions = new HashSet<>();
+    private static Set<IElementType> defaultTypes = new HashSet<>();
     static {
         /* in exceptions die to conflict with strict types inspection, which requires argument specification */
         exceptions.add("array_search");
         exceptions.add("in_array");
+        /* defaults types we are processing */
+        defaultTypes.add(PhpElementTypes.CONSTANT_REF);
+        defaultTypes.add(PhpElementTypes.ARRAY_CREATION_EXPRESSION);
+        defaultTypes.add(PhpElementTypes.CLASS_CONSTANT_REFERENCE);
+        defaultTypes.add(PhpElementTypes.ARRAY_CREATION_EXPRESSION);
+        defaultTypes.add(PhpElementTypes.NUMBER);
     }
 
     @NotNull
@@ -66,7 +71,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                     PsiElement reportFrom = null;
                     PsiElement reportTo   = null;
 
-                    if (this.canBeDefault(arguments[arguments.length - 1])) {
+                    if (defaultTypes.contains(arguments[arguments.length - 1].getNode().getElementType())) {
                         final PsiElement resolved = reference.resolve();
                         if (resolved instanceof Function) {
                             final Parameter[] parameters = ((Function) resolved).getParameters();
@@ -98,16 +103,6 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                         );
                     }
                 }
-            }
-
-            private boolean canBeDefault(@Nullable PsiElement candidate) {
-                return
-                    candidate instanceof ConstantReference ||
-                    candidate instanceof StringLiteralExpression ||
-                    candidate instanceof ClassConstantReference ||
-                    candidate instanceof ArrayCreationExpression ||
-                    OpenapiTypesUtil.is(candidate, PhpElementTypes.NUMBER)
-                ;
             }
         };
     }

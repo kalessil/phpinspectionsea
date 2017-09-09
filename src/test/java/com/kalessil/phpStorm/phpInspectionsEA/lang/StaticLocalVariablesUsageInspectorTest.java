@@ -5,13 +5,13 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.StaticLocalVariablesUsa
 
 final public class StaticLocalVariablesUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new StaticLocalVariablesUsageInspector());
         myFixture.configureByFile("fixtures/lang/static-local-variables.php");
-        myFixture.enableInspections(StaticLocalVariablesUsageInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
     public void testFalsePositives() {
+        myFixture.enableInspections(new StaticLocalVariablesUsageInspector());
         myFixture.configureByFile("fixtures/lang/static-local-variables-false-positives.php");
-        myFixture.enableInspections(StaticLocalVariablesUsageInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

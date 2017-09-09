@@ -50,14 +50,14 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* general structure expectations */
-                final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (null == functionName || 1 != params.length || !semanticMapping.containsKey(functionName)) {
+                final String functionName    = reference.getName();
+                final PsiElement[] arguments = reference.getParameters();
+                if (null == functionName || 1 != arguments.length || !semanticMapping.containsKey(functionName)) {
                     return;
                 }
 
                 /* discover possible values */
-                final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(params[0]);
+                final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(arguments[0]);
 
                 /* do not analyze invariants */
                 if (1 == values.size()) {
@@ -74,14 +74,14 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                         }
 
                         /* if the parameter is a variable, ensure it used only 2 times (write, read) */
-                        if (params[0] instanceof Variable) {
+                        if (arguments[0] instanceof Variable) {
                             final PhpScopeHolder parentScope = ExpressionSemanticUtil.getScope(reference);
                             if (null != parentScope) {
                                 final PhpAccessVariableInstruction[] usages
                                     = PhpControlFlowUtil.getFollowingVariableAccessInstructions
                                       (
                                           parentScope.getControlFlow().getEntryPoint(),
-                                          ((Variable) params[0]).getName(),
+                                          ((Variable) arguments[0]).getName(),
                                           false
                                       );
                                 if (2 != usages.length) {
@@ -94,8 +94,8 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                 .replace("%f%", innerParams[0].getText())
                                 .replace("%s%", innerParams[1].getText());
                         final String message = messagePattern.replace("%e%", replacement);
-                        if (params[0] == value) {
-                            holder.registerProblem(reference, message, new UseSuggestedReplacementFixer(replacement));
+                        if (arguments[0] == value) {
+                            holder.registerProblem(reference, message, new UseAlternativeFix(replacement));
                         } else {
                             holder.registerProblem(reference, message);
                         }
@@ -104,5 +104,17 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                 values.clear();
             }
         };
+    }
+
+    private class UseAlternativeFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use the suggested alternative";
+        }
+
+        UseAlternativeFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

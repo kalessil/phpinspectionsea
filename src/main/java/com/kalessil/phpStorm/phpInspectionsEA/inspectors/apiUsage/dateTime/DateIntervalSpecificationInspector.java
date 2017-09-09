@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -58,7 +57,7 @@ public class DateIntervalSpecificationInspector extends BasePhpInspection {
                     if (pattern != null && pattern.getFirstPsiChild() == null) {
                         final String input = pattern.getContents();
                         if (!regexRegular.matcher(input).find() && !regexDateTimeAlike.matcher(input).find()) {
-                            holder.registerProblem(pattern, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(pattern, message);
                         }
                     }
                 }

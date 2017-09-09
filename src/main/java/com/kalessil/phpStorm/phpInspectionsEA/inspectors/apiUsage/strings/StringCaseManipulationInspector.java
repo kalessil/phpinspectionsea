@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -65,7 +64,7 @@ public class StringCaseManipulationInspector extends BasePhpInspection {
                             .replace("%a1%", (first == null ? params[0] : first).getText())
                             .replace("%f%", functions.get(functionName));
                         final String message = messagePattern.replace("%e%", replacement);
-                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new SimplifyFix(replacement));
+                        holder.registerProblem(reference, message, new SimplifyFix(replacement));
                     }
                 }
             }

@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformati
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -76,7 +75,7 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
                             this.isArrayCasting((FunctionReference) condition, trueExpression, falseExpression)
                         ) {
                             final String replacement = trueExpression.getText() + " = (array) " + trueExpression.getText();
-                            holder.registerProblem(expression.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new SimplifyFix(replacement));
+                            holder.registerProblem(expression.getFirstChild(), message, new SimplifyFix(replacement));
                         }
                     }
                 }
@@ -100,7 +99,7 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
                 if (trueExpression != null && falseExpression != null && OpenapiTypesUtil.isFunctionReference(condition)) {
                     if (this.isArrayCasting((FunctionReference) condition, trueExpression, falseExpression)) {
                         final String replacement  = "(array) " + trueExpression.getText();
-                        holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new SimplifyFix(replacement));
+                        holder.registerProblem(expression, message, new SimplifyFix(replacement));
                     }
                 }
             }

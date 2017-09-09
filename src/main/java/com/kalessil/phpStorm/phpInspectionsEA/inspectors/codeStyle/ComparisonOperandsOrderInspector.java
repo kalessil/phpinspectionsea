@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -61,10 +60,10 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
                         PhpElementTypes.NUMBER == right.getNode().getElementType();
                     if (isLeftConstant != isRightConstant) {
                         if (PREFER_YODA_STYLE && isRightConstant) {
-                            problemsHolder.registerProblem(expression, messageUseYoda, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
+                            problemsHolder.registerProblem(expression, messageUseYoda, new TheLocalFix());
                         }
                         if (PREFER_REGULAR_STYLE && isLeftConstant) {
-                            problemsHolder.registerProblem(expression, messageUseRegular, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
+                            problemsHolder.registerProblem(expression, messageUseRegular, new TheLocalFix());
                         }
                     }
                 }

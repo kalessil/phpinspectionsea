@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.cla
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -54,7 +53,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                     PhpModifierList modifiers = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
                     if (null != modifiers && !modifiers.getText().contains("public")) {
                         final String message = messagePattern.replace("%s%", method.getName());
-                        holder.registerProblem(methodName, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(modifiers));
+                        holder.registerProblem(methodName, message, new TheLocalFix(modifiers));
                     }
                 }
 
@@ -68,7 +67,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                     PhpModifierList modifiers = PsiTreeUtil.findChildOfType(field.getParent(), PhpModifierList.class);
                     if (null != modifiers && !modifiers.getText().contains("public")) {
                         final String message = messagePattern.replace("%s%", field.getName());
-                        holder.registerProblem(fieldName, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(modifiers));
+                        holder.registerProblem(fieldName, message, new TheLocalFix(modifiers));
                     }
                 }
             }

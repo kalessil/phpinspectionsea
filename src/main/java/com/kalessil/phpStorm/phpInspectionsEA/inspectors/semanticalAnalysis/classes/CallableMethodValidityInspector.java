@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -84,7 +83,7 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                     final Method method = (Method) element;
                     if (!method.getAccess().isPublic()) {
                         final String message = patternNotPublic.replace("%m%", method.getName());
-                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(target, message);
                     }
 
                     boolean needStatic = false;
@@ -113,7 +112,7 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                     }
                     if (needStatic) {
                         final String message = patternNotStatic.replace("%m%", method.getName());
-                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(target, message);
                     }
                 }
             }

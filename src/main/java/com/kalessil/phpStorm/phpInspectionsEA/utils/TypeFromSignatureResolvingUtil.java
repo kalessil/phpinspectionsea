@@ -1,8 +1,8 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
-import org.apache.commons.lang.StringUtils;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

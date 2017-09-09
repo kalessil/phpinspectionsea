@@ -77,7 +77,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                                 .replace("%o%", isInverted ? "!==": "===");
                             final String message    = patternUseCount.replace("%e%", replacement);
                             final PsiElement target = isInverted ? parent : emptyExpression;
-                            holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseCountFix(replacement));
+                            holder.registerProblem(target, message, new UseCountFix(replacement));
                         }
 
                         return;
@@ -93,7 +93,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                                 .replace("%o%", isInverted ? "!==": "===");
                             final String message    = patternUseNullComparison.replace("%e%", replacement);
                             final PsiElement target = isInverted ? parent : emptyExpression;
-                            holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new CompareToNullFix(replacement));
+                            holder.registerProblem(target, message, new CompareToNullFix(replacement));
                         }
 
                         return;

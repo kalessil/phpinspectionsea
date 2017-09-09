@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptions;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -53,13 +52,13 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
                     boolean containsPlaceholders = ((StringLiteralExpression) params[0]).getContents().contains("%s");
                     if (containsPlaceholders && isExceptionClass(argument)) {
                         final String replacement = "sprintf(" + params[0].getText() + ", )";
-                        holder.registerProblem(params[0], messageSprintf, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new AddMissingSprintfFix(replacement));
+                        holder.registerProblem(params[0], messageSprintf, new AddMissingSprintfFix(replacement));
                     }
                 }
 
                 /* pattern 'new Exception(...);' */
                 if (parent.getClass() == StatementImpl.class && isExceptionClass(argument)) {
-                    holder.registerProblem(expression, messageThrow, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new AddMissingThrowFix());
+                    holder.registerProblem(expression, messageThrow, new AddMissingThrowFix());
                 }
             }
 

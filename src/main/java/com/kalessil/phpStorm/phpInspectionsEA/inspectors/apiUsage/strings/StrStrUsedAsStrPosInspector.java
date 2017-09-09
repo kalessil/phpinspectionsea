@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -75,7 +74,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                                 .replace("%f%", mapping.get(functionName))
                                 .replace("%o%", operator.length() == 2 ? operator + "=": operator);
                             final String message     = messagePattern.replace("%e%", replacement);
-                            holder.registerProblem(parent, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseStrposFix(replacement));
+                            holder.registerProblem(parent, message, new UseStrposFix(replacement));
 
                             return;
                         }
@@ -93,7 +92,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                         .replace("%f%", mapping.get(functionName))
                         .replace("%o%", reference.getParent() instanceof UnaryExpression ? "===": "!==");
                     final String message     = messagePattern.replace("%e%", replacement);
-                    holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseStrposFix(replacement));
+                    holder.registerProblem(target, message, new UseStrposFix(replacement));
 
                     //return;
                 }

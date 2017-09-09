@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -59,7 +58,7 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
                         .replace("%i%", params[1].getText());
 
                     final String message = messagePattern.replace("%e%", expression);
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(expression));
+                    holder.registerProblem(reference, message, new TheLocalFix(expression));
                 }
             }
         };

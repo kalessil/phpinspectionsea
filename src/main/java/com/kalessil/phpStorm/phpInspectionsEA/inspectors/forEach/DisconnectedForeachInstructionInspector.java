@@ -1,8 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -16,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -129,13 +128,13 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                         final boolean isVariablesUsed
                                             = null != PsiTreeUtil.findChildOfAnyType(oneInstruction, true, Variable.class);
                                         if (null == loopInterrupter && isVariablesUsed) {
-                                            holder.registerProblem(reportingTarget, messageDisconnected, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                            holder.registerProblem(reportingTarget, messageDisconnected);
                                         }
                                     }
                                 }
 
                                 if (SUGGEST_USING_CLONE && (ExpressionType.DOM_ELEMENT_CREATE == target || ExpressionType.NEW == target)) {
-                                    holder.registerProblem(oneInstruction, messageUseClone, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                    holder.registerProblem(oneInstruction, messageUseClone);
                                 }
                             }
 

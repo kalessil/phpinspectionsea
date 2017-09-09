@@ -148,7 +148,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                         }
 
                         if (!isPropertyReused && REPORT_DEFAULTS_FLAWS) {
-                            holder.registerProblem(fieldDefault, messageDefaultOverride, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new DropFieldDefaultValueFix());
+                            holder.registerProblem(fieldDefault, messageDefaultOverride, new DropFieldDefaultValueFix());
                         }
                     }
                 }

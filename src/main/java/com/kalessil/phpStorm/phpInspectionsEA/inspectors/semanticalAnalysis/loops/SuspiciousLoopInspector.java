@@ -109,7 +109,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                     return;
                 }
 
-                holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundaries, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundaries);
             }
 
             private void inspectVariables(PhpPsiElement loop) {

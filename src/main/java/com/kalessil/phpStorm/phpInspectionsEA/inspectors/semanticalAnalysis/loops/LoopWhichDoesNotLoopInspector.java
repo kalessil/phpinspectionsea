@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -90,7 +89,7 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
                 }
                 continues.clear();
 
-                holder.registerProblem(loop.getFirstChild(), message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(loop.getFirstChild(), message);
             }
         };
     }

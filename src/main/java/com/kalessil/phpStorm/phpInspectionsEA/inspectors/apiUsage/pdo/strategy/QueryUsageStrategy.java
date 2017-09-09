@@ -3,7 +3,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.strategy;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -60,12 +59,7 @@ final public class QueryUsageStrategy {
                     variableAssigned != null && variableUsed != null &&
                     PsiEquivalenceUtil.areElementsEquivalent(variableAssigned, variableUsed)
                 ) {
-                    holder.registerProblem(
-                            reference,
-                            message,
-                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                            new UseQueryFix(precedingReference)
-                    );
+                    holder.registerProblem(reference, message, new UseQueryFix(precedingReference));
                 }
 
             }

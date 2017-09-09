@@ -2,10 +2,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.api
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class FunctionCallCheckStrategy {
@@ -17,7 +17,7 @@ public class FunctionCallCheckStrategy {
             final PsiElement[] params = reference.getParameters();
 
             if (1 == params.length && functionName.equals("preg_quote")) {
-                holder.registerProblem(reference, strProblemQuote, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(reference, strProblemQuote);
                 return;
             }
 

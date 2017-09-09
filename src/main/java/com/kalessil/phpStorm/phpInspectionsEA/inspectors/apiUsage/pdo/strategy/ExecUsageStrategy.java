@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.strategy;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -34,7 +33,7 @@ final public class ExecUsageStrategy {
             reference.getParent().getClass() == StatementImpl.class &&
             MethodIdentityUtil.isReferencingMethod(reference, "\\PDO", "query")
         ) {
-            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseExecFix());
+            holder.registerProblem(reference, message, new UseExecFix());
         }
     }
 

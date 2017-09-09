@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.strategy;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -109,7 +108,7 @@ final public class PropertyUsedInPrivateContextStrategy {
                     if (usages.size() == 1 && usages.contains("private")) {
                         final PsiElement modifier = ModifierExtractionUtil.getProtectedModifier(fields.get(fieldName));
                         if (modifier != null) {
-                            holder.registerProblem(modifier, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new MakePrivateFixer(modifier));
+                            holder.registerProblem(modifier, message, new MakePrivateFixer(modifier));
                         }
                     }
                 }

@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
@@ -15,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -115,7 +115,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
 
                 /* TODO: has method/function reference as index */
                 if (!isResultStored && this.hasConcatenationAsIndex((ArrayAccessExpression) argument)) {
-                    holder.registerProblem(argument, messageConcatenationInIndex, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(argument, messageConcatenationInIndex);
                     return;
                 }
 

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -54,11 +53,11 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
                     operationType == PhpTokenTypes.opPLUS
                 ) {
                     if (this.isTargetMagicNumber(right) && this.isTargetContext(right)) {
-                        holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(expression, message);
                         return;
                     }
                     if (this.isTargetMagicNumber(left) && this.isTargetContext(left)) {
-                        holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(expression, message);
                     }
                 }
             }
@@ -79,7 +78,7 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
                     operationType == PhpTokenTypes.opPLUS_ASGN
                 ) {
                     if (this.isTargetMagicNumber(value)) {
-                        holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(expression, message);
                     }
                 }
             }

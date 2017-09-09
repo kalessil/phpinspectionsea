@@ -1,10 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
-import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;

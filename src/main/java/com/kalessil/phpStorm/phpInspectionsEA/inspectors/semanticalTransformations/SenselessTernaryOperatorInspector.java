@@ -1,7 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -64,7 +63,6 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
                                 holder.registerProblem(
                                     expression,
                                     patternUseOperands.replace("%o%", replacement),
-                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                                     new SimplifyFix(replacement)
                                 );
                             }

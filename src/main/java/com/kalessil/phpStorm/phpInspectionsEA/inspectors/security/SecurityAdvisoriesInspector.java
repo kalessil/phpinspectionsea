@@ -12,15 +12,14 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.psi.PsiFile;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.

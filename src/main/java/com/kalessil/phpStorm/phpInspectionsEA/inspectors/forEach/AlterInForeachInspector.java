@@ -3,7 +3,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
@@ -14,6 +13,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -92,7 +92,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
 
                             /* check if warning needs to be reported */
                             if (!isRequirementFullFilled) {
-                                holder.registerProblem(objForeachValue, messageMissingUnset, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                holder.registerProblem(objForeachValue, messageMissingUnset);
                             }
                         } else {
                             /* check for unset in parent foreach-statements: foreach-{foreach}-unset */

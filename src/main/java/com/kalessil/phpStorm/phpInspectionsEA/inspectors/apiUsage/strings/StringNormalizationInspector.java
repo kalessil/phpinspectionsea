@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -81,7 +80,7 @@ public class StringNormalizationInspector extends BasePhpInspection {
                     final String replacement  = innerCall.getText().replace(theString, newInnerCall);
 
                     final String message      = patternInvertedNesting.replace("%e%", replacement);
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new NormalizationFix(replacement));
+                    holder.registerProblem(reference, message, new NormalizationFix(replacement));
 
                     return;
                 }
@@ -92,7 +91,7 @@ public class StringNormalizationInspector extends BasePhpInspection {
                     }
 
                     final String message = patternSenselessNesting.replace("%i%", innerFunctionName);
-                    holder.registerProblem(innerCall, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new NormalizationFix(innerParams[0].getText()));
+                    holder.registerProblem(innerCall, message, new NormalizationFix(innerParams[0].getText()));
                 }
             }
         };

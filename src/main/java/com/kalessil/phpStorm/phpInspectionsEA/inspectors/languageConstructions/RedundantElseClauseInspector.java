@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -84,7 +83,7 @@ public class RedundantElseClauseInspector extends BasePhpInspection {
                     if (isReturnPoint) {
                         final PsiElement target = alternative.getFirstChild();
                         final String message    = messagePattern.replace("%kw%", target.getText());
-                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UnnecessaryElseFixer());
+                        holder.registerProblem(target, message, new UnnecessaryElseFixer());
                     }
                 }
                 alternativeBranches.clear();

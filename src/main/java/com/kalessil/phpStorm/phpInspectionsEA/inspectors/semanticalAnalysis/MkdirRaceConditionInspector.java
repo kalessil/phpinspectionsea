@@ -6,7 +6,6 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -52,7 +51,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 final PsiElement parent = this.getCompleteExpression(reference);
 
                 // case 1: if ([!]mkdir(...))
-                if (parent instanceof If || OpenapiTypesUtil.is(parent, PhpElementTypes.STATEMENT)) {
+                if (parent instanceof If || OpenapiTypesUtil.isStatementImpl(parent)) {
                     final PsiElement target = parent instanceof If ? ((If) parent).getCondition() : parent;
                     final String message =
                             (parent instanceof If ? patternMkdirAndCondition : patternMkdirDirectCall)
@@ -99,7 +98,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
             private PsiElement getCompleteExpression(@NotNull PsiElement expression) {
                 final PsiElement parent = expression.getParent();
 
-                if (parent instanceof AssignmentExpression || OpenapiTypesUtil.is(parent, PhpElementTypes.STATEMENT)) {
+                if (parent instanceof AssignmentExpression || OpenapiTypesUtil.isStatementImpl(parent)) {
                     return parent;
                 } else if (parent instanceof ParenthesizedExpression) {
                     return this.getCompleteExpression(parent);

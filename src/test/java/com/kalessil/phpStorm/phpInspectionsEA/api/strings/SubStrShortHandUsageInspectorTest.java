@@ -6,7 +6,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.SubStr
 final public class SubStrShortHandUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new SubStrShortHandUsageInspector());
-
         myFixture.configureByFile("fixtures/api/strings/substr-short-hand.php");
         myFixture.testHighlighting(true, false, true);
     }

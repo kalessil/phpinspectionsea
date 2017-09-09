@@ -6,7 +6,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import org.apache.commons.lang.StringUtils;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
@@ -16,7 +16,6 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -50,7 +49,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                 final PsiElement[] params = reference.getParameters();
                 if (
                     (3 != params.length && 4 != params.length) || !(params[2] instanceof BinaryExpression) ||
-                    StringUtils.isEmpty(functionName) || (!functionName.equals("substr") && !functionName.equals("mb_substr"))
+                    functionName == null || (!functionName.equals("substr") && !functionName.equals("mb_substr"))
                 ) {
                     return;
                 }
@@ -72,15 +71,12 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                 }
 
                 /* should be "[mb_]strlen($search) - *" */
-                if (
-                    candidate.getLeftOperand() instanceof FunctionReferenceImpl &&
-                    null != candidate.getRightOperand()
-                ) {
+                if (OpenapiTypesUtil.isFunctionReference(candidate.getLeftOperand()) && candidate.getRightOperand() != null) {
                     final FunctionReference leftCall  = (FunctionReference) candidate.getLeftOperand();
                     final String leftCallName         = leftCall.getName();
                     final PsiElement[] leftCallParams = leftCall.getParameters();
                     if (
-                        1 == leftCallParams.length && !StringUtils.isEmpty(leftCallName) &&
+                        1 == leftCallParams.length && leftCallName != null &&
                         (leftCallName.equals("strlen") || leftCallName.equals("mb_strlen")) &&
                         PsiEquivalenceUtil.areElementsEquivalent(leftCallParams[0], params[0])
                     ) {

@@ -3,9 +3,9 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -13,7 +13,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -42,24 +41,27 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
 
                     final Function scope = ExpressionSemanticUtil.getScope(reference);
                     if (null != scope) {
-                        Collection<FunctionReferenceImpl> calls = PsiTreeUtil.findChildrenOfType(scope, FunctionReferenceImpl.class);
+                        Collection<FunctionReference> calls = PsiTreeUtil.findChildrenOfType(scope, FunctionReference.class);
                         if (calls.size() > 0) {
-                            for (FunctionReferenceImpl oneCall : calls) {
+                            for (final FunctionReference oneCall : calls) {
                                 /* skip inspected call and calls without arguments */
-                                if (oneCall == reference || 0 == oneCall.getParameters().length) {
+                                if (
+                                    oneCall == reference || !OpenapiTypesUtil.isFunctionReference(oneCall) ||
+                                    oneCall.getParameters().length == 0
+                                ) {
                                     continue;
                                 }
 
                                 /* skip non-target function */
                                 final String currentFunction = oneCall.getName();
-                                if (StringUtils.isEmpty(currentFunction) || !currentFunction.equals("http_build_query")) {
+                                if (currentFunction == null || !currentFunction.equals("http_build_query")) {
                                     continue;
                                 }
 
                                 /* pattern match: ksort and http_build_query operating on the same expression */
                                 if (PsiEquivalenceUtil.areElementsEquivalent(oneCall.getParameters()[0], parameters[0])) {
                                     final String message = strProblemDescription.replace("%a%", parameters[0].getText());
-                                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
+                                    holder.registerProblem(reference, message, new TheLocalFix());
 
                                     break;
                                 }

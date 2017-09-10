@@ -25,43 +25,44 @@ final public class AnalyticsUtil {
 
     public static void registerPluginException(@NotNull EASettings source, @Nullable Throwable exception) {
         if (exception != null) {
-            new Thread() {
-                public void run() {
-                    final List<StackTraceElement> related = Arrays.stream(exception.getStackTrace())
-                            .filter(e -> e.getClassName().contains(pluginNamespace))
-                            .collect(Collectors.toList());
-                    if (!related.isEmpty()) {
-                        final StackTraceElement rootCause = related.get(0);
-                        final String description          = String.format(
-                                "%s:%s (%s) %s",
-                                rootCause.getFileName(),
-                                rootCause.getLineNumber(),
-                                source.getVersion(),
-                                exception.getMessage()
-                        );
+            final List<StackTraceElement> related = Arrays.stream(exception.getStackTrace())
+                    .filter(e -> e.getClassName().contains(pluginNamespace))
+                    .collect(Collectors.toList());
+            if (!related.isEmpty()) {
+                final StackTraceElement rootCause = related.get(0);
+                final String description          = String.format(
+                        "%s:%s (%s) %s",
+                        rootCause.getFileName(),
+                        rootCause.getLineNumber(),
+                        source.getVersion(),
+                        exception.getMessage()
+                );
+                related.clear();
 
+                new Thread() {
+                    public void run() {
                         /* See https://developers.google.com/analytics/devguides/collection/analyticsjs/exceptions */
                         final StringBuilder payload = new StringBuilder();
                         payload
-                            .append("v=1")                                              // Version.
-                            .append("&tid=").append(COLLECTOR_ID)                       // Tracking ID / Property ID.
-                            .append("&cid=").append(source.getUuid())                   // Anonymous Client ID.
-                            .append("&t=exception")                                     // Exception hit type.
-                            .append("&exd=").append(description)                        // Exception description.
-                            .append("&exf=1")                                           // Exception is fatal?
+                                .append("v=1")                                              // Version.
+                                .append("&tid=").append(COLLECTOR_ID)                       // Tracking ID / Property ID.
+                                .append("&cid=").append(source.getUuid())                   // Anonymous Client ID.
+                                .append("&t=exception")                                     // Exception hit type.
+                                .append("&exd=").append(description)                        // Exception description.
+                                .append("&exf=1")                                           // Exception is fatal?
                         ;
 
                         try {
                             Request.Post(COLLECTOR_URL)
-                                .bodyByteArray(payload.toString().getBytes())
-                                .connectTimeout(3000)
-                            .execute();
+                                    .bodyByteArray(payload.toString().getBytes())
+                                    .connectTimeout(3000)
+                                    .execute();
                         } catch (Exception failed) {
                             /* we do nothing here - this happens in background and not mission critical */
                         }
                     }
-                }
-            }.start();
+                }.start();
+            }
         }
     }
 

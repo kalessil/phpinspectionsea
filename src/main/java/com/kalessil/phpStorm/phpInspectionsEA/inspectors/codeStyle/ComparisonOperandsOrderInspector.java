@@ -8,13 +8,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -54,10 +54,10 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
                 if (left != null && right != null && operator != null && PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
                     final boolean isLeftConstant =
                         left instanceof StringLiteralExpression || left instanceof ConstantReference ||
-                        PhpElementTypes.NUMBER == left.getNode().getElementType();
+                        OpenapiTypesUtil.isNumber(left);
                     final boolean isRightConstant =
                         right instanceof StringLiteralExpression || right instanceof ConstantReference ||
-                        PhpElementTypes.NUMBER == right.getNode().getElementType();
+                        OpenapiTypesUtil.isNumber(right);
                     if (isLeftConstant != isRightConstant) {
                         if (PREFER_YODA_STYLE && isRightConstant) {
                             problemsHolder.registerProblem(expression, messageUseYoda, new TheLocalFix());

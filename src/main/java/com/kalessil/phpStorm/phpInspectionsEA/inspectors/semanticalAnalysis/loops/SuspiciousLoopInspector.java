@@ -6,12 +6,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -70,11 +70,8 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
 
                     /* false-positives: joda conditions applied, invert the operator */
                     final PsiElement left = ((BinaryExpression) conditions[0]).getLeftOperand();
-                    if (null != left) {
-                        final IElementType leftType = left.getNode().getElementType();
-                        if (PhpElementTypes.NUMBER == leftType && operationsInversion.containsKey(checkOperator)) {
-                            checkOperator = operationsInversion.get(checkOperator);
-                        }
+                    if (OpenapiTypesUtil.isNumber(left) && operationsInversion.containsKey(checkOperator)) {
+                        checkOperator = operationsInversion.get(checkOperator);
                     }
 
                     if (checkOperator == PhpTokenTypes.opGREATER || checkOperator == PhpTokenTypes.opGREATER_OR_EQUAL) {

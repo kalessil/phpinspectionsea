@@ -10,7 +10,6 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -138,8 +137,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                 }
 
                 /* we'll check only numeric arrays */
-                final PsiElement indexValue = index.getValue();
-                if (PhpElementTypes.NUMBER == indexValue.getNode().getElementType()) {
+                if (OpenapiTypesUtil.isNumber(index.getValue())) {
                     return container;
                 }
 

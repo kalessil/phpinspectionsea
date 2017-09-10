@@ -6,15 +6,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.PhpExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ClassInStringContextStrategy;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,7 +57,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                     final PsiElement left          = parent.getLeftOperand();
                     final PsiElement secondOperand = left == reference ? parent.getRightOperand() : left;
                     /* second operand should be a number */
-                    if (secondOperand instanceof PhpExpression && PhpElementTypes.NUMBER == secondOperand.getNode().getElementType()) {
+                    if (OpenapiTypesUtil.isNumber(secondOperand)) {
                         final String strNumber = secondOperand.getText();
 
                         /* check cases when comparing with 1 */

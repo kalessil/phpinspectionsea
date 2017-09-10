@@ -5,11 +5,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -50,7 +50,7 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
                     }
                 }
 
-                if (PhpElementTypes.NUMBER == params[2].getNode().getElementType() && params[2].getText().equals("1")) {
+                if (OpenapiTypesUtil.isNumber(params[2]) && params[2].getText().equals("1")) {
                     final boolean isNegativeOffset = params[1].getText().startsWith("-");
                     final String expression        = (isNegativeOffset ? "%c%[strlen(%c%) %i%]" : "%c%[%i%]")
                         .replace("%c%", params[0].getText())

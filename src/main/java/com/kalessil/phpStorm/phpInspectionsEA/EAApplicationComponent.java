@@ -6,6 +6,10 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.extensions.PluginId;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.analytics.AnalyticsUtil;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggingEvent;
+import org.apache.log4j.spi.ThrowableInformation;
 import org.jetbrains.annotations.NotNull;
 
 public class EAApplicationComponent implements ApplicationComponent {
@@ -25,13 +29,27 @@ public class EAApplicationComponent implements ApplicationComponent {
         }
 
         final EASettings settings = EASettings.getInstance();
-        this.updated              = !plugin.getVersion().equals(settings.getVersion());
+
+        /* collect installation events (anonymous) */
+        this.updated = !plugin.getVersion().equals(settings.getVersion());
         if (this.updated) {
             settings.setVersion(plugin.getVersion());
             AnalyticsUtil.registerPluginEvent(settings, "install", settings.getOldestVersion());
         }
-
         AnalyticsUtil.registerPluginEvent(settings, "run", settings.getOldestVersion());
+
+        /* collect exceptions */
+        final FileAppender appender = new FileAppender() {
+            @Override
+            public void append(@NotNull LoggingEvent event) {
+                final ThrowableInformation exceptionDetails = event.getThrowableInformation();
+                if (exceptionDetails != null) {
+                    AnalyticsUtil.registerPluginException(settings, exceptionDetails.getThrowable());
+                }
+            }
+        };
+        appender.setName("ea-exceptions-tracker");
+        Logger.getRootLogger().addAppender(appender);
     }
 
     @Override

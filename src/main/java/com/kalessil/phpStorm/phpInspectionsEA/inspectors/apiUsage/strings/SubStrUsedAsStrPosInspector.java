@@ -51,7 +51,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                  *   - 3rd is not important, as we'll rely on parent comparison operand instead
                  */
                 final String index = arguments[1].getText();
-                if (OpenapiTypesUtil.isNumber(arguments[1]) || !index.equals("0")) {
+                if (!OpenapiTypesUtil.isNumber(arguments[1]) || !index.equals("0")) {
                     return;
                 }
 

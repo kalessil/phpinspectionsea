@@ -2,12 +2,21 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 final public class OpenapiTypesUtil {
+    final public static TokenSet DEFAULT_VALUES = TokenSet.create(
+            PhpElementTypes.CONSTANT_REF,
+            PhpElementTypes.STRING,
+            PhpElementTypes.NUMBER,
+            PhpElementTypes.CLASS_CONSTANT_REFERENCE,
+            PhpElementTypes.ARRAY_CREATION_EXPRESSION
+    );
+
     static public boolean isLambda(@Nullable PsiElement expression) {
         if (is(expression, PhpElementTypes.CLOSURE)) {
             expression = expression.getFirstChild();

@@ -9,13 +9,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.Parameter;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -35,17 +35,10 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
     private static final String message = "The argument can be safely dropped, as it's identical to the default value.";
 
     private static Set<String> exceptions = new HashSet<>();
-    private static Set<IElementType> defaultTypes = new HashSet<>();
     static {
         /* in exceptions die to conflict with strict types inspection, which requires argument specification */
         exceptions.add("array_search");
         exceptions.add("in_array");
-        /* defaults types we are processing */
-        defaultTypes.add(PhpElementTypes.CONSTANT_REF);
-        defaultTypes.add(PhpElementTypes.STRING);
-        defaultTypes.add(PhpElementTypes.NUMBER);
-        defaultTypes.add(PhpElementTypes.CLASS_CONSTANT_REFERENCE);
-        defaultTypes.add(PhpElementTypes.ARRAY_CREATION_EXPRESSION);
     }
 
     @NotNull
@@ -74,7 +67,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                     PsiElement reportFrom = null;
                     PsiElement reportTo   = null;
 
-                    if (defaultTypes.contains(arguments[arguments.length - 1].getNode().getElementType())) {
+                    if (OpenapiTypesUtil.DEFAULT_VALUES.contains(arguments[arguments.length - 1].getNode().getElementType())) {
                         final PsiElement resolved = reference.resolve();
                         if (resolved instanceof Function) {
                             final Parameter[] parameters = ((Function) resolved).getParameters();

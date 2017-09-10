@@ -34,7 +34,7 @@ final public class AnalyticsUtil {
                         final StackTraceElement rootCause = related.get(0);
                         final String description          = String.format(
                                 "%s:%s (%s) %s",
-                                rootCause.getFileName().substring(rootCause.getFileName().lastIndexOf('.')),
+                                rootCause.getFileName(),
                                 rootCause.getLineNumber(),
                                 source.getVersion(),
                                 exception.getMessage()

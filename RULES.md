@@ -233,7 +233,6 @@ Inspections Lists (Performance)
 | Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                          | yes | yes | yes  | no  |
 | Performance          | FilePutContentsMissUseInspection                | 'file_put_contents(...)' misused                                                                  | yes | yes | yes  | no  |
 | Performance          | PackedHashtableOptimizationInspection           | Packed hashtable optimizations                                                                    | no  | yes | no   | yes |
-| Performance          | StaticLocalVariablesUsageInspection             | Static local variables usage                                                                      | n/a | yes | n/a  | yes |
 | Performance          | UnqualifiedReferenceInspection                  | Unqualified function/constant reference                                                           | yes | yes | yes  | no  |
 | Performance          | ExplodeMissUseInspection                        | 'explode(...)' misused                                                                            | yes | yes | yes  | no  |
 | Performance          | ScandirUsageInspection                          | 'scandir(...)' low performing usage                                                               | yes | yes | yes  | no  |

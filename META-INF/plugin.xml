@@ -80,6 +80,7 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
 - Suspicious binary operations: new patterns<br/>
 - Unnecessary final modifiers: new patterns<br/>
 <br/>
+- Static local variables usage: dropped<br/>
 - Usage of the silence operator: dropped<br/>
 - 'array_unique(...)' can be used: implemented<br/>
 - 'array_unique(...)' low performing usage: dropped<br/>
@@ -161,10 +162,6 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
         shortName="StrtotimeUsageInspection"                      displayName="'strtotime(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.StrtotimeUsageInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="StaticLocalVariablesUsageInspection"           displayName="Static local variables usage"
-        groupName="Performance"                                   enabledByDefault="false" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.StaticLocalVariablesUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="PackedHashtableOptimizationInspection"         displayName="Packed hashtable optimizations"
         groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"

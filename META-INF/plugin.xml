@@ -84,6 +84,7 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
 - Usage of the silence operator: dropped<br/>
 - 'array_unique(...)' can be used: implemented<br/>
 - 'array_unique(...)' low performing usage: dropped<br/>
+- 'DateTime::setTime(...)' usage correctness: implemented<br/>
 - 'simplexml_load_file(...)' usage correctness: implemented<br/>
 <br/>
 <hr/>
@@ -454,6 +455,10 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
         shortName="SimpleXmlLoadFileUsageInspection"              displayName="'simplexml_load_file(...)' usage correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SimpleXmlLoadFileUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="DateTimeSetTimeUsageInspection"                displayName="'DateTime::setTime(...)' usage correctness"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.DateTimeSetTimeUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

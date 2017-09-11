@@ -53,5 +53,9 @@ function immediateOverrides()
     $y10[]['pos'] = 0;
     $y10[]['pos'] = 1;
 
+    /* false-positives: self injection in strings */
+    $y11 = '';
+    $y11 = "$y11";
+
     return [$y1, $y2, $y3, $y4, $y5, $y6, $y7, $y8, $y9, $y10, $y10];
 }

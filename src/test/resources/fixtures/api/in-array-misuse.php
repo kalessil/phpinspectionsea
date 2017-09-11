@@ -45,3 +45,6 @@
     /* false-positives */
     $x = in_array('1', array(), true);
     $x = in_array('1', array());
+
+    $x = array_search('', []) ?: '...';
+    $x = array_search('', []) ?: array_search('', []);

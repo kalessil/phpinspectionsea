@@ -43,6 +43,7 @@ final public class SequentialAssignmentsStrategy {
         }
     }
 
+    /* TODO: ContextUtil::isArrayPush() - parent is assignment and [] is at any level */
     static private boolean isArrayPush(@NotNull PsiElement container) {
         boolean result = false;
         while (container instanceof ArrayAccessExpression) {
@@ -57,10 +58,11 @@ final public class SequentialAssignmentsStrategy {
         return result;
     }
 
+    /* TODO: wrap PsiEquivalenceUtil.areElementsEquivalent to cover it's bugs */
     static private boolean isContainerUsed(@NotNull PsiElement container, @Nullable PsiElement expression) {
         boolean result = false;
-        if (null != expression) {
-            for (PsiElement matchCandidate : PsiTreeUtil.findChildrenOfType(expression, container.getClass())) {
+        if (expression != null) {
+            for (final PsiElement matchCandidate : PsiTreeUtil.findChildrenOfType(expression, container.getClass())) {
                 if (matchCandidate != container && PsiEquivalenceUtil.areElementsEquivalent(matchCandidate, container)) {
                     result = true;
                     break;

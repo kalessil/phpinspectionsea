@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
@@ -79,14 +78,14 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                     /* Case 1: $this-><static method>() */
                     if (contextOfThis) {
                         final String message = messageThisUsed.replace("%m%", methodName);
-                        holder.registerProblem(thisCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix(thisCandidate, operator));
+                        holder.registerProblem(thisCandidate, message, new TheLocalFix(thisCandidate, operator));
 
                         return;
                     }
 
                     /* Case 2: <expression>-><static method>(); no chained calls; no QF - needs looking into cases */
                     final String message = messageExpressionUsed.replace("%m%", reference.getName());
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(reference, message);
                 }
             }
         };

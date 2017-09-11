@@ -1,8 +1,10 @@
 <?php
 
 function explodeMisuse($arg) {
+    /* case: misuse */
     echo substr_count($arg, '') + 1;
 
+    /* case: misuse, with variants lookup */
     $a = explode('', $arg);
     echo count ($a);
 

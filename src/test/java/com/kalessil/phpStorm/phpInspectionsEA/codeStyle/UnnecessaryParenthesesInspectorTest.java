@@ -14,7 +14,7 @@ final public class UnnecessaryParenthesesInspectorTest extends PhpCodeInsightFix
         myFixture.configureByFile("fixtures/codeStyle/unnecessary-parentheses.php");
         myFixture.testHighlighting(true, false, true);
 
-                for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");

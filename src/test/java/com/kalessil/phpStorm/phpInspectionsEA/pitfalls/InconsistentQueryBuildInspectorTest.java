@@ -5,8 +5,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Inco
 
 final public class InconsistentQueryBuildInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new InconsistentQueryBuildInspector());
         myFixture.configureByFile("fixtures/pitfalls/inconsistent-http_build_query.php");
-        myFixture.enableInspections(InconsistentQueryBuildInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

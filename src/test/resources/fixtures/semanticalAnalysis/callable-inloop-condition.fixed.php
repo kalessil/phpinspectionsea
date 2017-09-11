@@ -1,11 +1,12 @@
 <?php
 
 // Allowed.
-for ($i = 0, $iMax = count($values); $i < $iMax; $i++) { }
+for ($i = 0, $iMax = count($values); $i < $iMax; $i++) {}
 for ($i = 0; ; $i++) {}
 
 // Warning (case #1).
 for ($i = 0, $iMax = count($values); $i < $iMax; $i++) {}
+for ($i->loop['index'] = 0, $loopsMax = count($values); $i->loop['index'] < $loopsMax; $i->loop['index']++) {}
 for ($i = 0, $iMax = count($values); $iMax >= $i; $i++) {}
 for ($i = 0, $j = 0, $iMax = count($values); $iMax >= $i; $i++) {}
 

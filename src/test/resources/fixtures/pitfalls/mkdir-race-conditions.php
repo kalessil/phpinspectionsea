@@ -1,17 +1,22 @@
 <?php
 
-    <error descr="Following construct should be used: 'if (!@mkdir(...) && !is_dir(...)) { throw ...; }'.">mkdir('test');</error>
-
-    if (!is_dir('test')) {
-        <error descr="Following construct should be used: 'if (!@mkdir(...) && !is_dir(...)) { throw ...; }'.">mkdir('test');</error>
+    /* case: just a call -> conditionally throw exception */
+    <error descr="Following construct should be used: 'if (!mkdir('...') && !is_dir('...')) { ... }'.">mkdir('...');</error>
+    <error descr="Following construct should be used: 'if (!mkdir('...') && !is_dir('...')) { ... }'.">@mkdir('...');</error>
+    if (!is_dir('...')) {
+        <error descr="Following construct should be used: 'if (!mkdir('...') && !is_dir('...')) { ... }'.">mkdir('...');</error>
     }
 
-    <error descr="Following construct should be used: 'if (!@mkdir(...) && !is_dir(...)) { throw ...; }'.">if</error> ((!mkdir('test'))) {
-       echo 'not created';
-    }
+    /* false-positive: result saved */
+    $result = mkdir('...');
 
-    if (!is_dir('test') &&
-        <error descr="Condition needs to be corrected (invert if needed): '!@mkdir(...) && !is_dir(...)'.">!mkdir('test')</error>
-    ) {
-        echo 'not created';
-    }
+    /* case: incomplete conditions */
+    // if ((mkdir('...'))) {}
+    if (<error descr="Some check are missing: '!mkdir('...') && !is_dir('...')'.">(!mkdir('...'))</error>) {}
+    if (<error descr="Some check are missing: '!mkdir('...') && !is_dir('...')'.">(!@mkdir('...'))</error>) {}
+    if (!is_dir('...') && <error descr="Some check are missing: '!mkdir('...') && !is_dir('...')'.">!mkdir('...')</error>) {}
+    if (is_dir('...') || <error descr="Some check are missing: 'mkdir('...') || is_dir('...')'.">mkdir('...')</error>) {}
+
+    /* false-positive: re-checked afterwards */
+    if (!is_dir('...') && !mkdir('...') && !is_dir('...')) {}
+    // if (is_dir('...') || mkdir('...') || is_dir('...')) {}

@@ -302,7 +302,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                         ++issetCallsCount;
                         if (issetCallsCount > 1) {
-                            holder.registerProblem(expression, messageIssetCanBeMergedAndCase, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(expression, messageIssetCanBeMergedAndCase);
                         }
                     }
 
@@ -323,7 +323,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                         ++issetCallsCount;
                         if (issetCallsCount > 1) {
-                            holder.registerProblem(expression, messageIssetCanBeMergedOrCase, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(expression, messageIssetCanBeMergedOrCase);
                         }
                     }
                 }
@@ -366,7 +366,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         }
 
                         if (PsiEquivalenceUtil.areElementsEquivalent(innerLoopExpression, expression)) {
-                            holder.registerProblem(innerLoopExpression, messageDuplicateConditionPart, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(innerLoopExpression, messageDuplicateConditionPart);
                             callsExtracted.set(callsExtracted.indexOf(innerLoopExpression), null);
                         }
                     }
@@ -458,7 +458,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                         boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objInnerLoopExpression, objExpression);
                         if (isDuplicate) {
-                            holder.registerProblem(objInnerLoopExpression, messageDuplicateConditions, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(objInnerLoopExpression, messageDuplicateConditions);
 
                             int intInnerIndex = objAllConditions.indexOf(objInnerLoopExpression);
                             objAllConditions.set(intInnerIndex, null);
@@ -473,7 +473,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                         boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objOuterScopeExpression, objExpression);
                         if (isDuplicate) {
-                            holder.registerProblem(objExpression, messageDuplicateConditions, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(objExpression, messageDuplicateConditions);
 
                             int intOuterScopeIndex = objParentConditions.indexOf(objOuterScopeExpression);
                             objParentConditions.set(intOuterScopeIndex, null);

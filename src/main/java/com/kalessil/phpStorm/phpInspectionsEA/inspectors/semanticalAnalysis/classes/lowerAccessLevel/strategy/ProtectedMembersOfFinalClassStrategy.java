@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.strategy;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.Field;
@@ -28,7 +27,7 @@ final public class ProtectedMembersOfFinalClassStrategy {
         if (isTargetContext && clazz.getSuperClass() == null &&!isOverride(subject, clazz)) {
             final PsiElement modifier = ModifierExtractionUtil.getProtectedModifier(subject);
             if (modifier != null) {
-                holder.registerProblem(modifier, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new MakePrivateFixer(modifier));
+                holder.registerProblem(modifier, message, new MakePrivateFixer(modifier));
             }
         }
     }

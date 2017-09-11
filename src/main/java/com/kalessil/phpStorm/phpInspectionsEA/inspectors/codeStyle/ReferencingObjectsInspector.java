@@ -33,11 +33,14 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
 
     private static final PhpType php7Types = new PhpType();
     static {
+        /* implicit scalar types */
         php7Types.add(PhpType.STRING);
         php7Types.add(PhpType.INT);
         php7Types.add(PhpType.FLOAT);
         php7Types.add(PhpType.BOOLEAN);
         php7Types.add(PhpType.ARRAY);
+        /* nullability support */
+        php7Types.add(PhpType.NULL);
     }
 
     @NotNull
@@ -63,13 +66,13 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
             private void inspectCallable (@NotNull Function callable) {
                 if (NamedElementUtil.getNameIdentifier(callable) != null) {
                     Arrays.stream(callable.getParameters())
-                        .filter(p -> {
-                            final PhpType declared = p.getDeclaredType();
-                            return !declared.isEmpty() && p.isPassByRef() && !PhpType.isSubType(declared, php7Types);
+                        .filter(parameter -> {
+                            final PhpType declared = parameter.getDeclaredType();
+                            return !declared.isEmpty() && parameter.isPassByRef() && !PhpType.isSubType(declared, php7Types);
                         })
-                        .filter(p -> {
+                        .filter(parameter -> {
                             boolean result             = true;
-                            final String parameterName = p.getName();
+                            final String parameterName = parameter.getName();
                             final GroupStatement body  = ExpressionSemanticUtil.getGroupStatement(callable);
                             for (final Variable variable : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
                                 final PsiElement parent = variable.getParent();
@@ -83,9 +86,9 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
                             }
                             return result;
                         })
-                        .forEach(p -> {
-                            final String message = messageParameter.replace("%p%", p.getName());
-                            holder.registerProblem(p, message, new ParameterLocalFix(p));
+                        .forEach(parameter -> {
+                            final String message = messageParameter.replace("%p%", parameter.getName());
+                            holder.registerProblem(parameter, message, new ParameterLocalFix(parameter));
                         });
                 }
             }

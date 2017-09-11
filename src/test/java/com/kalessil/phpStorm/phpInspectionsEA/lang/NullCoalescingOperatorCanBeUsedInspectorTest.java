@@ -8,9 +8,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.n
 final public class NullCoalescingOperatorCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
-
+        myFixture.enableInspections(new NullCoalescingOperatorCanBeUsedInspector());
         myFixture.configureByFile("fixtures/lang/null-coalescing-operator.php");
-        myFixture.enableInspections(NullCoalescingOperatorCanBeUsedInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

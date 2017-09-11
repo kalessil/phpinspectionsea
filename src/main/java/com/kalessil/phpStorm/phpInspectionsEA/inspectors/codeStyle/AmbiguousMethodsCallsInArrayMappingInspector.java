@@ -1,7 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -66,7 +65,7 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
                     for (PsiElement inVariable : varCalls) {
                         if (PsiEquivalenceUtil.areElementsEquivalent(inValue, inVariable)) {
                             /* report an issue and continue with outer loop */
-                            holder.registerProblem(inValue, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(inValue, message);
                             break;
                         }
                     }

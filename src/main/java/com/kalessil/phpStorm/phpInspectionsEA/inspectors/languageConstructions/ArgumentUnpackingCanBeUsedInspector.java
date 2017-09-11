@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -63,7 +62,7 @@ public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
                         .replace("%a%", params[1].getText())
                         .replace("%f%", targetFunction.getContents());
                     final String message = messagePattern.replace("%e%", replacement);
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UnpackFix(replacement));
+                    holder.registerProblem(reference, message, new UnpackFix(replacement));
                 }
 
                 // TODO: if (isContainerValid && params[0] instanceof ArrayCreationExpression) {

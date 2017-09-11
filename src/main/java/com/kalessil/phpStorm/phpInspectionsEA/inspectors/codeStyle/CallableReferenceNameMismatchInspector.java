@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -17,9 +16,18 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
     private static final Map<String, String> cache = new ConcurrentHashMap<>();
-    private static final String messagePattern = "Name provided in this call should be '%n%' (case mismatch).";
+    private static final String messagePattern     = "Name provided in this call should be '%n%' (case mismatch).";
 
     @NotNull
     public String getShortName() {
@@ -30,10 +38,12 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMethodReference(MethodReference reference) {
+            @Override
+            public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 inspectCaseIdentity(reference, false);
             }
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* invoke caching as (assumption) in 99% of cases functions are global; assumption was right ;) */
                 inspectCaseIdentity(reference, true);
             }
@@ -59,7 +69,7 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
                     if (!realName.equals(usedName) && realName.equalsIgnoreCase(usedName)) {
                         /* report issues found */
                         final String message = messagePattern.replace("%n%", realName);
-                        holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new CallableReferenceNameMismatchQuickFix());
+                        holder.registerProblem(reference, message, new CallableReferenceNameMismatchQuickFix());
                     }
                 }
             }
@@ -81,12 +91,12 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            PsiElement target = descriptor.getPsiElement();
+            final PsiElement target = descriptor.getPsiElement();
             if (target instanceof FunctionReference) {
-                FunctionReference reference = (FunctionReference) target;
-                PsiElement callable         = reference.resolve();
+                final FunctionReference reference = (FunctionReference) target;
+                final PsiElement callable         = reference.resolve();
                 if (callable instanceof Function) {
-                    reference.handleElementRename((((Function) callable)).getName());
+                    reference.handleElementRename(((Function) callable).getName());
                 }
             }
         }

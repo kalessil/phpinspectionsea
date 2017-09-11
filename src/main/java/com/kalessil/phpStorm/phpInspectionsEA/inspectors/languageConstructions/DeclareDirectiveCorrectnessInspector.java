@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -48,7 +47,7 @@ public class DeclareDirectiveCorrectnessInspector extends BasePhpInspection {
                     final String directive = declarationText.split("=")[0];
                     if (!directives.contains(directive.trim())) {
                         final String message = messagePattern.replace("%d%", directive);
-                        holder.registerProblem(declare, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(declare, message);
                     }
                 }
             }

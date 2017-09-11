@@ -1,10 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils;
 
-import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -165,10 +165,7 @@ final public class ExpressionCostEstimateUtil {
             return intCosts;
         }
 
-        if (
-            objExpression instanceof PhpExpression &&
-            objExpression.getNode().getElementType() == PhpElementTypes.NUMBER
-        ) {
+        if (OpenapiTypesUtil.isNumber(objExpression)) {
             return 0;
         }
 

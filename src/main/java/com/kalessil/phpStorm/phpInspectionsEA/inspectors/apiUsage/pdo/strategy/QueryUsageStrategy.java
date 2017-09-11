@@ -3,7 +3,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.strategy;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -13,8 +12,9 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
+import com.jetbrains.php.lang.psi.elements.Statement;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.utils.MethodIdentityUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -40,8 +40,8 @@ final public class QueryUsageStrategy {
         /* inspect preceding and succeeding statement */
         final PsiElement parent = reference.getParent();
         PsiElement predecessor  = null;
-        if (parent instanceof StatementImpl) {
-            predecessor = ((StatementImpl) parent).getPrevPsiSibling();
+        if (OpenapiTypesUtil.isStatementImpl(parent)) {
+            predecessor = ((Statement) parent).getPrevPsiSibling();
             while (predecessor instanceof PhpDocComment) {
                 predecessor = ((PhpDocComment) predecessor).getPrevPsiSibling();
             }
@@ -60,12 +60,7 @@ final public class QueryUsageStrategy {
                     variableAssigned != null && variableUsed != null &&
                     PsiEquivalenceUtil.areElementsEquivalent(variableAssigned, variableUsed)
                 ) {
-                    holder.registerProblem(
-                            reference,
-                            message,
-                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                            new UseQueryFix(precedingReference)
-                    );
+                    holder.registerProblem(reference, message, new UseQueryFix(precedingReference));
                 }
 
             }

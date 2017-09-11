@@ -5,13 +5,13 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.MissingOrEmpt
 
 final public class MissingOrEmptyGroupStatementInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsMissingStatements() {
+        myFixture.enableInspections(new MissingOrEmptyGroupStatementInspector());
         myFixture.configureByFile("fixtures/codeStyle/group-statements-missing.php");
-        myFixture.enableInspections(MissingOrEmptyGroupStatementInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
     public void testIfFindsEmptyStatements() {
+        myFixture.enableInspections(new MissingOrEmptyGroupStatementInspector());
         myFixture.configureByFile("fixtures/codeStyle/group-statements-empty.php");
-        myFixture.enableInspections(MissingOrEmptyGroupStatementInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

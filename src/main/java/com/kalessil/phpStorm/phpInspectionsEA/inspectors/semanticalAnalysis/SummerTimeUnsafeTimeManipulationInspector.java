@@ -1,19 +1,18 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.jetbrains.php.lang.psi.elements.PhpExpression;
 import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -54,11 +53,11 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
                     operationType == PhpTokenTypes.opPLUS
                 ) {
                     if (this.isTargetMagicNumber(right) && this.isTargetContext(right)) {
-                        holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(expression, message);
                         return;
                     }
                     if (this.isTargetMagicNumber(left) && this.isTargetContext(left)) {
-                        holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(expression, message);
                     }
                 }
             }
@@ -79,7 +78,7 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
                     operationType == PhpTokenTypes.opPLUS_ASGN
                 ) {
                     if (this.isTargetMagicNumber(value)) {
-                        holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(expression, message);
                     }
                 }
             }
@@ -91,8 +90,8 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
                     while (expression instanceof ParenthesizedExpression || expression instanceof BinaryExpression) {
                         expression = expression.getParent();
                     }
-                    for (PsiElement candidate : PsiTreeUtil.findChildrenOfType(expression, PhpExpression.class)) {
-                        if (candidate.getNode().getElementType() == PhpElementTypes.NUMBER) {
+                    for (final PsiElement candidate : PsiTreeUtil.findChildrenOfType(expression, PhpExpression.class)) {
+                        if (OpenapiTypesUtil.isNumber(candidate)) {
                             final String text = candidate.getText();
                             if (text.equals("60") || text.endsWith("3600")) {
                                 result = true;
@@ -106,7 +105,7 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
 
             private boolean isTargetMagicNumber(@NotNull PsiElement candidate) {
                 boolean result = false;
-                if (candidate.getNode().getElementType() == PhpElementTypes.NUMBER) {
+                if (OpenapiTypesUtil.isNumber(candidate)) {
                     result = candidate.textMatches("24") || candidate.textMatches("86400");
                 }
                 return result;

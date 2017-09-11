@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -57,7 +56,6 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
                             problemsHolder.registerProblem(
                                 elseStatement.getFirstChild(),
                                 message,
-                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                                 new NormalizeWorkflowFix((GroupStatement) ifBody, (GroupStatement) elseBody, (UnaryExpression) condition)
                             );
                         }

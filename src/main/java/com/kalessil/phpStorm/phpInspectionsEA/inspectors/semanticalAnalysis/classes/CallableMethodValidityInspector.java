@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -16,7 +15,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /*
@@ -45,11 +43,8 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
                 if (params.length == 1 && functionName != null && functionName.equals("is_callable")) {
-                    final Set<PsiElement> processed = new HashSet<>();
-                    final Set<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(params[0], processed);
-                    processed.clear();
-
-                    final PsiElement callable = values.size() == 1 ? values.iterator().next() : null;
+                    final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(params[0]);
+                    final PsiElement callable    = values.size() == 1 ? values.iterator().next() : null;
                     if (callable != null && this.isTarget(callable)) {
                         final PsiReference resolver = this.buildResolver(callable);
                         if (resolver != null) {
@@ -88,7 +83,7 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                     final Method method = (Method) element;
                     if (!method.getAccess().isPublic()) {
                         final String message = patternNotPublic.replace("%m%", method.getName());
-                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(target, message);
                     }
 
                     boolean needStatic = false;
@@ -117,7 +112,7 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                     }
                     if (needStatic) {
                         final String message = patternNotStatic.replace("%m%", method.getName());
-                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(target, message);
                     }
                 }
             }

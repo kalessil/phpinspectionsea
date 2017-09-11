@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -18,9 +17,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /*
@@ -36,6 +35,16 @@ import java.util.stream.Collectors;
 public class MisorderedModifiersInspector extends BasePhpInspection {
     private static final String message = "Modifiers are misordered (according to PSRs)";
 
+    private static final List<String> standardOrder = new ArrayList<>();
+    static {
+        standardOrder.add("final");
+        standardOrder.add("abstract");
+        standardOrder.add("public");
+        standardOrder.add("protected");
+        standardOrder.add("private");
+        standardOrder.add("static");
+    }
+
     @NotNull
     public String getShortName() {
         return "MisorderedModifiersInspection";
@@ -46,69 +55,36 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpMethod(final Method method) {
-                if (!method.isStatic() && !method.isAbstract()) {
-                    return;
-                }
-
-                final PhpModifierList methodModifierList = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
-                if (methodModifierList == null) {
-                    return;
-                }
-
-                final List<LeafPsiElement> methodModifiers =
-                    PsiTreeUtil.findChildrenOfType(methodModifierList, LeafPsiElement.class).stream()
-                               .filter(element -> !(element instanceof PsiWhiteSpace))
-                               .collect(Collectors.toList());
-
-                if (methodModifiers.size() < 2) {
-                    return;
-                }
-
-                final String modifiersOriginalOrdering = describeOriginalOrdering(methodModifiers, LeafElement::getText).toLowerCase();
-                final String modifiersExpectedOrdering =
-                    describeExpectedOrdering(modifiersOriginalOrdering, methodModifiers.size(),
-                                             "final", "abstract",
-                                             "public", "protected", "private",
-                                             "static");
-
-                if (modifiersOriginalOrdering.equals(modifiersExpectedOrdering)) {
-                    return;
-                }
-
-                problemsHolder.registerProblem(methodModifierList, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(modifiersExpectedOrdering));
-            }
-
-            private String describeOriginalOrdering(final Collection<LeafPsiElement> methodModifiers, final Function<LeafPsiElement, String> modifierText) {
-                final StringBuilder describerBuilder = new StringBuilder(methodModifiers.size());
-
-                for (final LeafPsiElement methodModifier : methodModifiers) {
-                    describerBuilder.append(modifierText.apply(methodModifier)).append(' ');
-                }
-
-                return describerBuilder.toString().trim();
-            }
-
-            private String describeExpectedOrdering(final String modifiersOriginalOrdering, final int modifiersSize, @NotNull final String... expectedOrderingKeywords) {
-                final StringBuilder describerBuilder = new StringBuilder(modifiersSize);
-
-                for (final String expectedOrderingKeyword : expectedOrderingKeywords) {
-                    if (modifiersOriginalOrdering.contains(expectedOrderingKeyword)) {
-                        describerBuilder.append(expectedOrderingKeyword).append(' ');
+            public void visitPhpMethod(@NotNull Method method) {
+                if (method.isStatic() || method.isAbstract() || method.isFinal()) {
+                    final PhpModifierList modifiersNode  = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
+                    final List<LeafPsiElement> modifiers = PsiTreeUtil.findChildrenOfType(modifiersNode, LeafPsiElement.class).stream()
+                                .filter(element -> !(element instanceof PsiWhiteSpace))
+                                .collect(Collectors.toList());
+                    if (modifiersNode != null && modifiers.size() >= 2) {
+                        final String original = this.getOriginalOrder(modifiers);
+                        final String expected = this.getExpectedOrder(original, standardOrder);
+                        if (!original.equals(expected)) {
+                            problemsHolder.registerProblem(modifiersNode, message, new TheLocalFix(expected));
+                        }
                     }
                 }
+            }
 
-                return describerBuilder.toString().trim();
+            @NotNull
+            private String getOriginalOrder(@NotNull Collection<LeafPsiElement> original) {
+                return original.stream().map(LeafElement::getText).collect(Collectors.joining(" ")).toLowerCase();
+            }
+
+            @NotNull
+            private String getExpectedOrder(@NotNull String original, @NotNull Collection<String> expected) {
+                return expected.stream().filter(original::contains).collect(Collectors.joining(" "));
             }
         };
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private final String methodModifiers;
-
-        private TheLocalFix(final String methodModifiers) {
-            this.methodModifiers = methodModifiers;
-        }
+        private final String modifiers;
 
         @NotNull
         @Override
@@ -122,12 +98,16 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
             return getName();
         }
 
+        private TheLocalFix(@NotNull String modifiers) {
+            this.modifiers = modifiers;
+        }
+
         @Override
         public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
-            final PsiElement methodModifierList = descriptor.getPsiElement();
-
-            final Method replacement = PhpPsiElementFactory.createMethod(project, methodModifiers + " function x();");
-            methodModifierList.replace(replacement.getFirstChild());
+            final PsiElement target = descriptor.getPsiElement();
+            if (target != null) {
+                target.replace(PhpPsiElementFactory.createMethod(project, modifiers + " function x();").getFirstChild());
+            }
         }
     }
 }

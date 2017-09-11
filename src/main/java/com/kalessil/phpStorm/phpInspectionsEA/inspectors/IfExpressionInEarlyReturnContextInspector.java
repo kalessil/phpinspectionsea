@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -52,7 +51,7 @@ public class IfExpressionInEarlyReturnContextInspector extends BasePhpInspection
                 }
 
                 /* point the problem out */
-                holder.registerProblem(ifStatement.getFirstChild(), strProblemDescription, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(ifStatement.getFirstChild(), strProblemDescription);
             }
         };
     }

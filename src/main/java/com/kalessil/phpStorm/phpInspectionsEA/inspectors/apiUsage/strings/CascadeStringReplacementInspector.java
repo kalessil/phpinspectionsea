@@ -11,7 +11,6 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -318,7 +317,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         private void mergeSources(@NotNull FunctionReference patch, @NotNull FunctionReference eliminate) {
             final PsiElement eliminateParent = eliminate.getParent().getParent();
             patch.getParameters()[2].replace(eliminate.getParameters()[2]);
-            if (eliminateParent instanceof StatementImpl) {
+            if (OpenapiTypesUtil.isStatementImpl(eliminateParent)) {
                 final PsiElement trailingSpaceCandidate = eliminateParent.getNextSibling();
                 if (trailingSpaceCandidate instanceof PsiWhiteSpace) {
                     trailingSpaceCandidate.delete();

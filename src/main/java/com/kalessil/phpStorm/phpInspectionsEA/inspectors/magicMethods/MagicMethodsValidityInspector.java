@@ -178,7 +178,7 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                 }
 
                 if (!knownNonMagic.contains(methodName)) {
-                    holder.registerProblem(nameNode, messageNotMagic, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(nameNode, messageNotMagic);
                 }
             }
         };

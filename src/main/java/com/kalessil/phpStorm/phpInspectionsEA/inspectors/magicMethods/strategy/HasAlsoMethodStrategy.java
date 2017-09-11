@@ -2,9 +2,9 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import org.apache.commons.lang.StringUtils;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import org.apache.commons.lang.StringUtils;
 
 public class HasAlsoMethodStrategy {
     private static final String strProblemDescription = "%m% should have pair method %p%.";

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -34,15 +33,17 @@ public class SuspiciousSemicolonInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpStatement(Statement statement) {
-                if (0 == statement.getChildren().length) {
+            @Override
+            public void visitPhpStatement(@NotNull Statement statement) {
+                if (statement.getChildren().length == 0) {
                     final PsiElement parent = statement.getParent();
-                    if (null == parent) {
-                        return;
-                    }
-
-                    if (OpenapiTypesUtil.isLoop(parent) || parent instanceof If || parent instanceof ElseIf || parent instanceof Else) {
-                        holder.registerProblem(statement, message, ProblemHighlightType.GENERIC_ERROR);
+                    if (parent != null) {
+                        if (
+                            OpenapiTypesUtil.isLoop(parent) ||
+                            parent instanceof If || parent instanceof ElseIf || parent instanceof Else
+                        ) {
+                            holder.registerProblem(statement, message);
+                        }
                     }
                 }
             }

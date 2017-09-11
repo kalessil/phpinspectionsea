@@ -1,9 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
@@ -12,14 +10,11 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.AssignmentExpressionImpl;
-import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,14 +35,15 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpMultiassignmentExpression(MultiassignmentExpression multiassignmentExpression) {
                 /* ensure php version is at least PHP 5.5 */
-                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                final PhpLanguageLevel phpVersion
+                        = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (!phpVersion.hasFeature(PhpLanguageFeature.FOREACH_LIST)) {
                     return;
                 }
 
                 /* verify if it's dedicated statement and it's the list(...) construction */
                 PsiElement parent = multiassignmentExpression.getParent();
-                if (!(parent instanceof StatementImpl)) {
+                if (!OpenapiTypesUtil.isStatementImpl(parent)) {
                     return;
                 }
                 final PsiElement listKeyword = multiassignmentExpression.getFirstChild();
@@ -58,8 +54,8 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
 
                 /* extract container: it needs to be a variable */
                 PsiElement container = multiassignmentExpression.getValue();
-                if (container instanceof PhpExpressionImpl) {
-                    container = ((PhpExpressionImpl) container).getFirstPsiChild();
+                if (OpenapiTypesUtil.isPhpExpressionImpl(container)) {
+                    container = ((PhpExpression) container).getFirstPsiChild();
                 }
                 if (!(container instanceof Variable)) {
                     return;
@@ -72,12 +68,11 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                 while (null != parent && ! (parent instanceof Function) && ! (parent instanceof PhpFile)) {
                     if (parent instanceof ForeachStatement) {
                         final List<Variable> variables = ((ForeachStatement) parent).getVariables();
-                        for (Variable variable : variables) {
-                            final String variableName = variable.getName();
-                            if (!StringUtils.isEmpty(variableName) && variableName.equals(containerName)) {
+                        for (final Variable variable : variables) {
+                            if (variable.getName().equals(containerName)) {
                                 stopAnalysis = true;
 
-                                holder.registerProblem(multiassignmentExpression, messageImplicitList, ProblemHighlightType.WEAK_WARNING);
+                                holder.registerProblem(multiassignmentExpression, messageImplicitList);
                                 break;
                             }
                         }
@@ -99,18 +94,18 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
 
                 /* ensure that preceding expression is also an assignment */
                 final PsiElement parent = assignmentExpression.getParent();
-                if (!(parent instanceof StatementImpl)) {
+                if (!OpenapiTypesUtil.isStatementImpl(parent)) {
                     return;
                 }
-                PsiElement previous = ((StatementImpl) parent).getPrevPsiSibling();
+                PsiElement previous = ((Statement) parent).getPrevPsiSibling();
                 while (previous instanceof PhpDocComment) {
                     previous = ((PhpDocComment) previous).getPrevPsiSibling();
                 }
-                if (!(previous instanceof StatementImpl)) {
+                if (!OpenapiTypesUtil.isStatementImpl(previous)) {
                     return;
                 }
-                final PhpPsiElement previousExpression = ((StatementImpl) previous).getFirstPsiChild();
-                if (!(previousExpression instanceof AssignmentExpressionImpl)) {
+                final PhpPsiElement previousExpression = ((Statement) previous).getFirstPsiChild();
+                if (!OpenapiTypesUtil.isAssignment(previousExpression)) {
                     return;
                 }
 
@@ -120,7 +115,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                     final PsiElement previousContainer = getContainer((AssignmentExpression) previousExpression);
                     if (null != previousContainer && PsiEquivalenceUtil.areElementsEquivalent(ownContainer, previousContainer)) {
                         final String message = messagePattern.replace("%a%", ownContainer.getText());
-                        holder.registerProblem(assignmentExpression, message, ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(assignmentExpression, message);
                     }
                 }
             }
@@ -142,8 +137,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                 }
 
                 /* we'll check only numeric arrays */
-                final PsiElement indexValue = index.getValue();
-                if (PhpElementTypes.NUMBER == indexValue.getNode().getElementType()) {
+                if (OpenapiTypesUtil.isNumber(index.getValue())) {
                     return container;
                 }
 

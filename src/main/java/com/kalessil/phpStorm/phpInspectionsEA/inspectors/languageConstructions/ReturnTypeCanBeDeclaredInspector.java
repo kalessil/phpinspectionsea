@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -119,7 +118,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         .replace("%t%", suggestedType)
                         .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "")
                     ;
-                    holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixer);
+                    holder.registerProblem(target, message, fixer);
                 }
                 /* case 2: offer using type */
                 if (1 == typesCount) {
@@ -135,7 +134,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                             .replace("%t%", suggestedType)
                             .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "")
                         ;
-                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixer);
+                        holder.registerProblem(target, message, fixer);
                     }
                 }
                 /* case 3: offer using nullable type */
@@ -155,7 +154,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                             .replace("%t%", typeHint)
                             .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "")
                         ;
-                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixer);
+                        holder.registerProblem(target, message, fixer);
                     }
                 }
             }

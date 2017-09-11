@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
@@ -50,7 +49,7 @@ final public class SuspiciousOperatorFormattingStrategy {
             final IElementType valueOperation = valueOperator.getNode().getElementType();
             if (mapping.containsKey(valueOperation)) {
                 final String message = messagePattern.replace("%o%", mapping.get(valueOperation));
-                holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                holder.registerProblem(expression, message);
             }
         }
     }

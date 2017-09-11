@@ -1,13 +1,12 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage;
 
 import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -106,7 +105,7 @@ final public class PlainApiUseCheckStrategy {
                 }
 
                 if (message != null) {
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixer);
+                    holder.registerProblem(reference, message, fixer);
                     return;
                 }
             }
@@ -134,12 +133,7 @@ final public class PlainApiUseCheckStrategy {
                     .replace("%p%", characterToTrim)
                     .replace("%s%", params[2].getText())
                     .replace("%f%", function);
-                holder.registerProblem(
-                    reference,
-                    messagePattern.replace("%e%", replacement),
-                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                    new UseTrimFix(replacement)
-                );
+                holder.registerProblem(reference, messagePattern.replace("%e%", replacement), new UseTrimFix(replacement));
                 return;
             }
 
@@ -152,12 +146,7 @@ final public class PlainApiUseCheckStrategy {
                     .replace("%l%", parametersCount > 2 ? ", " + params[2].getText() : "")
                     .replace("%s%", params[1].getText())
                     .replace("%p%", patternAdapted);
-                holder.registerProblem(
-                    reference,
-                    messagePattern.replace("%e%", replacement),
-                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                    new UseExplodeFix(replacement)
-                );
+                holder.registerProblem(reference, messagePattern.replace("%e%", replacement), new UseExplodeFix(replacement));
             }
         }
     }

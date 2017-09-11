@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -42,7 +41,7 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
                     subject = subject.getPrevSibling();
                 }
                 if (subject != null && subject.getNode().getElementType() == PhpTokenTypes.opCOMMA) {
-                    holder.registerProblem(subject, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new TheLocalFix());
+                    holder.registerProblem(subject, message, new TheLocalFix());
                 }
             }
         };

@@ -7,7 +7,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ExplodeMissUse
 final public class ExplodeMissUseInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ExplodeMissUseInspector());
-
         myFixture.configureByFile("fixtures/controlFlow/explode-misuse.php");
         myFixture.testHighlighting(true, false, true);
 

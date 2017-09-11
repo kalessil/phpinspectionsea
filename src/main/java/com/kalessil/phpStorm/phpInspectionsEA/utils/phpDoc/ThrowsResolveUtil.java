@@ -70,17 +70,18 @@ final public class ThrowsResolveUtil {
     ) {
         final PhpClass clazz = method.getContainingClass();
         if (clazz != null) {
+            final String methodName = method.getName();
             /* inherited methods */
             final PhpClass parent = clazz.getSuperClass();
             if (parent != null) {
-                final Method parentMethod = parent.findMethodByName(method.getName());
+                final Method parentMethod = parent.findMethodByName(methodName);
                 if (parentMethod != null && !processedMethods.contains(parentMethod)) {
                     collectThrownAndInherited(parentMethod, exceptionsRegistry, processedMethods);
                 }
             }
             /* contract methods */
             for (final PhpClass implementedInterface : clazz.getImplementedInterfaces()) {
-                final Method requiredMethod = implementedInterface.findMethodByName(method.getName());
+                final Method requiredMethod = implementedInterface.findMethodByName(methodName);
                 if (requiredMethod != null && !processedMethods.contains(requiredMethod)) {
                     collectThrownAndInherited(requiredMethod, exceptionsRegistry, processedMethods);
                 }

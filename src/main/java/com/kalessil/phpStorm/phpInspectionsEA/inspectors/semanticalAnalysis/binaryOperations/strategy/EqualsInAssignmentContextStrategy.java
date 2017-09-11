@@ -4,7 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -28,7 +28,7 @@ final public class EqualsInAssignmentContextStrategy {
 
         /* analysis itself */
         final PsiElement parent = expression.getParent();
-        if (null != parent && StatementImpl.class == parent.getClass()) {
+        if (OpenapiTypesUtil.isStatementImpl(parent)) {
             holder.registerProblem(operation, message);
             return true;
         }

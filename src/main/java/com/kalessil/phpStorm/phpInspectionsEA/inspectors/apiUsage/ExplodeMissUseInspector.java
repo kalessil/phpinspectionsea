@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -18,7 +17,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,18 +47,17 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* general structure expectations */
-                final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (null == functionName || 1 != params.length || !semanticMapping.containsKey(functionName)) {
+                final String functionName    = reference.getName();
+                final PsiElement[] arguments = reference.getParameters();
+                if (null == functionName || 1 != arguments.length || !semanticMapping.containsKey(functionName)) {
                     return;
                 }
 
                 /* discover possible values */
-                final Set<PsiElement> processed = new HashSet<>();
-                final Set<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(params[0], processed);
-                processed.clear();
+                final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(arguments[0]);
 
                 /* do not analyze invariants */
                 if (1 == values.size()) {
@@ -77,14 +74,14 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                         }
 
                         /* if the parameter is a variable, ensure it used only 2 times (write, read) */
-                        if (params[0] instanceof Variable) {
+                        if (arguments[0] instanceof Variable) {
                             final PhpScopeHolder parentScope = ExpressionSemanticUtil.getScope(reference);
                             if (null != parentScope) {
                                 final PhpAccessVariableInstruction[] usages
                                     = PhpControlFlowUtil.getFollowingVariableAccessInstructions
                                       (
                                           parentScope.getControlFlow().getEntryPoint(),
-                                          ((Variable) params[0]).getName(),
+                                          ((Variable) arguments[0]).getName(),
                                           false
                                       );
                                 if (2 != usages.length) {
@@ -97,15 +94,27 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                 .replace("%f%", innerParams[0].getText())
                                 .replace("%s%", innerParams[1].getText());
                         final String message = messagePattern.replace("%e%", replacement);
-                        if (params[0] == value) {
-                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new UseSuggestedReplacementFixer(replacement));
+                        if (arguments[0] == value) {
+                            holder.registerProblem(reference, message, new UseAlternativeFix(replacement));
                         } else {
-                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(reference, message);
                         }
                     }
                 }
                 values.clear();
             }
         };
+    }
+
+    private class UseAlternativeFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use the suggested alternative";
+        }
+
+        UseAlternativeFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

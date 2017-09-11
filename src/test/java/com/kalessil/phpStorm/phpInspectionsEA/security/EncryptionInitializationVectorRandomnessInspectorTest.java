@@ -6,7 +6,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.EncryptionInit
 final public class EncryptionInitializationVectorRandomnessInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new EncryptionInitializationVectorRandomnessInspector());
-
         myFixture.configureByFile("fixtures/security/iv-randomness.php");
         myFixture.testHighlighting(true, false, true);
     }

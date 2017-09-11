@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.debug;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Pair;
@@ -8,28 +7,16 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.UnaryExpression;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-import org.jetbrains.annotations.NotNull;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -158,7 +145,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                     if (resolved instanceof Method) {
                         final PhpClass clazz = ((Method) resolved).getContainingClass();
                         if (clazz != null && match.getFirst().equals(clazz.getFQN())) {
-                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(reference, message);
                             return;
                         }
                     }
@@ -173,7 +160,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                         return;
                     }
                     if (!this.isBuffered(reference)) {
-                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        holder.registerProblem(reference, message);
                     }
                 }
             }
@@ -190,8 +177,8 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                     }
                 }
                 /* ensure it's not prepended with 'ob_start();' */
-                if (parent instanceof StatementImpl) {
-                    final PsiElement preceding = ((StatementImpl) parent).getPrevPsiSibling();
+                if (OpenapiTypesUtil.isStatementImpl(parent)) {
+                    final PsiElement preceding = ((Statement) parent).getPrevPsiSibling();
                     if (preceding != null && OpenapiTypesUtil.isFunctionReference(preceding.getFirstChild())) {
                         final FunctionReference precedingCall = (FunctionReference) preceding.getFirstChild();
                         final String precedingFunctionName    = precedingCall.getName();

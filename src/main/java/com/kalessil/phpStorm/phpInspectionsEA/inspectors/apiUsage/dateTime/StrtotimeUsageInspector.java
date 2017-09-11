@@ -49,13 +49,7 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
                     if (params[0] instanceof StringLiteralExpression) {
                         final StringLiteralExpression pattern = (StringLiteralExpression) params[0];
                         if (pattern.getContents().equalsIgnoreCase("now")) {
-                            holder.registerProblem
-                            (
-                                    reference,
-                                    messageUseTime,
-                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                    new UseTimeFunctionLocalFix("time()")
-                            );
+                            holder.registerProblem(reference, messageUseTime, new UseTimeFunctionLocalFix("time()"));
                         }
                     }
                     return;

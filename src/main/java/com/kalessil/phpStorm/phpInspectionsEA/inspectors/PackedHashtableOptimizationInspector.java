@@ -1,17 +1,16 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -79,7 +78,7 @@ final public class PackedHashtableOptimizationInspector extends BasePhpInspectio
                         break;
                     }
 
-                    if (key instanceof StringLiteralExpression || key instanceof PhpExpressionImpl) {
+                    if (key instanceof StringLiteralExpression || OpenapiTypesUtil.isNumber(key)) {
                         /* no injections expected */
                         if (null != key.getFirstPsiChild()) {
                             isTarget = false;
@@ -138,10 +137,10 @@ final public class PackedHashtableOptimizationInspector extends BasePhpInspectio
 
                 /* report if criteria are met */
                 if (!hasIncreasingIndexes) {
-                    holder.registerProblem(expression.getFirstChild(), messageReorder, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(expression.getFirstChild(), messageReorder);
                 }
                 if (hasIncreasingIndexes && hasStringIndexes) {
-                    holder.registerProblem(expression.getFirstChild(), messageUseNumericKeys, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(expression.getFirstChild(), messageUseNumericKeys);
                 }
             }
         };

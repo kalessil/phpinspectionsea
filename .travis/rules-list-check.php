@@ -2,7 +2,7 @@
 
     $basePath = __DIR__ . '/../';
 
-    $manifest = simplexml_load_file($basePath . 'META-INF/plugin.xml');
+    $manifest = simplexml_load_string(file_get_contents($basePath . 'META-INF/plugin.xml'));
     $rules    = file($basePath . 'RULES.md');
     if (false === $manifest || false === $rules) {
         throw new \RuntimeException('Failed to load resources');
@@ -61,6 +61,7 @@
     /* step 3: report outdated documentation */
     $outdated = array();
     foreach ($definedRules as $shortName => $valueObject) {
+        /** @noinspection TypeUnsafeComparisonInspection ; hacky object content comparison */
         if ((array)$valueObject != (array)$documentedRules[$shortName]) {
             $outdated []= $shortName;
         }

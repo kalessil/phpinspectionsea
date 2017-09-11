@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -69,7 +68,7 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
                         if (!expectedClassName.equals(extractedClassName) && !expectedClassName.equals(clazz.getName())) {
                             final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
                             if (classNameNode != null) {
-                                holder.registerProblem(classNameNode, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                holder.registerProblem(classNameNode, message);
                             }
                         }
                     }

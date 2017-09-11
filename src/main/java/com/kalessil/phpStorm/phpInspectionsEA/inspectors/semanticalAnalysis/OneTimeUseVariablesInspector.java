@@ -2,10 +2,8 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
@@ -16,8 +14,6 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
-import com.jetbrains.php.lang.psi.elements.impl.StatementImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -53,10 +49,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 final String variableName = argument.getName();
                 final PsiElement previous = construct.getPrevPsiSibling();
                 /* verify preceding expression (assignment needed) */
-                if (
-                    null != previous && !StringUtils.isEmpty(variableName) &&
-                    OpenapiTypesUtil.isAssignment(previous.getFirstChild())
-                ) {
+                if (null != previous && OpenapiTypesUtil.isAssignment(previous.getFirstChild())) {
                     final AssignmentExpression assign = (AssignmentExpression) previous.getFirstChild();
 
                     /* ensure variables are the same */
@@ -64,7 +57,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                     final PsiElement assignValue       = ExpressionSemanticUtil.getExpressionTroughParenthesis(assign.getValue());
                     if (null != assignValue && assignVariable instanceof Variable) {
                         final String assignVariableName = assignVariable.getName();
-                        if (StringUtils.isEmpty(assignVariableName) || !assignVariableName.equals(variableName)) {
+                        if (assignVariableName == null || !assignVariableName.equals(variableName)) {
                             return;
                         }
 
@@ -124,7 +117,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
                         final String message    = messagePattern.replace("%v%", variableName);
                         final TheLocalFix fixer = new TheLocalFix(assign.getParent(), argument, assignValue);
-                        holder.registerProblem(assignVariable, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixer);
+                        holder.registerProblem(assignVariable, message, fixer);
                     }
                 }
             }
@@ -162,7 +155,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 if (null != nodeType && (PhpTokenTypes.kwLIST == nodeType || PhpTokenTypes.chLBRACKET == nodeType)) {
                     final Variable variable = this.getVariable(multiassignmentExpression.getValue());
                     final PsiElement parent = multiassignmentExpression.getParent();
-                    if (null != variable && parent instanceof StatementImpl) {
+                    if (null != variable && OpenapiTypesUtil.isStatementImpl(parent)) {
                         checkOneTimeUse((PhpPsiElement) parent, variable);
                     }
                 }
@@ -199,7 +192,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 }
 
                 /* instanceof passes child classes as well, what isn't correct */
-                if (expression.getClass() == PhpExpressionImpl.class) {
+                if (OpenapiTypesUtil.isPhpExpressionImpl(expression)) {
                     return getVariable(expression.getFirstPsiChild());
                 }
 
@@ -244,7 +237,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             }
 
             /* delete preceding PhpDoc */
-            final PhpPsiElement previous = ((StatementImpl) assignment).getPrevPsiSibling();
+            final PhpPsiElement previous = ((Statement) assignment).getPrevPsiSibling();
             if (previous instanceof PhpDocComment) {
                 previous.delete();
             }

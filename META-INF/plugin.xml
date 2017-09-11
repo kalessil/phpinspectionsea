@@ -53,18 +53,38 @@ with a laptop.
 
   <change-notes><![CDATA[
 Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patreon</a> or
-<a href="https://www.paypal.me/VReznichenko">PayPal</a>. Hot-fixes:
+<a href="https://www.paypal.me/VReznichenko">PayPal</a>. Enhancements:
 <br/>
 <br/>
+- Callable parameter usage violates definition: resolved false-positives (static/self interpretation)<br/>
+- Cascading 'str_replace(...)' calls: implemented QF<br/>
+- Foreach usage possible: implemented QF<br/>
 - General '\Exception' is thrown: resolved false-positives (overridden message property)<br/>
 - Increment/decrement operation equivalent: QF bug-fix, added fix style options<br/>
 - Hostname substitution: fixed casting exceptions, messages<br/>
 - Magic methods validity: resolved false-positives (missing parent call, parent is abstract)<br/>
+- Referencing objects: resolved false-positives (multiple cases)<br/>
+- Security advisories for Composer packages: added options (thank you David Rodrigues)<br/>
+- Self class referencing: resolved false-positives (self::class, __CLASS__ in traits)<br/>
 - Self class referencing: fixed casting exceptions (thank you David Rodrigues)<br/>
+- Suspicious binary operations: implemented QF (misplaced operations)<br/>
+- Type unsafe comparison: resolved false-positives (empty string comparison)<br/>
+- Unnecessary type casting: resolved false-positives (enhance WI-37466 workaround)<br/>
+- 'mkdir(...)' race condition: implemented QF<br/>
+- 'null === ...' can be used: added options (QF style)<br/>
 <br/>
+- Cascading 'str_replace(...)' calls: new patterns<br/>
 - Long inheritance chain: support Yii1 (thank you Anatoly Pashin)<br/>
 - Non-optimal regular expression: new patterns (missing u-modifier)<br/>
+- Null reference: new patterns<br/>
+- Suspicious binary operations: new patterns<br/>
+- Unnecessary final modifiers: new patterns<br/>
 <br/>
+- Static local variables usage: dropped<br/>
+- Usage of the silence operator: dropped<br/>
+- 'array_unique(...)' can be used: implemented<br/>
+- 'array_unique(...)' low performing usage: dropped<br/>
+- 'DateTime::setTime(...)' usage correctness: implemented<br/>
 - 'simplexml_load_file(...)' usage correctness: implemented<br/>
 <br/>
 <hr/>
@@ -143,10 +163,6 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
         shortName="StrtotimeUsageInspection"                      displayName="'strtotime(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.StrtotimeUsageInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="StaticLocalVariablesUsageInspection"           displayName="Static local variables usage"
-        groupName="Performance"                                   enabledByDefault="false" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.StaticLocalVariablesUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="PackedHashtableOptimizationInspection"         displayName="Packed hashtable optimizations"
         groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
@@ -245,7 +261,7 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.PdoApiUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MultiAssignmentUsageInspection"                 displayName="'list(...) = ' usage possible"
-        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.MultiAssignmentUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="GetTypeMissUseInspection"                      displayName="'gettype(...)' could be replaced with 'is_*(...)'"
@@ -439,6 +455,10 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
         shortName="SimpleXmlLoadFileUsageInspection"              displayName="'simplexml_load_file(...)' usage correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SimpleXmlLoadFileUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="DateTimeSetTimeUsageInspection"                displayName="'DateTime::setTime(...)' usage correctness"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.DateTimeSetTimeUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
@@ -595,7 +615,7 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.DynamicInvocationViaScopeResolutionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="NestedNotOperatorsInspection"                  displayName="Nested not operators usage"
-        groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.NestedNotOperatorsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnnecessaryParenthesesInspection"              displayName="Unnecessary parentheses"
@@ -641,10 +661,6 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
         shortName="DisallowWritingIntoStaticPropertiesInspection" displayName="Disallow writing into static properties"
         groupName="Code Style"                                    enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.DisallowWritingIntoStaticPropertiesInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="UsageOfSilenceOperatorInspection"              displayName="Usage of the silence operator"
-        groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UsageOfSilenceOperatorInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MisorderedModifiersInspection"                 displayName="PSR-compliant modifiers order"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"

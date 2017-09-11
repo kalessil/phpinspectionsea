@@ -4,7 +4,6 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParameterList;
@@ -52,7 +51,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                  *   - 3rd is not important, as we'll rely on parent comparison operand instead
                  */
                 final String index = arguments[1].getText();
-                if (arguments[1].getNode().getElementType() != PhpElementTypes.NUMBER || !index.equals("0")) {
+                if (!OpenapiTypesUtil.isNumber(arguments[1]) || !index.equals("0")) {
                     return;
                 }
 

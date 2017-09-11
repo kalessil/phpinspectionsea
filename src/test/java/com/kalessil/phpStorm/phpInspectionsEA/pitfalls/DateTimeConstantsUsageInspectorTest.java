@@ -5,8 +5,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.DateT
 
 final public class DateTimeConstantsUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new DateTimeConstantsUsageInspector());
         myFixture.configureByFile("fixtures/pitfalls/date-time-constants.php");
-        myFixture.enableInspections(DateTimeConstantsUsageInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

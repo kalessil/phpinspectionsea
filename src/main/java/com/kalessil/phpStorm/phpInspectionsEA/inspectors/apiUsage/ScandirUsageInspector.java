@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -36,7 +35,7 @@ public class ScandirUsageInspector extends BasePhpInspection {
                 final PsiElement[] arguments = reference.getParameters();
                 if (functionName != null && arguments.length == 1 && functionName.equals("scandir")) {
                     final String replacement = "scandir(%a%, SCANDIR_SORT_NONE)".replace("%a%", arguments[0].getText());
-                    holder.registerProblem(reference, messagePattern, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new NoSortFix(replacement));
+                    holder.registerProblem(reference, messagePattern, new NoSortFix(replacement));
                 }
             }
         };

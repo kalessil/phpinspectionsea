@@ -1,10 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
-import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -21,7 +21,15 @@ import java.util.Set;
 
 public class PossibleValuesDiscoveryUtil {
     @NotNull
-    static public Set<PsiElement> discover(@NotNull PsiElement expression, @NotNull Set<PsiElement> processed) {
+    static public Set<PsiElement> discover(@NotNull PsiElement expression) {
+        final Set<PsiElement> processed = new HashSet<>();
+        final Set<PsiElement> result    = discover(expression, processed);
+        processed.clear();
+        return result;
+    }
+
+    @NotNull
+    static private Set<PsiElement> discover(@NotNull PsiElement expression, @NotNull Set<PsiElement> processed) {
         /* un-wrap parenthesises to avoid false-positives */
         expression = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression);
 
@@ -52,7 +60,7 @@ public class PossibleValuesDiscoveryUtil {
 
         /* Case 4: constants value discovery */
         if (expression instanceof ClassConstantReference) {
-            handleClassConstantReference((ClassConstantReference) expression, result, processed);
+            handleClassConstantReference((ClassConstantReference) expression, result);
             return result;
         }
 
@@ -102,7 +110,8 @@ public class PossibleValuesDiscoveryUtil {
     }
 
     static private void handleClassConstantReference(
-            @NotNull ClassConstantReference reference, @NotNull Set<PsiElement> result, @NotNull Set<PsiElement> processed
+            @NotNull ClassConstantReference reference,
+            @NotNull Set<PsiElement> result
     ) {
         final String constantName          = reference.getName();
         final PsiElement resolvedReference = StringUtils.isEmpty(constantName) ? null : reference.resolve();

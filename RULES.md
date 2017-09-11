@@ -32,7 +32,7 @@ Inspections Lists (Control flow)
 | Control Flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach                                         | n/a | yes | n/a  | no  |
 | Control Flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                                                | yes |
 | Control Flow         | DegradedSwitchInspection                        | Switch-case could be simplified                                                   | n/a |
-| Control Flow         | ForeachInvariantsInspection                     | Foreach usage possible                                                            | no  | yes | no   | no  |
+| Control Flow         | ForeachInvariantsInspection                     | Foreach usage possible                                                            | yes | yes | yes  | no  |
 | Control Flow         | PdoApiUsageInspection                           | PDO API usage                                                                     | yes | yes | yes  | yes |
 | Control Flow         | OneTimeUseVariablesInspection                   | One-time use variables                                                            | yes | yes | yes  | no  |
 | Control Flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                                                     | n/a | yes | n/a  | no  |
@@ -83,7 +83,7 @@ Inspections Lists (Confusing constructs)
 | Confusing constructs | ClassMethodNameMatchesFieldNameInspection       | Method name matches existing field name             | n/a | yes | n/a  | no  |
 | Confusing constructs | NestedTernaryOperatorInspection                 | Nested ternary operator                             | no  | yes | no   | no  |
 | Confusing constructs | UselessReturnInspection                         | Useless return                                      | n/a | yes | n/a  | no  |
-| Confusing constructs | ReferencingObjectsInspection                    | Referencing objects                                 | yes | yes | no   | no  |
+| Confusing constructs | ReferencingObjectsInspection                    | Referencing objects                                 | yes | yes | yes  | no  |
 
 Inspections Lists (Code style)
 ---
@@ -111,7 +111,6 @@ Inspections Lists (Code style)
 | Code Style           | ParameterDefaultValueIsNotNullInspection        | Non-null parameters default value                   | n/a | yes | n/a  | yes |
 | Code Style           | MisorderedModifiersInspection                   | PSR-compliant modifiers order                       | yes | yes | yes  | no  |
 | Code Style           | DisallowWritingIntoStaticPropertiesInspection   | Disallow writing into static properties             | n/a | yes | n/a  | no  |
-| Code Style           | UsageOfSilenceOperatorInspection                | Usage of the silence operator                       | yes | yes | no   | yes |
 | Code Style           | UnnecessaryCastingInspection                    | Unnecessary type casting                            | yes | yes | yes  | no  |
 | Code Style           | SelfClassReferencingInspection                  | Self class referencing                              | yes | yes | yes  | no  |
 | Code Style           | ImplicitMagicMethodCallInspection               | Implicit magic method calls                         | yes | yes |  no  | no  |
@@ -192,6 +191,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | InfinityLoopInspection                          | Infinity loop detection                                   | n/a | yes | n/a  | no  |
 | Probable bugs        | StringsFirstCharactersCompareInspection         | Strings N-character comparison flaws                      | yes | yes | yes  | no  |
 | Probable bugs        | SimpleXmlLoadFileUsageInspection                | 'simplexml_load_file(...)' usage correctness              | yes | yes | yes  | no  |
+| Probable bugs        | DateTimeSetTimeUsageInspection                  | 'DateTime::setTime(...)' usage correctness                | n/a | yes | n/a  | no  |
 
 Inspections Lists (Security)
 ---
@@ -234,7 +234,6 @@ Inspections Lists (Performance)
 | Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                          | yes | yes | yes  | no  |
 | Performance          | FilePutContentsMissUseInspection                | 'file_put_contents(...)' misused                                                                  | yes | yes | yes  | no  |
 | Performance          | PackedHashtableOptimizationInspection           | Packed hashtable optimizations                                                                    | no  | yes | no   | yes |
-| Performance          | StaticLocalVariablesUsageInspection             | Static local variables usage                                                                      | n/a | yes | n/a  | yes |
 | Performance          | UnqualifiedReferenceInspection                  | Unqualified function/constant reference                                                           | yes | yes | yes  | no  |
 | Performance          | ExplodeMissUseInspection                        | 'explode(...)' misused                                                                            | yes | yes | yes  | no  |
 | Performance          | ScandirUsageInspection                          | 'scandir(...)' low performing usage                                                               | yes | yes | yes  | no  |

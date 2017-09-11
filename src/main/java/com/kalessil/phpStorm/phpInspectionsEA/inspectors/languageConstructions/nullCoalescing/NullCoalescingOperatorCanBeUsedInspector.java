@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageFeature;
@@ -15,8 +14,28 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection {
-    private static final String messageUseOperator = "'%e%' construction should be used instead.";
+    private static final String messagePattern = "'%e%' construction should be used instead.";
+
+    private static final List<Function<TernaryExpression, String>> strategies = new ArrayList<>();
+    static {
+        strategies.add(GenerateAlternativeFromIssetStrategy::generate);
+        strategies.add(GenerateAlternativeFromNullComparisonStrategy::generate);
+        strategies.add(GenerateAlternativeFromArrayKeyExistsStrategy::generate);
+    }
 
     @NotNull
     public String getShortName() {
@@ -27,34 +46,34 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpTernaryExpression(TernaryExpression expression) {
-                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (!phpVersion.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
-                    return;
-                }
+            @Override
+            public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
+                final PhpLanguageLevel phpVersion
+                        = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (phpVersion.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
+                    for (final Function<TernaryExpression, String> strategy : strategies) {
+                        final String replacement = strategy.apply(expression);
+                        if (replacement != null) {
+                            final String message = messagePattern.replace("%e%", replacement);
+                            holder.registerProblem(expression, message, new UseTheOperatorFix(replacement));
 
-                final String replacementIsset = GenerateAlternativeFromIssetStrategy.generate(expression);
-                if (null != replacementIsset) {
-                    final String message = messageUseOperator.replace("%e%", replacementIsset);
-                    holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new UseSuggestedReplacementFixer(replacementIsset));
-
-                    return;
-                }
-
-                final String replacementNc = GenerateAlternativeFromNullComparisonStrategy.generate(expression);
-                if (null != replacementNc) {
-                    final String message = messageUseOperator.replace("%e%", replacementNc);
-                    holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new UseSuggestedReplacementFixer(replacementNc));
-
-                    return;
-                }
-
-                final String replacementAke = GenerateAlternativeFromArrayKeyExistsStrategy.generate(expression);
-                if (null != replacementAke) {
-                    final String message = messageUseOperator.replace("%e%", replacementAke);
-                    holder.registerProblem(expression, message, ProblemHighlightType.WEAK_WARNING, new UseSuggestedReplacementFixer(replacementAke));
+                            break;
+                        }
+                    }
                 }
             }
         };
+    }
+
+    private class UseTheOperatorFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use null coalescing operator instead";
+        }
+
+        UseTheOperatorFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

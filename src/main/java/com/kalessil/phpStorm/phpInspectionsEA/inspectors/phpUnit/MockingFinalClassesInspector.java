@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -60,7 +59,7 @@ public class MockingFinalClassesInspector extends BasePhpInspection {
                             if (typeCandidate instanceof ClassReference) {
                                 final PsiElement resolved = ((ClassReference) typeCandidate).resolve();
                                 if (resolved instanceof PhpClass && ((PhpClass) resolved).isFinal()) {
-                                    holder.registerProblem(typeCandidate, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                    holder.registerProblem(typeCandidate, message);
                                 }
                             }
                         }
@@ -77,7 +76,7 @@ public class MockingFinalClassesInspector extends BasePhpInspection {
                     if (resolved instanceof Method && methods.get(((Method) resolved).getFQN()) != null) {
                         final PhpClass referencedClass = this.getClass(arguments[0]);
                         if (referencedClass != null && referencedClass.isFinal()) {
-                            holder.registerProblem(arguments[0], message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            holder.registerProblem(arguments[0], message);
                         }
                     }
                 }

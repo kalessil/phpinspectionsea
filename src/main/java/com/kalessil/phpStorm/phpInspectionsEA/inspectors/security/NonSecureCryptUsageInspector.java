@@ -11,7 +11,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.security;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import org.apache.commons.lang.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
@@ -24,10 +23,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public class NonSecureCryptUsageInspector extends BasePhpInspection {
@@ -60,7 +59,7 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
 
                 /* Case 1: suggest providing blowfish as the 2nd parameter*/
                 if (1 == params.length) {
-                    holder.registerProblem(reference, messageWeakSalt, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(reference, messageWeakSalt);
                     return;
                 }
 
@@ -89,12 +88,9 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
             @Nullable
             private String resolveSalt(@NotNull PsiElement expression) {
                 /* collect possible value for further analysis */
-                final Set<PsiElement> processed  = new HashSet<>();
-                final Set<PsiElement> discovered = PossibleValuesDiscoveryUtil.discover(expression, processed);
+                final Set<PsiElement> discovered = PossibleValuesDiscoveryUtil.discover(expression);
                 if (discovered.size() != 1) {
-                    processed.clear();
                     discovered.clear();
-
                     return null;
                 }
 
@@ -102,7 +98,6 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
                 final PsiElement saltExpression       = discovered.iterator().next();
                 final StringBuilder resolvedSaltValue = new StringBuilder();
                 discovered.clear();
-                processed.clear();
 
                 /*  resolve string literals and concatenations */
                 PsiElement current = saltExpression;

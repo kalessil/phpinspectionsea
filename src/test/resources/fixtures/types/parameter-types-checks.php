@@ -7,13 +7,13 @@
             is_array($iterable) ||
             is_array($stringsArray) ||
 
-            <weak_warning descr="Makes no sense, because this type is not defined in annotations.">is_int</weak_warning>($array) ||
-            <weak_warning descr="Makes no sense, because this type is not defined in annotations.">is_int</weak_warning>($iterable) ||
-            <weak_warning descr="Makes no sense, because this type is not defined in annotations.">is_int</weak_warning>($stringsArray) ||
+            <warning descr="Makes no sense, because this type is not defined in annotations.">is_int($array)</warning> ||
+            <warning descr="Makes no sense, because this type is not defined in annotations.">is_int($iterable)</warning> ||
+            <warning descr="Makes no sense, because this type is not defined in annotations.">is_int($stringsArray)</warning> ||
 
-            !<weak_warning descr="Makes no sense, because it's always true according to annotations.">is_int</weak_warning>($array) ||
-            !<weak_warning descr="Makes no sense, because it's always true according to annotations.">is_int</weak_warning>($iterable) ||
-            !<weak_warning descr="Makes no sense, because it's always true according to annotations.">is_int</weak_warning>($stringsArray)
+            !<warning descr="Makes no sense, because it's always true according to annotations.">is_int($array)</warning> ||
+            !<warning descr="Makes no sense, because it's always true according to annotations.">is_int($iterable)</warning> ||
+            !<warning descr="Makes no sense, because it's always true according to annotations.">is_int($stringsArray)</warning>
         ;
     };
 
@@ -58,11 +58,27 @@
             $first = new Clazz();
         }
 
-        $second = <weak_warning descr="New value type (\Clazz) is not in annotated types.">$second ?? new Clazz()</weak_warning>;
-        $second = <weak_warning descr="New value type (\Clazz) is not in annotated types.">$second ?: new Clazz()</weak_warning>;
+        $second = <warning descr="New value type (\Clazz) is not in annotated types.">$second ?? new Clazz()</warning>;
+        $second = <warning descr="New value type (\Clazz) is not in annotated types.">$second ?: new Clazz()</warning>;
         if (null === $second) {
-            $second = <weak_warning descr="New value type (\Clazz) is not in annotated types.">new Clazz()</weak_warning>;
+            $second = <warning descr="New value type (\Clazz) is not in annotated types.">new Clazz()</warning>;
         }
 
         return [ $first, $second ];
+    }
+
+
+    /* case: self/static types support */
+    interface IndirectClassReference {
+        /** @return self */
+        public function returnSelf();
+        /** @return static */
+        public function returnStatic();
+    }
+    abstract class IndirectClassReferenceTest implements IndirectClassReference {
+        public function method(IndirectClassReference $parameter) {
+            $parameter = $this->returnSelf();
+            $parameter = $this->returnStatic();
+            $parameter = <warning descr="New value type (null) is not in annotated types.">null</warning>;
+        }
     }

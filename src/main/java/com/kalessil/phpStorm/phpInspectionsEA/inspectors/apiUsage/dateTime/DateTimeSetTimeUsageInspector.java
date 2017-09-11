@@ -5,6 +5,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.psi.elements.Function;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -33,6 +35,21 @@ public class DateTimeSetTimeUsageInspector extends BasePhpInspection {
                         final PsiElement resolved = reference.resolve();
                         if (resolved instanceof Method && ((Method) resolved).getFQN().equals("\\DateTime.setTime")) {
                             holder.registerProblem(arguments[3], message);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (php.compareTo(PhpLanguageLevel.PHP710) < 0) {
+                    final String functionName    = reference.getName();
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (functionName != null && arguments.length == 5 && functionName.equals("date_time_set")) {
+                        final PsiElement resolved = reference.resolve();
+                        if (resolved instanceof Function && ((Function) resolved).getFQN().equals("\\date_time_set")) {
+                            holder.registerProblem(arguments[4], message);
                         }
                     }
                 }

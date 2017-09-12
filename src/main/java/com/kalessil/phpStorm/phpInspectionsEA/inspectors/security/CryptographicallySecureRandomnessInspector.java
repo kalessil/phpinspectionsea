@@ -14,6 +14,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -138,7 +139,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                         }
 
                         final PsiElement operatorValue = PhpLanguageUtil.isFalse(left) ? right : left;
-                        if (PsiEquivalenceUtil.areElementsEquivalent(operatorValue, subject)) {
+                        if (OpeanapiEquivalenceUtil.areEqual(operatorValue, subject)) {
                             isChecked = true;
                             break;
                         }

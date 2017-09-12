@@ -123,7 +123,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                         /* Pattern: written and default values are identical */
                         if (
                             (null == fieldDefault && PhpLanguageUtil.isNull(value)) ||
-                            (null != fieldDefault && PsiEquivalenceUtil.areElementsEquivalent(value, fieldDefault))
+                            (null != fieldDefault && OpeanapiEquivalenceUtil.areEqual(value, fieldDefault))
                         ) {
                             holder.registerProblem(expression, messageSenselessWrite, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                             continue;
@@ -135,7 +135,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                         /* false-positive: property is involved into generating new value */
                         boolean isPropertyReused = false;
                         for (final FieldReference candidate : PsiTreeUtil.findChildrenOfType(value, FieldReference.class)) {
-                            if (!PsiEquivalenceUtil.areElementsEquivalent(container, candidate)) {
+                            if (!OpeanapiEquivalenceUtil.areEqual(container, candidate)) {
                                 continue;
                             }
 

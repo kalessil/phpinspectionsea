@@ -46,46 +46,59 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
+            public void visitPhpReturn(@NotNull PhpReturn returnStatement) {
+                final FunctionReference functionCall = this.getFunctionReference(returnStatement);
+                if (functionCall != null) {
+                    this.analyze(functionCall, returnStatement);
+                }
+            }
+
+            @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
                 final FunctionReference functionCall = this.getFunctionReference(assignmentExpression);
                 if (functionCall != null) {
-                    final PsiElement[] arguments = functionCall.getParameters();
-                    if (arguments.length == 3) {
-                        /* case: cascading replacements */
-                        final AssignmentExpression previous  = this.getPreviousAssignment(assignmentExpression);
-                        final FunctionReference previousCall = previous == null ? null : this.getFunctionReference(previous);
-                        if (previousCall != null) {
-                            final PsiElement transitionVariable = previous.getVariable();
-                            if (transitionVariable instanceof Variable && arguments[2] instanceof Variable) {
-                                /* ensure previous, used and result storage is the same variable */
-                                final String previousVariableName  = ((Variable) transitionVariable).getName();
-                                final String callSubjectName       = ((Variable) arguments[2]).getName();
-                                final PsiElement callResultStorage = assignmentExpression.getVariable();
-                                if (
-                                    callResultStorage != null && callSubjectName.equals(previousVariableName) &&
-                                    OpeanapiEquivalenceUtil.areEqual(transitionVariable, callResultStorage)
-                                ) {
-                                    holder.registerProblem(
-                                        functionCall,
-                                        messageCascading,
-                                        new MergeStringReplaceCallsFix(functionCall, previousCall)
-                                    );
-                                }
+                    this.analyze(functionCall, assignmentExpression);
+                }
+            }
+
+            private void analyze(@NotNull FunctionReference functionCall, @NotNull PsiElement expression) {
+                final PsiElement[] arguments = functionCall.getParameters();
+                if (arguments.length == 3) {
+                    /* case: cascading replacements */
+                    final AssignmentExpression previous  = this.getPreviousAssignment(expression);
+                    final FunctionReference previousCall = previous == null ? null : this.getFunctionReference(previous);
+                    if (previousCall != null) {
+                        final PsiElement transitionVariable = previous.getVariable();
+                        if (transitionVariable instanceof Variable && arguments[2] instanceof Variable) {
+                            final Variable callSubject         = (Variable) arguments[2];
+                            final Variable previousVariable    = (Variable) transitionVariable;
+                            final PsiElement callResultStorage =
+                                    expression instanceof AssignmentExpression ?
+                                            ((AssignmentExpression) expression).getVariable() : callSubject;
+                            if (
+                                callResultStorage != null && callSubject.getName().equals(previousVariable.getName()) &&
+                                OpeanapiEquivalenceUtil.areEqual(transitionVariable, callResultStorage)
+                            ) {
+                                holder.registerProblem(
+                                    functionCall,
+                                    messageCascading,
+                                    new MergeStringReplaceCallsFix(functionCall, previousCall)
+                                );
                             }
                         }
+                    }
 
-                        /* case: nested replacements */
-                        this.checkNestedCalls(arguments[2], functionCall);
+                    /* case: nested replacements */
+                    this.checkNestedCalls(arguments[2], functionCall);
 
-                        /* case: search/replace simplification */
-                        final PsiElement replace = arguments[1];
-                        if (replace instanceof ArrayCreationExpression) {
-                            this.checkForSimplification((ArrayCreationExpression) replace);
-                        } else if (replace instanceof StringLiteralExpression){
-                            final PsiElement search = arguments[0];
-                            if (search instanceof ArrayCreationExpression) {
-                                this.checkForSimplification((ArrayCreationExpression) search);
-                            }
+                    /* case: search/replace simplification */
+                    final PsiElement replace = arguments[1];
+                    if (replace instanceof ArrayCreationExpression) {
+                        this.checkForSimplification((ArrayCreationExpression) replace);
+                    } else if (replace instanceof StringLiteralExpression){
+                        final PsiElement search = arguments[0];
+                        if (search instanceof ArrayCreationExpression) {
+                            this.checkForSimplification((ArrayCreationExpression) search);
                         }
                     }
                 }
@@ -141,11 +154,31 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 return result;
             }
 
+                        @Nullable
+            private FunctionReference getFunctionReference(@NotNull PhpReturn phpReturn) {
+                FunctionReference result = null;
+                final PsiElement value
+                    = ExpressionSemanticUtil.getExpressionTroughParenthesis(ExpressionSemanticUtil.getReturnValue(phpReturn));
+                if (OpenapiTypesUtil.isFunctionReference(value)) {
+                    final String functionName = ((FunctionReference) value).getName();
+                    if (functionName != null && functionName.equals("str_replace")) {
+                        result = (FunctionReference) value;
+                    }
+                }
+                return result;
+            }
+
+
 
             @Nullable
-            private AssignmentExpression getPreviousAssignment(@NotNull AssignmentExpression assignmentExpression) {
+            private AssignmentExpression getPreviousAssignment(@NotNull PsiElement returnOrAssignment) {
                 /* get previous non-comment, non-php-doc expression */
-                PsiElement previous = assignmentExpression.getParent().getPrevSibling();
+                PsiElement previous = null;
+                if (returnOrAssignment instanceof PhpReturn) {
+                    previous = ((PhpReturn) returnOrAssignment).getPrevPsiSibling();
+                } else if (returnOrAssignment instanceof AssignmentExpression) {
+                    previous = returnOrAssignment.getParent().getPrevSibling();
+                }
                 while (previous != null && !(previous instanceof PhpPsiElement)) {
                     previous = previous.getPrevSibling();
                 }

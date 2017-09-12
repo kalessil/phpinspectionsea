@@ -29,6 +29,11 @@
         '...'
     );
 
+    function return_case_holder($x) {
+        $x = str_replace('...', '', $x);
+        return <warning descr="This str_replace(...) call can be merged with the previous.">str_replace('...', '', $x)<warning>;
+    }
+
     /* false-positives: source and result storage containers are not matching */
     $a = str_replace('', '', '');
     $b = str_replace('', '', $a);

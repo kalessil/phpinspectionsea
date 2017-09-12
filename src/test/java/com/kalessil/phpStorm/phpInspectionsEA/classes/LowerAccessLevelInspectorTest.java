@@ -6,31 +6,27 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.LowerAccessLevelInspector;
 
-public class LowerAccessLevelInspectorTest extends PhpCodeInsightFixtureTestCase {
+final public class LowerAccessLevelInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testProtectedMembersOfFinalClass() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new LowerAccessLevelInspector());
-
         myFixture.configureByFile("fixtures/classes/weakerAccess/protected-with-final-class.php");
         myFixture.testHighlighting(true, false, true);
 
         for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
-
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/classes/weakerAccess/protected-with-final-class.fixed.php");
     }
     public void testProtectedFieldsInPrivateContext() {
         myFixture.enableInspections(new LowerAccessLevelInspector());
-
         myFixture.configureByFile("fixtures/classes/weakerAccess/protected-fields-in-private-context.php");
         myFixture.testHighlighting(true, false, true);
 
         for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
-
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/classes/weakerAccess/protected-fields-in-private-context.fixed.php");
     }

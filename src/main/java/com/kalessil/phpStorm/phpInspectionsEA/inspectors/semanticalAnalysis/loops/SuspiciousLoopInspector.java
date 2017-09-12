@@ -71,6 +71,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
             }
 
             private boolean doesConditionContainsAnomalies(@NotNull PsiElement source, @NotNull PsiElement condition) {
+                /* TODO: find, match, check ([!]empty, count() <op> number) */
                 return false;
             }
 
@@ -184,8 +185,11 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                             .filter(init  -> init instanceof AssignmentExpression)
                             .forEach(init -> {
                                 final PhpPsiElement variable = ((AssignmentExpression) init).getVariable();
-                                if (variable instanceof Variable && null != variable.getName()) {
-                                    variables.add(variable.getName());
+                                if (variable instanceof Variable) {
+                                    final String variableName = variable.getName();
+                                    if (variableName != null) {
+                                        variables.add(variableName);
+                                    }
                                 }
                             });
                 } else if (loop instanceof ForeachStatement) {

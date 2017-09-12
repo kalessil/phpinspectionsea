@@ -273,16 +273,16 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 final PsiElement firstValue = ((ArrayCreationExpression) to).getFirstPsiChild();
                 final PsiElement marker     = firstValue == null ? null : firstValue.getPrevSibling();
                 if (comma != null && marker != null) {
-                    if (from instanceof StringLiteralExpression) {
-                        to.addAfter(comma, marker);
-                        to.addAfter(from.copy(), marker);
-                    } else if (from instanceof ArrayCreationExpression) {
+                    if (from instanceof ArrayCreationExpression) {
                         final PsiElement[] values = from.getChildren();
                         ArrayUtils.reverse(values);
                         Arrays.stream(values).forEach(value -> {
                             to.addAfter(comma, marker);
                             to.addAfter(value.copy(), marker);
                         });
+                    } else {
+                        to.addAfter(comma, marker);
+                        to.addAfter(from.copy(), marker);
                     }
                 }
             } else {

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -13,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -192,8 +192,8 @@ public class AlterInForeachInspector extends BasePhpInspection {
                         /* report if aggressive optimization possible: foreach(... as &$value) */
                         if (
                             null != objForeachArray && null != objForeachKey && null != objForeachValue &&
-                            PsiEquivalenceUtil.areElementsEquivalent(objForeachKey, objForeachKeyCandidate) &&
-                            PsiEquivalenceUtil.areElementsEquivalent(objForeachArray, objForeachSourceCandidate)
+                            OpeanapiEquivalenceUtil.areEqual(objForeachKey, objForeachKeyCandidate) &&
+                            OpeanapiEquivalenceUtil.areEqual(objForeachArray, objForeachSourceCandidate)
                         ) {
                             final String strName = objForeachValue.getName();
                             if (!StringUtils.isEmpty(strName)) {

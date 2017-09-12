@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -90,7 +89,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         final PsiElement parent = expression.getParent();
                         if (parent instanceof AssignmentExpression) {
                             final PsiElement matchCandidate = ((AssignmentExpression) parent).getVariable();
-                            if (null != matchCandidate && PsiEquivalenceUtil.areElementsEquivalent(matchCandidate, container)) {
+                            if (null != matchCandidate && OpeanapiEquivalenceUtil.areEqual(matchCandidate, container)) {
                                 types.clear();
                                 return;
                             }

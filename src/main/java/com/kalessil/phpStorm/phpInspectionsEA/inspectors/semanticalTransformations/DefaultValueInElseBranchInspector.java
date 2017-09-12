@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -12,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -123,7 +123,7 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
                     }
 
                     /* ensure target variables matches */
-                    if (!PsiEquivalenceUtil.areElementsEquivalent(subjectToCompareWith, subjectFromExpression)) {
+                    if (!OpeanapiEquivalenceUtil.areEqual(subjectToCompareWith, subjectFromExpression)) {
                         assignmentsList.clear();
                         return;
                     }
@@ -145,18 +145,18 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
                 boolean result = false;
 
                 final Class clazz = container.getClass();
-                for (PhpPsiElement condition : conditions) {
+                for (final PhpPsiElement condition : conditions) {
                     if (null == condition) {
                         continue;
                     }
 
-                    if (clazz == condition.getClass() && PsiEquivalenceUtil.areElementsEquivalent(condition, container)) {
+                    if (clazz == condition.getClass() && OpeanapiEquivalenceUtil.areEqual(condition, container)) {
                         result = true;
                         break;
                     }
 
-                    for (PsiElement matchCandidate : PsiTreeUtil.findChildrenOfType(condition, container.getClass())) {
-                        if (PsiEquivalenceUtil.areElementsEquivalent(matchCandidate, container)) {
+                    for (final PsiElement matchCandidate : PsiTreeUtil.findChildrenOfType(condition, container.getClass())) {
+                        if (OpeanapiEquivalenceUtil.areEqual(matchCandidate, container)) {
                             result = true;
                             break;
                         }

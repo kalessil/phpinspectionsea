@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -11,6 +10,7 @@ import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.PhpIsset;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,7 +89,7 @@ final public class IssetAndNullComparisonStrategy {
             for (final PsiElement issetArgument : ((PhpIsset) issetCandidate).getVariables()) {
                 /* compare with know null identity checked subjects */
                 for (final Map.Entry<PsiElement, PsiElement> nullTestPair : nullTestSubjects.entrySet()) {
-                    if (!PsiEquivalenceUtil.areElementsEquivalent(nullTestPair.getValue(), issetArgument)) {
+                    if (!OpeanapiEquivalenceUtil.areEqual(nullTestPair.getValue(), issetArgument)) {
                         continue;
                     }
 

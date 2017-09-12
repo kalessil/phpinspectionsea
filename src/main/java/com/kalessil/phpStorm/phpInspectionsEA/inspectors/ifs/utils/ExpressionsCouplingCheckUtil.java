@@ -1,11 +1,11 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
 import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.MultiassignmentExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -37,11 +37,11 @@ final public class ExpressionsCouplingCheckUtil {
 
             if (expressionsInFirst.size() > 0) {
                 /* now find containers usage, we can perform same class search multiple time - perhaps improvements possible */
-                for (PsiElement expression : expressionsInFirst) {
+                for (final PsiElement expression : expressionsInFirst) {
                     final Collection<PsiElement> findings = PsiTreeUtil.findChildrenOfType(second, expression.getClass());
                     if (findings.size() > 0) {
-                        for (PsiElement subject : findings) {
-                            if (PsiEquivalenceUtil.areElementsEquivalent(subject, expression)) {
+                        for (final PsiElement subject : findings) {
+                            if (OpeanapiEquivalenceUtil.areEqual(subject, expression)) {
                                 isCoupled = true;
                                 break;
                             }
@@ -86,7 +86,7 @@ final public class ExpressionsCouplingCheckUtil {
 
             /* if we have expressions to lookup in first one, then work  them out and release references */
             if (expressionsInSecond.size() > 0) {
-                for (PsiElement expression : expressionsInSecond) {
+                for (final PsiElement expression : expressionsInSecond) {
                     /* find expression in first, stop processing if found match */
                     final Collection<PsiElement> findings = PsiTreeUtil.findChildrenOfType(first, expression.getClass());
                     if (findings.size() > 0) {
@@ -97,7 +97,7 @@ final public class ExpressionsCouplingCheckUtil {
                                 continue;
                             }
 
-                            if (PsiEquivalenceUtil.areElementsEquivalent(subject, expression)) {
+                            if (OpeanapiEquivalenceUtil.areEqual(subject, expression)) {
                                 isCoupled = true;
                                 break;
                             }

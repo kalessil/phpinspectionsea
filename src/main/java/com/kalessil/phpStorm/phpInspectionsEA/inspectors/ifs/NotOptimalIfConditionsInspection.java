@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -19,6 +18,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
@@ -185,7 +185,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     // push subject properly, as expressions can be different objects with the same semantics
                     PsiElement registeredSubject = null;
                     for (final PsiElement testSubject : mappedChecks.keySet()) {
-                        if (PsiEquivalenceUtil.areElementsEquivalent(subject, testSubject)) {
+                        if (OpeanapiEquivalenceUtil.areEqual(subject, testSubject)) {
                             registeredSubject = testSubject;
                             break;
                         }
@@ -280,8 +280,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                                 PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(binaryExpression.getOperationType())
                             ) {
                                 if (
-                                    PsiEquivalenceUtil.areElementsEquivalent(testSubject, left) ||
-                                    PsiEquivalenceUtil.areElementsEquivalent(testSubject, right)
+                                    OpeanapiEquivalenceUtil.areEqual(testSubject, left) ||
+                                    OpeanapiEquivalenceUtil.areEqual(testSubject, right)
                                 ) {
                                     holder.registerProblem(expression, messageInstanceOfComplementarity, ProblemHighlightType.WEAK_WARNING);
                                 }
@@ -361,11 +361,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     callsExtracted.set(callsExtracted.indexOf(expression), null);
                     /* search duplicates in current scope */
                     for (final PsiElement innerLoopExpression : callsExtracted) {
-                        if (null == innerLoopExpression) {
-                            continue;
-                        }
-
-                        if (PsiEquivalenceUtil.areElementsEquivalent(innerLoopExpression, expression)) {
+                        if (innerLoopExpression != null && OpeanapiEquivalenceUtil.areEqual(innerLoopExpression, expression)) {
                             holder.registerProblem(innerLoopExpression, messageDuplicateConditionPart);
                             callsExtracted.set(callsExtracted.indexOf(innerLoopExpression), null);
                         }
@@ -456,7 +452,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                             continue;
                         }
 
-                        boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objInnerLoopExpression, objExpression);
+                        boolean isDuplicate = OpeanapiEquivalenceUtil.areEqual(objInnerLoopExpression, objExpression);
                         if (isDuplicate) {
                             holder.registerProblem(objInnerLoopExpression, messageDuplicateConditions);
 
@@ -471,7 +467,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                             continue;
                         }
 
-                        boolean isDuplicate = PsiEquivalenceUtil.areElementsEquivalent(objOuterScopeExpression, objExpression);
+                        boolean isDuplicate = OpeanapiEquivalenceUtil.areEqual(objOuterScopeExpression, objExpression);
                         if (isDuplicate) {
                             holder.registerProblem(objExpression, messageDuplicateConditions);
 

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -17,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,17 +92,8 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                     }
 
                     /* process comparing 2 nodes */
-                    if (!PsiEquivalenceUtil.areElementsEquivalent(ownExpression, parentExpression)) {
-                        boolean mismatched = true;
-                        /* PsiEquivalenceUtil.areElementsEquivalent is not handling assignments properly */
-                        /* FIXME: ugly workaround / https://youtrack.jetbrains.com/issue/WI-34368 */
-                        if (ownExpression.getTextLength() == parentExpression.getTextLength()) {
-                            mismatched = !ownExpression.getText().equals(parentExpression.getText());
-                        }
-
-                        if (mismatched) {
+                    if (!OpeanapiEquivalenceUtil.areEqual(ownExpression, parentExpression)) {
                             return;
-                        }
                     }
                     ownExpression    = ownExpression.getNextPsiSibling();
                     parentExpression = parentExpression.getNextPsiSibling();

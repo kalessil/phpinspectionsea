@@ -4,8 +4,7 @@
 
         protected function method()
         {
-            // PsiEquivalenceUtil.areElementsEquivalent is not matching those assignments properly
-            // We had to place ugly workaround there
+            // single-line comment here
             $x = [];
             $x = 1;
 
@@ -36,8 +35,7 @@
 
         protected function <weak_warning descr="'method' method can be dropped, as it identical to parent's one.">method</weak_warning> ()
         {
-            // PsiEquivalenceUtil.areElementsEquivalent is not matching those assignments properly
-            // We had to place ugly workaround there
+            // single-line comment here
             $x = [];
             $x = 1;
 

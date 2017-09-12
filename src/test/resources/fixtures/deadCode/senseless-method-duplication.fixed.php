@@ -4,8 +4,7 @@
 
         protected function method()
         {
-            // PsiEquivalenceUtil.areElementsEquivalent is not matching those assignments properly
-            // We had to place ugly workaround there
+            // single-line comment here
             $x = [];
             $x = 1;
 

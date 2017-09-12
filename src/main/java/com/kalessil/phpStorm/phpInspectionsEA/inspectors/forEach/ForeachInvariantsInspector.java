@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -17,6 +16,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -127,7 +127,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         final PsiElement argument                = incrementCandidate.getValue();
                         if (
                             OpenapiTypesUtil.is(incrementCandidate.getOperation(), PhpTokenTypes.opINCREMENT) &&
-                            argument != null && PsiEquivalenceUtil.areElementsEquivalent(variable, argument)
+                            argument != null && OpeanapiEquivalenceUtil.areEqual(variable, argument)
                         ) {
                             result = true;
                             break;
@@ -142,7 +142,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 for (final ArrayAccessExpression offset : PsiTreeUtil.findChildrenOfType(body, ArrayAccessExpression.class)) {
                     final ArrayIndex index = offset.getIndex();
                     final PsiElement value = index == null ? null : index.getValue();
-                    if (value instanceof Variable && PsiEquivalenceUtil.areElementsEquivalent(variable, value)) {
+                    if (value instanceof Variable && OpeanapiEquivalenceUtil.areEqual(variable, value)) {
                         final PsiElement container = offset.getValue();
                         if (container != null) {
                             containers.put(container.getText(), container);
@@ -168,9 +168,9 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                             final PsiElement right           = condition.getRightOperand();
 
                             final PsiElement value;
-                            if (left instanceof Variable && PsiEquivalenceUtil.areElementsEquivalent(variable, left)) {
+                            if (left instanceof Variable && OpeanapiEquivalenceUtil.areEqual(variable, left)) {
                                 value = right;
-                            } else if (right instanceof Variable && PsiEquivalenceUtil.areElementsEquivalent(variable, right)) {
+                            } else if (right instanceof Variable && OpeanapiEquivalenceUtil.areEqual(variable, right)) {
                                 value = left;
                             } else {
                                 value = null;
@@ -269,8 +269,6 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
             @NotNull PsiElement index,
             @NotNull PsiElement replacement
         ) {
-            final String containerText = container.getText();
-            final String indexText     = index.getText();
             PsiTreeUtil.findChildrenOfType(body, ArrayAccessExpression.class).stream()
                 .filter(offset  -> {
                     boolean result          = false;
@@ -294,11 +292,12 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                     final ArrayIndex offsetIndex   = offset.getIndex();
                     final PsiElement usedIndex     = offsetIndex == null ? null : offsetIndex.getValue();
                     final PsiElement usedContainer = offset.getValue();
-                    if (usedIndex != null && usedContainer != null) {
-                        /* let's not use PsiEquivalenceUtil.areElementsEquivalent here for now - not always matches */
-                        if (indexText.equals(usedIndex.getText()) && containerText.equals(usedContainer.getText())) {
-                            offset.replace(replacement);
-                        }
+                    if (
+                        usedIndex != null && usedContainer != null &&
+                        OpeanapiEquivalenceUtil.areEqual(index, usedIndex) &&
+                        OpeanapiEquivalenceUtil.areEqual(container, usedContainer)
+                    ) {
+                        offset.replace(replacement);
                     }
                 });
         }

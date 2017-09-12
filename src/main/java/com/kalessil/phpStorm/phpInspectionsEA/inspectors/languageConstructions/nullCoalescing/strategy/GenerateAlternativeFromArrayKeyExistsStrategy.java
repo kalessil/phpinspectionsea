@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
@@ -8,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +60,10 @@ final public class GenerateAlternativeFromArrayKeyExistsStrategy {
         if (null == params[0] || null == params[1] || null == container || null == index ) {
             return null;
         }
-        if (!PsiEquivalenceUtil.areElementsEquivalent(params[1], container) || !PsiEquivalenceUtil.areElementsEquivalent(params[0], index)) {
+        if (
+            !OpeanapiEquivalenceUtil.areEqual(params[1], container) ||
+            !OpeanapiEquivalenceUtil.areEqual(params[0], index)
+        ) {
             return null;
         }
 

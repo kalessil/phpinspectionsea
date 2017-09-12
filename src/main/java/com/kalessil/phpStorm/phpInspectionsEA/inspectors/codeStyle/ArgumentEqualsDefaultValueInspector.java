@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -15,6 +14,7 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.Parameter;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -74,7 +74,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                             for (int index = Math.min(parameters.length, arguments.length) - 1; index >= 0; --index) {
                                 final PsiElement value    = parameters[index].getDefaultValue();
                                 final PsiElement argument = arguments[index];
-                                if (value == null || !PsiEquivalenceUtil.areElementsEquivalent(value, argument)) {
+                                if (value == null || !OpeanapiEquivalenceUtil.areEqual(value, argument)) {
                                     break;
                                 }
 

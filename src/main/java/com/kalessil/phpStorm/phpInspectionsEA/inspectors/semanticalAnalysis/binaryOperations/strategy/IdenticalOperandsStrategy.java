@@ -1,12 +1,12 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -45,7 +45,7 @@ final public class IdenticalOperandsStrategy {
         }
 
         final IElementType operation = expression.getOperationType();
-        if (operationsToCheck.contains(operation) && PsiEquivalenceUtil.areElementsEquivalent(left, right)) {
+        if (operationsToCheck.contains(operation) && OpeanapiEquivalenceUtil.areEqual(left, right)) {
             holder.registerProblem(expression, message);
             return true;
         }

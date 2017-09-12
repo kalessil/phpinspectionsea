@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.strategy;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -56,7 +55,7 @@ final public class ChainedCallsStrategy {
                             final String nullTestedMethodName = nullTestedReferences.get(nullTestedReference);
                             if (
                                 nullTestedMethodName != null && nullTestedMethodName.equals(methodName) &&
-                                PsiEquivalenceUtil.areElementsEquivalent(nullTestedReference, baseReference)
+                                OpeanapiEquivalenceUtil.areEqual(nullTestedReference, baseReference)
                             ) {
                                 isNullTested = true;
                                 break;

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -15,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
@@ -63,7 +63,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                                 final PsiElement callResultStorage = assignmentExpression.getVariable();
                                 if (
                                     callResultStorage != null && callSubjectName.equals(previousVariableName) &&
-                                    PsiEquivalenceUtil.areElementsEquivalent(transitionVariable, callResultStorage)
+                                    OpeanapiEquivalenceUtil.areEqual(transitionVariable, callResultStorage)
                                 ) {
                                     holder.registerProblem(
                                         functionCall,

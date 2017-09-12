@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -154,7 +153,7 @@ public class PossibleValuesDiscoveryUtil {
                     final String containerName = ((FieldReference) container).getName();
                     if (
                         null != containerName && containerName.equals(fieldName) &&
-                        PsiEquivalenceUtil.areElementsEquivalent(container, reference)
+                        OpeanapiEquivalenceUtil.areEqual(container, reference)
                     ) {
                         final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
                         if (discoveredWrites.size() > 0) {

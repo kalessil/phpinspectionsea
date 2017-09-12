@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.strategy;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -14,6 +13,7 @@ import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.Statement;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.utils.MethodIdentityUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,7 +58,7 @@ final public class QueryUsageStrategy {
                 final PsiElement variableUsed     = reference.getClassReference();
                 if (
                     variableAssigned != null && variableUsed != null &&
-                    PsiEquivalenceUtil.areElementsEquivalent(variableAssigned, variableUsed)
+                    OpeanapiEquivalenceUtil.areEqual(variableAssigned, variableUsed)
                 ) {
                     holder.registerProblem(reference, message, new UseQueryFix(precedingReference));
                 }

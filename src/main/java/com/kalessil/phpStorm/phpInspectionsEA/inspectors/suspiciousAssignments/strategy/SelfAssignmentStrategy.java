@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -8,6 +7,8 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -63,9 +64,10 @@ final public class SelfAssignmentStrategy {
         }
 
         /* now analysis itself */
-        final IElementType expectedOperator = mapping.get(assignOperator);
-        final IElementType valueOperator    = valueOperation.getNode().getElementType();
-        if (expectedOperator == valueOperator && PsiEquivalenceUtil.areElementsEquivalent(variable, valueLeftPart)) {
+        if (
+            OpenapiTypesUtil.is(valueOperation, mapping.get(assignOperator)) &&
+            OpeanapiEquivalenceUtil.areEqual(variable, valueLeftPart)
+        ) {
             holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR);
         }
     }

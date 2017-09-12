@@ -1,11 +1,11 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,8 +43,8 @@ final public class SwitchFallThroughStrategy {
                     for (PsiElement variable : ((MultiassignmentExpression) expression).getVariables()) {
                         /* HashSet is not working here, hence manual checks */
                         boolean isOverridden = false;
-                        for (PsiElement writtenVariable : written) {
-                            if (PsiEquivalenceUtil.areElementsEquivalent(writtenVariable, variable)) {
+                        for (final PsiElement writtenVariable : written) {
+                            if (OpeanapiEquivalenceUtil.areEqual(writtenVariable, variable)) {
                                 isOverridden = true;
                                 holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR);
 
@@ -71,8 +71,8 @@ final public class SwitchFallThroughStrategy {
 
                         /* HashSet is not working here, hence manual checks */
                         boolean isOverridden = false;
-                        for (PsiElement writtenVariable : written) {
-                            if (PsiEquivalenceUtil.areElementsEquivalent(writtenVariable, variable)) {
+                        for (final PsiElement writtenVariable : written) {
+                            if (OpeanapiEquivalenceUtil.areEqual(writtenVariable, variable)) {
                                 isOverridden = true;
                                 holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR);
 
@@ -91,8 +91,8 @@ final public class SwitchFallThroughStrategy {
             /* now flush local writes into shared one; manually as HashSet is not working */
             for (PsiElement localVariable : writtenLocally) {
                 boolean isAddedAlready = false;
-                for (PsiElement sharedVariable : written) {
-                    if (PsiEquivalenceUtil.areElementsEquivalent(localVariable, sharedVariable)) {
+                for (final PsiElement sharedVariable : written) {
+                    if (OpeanapiEquivalenceUtil.areEqual(localVariable, sharedVariable)) {
                         isAddedAlready = true;
                         break;
                     }

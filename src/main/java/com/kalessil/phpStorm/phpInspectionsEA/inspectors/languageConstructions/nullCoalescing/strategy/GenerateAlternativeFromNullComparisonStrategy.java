@@ -1,12 +1,12 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +43,10 @@ final public class GenerateAlternativeFromNullComparisonStrategy {
         value                           = ExpressionSemanticUtil.getExpressionTroughParenthesis(value);
         PsiElement alternative          = isInverted ? expression.getFalseVariant() : expression.getTrueVariant();
         alternative                     = ExpressionSemanticUtil.getExpressionTroughParenthesis(alternative);
-        if (null == subject || null == value || null == alternative || !PsiEquivalenceUtil.areElementsEquivalent(subject, value)) {
+        if (
+            null == subject || null == value || null == alternative ||
+            !OpeanapiEquivalenceUtil.areEqual(subject, value)
+        ) {
             return null;
         }
 

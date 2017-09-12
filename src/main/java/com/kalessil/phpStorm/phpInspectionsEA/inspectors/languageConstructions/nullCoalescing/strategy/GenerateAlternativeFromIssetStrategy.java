@@ -1,12 +1,12 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.PhpIsset;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,7 +45,10 @@ final public class GenerateAlternativeFromIssetStrategy {
         value                    = ExpressionSemanticUtil.getExpressionTroughParenthesis(value);
         PsiElement alternative   = isInverted ? expression.getTrueVariant() : expression.getFalseVariant();
         alternative              = ExpressionSemanticUtil.getExpressionTroughParenthesis(alternative);
-        if (null == subject || null == value || null == alternative || !PsiEquivalenceUtil.areElementsEquivalent(subject, value)) {
+        if (
+            null == subject || null == value || null == alternative ||
+            !OpeanapiEquivalenceUtil.areEqual(subject, value)
+        ) {
             return null;
         }
 

@@ -11,10 +11,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -45,7 +42,7 @@ final public class ChainedCallsStrategy {
         @NotNull ProblemsHolder holder
     ) {
         final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
-        if (operator != null && PhpTokenTypes.ARROW == operator.getNode().getElementType()) {
+        if (OpenapiTypesUtil.is(operator, PhpTokenTypes.ARROW)) {
             final PsiElement base = reference.getFirstPsiChild();
             if (base instanceof FunctionReference) {
                 final FunctionReference baseReference = (FunctionReference) base;

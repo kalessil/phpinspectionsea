@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +33,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
         return new BasePhpElementVisitor() {
             public void visitPhpMethodReference(MethodReference reference) {
                 final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
-                if (null == operator || PhpTokenTypes.SCOPE_RESOLUTION != operator.getNode().getElementType()) {
+                if (!OpenapiTypesUtil.is(operator, PhpTokenTypes.SCOPE_RESOLUTION)) {
                     return;
                 }
 

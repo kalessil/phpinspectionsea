@@ -5,8 +5,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.D
 
 final public class DynamicInvocationViaScopeResolutionInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new DynamicInvocationViaScopeResolutionInspector());
         myFixture.configureByFile("fixtures/classes/dynamic-method-invocation-via-scope-resolution.php");
-        myFixture.enableInspections(DynamicInvocationViaScopeResolutionInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

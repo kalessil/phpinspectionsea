@@ -16,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -39,7 +40,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
             public void visitPhpMethodReference(MethodReference reference) {
                 /* Basic structure validation */
                 final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
-                if (null == operator || PhpTokenTypes.ARROW != operator.getNode().getElementType()) {
+                if (!OpenapiTypesUtil.is(operator, PhpTokenTypes.ARROW)) {
                     return;
                 }
                 final PsiReference psiReference = reference.getReference();

@@ -8,6 +8,15 @@ import com.jetbrains.php.lang.psi.elements.MemberReference;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import org.jetbrains.annotations.Nullable;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 final public class OpenapiPsiSearchUtil {
     /*
         finds '::' or '->' node in a method reference and returns it;
@@ -15,23 +24,21 @@ final public class OpenapiPsiSearchUtil {
     */
     @Nullable
     public static PsiElement findResolutionOperator(@Nullable MemberReference reference) {
-        if (null != reference) {
+        if (reference != null) {
             final PhpPsiElement start = reference.getFirstPsiChild();
             final PsiElement end
-                = null == start ? null : (start instanceof ClassReference ? reference.getLastChild() : start.getNextPsiSibling());
-            if (null != start && null != end) {
+                = start == null ? null : (start instanceof ClassReference ? reference.getLastChild() : start.getNextPsiSibling());
+            if (start != null && end != null) {
                 PsiElement current = start.getNextSibling();
-                while (null != current && current != end) {
+                while (current != null && current != end) {
                     final IElementType nodeType = current.getNode().getElementType();
-                    if (PhpTokenTypes.ARROW == nodeType || PhpTokenTypes.SCOPE_RESOLUTION == nodeType) {
+                    if (nodeType == PhpTokenTypes.ARROW || nodeType == PhpTokenTypes.SCOPE_RESOLUTION) {
                         return current;
                     }
-
                     current = current.getNextSibling();
                 }
             }
         }
-
         return null;
     }
 }

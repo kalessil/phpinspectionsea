@@ -15,8 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 final public class OpeanapiEquivalenceUtil {
     public static boolean areEqual(@NotNull PsiElement first, @NotNull PsiElement second) {
-        return first == second ||
-               PsiEquivalenceUtil.areElementsEquivalent(first, second) ||
+        return PsiEquivalenceUtil.areElementsEquivalent(first, second) ||
                (first.getClass() == second.getClass() && first.getText().equals(second.getText()));
     }
 }

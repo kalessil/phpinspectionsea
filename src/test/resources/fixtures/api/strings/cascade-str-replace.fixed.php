@@ -28,7 +28,7 @@
     );
 
     function return_case_holder($x) {
-        return str_replace(array('...', '...'), array('', ''), $x);
+        return str_replace(array('...', '...'), '', $x);
     }
 
     /* false-positives: source and result storage containers are not matching */

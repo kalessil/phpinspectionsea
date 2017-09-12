@@ -212,8 +212,9 @@ final public class ExpressionSemanticUtil {
             return PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation) ||
                    PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operation);
         }
-        if (parent instanceof TernaryExpression && expression == ((TernaryExpression) parent).getCondition()) {
-            return true;
+        if (parent instanceof TernaryExpression) {
+            final TernaryExpression ternary = (TernaryExpression) parent;
+            return !ternary.isShort() && expression == ternary.getCondition();
         }
         return false;
     }

@@ -52,7 +52,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
 
                 /* check if the call used as (boolean) logical operand */
                 if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
-                    holder.registerProblem(reference, messageUseInArray, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                    holder.registerProblem(reference, messageUseInArray, new TheLocalFix());
                     return;
                 }
 
@@ -72,7 +72,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                                 return;
                             }
 
-                            holder.registerProblem(parent, messageUseInArray, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                            holder.registerProblem(parent, messageUseInArray, new TheLocalFix());
                         }
                     }
                 }

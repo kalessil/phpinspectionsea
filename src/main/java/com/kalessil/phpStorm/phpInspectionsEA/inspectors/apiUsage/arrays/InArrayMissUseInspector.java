@@ -10,12 +10,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class InArrayMissUseInspector extends BasePhpInspection {
     private static final String patternComparison = "'%e%' should be used instead.";
-    private static final String patternKeyExists  = "'%e%' should be used instead. It is safe to refactor for type-safe code when the indexes are integers/strings only."; // NOTE-TR: It cannot be anything else...
+    private static final String patternKeyExists  = "'%e%' should be used instead. It is safe to refactor for type-safe code when the indexes are integers/strings only.";
 
     @NotNull
     public String getShortName() {
@@ -26,11 +25,12 @@ public class InArrayMissUseInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* general structure requirements */
                 final PsiElement[] params = reference.getParameters();
                 final String functionName = reference.getName();
-                if ((2 != params.length && 3 != params.length) || StringUtils.isEmpty(functionName) || !functionName.equals("in_array")) {
+                if ((2 != params.length && 3 != params.length) || functionName == null || !functionName.equals("in_array")) {
                     return;
                 }
 

@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
@@ -15,7 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SuspiciousLoopInspector extends BasePhpInspection {
     private static final String messageMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
@@ -40,22 +40,47 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpForeach(ForeachStatement foreach) {
-                this.inspectVariables(foreach);
-            }
-            public void visitPhpFor(For forStatement) {
-                this.inspectConditions(forStatement);
-                this.inspectVariables(forStatement);
-                this.inspectBoundariesCorrectness(forStatement);
+            @Override
+            public void visitPhpForeach(@NotNull ForeachStatement statement) {
+                this.inspectVariables(statement);
+                this.inspectParentConditions(statement);
             }
 
-            private void inspectConditions(For forStatement) {
-                if (forStatement.getConditionalExpressions().length > 1) {
-                    holder.registerProblem(forStatement.getFirstChild(), messageMultipleConditions, ProblemHighlightType.GENERIC_ERROR);
+            @Override
+            public void visitPhpFor(@NotNull For statement) {
+                this.inspectConditions(statement);
+                this.inspectVariables(statement);
+                this.inspectBoundariesCorrectness(statement);
+            }
+
+            private void inspectParentConditions(@NotNull ForeachStatement statement) {
+                final PsiElement source = statement.getArray();
+                if (source instanceof Variable || source instanceof FieldReference) {
+                    PsiElement parent = statement.getParent();
+                    while (parent != null && !(parent instanceof Function) && !(parent instanceof PsiFile)) {
+                        if (parent instanceof If) {
+                            final PsiElement condition = ((If) parent).getCondition();
+                            if (condition != null && this.doesConditionContainsAnomalies(source, condition)) {
+                                holder.registerProblem(statement.getFirstChild(), "A parent condition (...) looks suspicious");
+                                return;
+                            }
+                        }
+                        parent = parent.getParent();
+                    }
                 }
             }
 
-            private void inspectBoundariesCorrectness(For forStatement) {
+            private boolean doesConditionContainsAnomalies(@NotNull PsiElement source, @NotNull PsiElement condition) {
+                return false;
+            }
+
+            private void inspectConditions(@NotNull For forStatement) {
+                if (forStatement.getConditionalExpressions().length > 1) {
+                    holder.registerProblem(forStatement.getFirstChild(), messageMultipleConditions);
+                }
+            }
+
+            private void inspectBoundariesCorrectness(@NotNull For forStatement) {
                 /* currently supported simple for-loops: one condition and one repeated operation */
                 final PsiElement[] repeated   = forStatement.getRepeatedExpressions();
                 final PsiElement[] conditions = forStatement.getConditionalExpressions();
@@ -109,8 +134,8 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                 holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundaries);
             }
 
-            private void inspectVariables(PhpPsiElement loop) {
-                final HashSet<String> loopVariables = getLoopVariables(loop);
+            private void inspectVariables(@NotNull PhpPsiElement loop) {
+                final Set<String> loopVariables = this.getLoopVariables(loop);
 
                 final Function function = ExpressionSemanticUtil.getScope(loop);
                 if (null != function) {
@@ -135,7 +160,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                 while (null != parent && ! (parent instanceof Function) && ! (parent instanceof PhpFile)) {
                     /* inspect parent loops for conflicted variables */
                     if (parent instanceof For || parent instanceof ForeachStatement) {
-                        final Set<String> parentVariables = getLoopVariables((PhpPsiElement) parent);
+                        final Set<String> parentVariables = this.getLoopVariables((PhpPsiElement) parent);
                         loopVariables.stream()
                                 .filter(parentVariables::contains)
                                 .forEach(variable -> {
@@ -150,32 +175,24 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                 loopVariables.clear();
             }
 
-            private HashSet<String> getLoopVariables(PhpPsiElement loop) {
-                final HashSet<String> loopVariables = new HashSet<>();
-
+            @NotNull
+            private Set<String> getLoopVariables(@NotNull PhpPsiElement loop) {
+                final Set<String> variables = new HashSet<>();
                 if (loop instanceof For) {
-                    /* find assignments in init expressions */
-                    for (PhpPsiElement init : ((For) loop).getInitialExpressions()) {
-                        if (init instanceof AssignmentExpression) {
-                            /* variable used in assignment */
-                            final PhpPsiElement variable = ((AssignmentExpression) init).getVariable();
-                            if (variable instanceof Variable && null != variable.getName()) {
-                                loopVariables.add(variable.getName());
-                            }
-                        }
-                    }
+                    /* get variables from assignments */
+                    Stream.of(((For) loop).getInitialExpressions())
+                            .filter(init  -> init instanceof AssignmentExpression)
+                            .forEach(init -> {
+                                final PhpPsiElement variable = ((AssignmentExpression) init).getVariable();
+                                if (variable instanceof Variable && null != variable.getName()) {
+                                    variables.add(variable.getName());
+                                }
+                            });
+                } else if (loop instanceof ForeachStatement) {
+                    ((ForeachStatement) loop).getVariables().forEach(variable -> variables.add(variable.getName()));
                 }
 
-                if (loop instanceof ForeachStatement) {
-                    /* just extract variables which created by foreach */
-                    loopVariables.addAll(
-                            ((ForeachStatement) loop).getVariables().stream()
-                                    .map(PhpNamedElement::getName)
-                                    .collect(Collectors.toList())
-                    );
-                }
-
-                return loopVariables;
+                return variables;
             }
         };
     }

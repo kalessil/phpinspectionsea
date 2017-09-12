@@ -24,8 +24,9 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     public void visitPhpDocTag(@NotNull PhpDocTag tag)    {}
 
     /* overrides to reduce amount of 'com.jetbrains.php.lang.psi.visitors.PhpElementVisitor.visitElement' calls */
-    @Override
-    public void visitPhpMethodReference(MethodReference reference) {}
-    @Override
-    public void visitPhpFunctionCall(FunctionReference reference)  {}
+    @Override public void visitPhpMethodReference(MethodReference reference) {}
+    @Override public void visitPhpFunctionCall(FunctionReference reference) {}
+
+    @Override public void visitPhpForeach(ForeachStatement foreach) {}
+    @Override public void visitPhpFor(For forStatement) {}
 }

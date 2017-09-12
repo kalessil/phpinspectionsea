@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -8,6 +7,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,12 +58,11 @@ final public class SequentialAssignmentsStrategy {
         return result;
     }
 
-    /* TODO: wrap PsiEquivalenceUtil.areElementsEquivalent to cover it's bugs */
     static private boolean isContainerUsed(@NotNull PsiElement container, @Nullable PsiElement expression) {
         boolean result = false;
         if (expression != null) {
             for (final PsiElement matchCandidate : PsiTreeUtil.findChildrenOfType(expression, container.getClass())) {
-                if (matchCandidate != container && PsiEquivalenceUtil.areElementsEquivalent(matchCandidate, container)) {
+                if (matchCandidate != container && OpeanapiEquivalenceUtil.areEqual(matchCandidate, container)) {
                     result = true;
                     break;
                 }
@@ -90,7 +89,7 @@ final public class SequentialAssignmentsStrategy {
                     final PsiElement candidateExpression = bodyStatement.getFirstChild();
                     if (candidateExpression instanceof AssignmentExpression) {
                         final PsiElement candidate = ((AssignmentExpression) candidateExpression).getVariable();
-                        if (null != candidate && PsiEquivalenceUtil.areElementsEquivalent(candidate, container)) {
+                        if (null != candidate && OpeanapiEquivalenceUtil.areEqual(candidate, container)) {
                             final String message = patternProbableElse.replace("%c%", container.getText());
                             holder.registerProblem(container.getParent(), message, ProblemHighlightType.GENERIC_ERROR);
 
@@ -108,7 +107,7 @@ final public class SequentialAssignmentsStrategy {
         @NotNull ProblemsHolder holder
     ) {
         final PsiElement previousContainer = previous.getVariable();
-        if (previousContainer != null && PsiEquivalenceUtil.areElementsEquivalent(previousContainer, container)) {
+        if (previousContainer != null && OpeanapiEquivalenceUtil.areEqual(previousContainer, container)) {
             PsiElement operation = previousContainer.getNextSibling();
             while (operation != null && operation.getNode().getElementType() != PhpTokenTypes.opASGN) {
                 operation = operation.getNextSibling();

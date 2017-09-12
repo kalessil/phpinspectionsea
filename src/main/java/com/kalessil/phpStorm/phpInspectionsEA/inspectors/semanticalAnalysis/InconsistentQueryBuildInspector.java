@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -14,6 +13,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +59,7 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
                                 }
 
                                 /* pattern match: ksort and http_build_query operating on the same expression */
-                                if (PsiEquivalenceUtil.areElementsEquivalent(oneCall.getParameters()[0], parameters[0])) {
+                                if (OpeanapiEquivalenceUtil.areEqual(oneCall.getParameters()[0], parameters[0])) {
                                     final String message = strProblemDescription.replace("%a%", parameters[0].getText());
                                     holder.registerProblem(reference, message, new TheLocalFix());
 

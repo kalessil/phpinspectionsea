@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -12,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -51,12 +51,12 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
                         final PsiElement subject      = binary.getLeftOperand();
                         if (trueVariant != null && falseVariant != null && value != null && subject != null) {
                             final boolean isLeftPartReturned = (
-                                PsiEquivalenceUtil.areElementsEquivalent(value, trueVariant) ||
-                                PsiEquivalenceUtil.areElementsEquivalent(value, falseVariant)
+                                OpeanapiEquivalenceUtil.areEqual(value, trueVariant) ||
+                                OpeanapiEquivalenceUtil.areEqual(value, falseVariant)
                             );
                             final boolean isRightPartReturned = (isLeftPartReturned && (
-                                PsiEquivalenceUtil.areElementsEquivalent(subject, falseVariant) ||
-                                PsiEquivalenceUtil.areElementsEquivalent(subject, trueVariant)
+                                OpeanapiEquivalenceUtil.areEqual(subject, falseVariant) ||
+                                OpeanapiEquivalenceUtil.areEqual(subject, trueVariant)
                             ));
                             if (isLeftPartReturned && isRightPartReturned) {
                                 final String replacement = falseVariant.getText();

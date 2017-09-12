@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
@@ -15,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
@@ -125,8 +125,8 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
                         /* ensure both true/false branches applied to the same subject */
                         boolean result =
                             valuesSet.size() == 1 &&
-                            PsiEquivalenceUtil.areElementsEquivalent(trueExpression, params[0]) &&
-                            PsiEquivalenceUtil.areElementsEquivalent(trueExpression, valuesSet.get(0));
+                            OpeanapiEquivalenceUtil.areEqual(trueExpression, params[0]) &&
+                            OpeanapiEquivalenceUtil.areEqual(trueExpression, valuesSet.get(0));
                         valuesSet.clear();
                         /* ensure the subject type is array casting safe */
                         if (result) {

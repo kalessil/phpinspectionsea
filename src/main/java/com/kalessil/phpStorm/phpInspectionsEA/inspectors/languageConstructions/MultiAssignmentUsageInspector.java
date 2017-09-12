@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -14,6 +13,7 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -111,9 +111,9 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
 
                 /* analyze if containers are matching */
                 final PsiElement ownContainer = getContainer(assignmentExpression);
-                if (null != ownContainer) {
+                if (ownContainer != null) {
                     final PsiElement previousContainer = getContainer((AssignmentExpression) previousExpression);
-                    if (null != previousContainer && PsiEquivalenceUtil.areElementsEquivalent(ownContainer, previousContainer)) {
+                    if (previousContainer != null && OpeanapiEquivalenceUtil.areEqual(ownContainer, previousContainer)) {
                         final String message = messagePattern.replace("%a%", ownContainer.getText());
                         holder.registerProblem(assignmentExpression, message);
                     }

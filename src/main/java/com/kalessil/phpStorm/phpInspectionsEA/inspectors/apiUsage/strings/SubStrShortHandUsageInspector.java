@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -18,6 +17,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,9 +78,9 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                     if (
                         1 == leftCallParams.length && leftCallName != null &&
                         (leftCallName.equals("strlen") || leftCallName.equals("mb_strlen")) &&
-                        PsiEquivalenceUtil.areElementsEquivalent(leftCallParams[0], params[0])
+                        OpeanapiEquivalenceUtil.areEqual(leftCallParams[0], params[0])
                     ) {
-                        if (PsiEquivalenceUtil.areElementsEquivalent(candidate.getRightOperand(), params[1])) {
+                        if (OpeanapiEquivalenceUtil.areEqual(candidate.getRightOperand(), params[1])) {
                             /* 3rd parameter not needed at all */
                             final String message = patternDropLength.replace("%l%", params[2].getText());
                             holder.registerProblem(params[2], message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new Drop3rdParameterLocalFix(reference));

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -17,6 +16,7 @@ import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -63,7 +63,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
                         if (
                             null != variable && null != leftOperand && null != rightOperand &&
                             mapping.containsKey(operation) &&
-                            PsiEquivalenceUtil.areElementsEquivalent(variable, leftOperand)
+                            OpeanapiEquivalenceUtil.areEqual(variable, leftOperand)
                         ) {
                             final String replacement = "%v% %o%= %e%"
                                 .replace("%e%", rightOperand.getText())

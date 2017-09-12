@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -13,10 +12,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -64,7 +60,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                     } else if (fieldDefault instanceof PhpPsiElement && originDefault instanceof PhpPsiElement) {
                         final boolean isDefaultDuplicate =
                             !originField.getModifier().getAccess().isPrivate() &&
-                            PsiEquivalenceUtil.areElementsEquivalent(fieldDefault, originDefault);
+                            OpeanapiEquivalenceUtil.areEqual(fieldDefault, originDefault);
                         if (isDefaultDuplicate) {
                             holder.registerProblem(fieldDefault, messageSenselessWrite, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                         }

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -13,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -83,7 +83,7 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
                 /* Case 2: identical variants */
                 if (
                     trueVariant != null && extractedFalseVariant != null &&
-                    PsiEquivalenceUtil.areElementsEquivalent(trueVariant, extractedFalseVariant)
+                    OpeanapiEquivalenceUtil.areEqual(trueVariant, extractedFalseVariant)
                 ) {
                     holder.registerProblem(expression, messageVariantsIdentical, ProblemHighlightType.GENERIC_ERROR);
                 }

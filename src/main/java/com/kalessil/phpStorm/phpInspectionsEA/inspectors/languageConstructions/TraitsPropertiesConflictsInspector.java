@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -10,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -53,7 +53,7 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                             if (null == ownFieldDefault || null == traitFieldDefault) {
                                 isError = traitFieldDefault != ownFieldDefault;
                             } else {
-                                isError = !PsiEquivalenceUtil.areElementsEquivalent(traitFieldDefault, ownFieldDefault);
+                                isError = !OpeanapiEquivalenceUtil.areEqual(traitFieldDefault, ownFieldDefault);
                             }
 
                             /* error case already covered by the IDEs */
@@ -108,7 +108,7 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                             if (null == parentFieldDefault || null == traitFieldDefault) {
                                 isError = traitFieldDefault != parentFieldDefault;
                             } else {
-                                isError = !PsiEquivalenceUtil.areElementsEquivalent(traitFieldDefault, parentFieldDefault);
+                                isError = !OpeanapiEquivalenceUtil.areEqual(traitFieldDefault, parentFieldDefault);
                             }
 
                             final String message = messagePattern

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -11,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
@@ -103,8 +103,8 @@ public class IncrementDecrementOperationEquivalentInspector extends BasePhpInspe
                     if (operation == PhpTokenTypes.opPLUS) {
                         /* plus operation: operand position NOT important */
                         if (
-                            (leftOperand.getText().equals("1") && PsiEquivalenceUtil.areElementsEquivalent(rightOperand, variable)) ||
-                            (rightOperand.getText().equals("1") && PsiEquivalenceUtil.areElementsEquivalent(leftOperand, variable))
+                            (leftOperand.getText().equals("1") && OpeanapiEquivalenceUtil.areEqual(rightOperand, variable)) ||
+                            (rightOperand.getText().equals("1") && OpeanapiEquivalenceUtil.areEqual(leftOperand, variable))
                         ) {
                             if (!isArrayAccessOrString(variable)) {
                                 final String replacement
@@ -117,7 +117,7 @@ public class IncrementDecrementOperationEquivalentInspector extends BasePhpInspe
                         /* minus operation: operand position IS important */
                         if (
                             rightOperand.getText().equals("1") &&
-                            PsiEquivalenceUtil.areElementsEquivalent(leftOperand, variable) &&
+                            OpeanapiEquivalenceUtil.areEqual(leftOperand, variable) &&
                             !isArrayAccessOrString(variable)
                         ) {
                             final String replacement

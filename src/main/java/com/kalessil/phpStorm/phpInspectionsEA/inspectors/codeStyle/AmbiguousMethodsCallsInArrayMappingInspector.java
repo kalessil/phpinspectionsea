@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -9,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -61,9 +61,9 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
                 }
 
                 /* iterate over calls in the value, match them with calls in the variable */
-                for (PsiElement inValue : valCalls) {
-                    for (PsiElement inVariable : varCalls) {
-                        if (PsiEquivalenceUtil.areElementsEquivalent(inValue, inVariable)) {
+                for (final PsiElement inValue : valCalls) {
+                    for (final PsiElement inVariable : varCalls) {
+                        if (OpeanapiEquivalenceUtil.areEqual(inValue, inVariable)) {
                             /* report an issue and continue with outer loop */
                             holder.registerProblem(inValue, message);
                             break;

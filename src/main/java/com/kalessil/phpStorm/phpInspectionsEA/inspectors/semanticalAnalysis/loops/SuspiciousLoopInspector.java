@@ -67,19 +67,25 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                 if (source instanceof Variable || source instanceof FieldReference) {
                     PsiElement parent = statement.getParent();
                     while (parent != null && !(parent instanceof Function) && !(parent instanceof PsiFile)) {
+                        /* extract condition */
+                        PsiElement condition = null;
                         if (parent instanceof If) {
-                            final PsiElement condition = ((If) parent).getCondition();
-                            if (condition != null) {
-                                final PsiElement anomaly = this.findFirstConditionAnomaly(source, condition);
-                                if (anomaly != null) {
-                                    final String message = String.format(patternConditionAnomaly, anomaly.getText());
-                                    holder.registerProblem(statement.getFirstChild(), message);
-
-                                    break;
-                                }
-                            }
+                            condition = ((If) parent).getCondition();
+                        } else if (parent instanceof ElseIf) {
+                            condition = ((ElseIf) parent).getCondition();
+                            parent    = parent.getParent(); /* skip if processing */
                         } else if (parent instanceof Else) {
-                            break;
+                            parent    = parent.getParent(); /* skip if processing */
+                        }
+                        /* process condition and continue */
+                        if (condition != null) {
+                            final PsiElement anomaly = this.findFirstConditionAnomaly(source, condition);
+                            if (anomaly != null) {
+                                final String message = String.format(patternConditionAnomaly, anomaly.getText());
+                                holder.registerProblem(statement.getFirstChild(), message);
+
+                                break;
+                            }
                         }
                         parent = parent.getParent();
                     }

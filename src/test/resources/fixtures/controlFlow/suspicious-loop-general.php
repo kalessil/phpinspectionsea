@@ -54,6 +54,9 @@
     if (count($one) < 2 || count($correct) === 2) {
         foreach ($correct as $value) {}
         <error descr="A parent condition 'count($one) < 2' looks suspicious.">foreach</error> ($one as $value) {}
+    } elseif (count($two) < 2) {
+        foreach ($one as $value) {}
+        <error descr="A parent condition 'count($two) < 2' looks suspicious.">foreach</error> ($two as $value) {}
     } else {
         foreach ($one as $value) {}
     }

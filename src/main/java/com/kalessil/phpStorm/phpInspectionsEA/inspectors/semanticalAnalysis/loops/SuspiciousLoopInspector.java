@@ -83,7 +83,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                     final PsiElement outerContext  = directContext.getParent();
                     if (directContext instanceof PhpEmpty && !(outerContext instanceof UnaryExpression)) {
                         return directContext;
-                    } else if (outerContext instanceof BinaryExpression && OpenapiTypesUtil.isFunctionReference(directContext)) {
+                    } else if (outerContext instanceof BinaryExpression && directContext instanceof FunctionReference) {
                         final FunctionReference call = (FunctionReference) directContext;
                         final String functionName    = call.getName();
                         if (functionName != null && functionName.equals("count")) {
@@ -92,7 +92,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                                 final PsiElement number = binary.getRightOperand();
                                 if (OpenapiTypesUtil.isNumber(number)) {
                                     /* TODO: parse integer; report following cases */
-                                    /* 0,1: <, <=, ==, ===, !=, !== */
+                                    /* 0,1: <, <=, ==, === */
                                     /* 2: < */
                                 }
                                 return null;

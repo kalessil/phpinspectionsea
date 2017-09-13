@@ -36,3 +36,21 @@
         foreach ($correct as $value) {}
         <error descr="A parent condition 'empty($wrong)' looks suspicious.">foreach</error> ($wrong as $value) {}
     }
+    if (count($one) < 0 || count($two) <= 0 || count($three) == 0 || count($four) === 0 || count($correct) > 0) {
+        foreach ($correct as $value) {}
+        foreach ($one as $value) {}
+        foreach ($two as $value) {}
+        foreach ($three as $value) {}
+        foreach ($four as $value) {}
+    }
+    if (count($one) < 1 || count($two) <= 1 || count($three) == 1 || count($four) === 1 || count($correct) > 0) {
+        foreach ($correct as $value) {}
+        foreach ($one as $value) {}
+        foreach ($two as $value) {}
+        foreach ($three as $value) {}
+        foreach ($four as $value) {}
+    }
+    if (count($one) < 2 || count($correct) === 2) {
+        foreach ($correct as $value) {}
+        foreach ($one as $value) {}
+    }

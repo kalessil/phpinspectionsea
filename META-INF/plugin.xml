@@ -70,6 +70,7 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
 - Suspicious binary operations: implemented QF (misplaced operations)<br/>
 - Type unsafe comparison: resolved false-positives (empty string comparison)<br/>
 - Unnecessary type casting: resolved false-positives (enhance WI-37466 workaround)<br/>
+- 'array_search(...)' could be replaced by 'in_array(...)': resolved false-positives (multiple cases)<br/>
 - 'mkdir(...)' race condition: implemented QF<br/>
 - 'null === ...' can be used: added options (QF style)<br/>
 <br/>
@@ -78,6 +79,7 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
 - Non-optimal regular expression: new patterns (missing u-modifier)<br/>
 - Null reference: new patterns<br/>
 - Suspicious binary operations: new patterns<br/>
+- Suspicious loop: new patterns<br/>
 - Unnecessary final modifiers: new patterns<br/>
 <br/>
 - Static local variables usage: dropped<br/>

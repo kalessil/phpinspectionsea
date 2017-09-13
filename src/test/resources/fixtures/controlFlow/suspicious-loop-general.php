@@ -32,6 +32,7 @@
     }
 
 
+    /* case: anomalies in conditions, which conflicts with looping itself */
     if (empty($wrong) || !empty($correct)) {
         foreach ($correct as $value) {}
         <error descr="A parent condition 'empty($wrong)' looks suspicious.">foreach</error> ($wrong as $value) {}
@@ -53,4 +54,6 @@
     if (count($one) < 2 || count($correct) === 2) {
         foreach ($correct as $value) {}
         <error descr="A parent condition 'count($one) < 2' looks suspicious.">foreach</error> ($one as $value) {}
+    } else {
+        foreach ($one as $value) {}
     }

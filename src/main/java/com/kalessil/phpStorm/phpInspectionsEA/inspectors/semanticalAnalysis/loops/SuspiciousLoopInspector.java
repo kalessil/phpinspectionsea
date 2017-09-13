@@ -78,6 +78,8 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                                     break;
                                 }
                             }
+                        } else if (parent instanceof Else) {
+                            break;
                         }
                         parent = parent.getParent();
                     }

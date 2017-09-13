@@ -64,8 +64,9 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                             if (condition != null) {
                                 final PsiElement anomaly = this.findFirstConditionAnomaly(source, condition);
                                 if (anomaly != null) {
-                                    final String message = "A parent condition (...) looks suspicious";
+                                    final String message = String.format("A parent condition '%s' looks suspicious.", anomaly.getText());
                                     holder.registerProblem(statement.getFirstChild(), message);
+
                                     break;
                                 }
                             }
@@ -80,10 +81,12 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                     final PsiElement parent        = expression.getParent();
                     final PsiElement directContext = parent instanceof ParameterList ? parent.getParent() : parent;
                     final PsiElement outerContext  = directContext.getParent();
-                    if (directContext instanceof PhpEmpty) {
-                        /* TODO: [!]empty */
-                        return null;
-                    } else if (outerContext instanceof BinaryExpression && OpenapiTypesUtil.isFunctionReference(directContext)) {
+                    if (directContext instanceof PhpEmpty && !(outerContext instanceof UnaryExpression)) {
+                        return directContext;
+                    } else if (
+                        outerContext instanceof BinaryExpression &&
+                        OpenapiTypesUtil.isFunctionReference(directContext)
+                    ) {
                         final FunctionReference call = (FunctionReference) directContext;
                         final String functionName    = call.getName();
                         if (functionName != null && functionName.equals("count")) {

@@ -6,8 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.Strto
 
 final public class StrtotimeUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(StrtotimeUsageInspector.class);
-
+        myFixture.enableInspections(new StrtotimeUsageInspector());
         myFixture.configureByFile("fixtures/api/strtotime-function-misuse.php");
         myFixture.testHighlighting(true, false, true);
 
@@ -16,6 +15,5 @@ final public class StrtotimeUsageInspectorTest extends PhpCodeInsightFixtureTest
         }
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/api/strtotime-function-misuse.fixed.php");
-
     }
 }

@@ -5,8 +5,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.Dir
 
 final public class DirnameCallOnFileConstantInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new DirnameCallOnFileConstantInspector());
         myFixture.configureByFile("fixtures/api/dirname-on-file-const.php");
-        myFixture.enableInspections(DirnameCallOnFileConstantInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

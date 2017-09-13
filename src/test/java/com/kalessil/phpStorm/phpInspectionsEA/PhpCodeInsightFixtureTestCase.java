@@ -20,7 +20,7 @@ public abstract class PhpCodeInsightFixtureTestCase extends CodeInsightFixtureTe
     }
 
     private static class WebModuleFixtureBuilderImpl extends ModuleFixtureBuilderImpl implements WebModuleFixtureBuilder {
-        public WebModuleFixtureBuilderImpl(final TestFixtureBuilder<? extends IdeaProjectTestFixture> fixtureBuilder) {
+        WebModuleFixtureBuilderImpl(final TestFixtureBuilder<? extends IdeaProjectTestFixture> fixtureBuilder) {
             super(new WebModuleType(), fixtureBuilder);
         }
 

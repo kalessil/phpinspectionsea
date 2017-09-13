@@ -7,7 +7,6 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 
-import java.util.HashSet;
 import java.util.Set;
 
 final public class PossibleValuesDiscoveryUtilTest extends PhpCodeInsightFixtureTestCase {

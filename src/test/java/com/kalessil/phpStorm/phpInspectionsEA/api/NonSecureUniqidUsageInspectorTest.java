@@ -6,8 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureUniqi
 
 final public class NonSecureUniqidUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(NonSecureUniqidUsageInspector.class);
-
+        myFixture.enableInspections(new NonSecureUniqidUsageInspector());
         myFixture.configureByFile("fixtures/security/uniqid.php");
         myFixture.testHighlighting(true, false, true);
 

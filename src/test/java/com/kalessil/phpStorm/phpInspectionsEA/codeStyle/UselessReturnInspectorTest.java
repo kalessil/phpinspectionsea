@@ -5,8 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Usel
 
 final public class UselessReturnInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(UselessReturnInspector.class);
-
+        myFixture.enableInspections(new UselessReturnInspector());
         myFixture.configureByFile("fixtures/codeStyle/useless-returns.php");
         myFixture.testHighlighting(true, false, true);
     }

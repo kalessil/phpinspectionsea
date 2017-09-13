@@ -8,8 +8,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnqualifiedRef
 final public class UnqualifiedReferenceInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testFindsAllNsPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
-        myFixture.enableInspections(UnqualifiedReferenceInspector.class);
-
+        myFixture.enableInspections(new UnqualifiedReferenceInspector());
         myFixture.configureByFile("fixtures/unqualified-function-refs-ns.php");
         myFixture.testHighlighting(true, false, true);
 
@@ -21,9 +20,8 @@ final public class UnqualifiedReferenceInspectorTest extends PhpCodeInsightFixtu
     }
     public void testFindsAllNonNsPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
-
+        myFixture.enableInspections(new UnqualifiedReferenceInspector());
         myFixture.configureByFile("fixtures/unqualified-function-refs-no-ns.php");
-        myFixture.enableInspections(UnqualifiedReferenceInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

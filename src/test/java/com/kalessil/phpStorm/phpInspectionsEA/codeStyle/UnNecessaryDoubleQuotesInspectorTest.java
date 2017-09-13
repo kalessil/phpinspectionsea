@@ -15,6 +15,5 @@ final public class UnNecessaryDoubleQuotesInspectorTest extends PhpCodeInsightFi
         }
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/codeStyle/double-quotes.fixed.php");
-
     }
 }

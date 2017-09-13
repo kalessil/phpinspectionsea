@@ -97,9 +97,29 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                     final PsiElement parent        = expression.getParent();
                     final PsiElement directContext = parent instanceof ParameterList ? parent.getParent() : parent;
                     final PsiElement outerContext  = directContext.getParent();
-                    if (directContext instanceof PhpEmpty && !(outerContext instanceof UnaryExpression)) {
+
+                    /* case: empty statement */
+                    if (directContext instanceof PhpEmpty) {
+                        if (outerContext instanceof UnaryExpression) {
+                            final UnaryExpression unary = (UnaryExpression) outerContext;
+                            if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                                return null;
+                            }
+                        } else if (outerContext instanceof BinaryExpression) {
+                            final IElementType operation = ((BinaryExpression) outerContext).getOperationType();
+                            if (
+                                PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operation) ||
+                                PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation) ||
+                                PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operation)
+                            ) {
+                                return null;
+                            }
+                        }
                         return directContext;
-                    } else if (outerContext instanceof BinaryExpression && directContext instanceof FunctionReference) {
+                    }
+
+                    /* case: count function/method */
+                    if (outerContext instanceof BinaryExpression && directContext instanceof FunctionReference) {
                         final FunctionReference call = (FunctionReference) directContext;
                         final String functionName    = call.getName();
                         if (functionName != null && functionName.equals("count")) {

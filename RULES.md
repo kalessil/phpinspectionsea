@@ -24,7 +24,7 @@ Inspections Lists (Control flow)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------------------------------------- | --: | --: | ---: | --: |
 | Control Flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                                                | no  | yes | no   | no  |
 | Control Flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                                              | yes | yes | yes  | no  |
-| Control Flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                                              | yes | yes | no   | no  |
+| Control Flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                                              | yes | yes | yes  | no  |
 | Control Flow         | DefaultValueInElseBranchInspection              | Default value is hidden in else branch                                            | n/a | yes | n/a  | no  |
 | Control Flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                                         | n/a |
 | Control Flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                                                          | n/a | yes | n/a  | no  |
@@ -36,7 +36,7 @@ Inspections Lists (Control flow)
 | Control Flow         | PdoApiUsageInspection                           | PDO API usage                                                                     | yes | yes | yes  | yes |
 | Control Flow         | OneTimeUseVariablesInspection                   | One-time use variables                                                            | yes | yes | yes  | no  |
 | Control Flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                                                     | n/a | yes | n/a  | no  |
-| Control Flow         | GetTypeMissUseInspection                        | 'gettype(...)' could be replaced with 'is_*(...)'                                 | yes | yes | no   | no  |
+| Control Flow         | GetTypeMissUseInspection                        | 'gettype(...)' could be replaced with 'is_*(...)'                                 | yes | yes | yes  | no  |
 | Control Flow         | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)'                          | yes | yes | no   | no  |
 | Control Flow         | SequentialUnSetCallsInspection                  | 'unset(...)' calls could be merged                                                | yes | yes | no   | no  |
 | Control Flow         | StrTrUsageAsStrReplaceInspection                | 'strtr(...)' could be replaced with 'str_replace(...)'                            | yes | yes | yes  | no  |

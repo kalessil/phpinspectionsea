@@ -2,11 +2,14 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.ClassReference;
-import com.jetbrains.php.lang.psi.elements.MemberReference;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import com.jetbrains.php.lang.psi.elements.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -40,5 +43,23 @@ final public class OpenapiPsiSearchUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * NOTE: get nodes even from inner lambdas
+     */
+    public static List<PsiElement> findEqual(@Nullable PsiElement where, @NotNull PsiElement what) {
+        final List<PsiElement> result = new ArrayList<>();
+        if (where != null) {
+            if (what instanceof Variable && where instanceof Function) {
+                /* TODO: implement */
+                throw new RuntimeException("Implement, use PhpControlFlowUtil.getFollowingVariableAccessInstructions");
+            } else {
+                PsiTreeUtil.findChildrenOfType(where, what.getClass()).stream()
+                        .filter(expression -> OpeanapiEquivalenceUtil.areEqual(what, expression))
+                        .forEach(result::add);
+            }
+        }
+        return result;
     }
 }

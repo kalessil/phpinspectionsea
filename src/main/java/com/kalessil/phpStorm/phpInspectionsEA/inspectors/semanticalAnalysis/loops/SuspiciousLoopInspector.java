@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,9 +61,13 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                     while (parent != null && !(parent instanceof Function) && !(parent instanceof PsiFile)) {
                         if (parent instanceof If) {
                             final PsiElement condition = ((If) parent).getCondition();
-                            if (condition != null && this.doesConditionContainsAnomalies(source, condition)) {
-                                holder.registerProblem(statement.getFirstChild(), "A parent condition (...) looks suspicious");
-                                return;
+                            if (condition != null) {
+                                final PsiElement anomaly = this.findFirstConditionAnomaly(source, condition);
+                                if (anomaly != null) {
+                                    final String message = "A parent condition (...) looks suspicious";
+                                    holder.registerProblem(statement.getFirstChild(), message);
+                                    break;
+                                }
                             }
                         }
                         parent = parent.getParent();
@@ -70,9 +75,24 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                 }
             }
 
-            private boolean doesConditionContainsAnomalies(@NotNull PsiElement source, @NotNull PsiElement condition) {
-                /* TODO: find, match, check ([!]empty, count() <op> number) */
-                return false;
+            private PsiElement findFirstConditionAnomaly(@NotNull PsiElement source, @NotNull PsiElement condition) {
+                for (final PsiElement expression : OpenapiPsiSearchUtil.findEqual(condition, source)) {
+                    final PsiElement parent        = expression.getParent();
+                    final PsiElement directContext = parent instanceof ParameterList ? parent.getParent() : parent;
+                    final PsiElement outerContext  = directContext.getParent();
+                    if (directContext instanceof PhpEmpty) {
+                        /* TODO: [!]empty */
+                        return null;
+                    } else if (outerContext instanceof BinaryExpression && OpenapiTypesUtil.isFunctionReference(directContext)) {
+                        final FunctionReference call = (FunctionReference) directContext;
+                        final String functionName    = call.getName();
+                        if (functionName != null && functionName.equals("count")) {
+                            /* TODO: count() <op> number */
+                            return null;
+                        }
+                    }
+                }
+                return null;
             }
 
             private void inspectConditions(@NotNull For forStatement) {

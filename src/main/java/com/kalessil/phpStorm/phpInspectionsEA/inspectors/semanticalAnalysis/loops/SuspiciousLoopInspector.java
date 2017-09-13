@@ -20,16 +20,24 @@ import java.util.stream.Stream;
 
 public class SuspiciousLoopInspector extends BasePhpInspection {
     private static final String messageMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
+    private static final String messageLoopBoundaries     = "Conditions and repeated operations are not complimentary, please check what's going on here.";
     private static final String patternOverridesLoopVars  = "Variable '$%v%' is introduced in a outer loop and overridden here.";
     private static final String patternOverridesParameter = "Variable '$%v%' is introduced as a %t% parameter and overridden here.";
-    private static final String messageLoopBoundaries     = "Conditions and repeated operations are not complimentary, please check what's going on here.";
+    private static final String patternConditionAnomaly   = "A parent condition '%s' looks suspicious.";
+
 
     private static final Map<IElementType, IElementType> operationsInversion = new HashMap<>();
+    private static final Set<IElementType> operationsAnomaly                 = new HashSet<>();
     static {
         operationsInversion.put(PhpTokenTypes.opGREATER,          PhpTokenTypes.opLESS_OR_EQUAL);
         operationsInversion.put(PhpTokenTypes.opGREATER_OR_EQUAL, PhpTokenTypes.opLESS);
         operationsInversion.put(PhpTokenTypes.opLESS,             PhpTokenTypes.opGREATER_OR_EQUAL);
         operationsInversion.put(PhpTokenTypes.opLESS_OR_EQUAL,    PhpTokenTypes.opGREATER);
+
+        operationsAnomaly.add(PhpTokenTypes.opLESS);
+        operationsAnomaly.add(PhpTokenTypes.opLESS_OR_EQUAL);
+        operationsAnomaly.add(PhpTokenTypes.opEQUAL);
+        operationsAnomaly.add(PhpTokenTypes.opIDENTICAL);
     }
 
     @NotNull
@@ -64,7 +72,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                             if (condition != null) {
                                 final PsiElement anomaly = this.findFirstConditionAnomaly(source, condition);
                                 if (anomaly != null) {
-                                    final String message = String.format("A parent condition '%s' looks suspicious.", anomaly.getText());
+                                    final String message = String.format(patternConditionAnomaly, anomaly.getText());
                                     holder.registerProblem(statement.getFirstChild(), message);
 
                                     break;
@@ -89,13 +97,17 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                         if (functionName != null && functionName.equals("count")) {
                             final BinaryExpression binary = (BinaryExpression) outerContext;
                             if (call == binary.getLeftOperand()) {
-                                final PsiElement number = binary.getRightOperand();
-                                if (OpenapiTypesUtil.isNumber(number)) {
-                                    /* TODO: parse integer; report following cases */
-                                    /* 0,1: <, <=, ==, === */
-                                    /* 2: < */
+                                final PsiElement threshold = binary.getRightOperand();
+                                if (OpenapiTypesUtil.isNumber(threshold)) {
+                                    final String number   = threshold.getText();
+                                    final IElementType op = binary.getOperationType();
+                                    if (op == PhpTokenTypes.opLESS && number.equals("2")) {
+                                        return outerContext;
+                                    }
+                                    if (operationsAnomaly.contains(op) && (number.equals("0") || number.equals("1"))) {
+                                        return outerContext;
+                                    }
                                 }
-                                return null;
                             }
                         }
                     }

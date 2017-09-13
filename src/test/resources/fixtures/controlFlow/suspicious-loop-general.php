@@ -38,19 +38,19 @@
     }
     if (count($one) < 0 || count($two) <= 0 || count($three) == 0 || count($four) === 0 || count($correct) > 0) {
         foreach ($correct as $value) {}
-        foreach ($one as $value) {}
-        foreach ($two as $value) {}
-        foreach ($three as $value) {}
-        foreach ($four as $value) {}
+        <error descr="A parent condition 'count($one) < 0' looks suspicious.">foreach</error> ($one as $value) {}
+        <error descr="A parent condition 'count($two) <= 0' looks suspicious.">foreach</error> ($two as $value) {}
+        <error descr="A parent condition 'count($three) == 0' looks suspicious.">foreach</error> ($three as $value) {}
+        <error descr="A parent condition 'count($four) === 0' looks suspicious.">foreach</error> ($four as $value) {}
     }
     if (count($one) < 1 || count($two) <= 1 || count($three) == 1 || count($four) === 1 || count($correct) > 0) {
         foreach ($correct as $value) {}
-        foreach ($one as $value) {}
-        foreach ($two as $value) {}
-        foreach ($three as $value) {}
-        foreach ($four as $value) {}
+        <error descr="A parent condition 'count($one) < 1' looks suspicious.">foreach</error> ($one as $value) {}
+        <error descr="A parent condition 'count($two) <= 1' looks suspicious.">foreach</error> ($two as $value) {}
+        <error descr="A parent condition 'count($three) == 1' looks suspicious.">foreach</error> ($three as $value) {}
+        <error descr="A parent condition 'count($four) === 1' looks suspicious.">foreach</error> ($four as $value) {}
     }
     if (count($one) < 2 || count($correct) === 2) {
         foreach ($correct as $value) {}
-        foreach ($one as $value) {}
+        <error descr="A parent condition 'count($one) < 2' looks suspicious.">foreach</error> ($one as $value) {}
     }

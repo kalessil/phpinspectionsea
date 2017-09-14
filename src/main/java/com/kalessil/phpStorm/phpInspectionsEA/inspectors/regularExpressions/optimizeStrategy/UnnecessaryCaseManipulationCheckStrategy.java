@@ -18,7 +18,7 @@ final public class UnnecessaryCaseManipulationCheckStrategy {
     static {
         targetFunctions.add("strtolower");
         targetFunctions.add("strtoupper");
-        targetFunctions.add("mb_strtolower ");
+        targetFunctions.add("mb_strtolower");
         targetFunctions.add("mb_strtoupper");
     }
 

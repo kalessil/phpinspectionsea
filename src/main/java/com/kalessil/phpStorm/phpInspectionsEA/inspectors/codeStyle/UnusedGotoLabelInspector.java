@@ -1,14 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
-/*
- * This file is part of the Php Inspections (EA Extended) package.
- *
- * (c) Vladimir Reznichenko <kalessil@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -28,6 +19,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class UnusedGotoLabelInspector extends BasePhpInspection {
     private static final String message = "The label is not used.";
 
@@ -40,30 +40,28 @@ public class UnusedGotoLabelInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpGotoLabel(PhpGotoLabel label) {
-                final String labelName    = label.getName();
+            @Override
+            public void visitPhpGotoLabel(@NotNull PhpGotoLabel label) {
                 final Function function   = ExpressionSemanticUtil.getScope(label);
                 final GroupStatement body = null == function ? null : ExpressionSemanticUtil.getGroupStatement(function);
-                if (null == body || 0 == ExpressionSemanticUtil.countExpressionsInGroup(body)) {
-                    return;
-                }
-
-                /* process goto statements and drop used from existing */
-                final Collection<PhpGoto> refs = PsiTreeUtil.findChildrenOfType(body, PhpGoto.class);
-                if (refs.size() > 0) {
-                    for (PhpGoto gotoExpression : refs) {
-                        final String labelUsed = gotoExpression.getName();
-                        if (null != labelUsed && labelUsed.length() > 0 && labelUsed.equals(labelName)) {
-                            refs.clear();
-                            return;
+                if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
+                    /* process goto statements and drop used from existing */
+                    final Collection<PhpGoto> references = PsiTreeUtil.findChildrenOfType(body, PhpGoto.class);
+                    if (!references.isEmpty()) {
+                        final String labelName = label.getName();
+                        for (final PhpGoto gotoExpression : references) {
+                            final String labelUsed = gotoExpression.getName();
+                            if (null != labelUsed && labelUsed.equals(labelName)) {
+                                references.clear();
+                                return;
+                            }
                         }
+                        references.clear();
                     }
-                    refs.clear();
-                }
 
-                /* report unused labels */
-                // TODO: marks as unused instead, see https://youtrack.jetbrains.com/issue/WI-34508
-                holder.registerProblem(label, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
+                    /* TODO: marks as unused instead, see https://youtrack.jetbrains.com/issue/WI-34508 */
+                    holder.registerProblem(label, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
+                }
             }
         };
     }

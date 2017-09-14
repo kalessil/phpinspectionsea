@@ -32,7 +32,7 @@ public class UseSuggestedReplacementFixer implements LocalQuickFix {
         return getName();
     }
 
-    public UseSuggestedReplacementFixer(@NotNull String expression) {
+    protected UseSuggestedReplacementFixer(@NotNull String expression) {
         super();
         this.expression = expression;
     }

@@ -34,7 +34,7 @@ import java.util.Set;
 public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
     private static final String message = "The argument can be safely dropped, as it's identical to the default value.";
 
-    private static Set<String> exceptions = new HashSet<>();
+    private static final Set<String> exceptions = new HashSet<>();
     static {
         /* in exceptions die to conflict with strict types inspection, which requires argument specification */
         exceptions.add("array_search");

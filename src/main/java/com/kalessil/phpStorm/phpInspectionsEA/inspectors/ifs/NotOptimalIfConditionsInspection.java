@@ -218,11 +218,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                             final PsiElement instanceOfExpression = instanceOf2class.getKey();
 
                             // extract current condition details
-                            Set<PhpClass> clazzParents = resolvedInheritanceChains.get(clazz);
-                            if (null == clazzParents) {
-                                clazzParents = InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true);
-                                resolvedInheritanceChains.put(clazz, clazzParents);
-                            }
+                            final Set<PhpClass> clazzParents = resolvedInheritanceChains
+                                .computeIfAbsent(clazz, c -> InterfacesExtractUtil.getCrawlInheritanceTree(c, true));
 
                             // inner loop for verification
                             for (Map.Entry<PsiElement, PhpClass> instanceOf2classInner : subjectContainer.entrySet()) {

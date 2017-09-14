@@ -158,7 +158,7 @@ final public class ExpressionSemanticUtil {
         /* don't forget very first one */
         result.addFirst(current);
 
-        return result.stream().filter(entry -> entry != null).collect(Collectors.toList());
+        return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     @Nullable

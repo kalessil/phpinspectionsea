@@ -71,7 +71,7 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
             return "Use array access";
         }
 
-        public TheLocalFix(@NotNull String expression) {
+        TheLocalFix(@NotNull String expression) {
             super(expression);
         }
     }

@@ -37,7 +37,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
     private static final String messageViolationInCheck      = "Makes no sense, because this type is not defined in annotations.";
     private static final String patternViolationInAssignment = "New value type (%s%) is not in annotated types.";
 
-    private static Set<String> classReferences = new HashSet<>();
+    private static final Set<String> classReferences = new HashSet<>();
     static {
         classReferences.add("self");
         classReferences.add("static");

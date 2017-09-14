@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 final public class PluginsIterator implements Iterator {
-    private static List<String> jetBrainsPlugins = new ArrayList<>();
+    private static final List<String> jetBrainsPlugins = new ArrayList<>();
     static {
         jetBrainsPlugins.add("com.jetbrains.php");
     }

@@ -155,7 +155,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
             return getName();
         }
 
-        public TheLocalFix(@NotNull String expression) {
+        TheLocalFix(@NotNull String expression) {
             super();
             this.expression = expression;
         }

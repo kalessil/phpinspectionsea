@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class NonGreedyTransformCheckStrategy {
+final public class NonGreedyTransformCheckStrategy {
     private static final String strProblemDescription = "'%p%' can be replaced with '[^%c%]%m%%c%'.";
 
     final static private Pattern regexNonGreedyPattern;
@@ -21,7 +21,11 @@ public class NonGreedyTransformCheckStrategy {
      * TODO: $content = preg_replace('#<esi\:remove>.*?</esi\:remove>#s', '', $content);
      * nested tags are broken, reflect in message as risky, breaks e.g. nested tags
      */
-    static public void apply(final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
+    static public void apply(
+            final String pattern,
+            @NotNull final StringLiteralExpression target,
+            @NotNull final ProblemsHolder holder
+    ) {
         if (!StringUtils.isEmpty(pattern) && pattern.indexOf('?') >= 0) {
             Matcher regexMatcher = regexNonGreedyPattern.matcher(pattern);
             if (regexMatcher.find()) {

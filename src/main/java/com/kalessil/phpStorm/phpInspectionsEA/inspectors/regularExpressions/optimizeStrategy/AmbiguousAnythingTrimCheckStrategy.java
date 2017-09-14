@@ -7,14 +7,16 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-public class AmbiguousAnythingTrimCheckStrategy {
+final public class AmbiguousAnythingTrimCheckStrategy {
     private static final String strProblemLeading  = "Leading .* can be removed.";
     private static final String strProblemTrailing = "Trailing .* can be removed.";
 
     static public void apply(
-            final String functionName, @NotNull final FunctionReference reference,
+            final String functionName,
+            @NotNull final FunctionReference reference,
             final String pattern,
-            @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder
+            @NotNull final StringLiteralExpression target,
+            @NotNull final ProblemsHolder holder
     ) {
         if (
             2 == reference.getParameters().length &&

@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.expl
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.modifiersStrategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.AmbiguousAnythingTrimCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.SequentialClassesCollapseCheckStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.UnnecessaryCaseManipulationCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -61,7 +62,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 }
 
                 /* resolve first parameter */
-                final PsiElement[] params = reference.getParameters();
+                final PsiElement[] params       = reference.getParameters();
                 StringLiteralExpression pattern = null;
                 if (params.length > 0) {
                     pattern = ExpressionSemanticUtil.resolveAsStringLiteral(params[0]);
@@ -77,8 +78,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                     if (regexMatcher.find()) {
                         final String phpRegexPattern   = regexMatcher.group(2);
                         final String phpRegexModifiers = regexMatcher.group(3);
-
-                        checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
+                        this.checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
                         return;
                     }
 
@@ -86,14 +86,13 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                     if (regexMatcher.find()) {
                         final String phpRegexPattern   = regexMatcher.group(1);
                         final String phpRegexModifiers = regexMatcher.group(2);
-
-                        checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
+                        this.checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
                         // return;
                     }
                 }
             }
 
-            private void checkCall (String strFunctionName, FunctionReference reference, StringLiteralExpression target, String regex, String modifiers) {
+            private void checkCall (String functionName, FunctionReference reference, StringLiteralExpression target, String regex, String modifiers) {
                 /* Modifiers validity (done):
                  * + /no-az-chars/i => /no-az-chars/
                  * + /no-dot-char/s => /no-dot-char/
@@ -117,8 +116,8 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  * + preg_quote => warning if second argument is not presented
                  * + preg_match_all without match argument preg_match
                  */
-                FunctionCallCheckStrategy.apply(strFunctionName, reference, holder);
-                PlainApiUseCheckStrategy.apply(strFunctionName, reference, modifiers, regex, holder);
+                FunctionCallCheckStrategy.apply(functionName, reference, holder);
+                PlainApiUseCheckStrategy.apply(functionName, reference, modifiers, regex, holder);
 
                 /* Classes shortening (done):
                  * + [0-9] => \d
@@ -145,7 +144,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  * + dangerous (a+)+ pattern
                  */
                 SequentialClassesCollapseCheckStrategy.apply(regex, target, holder);
-                AmbiguousAnythingTrimCheckStrategy.apply(strFunctionName, reference, regex, target, holder);
+                AmbiguousAnythingTrimCheckStrategy.apply(functionName, reference, regex, target, holder);
                 //NonGreedyTransformCheckStrategy.apply(regex, target, holder);
                 GreedyCharactersSetCheckStrategy.apply(regex, target, holder);
                 QuantifierCompoundsQuantifierCheckStrategy.apply(regex, target, holder);
@@ -157,6 +156,9 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  */
                 MissingDotAllCheckStrategy.apply(modifiers, regex, target, holder);
                 MissingUnicodeModifierStrategy.apply(modifiers, regex, target, holder);
+
+                /* source checks */
+                UnnecessaryCaseManipulationCheckStrategy.apply(functionName, reference, modifiers, holder);
             }
         };
     }

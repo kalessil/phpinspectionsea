@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SequentialClassesCollapseCheckStrategy {
+final public class SequentialClassesCollapseCheckStrategy {
     private static final String strProblemDescription = "'%p%' can be replaced with '%r%{...}'.";
 
     final static private Pattern regexRepeatedClasses;
@@ -17,7 +17,11 @@ public class SequentialClassesCollapseCheckStrategy {
         regexRepeatedClasses = Pattern.compile("((\\[([^\\]]+)\\])(\\*|\\+|\\?|\\{[^\\}]+\\})?\\2(\\*|\\+|\\?|\\{[^\\}]+\\})?)+");
     }
 
-    static public void apply(final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
+    static public void apply(
+            final String pattern,
+            @NotNull final StringLiteralExpression target,
+            @NotNull final ProblemsHolder holder
+    ) {
         if (!StringUtils.isEmpty(pattern) && pattern.indexOf('[') >= 0) {
             Matcher regexMatcher = regexRepeatedClasses.matcher(pattern);
             if (regexMatcher.find()) {

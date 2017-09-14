@@ -84,7 +84,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
         @NotNull
         @Override
         public String getName() {
-            return "Use suggested replacement";
+            return "Use suggested function instead";
         }
 
         @NotNull

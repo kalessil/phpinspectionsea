@@ -90,7 +90,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use suggested replacement";
+            return "Use the short notation";
         }
 
         @NotNull

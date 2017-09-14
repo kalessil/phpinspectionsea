@@ -128,7 +128,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use suggested is_*(...) functions";
+            return "Use suggested is_*(...) function instead";
         }
 
         @NotNull

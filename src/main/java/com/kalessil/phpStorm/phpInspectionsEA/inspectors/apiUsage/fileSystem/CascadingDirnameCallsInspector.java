@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -15,7 +14,6 @@ import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -48,7 +46,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                 final PsiElement[] params = reference.getParameters();
                 if (
                     (1 != params.length && 2 != params.length) ||
-                    StringUtils.isEmpty(functionName) || !functionName.equals("dirname")
+                    functionName == null || !functionName.equals("dirname")
                 ) {
                     return;
                 }
@@ -67,7 +65,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                     final PsiElement[] parentParams = parentReference.getParameters();
                     if (
                         (1 == parentParams.length || 2 == parentParams.length) &&
-                        !StringUtils.isEmpty(parentName) && parentName.equals("dirname")
+                        parentName != null && parentName.equals("dirname")
                     ) {
                         return;
                     }
@@ -82,7 +80,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                 //noinspection ConstantConditions - due to better readability
                 while (current instanceof FunctionReference) {
                     final String currentName = current.getName();
-                    if (StringUtils.isEmpty(currentName) || !currentName.equals("dirname")) {
+                    if (currentName == null || !currentName.equals("dirname")) {
                         break;
                     }
 
@@ -134,7 +132,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                     reported.clear();
 
                     final String message = messagePattern.replace("%e%", replacement);
-                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(replacement));
+                    holder.registerProblem(reference, message, new TheLocalFix(replacement));
                 }
             }
         };
@@ -146,7 +144,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use suggested replacement";
+            return "Collapse dirname(...) calls";
         }
 
         @NotNull

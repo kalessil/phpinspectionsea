@@ -139,7 +139,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use suggested simplification";
+            return "Apply suggested simplification";
         }
 
         @NotNull

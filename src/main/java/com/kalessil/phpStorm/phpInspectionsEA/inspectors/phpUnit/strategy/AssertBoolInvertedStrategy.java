@@ -58,7 +58,7 @@ public class AssertBoolInvertedStrategy {
         @NotNull
         @Override
         public String getName() {
-            return "Use suggested replacement";
+            return "Use suggested assertion";
         }
 
         @NotNull

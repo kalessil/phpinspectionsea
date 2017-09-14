@@ -63,7 +63,7 @@ Inspections Lists (Unused)
 | Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a | yes | n/a  | no  |
 | Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes | yes | no   | no  |
 | Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | yes | yes | yes  | no  |
-| Unused               | UnusedGotoLabelInspection                       | Unused goto labels                                  | yes | yes | no   | no  |
+| Unused               | UnusedGotoLabelInspection                       | Unused goto labels                                  | yes | yes | yes  | no  |
 | Unused               | ArgumentEqualsDefaultValueInspection            | Unnecessary arguments specification                 | yes | yes | yes  | no  |
 
 Inspections Lists (Compatibility)
@@ -71,7 +71,7 @@ Inspections Lists (Compatibility)
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
 | Compatibility        | DeprecatedIniOptionsInspection                  | Deprecated configuration options                    | n/a |
-| Compatibility        | RandomApiMigrationInspection                    | Random API migration                                | yes | yes | no   | no  |
+| Compatibility        | RandomApiMigrationInspection                    | Random API migration                                | yes | yes | yes  | no  |
 | Compatibility        | MktimeUsageInspection                           | 'gmmktime(...)'/'mktime(...)' usage                 | yes | yes | yes  | no  |
 | Compatibility        | FopenBinaryUnsafeUsageInspection                | Binary-unsafe 'fopen(...)' usage                    | yes | yes | yes  | no  |
 

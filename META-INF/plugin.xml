@@ -76,7 +76,7 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
 <br/>
 - Cascading 'str_replace(...)' calls: new patterns<br/>
 - Long inheritance chain: support Yii1 (thank you Anatoly Pashin)<br/>
-- Non-optimal regular expression: new patterns (missing u-modifier)<br/>
+- Non-optimal regular expression: new patterns<br/>
 - Null reference: new patterns<br/>
 - Suspicious binary operations: new patterns<br/>
 - Suspicious loop: new patterns<br/>

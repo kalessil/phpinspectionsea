@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -17,9 +16,18 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class SequentialUnSetCallsInspector extends BasePhpInspection {
     private static final String message = "Can be safely replaced with 'unset(..., ...[, ...])' construction.";
@@ -33,14 +41,14 @@ public class SequentialUnSetCallsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpUnset(PhpUnset unsetStatement) {
+            @Override
+            public void visitPhpUnset(@NotNull PhpUnset unsetStatement) {
                 PsiElement previous = unsetStatement.getPrevPsiSibling();
                 while (previous instanceof PhpDocComment) {
                     previous = ((PhpDocComment) previous).getPrevPsiSibling();
                 }
-
                 if (previous instanceof PhpUnset) {
-                    holder.registerProblem(unsetStatement, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(unsetStatement));
+                    holder.registerProblem(unsetStatement, message, new TheLocalFix(unsetStatement));
                 }
             }
         };
@@ -63,7 +71,7 @@ public class SequentialUnSetCallsInspector extends BasePhpInspection {
 
         TheLocalFix(@NotNull PhpUnset unset) {
             super();
-            SmartPointerManager manager =  SmartPointerManager.getInstance(unset.getProject());
+            final SmartPointerManager manager =  SmartPointerManager.getInstance(unset.getProject());
 
             this.unset = manager.createSmartPsiElementPointer(unset);
         }
@@ -71,7 +79,7 @@ public class SequentialUnSetCallsInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PhpUnset unset = this.unset.getElement();
-            if (null != unset) {
+            if (unset != null) {
                 synchronized (unset.getContainingFile()) {
                     /* find preceding unset-statement */
                     PsiElement previous = unset.getPrevPsiSibling();
@@ -83,19 +91,18 @@ public class SequentialUnSetCallsInspector extends BasePhpInspection {
                     }
 
                     /* collect all parameters */
-                    final List<PsiElement> params     = new ArrayList<>();
-                    Collections.addAll(params, ((PhpUnset) previous).getArguments());
-                    Collections.addAll(params, unset.getArguments());
+                    final List<PsiElement> arguments = new ArrayList<>();
+                    arguments.addAll(Arrays.asList(((PhpUnset) previous).getArguments()));
+                    arguments.addAll(Arrays.asList(unset.getArguments()));
 
                     /* generate target expression */
-                    final List<String> paramsAsString = params.stream().map(PsiElement::getText).collect(Collectors.toList());
-                    final String pattern = "unset(%p%);".replace("%p%", String.join(", ", paramsAsString));
-                    paramsAsString.clear();
-                    params.clear();
+                    final String list    = arguments.stream().map(PsiElement::getText).collect(Collectors.joining(", "));
+                    final String pattern = "unset(%p%);".replace("%p%", list);
+                    arguments.clear();
 
                     /* apply refactoring */
                     final PhpUnset merged = PhpPsiElementFactory.createFromText(project, PhpUnset.class, pattern);
-                    if (null != merged) {
+                    if (merged != null) {
                         previous.replace(merged);
                         unset.delete();
                     }

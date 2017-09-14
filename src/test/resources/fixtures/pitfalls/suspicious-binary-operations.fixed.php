@@ -37,7 +37,8 @@ class MisplacedOperations
 /* a bug: hardcoded booleans */
 $x = (
     true ||
-    true ||
+    false ||
+    null ||
     false === true
 );
 

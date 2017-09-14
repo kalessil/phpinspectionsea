@@ -36,8 +36,9 @@ class MisplacedOperations
 
 /* a bug: hardcoded booleans */
 $x = (
-    <error descr="This boolean makes no sense or enforces the operation result.">true</error> ||
-    <error descr="This boolean makes no sense or enforces the operation result.">true</error> ||
+    <error descr="This makes no sense or enforces the operation result.">true</error> ||
+    <error descr="This makes no sense or enforces the operation result.">false</error> ||
+    <error descr="This makes no sense or enforces the operation result.">null</error> ||
     false === true
 );
 

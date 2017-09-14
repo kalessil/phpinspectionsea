@@ -17,23 +17,24 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-final public class HardcodedBooleansStrategy {
-    private static final String message = "This boolean makes no sense or enforces the operation result.";
+final public class HardcodedConstantValuesStrategy {
+    private static final String message = "This makes no sense or enforces the operation result.";
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         boolean result               = false;
         final IElementType operation = expression.getOperationType();
         if (
-            operation == PhpTokenTypes.opAND     || operation == PhpTokenTypes.opOR ||
-            operation == PhpTokenTypes.opLIT_AND || operation == PhpTokenTypes.opLIT_OR
+            PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation) ||
+            PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operation)
         ) {
             final PsiElement left  = expression.getLeftOperand();
-            if (PhpLanguageUtil.isBoolean(left)) {
+            final PsiElement right = expression.getRightOperand();
+            if (left != null && (PhpLanguageUtil.isBoolean(left) || PhpLanguageUtil.isNull(left))) {
                 holder.registerProblem(left, message);
                 result = true;
             }
-            final PsiElement right = expression.getRightOperand();
-            if (PhpLanguageUtil.isBoolean(right)) {
+            /* no else-if, as it breaks proper processing */
+            if (right != null && (PhpLanguageUtil.isBoolean(right) || PhpLanguageUtil.isNull(right))) {
                 holder.registerProblem(right, message);
                 result = true;
             }

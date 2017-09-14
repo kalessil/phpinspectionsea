@@ -6,8 +6,8 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
@@ -28,9 +28,9 @@ import java.util.Map;
 final public class ChainedCallsStrategy {
     private static final String message = "Null pointer exception may occur here.";
 
-    public static void apply(@NotNull Method method, @NotNull ProblemsHolder holder) {
+    public static void apply(@NotNull Function function, @NotNull ProblemsHolder holder) {
         final Map<MethodReference, String> nullTestedReferences = new HashMap<>();
-        PsiTreeUtil.findChildrenOfType(method, MethodReference.class)
+        PsiTreeUtil.findChildrenOfType(function, MethodReference.class)
                 .forEach(reference -> apply(reference, nullTestedReferences, holder));
         nullTestedReferences.clear();
     }

@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.strategy.ChainedCallsStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.strategy.NullableVariablesStrategy;
@@ -35,6 +36,13 @@ public class NullPointerExceptionInspector extends BasePhpInspection {
                     ChainedCallsStrategy.apply(method, holder);
                     NullableVariablesStrategy.applyToLocalVariables(method, holder);
                 }
+            }
+
+            @Override
+            public void visitPhpFunction(@NotNull Function function) {
+                    NullableVariablesStrategy.applyToParameters(function, holder);
+                    ChainedCallsStrategy.apply(function, holder);
+                    NullableVariablesStrategy.applyToLocalVariables(function, holder);
             }
         };
     }

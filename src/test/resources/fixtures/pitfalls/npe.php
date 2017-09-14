@@ -98,3 +98,7 @@ class CasesHolder {
         if ($this->npeReportingChainedCalls())          { return $this->npeReportingChainedCalls()->npeReportingChainedCalls(); }
     }
 }
+
+function cases_holder(?CasesHolder $object) {
+    <warning descr="Null pointer exception may occur here.">$object</warning>->npeCheckLocalVariables();
+}

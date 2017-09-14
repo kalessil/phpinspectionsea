@@ -39,9 +39,10 @@ final public class NullableVariablesStrategy {
         objectTypes.add(Types.strObject);
     }
 
-    public static void applyToLocalVariables(@NotNull Method method, @NotNull ProblemsHolder holder) {
-        final Set<String> parameters = Arrays.stream(method.getParameters()).map(Parameter::getName).collect(Collectors.toSet());
-        final GroupStatement body    = ExpressionSemanticUtil.getGroupStatement(method);
+    public static void applyToLocalVariables(@NotNull Function function, @NotNull ProblemsHolder holder) {
+        final Set<String> parameters
+                = Arrays.stream(function.getParameters()).map(Parameter::getName).collect(Collectors.toSet());
+        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
 
         /* group variables assignments, except parameters */
         final Map<String, List<AssignmentExpression>> assignments = new HashMap<>();
@@ -64,7 +65,7 @@ final public class NullableVariablesStrategy {
         }
 
         /* check if the variable has been written only once, inspect when null/void values are possible */
-        final PhpEntryPointInstruction controlFlowStart = method.getControlFlow().getEntryPoint();
+        final PhpEntryPointInstruction controlFlowStart = function.getControlFlow().getEntryPoint();
         final Project project                           = holder.getProject();
         for (final String variableName : assignments.keySet()) {
             final List<AssignmentExpression> variableAssignments = assignments.get(variableName);
@@ -89,9 +90,9 @@ final public class NullableVariablesStrategy {
         assignments.clear();
     }
 
-    public static void applyToParameters(@NotNull Method method, @NotNull ProblemsHolder holder) {
-        final PhpEntryPointInstruction controlFlowStart = method.getControlFlow().getEntryPoint();
-        for (final Parameter parameter : method.getParameters()) {
+    public static void applyToParameters(@NotNull Function function, @NotNull ProblemsHolder holder) {
+        final PhpEntryPointInstruction controlFlowStart = function.getControlFlow().getEntryPoint();
+        for (final Parameter parameter : function.getParameters()) {
             final Set<String> declaredTypes =
                     parameter.getDeclaredType().getTypes().stream()
                             .map(Types::getType)

@@ -30,7 +30,7 @@ final public class UnnecessaryCaseManipulationCheckStrategy {
     ) {
         if (functionName.equals("preg_match")) {
             final PsiElement[] arguments = reference.getParameters();
-            if (arguments.length > 1 && OpenapiTypesUtil.isFunctionReference(arguments[1])) {
+            if (arguments.length == 2 && OpenapiTypesUtil.isFunctionReference(arguments[1])) {
                 final String argumentName = ((FunctionReference) arguments[1]).getName();
                 if (argumentName != null && targetFunctions.contains(argumentName)) {
                     final boolean isCaseInsensitive = modifiers != null && modifiers.indexOf('i') != -1;

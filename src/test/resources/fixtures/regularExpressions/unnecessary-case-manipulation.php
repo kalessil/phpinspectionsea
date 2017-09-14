@@ -9,3 +9,5 @@
     $x = preg_match('/x{1,3}/i', <warning descr="Unnecessary case manipulation (the regex is case-insensitive).">strtoupper('...')</warning>);
     $x = preg_match('/x{1,3}/i', <warning descr="Unnecessary case manipulation (the regex is case-insensitive).">mb_strtoupper('...')</warning>);
     $x = preg_match('/x{1,3}/i', <warning descr="Unnecessary case manipulation (the regex is case-insensitive).">mb_strtolower('...')</warning>);
+
+    $x = preg_match('/x{1,3}/',strtolower('...'), $m);

@@ -70,7 +70,8 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                             .replace("%f%", resource)
                             .replace("%f%", resource);
 
-                    final LocalQuickFix fixer = (context instanceof If ? null : new ThrowExceptionFix(resource));
+                    final LocalQuickFix fixer
+                        = (context instanceof If ? new HardenConditionFix(resource) : new ThrowExceptionFix(resource));
                     holder.registerProblem(context instanceof If ? target : context, message, fixer);
                 }
                 // case 2: && and || expressions
@@ -109,7 +110,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                             (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation) ? patternAndCondition : patternOrCondition)
                                 .replace("%f%", resource)
                                 .replace("%f%", resource);
-                        holder.registerProblem(target, message);
+                        holder.registerProblem(target, message, new HardenConditionFix(resource));
                     }
                 }
             }
@@ -207,6 +208,41 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 final String pattern   = "if (!mkdir(%s) && !is_dir(%s)) { %s }";
                 final String code      = String.format(pattern, resource, resource, String.format(throwPart, resource));
                 target.replace(PhpPsiElementFactory.createPhpPsiFromText(project, If.class, code));
+            }
+        }
+    }
+
+    private static class HardenConditionFix implements LocalQuickFix {
+        private final String resource;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Harden the condition";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        HardenConditionFix(@NotNull String resource) {
+            this.resource = resource;
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement target = descriptor.getPsiElement();
+            if (target != null) {
+                final PsiElement parent = target.getParent();
+                if (parent instanceof If) {
+                    final String code = String.format("(!mkdir(%s) && !is_dir(%s))", resource, resource);
+                    target.replace(
+                            PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, code)
+                                    .getArgument()
+                    );
+                }
             }
         }
     }

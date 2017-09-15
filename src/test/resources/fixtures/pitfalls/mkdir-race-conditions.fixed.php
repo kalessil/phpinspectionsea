@@ -18,9 +18,9 @@ function cases_holder() {
     $result = mkdir('...');
 
     /* case: incomplete conditions */
-    if ((mkdir('...'))) {}
-    if ((!mkdir('...'))) {}
-    if ((!@mkdir('...'))) {}
+    if (!mkdir('...') && !is_dir('...')) {}
+    if (!mkdir('...') && !is_dir('...')) {}
+    if (!mkdir('...') && !is_dir('...')) {}
     if (!is_dir('...') && !mkdir('...')) {}
     if (is_dir('...') || mkdir('...')) {}
 

@@ -21,7 +21,7 @@ final public class OpeanapiEquivalenceUtil {
             if (!result) {
                 result = first.getClass() == second.getClass() && first.getText().equals(second.getText());
             }
-        } catch (Exception error) {
+        } catch (Throwable error) {
             /* not clear why, but PsiEquivalenceUtil.areElementsEquivalent emits IOException, EOFException */
             result = false;
         }

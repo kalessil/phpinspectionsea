@@ -6,7 +6,7 @@ IFS=$'\n\t'
 
 ideaVersion="2017.2"
 if [ "$IDE_ID" == "2017.2" ]; then
-    ideaVersion="2017.2.3"
+    ideaVersion="2017.2.4"
 elif [ "$IDE_ID" == "2017.1" ]; then
     ideaVersion="2017.1.5"
 elif [ "$IDE_ID" == "2016.3" ]; then
@@ -63,8 +63,8 @@ fi
 mkdir plugins
 
 if [ "$IDE_ID" == "2017.2" ]; then
-    download "http://plugins.jetbrains.com/files/6610/36973/php-172.3317.83.zip"
-    unzip -qo $travisCache/php-172.3317.83.zip -d ./plugins
+    download "http://plugins.jetbrains.com/files/6610/38775/php-172.4155.41.zip"
+    unzip -qo $travisCache/php-172.4155.41.zip -d ./plugins
 elif [ "$IDE_ID" == "2017.1" ]; then
     download "http://plugins.jetbrains.com/files/6610/33685/php-171.3780.104.zip"
     unzip -qo $travisCache/php-171.3780.104.zip -d ./plugins

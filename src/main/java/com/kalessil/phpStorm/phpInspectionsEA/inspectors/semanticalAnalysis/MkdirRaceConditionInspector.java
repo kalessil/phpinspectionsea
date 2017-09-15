@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MkdirRaceConditionInspector extends BasePhpInspection {
-    private static final String patternMkdirDirectCall   = "Following construct should be used: 'if (!mkdir(%f%) && !is_dir(%f%)) { ... }'.";
-    private static final String patternMkdirAndCondition = "Some check are missing: '!mkdir(%f%) && !is_dir(%f%)'.";
-    private static final String patternMkdirOrCondition  = "Some check are missing: 'mkdir(%f%) || is_dir(%f%)'.";
+    private static final String patternDirectCall   = "Following construct should be used: 'if (!mkdir(%f%) && !is_dir(%f%)) { ... }'.";
+    private static final String patternAndCondition = "Some check are missing: '!mkdir(%f%) && !is_dir(%f%)'.";
+    private static final String patternOrCondition  = "Some check are missing: 'mkdir(%f%) || is_dir(%f%)'.";
 
     @NotNull
     public String getShortName() {
@@ -51,7 +51,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
 
                 /* ind out expression where the call is contained - quite big set of variations */
                 final ExpressionLocateResult searchResult = new ExpressionLocateResult();
-                this.getCompleteExpression(reference, searchResult);
+                this.locateExpression(reference, searchResult);
                 final PsiElement target  = searchResult.getReportingTarget();
                 final PsiElement context = target == null ? null : target.getParent();
                 if (target == null) {
@@ -61,8 +61,8 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 // case 1: if ([!]mkdir(...))
                 if (context instanceof If || OpenapiTypesUtil.isStatementImpl(context)) {
                     final String resource = arguments[0].getText();
-                    final String binary   = searchResult.isInverted ? patternMkdirAndCondition : patternMkdirOrCondition;
-                    final String message  = (context instanceof If ? binary : patternMkdirDirectCall)
+                    final String binary   = searchResult.isInverted ? patternAndCondition : patternOrCondition;
+                    final String message  = (context instanceof If ? binary : patternDirectCall)
                             .replace("%f%", resource)
                             .replace("%f%", resource);
                     holder.registerProblem(context instanceof If ? target : context, message);
@@ -97,17 +97,18 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
 
                     /* report when needed */
                     if (!isSecondExistenceCheckExists) {
+                        final String resource        = arguments[0].getText();
                         final IElementType operation = binary.getOperationType();
                         final String message =
-                                (operation == PhpTokenTypes.opAND ? patternMkdirAndCondition : patternMkdirOrCondition)
-                                .replace("%f%", arguments[0].getText())
-                                .replace("%f%", arguments[0].getText());
+                            (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation) ? patternAndCondition : patternOrCondition)
+                                .replace("%f%", resource)
+                                .replace("%f%", resource);
                         holder.registerProblem(target, message);
                     }
                 }
             }
 
-            private void getCompleteExpression(@NotNull PsiElement expression, @NotNull ExpressionLocateResult status) {
+            private void locateExpression(@NotNull PsiElement expression, @NotNull ExpressionLocateResult status) {
                 final PsiElement parent = expression.getParent();
 
                 if (
@@ -118,7 +119,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     return;
                 }
                 if (parent instanceof ParenthesizedExpression) {
-                    this.getCompleteExpression(parent, status);
+                    this.locateExpression(parent, status);
                     return;
                 }
                 if (parent instanceof UnaryExpression) {
@@ -128,11 +129,11 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                         final IElementType operator = operation.getNode().getElementType();
                         if (operator == PhpTokenTypes.opNOT) {
                             status.setInverted(!status.isInverted());
-                            this.getCompleteExpression(unary, status);
+                            this.locateExpression(unary, status);
                             return;
                         }
                         if (operator == PhpTokenTypes.opSILENCE) {
-                            this.getCompleteExpression(unary, status);
+                            this.locateExpression(unary, status);
                         }
                     }
                     return;
@@ -147,7 +148,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                         status.setReportingTarget(expression);
                         return;
                     }
-                    this.getCompleteExpression(binary, status);
+                    this.locateExpression(binary, status);
                 }
             }
         };

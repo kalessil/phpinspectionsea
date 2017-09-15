@@ -21,8 +21,8 @@ function cases_holder() {
     if (!mkdir('...') && !is_dir('...')) {}
     if (!mkdir('...') && !is_dir('...')) {}
     if (!mkdir('...') && !is_dir('...')) {}
-    if (!is_dir('...') && !mkdir('...')) {}
-    if (is_dir('...') || mkdir('...')) {}
+    if (!is_dir('...') && !mkdir('...') && !is_dir('...')) {}
+    if (is_dir('...') || mkdir('...') || is_dir('...')) {}
 
     /* false-positive: re-checked afterwards */
     if (!is_dir('...') && !mkdir('...') && !is_dir('...')) {}

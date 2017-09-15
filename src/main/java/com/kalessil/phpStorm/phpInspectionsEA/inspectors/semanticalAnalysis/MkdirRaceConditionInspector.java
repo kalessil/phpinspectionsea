@@ -238,10 +238,18 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 final PsiElement parent = target.getParent();
                 if (parent instanceof If) {
                     final String code = String.format("(!mkdir(%s) && !is_dir(%s))", resource, resource);
-                    target.replace(
-                            PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, code)
-                                    .getArgument()
-                    );
+                    target.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, code).getArgument());
+                } else if (parent instanceof BinaryExpression) {
+                    final BinaryExpression binary = (BinaryExpression) parent;
+                    final IElementType operation  = binary.getOperationType();
+                    final String conditions       = binary.getLeftOperand().getText();
+                    if (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation)) {
+                        final String code = String.format("(%s && !mkdir(%s) && !is_dir(%s))", conditions, resource, resource);
+                        parent.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, code).getArgument());
+                    } else if (PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operation)) {
+                        final String code = String.format("(%s || mkdir(%s) || is_dir(%s))", conditions, resource, resource);
+                        parent.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, code).getArgument());
+                    }
                 }
             }
         }

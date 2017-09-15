@@ -140,7 +140,10 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 if (parent instanceof BinaryExpression) {
                     final BinaryExpression binary = (BinaryExpression) parent;
                     final IElementType operation  = binary.getOperationType();
-                    if (PhpTokenTypes.opAND == operation || PhpTokenTypes.opOR == operation) {
+                    if (
+                        PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation) ||
+                        PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operation)
+                    ) {
                         status.setReportingTarget(expression);
                         return;
                     }

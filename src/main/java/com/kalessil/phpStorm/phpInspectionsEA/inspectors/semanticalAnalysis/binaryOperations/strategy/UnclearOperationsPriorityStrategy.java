@@ -31,19 +31,27 @@ final public class UnclearOperationsPriorityStrategy {
             if (parent instanceof BinaryExpression) {
                 final IElementType parentOperator = ((BinaryExpression) parent).getOperationType();
                 if (parentOperator != operator && (parentOperator == PhpTokenTypes.opAND || parentOperator == PhpTokenTypes.opOR)) {
-                    holder.registerProblem(expression, message, new WrapItAsItIsFix(expression));
+                    final String replacement = "(" + expression.getText() + ")";
+                    holder.registerProblem(expression, message, new WrapItAsItIsFix(replacement));
                     return true;
                 }
             }
             /* assignment dramatically changing precedence */
             else if (OpenapiTypesUtil.isAssignment(parent) && !OpenapiTypesUtil.isStatementImpl(parent.getParent())) {
-                holder.registerProblem(expression, message, new WrapItAsItIsFix(expression));
+                final String replacement = "(" + expression.getText() + ")";
+                holder.registerProblem(expression, message, new WrapItAsItIsFix(replacement));
                 return true;
             }
         } else if (PhpTokenTypes.tsCOMPARE_OPS.contains(operator)) {
             if (OpenapiTypesUtil.isAssignment(parent) && parent.getParent() instanceof If) {
-                holder.registerProblem(parent, message, new WrapItAsItIsFix((AssignmentExpression) parent));
-                return true;
+                final AssignmentExpression assignment = (AssignmentExpression) parent;
+                final PsiElement assignedValue        = assignment.getValue();
+                if (assignedValue != null) {
+                    final String value       = assignedValue.getText();
+                    final String replacement = assignment.getText().replace(value, "(%v%)").replace("%v%", value);
+                    holder.registerProblem(parent, message, new WrapItAsItIsFix(replacement));
+                    return true;
+                }
             }
         }
         return false;
@@ -56,18 +64,8 @@ final public class UnclearOperationsPriorityStrategy {
             return "Wrap with parenthesises as it's";
         }
 
-        WrapItAsItIsFix(@NotNull PsiElement expression) {
-            super("(" + expression.getText() + ")");
-        }
-
-        /* ugly, but worth to keep for maintainable main logic */
-        WrapItAsItIsFix(@NotNull AssignmentExpression expression) {
-            //noinspection ConstantConditions ; at wraning fire point the value is there
-            super(
-                    expression.getText()
-                            .replace(expression.getValue().getText(), "(%v%)")
-                            .replace("%v%", expression.getValue().getText())
-            );
+        WrapItAsItIsFix(@NotNull String replacement) {
+            super(replacement);
         }
     }
 }

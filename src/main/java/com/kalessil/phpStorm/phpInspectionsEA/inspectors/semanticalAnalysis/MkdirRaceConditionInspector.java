@@ -15,7 +15,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MkdirRaceConditionInspector extends BasePhpInspection {
     private static final String patternMkdirDirectCall   = "Following construct should be used: 'if (!mkdir(%f%) && !is_dir(%f%)) { ... }'.";
@@ -51,7 +52,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 /* ind out expression where the call is contained - quite big set of variations */
                 final ExpressionLocateResult searchResult = new ExpressionLocateResult();
                 this.getCompleteExpression(reference, searchResult);
-                final PsiElement target = searchResult.getReportingTarget();
+                final PsiElement target  = searchResult.getReportingTarget();
                 final PsiElement context = target == null ? null : target.getParent();
                 if (target == null) {
                     return;
@@ -72,16 +73,22 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
 
                     /* deal with nested conditions */
                     BinaryExpression binary = (BinaryExpression) context;
-                    if (binary.getRightOperand() == context && binary.getParent() instanceof BinaryExpression) {
+                    if (binary.getRightOperand() == target && binary.getParent() instanceof BinaryExpression) {
                         binary = (BinaryExpression) binary.getParent();
                     }
 
                     /* check if following expression contains is_dir */
-                    final Collection<FunctionReference> calls
-                            = PsiTreeUtil.findChildrenOfType(binary.getRightOperand(), FunctionReference.class);
+                    final PsiElement candidate          = binary.getRightOperand();
+                    final List<FunctionReference> calls = new ArrayList<>();
+                    if (candidate instanceof FunctionReference) {
+                        calls.add((FunctionReference) candidate);
+                    }
+                    calls.addAll(PsiTreeUtil.findChildrenOfType(candidate, FunctionReference.class));
+
                     for (final FunctionReference call : calls) {
                         final String name = call.getName();
                         if (name != null && name.equals("is_dir") && OpenapiTypesUtil.isFunctionReference(call)) {
+                            /* TODO: argument needs match as well */
                             isSecondExistenceCheckExists = true;
                             break;
                         }

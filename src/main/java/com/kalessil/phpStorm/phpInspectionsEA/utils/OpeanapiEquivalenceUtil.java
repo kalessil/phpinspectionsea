@@ -15,7 +15,16 @@ import org.jetbrains.annotations.NotNull;
 
 final public class OpeanapiEquivalenceUtil {
     public static boolean areEqual(@NotNull PsiElement first, @NotNull PsiElement second) {
-        return PsiEquivalenceUtil.areElementsEquivalent(first, second) ||
-               (first.getClass() == second.getClass() && first.getText().equals(second.getText()));
+        boolean result;
+        try {
+            result = PsiEquivalenceUtil.areElementsEquivalent(first, second);
+            if (!result) {
+                result = first.getClass() == second.getClass() && first.getText().equals(second.getText());
+            }
+        } catch (Exception error) {
+            /* not clear why, but PsiEquivalenceUtil.areElementsEquivalent emits IOException, EOFException */
+            result = false;
+        }
+        return result;
     }
 }

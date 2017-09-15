@@ -32,7 +32,7 @@ public class EAUpdateComponent implements ProjectComponent {
                 return;
             }
 
-            String popupTitle       = "<b> "+ plugin.getName() + "</b> updated to v" + plugin.getVersion();
+            String popupTitle       = "<b> "+ plugin.getName() + "</b> update v" + plugin.getVersion();
             NotificationGroup group = new NotificationGroup(plugin.getName(), NotificationDisplayType.STICKY_BALLOON, true);
             Notification notification = group.createNotification(
                     popupTitle, plugin.getChangeNotes(), NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER

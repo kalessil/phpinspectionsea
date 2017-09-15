@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -34,7 +35,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName    = reference.getName();
                 final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length != 1 || functionName == null || !functionName.equals("mkdir")) {
+                if (functionName == null || arguments.length != 1 || !functionName.equals("mkdir")) {
                     return;
                 }
 
@@ -48,25 +49,30 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 }
 
                 /* ind out expression where the call is contained - quite big set of variations */
-                final PsiElement parent = this.getCompleteExpression(reference);
+                final ExpressionLocateResult searchResult = new ExpressionLocateResult();
+                this.getCompleteExpression(reference, searchResult);
+                final PsiElement target = searchResult.getReportingTarget();
+                final PsiElement context = target == null ? null : target.getParent();
+                if (target == null) {
+                    return;
+                }
 
                 // case 1: if ([!]mkdir(...))
-                if (parent instanceof If || OpenapiTypesUtil.isStatementImpl(parent)) {
-                    final PsiElement target = parent instanceof If ? ((If) parent).getCondition() : parent;
-                    final String message =
-                            (parent instanceof If ? patternMkdirAndCondition : patternMkdirDirectCall)
-                            .replace("%f%", arguments[0].getText())
-                            .replace("%f%", arguments[0].getText());
-                    //noinspection ConstantConditions ; at this point the condition can not be null
-                    holder.registerProblem(target, message);
+                if (context instanceof If || OpenapiTypesUtil.isStatementImpl(context)) {
+                    final String resource = arguments[0].getText();
+                    final String binary   = searchResult.isInverted ? patternMkdirAndCondition : patternMkdirOrCondition;
+                    final String message  = (context instanceof If ? binary : patternMkdirDirectCall)
+                            .replace("%f%", resource)
+                            .replace("%f%", resource);
+                    holder.registerProblem(context instanceof If ? target : context, message);
                 }
                 // case 2: && and || expressions
-                else if (parent.getParent() instanceof BinaryExpression) {
+                else if (context instanceof BinaryExpression) {
                     boolean isSecondExistenceCheckExists = false;
 
                     /* deal with nested conditions */
-                    BinaryExpression binary = (BinaryExpression) parent.getParent();
-                    if (binary.getRightOperand() == parent && binary.getParent() instanceof BinaryExpression) {
+                    BinaryExpression binary = (BinaryExpression) context;
+                    if (binary.getRightOperand() == context && binary.getParent() instanceof BinaryExpression) {
                         binary = (BinaryExpression) binary.getParent();
                     }
 
@@ -89,39 +95,71 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                                 (operation == PhpTokenTypes.opAND ? patternMkdirAndCondition : patternMkdirOrCondition)
                                 .replace("%f%", arguments[0].getText())
                                 .replace("%f%", arguments[0].getText());
-                        holder.registerProblem(parent, message);
+                        holder.registerProblem(target, message);
                     }
                 }
             }
 
-            @NotNull
-            private PsiElement getCompleteExpression(@NotNull PsiElement expression) {
+            private void getCompleteExpression(@NotNull PsiElement expression, @NotNull ExpressionLocateResult status) {
                 final PsiElement parent = expression.getParent();
 
-                if (parent instanceof AssignmentExpression || OpenapiTypesUtil.isStatementImpl(parent)) {
-                    return parent;
-                } else if (parent instanceof ParenthesizedExpression) {
-                    return this.getCompleteExpression(parent);
-                } else if (parent instanceof UnaryExpression) {
+                if (
+                    parent instanceof If || parent instanceof AssignmentExpression ||
+                    OpenapiTypesUtil.isStatementImpl(parent)
+                ) {
+                    status.setReportingTarget(expression);
+                    return;
+                }
+                if (parent instanceof ParenthesizedExpression) {
+                    this.getCompleteExpression(parent, status);
+                    return;
+                }
+                if (parent instanceof UnaryExpression) {
                     final UnaryExpression unary = (UnaryExpression) parent;
                     final PsiElement operation  = unary.getOperation();
                     if (operation != null) {
                         final IElementType operator = operation.getNode().getElementType();
-                        if (operator == PhpTokenTypes.opNOT || operator == PhpTokenTypes.opSILENCE) {
-                            return this.getCompleteExpression(unary);
+                        if (operator == PhpTokenTypes.opNOT) {
+                            status.setInverted(!status.isInverted());
+                            this.getCompleteExpression(unary, status);
+                            return;
+                        }
+                        if (operator == PhpTokenTypes.opSILENCE) {
+                            this.getCompleteExpression(unary, status);
                         }
                     }
-                } else if (parent instanceof BinaryExpression) {
+                    return;
+                }
+                if (parent instanceof BinaryExpression) {
                     final BinaryExpression binary = (BinaryExpression) parent;
                     final IElementType operation  = binary.getOperationType();
                     if (PhpTokenTypes.opAND == operation || PhpTokenTypes.opOR == operation) {
-                        return expression;
+                        status.setReportingTarget(expression);
+                        return;
                     }
-                    return this.getCompleteExpression(binary);
+                    this.getCompleteExpression(binary, status);
                 }
-
-                return parent;
             }
         };
+    }
+
+    final class ExpressionLocateResult {
+        private PsiElement reportingTarget;
+        private boolean isInverted;
+
+        boolean isInverted() {
+            return isInverted;
+        }
+        void setInverted(boolean inverted) {
+            isInverted = inverted;
+        }
+
+        @Nullable
+        PsiElement getReportingTarget() {
+            return reportingTarget;
+        }
+        void setReportingTarget(@NotNull PsiElement reportingTarget) {
+            this.reportingTarget = reportingTarget;
+        }
     }
 }

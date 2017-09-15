@@ -6,6 +6,7 @@
     $x = clone $object;
 
     $x = ($x + 1) / 2;
+    $x = ((array) $x)[0];
 
     (new stdClass())->with('data');
     (new stdClass())->prop;

@@ -6,6 +6,7 @@
     $x = clone<weak_warning descr="Unnecessary parentheses.">($object)</weak_warning>;
 
     $x = ($x + 1) / 2;
+    $x = ((array) $x)[0];
 
     (new stdClass())->with('data');
     (new stdClass())->prop;

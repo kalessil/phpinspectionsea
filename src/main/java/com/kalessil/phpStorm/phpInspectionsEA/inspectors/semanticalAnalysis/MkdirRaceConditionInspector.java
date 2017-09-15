@@ -1,11 +1,15 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -65,7 +69,9 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     final String message  = (context instanceof If ? binary : patternDirectCall)
                             .replace("%f%", resource)
                             .replace("%f%", resource);
-                    holder.registerProblem(context instanceof If ? target : context, message);
+
+                    final LocalQuickFix fixer = (context instanceof If ? null : new ThrowExceptionFix(resource));
+                    holder.registerProblem(context instanceof If ? target : context, message, fixer);
                 }
                 // case 2: && and || expressions
                 else if (context instanceof BinaryExpression) {
@@ -154,7 +160,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         };
     }
 
-    final class ExpressionLocateResult {
+    private static class ExpressionLocateResult {
         private PsiElement reportingTarget;
         private boolean isInverted;
 
@@ -171,6 +177,37 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         }
         void setReportingTarget(@NotNull PsiElement reportingTarget) {
             this.reportingTarget = reportingTarget;
+        }
+    }
+
+    private static class ThrowExceptionFix implements LocalQuickFix {
+        private final String resource;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Replace with conditional expression";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        ThrowExceptionFix(@NotNull String resource) {
+            this.resource = resource;
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement target = descriptor.getPsiElement();
+            if (target != null) {
+                final String throwPart = "throw new RuntimeException(sprintf('Directory \"%%s\" was not created', %s));";
+                final String pattern   = "if (!mkdir(%s) && !is_dir(%s)) { %s }";
+                final String code      = String.format(pattern, resource, resource, String.format(throwPart, resource));
+                target.replace(PhpPsiElementFactory.createPhpPsiFromText(project, If.class, code));
+            }
         }
     }
 }

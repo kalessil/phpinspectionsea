@@ -48,7 +48,7 @@ final public class UnclearOperationsPriorityStrategy {
                 final PsiElement assignedValue        = assignment.getValue();
                 if (assignedValue != null) {
                     final String value       = assignedValue.getText();
-                    final String replacement = assignment.getText().replace(value, "(%v%)").replace("%v%", value);
+                    final String replacement = assignment.getText().replace(value, "(" + value + ")");
                     holder.registerProblem(parent, message, new WrapItAsItIsFix(replacement));
                     return true;
                 }

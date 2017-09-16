@@ -35,7 +35,7 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
                 final PhpLanguageLevel php    = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                final boolean canUseConstants = php.compareTo(PhpLanguageLevel.PHP550) >= 0;
+                final boolean canUseConstants = php.compareTo(PhpLanguageLevel.PHP560) >= 0;
 
                 /* parent class might already introduce fields */
                 final PhpClass parent = clazz.getSuperClass();

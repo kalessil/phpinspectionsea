@@ -1,9 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -20,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class PropertyCanBeStaticInspector extends BasePhpInspection {
-    private static final String message
-        = "This property initialization seems to be quite 'heavy', consider using static property or constant instead.";
+    private static final String messageNoConstants   = "This property initialization seems to be quite 'heavy', consider using static property instead.";
+    private static final String messageWithConstants = "This property initialization seems to be quite 'heavy', consider using static property or constant instead.";
 
     @NotNull
     public String getShortName() {
@@ -33,6 +34,9 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpClass(PhpClass clazz) {
+                final PhpLanguageLevel php    = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                final boolean canUseConstants = php.compareTo(PhpLanguageLevel.PHP550) >= 0;
+
                 /* parent class might already introduce fields */
                 final PhpClass parent = clazz.getSuperClass();
                 for (final Field field : clazz.getOwnFields()) {
@@ -59,11 +63,10 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
                         final PhpPsiElement item = entry.getValue();
                         if (item instanceof ArrayCreationExpression || item instanceof StringLiteralExpression) {
                             ++intArrayOrStringCount;
-                        }
-
-                        if (intArrayOrStringCount == 3) {
-                            holder.registerProblem(nameNode, message, ProblemHighlightType.WEAK_WARNING);
-                            break;
+                            if (intArrayOrStringCount == 3) {
+                                holder.registerProblem(nameNode, canUseConstants ? messageWithConstants : messageNoConstants);
+                                break;
+                            }
                         }
                     }
                     /* look into array for value only pairs */
@@ -73,11 +76,10 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
                                 final PhpPsiElement item = ((PhpPsiElement) entry).getFirstPsiChild();
                                 if (item instanceof ArrayCreationExpression || item instanceof StringLiteralExpression) {
                                     ++intArrayOrStringCount;
-                                }
-
-                                if (intArrayOrStringCount == 3) {
-                                    holder.registerProblem(nameNode, message, ProblemHighlightType.WEAK_WARNING);
-                                    break;
+                                    if (intArrayOrStringCount == 3) {
+                                        holder.registerProblem(nameNode, canUseConstants ? messageWithConstants : messageNoConstants);
+                                        break;
+                                    }
                                 }
                             }
                         }

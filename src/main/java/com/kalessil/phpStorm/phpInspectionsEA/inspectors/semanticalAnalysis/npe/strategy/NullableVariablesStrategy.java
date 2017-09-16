@@ -10,6 +10,7 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableI
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
@@ -73,9 +74,11 @@ final public class NullableVariablesStrategy {
                 final AssignmentExpression assignment = variableAssignments.iterator().next();
                 final PsiElement assignmentValue      = assignment.getValue();
                 if (assignmentValue instanceof PhpTypedElement) {
-                    final Set<String> types = ((PhpTypedElement) assignmentValue)
-                            .getType().global(project).filterUnknown().getTypes().stream()
-                            .map(Types::getType).collect(Collectors.toSet());
+                    /* TODO: make compact again once NPEs source is found */
+                    PhpType resolved = ((PhpTypedElement) assignmentValue).getType();
+                    resolved         = resolved.global(project);
+                    resolved         = resolved.filterUnknown();
+                    final Set<String> types = resolved.getTypes().stream().map(Types::getType).collect(Collectors.toSet());
                     if (types.contains(Types.strNull) || types.contains(Types.strVoid)) {
                         types.remove(Types.strNull);
                         types.remove(Types.strVoid);

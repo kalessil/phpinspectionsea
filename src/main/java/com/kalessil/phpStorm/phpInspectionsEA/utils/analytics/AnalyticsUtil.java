@@ -32,12 +32,13 @@ final public class AnalyticsUtil {
             if (!related.isEmpty()) {
                 final StackTraceElement rootCause = related.get(0);
                 final String description          = String.format(
-                        "[%s:%s@%s] %s.%s: %s",
+                        "[%s:%s@%s] %s.%s#%s: %s",
                         rootCause.getFileName(),
                         rootCause.getLineNumber(),
                         source.getVersion(),
                         stackTrace[0].getClassName(),
                         stackTrace[0].getMethodName(),
+                        stackTrace[0].getLineNumber(),
                         exception.getMessage()
                 );
                 related.clear();

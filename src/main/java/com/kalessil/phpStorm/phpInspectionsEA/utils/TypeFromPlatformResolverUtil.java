@@ -28,7 +28,7 @@ final public class TypeFromPlatformResolverUtil {
 
             /* TODO: make compact again once NPEs source is found */
             PhpType resolved = ((PhpTypedElement) expression).getType();
-            resolved = resolved.global(project);
+            resolved         = resolved.global(project);
             for (final String resolvedType : resolved.getTypes()) {
                 final boolean isSignatureProvided = resolvedType.contains("?") || resolvedType.contains("#");
                 if (isSignatureProvided) {

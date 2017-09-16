@@ -25,16 +25,19 @@ final public class AnalyticsUtil {
 
     public static void registerPluginException(@NotNull EASettings source, @Nullable Throwable exception) {
         if (exception != null) {
-            final List<StackTraceElement> related = Arrays.stream(exception.getStackTrace())
-                    .filter(e -> e.getClassName().contains(pluginNamespace))
+            final StackTraceElement[] stackTrace  = exception.getStackTrace();
+            final List<StackTraceElement> related = Arrays.stream(stackTrace)
+                    .filter(element -> element.getClassName().contains(pluginNamespace))
                     .collect(Collectors.toList());
             if (!related.isEmpty()) {
                 final StackTraceElement rootCause = related.get(0);
                 final String description          = String.format(
-                        "%s:%s (%s) %s",
+                        "[%s:%s@%s] %s.%s: %s",
                         rootCause.getFileName(),
                         rootCause.getLineNumber(),
                         source.getVersion(),
+                        stackTrace[0].getClassName(),
+                        stackTrace[0].getMethodName(),
                         exception.getMessage()
                 );
                 related.clear();

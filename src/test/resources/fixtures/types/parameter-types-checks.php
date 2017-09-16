@@ -37,6 +37,18 @@
         ];
     }
 
+    /**
+     *  @param float  $float
+     *  @param int    $int
+     *  @param number $number
+     */
+    function numericTypes ($float, $int, $number) {
+        return [
+            is_int($int),
+            is_float($float),
+            is_int($number), is_float($number)
+        ];
+    }
 
     /** @var string $string */
     function stringTypeMagic ($string) {

@@ -12,6 +12,7 @@ final public class Types {
     final static public String strBoolean  = "bool";
     final static public String strInteger  = "int";
     final static public String strFloat    = "float";
+    final static public String strNumber   = "number";
     final static public String strNull     = "null";
     final static public String strVoid     = "void";
     final static public String strMixed    = "mixed";
@@ -55,6 +56,9 @@ final public class Types {
 
             mapTypes.put(strFloat,     strFloat);
             mapTypes.put("\\float",    strFloat);
+
+            mapTypes.put(strNumber,    strNumber);
+            mapTypes.put("\\number",   strNumber);
 
             mapTypes.put(strNull,      strNull);
             mapTypes.put("\\null",     strNull);

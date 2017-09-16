@@ -69,19 +69,19 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                 for (final Parameter parameter : parameters) {
                     /* normalize parameter types, skip analysis when mixed or object appears */
-                    final Set<String> parameterTypes = new HashSet<>();
+                    final Set<String> paramTypes = new HashSet<>();
                     for (final String type : parameter.getType().global(project).filterUnknown().getTypes()) {
                         final String typeNormalized = Types.getType(type);
                         if (typeNormalized.equals(Types.strMixed) || typeNormalized.equals(Types.strObject)) {
-                            parameterTypes.clear();
+                            paramTypes.clear();
                             break;
                         } else if (typeNormalized.equals(Types.strCallable)) {
-                            parameterTypes.add(Types.strArray);
-                            parameterTypes.add(Types.strString);
+                            paramTypes.add(Types.strArray);
+                            paramTypes.add(Types.strString);
                         }
-                        parameterTypes.add(typeNormalized);
+                        paramTypes.add(typeNormalized);
                     }
-                    if (parameterTypes.isEmpty()) {
+                    if (paramTypes.isEmpty()) {
                         continue;
                     }
 
@@ -107,25 +107,26 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             switch (functionName) {
                                 case "is_array":
                                     isTypeAnnounced =
-                                        parameterTypes.contains(Types.strArray) ||
-                                        parameterTypes.contains(Types.strIterable)
-                                    ;
+                                        paramTypes.contains(Types.strArray) || paramTypes.contains(Types.strIterable);
                                     break;
                                 case "is_string":
-                                    isTypeAnnounced = parameterTypes.contains(Types.strString);
+                                    isTypeAnnounced = paramTypes.contains(Types.strString);
                                     break;
                                 case "is_bool":
-                                    isTypeAnnounced = parameterTypes.contains(Types.strBoolean);
+                                    isTypeAnnounced = paramTypes.contains(Types.strBoolean);
                                     break;
                                 case "is_int":
-                                    isTypeAnnounced = parameterTypes.contains(Types.strInteger);
+                                    isTypeAnnounced =
+                                        paramTypes.contains(Types.strInteger) || paramTypes.contains(Types.strNumber);
                                     break;
                                 case "is_float":
-                                    isTypeAnnounced = parameterTypes.contains(Types.strFloat);
+                                    isTypeAnnounced =
+                                        paramTypes.contains(Types.strFloat) || paramTypes.contains(Types.strNumber);
                                     break;
                                 case "is_resource":
-                                    isTypeAnnounced = parameterTypes.contains(Types.strResource);
+                                    isTypeAnnounced = paramTypes.contains(Types.strResource);
                                     break;
+
                                 default:
                                     continue;
                             }
@@ -175,7 +176,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                             }
                                         }
 
-                                        final boolean isViolation = !this.isTypeCompatibleWith(type, parameterTypes, index);
+                                        final boolean isViolation = !this.isTypeCompatibleWith(type, paramTypes, index);
                                         if (isViolation) {
                                             final String message = patternViolationInAssignment.replace("%s%", type);
                                             holder.registerProblem(value, message);
@@ -189,7 +190,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                         /* TODO: analyze comparison operations */
                     }
 
-                    parameterTypes.clear();
+                    paramTypes.clear();
                 }
             }
 

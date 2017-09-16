@@ -23,6 +23,7 @@ final public class OpeanapiEquivalenceUtil {
             }
         } catch (Throwable error) {
             /* not clear why, but PsiEquivalenceUtil.areElementsEquivalent emits IOException, EOFException */
+            /* this probably is not necessary, but we are getting exceptions logged */
             result = false;
         }
         return result;

@@ -14,6 +14,7 @@ import org.apache.http.client.fluent.Request;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +25,7 @@ final public class AnalyticsUtil {
     private static final String pluginNamespace = "com.kalessil.phpStorm.phpInspectionsEA";
 
     public static void registerPluginException(@NotNull EASettings source, @Nullable Throwable exception) {
-        if (exception != null) {
+        if (exception != null && !(exception instanceof IOException)) {
             final StackTraceElement[] stackTrace  = exception.getStackTrace();
             final List<StackTraceElement> related = Arrays.stream(stackTrace)
                     .filter(element -> element.getClassName().contains(pluginNamespace))

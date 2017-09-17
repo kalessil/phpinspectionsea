@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.10.3</version>
+  <version>2.3.10.4</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -56,6 +56,7 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
 <a href="https://www.paypal.me/VReznichenko">PayPal</a>. Enhancements:
 <br/>
 <br/>
+- Fixes for newly discovered IDE exceptions<br/>
 - Callable parameter usage violates definition: resolved false-positives (multiple cases)<br/>
 - Cascading 'str_replace(...)' calls: implemented QF<br/>
 - Foreach usage possible: implemented QF<br/>

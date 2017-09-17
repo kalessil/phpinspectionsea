@@ -25,7 +25,14 @@ final public class AnalyticsUtil {
     private static final String pluginNamespace = "com.kalessil.phpStorm.phpInspectionsEA";
 
     public static void registerPluginException(@NotNull EASettings source, @Nullable Throwable exception) {
-        if (exception != null && !(exception instanceof IOException)) {
+        if (exception != null) {
+            /* ignore IO-errors, that's not something we can handle */
+            final Throwable cause = exception.getCause();
+            if (exception instanceof IOException || cause instanceof IOException) {
+                return;
+            }
+
+            /* report plugin failure location and trace top: to understand is it internals or the plugin */
             final StackTraceElement[] stackTrace  = exception.getStackTrace();
             final List<StackTraceElement> related = Arrays.stream(stackTrace)
                     .filter(element -> element.getClassName().contains(pluginNamespace))

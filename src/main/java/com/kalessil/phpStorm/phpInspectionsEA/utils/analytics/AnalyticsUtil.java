@@ -9,6 +9,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils.analytics;
  * file that was distributed with this source code.
  */
 
+import com.intellij.util.indexing.StorageException;
 import com.kalessil.phpStorm.phpInspectionsEA.EASettings;
 import org.apache.http.client.fluent.Request;
 import org.jetbrains.annotations.NotNull;
@@ -24,16 +25,16 @@ final public class AnalyticsUtil {
     final static private String COLLECTOR_URL   = "https://www.google-analytics.com/collect"; /* or /debug/collect */
     private static final String pluginNamespace = "com.kalessil.phpStorm.phpInspectionsEA";
 
-    public static void registerPluginException(@NotNull EASettings source, @Nullable Throwable exception) {
-        if (exception != null) {
+    public static void registerPluginException(@NotNull EASettings source, @Nullable Throwable error) {
+        if (error != null) {
             /* ignore IO-errors, that's not something we can handle */
-            final Throwable cause = exception.getCause();
-            if (exception instanceof IOException || cause instanceof IOException) {
+            final Throwable cause = error.getCause();
+            if (error instanceof StorageException || error instanceof IOException || cause instanceof IOException) {
                 return;
             }
 
             /* report plugin failure location and trace top: to understand is it internals or the plugin */
-            final StackTraceElement[] stackTrace  = exception.getStackTrace();
+            final StackTraceElement[] stackTrace  = error.getStackTrace();
             final List<StackTraceElement> related = Arrays.stream(stackTrace)
                     .filter(element -> element.getClassName().contains(pluginNamespace))
                     .collect(Collectors.toList());
@@ -47,8 +48,8 @@ final public class AnalyticsUtil {
                         stackTrace[0].getClassName(),
                         stackTrace[0].getMethodName(),
                         stackTrace[0].getLineNumber(),
-                        exception.getMessage(),
-                        exception.getClass().getName()
+                        error.getMessage(),
+                        error.getClass().getName()
                 );
                 related.clear();
 

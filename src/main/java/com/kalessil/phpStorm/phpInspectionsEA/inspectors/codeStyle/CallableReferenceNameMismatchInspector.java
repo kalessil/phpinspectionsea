@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -56,7 +57,7 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
                 }
 
                 /* resolve callable and ensure the case matches */
-                final PsiElement resolved = reference.resolve();
+                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                 if (resolved instanceof Function) {
                     final Function function = (Function) resolved;
                     final String realName   = function.getName();

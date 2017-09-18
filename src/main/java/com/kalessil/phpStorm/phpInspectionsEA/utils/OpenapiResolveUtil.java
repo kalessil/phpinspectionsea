@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.php.lang.psi.elements.PhpReference;
+import com.intellij.psi.PsiReference;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.EASettings;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 final public class OpenapiResolveUtil {
     @Nullable
-    static public PsiElement resolveReference(@NotNull PhpReference reference) {
+    static public PsiElement resolveReference(@NotNull PsiReference reference) {
         try {
             return reference.resolve();
         } catch (Throwable error) {

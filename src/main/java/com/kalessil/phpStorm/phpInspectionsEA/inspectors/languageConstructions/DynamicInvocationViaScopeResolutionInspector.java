@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +41,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
                 final PsiReference objReference = reference.getReference();
                 final String methodName         = reference.getName();
                 if (null != objReference && !StringUtils.isEmpty(methodName)) {
-                    final PsiElement objResolvedRef = objReference.resolve();
+                    final PsiElement objResolvedRef = OpenapiResolveUtil.resolveReference(objReference);
                     /* resolved method is static but called with $ this*/
                     if (objResolvedRef instanceof Method) {
                         final Method method  = (Method) objResolvedRef;

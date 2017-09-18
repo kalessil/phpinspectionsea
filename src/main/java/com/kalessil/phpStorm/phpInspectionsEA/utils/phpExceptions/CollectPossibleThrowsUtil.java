@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpDoc.ThrowsResolveUtil;
@@ -184,7 +185,7 @@ final public class CollectPossibleThrowsUtil {
                     continue;
                 }
 
-                PsiElement methodResolved = call.resolve();
+                PsiElement methodResolved = OpenapiResolveUtil.resolveReference(call);
                 if (methodResolved instanceof Method) {
                     /* lookup for annotated exceptions */
                     final HashSet<PhpClass> methodExceptions = new HashSet<>();

@@ -2,6 +2,8 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.psi.PsiElement;
+import com.kalessil.phpStorm.phpInspectionsEA.EASettings;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.analytics.AnalyticsUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -22,8 +24,7 @@ final public class OpeanapiEquivalenceUtil {
                 result = first.getClass() == second.getClass() && first.getText().equals(second.getText());
             }
         } catch (Throwable error) {
-            /* not clear why, but PsiEquivalenceUtil.areElementsEquivalent emits IOException, EOFException */
-            /* this probably is not necessary, but we are getting exceptions logged */
+            AnalyticsUtil.registerPreventedException(EASettings.getInstance().getUuid(), error);
             result = false;
         }
         return result;

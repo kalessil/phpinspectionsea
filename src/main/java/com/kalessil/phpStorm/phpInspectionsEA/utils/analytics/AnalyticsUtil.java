@@ -25,7 +25,24 @@ final public class AnalyticsUtil {
     final static private String COLLECTOR_URL   = "https://www.google-analytics.com/collect"; /* or /debug/collect */
     private static final String pluginNamespace = "com.kalessil.phpStorm.phpInspectionsEA";
 
-    public static void registerPluginException(@NotNull EASettings source, @Nullable Throwable error) {
+    public static void registerPreventedException(@Nullable String uuid, @NotNull Throwable error) {
+        final List<StackTraceElement> related = Arrays.stream(error.getStackTrace())
+                    .filter(element -> element.getClassName().contains(pluginNamespace))
+                    .collect(Collectors.toList());
+        if (!related.isEmpty()) {
+            final StackTraceElement entryPoint = related.get(0);
+            final String description          = String.format(
+                    "[%s:%s] Handled %s",
+                    entryPoint.getFileName(),
+                    entryPoint.getLineNumber(),
+                    error.getClass().getName()
+            );
+            related.clear();
+            invokeExceptionReporting(uuid, description);
+        }
+    }
+
+    public static void registerLoggedException(@Nullable String uuid, @Nullable Throwable error) {
         if (error != null) {
             /* ignore IO-errors, that's not something we can handle */
             final Throwable cause = error.getCause();
@@ -39,12 +56,12 @@ final public class AnalyticsUtil {
                     .filter(element -> element.getClassName().contains(pluginNamespace))
                     .collect(Collectors.toList());
             if (!related.isEmpty()) {
-                final StackTraceElement rootCause = related.get(0);
-                final String description          = String.format(
+                final StackTraceElement entryPoint = related.get(0);
+                final String description           = String.format(
                         "[%s:%s@%s] %s.%s#%s: %s|%s",
-                        rootCause.getFileName(),
-                        rootCause.getLineNumber(),
-                        source.getVersion(),
+                        entryPoint.getFileName(),
+                        entryPoint.getLineNumber(),
+                        uuid,
                         stackTrace[0].getClassName(),
                         stackTrace[0].getMethodName(),
                         stackTrace[0].getLineNumber(),
@@ -52,30 +69,32 @@ final public class AnalyticsUtil {
                         error.getClass().getName()
                 );
                 related.clear();
-
-                new Thread(() -> {
-                    /* See https://developers.google.com/analytics/devguides/collection/analyticsjs/exceptions */
-                    final StringBuilder payload = new StringBuilder();
-                    payload
-                            .append("v=1")                                              // Version.
-                            .append("&tid=").append(COLLECTOR_ID)                       // Tracking ID / Property ID.
-                            .append("&cid=").append(source.getUuid())                   // Anonymous Client ID.
-                            .append("&t=exception")                                     // Exception hit type.
-                            .append("&exd=").append(description)                        // Exception description.
-                            .append("&exf=1")                                           // Exception is fatal?
-                    ;
-
-                    try {
-                        Request.Post(COLLECTOR_URL)
-                                .bodyByteArray(payload.toString().getBytes())
-                                .connectTimeout(3000)
-                                .execute();
-                    } catch (Exception failed) {
-                        /* we do nothing here - this happens in background and not mission critical */
-                    }
-                }).start();
+                invokeExceptionReporting(uuid, description);
             }
         }
+    }
+
+    static private void invokeExceptionReporting(@Nullable String uuid, @NotNull String description) {
+        new Thread(() -> {
+            /* See https://developers.google.com/analytics/devguides/collection/analyticsjs/exceptions */
+            final StringBuilder payload = new StringBuilder();
+            payload
+                    .append("v=1")                                              // Version.
+                    .append("&tid=").append(COLLECTOR_ID)                       // Tracking ID / Property ID.
+                    .append("&cid=").append(uuid)                               // Anonymous Client ID.
+                    .append("&t=exception")                                     // Exception hit type.
+                    .append("&exd=").append(description)                        // Exception description.
+                    .append("&exf=1")                                           // Exception is fatal?
+            ;
+            try {
+                Request.Post(COLLECTOR_URL)
+                        .bodyByteArray(payload.toString().getBytes())
+                        .connectTimeout(3000)
+                        .execute();
+            } catch (Exception failed) {
+                /* we do nothing here - this happens in background and not mission critical */
+            }
+        }).start();
     }
 
     public static void registerPluginEvent(@NotNull EASettings source, @NotNull String action, @NotNull String eventValue) {

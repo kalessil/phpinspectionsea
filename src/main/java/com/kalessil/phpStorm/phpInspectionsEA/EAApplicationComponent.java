@@ -44,7 +44,7 @@ public class EAApplicationComponent implements ApplicationComponent {
             public void append(@NotNull LoggingEvent event) {
                 final ThrowableInformation exceptionDetails = event.getThrowableInformation();
                 if (exceptionDetails != null) {
-                    AnalyticsUtil.registerPluginException(settings, exceptionDetails.getThrowable());
+                    AnalyticsUtil.registerLoggedException(settings.getUuid(), exceptionDetails.getThrowable());
                 }
             }
         };

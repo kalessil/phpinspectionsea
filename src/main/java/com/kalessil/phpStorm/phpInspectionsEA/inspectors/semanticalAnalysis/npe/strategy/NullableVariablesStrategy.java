@@ -11,10 +11,7 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstr
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,16 +71,17 @@ final public class NullableVariablesStrategy {
                 final AssignmentExpression assignment = variableAssignments.iterator().next();
                 final PsiElement assignmentValue      = assignment.getValue();
                 if (assignmentValue instanceof PhpTypedElement) {
-                    /* TODO: make compact again once NPEs source is found */
-                    PhpType resolved = ((PhpTypedElement) assignmentValue).getType();
-                    resolved         = resolved.global(project);
-                    resolved         = resolved.filterUnknown();
-                    final Set<String> types = resolved.getTypes().stream().map(Types::getType).collect(Collectors.toSet());
-                    if (types.contains(Types.strNull) || types.contains(Types.strVoid)) {
-                        types.remove(Types.strNull);
-                        types.remove(Types.strVoid);
-                        if (types.stream().filter(t -> !t.startsWith("\\") && !objectTypes.contains(t)).count() == 0) {
-                            apply(variableName, assignment, controlFlowStart, holder);
+                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) assignmentValue, project);
+                    if (resolved != null) {
+                        final Set<String> types = resolved.filterUnknown().getTypes().stream()
+                                .map(Types::getType)
+                                .collect(Collectors.toSet());
+                        if (types.contains(Types.strNull) || types.contains(Types.strVoid)) {
+                            types.remove(Types.strNull);
+                            types.remove(Types.strVoid);
+                            if (types.stream().filter(t -> !t.startsWith("\\") && !objectTypes.contains(t)).count() == 0) {
+                                apply(variableName, assignment, controlFlowStart, holder);
+                            }
                         }
                     }
                 }

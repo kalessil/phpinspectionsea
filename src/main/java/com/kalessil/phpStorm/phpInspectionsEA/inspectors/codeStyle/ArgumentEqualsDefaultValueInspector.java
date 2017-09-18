@@ -15,6 +15,7 @@ import com.jetbrains.php.lang.psi.elements.Parameter;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,7 +69,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                     PsiElement reportTo   = null;
 
                     if (OpenapiTypesUtil.DEFAULT_VALUES.contains(arguments[arguments.length - 1].getNode().getElementType())) {
-                        final PsiElement resolved = reference.resolve();
+                        final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                         if (resolved instanceof Function) {
                             final Parameter[] parameters = ((Function) resolved).getParameters();
                             for (int index = Math.min(parameters.length, arguments.length) - 1; index >= 0; --index) {

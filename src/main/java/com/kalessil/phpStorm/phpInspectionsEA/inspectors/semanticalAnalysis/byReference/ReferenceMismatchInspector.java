@@ -18,6 +18,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -333,7 +334,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                     AssignmentExpression assignment = (AssignmentExpression) reference.getParent();
                     if (assignment.getValue() == reference) {
                         /* try resolving now */
-                        PsiElement callable = reference.resolve();
+                        PsiElement callable = OpenapiResolveUtil.resolveReference(reference);
                         if (callable instanceof Function) {
                             /* ensure name discoverable */
                             final Function function   = (Function) callable;

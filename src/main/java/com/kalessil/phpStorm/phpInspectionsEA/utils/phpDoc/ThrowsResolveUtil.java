@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocReturnTag;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -47,7 +48,7 @@ final public class ThrowsResolveUtil {
                 if (candidate.getName().equalsIgnoreCase("@throws")) {
                     /* definition styles can differ: single tags, pipe concatenated or combined  */
                     for (final PhpDocType type : PsiTreeUtil.findChildrenOfType(candidate, PhpDocType.class)) {
-                        final PsiElement resolved = type.resolve();
+                        final PsiElement resolved = OpenapiResolveUtil.resolveReference(type);
                         if (resolved instanceof PhpClass) {
                             exceptionsRegistry.add((PhpClass) resolved);
                         }

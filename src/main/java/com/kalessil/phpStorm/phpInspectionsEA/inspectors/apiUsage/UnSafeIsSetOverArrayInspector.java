@@ -10,10 +10,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -99,7 +96,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                     if (argument instanceof FieldReference) {
                         /* if field is not resolved, it's probably dynamic and isset have a purpose */
                         final PsiReference referencedField = argument.getReference();
-                        final PsiElement resolvedField     = null == referencedField ? null : referencedField.resolve();
+                        final PsiElement resolvedField     = null == referencedField ? null : OpenapiResolveUtil.resolveReference(referencedField);
                         if (null == resolvedField || !(ExpressionSemanticUtil.getBlockScope(resolvedField) instanceof PhpClass)) {
                             return;
                         }

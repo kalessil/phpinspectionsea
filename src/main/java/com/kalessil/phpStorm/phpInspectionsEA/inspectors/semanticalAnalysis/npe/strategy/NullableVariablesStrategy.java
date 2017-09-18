@@ -203,7 +203,7 @@ final public class NullableVariablesStrategy {
             /* cases when null dispatched into to non-null parameter */
             if (parent instanceof ParameterList && parent.getParent() instanceof FunctionReference) {
                 final FunctionReference reference = (FunctionReference) parent.getParent();
-                final PsiElement resolved         = reference.resolve();
+                final PsiElement resolved         = OpenapiResolveUtil.resolveReference(reference);
                 if (resolved != null)  {
                     /* get the parameter definition */
                     final int position           = Arrays.asList(reference.getParameters()).indexOf(variable);

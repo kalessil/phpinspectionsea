@@ -10,6 +10,7 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -50,7 +51,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                     if (reference instanceof ClassReference) {
                         final ClassReference clazz = (ClassReference) reference;
                         final String referencedQn  = reference.getText();
-                        final PsiElement resolved  = validReferences.contains(referencedQn) ? null : clazz.resolve();
+                        final PsiElement resolved  = validReferences.contains(referencedQn) ? null : OpenapiResolveUtil.resolveReference(clazz);
                         if (resolved instanceof PhpClass) {
                             /* the resolved class will accumulate case issue in it's FQN */
                             final List<String> variants = this.getVariants(clazz, (PhpClass) resolved);

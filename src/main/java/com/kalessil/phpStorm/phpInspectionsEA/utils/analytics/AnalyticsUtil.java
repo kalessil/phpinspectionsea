@@ -25,23 +25,6 @@ final public class AnalyticsUtil {
     final static private String COLLECTOR_URL   = "https://www.google-analytics.com/collect"; /* or /debug/collect */
     private static final String pluginNamespace = "com.kalessil.phpStorm.phpInspectionsEA";
 
-    public static void registerPreventedException(@Nullable String uuid, @NotNull Throwable error) {
-        final List<StackTraceElement> related = Arrays.stream(error.getStackTrace())
-                    .filter(element -> element.getClassName().contains(pluginNamespace))
-                    .collect(Collectors.toList());
-        if (!related.isEmpty()) {
-            final StackTraceElement entryPoint = related.get(0);
-            final String description          = String.format(
-                    "[%s:%s] Handled %s",
-                    entryPoint.getFileName(),
-                    entryPoint.getLineNumber(),
-                    error.getClass().getName()
-            );
-            related.clear();
-            invokeExceptionReporting(uuid, description);
-        }
-    }
-
     public static void registerLoggedException(@Nullable String uuid, @Nullable Throwable error) {
         if (error != null) {
             /* ignore IO-errors, that's not something we can handle */

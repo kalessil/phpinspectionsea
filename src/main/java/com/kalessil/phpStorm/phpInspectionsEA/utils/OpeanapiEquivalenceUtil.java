@@ -2,8 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.psi.PsiElement;
-import com.kalessil.phpStorm.phpInspectionsEA.EASettings;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.analytics.AnalyticsUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -24,7 +22,7 @@ final public class OpeanapiEquivalenceUtil {
                 result = first.getClass() == second.getClass() && first.getText().equals(second.getText());
             }
         } catch (Throwable error) {
-            AnalyticsUtil.registerPreventedException(EASettings.getInstance().getUuid(), error);
+            /* exception here connected with indexing and IO failures, hence just ignore them */
             result = false;
         }
         return result;

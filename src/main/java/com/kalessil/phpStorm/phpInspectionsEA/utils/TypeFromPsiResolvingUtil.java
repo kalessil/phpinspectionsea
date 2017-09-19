@@ -110,7 +110,7 @@ final public class TypeFromPsiResolvingUtil {
         if (objSubjectExpression instanceof ArrayAccessExpression) {
             PsiElement var = ((ArrayAccessExpression) objSubjectExpression).getValue();
             if (var instanceof PsiReference) {
-                var = ((PsiReference) var).resolve();
+                var = OpenapiResolveUtil.resolveReference((PsiReference) var);
             }
             if ((var instanceof PhpTypedElement) && ((PhpTypedElement) var).getType().equals(PhpType.STRING)) {
                 objTypesSet.add(Types.strString);

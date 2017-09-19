@@ -1,18 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -70,8 +65,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
                                 .replace("%o%", operator.getText())
                                 .replace("%v%", leftOperand.getText());
                             final String message = messagePattern.replace("%r%", replacement);
-                            holder.registerProblem(assignmentExpression, message, ProblemHighlightType.WEAK_WARNING,
-                                    new TheLocalFix(replacement));
+                            holder.registerProblem(assignmentExpression, message, new UseShorthandOperatorFix(replacement));
                         }
                     }
                 }
@@ -79,33 +73,15 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
-        final private String suggestedReplacement;
-
-        TheLocalFix(@NotNull String suggestedReplacement) {
-            super();
-            this.suggestedReplacement = suggestedReplacement;
+    private static class UseShorthandOperatorFix extends UseSuggestedReplacementFixer {
+        UseShorthandOperatorFix(@NotNull String suggestedReplacement) {
+            super(suggestedReplacement);
         }
 
         @NotNull
         @Override
         public String getName() {
             return "Use the short notation";
-        }
-
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return getName();
-        }
-
-        @Override
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement target = descriptor.getPsiElement();
-            if (target instanceof AssignmentExpression) {
-                //noinspection ConstantConditions - as we safe from NPE due to hardcoded pattern
-                target.replace(PhpPsiElementFactory.createFromText(project, SelfAssignmentExpression.class, this.suggestedReplacement));
-            }
         }
     }
 }

@@ -25,7 +25,7 @@ final public class AnalyticsUtil {
     final static private String COLLECTOR_URL   = "https://www.google-analytics.com/collect"; /* or /debug/collect */
     private static final String pluginNamespace = "com.kalessil.phpStorm.phpInspectionsEA";
 
-    public static void registerLoggedException(@Nullable String uuid, @Nullable Throwable error) {
+    public static void registerLoggedException(@Nullable String version, @Nullable String uuid, @Nullable Throwable error) {
         if (error != null) {
             /* ignore IO-errors, that's not something we can handle */
             final Throwable cause = error.getCause();
@@ -44,7 +44,7 @@ final public class AnalyticsUtil {
                         "[%s:%s@%s] %s.%s#%s: %s|%s",
                         entryPoint.getFileName(),
                         entryPoint.getLineNumber(),
-                        uuid,
+                        version,
                         stackTrace[0].getClassName(),
                         stackTrace[0].getMethodName(),
                         stackTrace[0].getLineNumber(),

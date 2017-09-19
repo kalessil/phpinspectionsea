@@ -85,13 +85,14 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                     }
 
                     final PsiElement[] currentParams = current.getParameters();
-                    if (1 == currentParams.length) {
+                    if (currentParams.length == 1) {
                         argument = currentParams[0];
                         ++directoryLevel;
-                    }
-                    if (2 == currentParams.length) {
+                    } else if (currentParams.length == 2) {
                         argument = currentParams[0];
                         levels.add(currentParams[1]);
+                    } else {
+                        break;
                     }
 
                     if (!(currentParams[0] instanceof FunctionReference)) {

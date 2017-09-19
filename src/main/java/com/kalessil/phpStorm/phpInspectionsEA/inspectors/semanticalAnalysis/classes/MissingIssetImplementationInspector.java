@@ -8,6 +8,7 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,7 +62,7 @@ public class MissingIssetImplementationInspector extends BasePhpInspection {
                     if (parameter instanceof FieldReference) {
                         final FieldReference reference = (FieldReference) parameter;
                         /* if the field name is not implicit or the field resolved, continue */
-                        if (null == reference.getNameNode() || null != reference.resolve()) {
+                        if (null == reference.getNameNode() || null != OpenapiResolveUtil.resolveReference(reference)) {
                             continue;
                         }
 

@@ -24,6 +24,7 @@ final public class OpenapiResolveUtil {
         try {
             return expression.getType().global(project);
         } catch (Throwable error) {
+            /* exception here connected with indexing and IO failures, hence just ignore them */
             return null;
         }
     }

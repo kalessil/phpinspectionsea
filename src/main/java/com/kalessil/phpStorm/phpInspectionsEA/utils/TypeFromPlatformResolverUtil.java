@@ -26,19 +26,19 @@ final public class TypeFromPlatformResolverUtil {
             final PhpIndex index  = PhpIndex.getInstance(project);
             final Function scope  = ExpressionSemanticUtil.getScope(expression);
 
-            /* TODO: make compact again once NPEs source is found */
-            PhpType resolved = ((PhpTypedElement) expression).getType();
-            resolved         = resolved.global(project);
-            for (final String resolvedType : resolved.getTypes()) {
-                final boolean isSignatureProvided = resolvedType.contains("?") || resolvedType.contains("#");
-                if (isSignatureProvided) {
-                    TypeFromPsiResolvingUtil.resolveExpressionType(expression, scope, index, types);
-                    continue;
+            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) expression, project);
+            if (resolved != null) {
+                for (final String resolvedType : resolved.getTypes()) {
+                    final boolean isSignatureProvided = resolvedType.contains("?") || resolvedType.contains("#");
+                    if (isSignatureProvided) {
+                        TypeFromPsiResolvingUtil.resolveExpressionType(expression, scope, index, types);
+                        continue;
+                    }
+                    types.add(Types.getType(resolvedType));
                 }
-                types.add(Types.getType(resolvedType));
+                types.remove(Types.strClassNotResolved);
+                types.remove(Types.strResolvingAbortedOnPsiLevel);
             }
-            types.remove(Types.strClassNotResolved);
-            types.remove(Types.strResolvingAbortedOnPsiLevel);
         }
     }
 }

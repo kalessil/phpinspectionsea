@@ -127,7 +127,7 @@ final public class TypeFromPsiResolvingUtil {
 
         // resolve reference
         if (objSubjectExpression instanceof PsiReference) {
-            PsiElement target = ((PsiReference) objSubjectExpression).resolve();
+            PsiElement target = OpenapiResolveUtil.resolveReference((PsiReference) objSubjectExpression);
             if (target instanceof PhpTypedElement) {
                 storeAsTypeWithSignaturesImport(((PhpTypedElement) target).getType().toString(), objScope, objIndex, objTypesSet);
                 return;

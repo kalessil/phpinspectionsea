@@ -20,6 +20,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -99,8 +100,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 boolean supportNullableTypes
             ) {
                 /* suggest nothing when the type is only partially resolved */
-                final PhpType resolvedReturnType  = method.getType().global(holder.getProject());
-                if (resolvedReturnType.hasUnknown()) {
+                final PhpType resolvedReturnType = OpenapiResolveUtil.resolveType(method, holder.getProject());
+                if (resolvedReturnType == null || resolvedReturnType.hasUnknown()) {
                     return;
                 }
 

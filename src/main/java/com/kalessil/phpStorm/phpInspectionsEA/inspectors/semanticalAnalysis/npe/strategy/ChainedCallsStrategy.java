@@ -44,26 +44,28 @@ final public class ChainedCallsStrategy {
         if (OpenapiTypesUtil.is(operator, PhpTokenTypes.ARROW)) {
             final PsiElement base = reference.getFirstPsiChild();
             if (base instanceof FunctionReference) {
-                final FunctionReference baseReference = (FunctionReference) base;
-                final String methodName               = baseReference.getName();
-                final PhpType types                   = baseReference.getType().global(holder.getProject()).filterUnknown();
-                for (final String resolvedType : types.getTypes()) {
-                    final String type = Types.getType(resolvedType);
-                    if (type.equals(Types.strNull) || type.equals(Types.strVoid)) {
-                        boolean isNullTested = false;
-                        for (final MethodReference nullTestedReference : nullTestedReferences.keySet()) {
-                            final String nullTestedMethodName = nullTestedReferences.get(nullTestedReference);
-                            if (
-                                nullTestedMethodName != null && nullTestedMethodName.equals(methodName) &&
-                                OpeanapiEquivalenceUtil.areEqual(nullTestedReference, baseReference)
-                            ) {
-                                isNullTested = true;
+                final FunctionReference baseCall = (FunctionReference) base;
+                final PhpType returnType         = OpenapiResolveUtil.resolveType(baseCall, holder.getProject());
+                if (returnType != null) {
+                    final String methodName = baseCall.getName();
+                    for (final String resolvedType : returnType.filterUnknown().getTypes()) {
+                        final String type = Types.getType(resolvedType);
+                        if (type.equals(Types.strNull) || type.equals(Types.strVoid)) {
+                            boolean isNullTested = false;
+                            for (final MethodReference nullTestedReference : nullTestedReferences.keySet()) {
+                                final String nullTestedMethodName = nullTestedReferences.get(nullTestedReference);
+                                if (
+                                    nullTestedMethodName != null && nullTestedMethodName.equals(methodName) &&
+                                    OpeanapiEquivalenceUtil.areEqual(nullTestedReference, baseCall)
+                                ) {
+                                    isNullTested = true;
+                                    break;
+                                }
+                            }
+                            if (!isNullTested) {
+                                holder.registerProblem(operator, message);
                                 break;
                             }
-                        }
-                        if (!isNullTested) {
-                            holder.registerProblem(operator, message);
-                            break;
                         }
                     }
                 }

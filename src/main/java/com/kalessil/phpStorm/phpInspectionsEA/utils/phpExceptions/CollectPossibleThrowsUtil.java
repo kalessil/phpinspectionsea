@@ -224,11 +224,12 @@ final public class CollectPossibleThrowsUtil {
             /* resolve catch-class */
             final Collection<ClassReference> catchClassReferences = catchInTry.getExceptionTypes();
             for (ClassReference catchClassReference : catchClassReferences) {
-                if (!(catchClassReference.resolve() instanceof PhpClass)) {
+                final PsiElement resolved = OpenapiResolveUtil.resolveReference(catchClassReference);
+                if (!(resolved instanceof PhpClass)) {
                     continue;
                 }
 
-                final PhpClass caughtClass = (PhpClass) catchClassReference.resolve();
+                final PhpClass caughtClass = (PhpClass) resolved;
 //holder.registerProblem(catchInTry.getFirstChild(), "Catches: " + caughtClass.toString(), ProblemHighlightType.WEAK_WARNING);
 
                 /* inspect what covered */

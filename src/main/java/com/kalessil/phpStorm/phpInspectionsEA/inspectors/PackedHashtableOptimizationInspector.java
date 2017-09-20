@@ -123,7 +123,7 @@ final public class PackedHashtableOptimizationInspector extends BasePhpInspectio
 
                     /* try converting into integer */
                     try {
-                        integerIndex = Integer.valueOf(numericIndex);
+                        integerIndex = Integer.parseInt(numericIndex);
                     } catch (NumberFormatException error) {
                         indexes.clear();
                         return;

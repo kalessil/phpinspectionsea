@@ -88,7 +88,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                             /* 3rd parameter can be simplified */
                             final String replacement;
                             try {
-                                replacement = "-" + (Integer.valueOf(candidate.getRightOperand().getText()) - 1);
+                                replacement = "-" + (Integer.parseInt(candidate.getRightOperand().getText()) - 1);
                             } catch (NumberFormatException notNumericOffset) {
                                 return;
                             }

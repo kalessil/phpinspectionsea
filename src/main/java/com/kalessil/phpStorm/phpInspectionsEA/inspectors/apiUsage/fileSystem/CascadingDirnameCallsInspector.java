@@ -112,7 +112,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                     final List<String> reported = new ArrayList<>();
                     for (PsiElement levelEntry : levels) {
                         try {
-                            directoryLevel += Integer.valueOf(levelEntry.getText());
+                            directoryLevel += Integer.parseInt(levelEntry.getText());
                         } catch (NumberFormatException fail) {
                             reported.add(levelEntry.getText());
                         }

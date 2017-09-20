@@ -58,7 +58,7 @@ public class StringsFirstCharactersCompareInspector extends BasePhpInspection {
                         try {
                             final String string = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
                             stringLength        = string.length();
-                            isTarget            = stringLength != Integer.valueOf(arguments[2].getText());
+                            isTarget            = stringLength != Integer.parseInt(arguments[2].getText());
                         } catch (NumberFormatException lengthParsingHasFailed) {
                             isTarget     = false;
                             stringLength = 0;

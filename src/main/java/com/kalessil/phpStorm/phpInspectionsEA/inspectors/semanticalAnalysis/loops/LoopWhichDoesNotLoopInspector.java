@@ -70,7 +70,7 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
                                 int continueLevel = 1;
                                 if (null != expression.getArgument()) {
                                     try {
-                                        continueLevel = Integer.valueOf(expression.getArgument().getText());
+                                        continueLevel = Integer.parseInt(expression.getArgument().getText());
                                     } catch (NumberFormatException notParsed) {
                                         continueLevel = 1;
                                     }

@@ -96,6 +96,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         migrated.add("\\Codeception\\Util\\Debug::pause");
         migrated.add("\\Codeception\\Util\\Debug::debug");
         migrated.add("\\Doctrine\\Common\\Util\\Debug::dump");
+        migrated.add("\\Doctrine\\Common\\Util\\Debug::export");
         migrated.add("\\Symfony\\Component\\Debug\\Debug::enable");
         migrated.add("\\Symfony\\Component\\Debug\\ErrorHandler::register");
         migrated.add("\\Symfony\\Component\\Debug\\ExceptionHandler::register");

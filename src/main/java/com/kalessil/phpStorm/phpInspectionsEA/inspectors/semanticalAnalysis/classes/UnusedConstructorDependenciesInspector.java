@@ -138,14 +138,14 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                 if (method != constructor) {
                     return;
                 }
-                final Map<String, Field> clazzPrivateFields =  this.getPrivateFields(clazz);
-                if (0 == clazzPrivateFields.size()) {
+                final Map<String, Field> clazzPrivateFields = this.getPrivateFields(clazz);
+                if (clazzPrivateFields.isEmpty()) {
                     return;
                 }
 
                 /* === intensive part : extract references === */
                 final Map<String, List<FieldReference>> constructorsReferences = getFieldReferences(constructor, clazzPrivateFields);
-                if (constructorsReferences.size() > 0) {
+                if (!constructorsReferences.isEmpty()) {
                     /* constructor's references being identified */
                     final Map<String, List<FieldReference>> otherReferences = getMethodsFieldReferences(constructor, clazzPrivateFields);
                     /* methods's references being identified, time to re-visit constructor's references */

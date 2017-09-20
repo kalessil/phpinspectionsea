@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -107,19 +106,14 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                     }
 
                     final Map<String, List<FieldReference>> innerReferences = getFieldReferences(method, privateFields);
-                    if (innerReferences.size() > 0) {
+                    if (!innerReferences.isEmpty()) {
                         /* merge method's scan results into common container */
-                        for (String fieldName : innerReferences.keySet()) {
-                            if (!filteredReferences.containsKey(fieldName)) {
-                                filteredReferences.put(fieldName, new ArrayList<>());
-                            }
+                        innerReferences.forEach((fieldName, fields) -> {
                             filteredReferences
-                                    .get(fieldName)
-                                    .addAll(innerReferences.get(fieldName));
-                        }
-
-                        /* release references found in the method as they in common container now */
-                        innerReferences.values().forEach(List::clear);
+                                .computeIfAbsent(fieldName, name -> new ArrayList<>())
+                                .addAll(fields);
+                            fields.clear();
+                        });
                         innerReferences.clear();
                     }
                 }
@@ -155,24 +149,17 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                     /* constructor's references being identified */
                     final Map<String, List<FieldReference>> otherReferences = getMethodsFieldReferences(constructor, clazzPrivateFields);
                     /* methods's references being identified, time to re-visit constructor's references */
-                    for (String fieldName : constructorsReferences.keySet()) {
-                        /* field is used, we do nothing more */
-                        if (otherReferences.containsKey(fieldName)) {
-                            continue;
+                    constructorsReferences.forEach((fieldName, fields) -> {
+                        /* field is not used, report in constructor, PS will cover unused fields detection */
+                        if (!otherReferences.containsKey(fieldName)) {
+                            fields.forEach(reference -> holder.registerProblem(reference, message));
                         }
-
-                        /* report directly expressions in constructor, PS will cover unused fields detection */
-                        for (FieldReference reference : constructorsReferences.get(fieldName)) {
-                            holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
-                        }
-                    }
-
+                        fields.clear();
+                    });
                     /* release references found in the methods */
                     otherReferences.values().forEach(List::clear);
                     otherReferences.clear();
-
                     /* release references found in the constructor */
-                    constructorsReferences.values().forEach(List::clear);
                     constructorsReferences.clear();
                 }
             }

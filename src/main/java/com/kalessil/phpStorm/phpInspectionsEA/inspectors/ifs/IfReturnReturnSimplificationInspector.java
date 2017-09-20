@@ -2,10 +2,12 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -24,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
-    private static final String messagePattern = "An if-return construct can be replaced with 'return %c%'.";
+    private static final String messagePattern = "The construct can be replaced with '%s'.";
 
     @NotNull
     public String getShortName() {
@@ -35,111 +37,84 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpIf(If ifStatement) {
-                /* skip ifs with alternative branches */
-                if (ExpressionSemanticUtil.hasAlternativeBranches(ifStatement)) {
-                    return;
-                }
+            @Override
+            public void visitPhpIf(@NotNull If statement) {
+                final PsiElement cond = ExpressionSemanticUtil.getExpressionTroughParenthesis(statement.getCondition());
+                if (cond instanceof BinaryExpression && statement.getElseIfBranches().length == 0) {
+                    final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(statement);
+                    if (ifBody != null && ExpressionSemanticUtil.countExpressionsInGroup(ifBody) == 1) {
+                        final PsiElement ifLast = ExpressionSemanticUtil.getLastStatement(ifBody);
+                        if (ifLast instanceof PhpReturn) {
+                            /* find first and second returns */
+                            final PhpReturn first = (PhpReturn) ifLast;
+                            PhpReturn second      = null;
+                            final Else elseBranch = statement.getElseBranch();
+                            if (elseBranch != null) {
+                                final GroupStatement elseBody = ExpressionSemanticUtil.getGroupStatement(elseBranch);
+                                if (elseBody != null && ExpressionSemanticUtil.countExpressionsInGroup(elseBody) == 1) {
+                                    final PsiElement elseLast = ExpressionSemanticUtil.getLastStatement(elseBody);
+                                    if (elseLast instanceof PhpReturn) {
+                                        second = (PhpReturn) elseLast;
+                                    }
+                                }
+                            } else {
+                                final PsiElement next = statement.getNextPsiSibling();
+                                if (next instanceof PhpReturn) {
+                                    second = (PhpReturn) next;
+                                }
+                            }
 
+                            /* if 2nd return found, check more pattern matches */
+                            if (second != null) {
+                                final boolean isDirect  = PhpLanguageUtil.isTrue(first.getArgument()) && PhpLanguageUtil.isFalse(second.getArgument());
+                                final boolean isReverse = PhpLanguageUtil.isTrue(second.getArgument()) && PhpLanguageUtil.isFalse(first.getArgument());
+                                if (isDirect || isReverse) {
+                                    /* false-positives: if-return if-return return - code style */
+                                    if (elseBranch == null) {
+                                        final PsiElement before = statement.getPrevPsiSibling();
+                                        if (before instanceof If && !ExpressionSemanticUtil.hasAlternativeBranches((If) before)) {
+                                            final GroupStatement prevBody = ExpressionSemanticUtil.getGroupStatement(before);
+                                            if (prevBody != null && ExpressionSemanticUtil.getLastStatement(prevBody) instanceof PhpReturn) {
+                                                return;
+                                            }
+                                        }
+                                    }
 
-                /* Skip ifs without group statement */
-                final GroupStatement groupStatement = ExpressionSemanticUtil.getGroupStatement(ifStatement);
-                if (null == groupStatement) {
-                    return;
-                }
-
-
-                /* or condition is not an binary expression */
-                final PsiElement conditions = ExpressionSemanticUtil.getExpressionTroughParenthesis(ifStatement.getCondition());
-                /* or maybe try resolving type when not on-the-fly analysis is running */
-                /* TODO: resolve type of other expressions */
-                if (!(conditions instanceof BinaryExpression)) {
-                    return;
-                }
-
-
-                /* next expression is not return */
-                final PsiElement nextExpression = ifStatement.getNextPsiSibling();
-                if (!(nextExpression instanceof PhpReturn)) {
-                    return;
-                }
-
-
-                /* when if has preceding if-return we assume it's code style */
-                final PsiElement previousExpression = ifStatement.getPrevPsiSibling();
-                if (previousExpression instanceof If && !ExpressionSemanticUtil.hasAlternativeBranches((If) previousExpression)) {
-                    final GroupStatement previousIfBody = ExpressionSemanticUtil.getGroupStatement(previousExpression);
-                    if (null != previousIfBody) {
-                        final PsiElement previousReturnCandidate = ExpressionSemanticUtil.getLastStatement(previousIfBody);
-                        if (previousReturnCandidate instanceof PhpReturn) {
-                            return;
+                                    /* final reporting step */
+                                    final String replacement = String.format(isReverse ? "return !(%s)" : "return %s", cond.getText());
+                                    final String message     = String.format(messagePattern, replacement);
+                                    holder.registerProblem(
+                                            statement.getFirstChild(),
+                                            message,
+                                            new SimplifyFix(first, elseBranch == null ? second : first, replacement)
+                                    );
+                                }
+                            }
                         }
                     }
                 }
-
-
-                /* or return not a boolean */
-                final PhpReturn secondReturn         = (PhpReturn) nextExpression;
-                final boolean isSecondReturnUsesBool = PhpLanguageUtil.isBoolean(secondReturn.getArgument());
-                if (!isSecondReturnUsesBool) {
-                    return;
-                }
-
-
-                /* analyse if structure contains only one expression */
-                final int intCountExpressionsInCurrentGroup = ExpressionSemanticUtil.countExpressionsInGroup(groupStatement);
-                if (intCountExpressionsInCurrentGroup != 1) {
-                    return;
-                }
-                /* and it's a return expression */
-                PhpReturn firstReturn = null;
-                for (PsiElement ifChild : groupStatement.getChildren()) {
-                    if (ifChild instanceof PhpReturn) {
-                        firstReturn = (PhpReturn) ifChild;
-                        break;
-                    }
-                }
-                if (null == firstReturn) {
-                    return;
-                }
-
-
-                /* check if first return also boolean */
-                final boolean isFirstReturnUsesBool = PhpLanguageUtil.isBoolean(firstReturn.getArgument());
-                if (!isFirstReturnUsesBool) {
-                    return;
-                }
-
-
-                /* point the problem out */
-                final boolean isInverted = PhpLanguageUtil.isFalse(firstReturn.getArgument());
-                String message = isInverted ? messagePattern.replace("%c%", "!(%c%)") : messagePattern;
-
-                message = message.replace("%c%", ifStatement.getCondition().getText());
-                holder.registerProblem(ifStatement.getFirstChild(), message, ProblemHighlightType.WEAK_WARNING,
-                        new TheLocalFix(ifStatement, secondReturn, isInverted));
             }
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
-        final private SmartPsiElementPointer<If> ifExpression;
-        final private SmartPsiElementPointer<PhpReturn> returnExpression;
-        final boolean isInverted;
+    private static class SimplifyFix implements LocalQuickFix {
+        final private SmartPsiElementPointer<PsiElement> from;
+        final private SmartPsiElementPointer<PsiElement> to;
+        final String replacement;
 
-        TheLocalFix(@NotNull If ifExpression, @NotNull PhpReturn returnExpression, boolean isInverted) {
+        SimplifyFix(@NotNull PsiElement from, @NotNull PsiElement to, @NotNull String replacement) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(ifExpression.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(from.getProject());
 
-            this.ifExpression     = factory.createSmartPsiElementPointer(ifExpression);
-            this.returnExpression = factory.createSmartPsiElementPointer(returnExpression);
-            this.isInverted       = isInverted;
+            this.from        = factory.createSmartPsiElementPointer(from);
+            this.to          = factory.createSmartPsiElementPointer(to);
+            this.replacement = replacement;
         }
 
         @NotNull
         @Override
         public String getName() {
-            return "Apply suggested simplification";
+            return "Use return instead";
         }
 
         @NotNull
@@ -150,39 +125,15 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final If ifExpression            = this.ifExpression.getElement();
-            final PhpReturn returnExpression = this.returnExpression.getElement();
-            if (null == ifExpression || null == returnExpression) {
-                return;
-            }
-
-            PsiElement conditions           = ExpressionSemanticUtil.getExpressionTroughParenthesis(ifExpression.getCondition());
-            final PsiElement returnArgument = returnExpression.getArgument();
-            if (null != conditions && null != returnArgument) {
-                @SuppressWarnings("UnnecessaryLocalVariable")
-                boolean invertCondition = this.isInverted;
-
-                final PsiElement replacement;
-                if (invertCondition) {
-                    final String pattern = "(!(" + conditions.getText() + "))";
-                    replacement
-                        = PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, pattern).getArgument();
-                } else {
-                    replacement = conditions.copy();
-                }
-
-
-                /* all good, modify code */
-                if (null != replacement) {
-                    /* fix return first */
-                    returnArgument.replace(replacement);
-
-                    /* now drop if and succeeding whitespaces */
-                    if (ifExpression.getNextSibling() instanceof PsiWhiteSpace) {
-                        ifExpression.getNextSibling().delete();
-                    }
-                    ifExpression.delete();
-                }
+            final PsiElement from = this.from.getElement();
+            final PsiElement to   = this.to.getElement();
+            if (from != null && to != null && !project.isDisposed()) {
+                final PsiElement parent = from.getParent();
+                parent.addBefore(
+                        from,
+                        PhpPsiElementFactory.createPhpPsiFromText(project, PhpReturn.class, this.replacement + ";")
+                );
+                parent.deleteChildRange(from, to);
             }
         }
     }

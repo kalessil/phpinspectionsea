@@ -29,4 +29,7 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
 
     @Override public void visitPhpForeach(ForeachStatement foreach) {}
     @Override public void visitPhpFor(For forStatement) {}
+
+    @Override public void visitPhpIsset(PhpIsset issetExpression) {}
+    @Override public void visitPhpUnset(PhpUnset unsetStatement) {}
 }

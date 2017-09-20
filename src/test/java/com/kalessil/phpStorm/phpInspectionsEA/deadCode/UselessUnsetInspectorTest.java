@@ -5,8 +5,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UselessUnsetIn
 
 final public class UselessUnsetInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new UselessUnsetInspector());
         myFixture.configureByFile("fixtures/deadCode/useless-unset.php");
-        myFixture.enableInspections(UselessUnsetInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

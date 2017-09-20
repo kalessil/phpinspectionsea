@@ -7,10 +7,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 final public class SenselessMethodDuplicationInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         SenselessMethodDuplicationInspector inspector = new SenselessMethodDuplicationInspector();
-        inspector.MAX_METHOD_SIZE = 20;
-
+        inspector.MAX_METHOD_SIZE                     = 20;
         myFixture.enableInspections(inspector);
-
         myFixture.configureByFile("fixtures/deadCode/senseless-method-duplication.php");
         myFixture.testHighlighting(true, false, true);
 
@@ -22,8 +20,7 @@ final public class SenselessMethodDuplicationInspectorTest extends PhpCodeInsigh
     }
 
     public void testFalsePositives() {
-        myFixture.enableInspections(SenselessMethodDuplicationInspector.class);
-
+        myFixture.enableInspections(new SenselessMethodDuplicationInspector());
         myFixture.configureByFile("fixtures/deadCode/senseless-method-duplication-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }

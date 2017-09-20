@@ -6,19 +6,16 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 final public class SenselessProxyMethodInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsCommonPatterns() {
         myFixture.enableInspections(new SenselessProxyMethodInspector());
-
         myFixture.configureByFile("fixtures/deadCode/senselessProxy/senseless-proxy-common.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testIfFindsSignaturePatterns() {
         myFixture.enableInspections(new SenselessProxyMethodInspector());
-
         myFixture.configureByFile("fixtures/deadCode/senselessProxy/senseless-proxy-signature.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testIfFindsReturnPatterns() {
         myFixture.enableInspections(new SenselessProxyMethodInspector());
-
         myFixture.configureByFile("fixtures/deadCode/senselessProxy/senseless-proxy-return.php");
         myFixture.testHighlighting(true, false, true);
     }

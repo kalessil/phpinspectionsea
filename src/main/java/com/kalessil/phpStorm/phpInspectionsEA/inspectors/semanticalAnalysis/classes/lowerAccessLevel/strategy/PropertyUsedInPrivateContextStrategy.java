@@ -100,20 +100,20 @@ final public class PropertyUsedInPrivateContextStrategy {
                     }
                 }
 
-                for (final String fieldName : fields.keySet()) {
-                    if (!contextInformation.containsKey(fieldName)) {
-                        continue;
-                    }
-                    final Set<String> usages = contextInformation.get(fieldName);
-                    if (usages.size() == 1 && usages.contains("private")) {
-                        final PsiElement modifier = ModifierExtractionUtil.getProtectedModifier(fields.get(fieldName));
-                        if (modifier != null) {
-                            holder.registerProblem(modifier, message, new MakePrivateFixer(modifier));
+                fields.forEach((fieldName, list) -> {
+                    if (contextInformation.containsKey(fieldName)) {
+                        final Set<String> usages = contextInformation.get(fieldName);
+                        if (usages.size() == 1 && usages.contains("private")) {
+                            final PsiElement modifier = ModifierExtractionUtil.getProtectedModifier(list);
+                            if (modifier != null) {
+                                holder.registerProblem(modifier, message, new MakePrivateFixer(modifier));
+                            }
                         }
                     }
-                }
-                contextInformation.clear();
+                });
                 fields.clear();
+
+                contextInformation.clear();
             }
         }
     }

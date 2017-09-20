@@ -8,9 +8,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.S
 final public class ShortListSyntaxCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
-
+        myFixture.enableInspections(new ShortListSyntaxCanBeUsedInspector());
         myFixture.configureByFile("fixtures/lang/short-list-syntax.php");
-        myFixture.enableInspections(ShortListSyntaxCanBeUsedInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

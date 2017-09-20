@@ -6,8 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.SubStr
 
 final public class SubStrUsedAsArrayAccessInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(SubStrUsedAsArrayAccessInspector.class);
-
+        myFixture.enableInspections(new SubStrUsedAsArrayAccessInspector());
         myFixture.configureByFile("fixtures/lang/substr-used-as-index-access.php");
         myFixture.testHighlighting(true, false, true);
 

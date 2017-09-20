@@ -5,8 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc.GenericObjectTyp
 
 final public class GenericObjectTypeUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(GenericObjectTypeUsageInspector.class);
-
+        myFixture.enableInspections(new GenericObjectTypeUsageInspector());
         myFixture.configureByFile("fixtures/types/type-object-annotation.php");
         myFixture.testHighlighting(true, false, true);
     }

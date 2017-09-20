@@ -5,8 +5,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.T
 
 final public class TraitsPropertiesConflictsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new TraitsPropertiesConflictsInspector());
         myFixture.configureByFile("fixtures/classes/traits-properties-conflicts.php");
-        myFixture.enableInspections(TraitsPropertiesConflictsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

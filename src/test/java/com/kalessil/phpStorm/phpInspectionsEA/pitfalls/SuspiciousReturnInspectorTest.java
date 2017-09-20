@@ -5,8 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Susp
 
 final public class SuspiciousReturnInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(SuspiciousReturnInspector.class);
-
+        myFixture.enableInspections(new SuspiciousReturnInspector());
         myFixture.configureByFile("fixtures/pitfalls/return-in-finally.php");
         myFixture.testHighlighting(true, false, true);
     }

@@ -5,8 +5,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.R
 
 final public class RedundantElseClauseInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new RedundantElseClauseInspector());
         myFixture.configureByFile("fixtures/controlFlow/unnecessary-else-elseif.php");
-        myFixture.enableInspections(RedundantElseClauseInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

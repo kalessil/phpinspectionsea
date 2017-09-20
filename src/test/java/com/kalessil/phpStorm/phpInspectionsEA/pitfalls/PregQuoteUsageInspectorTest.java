@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PregQuoteUsage
 final public class PregQuoteUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/pitfalls/preg-quote.php");
-        myFixture.enableInspections(PregQuoteUsageInspector.class);
+        myFixture.enableInspections(new PregQuoteUsageInspector());
         myFixture.testHighlighting(true, false, true);
     }
 }

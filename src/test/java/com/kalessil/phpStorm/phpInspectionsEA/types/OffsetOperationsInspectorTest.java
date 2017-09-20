@@ -5,8 +5,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Offs
 
 final public class OffsetOperationsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new OffsetOperationsInspector());
         myFixture.configureByFile("fixtures/types/offset-operations.php");
-        myFixture.enableInspections(OffsetOperationsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

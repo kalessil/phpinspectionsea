@@ -5,8 +5,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ParameterDefa
 
 final public class ParameterDefaultValueIsNotNullInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new ParameterDefaultValueIsNotNullInspector());
         myFixture.configureByFile("fixtures/codeStyle/parameters-default-not-null.php");
-        myFixture.enableInspections(ParameterDefaultValueIsNotNullInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

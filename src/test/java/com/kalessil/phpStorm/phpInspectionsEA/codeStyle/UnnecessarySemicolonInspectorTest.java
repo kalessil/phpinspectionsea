@@ -5,8 +5,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessarySe
 
 final public class UnnecessarySemicolonInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new UnnecessarySemicolonInspector());
         myFixture.configureByFile("fixtures/codeStyle/semicolons.php");
-        myFixture.enableInspections(UnnecessarySemicolonInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

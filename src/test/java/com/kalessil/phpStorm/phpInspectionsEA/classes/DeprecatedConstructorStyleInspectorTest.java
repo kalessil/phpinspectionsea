@@ -5,8 +5,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 
 final public class DeprecatedConstructorStyleInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.enableInspections(new DeprecatedConstructorStyleInspector());
         myFixture.configureByFile("fixtures/classes/deprecated-constructors.php");
-        myFixture.enableInspections(DeprecatedConstructorStyleInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

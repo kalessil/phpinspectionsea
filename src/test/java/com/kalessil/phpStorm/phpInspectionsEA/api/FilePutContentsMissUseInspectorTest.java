@@ -6,8 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.Fil
 
 final public class FilePutContentsMissUseInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(FilePutContentsMissUseInspector.class);
-
+        myFixture.enableInspections(new FilePutContentsMissUseInspector());
         myFixture.configureByFile("fixtures/api/file_put_contents-misuse.php");
         myFixture.testHighlighting(true, false, true);
 

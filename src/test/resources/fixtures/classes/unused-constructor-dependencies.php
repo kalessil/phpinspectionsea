@@ -5,7 +5,7 @@ class ClassUpdSimple
     private $p1;
     public function __construct($p1)
     {
-        $this-><weak_warning descr="Property is used only in constructor, perhaps we are dealing with dead code here.">p1</weak_warning> = $p1;
+        <weak_warning descr="Property is used only in constructor, perhaps we are dealing with dead code here.">$this->p1</weak_warning> = $p1;
     }
 }
 
@@ -33,8 +33,8 @@ class ClassUpdComplex
     {
         $this->p1 = $p1;
         $this->p2 = $p2;
-        $this-><weak_warning descr="Property is used only in constructor, perhaps we are dealing with dead code here.">p3</weak_warning> =
-            ++$this-><weak_warning descr="Property is used only in constructor, perhaps we are dealing with dead code here.">p3</weak_warning>
+        <weak_warning descr="Property is used only in constructor, perhaps we are dealing with dead code here.">$this->p3</weak_warning> =
+            ++<weak_warning descr="Property is used only in constructor, perhaps we are dealing with dead code here.">$this->p3</weak_warning>
             +
             $p3;
 

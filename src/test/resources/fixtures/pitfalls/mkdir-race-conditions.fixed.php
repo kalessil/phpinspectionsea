@@ -3,14 +3,14 @@
 function cases_holder() {
     /* case: just a call -> conditionally throw exception */
     if (!mkdir('...') && !is_dir('...')) {
-        throw new RuntimeException(sprintf('Directory "%s" was not created', '...'));
+        throw new \RuntimeException(sprintf('Directory "%s" was not created', '...'));
     }
     if (!mkdir('...') && !is_dir('...')) {
-        throw new RuntimeException(sprintf('Directory "%s" was not created', '...'));
+        throw new \RuntimeException(sprintf('Directory "%s" was not created', '...'));
     }
     if (!is_dir('...')) {
         if (!mkdir('...') && !is_dir('...')) {
-            throw new RuntimeException(sprintf('Directory "%s" was not created', '...'));
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', '...'));
         }
     }
 

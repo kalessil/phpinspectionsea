@@ -204,7 +204,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
             if (target != null) {
-                final String throwPart = "throw new RuntimeException(sprintf('Directory \"%%s\" was not created', %s));";
+                final String throwPart = "throw new \\RuntimeException(sprintf('Directory \"%%s\" was not created', %s));";
                 final String pattern   = "if (!mkdir(%s) && !is_dir(%s)) { %s }";
                 final String code      = String.format(pattern, resource, resource, String.format(throwPart, resource));
                 target.replace(PhpPsiElementFactory.createPhpPsiFromText(project, If.class, code));

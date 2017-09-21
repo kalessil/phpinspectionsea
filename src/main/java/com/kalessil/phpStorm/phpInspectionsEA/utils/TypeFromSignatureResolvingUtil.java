@@ -11,9 +11,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-final public class TypeFromSignatureResolvingUtil {
+final class TypeFromSignatureResolvingUtil {
 
-    static public void resolveSignature (
+    static void resolveSignature(
             @Nullable String signatureToResolve,
             @Nullable Function scope,
             @NotNull PhpIndex projectIndex,

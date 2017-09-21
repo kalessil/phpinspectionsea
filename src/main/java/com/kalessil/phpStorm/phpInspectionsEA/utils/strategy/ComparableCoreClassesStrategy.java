@@ -39,13 +39,11 @@ final public class ComparableCoreClassesStrategy {
         if (null == scope) {
             return false;
         }
-        final PhpIndex projectIndex = PhpIndex.getInstance(holder.getProject());
-
-        return isComparableObject(leftOperand, scope, projectIndex, holder) && isComparableObject(rightOperand, scope, projectIndex, holder);
-
+        final PhpIndex index = PhpIndex.getInstance(holder.getProject());
+        return isComparableObject(leftOperand, scope, index) && isComparableObject(rightOperand, scope, index);
     }
 
-    private static boolean isComparableObject(@NotNull PsiElement operand, @NotNull Function scope, @NotNull PhpIndex projectIndex, ProblemsHolder holder) {
+    private static boolean isComparableObject(@NotNull PsiElement operand, @NotNull Function scope, @NotNull PhpIndex projectIndex) {
         /* extract types of operand, check if classes are/inherited from \DateTime */
         final HashSet<String> operandTypes = new HashSet<>();
         TypeFromPsiResolvingUtil.resolveExpressionType(operand, scope, projectIndex, operandTypes);

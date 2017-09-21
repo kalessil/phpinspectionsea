@@ -2,12 +2,10 @@
 
 class CasesHolder {
     public function ifReturnReturnOne($x) {
-        if ($x > 0) { return false; }
-        return true;
+        return !($x > 0);
     }
     public function ifReturnReturnTwo($x) {
-        if ($x > 0) { return true; }
-        return false;
+        return $x > 0;
     }
     public function ifReturnReturnThree($x) {
         if ($x === 0) { return true; }
@@ -21,12 +19,10 @@ class CasesHolder {
     }
 
     public function ifReturnElseReturnOne($x) {
-        if ($x > 0) { return true; }
-        else { return false; }
+        return $x > 0;
     }
     public function ifReturnElseReturnTwo($x) {
-        if ($x > 0) { return false; }
-        else { return true; }
+        return !($x > 0);
     }
     public function ifReturnElseReturnThree($x) {
         if ($x > 0) { return true; }
@@ -35,7 +31,6 @@ class CasesHolder {
     public function ifReturnElseReturnFour($x) {
         if ($x === 0) { return true; }
         /* a comment here */
-        if ($x > 0) { return false; }
-        else { return true; }
+        return !($x > 0);
     }
 }

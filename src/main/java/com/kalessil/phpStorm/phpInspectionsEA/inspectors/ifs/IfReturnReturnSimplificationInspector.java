@@ -86,7 +86,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                                     holder.registerProblem(
                                             statement.getFirstChild(),
                                             message,
-                                            new SimplifyFix(first, elseBranch == null ? second : first, replacement)
+                                            new SimplifyFix(statement, elseBranch == null ? second : statement, replacement)
                                     );
                                 }
                             }
@@ -128,12 +128,14 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
             final PsiElement from = this.from.getElement();
             final PsiElement to   = this.to.getElement();
             if (from != null && to != null && !project.isDisposed()) {
-                final PsiElement parent = from.getParent();
-                parent.addBefore(
-                        from,
-                        PhpPsiElementFactory.createPhpPsiFromText(project, PhpReturn.class, this.replacement + ";")
-                );
-                parent.deleteChildRange(from, to);
+                final String code = this.replacement + ";";
+                if (from == to) {
+                    from.replace(PhpPsiElementFactory.createPhpPsiFromText(project, PhpReturn.class, code));
+                } else {
+                    final PsiElement parent = from.getParent();
+                    parent.addBefore(PhpPsiElementFactory.createPhpPsiFromText(project, PhpReturn.class, code), from);
+                    parent.deleteChildRange(from, to);
+                }
             }
         }
     }

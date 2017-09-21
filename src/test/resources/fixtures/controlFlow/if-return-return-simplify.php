@@ -2,11 +2,11 @@
 
 class CasesHolder {
     public function ifReturnReturnOne($x) {
-        if ($x > 0) { return false; }
+        <warning descr="The construct can be replaced with 'return !($x > 0)'">if</warning> ($x > 0) { return false; }
         return true;
     }
     public function ifReturnReturnTwo($x) {
-        if ($x > 0) { return true; }
+        <warning descr="The construct can be replaced with 'return $x > 0'">if</warning> ($x > 0) { return true; }
         return false;
     }
     public function ifReturnReturnThree($x) {
@@ -21,11 +21,11 @@ class CasesHolder {
     }
 
     public function ifReturnElseReturnOne($x) {
-        if ($x > 0) { return true; }
+        <warning descr="The construct can be replaced with 'return $x > 0'">if</warning> ($x > 0) { return true; }
         else { return false; }
     }
     public function ifReturnElseReturnTwo($x) {
-        if ($x > 0) { return false; }
+        <warning descr="The construct can be replaced with 'return !($x > 0)'">if</warning> ($x > 0) { return false; }
         else { return true; }
     }
     public function ifReturnElseReturnThree($x) {
@@ -35,7 +35,7 @@ class CasesHolder {
     public function ifReturnElseReturnFour($x) {
         if ($x === 0) { return true; }
         /* a comment here */
-        if ($x > 0) { return false; }
+        <warning descr="The construct can be replaced with 'return !($x > 0)'">if</warning> ($x > 0) { return false; }
         else { return true; }
     }
 }

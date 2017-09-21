@@ -126,7 +126,7 @@ public class PossibleValuesDiscoveryUtil {
             @NotNull FieldReference reference, @NotNull Set<PsiElement> result, @NotNull Set<PsiElement> processed
     ) {
         final String fieldName             = reference.getName();
-        final PsiElement resolvedReference = StringUtils.isEmpty(fieldName) ? null : reference.resolve();
+        final PsiElement resolvedReference = StringUtils.isEmpty(fieldName) ? null : OpenapiResolveUtil.resolveReference(reference);
         if (resolvedReference instanceof Field) {
             /* TODO: properties without defaults returning variable as default are difficult to identify */
             /* TODO: multi-assignments */

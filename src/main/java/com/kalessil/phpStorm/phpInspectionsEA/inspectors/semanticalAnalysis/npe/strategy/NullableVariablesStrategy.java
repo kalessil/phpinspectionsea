@@ -54,10 +54,7 @@ final public class NullableVariablesStrategy {
                     OpenapiTypesUtil.isStatementImpl(assignment.getParent()) &&
                     !(assignment.getValue() instanceof FieldReference) /* TODO: strict method reference type check */
                 ) {
-                    if (!assignments.containsKey(variableName)) {
-                        assignments.put(variableName, new ArrayList<>());
-                    }
-                    assignments.get(variableName).add(assignment);
+                    assignments.computeIfAbsent(variableName, v -> new ArrayList<>()).add(assignment);
                 }
             }
         }

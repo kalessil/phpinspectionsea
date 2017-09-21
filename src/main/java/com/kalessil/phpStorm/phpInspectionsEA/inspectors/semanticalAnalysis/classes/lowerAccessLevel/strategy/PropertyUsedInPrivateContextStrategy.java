@@ -83,19 +83,17 @@ final public class PropertyUsedInPrivateContextStrategy {
                         /* store the context information */
                         final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                         if (resolved != null && fields.get(referenceName) == resolved) {
-                            if (!contextInformation.containsKey(referenceName)) {
-                                contextInformation.put(referenceName, new HashSet<>());
-                            }
-                            final Set<String> usages        = contextInformation.get(referenceName);
+                            final Set<String> usages        = contextInformation.computeIfAbsent(referenceName, r -> new HashSet<>());
                             final PhpModifier.Access access = method.getAccess();
                             if (isMagicMethod || access.isPrivate()) {
                                 usages.add("private");
                             }
-                            if (!isMagicMethod && access.isProtected()) {
-                                usages.add("protected");
-                            }
-                            if (!isMagicMethod && access.isPublic()) {
-                                usages.add("public");
+                            if (!isMagicMethod) {
+                                if (access.isProtected()) {
+                                    usages.add("protected");
+                                } else if (access.isPublic()) {
+                                    usages.add("public");
+                                }
                             }
                         }
                     }

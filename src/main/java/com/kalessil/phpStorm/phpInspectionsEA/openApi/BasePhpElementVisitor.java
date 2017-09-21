@@ -33,4 +33,6 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
 
     @Override public void visitPhpIsset(PhpIsset issetExpression) {}
     @Override public void visitPhpUnset(PhpUnset unsetStatement) {}
+
+    @Override public void visitPhpClass(PhpClass clazz) {}
 }

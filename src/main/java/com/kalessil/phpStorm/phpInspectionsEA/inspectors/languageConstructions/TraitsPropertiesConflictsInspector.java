@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -73,10 +74,10 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
 
                 /* check parent class accessibility and map use statements with traits for reporting */
                 final Map<PhpClass, PsiElement> useReportTargets = new HashMap<>();
-                for (PsiElement child: clazz.getChildren()) {
+                for (final PsiElement child: clazz.getChildren()) {
                     if (child instanceof PhpUseList) {
                         for (ClassReference reference :PsiTreeUtil.findChildrenOfType(child, ClassReference.class)) {
-                            final PsiElement resolved = reference.resolve();
+                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                             if (resolved instanceof PhpClass) {
                                 useReportTargets.putIfAbsent((PhpClass) resolved, reference);
                             }
@@ -90,7 +91,7 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                 }
 
                 /* iterate parent non-private fields to find conflicting properties */
-                for (Field parentField : parent.getFields()) {
+                for (final Field parentField : parent.getFields()) {
                     final PsiElement parentFieldNameNode = NamedElementUtil.getNameIdentifier(parentField);
                     final PhpModifier modifier           = parentField.getModifier();
                     if (null == parentFieldNameNode || parentField.isConstant() || modifier.isPrivate() || modifier.isAbstract()) {
@@ -99,9 +100,9 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                     final String parentFieldName        = parentField.getName();
                     final PsiElement parentFieldDefault = parentField.getDefaultValue();
 
-                    for (PhpClass trait : traits) {
+                    for (final PhpClass trait : traits) {
                         final Field traitField = trait.findFieldByName(parentFieldName, false);
-                        if (null != traitField) {
+                        if (traitField != null) {
                             final PsiElement traitFieldDefault = traitField.getDefaultValue();
 
                             final boolean isError;
@@ -111,12 +112,18 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                                 isError = !OpeanapiEquivalenceUtil.areEqual(traitFieldDefault, parentFieldDefault);
                             }
 
-                            final String message = messagePattern
-                                .replace("%p%", parentFieldName)
-                                .replace("%t%", trait.getName())
-                                .replace("%c%", clazz.getName());
-                            holder.registerProblem(useReportTargets.get(trait), message,
-                                isError ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING : ProblemHighlightType.WEAK_WARNING);
+                            final PsiElement reportTarget = useReportTargets.get(trait);
+                            if (reportTarget != null) {
+                                final String message = messagePattern
+                                        .replace("%p%", parentFieldName)
+                                        .replace("%t%", trait.getName())
+                                        .replace("%c%", clazz.getName());
+                                holder.registerProblem(
+                                    reportTarget,
+                                    message,
+                                    isError ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING : ProblemHighlightType.WEAK_WARNING
+                                );
+                            }
                             break;
                         }
                     }

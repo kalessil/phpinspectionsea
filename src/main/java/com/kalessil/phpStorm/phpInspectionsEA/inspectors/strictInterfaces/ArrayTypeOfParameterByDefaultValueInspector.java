@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -15,6 +14,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -37,45 +38,43 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            /** re-dispatch to inspector */
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 this.inspectCallable(method);
             }
-            public void visitPhpFunction(Function function) {
+
+            @Override
+            public void visitPhpFunction(@NotNull Function function) {
                 this.inspectCallable(function);
             }
 
-            private void inspectCallable (Function callable) {
+            private void inspectCallable (@NotNull Function callable) {
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(callable);
-                if (null == nameNode) {
-                    return;
-                }
-
-                if (callable instanceof Method) {
-                    /* the method can be as it is due to inheritance; skip reporting the case; */
-                    final PhpClass clazz = ((Method) callable).getContainingClass();
-                    if (null != clazz && !clazz.isInterface()) {
-                        final String methodName = callable.getName();
-                        for (PhpClass parent : clazz.getSupers()) {
-                            if (null != parent && null != parent.findMethodByName(methodName)) {
+                if (nameNode != null) {
+                    /* false-positives: overridden methods */
+                    if (callable instanceof Method) {
+                        final PhpClass clazz = ((Method) callable).getContainingClass();
+                        if (clazz != null && !clazz.isInterface()) {
+                            final PhpClass parent = clazz.getSuperClass();
+                            if (parent != null && parent.findMethodByName(callable.getName()) != null) {
                                 return;
                             }
                         }
                     }
-                }
 
-                for (Parameter param : callable.getParameters()) {
-                    if (this.canBePrependedWithArrayType(param)) {
-                        final String message = messagePattern.replace("%p%", param.getName());
-                        holder.registerProblem(nameNode, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(param));
-                    }
+                    Arrays.stream(callable.getParameters())
+                        .filter(this::canBePrependedWithArrayType)
+                        .forEach(param -> {
+                            final String message = messagePattern.replace("%p%", param.getName());
+                            holder.registerProblem(nameNode, message, new TheLocalFix(param));
+                        });
                 }
             }
 
             private boolean canBePrependedWithArrayType(@NotNull Parameter parameter) {
-                return parameter.isOptional() &&
-                        parameter.getDeclaredType().isEmpty() &&
-                        parameter.getDefaultValue() instanceof ArrayCreationExpression;
+                return
+                    parameter.getDefaultValue() instanceof ArrayCreationExpression &&
+                    parameter.getDeclaredType().isEmpty();
             }
         };
     }
@@ -104,14 +103,9 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final Parameter param         = this.param.getElement();
-            final PsiElement defaultValue = null == param ? null : param.getDefaultValue();
-            if (null != defaultValue) {
-                final String pattern = "array %r%$%n% = %d%"
-                    .replace("%d%", defaultValue.getText())
-                    .replace("%n%", param.getName())
-                    .replace("%r%", param.isPassByRef() ? "&" : "");
-                param.replace(PhpPsiElementFactory.createComplexParameter(project, pattern));
+            final Parameter param = this.param.getElement();
+            if (param != null && !project.isDisposed()) {
+                param.replace(PhpPsiElementFactory.createComplexParameter(project, "array " + param.getText()));
             }
         }
     }

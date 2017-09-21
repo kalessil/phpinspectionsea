@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -54,6 +55,7 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                     PsiTreeUtil.findChildrenOfType(body, ClassReference.class).stream()
                             .filter(reference  -> targetReference.equals(reference.getName()))
                             .filter(reference  -> method == PsiTreeUtil.getParentOfType(reference, Method.class))
+                            .filter(reference  -> clazz == OpenapiResolveUtil.resolveReference(reference))
                             .forEach(reference -> {
                                 final PsiElement parent = reference.getParent();
                                 if (!PREFER_CLASS_NAMES && parent instanceof ClassConstantReference) {

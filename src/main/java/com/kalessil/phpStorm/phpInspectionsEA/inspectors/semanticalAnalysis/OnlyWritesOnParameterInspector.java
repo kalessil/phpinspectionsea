@@ -136,7 +136,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     if (previous instanceof PsiWhiteSpace) {
                         previous = previous.getPrevSibling();
                     }
-                    if (null != previous && PhpTokenTypes.opBIT_AND == previous.getNode().getElementType()) {
+                    if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
                         final PhpAccessVariableInstruction[] usages = getVariableUsages(parameterName, scopeHolder);
                         if (0 == usages.length) {
                             holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);

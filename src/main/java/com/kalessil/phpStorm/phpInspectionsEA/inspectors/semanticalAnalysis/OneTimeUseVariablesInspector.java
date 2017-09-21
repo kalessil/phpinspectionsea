@@ -133,7 +133,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                     if (referenceCandidate instanceof PsiWhiteSpace) {
                         referenceCandidate = referenceCandidate.getPrevSibling();
                     }
-                    if (null != referenceCandidate && PhpTokenTypes.opBIT_AND == referenceCandidate.getNode().getElementType()) {
+                    if (OpenapiTypesUtil.is(referenceCandidate, PhpTokenTypes.opBIT_AND)) {
                         return;
                     }
                 }

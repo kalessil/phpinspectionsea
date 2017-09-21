@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,7 +88,7 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                     if (refCandidate instanceof PsiWhiteSpace) {
                         refCandidate = refCandidate.getPrevSibling();
                     }
-                    result = refCandidate != null && refCandidate.getNode().getElementType() == PhpTokenTypes.opBIT_AND;
+                    result = OpenapiTypesUtil.is(refCandidate, PhpTokenTypes.opBIT_AND);
                 }
                 return result;
             }

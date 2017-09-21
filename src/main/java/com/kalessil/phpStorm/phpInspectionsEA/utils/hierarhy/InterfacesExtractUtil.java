@@ -33,7 +33,7 @@ final public class InterfacesExtractUtil {
 
             /* handle parent class */
             final PhpClass parent = clazz.getSuperClass();
-            if (parent != null) {
+            if (parent != null && clazz != parent) {
                 processClass(parent, processedItems, withClasses);
             }
         }

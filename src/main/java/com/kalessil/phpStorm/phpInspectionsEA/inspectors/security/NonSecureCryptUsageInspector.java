@@ -22,6 +22,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +53,7 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
                     return;
                 }
                 /* avoid complaining to imported functions */
-                final PsiElement function = reference.resolve();
+                final PsiElement function = OpenapiResolveUtil.resolveReference(reference);
                 if (function instanceof Function && !((Function) function).getFQN().equals("\\crypt")) {
                     return;
                 }

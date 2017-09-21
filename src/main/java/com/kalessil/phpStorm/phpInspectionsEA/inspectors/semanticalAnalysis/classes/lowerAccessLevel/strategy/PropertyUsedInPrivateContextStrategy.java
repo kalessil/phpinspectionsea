@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.fixers.MakePrivateFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.utils.ModifierExtractionUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -80,7 +81,7 @@ final public class PropertyUsedInPrivateContextStrategy {
                         }
 
                         /* store the context information */
-                        final PsiElement resolved = reference.resolve();
+                        final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                         if (resolved != null && fields.get(referenceName) == resolved) {
                             if (!contextInformation.containsKey(referenceName)) {
                                 contextInformation.put(referenceName, new HashSet<>());

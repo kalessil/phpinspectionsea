@@ -7,6 +7,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -69,16 +70,13 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                     }
 
                     /* if not resolved or not in given list, continue */
-                    final PsiElement resolved = ref.resolve();
+                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(ref);
                     if (!(resolved instanceof Field) || !privateFields.containsValue(resolved)) {
                         continue;
                     }
 
                     /* bingo, store newly found reference */
-                    if (!filteredReferences.containsKey(fieldName)) {
-                        filteredReferences.put(fieldName, new ArrayList<>());
-                    }
-                    filteredReferences.get(fieldName).add(ref);
+                    filteredReferences.computeIfAbsent(fieldName, k -> new ArrayList<>()).add(ref);
                 }
                 references.clear();
 
@@ -95,7 +93,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                 final List<Method> methodsToCheck = new ArrayList<>();
                 //noinspection ConstantConditions as this checked in visitPhpMethod
                 Collections.addAll(methodsToCheck, constructor.getContainingClass().getOwnMethods());
-                for (PhpClass trait : constructor.getContainingClass().getTraits()) {
+                for (final PhpClass trait : constructor.getContainingClass().getTraits()) {
                     Collections.addAll(methodsToCheck, trait.getOwnMethods());
                 }
 

@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
@@ -63,7 +64,7 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
             }
 
             private boolean isExceptionClass(@NotNull ClassReference reference) {
-                final PsiElement resolved = reference.resolve();
+                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                 if (resolved instanceof PhpClass) {
                     final Set<PhpClass> inheritanceChain = InterfacesExtractUtil.getCrawlInheritanceTree((PhpClass) resolved, true);
                     for (PhpClass clazz : inheritanceChain) {

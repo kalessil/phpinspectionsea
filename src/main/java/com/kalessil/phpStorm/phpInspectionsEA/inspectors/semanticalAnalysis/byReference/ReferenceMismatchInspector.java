@@ -251,11 +251,11 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                     if (objExpression instanceof ParameterList && objExpression.getParent() instanceof FunctionReference) {
                         FunctionReference reference = (FunctionReference) objExpression.getParent();
                         /* not resolved or known re-unsafe function */
-                        PsiElement callable = reference.resolve();
+                        final PsiElement callable = OpenapiResolveUtil.resolveReference(reference);
                         if (!(callable instanceof Function)) {
                             continue;
                         }
-                        String strCallableName = ((Function) callable).getName();
+                        final String strCallableName = ((Function) callable).getName();
                         if (!StringUtils.isEmpty(strCallableName) && legalizedMismatchingFunctions.contains(strCallableName)) {
                             continue;
                         }

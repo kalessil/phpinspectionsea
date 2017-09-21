@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -38,7 +39,7 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
             public void visitPhpClassConstantReference(ClassConstantReference constantReference) {
                 final String constantName = constantReference.getName();
                 if (constantName != null && constantName.equals("ISO8601")) {
-                    final PsiElement resolved = constantReference.resolve();
+                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(constantReference);
                     if (resolved instanceof Field) {
                         final Field constant = (Field) resolved;
                         if (constant.isConstant() && constant.getFQN().equals("\\DateTime.ISO8601")) {

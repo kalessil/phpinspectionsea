@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -63,11 +64,11 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 if (null != functionName && mapping.containsKey(functionName)) {
                     /* avoid complaining to imported functions */
-                    PsiElement function = reference.resolve();
-                    if (null == function) {
+                    PsiElement function = OpenapiResolveUtil.resolveReference(reference);
+                    if (function == null) {
                         /* handle multiply resolved functions - we need one unique FQN */
                         final Map<String, Function> resolvedFunctions = new HashMap<>();
-                        for (ResolveResult resolve : reference.multiResolve(true)) {
+                        for (final ResolveResult resolve : reference.multiResolve(true)) {
                             final PsiElement resolved = resolve.getElement();
                             if (resolved instanceof Function) {
                                 resolvedFunctions.put(((Function) resolved).getFQN(), (Function) resolved);

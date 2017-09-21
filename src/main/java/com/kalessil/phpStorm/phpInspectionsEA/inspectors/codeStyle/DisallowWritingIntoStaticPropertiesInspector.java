@@ -8,6 +8,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,7 +59,7 @@ public class DisallowWritingIntoStaticPropertiesInspector extends BasePhpInspect
                             if (scope instanceof Method) {
                                 /* method context, ensure that caller shares the referenced field */
                                 final PhpClass   caller          = ((Method) scope).getContainingClass();
-                                final PsiElement referencedField = ((FieldReference) candidate).resolve();
+                                final PsiElement referencedField = OpenapiResolveUtil.resolveReference((FieldReference) candidate);
                                 if (referencedField != null && caller != ((Field) referencedField).getContainingClass()) {
                                     holder.registerProblem(assignmentExpression, messageDisallowExternalWrites);
                                 }

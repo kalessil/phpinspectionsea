@@ -19,6 +19,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
@@ -177,10 +178,11 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                     // ensure resolvable
                     final ClassReference reference = (ClassReference) instanceOfExpression.getRightOperand();
-                    if (!(reference.resolve() instanceof PhpClass)) {
+                    final PsiElement resolved      = OpenapiResolveUtil.resolveReference(reference);
+                    if (!(resolved instanceof PhpClass)) {
                         continue;
                     }
-                    final PhpClass clazz = (PhpClass) reference.resolve();
+                    final PhpClass clazz = (PhpClass) resolved;
 
                     // push subject properly, as expressions can be different objects with the same semantics
                     PsiElement registeredSubject = null;

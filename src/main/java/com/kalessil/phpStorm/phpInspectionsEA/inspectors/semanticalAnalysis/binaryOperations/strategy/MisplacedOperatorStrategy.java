@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,7 +54,7 @@ final public class MisplacedOperatorStrategy {
             final PsiElement candidate   = params.length > 0 ? params[params.length - 1] : null;
             /* BO should be the last parameter of a call in logical contexts */
             if (candidate == expression && ExpressionSemanticUtil.isUsedAsLogicalOperand(parent)) {
-                final PsiElement resolved = call.resolve();
+                final PsiElement resolved = OpenapiResolveUtil.resolveReference(call);
                 if (resolved instanceof Function) {
                     /* resolve the last parameter types: if bool not defined implicitly, continue */
                     final Function function   = (Function) resolved;

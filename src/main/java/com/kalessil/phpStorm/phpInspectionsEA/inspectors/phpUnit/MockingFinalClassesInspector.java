@@ -7,6 +7,7 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,7 +58,7 @@ public class MockingFinalClassesInspector extends BasePhpInspection {
                         for (final Parameter parameter : method.getParameters()) {
                             final PsiElement typeCandidate = parameter.getFirstPsiChild();
                             if (typeCandidate instanceof ClassReference) {
-                                final PsiElement resolved = ((ClassReference) typeCandidate).resolve();
+                                final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) typeCandidate);
                                 if (resolved instanceof PhpClass && ((PhpClass) resolved).isFinal()) {
                                     holder.registerProblem(typeCandidate, message);
                                 }
@@ -72,7 +73,7 @@ public class MockingFinalClassesInspector extends BasePhpInspection {
                 final String methodName      = reference.getName();
                 final PsiElement[] arguments = reference.getParameters();
                 if (methodName != null && arguments.length > 0 && methods.containsValue(methodName)) {
-                    final PsiElement resolved = reference.resolve();
+                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                     if (resolved instanceof Method && methods.get(((Method) resolved).getFQN()) != null) {
                         final PhpClass referencedClass = this.getClass(arguments[0]);
                         if (referencedClass != null && referencedClass.isFinal()) {
@@ -91,7 +92,7 @@ public class MockingFinalClassesInspector extends BasePhpInspection {
                     if (constantName != null && constantName.equals("class")) {
                         final PhpExpression classReference = reference.getClassReference();
                         if (classReference instanceof ClassReference) {
-                            final PsiElement resolved = ((ClassReference) classReference).resolve();
+                            final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) classReference);
                             result = resolved instanceof PhpClass ? (PhpClass) resolved : null;
                         }
                     }

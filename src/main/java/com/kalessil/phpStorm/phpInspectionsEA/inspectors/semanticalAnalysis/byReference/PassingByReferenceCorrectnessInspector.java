@@ -68,7 +68,7 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                                 parameters[index].isPassByRef() &&
                                 !this.isByReference(argument)
                             ) {
-                                final PsiElement resolvedArgument = ((FunctionReference) argument).resolve();
+                                final PsiElement resolvedArgument = OpenapiResolveUtil.resolveReference((FunctionReference) argument);
                                 if (resolvedArgument instanceof Function) {
                                     final PsiElement name = NamedElementUtil.getNameIdentifier((Function) resolvedArgument);
                                     if (!this.isByReference(name)) {

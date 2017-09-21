@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -15,6 +14,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -102,7 +102,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                                 final PhpIndex index = PhpIndex.getInstance(holder.getProject());
                                 if (!index.getFunctionsByFQN("\\" + functionName).isEmpty()) {
                                     final String message = messagePattern.replace("%t%", function);
-                                    holder.registerProblem(callback, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                                    holder.registerProblem(callback, message, new TheLocalFix());
                                 }
                             }
                         }
@@ -125,7 +125,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 }
 
                 /* resolve the constant/function, report if it's from the root NS */
-                final PsiElement function = reference.resolve();
+                final PsiElement function = OpenapiResolveUtil.resolveReference(reference);
                 final boolean isFunction  = function instanceof Function;
                 if (isFunction || function instanceof Constant) {
                     final String fqn = ((PhpNamedElement) function).getFQN();
@@ -134,7 +134,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                     }
 
                     final String message = messagePattern.replace("%t%", referenceName + (isFunction ? "(...)" : ""));
-                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                    holder.registerProblem(reference, message, new TheLocalFix());
                 }
             }
         };

@@ -95,7 +95,7 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
             final PsiElement target = descriptor.getPsiElement();
             if (target instanceof FunctionReference) {
                 final FunctionReference reference = (FunctionReference) target;
-                final PsiElement callable         = reference.resolve();
+                final PsiElement callable         = OpenapiResolveUtil.resolveReference(reference);
                 if (callable instanceof Function) {
                     reference.handleElementRename(((Function) callable).getName());
                 }

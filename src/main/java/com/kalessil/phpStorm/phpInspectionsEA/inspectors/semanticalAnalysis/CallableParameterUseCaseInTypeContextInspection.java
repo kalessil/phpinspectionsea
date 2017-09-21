@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
@@ -167,7 +168,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     for (String type : resolved) {
                                         /* translate static/self into FQNs */
                                         if (valueIsMethodCall && classReferences.contains(type)) {
-                                            final PsiElement source = ((MethodReference) value).resolve();
+                                            final PsiElement source = OpenapiResolveUtil.resolveReference((MethodReference) value);
                                             if (source instanceof Method) {
                                                 final PhpClass clazz = ((Method) source).getContainingClass();
                                                 if (clazz != null && !clazz.isAnonymous()) {

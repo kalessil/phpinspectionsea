@@ -40,16 +40,14 @@ final public class IdenticalOperandsStrategy {
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         final PsiElement left  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getLeftOperand());
         final PsiElement right = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getRightOperand());
-        if (null == left || null == right) {
-            return false;
-        }
-
-        final IElementType operation = expression.getOperationType();
-        if (operationsToCheck.contains(operation) && OpeanapiEquivalenceUtil.areEqual(left, right)) {
+        if (
+            left != null && right != null &&
+            operationsToCheck.contains(expression.getOperationType()) &&
+            OpeanapiEquivalenceUtil.areEqual(left, right)
+        ) {
             holder.registerProblem(expression, message);
             return true;
         }
-
         return false;
     }
 }

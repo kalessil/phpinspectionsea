@@ -34,8 +34,7 @@ final public class InstanceOfTraitStrategy {
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         /* general structure expectations */
-        final PsiElement operation = expression.getOperation();
-        if (null == operation || PhpTokenTypes.kwINSTANCEOF != operation.getNode().getElementType()) {
+        if (expression.getOperationType() != PhpTokenTypes.kwINSTANCEOF) {
             return false;
         }
         final PsiElement right = expression.getRightOperand();

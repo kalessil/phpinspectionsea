@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -38,21 +37,20 @@ public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection 
                 }
 
                 final String methodName = method.getName();
-                for (Field field : clazz.getFields()) {
+                for (final Field field : clazz.getFields()) {
                     if (field.isConstant() || !field.getName().equals(methodName)) {
                         continue;
                     }
 
                     final HashSet<String> resolvedTypes = new HashSet<>();
                     TypeFromPlatformResolverUtil.resolveExpressionType(field, resolvedTypes);
-                    if (resolvedTypes.size() > 0) {
+                    if (!resolvedTypes.isEmpty()) {
                         if (resolvedTypes.contains(Types.strCallable)) {
-                            holder.registerProblem(nameNode, messageMatches, ProblemHighlightType.WEAK_WARNING);
+                            holder.registerProblem(nameNode, messageMatches);
                         }
-
                         resolvedTypes.clear();
                     } else {
-                        holder.registerProblem(nameNode, messageFieldType, ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(nameNode, messageFieldType);
                     }
 
                     break;

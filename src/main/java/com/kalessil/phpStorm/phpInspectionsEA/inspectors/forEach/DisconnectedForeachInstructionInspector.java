@@ -262,17 +262,11 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                         final PsiElement value = assignment.getValue();
                         if (value instanceof NewExpression) {
                             return ExpressionType.NEW;
-                        }
-
-                        if (value instanceof UnaryExpression) {
-                            final PsiElement operation = ((UnaryExpression) value).getOperation();
-                            if (null != operation && PhpTokenTypes.kwCLONE == operation.getNode().getElementType()) {
+                        } else if (value instanceof UnaryExpression) {
+                            if (OpenapiTypesUtil.is(((UnaryExpression) value).getOperation(), PhpTokenTypes.kwCLONE)) {
                                 return ExpressionType.CLONE;
                             }
-                        }
-
-                        /* TODO: configurable \DOMNode::appendChild, \DOMDocument::createTextNode */
-                        if (value instanceof MethodReference) {
+                        } else if (value instanceof MethodReference) {
                             final MethodReference call = (MethodReference) value;
                             final String methodName    = call.getName();
                             if (methodName != null && methodName.equals("createElement")) {

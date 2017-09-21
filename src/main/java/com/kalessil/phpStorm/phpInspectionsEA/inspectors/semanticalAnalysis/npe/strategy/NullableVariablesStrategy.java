@@ -193,8 +193,7 @@ final public class NullableVariablesStrategy {
             }
             /* cases when NPE can be introduced: clone operator */
             if (parent instanceof UnaryExpression) {
-                final PsiElement operation = ((UnaryExpression) parent).getOperation();
-                if (operation != null && operation.getNode().getElementType() == PhpTokenTypes.kwCLONE) {
+                if (OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.kwCLONE)) {
                     holder.registerProblem(variable, message);
                 }
                 continue;

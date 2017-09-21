@@ -81,8 +81,7 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                         knowsLegalCases = true;
                     } else if (argument instanceof UnaryExpression) {
                         /* (clone ...)->...: allow method/property access on cloned objects */
-                        final PsiElement operator = ((UnaryExpression) argument).getOperation();
-                        knowsLegalCases = null != operator && operator.getNode().getElementType() == PhpTokenTypes.kwCLONE;
+                        knowsLegalCases = OpenapiTypesUtil.is(((UnaryExpression) argument).getOperation(), PhpTokenTypes.kwCLONE);
                     } else if (argument instanceof BinaryExpression) {
                         /* ( ?? )->...: allow method/property access on null coallesing operator */
                         knowsLegalCases = ((BinaryExpression) argument).getOperationType() == PhpTokenTypes.opCOALESCE;
@@ -137,8 +136,7 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                 /* clone replacement is a special case */
                 final PsiElement parent = expression.getParent();
                 if (parent instanceof UnaryExpression) {
-                    final PsiElement operation = ((UnaryExpression) parent).getOperation();
-                    if (operation != null && operation.getNode().getElementType() == PhpTokenTypes.kwCLONE) {
+                    if (OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.kwCLONE)) {
                         target             = parent;
                         final String clone = "clone " + replacement.getText();
                         replacement        = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, clone);

@@ -253,9 +253,9 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             if (value instanceof NewExpression) {
                 wrap = true;
             } else if (value instanceof UnaryExpression) {
-                final PsiElement operator = ((UnaryExpression) value).getOperation();
-                wrap = null != operator && PhpTokenTypes.kwCLONE == operator.getNode().getElementType();
+                wrap = OpenapiTypesUtil.is(((UnaryExpression) value).getOperation(), PhpTokenTypes.kwCLONE);
             }
+
             if (wrap && variable.getParent() instanceof MemberReference) {
                 final String wrappedPattern = "(" + value.getText() + ")";
                 final ParenthesizedExpression wrapped

@@ -53,9 +53,11 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                     final GroupStatement body      = ExpressionSemanticUtil.getGroupStatement(method);
 
                     PsiTreeUtil.findChildrenOfType(body, ClassReference.class).stream()
-                            .filter(reference  -> targetReference.equals(reference.getName()))
-                            .filter(reference  -> method == PsiTreeUtil.getParentOfType(reference, Method.class))
-                            .filter(reference  -> clazz == OpenapiResolveUtil.resolveReference(reference))
+                            .filter(reference  ->
+                                    targetReference.equals(reference.getName()) &&
+                                    method == PsiTreeUtil.getParentOfType(reference, Method.class) &&
+                                    clazz == OpenapiResolveUtil.resolveReference(reference)
+                            )
                             .forEach(reference -> {
                                 final PsiElement parent = reference.getParent();
                                 if (!PREFER_CLASS_NAMES && parent instanceof ClassConstantReference) {

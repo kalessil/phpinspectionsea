@@ -32,7 +32,8 @@ final public class GreaterOrEqualInHashElementStrategy {
         }
 
         /* analysis itself */
-        if (null != expression.getParent() && expression.getParent().getParent() instanceof ArrayCreationExpression) {
+        final PsiElement parent = expression.getParent();
+        if (null != parent && parent.getParent() instanceof ArrayCreationExpression) {
             holder.registerProblem(operation, message);
             return true;
         }

@@ -131,7 +131,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
                         /* try searching interfaces and classes for the given FQN */
                         Collection<PhpClass> classes = index.getClassesByFQN(fqnToLookup);
-                        if (0 == classes.size()) {
+                        if (classes.isEmpty()) {
                             classes = index.getInterfacesByFQN(fqnToLookup);
                         }
 
@@ -139,7 +139,8 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         if (1 == classes.size() && classes.iterator().next().getFQN().equals(fqnToLookup)) {
                             final String message = messagePattern.replace("%c%", normalizedContents);
                             holder.registerProblem(
-                                expression, message, ProblemHighlightType.WEAK_WARNING,
+                                expression,
+                                message,
                                 new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF)
                             );
                         }

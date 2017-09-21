@@ -81,10 +81,11 @@ final public class CollectPossibleThrowsUtil {
                 }
 
                 PhpClass newClass;
-                if (newClassRef.resolve() instanceof PhpClass) {
-                    newClass = (PhpClass) newClassRef.resolve();
-                } else if (newClassRef.resolve() instanceof Method) {
-                    newClass = ((Method) newClassRef.resolve()).getContainingClass();
+                final PsiElement resolved = OpenapiResolveUtil.resolveReference(newClassRef);
+                if (resolved instanceof PhpClass) {
+                    newClass = (PhpClass) resolved;
+                } else if (resolved instanceof Method) {
+                    newClass = ((Method) resolved).getContainingClass();
                 } else {
                     processed.add(newExpression);
                     continue;
@@ -104,8 +105,8 @@ final public class CollectPossibleThrowsUtil {
                 }
 
                 /* process constructors invocation */
-                Method constructor = newClass.getConstructor();
-                if (null != constructor) {
+                final Method constructor = newClass == null ? null : newClass.getConstructor();
+                if (constructor != null) {
 //holder.registerProblem(newExpression, "Constructor found", ProblemHighlightType.WEAK_WARNING);
                     /* lookup for annotated exceptions */
                     final HashSet<PhpClass> constructorExceptions = new HashSet<>();

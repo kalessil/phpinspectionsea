@@ -38,15 +38,13 @@ final public class IdenticalOperandsStrategy {
     }
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
-        final PsiElement left  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getLeftOperand());
-        final PsiElement right = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getRightOperand());
-        if (
-            left != null && right != null &&
-            operationsToCheck.contains(expression.getOperationType()) &&
-            OpeanapiEquivalenceUtil.areEqual(left, right)
-        ) {
-            holder.registerProblem(expression, message);
-            return true;
+        if (operationsToCheck.contains(expression.getOperationType())) {
+            final PsiElement left  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getLeftOperand());
+            final PsiElement right = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getRightOperand());
+            if (left != null && right != null && OpeanapiEquivalenceUtil.areEqual(left, right)) {
+                holder.registerProblem(expression, message);
+                return true;
+            }
         }
         return false;
     }

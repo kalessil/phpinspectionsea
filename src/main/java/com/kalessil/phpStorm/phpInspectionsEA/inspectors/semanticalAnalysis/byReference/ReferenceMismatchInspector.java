@@ -19,6 +19,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -192,7 +193,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                     if (prevElement instanceof PsiWhiteSpace) {
                         prevElement = prevElement.getPrevSibling();
                     }
-                    if (!StringUtils.isEmpty(strVariable) && null != prevElement && PhpTokenTypes.opBIT_AND == prevElement.getNode().getElementType()) {
+                    if (!StringUtils.isEmpty(strVariable) && OpenapiTypesUtil.is(prevElement, PhpTokenTypes.opBIT_AND)) {
                         /* the case, scan for miss-usages assuming value is unique */
                         Function scope = ExpressionSemanticUtil.getScope(foreach);
                         if (null != scope) {
@@ -345,7 +346,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                                 if (prevElement instanceof PsiWhiteSpace) {
                                     prevElement = prevElement.getPrevSibling();
                                 }
-                                if (null != prevElement && PhpTokenTypes.opBIT_AND == prevElement.getNode().getElementType()) {
+                                if (OpenapiTypesUtil.is(prevElement, PhpTokenTypes.opBIT_AND)) {
                                     /* check if assignments states reference usage */
                                     PsiElement operation = reference.getPrevSibling();
                                     if (operation instanceof PsiWhiteSpace) {

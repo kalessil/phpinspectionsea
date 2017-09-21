@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +49,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                     if (null != prevElement) {
                         PhpPsiElement nextExpression = foreach.getNextPsiSibling();
 
-                        if (PhpTokenTypes.opBIT_AND == prevElement.getNode().getElementType()) {
+                        if (OpenapiTypesUtil.is(prevElement, PhpTokenTypes.opBIT_AND)) {
                             /* === requested by the community, not part of original idea === */
                             /* look up for parents which doesn't have following statements, eg #53 */
                             PsiElement foreachParent = foreach.getParent();
@@ -144,7 +145,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                     if (prevElement instanceof PsiWhiteSpace) {
                         prevElement = prevElement.getPrevSibling();
                     }
-                    if (null != prevElement && PhpTokenTypes.opBIT_AND == prevElement.getNode().getElementType()) {
+                    if (OpenapiTypesUtil.is(prevElement, PhpTokenTypes.opBIT_AND)) {
                         holder.registerProblem(prevElement, messageKeyReference, ProblemHighlightType.ERROR);
                     }
                 }

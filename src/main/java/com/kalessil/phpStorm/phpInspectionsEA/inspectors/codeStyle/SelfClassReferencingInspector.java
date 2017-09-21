@@ -54,9 +54,9 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
 
                     PsiTreeUtil.findChildrenOfType(body, ClassReference.class).stream()
                             .filter(reference  ->
-                                    targetReference.equals(reference.getName()) &&
-                                    method == PsiTreeUtil.getParentOfType(reference, Method.class) &&
-                                    clazz == OpenapiResolveUtil.resolveReference(reference)
+                                targetReference.equals(reference.getName()) &&
+                                method == PsiTreeUtil.getParentOfType(reference, Method.class) &&
+                                clazz == OpenapiResolveUtil.resolveReference(reference)
                             )
                             .forEach(reference -> {
                                 final PsiElement parent = reference.getParent();
@@ -76,8 +76,10 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
 
                     if (PREFER_CLASS_NAMES) {
                         PsiTreeUtil.findChildrenOfType(body, ConstantReference.class).stream()
-                                .filter(reference  -> "__CLASS__".equals(reference.getName()))
-                                .filter(reference  -> method == PsiTreeUtil.getParentOfType(reference, Method.class))
+                                .filter(reference  ->
+                                    "__CLASS__".equals(reference.getName()) &&
+                                    method == PsiTreeUtil.getParentOfType(reference, Method.class)
+                                )
                                 .forEach(reference -> {
                                     final String replacement = targetReplacement + "::class";
                                     final String message     = String.format(messagePattern, reference.getText(), replacement);

@@ -15,6 +15,5 @@ final public class IfReturnReturnSimplificationInspectorTest extends PhpCodeInsi
         }
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/controlFlow/if-return-return-simplify.fixed.php");
-
     }
 }

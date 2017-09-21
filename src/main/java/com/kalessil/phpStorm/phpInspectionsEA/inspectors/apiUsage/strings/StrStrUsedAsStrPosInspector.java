@@ -72,7 +72,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                                 .replace("%p%", params[1].getText())
                                 .replace("%s%", params[0].getText())
                                 .replace("%f%", mapping.get(functionName))
-                                .replace("%o%", operator.length() == 2 ? operator + "=": operator);
+                                .replace("%o%", operator.length() == 2 ? operator + '=' : operator);
                             final String message     = messagePattern.replace("%e%", replacement);
                             holder.registerProblem(parent, message, new UseStrposFix(replacement));
 

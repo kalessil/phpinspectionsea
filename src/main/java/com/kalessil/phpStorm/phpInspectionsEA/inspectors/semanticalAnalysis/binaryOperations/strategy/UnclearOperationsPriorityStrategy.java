@@ -31,14 +31,14 @@ final public class UnclearOperationsPriorityStrategy {
             if (parent instanceof BinaryExpression) {
                 final IElementType parentOperator = ((BinaryExpression) parent).getOperationType();
                 if (parentOperator != operator && (parentOperator == PhpTokenTypes.opAND || parentOperator == PhpTokenTypes.opOR)) {
-                    final String replacement = "(" + expression.getText() + ")";
+                    final String replacement = '(' + expression.getText() + ')';
                     holder.registerProblem(expression, message, new WrapItAsItIsFix(replacement));
                     return true;
                 }
             }
             /* assignment dramatically changing precedence */
             else if (OpenapiTypesUtil.isAssignment(parent) && !OpenapiTypesUtil.isStatementImpl(parent.getParent())) {
-                final String replacement = "(" + expression.getText() + ")";
+                final String replacement = '(' + expression.getText() + ')';
                 holder.registerProblem(expression, message, new WrapItAsItIsFix(replacement));
                 return true;
             }
@@ -48,7 +48,7 @@ final public class UnclearOperationsPriorityStrategy {
                 final PsiElement assignedValue        = assignment.getValue();
                 if (assignedValue != null) {
                     final String value       = assignedValue.getText();
-                    final String replacement = assignment.getText().replace(value, "(" + value + ")");
+                    final String replacement = assignment.getText().replace(value, '(' + value + ')');
                     holder.registerProblem(parent, message, new WrapItAsItIsFix(replacement));
                     return true;
                 }

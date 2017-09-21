@@ -97,7 +97,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                             final String classFqnLowercase = classFqn.toLowerCase();
                             if (classFqnLowercase.startsWith(NsFqn.toLowerCase())) {
                                 result.add(classFqn.substring(classFqn.length() - referenceText.length()));
-                            } else if (classFqnLowercase.endsWith("\\" + referenceText.toLowerCase())) {
+                            } else if (classFqnLowercase.endsWith('\\' + referenceText.toLowerCase())) {
                                 result.add(classFqn.substring(classFqn.length() - referenceText.length()));
                             }
                         }

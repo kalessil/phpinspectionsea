@@ -228,7 +228,7 @@ final class TypeFromSignatureResolvingUtil {
                          /* exclude recursive definition in own signature */
                         strTypeExtracted = objMethod
                                 .getType().toString()
-                                .replace("#" + type + "#C" + strClass + "." + strSlot, "");
+                                .replace("#" + type + "#C" + strClass + '.' + strSlot, "");
 
                         Collections.addAll(resolvedTypesSet, strTypeExtracted.split("\\|"));
 
@@ -250,7 +250,7 @@ final class TypeFromSignatureResolvingUtil {
                         /* exclude recursive definition in own signature */
                         strTypeExtracted = objField
                                 .getType().toString()
-                                .replace("#" + type + "#C" + strClass + "." + strSlot, "");
+                                .replace("#" + type + "#C" + strClass + '.' + strSlot, "");
 
                         Collections.addAll(resolvedTypesSet, strTypeExtracted.split("\\|"));
                         break;

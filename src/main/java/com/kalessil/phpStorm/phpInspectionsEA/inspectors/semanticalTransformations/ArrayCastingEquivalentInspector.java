@@ -174,7 +174,7 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression != null) {
                 final PsiElement target = expression instanceof TernaryExpression ? expression : expression.getParent();
-                final String pattern    = "(" + this.expression + ")";
+                final String pattern    = '(' + this.expression + ')';
                 final ParenthesizedExpression replacement
                         = PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, pattern);
                 target.replace(replacement.getArgument());

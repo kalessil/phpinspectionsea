@@ -108,8 +108,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
 
                 /* exclude annotated exceptions, identify which has not been thrown */
-                final Set<PhpClass> annotatedButNotThrownExceptions = new HashSet<>();
-                annotatedButNotThrownExceptions.addAll(annotatedExceptions);
+                final Set<PhpClass> annotatedButNotThrownExceptions = new HashSet<>(annotatedExceptions);
                 /* release bundled expressions *//* actualize un-thrown exceptions registry */
                 annotatedExceptions.stream()
                         .filter(throwsExceptions::containsKey)

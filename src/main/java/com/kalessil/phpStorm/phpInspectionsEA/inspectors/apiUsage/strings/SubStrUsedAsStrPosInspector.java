@@ -98,7 +98,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                                 .replace("%p%", secondOperand.getText())
                                 .replace("%s%", arguments[0].getText())
                                 .replace("%f%", (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"))
-                                .replace("%o%", operator.length() == 2 ? (operator + "=") : operator)
+                                .replace("%o%", operator.length() == 2 ? (operator + '=') : operator)
                                 .replace("%i%", index);
                             final String message       = messagePattern.replace("%r%", replacement);
                             holder.registerProblem(parentExpression, message, new UseStringSearchFix(replacement));

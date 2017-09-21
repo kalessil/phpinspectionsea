@@ -100,7 +100,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                             final boolean isCandidate = !function.startsWith("\\") && !function.contains("::");
                             if (isCandidate) {
                                 final PhpIndex index = PhpIndex.getInstance(holder.getProject());
-                                if (!index.getFunctionsByFQN("\\" + functionName).isEmpty()) {
+                                if (!index.getFunctionsByFQN('\\' + functionName).isEmpty()) {
                                     final String message = messagePattern.replace("%t%", function);
                                     holder.registerProblem(callback, message, new TheLocalFix());
                                 }
@@ -129,7 +129,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 final boolean isFunction  = function instanceof Function;
                 if (isFunction || function instanceof Constant) {
                     final String fqn = ((PhpNamedElement) function).getFQN();
-                    if (fqn.length() != 1 + referenceName.length() || !fqn.equals("\\" + referenceName)) {
+                    if (fqn.length() != 1 + referenceName.length() || !fqn.equals('\\' + referenceName)) {
                         return;
                     }
 

@@ -101,7 +101,7 @@ public class MockingFinalClassesInspector extends BasePhpInspection {
                     final String contents                = string.getContents();
                     if (string.getFirstPsiChild() == null && contents.length() > 3) {
                         String fqn = contents.replaceAll("\\\\\\\\", "\\\\");
-                        fqn        = fqn.charAt(0) == '\\' ? fqn : "\\" + fqn;
+                        fqn        = fqn.charAt(0) == '\\' ? fqn : '\\' + fqn;
                         for (PhpClass clazz : PhpIndex.getInstance(expression.getProject()).getClassesByFQN(fqn)) {
                             if (clazz.isFinal()) {
                                 result = clazz;

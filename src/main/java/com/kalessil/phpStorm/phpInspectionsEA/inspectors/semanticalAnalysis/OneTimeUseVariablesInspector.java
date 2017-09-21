@@ -257,7 +257,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             }
 
             if (wrap && variable.getParent() instanceof MemberReference) {
-                final String wrappedPattern = "(" + value.getText() + ")";
+                final String wrappedPattern = '(' + value.getText() + ')';
                 final ParenthesizedExpression wrapped
                     = PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, wrappedPattern);
                 variable.replace(wrapped);

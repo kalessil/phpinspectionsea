@@ -163,7 +163,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
-                ParenthesizedExpression replacement = PhpPsiElementFactory.createFromText(project, ParenthesizedExpression.class, "(" + this.expression + ")");
+                ParenthesizedExpression replacement = PhpPsiElementFactory.createFromText(project, ParenthesizedExpression.class, '(' + this.expression + ')');
                 if (null != replacement) {
                     expression.replace(replacement.getArgument());
                 }

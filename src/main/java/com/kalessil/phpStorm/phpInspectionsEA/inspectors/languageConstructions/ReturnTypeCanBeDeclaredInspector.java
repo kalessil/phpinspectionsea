@@ -149,7 +149,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     final boolean isLegitNullable = nullableType.startsWith("\\") || returnTypes.contains(nullableType);
                     final boolean isLegitVoid     = suggestedType.equals(Types.strVoid);
                     if (isLegitNullable || isLegitVoid) {
-                        final String typeHint     = isLegitVoid ? suggestedType : "?" + suggestedType;
+                        final String typeHint     = isLegitVoid ? suggestedType : '?' + suggestedType;
                         final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(typeHint);
                         final String message      = messagePattern
                             .replace("%t%", typeHint)

@@ -4,6 +4,7 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +30,7 @@ final public class MethodIdentityUtil {
 
         final String referenceName = (null == reference ? null : reference.getName());
         if (referenceName != null && referenceName.equals(methodName)) {
-            final PsiElement resolved = reference.resolve();
+            final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
             if (resolved instanceof Method) {
                 final Method method = (Method) resolved;
                 result              = method.getFQN().equals(classFqn + "::" + methodName);

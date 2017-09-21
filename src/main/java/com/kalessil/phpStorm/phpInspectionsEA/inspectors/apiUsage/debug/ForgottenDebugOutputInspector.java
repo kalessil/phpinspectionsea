@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -143,7 +144,8 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                 }
 
                 for (final Pair<String, String> match : customMethods.values()) {
-                    final PsiElement resolved = methodName.equals(match.getSecond()) ? reference.resolve() : null;
+                    final PsiElement resolved
+                        = methodName.equals(match.getSecond()) ? OpenapiResolveUtil.resolveReference(reference) : null;
                     if (resolved instanceof Method) {
                         final PhpClass clazz = ((Method) resolved).getContainingClass();
                         if (clazz != null && match.getFirst().equals(clazz.getFQN())) {

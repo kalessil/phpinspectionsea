@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ClassConstantReference;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -49,14 +50,14 @@ final public class InstanceOfTraitStrategy {
         /* getting class from invariant constructs  */
         PsiElement resolved = null;
         if (right instanceof ClassReference) {
-            resolved = ((ClassReference) right).resolve();
+            resolved = OpenapiResolveUtil.resolveReference((ClassReference) right);
         }
         if (right instanceof ClassConstantReference) {
             final ClassConstantReference ref = (ClassConstantReference) right;
             final PsiElement classReference  = ref.getClassReference();
             final String constantName        = ref.getName();
             if (null != constantName && constantName.equals("class") && classReference instanceof ClassReference) {
-                resolved = ((ClassReference) classReference).resolve();
+                resolved = OpenapiResolveUtil.resolveReference((ClassReference) classReference);
             }
         }
 

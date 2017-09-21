@@ -20,6 +20,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -98,7 +99,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
                         final boolean callableNeeded = referenceText.contains("::");
                         for (final PsiReference ref : references) {
-                            final PsiElement resolved = ref.resolve();
+                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(ref);
                             if (resolved instanceof PhpClass) {
                                 hasClassReference    = true;
                                 hasCallableReference = referenceText.endsWith("::");

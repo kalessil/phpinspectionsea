@@ -231,8 +231,8 @@ final public class ExpressionSemanticUtil {
         }
 
         if (expression instanceof FieldReference || expression instanceof ClassConstantReference) {
-            final Field fieldOrConstant = (Field) ((MemberReference) expression).resolve();
-            if (null != fieldOrConstant && fieldOrConstant.getDefaultValue() instanceof StringLiteralExpression) {
+            final Field fieldOrConstant = (Field) OpenapiResolveUtil.resolveReference((MemberReference) expression);
+            if (fieldOrConstant != null && fieldOrConstant.getDefaultValue() instanceof StringLiteralExpression) {
                 return (StringLiteralExpression) fieldOrConstant.getDefaultValue();
             }
         }

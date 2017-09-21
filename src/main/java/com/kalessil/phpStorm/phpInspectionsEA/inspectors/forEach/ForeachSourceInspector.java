@@ -110,7 +110,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     /* false-positive: mixed definitions from stub functions */
                     boolean isStubFunction = false;
                     if (OpenapiTypesUtil.isFunctionReference(container)) {
-                        final PsiElement function = ((FunctionReference) container).resolve();
+                        final PsiElement function = OpenapiResolveUtil.resolveReference((FunctionReference) container);
                         final String filePath     = null == function ? null : function.getContainingFile().getVirtualFile().getCanonicalPath();
                         isStubFunction            = null != filePath && filePath.contains(".jar!") && filePath.contains("/stubs/");
                     }

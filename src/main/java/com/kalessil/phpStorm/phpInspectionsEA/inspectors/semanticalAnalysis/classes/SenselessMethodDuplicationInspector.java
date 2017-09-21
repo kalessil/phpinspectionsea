@@ -14,10 +14,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.DropMethodFix;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -128,7 +125,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    final PsiElement entry = reference.resolve();
+                    final PsiElement entry = OpenapiResolveUtil.resolveReference(reference);
                     if (entry instanceof PhpNamedElement) {
                         fqns.add(((PhpNamedElement) entry).getFQN());
                     }

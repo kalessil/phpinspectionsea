@@ -112,11 +112,11 @@ public class PossibleValuesDiscoveryUtil {
             @NotNull ClassConstantReference reference,
             @NotNull Set<PsiElement> result
     ) {
-        final String constantName          = reference.getName();
-        final PsiElement resolvedReference = StringUtils.isEmpty(constantName) ? null : reference.resolve();
+        final PsiElement resolvedReference
+                = StringUtils.isEmpty(reference.getName()) ? null : OpenapiResolveUtil.resolveReference(reference);
         if (resolvedReference instanceof Field) {
             final PsiElement value = ((Field) resolvedReference).getDefaultValue();
-            if (null != value) {
+            if (value != null) {
                 result.add(value);
             }
         }

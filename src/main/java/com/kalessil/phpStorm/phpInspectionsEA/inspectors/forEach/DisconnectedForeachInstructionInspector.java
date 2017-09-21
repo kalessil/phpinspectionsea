@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -270,7 +271,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             final MethodReference call = (MethodReference) value;
                             final String methodName    = call.getName();
                             if (methodName != null && methodName.equals("createElement")) {
-                                final PsiElement resolved = call.resolve();
+                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(call);
                                 if (
                                     resolved instanceof Method &&
                                     ((Method) resolved).getFQN().equals("\\DOMDocument.createElement")

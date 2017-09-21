@@ -99,7 +99,7 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
                     }
                 }
 
-                final String castingPattern  = "(" + this.suggestedType + ") null";
+                final String castingPattern  = '(' + this.suggestedType + ") null";
                 final PsiElement replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, castingPattern);
                 //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here
                 ((UnaryExpression) replacement).getValue().replace(parameter);

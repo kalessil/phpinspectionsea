@@ -117,7 +117,7 @@ final public class MisplacedOperatorStrategy {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = call.getElement();
             if (expression != null) {
-                final String pattern = "(" + this.expression + ")";
+                final String pattern = '(' + this.expression + ')';
                 final ParenthesizedExpression replacement
                         = PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, pattern);
                 expression.replace(replacement.getArgument());

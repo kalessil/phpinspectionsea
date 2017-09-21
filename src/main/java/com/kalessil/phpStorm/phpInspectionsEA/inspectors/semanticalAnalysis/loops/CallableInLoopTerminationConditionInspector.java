@@ -95,7 +95,7 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
             }
 
             String variableName             = (variableCandidate instanceof Variable) ? ((Variable) variableCandidate).getName() : "loops";
-            variableName                    = "$" + variableName + "Max";
+            variableName                    = '$' + variableName + "Max";
             final Variable variableElement  = PhpPsiElementFactory.createFromText(project, Variable.class, variableName);
             final AssignmentExpression init = PhpPsiElementFactory.createFromText(project, AssignmentExpression.class, variableName + " = " + referenceCandidate.getText());
             if (variableElement == null || init == null) {

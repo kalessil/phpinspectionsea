@@ -110,7 +110,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                     /* check second part: in some cases it overrides the first one completely */
                     String secondAsString = null;
                     if (null != secondPart) {
-                        secondAsString = secondPart instanceof Variable ? secondPart.getText() : "{" + secondPart.getText() + "}";
+                        secondAsString = secondPart instanceof Variable ? secondPart.getText() : '{' + secondPart.getText() + '}';
                         if (secondPart instanceof StringLiteralExpression) {
                             final StringLiteralExpression secondPartExpression = (StringLiteralExpression) secondPart;
                             if (null == secondPartExpression.getFirstPsiChild()) {
@@ -184,7 +184,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
             previous = previous.getPrevSibling();
         }
         if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
-            asString = "&" + asString;
+            asString = '&' + asString;
         }
 
         return asString;

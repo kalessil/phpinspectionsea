@@ -128,7 +128,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
             final PsiElement from = this.from.getElement();
             final PsiElement to   = this.to.getElement();
             if (from != null && to != null && !project.isDisposed()) {
-                final String code = this.replacement + ";";
+                final String code = this.replacement + ';';
                 if (from == to) {
                     from.replace(PhpPsiElementFactory.createPhpPsiFromText(project, PhpReturn.class, code));
                 } else {

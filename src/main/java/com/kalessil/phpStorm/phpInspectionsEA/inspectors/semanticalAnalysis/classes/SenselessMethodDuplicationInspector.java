@@ -159,7 +159,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 /* pre-collect resources needed for generation */
                 final List<String> parameters = new ArrayList<>();
                 for (Parameter parameter: method.getParameters()) {
-                    parameters.add("$" + parameter.getName());
+                    parameters.add('$' + parameter.getName());
                 }
                 final Set<String> types =
                         method.getType().global(project).filterUnknown().getTypes().stream()

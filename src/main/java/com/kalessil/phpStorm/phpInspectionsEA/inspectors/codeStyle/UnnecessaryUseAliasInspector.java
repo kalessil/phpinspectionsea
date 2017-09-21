@@ -31,7 +31,7 @@ public class UnnecessaryUseAliasInspector extends BasePhpInspection {
                 }
 
                 final String alias = expression.getAliasName();
-                if (!StringUtils.isEmpty(alias) && expression.getFQN().endsWith("\\" + alias)) {
+                if (!StringUtils.isEmpty(alias) && expression.getFQN().endsWith('\\' + alias)) {
                     final String message = messagePattern.replace("%a%", alias);
                     holder.registerProblem(expression.getLastChild(), message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new TheLocalFix());
                 }

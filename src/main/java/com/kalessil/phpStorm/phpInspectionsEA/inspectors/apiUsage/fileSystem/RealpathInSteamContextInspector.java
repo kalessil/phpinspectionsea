@@ -107,7 +107,7 @@ public class RealpathInSteamContextInspector extends BasePhpInspection {
                     String newRight             = rightContent;
                     while (newRight.startsWith("/..")) {
                         newRight = newRight.replaceFirst("/\\.\\.", "");
-                        newLeft.insert(0, "dirname(").append(")");
+                        newLeft.insert(0, "dirname(").append(')');
                     }
 
                     replacement = newLeft + " . " + quote + newRight + quote;

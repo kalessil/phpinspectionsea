@@ -113,6 +113,12 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         migrated.add("print_r");
         migrated.add("var_export");
         migrated.add("var_dump");
+        /* Drupal-related debug functions. */
+        migrated.add("dpm");
+        migrated.add("dsm");
+        migrated.add("dvm");
+        migrated.add("kpr");
+        migrated.add("dpq");
 
         return migrated;
     }

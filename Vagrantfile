@@ -23,8 +23,12 @@ Vagrant.configure("2") do |config|
     sudo chmod +x /usr/local/bin/composer
     composer require --optimize-autoloader shopsys/phpstorm-inspect
 
-    # get IDE and plugins
-    # extract IDE, drop it's plugin folder (except php,css) add PhpInspectionsEA.jar there
+    # IDE installation and plugins management
+    sudo rm -f PhpStorm-2016.2.2.tar.gz PhpInspectionsEA.jar
+    wget https://download.jetbrains.com/webide/PhpStorm-2016.2.2.tar.gz
+    wget https://download.plugins.jetbrains.com/7622/38887/PhpInspectionsEA.jar
+
+    #   transfer ~/.PhpStorm*/config/phpstorm.key onto the VM in order to activate the IDE
     # try running ./vendor/bin/phpstorm-inspect on a sample project interactively (requires inspection profile in VCS)
     # idea.sh inspect (we need to ensure 64 bit instance loaded - from IDE log files)
   SHELL

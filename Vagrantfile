@@ -46,6 +46,9 @@ Vagrant.configure("2") do |config|
     # export inspection_profile=$project/.idea/inspectionProfiles/Project_Default.xml
     # export default_inspections='<component name="InspectionProjectProfileManager"><profile version="1.0"><option name="myName" value="Project Default"/></profile></component>'
     # [ ! -e $inspection_profile ] && mkdir -p $project/.idea/inspectionProfiles && touch $inspection_profile && echo $default_inspections >$inspection_profile
+    # export project_misc=$project/.idea/misc.xml
+    # export default_misc='<?xml version="1.0" encoding="UTF-8"?><project version="4"><component name="ProjectRootManager" version="2"/></project>'
+    # [ ! -e $project_misc ] && touch $project_misc && echo $default_misc >$project_misc
     # ~/vendor/bin/phpstorm-inspect ~/PhpStorm-*/bin/inspect.sh ~/.PhpStorm2016.2/system $project $inspection_profile $project/src
 
     # TODO: ensure 64 bit instance loaded (check IDE log files)

@@ -3,6 +3,16 @@
 
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/trusty64"
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id,
+        "--memory",          1024,
+        "--cpus",            2,
+        "--cpuexecutioncap", 100,
+        "--usb",             "off",
+        "--usbehci",         "off",
+        "--audio",           "none"
+    ]
+  end
 
   config.vm.synced_folder ".", "/vagrant_share"
 

@@ -25,7 +25,11 @@ Vagrant.configure("2") do |config|
     sudo rm -f PhpStorm-2016.2.2.tar.gz PhpInspectionsEA.jar
     wget https://download.jetbrains.com/webide/PhpStorm-2016.2.2.tar.gz
     wget https://download.plugins.jetbrains.com/7622/38887/PhpInspectionsEA.jar
-    # TODO: unzip, drop plugins/* except white-listed
+    # TODO: tar -xvf PhpStorm-*.tar.gz
+    # TODO: mv PhpInspectionsEA.jar PhpStorm-*/plugins
+    # TODO: cd PhpStorm-*/plugins
+    # TODO: ls | grep -Evi "^(css|php|PhpInspectionsEA)$" | xargs rm -rf
+
     # TODO: transfer ~/.PhpStorm*/config/phpstorm.key onto the VM in order to activate the IDE
     # TODO: ensure 64 bit instance loaded (check IDE log files)
   SHELL

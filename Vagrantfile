@@ -5,9 +5,9 @@ Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/trusty64"
 
   # config.vm.synced_folder "../data", "/vagrant_data"
+  # to get vagrant working behind proxy check this: https://stackoverflow.com/a/26800847/1879087
 
   config.vm.provision "shell", inline: <<-SHELL
-    # TODO: proxy configuration instructions
     # repositories configuration
     sudo add-apt-repository ppa:webupd8team/java -y
     sudo apt-get update

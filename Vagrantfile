@@ -39,10 +39,10 @@ Vagrant.configure("2") do |config|
     sudo chown -R vagrant /home/vagrant/.PhpStorm2016.2
 
     # sample project
-    cd /tmp/
     git clone https://github.com/FriendsOfPHP/PHP-CS-Fixer.git
     export project=~/PHP-CS-Fixer
     export inspection_profile=$project/.idea/inspectionProfiles/Project_Default.xml
+    [ -e $project/composer.json ] && cd $project && composer install --no-dev
     ~/vendor/bin/phpstorm-inspect ~/PhpStorm-*/bin/inspect.sh ~/.PhpStorm2016.2/system $project $inspection_profile $project/src
   SHELL
 end

@@ -35,11 +35,12 @@ Vagrant.configure("2") do |config|
     ls | grep -Evi "^(css|php)?$" | xargs rm -rf
     # get new plugins installed
     wget --quiet --no-verbose https://download.plugins.jetbrains.com/7622/38887/PhpInspectionsEA.jar
+    # feed the license to PhpStorm
+    [ ! -e ~/.PhpStorm2016.2/system ] && mkdir -p ~/.PhpStorm2016.2/system
+    [ ! -e ~/.PhpStorm2016.2/config ] && mkdir -p ~/.PhpStorm2016.2/config && cp /vagrant_share/phpstorm.key ~/.PhpStorm2016.2/config
+    sudo chown -R vagrant /home/vagrant/.PhpStorm2016.2
 
     # sample project
-    # feed the license to PhpStorm
-    # [ ! -e ~/.PhpStorm2016.2/system ] && mkdir -p ~/.PhpStorm2016.2/system
-    # [ ! -e ~/.PhpStorm2016.2/config ] && mkdir -p ~/.PhpStorm2016.2/config && cp /vagrant_share/phpstorm.key ~/.PhpStorm2016.2/config
     # git clone https://github.com/FriendsOfPHP/PHP-CS-Fixer.git
     # export project=~/PHP-CS-Fixer
     # export inspection_profile=$project/.idea/inspectionProfiles/Project_Default.xml

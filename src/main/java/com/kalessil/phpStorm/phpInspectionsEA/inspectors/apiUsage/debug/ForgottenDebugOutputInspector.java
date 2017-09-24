@@ -93,35 +93,42 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
 
     @NotNull
     private static Set<String> optionConfigurationDefaults() {
-        final Set<String> migrated = new TreeSet<>();
-        migrated.add("\\Codeception\\Util\\Debug::pause");
-        migrated.add("\\Codeception\\Util\\Debug::debug");
-        migrated.add("\\Doctrine\\Common\\Util\\Debug::dump");
-        migrated.add("\\Doctrine\\Common\\Util\\Debug::export");
-        migrated.add("\\Symfony\\Component\\Debug\\Debug::enable");
-        migrated.add("\\Symfony\\Component\\Debug\\ErrorHandler::register");
-        migrated.add("\\Symfony\\Component\\Debug\\ExceptionHandler::register");
-        migrated.add("\\Symfony\\Component\\Debug\\DebugClassLoader::enable");
-        migrated.add("\\Zend\\Debug\\Debug::dump");
-        migrated.add("\\Zend\\Di\\Display\\Console::export");
-        migrated.add("\\Illuminate\\Support\\Debug\\Dumper::dump");
-        migrated.add("\\TYPO3\\CMS\\Core\\Utility\\DebugUtility::debug");
-        migrated.add("dd");
-        migrated.add("debug_print_backtrace");
-        migrated.add("debug_zval_dump");
-        migrated.add("error_log");
-        migrated.add("phpinfo");
-        migrated.add("print_r");
-        migrated.add("var_export");
-        migrated.add("var_dump");
-        /* Drupal-related debug functions. */
-        migrated.add("dpm");
-        migrated.add("dsm");
-        migrated.add("dvm");
-        migrated.add("kpr");
-        migrated.add("dpq");
+        final Set<String> list = new TreeSet<>();
+        /* Codeception-related debug functions */
+        list.add("\\Codeception\\Util\\Debug::pause");
+        list.add("\\Codeception\\Util\\Debug::debug");
+        /* Doctrine-related debug functions */
+        list.add("\\Doctrine\\Common\\Util\\Debug::dump");
+        list.add("\\Doctrine\\Common\\Util\\Debug::export");
+        /* Symfony-related debug functions */
+        list.add("\\Symfony\\Component\\Debug\\Debug::enable");
+        list.add("\\Symfony\\Component\\Debug\\ErrorHandler::register");
+        list.add("\\Symfony\\Component\\Debug\\ExceptionHandler::register");
+        list.add("\\Symfony\\Component\\Debug\\DebugClassLoader::enable");
+        /* Zend-related debug functions */
+        list.add("\\Zend\\Debug\\Debug::dump");
+        list.add("\\Zend\\Di\\Display\\Console::export");
+        /* Typo3-related debug functions */
+        list.add("\\TYPO3\\CMS\\Core\\Utility\\DebugUtility::debug");
+        /* Laravel-related debug functions */
+        list.add("\\Illuminate\\Support\\Debug\\Dumper::dump");
+        list.add("dd");
+        /* Core-php debug functions */
+        list.add("debug_print_backtrace");
+        list.add("debug_zval_dump");
+        list.add("error_log");
+        list.add("phpinfo");
+        list.add("print_r");
+        list.add("var_export");
+        list.add("var_dump");
+        /* Drupal-related debug functions */
+        list.add("dpm");
+        list.add("dsm");
+        list.add("dvm");
+        list.add("kpr");
+        list.add("dpq");
 
-        return migrated;
+        return list;
     }
 
     @NotNull

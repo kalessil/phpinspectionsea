@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -14,7 +15,9 @@ final public class OpenapiResolveUtil {
         try {
             return reference.resolve();
         } catch (Throwable error) {
-            /* exception here connected with indexing and IO failures, hence just ignore them */
+            if (error instanceof ProcessCanceledException) {
+                throw error;
+            }
             return null;
         }
     }
@@ -24,7 +27,9 @@ final public class OpenapiResolveUtil {
         try {
             return expression.getType().global(project);
         } catch (Throwable error) {
-            /* exception here connected with indexing and IO failures, hence just ignore them */
+            if (error instanceof ProcessCanceledException) {
+                throw error;
+            }
             return null;
         }
     }

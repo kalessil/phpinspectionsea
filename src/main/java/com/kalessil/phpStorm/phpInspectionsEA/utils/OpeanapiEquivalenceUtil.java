@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +23,9 @@ final public class OpeanapiEquivalenceUtil {
                 result = first.getClass() == second.getClass() && first.getText().equals(second.getText());
             }
         } catch (Throwable error) {
-            /* exception here connected with indexing and IO failures, hence just ignore them */
+            if (error instanceof ProcessCanceledException) {
+                throw error;
+            }
             result = false;
         }
         return result;

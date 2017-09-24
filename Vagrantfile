@@ -33,6 +33,7 @@ Vagrant.configure("2") do |config|
     wget --quiet --no-verbose https://download.plugins.jetbrains.com/7622/38887/PhpInspectionsEA.jar
 
     ### Feed license to PhpStorm ###
+    # TODO: place phpstorm.key from your ~/.PhpStorm2016.2/config near this vagrant file (that's your license)
     [ ! -e $phpstorm_preferences/system ] && mkdir -p $phpstorm_preferences/system
     [ ! -e $phpstorm_preferences/config ] && mkdir -p $phpstorm_preferences/config && cp /vagrant_share/phpstorm.key $phpstorm_preferences/config
     sudo chown -R vagrant $phpstorm_preferences && sudo ln -s $phpstorm_preferences /root/.PhpStorm2016.2
@@ -49,5 +50,6 @@ Vagrant.configure("2") do |config|
     $home_directory/vendor/bin/phpstorm-inspect \
         $home_directory/PhpStorm-*/bin/inspect.sh  $phpstorm_preferences/system \
         $project  $project/.idea/inspectionProfiles/Project_Default.xml  $project/src  checkstyle
+    # `... checkstyle > <file-name>.xml` will store results in a file of your choice
   SHELL
 end

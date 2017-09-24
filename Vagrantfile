@@ -35,7 +35,7 @@ Vagrant.configure("2") do |config|
     ### Feed license to PhpStorm ###
     [ ! -e $phpstorm_preferences/system ] && mkdir -p $phpstorm_preferences/system
     [ ! -e $phpstorm_preferences/config ] && mkdir -p $phpstorm_preferences/config && cp /vagrant_share/phpstorm.key $phpstorm_preferences/config
-    sudo chown -R vagrant $phpstorm_preferences
+    sudo chown -R vagrant $phpstorm_preferences && sudo ln -s $phpstorm_preferences /root/.PhpStorm2016.2
 
     ### Install a wrapper for running inspections ###
     cd $home_directory
@@ -44,10 +44,9 @@ Vagrant.configure("2") do |config|
     ### Sample project inspection; the part for moving into e.g. Jenkins ###
     export project=$home_directory/PHP-CS-Fixer
     git clone https://github.com/FriendsOfPHP/PHP-CS-Fixer.git && sudo chown -R vagrant $project
-    # you can install project dependencies as well, this is recommended
+    # you can install project deps as well, this is recommended (additional packages might be needed, see line 25)
     # [ -e $project/composer.json ] && cd $project && composer install --no-dev
-    # vagrant-specific: we need to run inspection from the vagrant user
-    sudo -u vagrant $home_directory/vendor/bin/phpstorm-inspect \
+    $home_directory/vendor/bin/phpstorm-inspect \
         $home_directory/PhpStorm-*/bin/inspect.sh  $phpstorm_preferences/system \
         $project  $project/.idea/inspectionProfiles/Project_Default.xml  $project/src  checkstyle
   SHELL

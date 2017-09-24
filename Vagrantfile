@@ -44,7 +44,8 @@ Vagrant.configure("2") do |config|
     ### Sample project inspection; the part for moving into e.g. Jenkins ###
     git clone https://github.com/FriendsOfPHP/PHP-CS-Fixer.git
     export project=$home_directory/PHP-CS-Fixer
-    [ -e $project/composer.json ] && cd $project && composer install --no-dev
+    # you can install project dependencies as well, this is recommended
+    # [ -e $project/composer.json ] && cd $project && composer install --no-dev
     $home_directory/vendor/bin/phpstorm-inspect \
         $home_directory/PhpStorm-*/bin/inspect.sh \
         $phpstorm_preferences/system \

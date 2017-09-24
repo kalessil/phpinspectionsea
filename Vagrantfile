@@ -47,8 +47,8 @@ Vagrant.configure("2") do |config|
     # you can install project dependencies as well, this is recommended
     # [ -e $project/composer.json ] && cd $project && composer install --no-dev
     # vagrant-specific: we need to run inspection from the vagrant user
-    su - vagrant -c "$home_directory/vendor/bin/phpstorm-inspect \
+    sudo -u vagrant $home_directory/vendor/bin/phpstorm-inspect \
         $home_directory/PhpStorm-*/bin/inspect.sh  $phpstorm_preferences/system \
-        $project  $project/.idea/inspectionProfiles/Project_Default.xml  $project/src  checkstyle"
+        $project  $project/.idea/inspectionProfiles/Project_Default.xml  $project/src  checkstyle
   SHELL
 end

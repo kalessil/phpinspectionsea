@@ -33,9 +33,7 @@ final public class AnalyticsUtil {
             final Throwable cause = error.getCause();
             if (
                 error instanceof ProcessCanceledException || error instanceof RuntimeExceptionWithAttachments ||
-                error instanceof StorageException ||
-                error instanceof IOException ||
-                cause instanceof IOException
+                error instanceof StorageException || error instanceof IOException || cause instanceof IOException
             ) {
                 return;
             }

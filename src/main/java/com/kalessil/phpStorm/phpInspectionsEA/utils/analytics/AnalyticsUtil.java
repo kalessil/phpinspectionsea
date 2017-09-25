@@ -9,9 +9,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils.analytics;
  * file that was distributed with this source code.
  */
 
-import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.util.indexing.StorageException;
 import com.kalessil.phpStorm.phpInspectionsEA.EASettings;
 import org.apache.http.client.fluent.Request;
 import org.jetbrains.annotations.NotNull;
@@ -19,10 +16,22 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 final public class AnalyticsUtil {
+    private final static Set<String> stopList = new HashSet<>();
+    static {
+        /* ugly, but: compatibility with PS 2016 and reducing crash reporting false-positives */
+        stopList.add("com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments");
+        stopList.add("com.intellij.openapi.progress.ProcessCanceledException");
+        stopList.add("com.intellij.util.indexing.StorageException");
+        stopList.add("OpeanapiEquivalenceUtil.java");
+        stopList.add("OpenapiResolveUtil.java");
+    }
+
     final static private String COLLECTOR_ID    = "UA-16483983-8";
     final static private String COLLECTOR_URL   = "https://www.google-analytics.com/collect"; /* or /debug/collect */
     private static final String pluginNamespace = "com.kalessil.phpStorm.phpInspectionsEA";
@@ -31,10 +40,7 @@ final public class AnalyticsUtil {
         if (error != null) {
             /* ignore IO-errors, that's not something we can handle */
             final Throwable cause = error.getCause();
-            if (
-                error instanceof ProcessCanceledException || error instanceof RuntimeExceptionWithAttachments ||
-                error instanceof StorageException || error instanceof IOException || cause instanceof IOException
-            ) {
+            if (stopList.contains(error.getClass().getName()) || error instanceof IOException || cause instanceof IOException) {
                 return;
             }
 
@@ -45,19 +51,21 @@ final public class AnalyticsUtil {
                     .collect(Collectors.toList());
             if (!related.isEmpty()) {
                 final StackTraceElement entryPoint = related.get(0);
-                final String description           = String.format(
-                        "[%s:%s@%s] %s.%s#%s: %s|%s",
-                        entryPoint.getFileName(),
-                        entryPoint.getLineNumber(),
-                        version,
-                        stackTrace[0].getClassName(),
-                        stackTrace[0].getMethodName(),
-                        stackTrace[0].getLineNumber(),
-                        error.getMessage(),
-                        error.getClass().getName()
-                );
+                if (!stopList.contains(entryPoint.getFileName())) {
+                    final String description = String.format(
+                            "[%s:%s@%s] %s.%s#%s: %s|%s",
+                            entryPoint.getFileName(),
+                            entryPoint.getLineNumber(),
+                            version,
+                            stackTrace[0].getClassName(),
+                            stackTrace[0].getMethodName(),
+                            stackTrace[0].getLineNumber(),
+                            error.getMessage(),
+                            error.getClass().getName()
+                    );
+                    invokeExceptionReporting(uuid, description);
+                }
                 related.clear();
-                invokeExceptionReporting(uuid, description);
             }
         }
     }

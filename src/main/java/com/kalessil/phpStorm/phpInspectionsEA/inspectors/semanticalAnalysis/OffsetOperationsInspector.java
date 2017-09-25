@@ -118,12 +118,9 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                         containerTypes
                 );
             } else {
-                final PhpType resolvedType = OpenapiResolveUtil.resolveType(
-                        (PhpTypedElement) container,
-                        container.getProject()
-                );
-                if (resolvedType != null) {
-                    resolvedType.getTypes().stream().map(Types::getType).forEach(containerTypes::add);
+                final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) container, container.getProject());
+                if (type != null) {
+                    type.getTypes().stream().map(Types::getType).forEach(containerTypes::add);
                 }
             }
         }

@@ -9,6 +9,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils.analytics;
  * file that was distributed with this source code.
  */
 
+import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.util.indexing.StorageException;
 import com.kalessil.phpStorm.phpInspectionsEA.EASettings;
@@ -31,7 +32,7 @@ final public class AnalyticsUtil {
             /* ignore IO-errors, that's not something we can handle */
             final Throwable cause = error.getCause();
             if (
-                error instanceof ProcessCanceledException ||
+                error instanceof ProcessCanceledException || error instanceof RuntimeExceptionWithAttachments ||
                 error instanceof StorageException ||
                 error instanceof IOException ||
                 cause instanceof IOException

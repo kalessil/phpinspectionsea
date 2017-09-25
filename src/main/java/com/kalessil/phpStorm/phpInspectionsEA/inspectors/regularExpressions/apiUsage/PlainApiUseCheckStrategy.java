@@ -26,7 +26,8 @@ final public class PlainApiUseCheckStrategy {
 
     final static private Pattern regexTextSearch;
     static {
-        regexTextSearch = Pattern.compile("^(\\^?)([\\w-]+)(\\$?)$");
+        // ^(\^?)(?:\\?([\w-]+|[.+*?]))(\$?)$
+        regexTextSearch = Pattern.compile("^(\\^?)(?:\\\\?([\\w-]+|[.+*?]))(\\$?)$");
     }
 
     final static private Pattern regexHasRegexAttributes;

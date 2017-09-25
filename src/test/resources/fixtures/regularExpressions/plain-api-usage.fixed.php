@@ -9,8 +9,10 @@
     preg_replace('/whatever.+/', $replacement, $string);
 
     /* case: strpos */
+    false !== strpos($string, "+");
     false !== strpos($string, "whatever");
     false !== stripos($string, "whatever");
+    0 === strpos($string, "+");
     0 === strpos($string, "whatever");
     0 === stripos($string, "whatever");
     /* false-positives */

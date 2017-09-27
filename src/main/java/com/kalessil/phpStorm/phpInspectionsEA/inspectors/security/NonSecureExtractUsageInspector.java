@@ -12,7 +12,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -40,7 +39,7 @@ public class NonSecureExtractUsageInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String function     = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if (1 == params.length && !StringUtils.isEmpty(function) && function.equals("extract")) {
+                if (1 == params.length && function != null && function.equals("extract")) {
                     /* ignore test classes */
                     final Function scope = ExpressionSemanticUtil.getScope(reference);
                     if (scope instanceof Method) {

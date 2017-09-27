@@ -24,7 +24,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +48,7 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
                 /* general structure requirements */
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if ((1 != params.length && 2 != params.length) || StringUtils.isEmpty(functionName) || !functionName.equals("crypt")) {
+                if ((1 != params.length && 2 != params.length) || functionName == null || !functionName.equals("crypt")) {
                     return;
                 }
                 /* avoid complaining to imported functions */

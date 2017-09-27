@@ -16,7 +16,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -51,7 +50,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                 /* genera and function name requirements */
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
-                if ((1 != params.length && 2 != params.length) || StringUtils.isEmpty(functionName)) {
+                if ((1 != params.length && 2 != params.length) || functionName == null) {
                     return;
                 }
                 if (!functionName.equals("openssl_random_pseudo_bytes") && !functionName.equals("mcrypt_create_iv")) {
@@ -102,7 +101,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                     if (params[1] instanceof ConstantReference) {
                         final ConstantReference secondArgument = (ConstantReference) params[1];
                         final String constant                  = secondArgument.getName();
-                        reliableSource = !StringUtils.isEmpty(constant) && constant.equals("MCRYPT_DEV_RANDOM");
+                        reliableSource = constant != null && constant.equals("MCRYPT_DEV_RANDOM");
                     }
                     if (!reliableSource) {
                         holder.registerProblem(params[1], messageMcrypt2ndArgumentNotSecure, ProblemHighlightType.GENERIC_ERROR);

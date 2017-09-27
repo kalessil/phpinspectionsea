@@ -7,7 +7,6 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -36,7 +35,7 @@ public class NonSecureParseStrUsageInspector  extends BasePhpInspection {
                 final String strFunction  = reference.getName();
                 final PsiElement[] params = reference.getParameters();
                 if (
-                    1 == params.length && !StringUtils.isEmpty(strFunction) &&
+                    1 == params.length && strFunction != null &&
                     (strFunction.equals("parse_str") || strFunction.equals("mb_parse_str"))
                 ) {
                     holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);

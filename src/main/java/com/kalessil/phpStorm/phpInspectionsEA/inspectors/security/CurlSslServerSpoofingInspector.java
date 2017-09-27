@@ -12,7 +12,6 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -42,7 +41,7 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
             @Override
             public void visitPhpConstantReference(@NotNull ConstantReference reference) {
                 final String constantName = reference.getName();
-                if (StringUtils.isEmpty(constantName) || !constantName.startsWith("CURLOPT_")) {
+                if (constantName == null || !constantName.startsWith("CURLOPT_")) {
                     return;
                 }
 
@@ -68,7 +67,7 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                     final String functionName    = call.getName();
                     if (
                         3 != params.length || null == params[2] ||
-                        StringUtils.isEmpty(functionName) || !functionName.equals("curl_setopt")
+                        functionName == null || !functionName.equals("curl_setopt")
                     ) {
                         return;
                     }

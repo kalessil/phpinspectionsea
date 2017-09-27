@@ -17,10 +17,10 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class RsaOraclePaddingAttacksGuard extends LocalInspectionTool {
+public class RsaOraclePaddingAttacksInspector extends LocalInspectionTool {
     @NotNull
     public String getShortName() {
-        return "RsaOraclePaddingAttacksGuard";
+        return "RsaOraclePaddingAttacksInspection";
     }
 
     @Override

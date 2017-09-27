@@ -485,6 +485,10 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
          shortName="HostnameSubstitutionInspection"                displayName="Hostname substitution"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.HostnameSubstitutionInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="RsaOraclePaddingAttacksGuard"                  displayName="RSA oracle padding vulnerability"
+         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.RsaOraclePaddingAttacksGuard"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

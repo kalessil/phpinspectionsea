@@ -211,6 +211,7 @@ Inspections Lists (Security)
 | Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage (Cryptographically weak algorithms)   | n/a | yes | n/a  | no  |
 | Security             | CryptographicallySecureAlgorithmsInspection        | Cryptographically secure algorithms                               | n/a | yes | n/a  | no  |
 | Security             | HostnameSubstitutionInspection                     | Hostname substitution                                             | n/a | yes | n/a  | no  |
+| Security             | RsaOraclePaddingAttacksGuard                       | RSA oracle padding vulnerability                                  | n/a | yes | n/a  | no  |
 
 Inspections Lists (Performance)
 ---

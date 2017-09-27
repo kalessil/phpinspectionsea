@@ -171,20 +171,19 @@ public class PossibleValuesDiscoveryUtil {
     ) {
         final PsiElement trueVariant  = ternary.getTrueVariant();
         final PsiElement falseVariant = ternary.getFalseVariant();
-        if (null == trueVariant || null == falseVariant) {
-            return;
-        }
+        if (trueVariant != null && falseVariant != null) {
+            /* discover true and false branches */
+            final Set<PsiElement> trueVariants = discover(trueVariant, processed);
+            if (!trueVariants.isEmpty()) {
+                result.addAll(trueVariants);
+                trueVariants.clear();
+            }
 
-        /* discover true and false branches */
-        Set<PsiElement> trueVariants = discover(trueVariant, processed);
-        if (trueVariants.size() > 0) {
-            result.addAll(trueVariants);
-            trueVariants.clear();
-        }
-        Set<PsiElement> falseVariants = discover(falseVariant, processed);
-        if (falseVariants.size() > 0) {
-            result.addAll(falseVariants);
-            falseVariants.clear();
+            final Set<PsiElement> falseVariants = discover(falseVariant, processed);
+            if (!falseVariants.isEmpty()) {
+                result.addAll(falseVariants);
+                falseVariants.clear();
+            }
         }
     }
 }

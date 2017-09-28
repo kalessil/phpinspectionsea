@@ -25,11 +25,12 @@ fi
 function download {
 
   url=$1
+  failover=$2
   basename=${url##*[/|\\]}
   cachefile=${travisCache}/${basename}
 
   if [ ! -f ${cachefile} ]; then
-      wget --quiet --no-verbose $url -P ${travisCache};
+      ([[ ! -z "${failover}" ]] && copy ./travis/${failover} ${travisCache}) || wget --quiet --no-verbose $url -P ${travisCache};
     else
       echo "Cached file `ls -sh $cachefile` - `date -r $cachefile +'%Y-%m-%d %H:%M:%S'`"
   fi
@@ -49,7 +50,7 @@ fi
 mkdir idea
 
 # Download main idea folder
-download "http://download.jetbrains.com/idea/ideaIU-${ideaVersion}.tar.gz"
+download "http://download.jetbrains.com/idea/ideaIU-${ideaVersion}.tar.gz" ""
 tar zxf ${travisCache}/ideaIU-${ideaVersion}.tar.gz -C .
 
 # Move the versioned IDEA folder to a known location
@@ -63,16 +64,16 @@ fi
 mkdir plugins
 
 if [ "$IDE_ID" == "2017.2" ]; then
-    download "http://plugins.jetbrains.com/files/6610/38775/php-172.4155.41.zip"
+    download "http://plugins.jetbrains.com/files/6610/38775/php-172.4155.41.zip" "php-172.4155.41-2017.2.zip"
     unzip -qo $travisCache/php-172.4155.41.zip -d ./plugins
 elif [ "$IDE_ID" == "2017.1" ]; then
-    download "http://plugins.jetbrains.com/files/6610/33685/php-171.3780.104.zip"
+    download "http://plugins.jetbrains.com/files/6610/33685/php-171.3780.104.zip" "php-171.3780.104-2017.1.zip"
     unzip -qo $travisCache/php-171.3780.104.zip -d ./plugins
 elif [ "$IDE_ID" == "2016.3" ]; then
-    download "http://plugins.jetbrains.com/files/6610/31161/php-163.10504.2.zip"
+    download "http://plugins.jetbrains.com/files/6610/31161/php-163.10504.2.zip" "php-163.10504.2-2016.3.zip"
     unzip -qo $travisCache/php-163.10504.2.zip -d ./plugins
 elif [ "$IDE_ID" == "2016.2" ]; then
-    download "http://plugins.jetbrains.com/files/6610/27859/php-162.1628.23.zip"
+    download "http://plugins.jetbrains.com/files/6610/27859/php-162.1628.23.zip" "php-162.1628.23-2016.2.zip"
     unzip -qo $travisCache/php-162.1628.23.zip -d ./plugins
 else
     echo "Unknown IDE_ID value: $IDE_ID"

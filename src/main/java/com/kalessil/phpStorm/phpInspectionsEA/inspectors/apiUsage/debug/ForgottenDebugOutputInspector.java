@@ -127,6 +127,41 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         list.add("dvm");
         list.add("kpr");
         list.add("dpq");
+        /* PHP XDebug extension */
+        list.add("xdebug_break");
+        list.add("xdebug_call_class");
+        list.add("xdebug_call_file");
+        list.add("xdebug_call_function");
+        list.add("xdebug_call_line");
+        list.add("xdebug_code_coverage_started");
+        list.add("xdebug_debug_zval");
+        list.add("xdebug_debug_zval_stdout");
+        list.add("xdebug_disable");
+        list.add("xdebug_dump_superglobals");
+        list.add("xdebug_enable");
+        list.add("xdebug_get_code_coverage");
+        list.add("xdebug_get_collected_errors");
+        list.add("xdebug_get_declared_vars");
+        list.add("xdebug_get_function_stack");
+        list.add("xdebug_get_headers");
+        list.add("xdebug_get_monitored_functions");
+        list.add("xdebug_get_profiler_filename");
+        list.add("xdebug_get_stack_depth");
+        list.add("xdebug_get_tracefile_name");
+        list.add("xdebug_is_enabled");
+        list.add("xdebug_memory_usage");
+        list.add("xdebug_peak_memory_usage");
+        list.add("xdebug_print_function_stack");
+        list.add("xdebug_start_code_coverage");
+        list.add("xdebug_start_error_collection");
+        list.add("xdebug_start_function_monitor");
+        list.add("xdebug_start_trace");
+        list.add("xdebug_stop_code_coverage");
+        list.add("xdebug_stop_error_collection");
+        list.add("xdebug_stop_function_monitor");
+        list.add("xdebug_stop_trace");
+        list.add("xdebug_time_index");
+        list.add("xdebug_var_dump");
 
         return list;
     }

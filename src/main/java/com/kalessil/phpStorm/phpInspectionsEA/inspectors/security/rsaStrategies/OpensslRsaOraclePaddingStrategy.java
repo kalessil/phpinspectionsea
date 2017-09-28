@@ -9,7 +9,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /*
@@ -22,14 +24,13 @@ import java.util.Set;
  */
 
 final public class OpensslRsaOraclePaddingStrategy {
-    private static final String message = "This call is vulnerable to oracle padding attacks, use OPENSSL_NO_PADDING as 4th argument.";
+    private static final String message = "This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.";
 
     private static final Set<String> functions = new HashSet<>();
     static {
-        functions.add("openssl_private_encrypt");
-        functions.add("openssl_private_decrypt");
+        /* openssl_private_encrypt and openssl_public_decrypt are out of the scope */
         functions.add("openssl_public_encrypt");
-        functions.add("openssl_public_decrypt");
+        functions.add("openssl_private_decrypt");
     }
 
     static public void apply(@NotNull ProblemsHolder holder, @NotNull FunctionReference reference) {

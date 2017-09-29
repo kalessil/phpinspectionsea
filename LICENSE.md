@@ -1,5 +1,5 @@
 Php Inspections (EA Extended) is a Static Code Analysis tool for PHP.
-Copyright (C) 2014-2016 Vladimir Reznichenko
+Copyright (C) 2014-2017 Vladimir Reznichenko
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

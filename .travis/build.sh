@@ -4,15 +4,15 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-ideaVersion="2017.2"
-if [ "$IDE_ID" == "2017.2" ]; then
-    ideaVersion="2017.2.4"
-elif [ "$IDE_ID" == "2017.1" ]; then
-    ideaVersion="2017.1.5"
-elif [ "$IDE_ID" == "2016.3" ]; then
-    ideaVersion="2016.3.6"
-elif [ "$IDE_ID" == "2016.2" ]; then
-    ideaVersion="2016.2.5"
+ideUrl="IU-2017.2"
+if [ "$IDE_ID" == "IU-2017.2" ]; then
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.4.tar.gz"
+elif [ "$IDE_ID" == "IU-2017.1" ]; then
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
+elif [ "$IDE_ID" == "IU-2016.3" ]; then
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.6.tar.gz"
+elif [ "$IDE_ID" == "IU-2016.2" ]; then
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
 fi
 
 travisCache=".cache"
@@ -24,19 +24,18 @@ fi
 
 function download {
 
-  url=$1
+  ideUrl=$1
   failover=$2
-  basename=${url##*[/|\\]}
-  cachefile=${travisCache}/${basename}
+  cachefile=${travisCache}/${ideUrl##*/}
 
   if [ ! -f ${cachefile} ]; then
-      ([[ ! -z "${failover}" ]] && cp ./.travis/failover/${failover} ${cachefile}) || wget --quiet --no-verbose $url -P ${travisCache};
+      ([[ ! -z "${failover}" ]] && cp ./.travis/failover/${failover} ${cachefile}) || wget --quiet --no-verbose $ideUrl -P ${travisCache};
     else
       echo "Cached file `ls -sh $cachefile` - `date -r $cachefile +'%Y-%m-%d %H:%M:%S'`"
   fi
 
   if [ ! -f ${cachefile} ]; then
-    echo "Failed to download: $url"
+    echo "Failed to download: $ideUrl"
     exit 1
   fi
 }
@@ -50,11 +49,12 @@ fi
 mkdir idea
 
 # Download main idea folder
-download "http://download.jetbrains.com/idea/ideaIU-${ideaVersion}.tar.gz" ""
-tar zxf ${travisCache}/ideaIU-${ideaVersion}.tar.gz -C .
+download "$ideUrl" ""
+tar zxf ${travisCache}/${ideUrl##*/} -C .
+echo "Successfully downloaded $ideUrl -> ${travisCache}/${ideUrl##*/}"
 
 # Move the versioned IDEA folder to a known location
-ideaPath=$(find . -name 'idea-IU*' | head -n 1)
+ideaPath=$(find . -name 'idea-*' | head -n 1)
 mv ${ideaPath}/* ./idea
 
 if [ -d ./plugins ]; then
@@ -63,16 +63,16 @@ fi
 
 mkdir plugins
 
-if [ "$IDE_ID" == "2017.2" ]; then
+if [ "$IDE_ID" == "IU-2017.2" ]; then
     download "http://plugins.jetbrains.com/files/6610/38775/php-172.4155.41.zip" "php-172.4155.41-2017.2.zip"
     unzip -qo $travisCache/php-172.4155.41.zip -d ./plugins
-elif [ "$IDE_ID" == "2017.1" ]; then
+elif [ "$IDE_ID" == "IU-2017.1" ]; then
     download "http://plugins.jetbrains.com/files/6610/33685/php-171.3780.104.zip" "php-171.3780.104-2017.1.zip"
     unzip -qo $travisCache/php-171.3780.104.zip -d ./plugins
-elif [ "$IDE_ID" == "2016.3" ]; then
+elif [ "$IDE_ID" == "IU-2016.3" ]; then
     download "http://plugins.jetbrains.com/files/6610/31161/php-163.10504.2.zip" "php-163.10504.2-2016.3.zip"
     unzip -qo $travisCache/php-163.10504.2.zip -d ./plugins
-elif [ "$IDE_ID" == "2016.2" ]; then
+elif [ "$IDE_ID" == "IU-2016.2" ]; then
     download "http://plugins.jetbrains.com/files/6610/27859/php-162.1628.23.zip" "php-162.1628.23-2016.2.zip"
     unzip -qo $travisCache/php-162.1628.23.zip -d ./plugins
 else

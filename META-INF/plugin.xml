@@ -105,7 +105,7 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.InArrayMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ArrayPushMissUseInspection"                    displayName="'array_push(...)' misused"
-        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayPushMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="FileFunctionMissUseInspection"                 displayName="'file(...)' misused"

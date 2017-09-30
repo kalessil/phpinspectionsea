@@ -555,6 +555,10 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
         shortName="UnnecessaryIssetArgumentsInspection"           displayName="Unnecessary isset arguments specification"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnnecessaryIssetArgumentsInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="DateUsageInspection"                           displayName="Unnecessary 'date(...)' arguments specification"
+        groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.DateUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

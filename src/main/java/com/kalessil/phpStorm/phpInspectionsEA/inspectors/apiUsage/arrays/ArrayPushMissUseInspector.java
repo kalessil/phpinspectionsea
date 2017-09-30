@@ -2,13 +2,11 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
@@ -17,11 +15,10 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class ArrayPushMissUseInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "'%t%[] = ...' should be used instead (2x faster).";
+    private static final String messagePattern = "'%t%[] = ...' should be used instead (2x faster).";
 
     @NotNull
     public String getShortName() {
@@ -32,11 +29,12 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* check requirements */
                 final PsiElement[] params = reference.getParameters();
                 final String function     = reference.getName();
-                if (2 != params.length || StringUtils.isEmpty(function) || !function.equals("array_push")) {
+                if (params.length != 2 || function == null || !function.equals("array_push")) {
                     return;
                 }
 
@@ -47,15 +45,12 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
                         variadicCandidate = variadicCandidate.getPrevSibling();
                     }
                     /* do not report cases with variadic 2nd parameter */
-                    if (
-                        variadicCandidate instanceof LeafPsiElement &&
-                        PhpTokenTypes.opVARIADIC == ((LeafPsiElement) variadicCandidate).getElementType()
-                    ) {
+                    if (OpenapiTypesUtil.is(variadicCandidate, PhpTokenTypes.opVARIADIC)) {
                         return;
                     }
 
-                    final String message = strProblemDescription.replace("%t%", params[0].getText());
-                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                    final String message = messagePattern.replace("%t%", params[0].getText());
+                    holder.registerProblem(reference, message, new TheLocalFix());
                 }
             }
         };

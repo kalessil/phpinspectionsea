@@ -12,13 +12,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 
 public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "'%s%(...)' is used in a loop and is a resources greedy construction.";
+    private static final String messagePattern = "'%s%(...)' is used in a loop and is a resources greedy construction.";
 
     @NotNull
     public String getShortName() {
@@ -37,9 +36,10 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String strFunctionName = reference.getName();
-                if (StringUtils.isEmpty(strFunctionName) || !functionsSet.contains(strFunctionName)) {
+                if (strFunctionName == null || !functionsSet.contains(strFunctionName)) {
                     return;
                 }
 
@@ -65,7 +65,7 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
                         /* pattern itself: container overridden */
                         for (final PsiElement objParameter : reference.getParameters()) {
                             if (OpeanapiEquivalenceUtil.areEqual(objContainer, objParameter)) {
-                                final String message = strProblemDescription.replace("%s%", strFunctionName);
+                                final String message = messagePattern.replace("%s%", strFunctionName);
                                 holder.registerProblem(reference, message);
 
                                 return;

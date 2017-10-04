@@ -114,15 +114,21 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         /* find "require" section, it is required here */
         final JsonProperty requireProperty = config.findProperty("require");
-
         if (requireProperty == null) {
             return null;
         }
-
         final JsonValue requiredPackagesList = requireProperty.getValue();
-
         if (!(requiredPackagesList instanceof JsonObject)) {
             return null;
+        }
+
+        /* if library type is implicitly defined: if so, do not hit as we can break minimum stability requirements */
+        final JsonProperty typeProperty = config.findProperty("type");
+        if (typeProperty != null) {
+            final JsonValue type = typeProperty.getValue();
+            if (type instanceof JsonStringLiteral && "library".equals(((JsonStringLiteral) type).getValue())) {
+                return null;
+            }
         }
 
         final JsonProperty nameProperty     = config.findProperty("name");

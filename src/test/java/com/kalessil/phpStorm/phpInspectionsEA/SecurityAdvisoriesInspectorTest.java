@@ -28,6 +28,12 @@ public final class SecurityAdvisoriesInspectorTest extends PhpCodeInsightFixture
         myFixture.testHighlighting(true, false, true);
     }
 
+    public void testLibraryType() {
+        myFixture.enableInspections(new SecurityAdvisoriesInspector());
+        myFixture.configureByFile("fixtures/securityAdvisories/libraryType/composer.json");
+        myFixture.testHighlighting(true, false, true);
+    }
+
     public void testNonMasterAdvisory() {
         myFixture.enableInspections(new SecurityAdvisoriesInspector());
         myFixture.configureByFile("fixtures/securityAdvisories/needsMasterAdvisories/composer.json");

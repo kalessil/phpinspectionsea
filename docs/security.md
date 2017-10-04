@@ -146,6 +146,8 @@ curl_setopt($curlHandler, CURLOPT_CAPATH , '<path>/');
 
 > Note: if the composer.lock file ships with your project, adding roave/security-advisories brings 0 deployment risks.
 
+> Note: the inspection doesn't fire when package type is implicitly defined as library.
+
 > Best practices: consider adding `composer update` into your CI/CD to get informed about security issues early.
 
 Security Advisories is a Vulnerability Database from SensioLabs (https://security.sensiolabs.org/database) which can 

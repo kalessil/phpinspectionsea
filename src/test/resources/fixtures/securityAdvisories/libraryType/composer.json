@@ -1,0 +1,9 @@
+{
+  "name":        "kalessil/whatever",
+  "description": "",
+  "license":     "",
+  "type":        "library",
+  "require": {
+    "kalessil-team/something-else": "*"
+  }
+}

@@ -7,7 +7,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ConstantCanBeU
 final public class ConstantCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ConstantCanBeUsedInspector());
-
         myFixture.configureByFile("fixtures/api/constants-usage.php");
         myFixture.testHighlighting(true, false, true);
 

@@ -45,7 +45,7 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                     final String ownFieldName        = ownField.getName();
                     final PsiElement ownFieldDefault = ownField.getDefaultValue();
 
-                    for (PhpClass trait : traits) {
+                    for (final PhpClass trait : traits) {
                         final Field traitField = trait.findFieldByName(ownFieldName, false);
                         if (null != traitField) {
                             final PsiElement traitFieldDefault = traitField.getDefaultValue();

@@ -12,9 +12,10 @@ class MyClass
 
         (new self)::staticMethod();
 
-        // False-positives:
+        /* false-positives */
         self::class;
         static::class;
+        (function(){ return new MyClass(); })();
     }
 
     // Not applicable: anonymous class is another context.

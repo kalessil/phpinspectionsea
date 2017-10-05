@@ -1,3 +1,4 @@
+
 [![Version](http://phpstorm.espend.de/badge/7622/version)](https://plugins.jetbrains.com/plugin/7622)
 [![Build Status](https://img.shields.io/travis/kalessil/phpinspectionsea.svg?branch=master)](https://travis-ci.org/kalessil/phpinspectionsea)
 [![Downloads](http://phpstorm.espend.de/badge/7622/downloads)](https://plugins.jetbrains.com/plugin/7622)
@@ -38,6 +39,8 @@ Acknowledgments
 ---
 
 <a href="https://shopware.com/"><img src="https://de.shopware.com/media/image/shopware_logo_blue.png" alt="Shopware" height="20"></a> Shopware is the biggest supporter of our 2017 <a href="https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security#/">crowdfunding campaign</a>.
+
+<a href="https://shopware.com/"><img src="https://pixelandtonic.com/resources/images/logo.png" alt="Shopware" height="20"></a> Pixel & Tonic (Brandon Kelly to be more specific) are supporting us since 2017.
 
 <a href="https://www.cellsynt.com"><img src="https://d22z914jmqt4fj.cloudfront.net/images/logo.gif" alt="Cellsynt" height="20"></a> Cellsynt is a supporter of our 2017 <a href="https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security#/">crowdfunding campaign</a>.
 

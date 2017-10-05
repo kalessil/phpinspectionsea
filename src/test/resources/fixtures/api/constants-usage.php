@@ -9,7 +9,8 @@
     echo phpversion('extension-name');
     echo phpversion($object);
 
-    version_compare(PHP_VERSION, '7', '>=');
-    version_compare(PHP_VERSION, '7.1', '>=');
-    version_compare(PHP_VERSION, '7.1.11', '>=');
+    <weak_warning descr="'PHP_VERSION_ID >= 70000' should be used instead.">version_compare(PHP_VERSION, '7', '>=')</weak_warning>;
+    <weak_warning descr="'PHP_VERSION_ID === 70100' should be used instead.">version_compare(PHP_VERSION, '7.1', '==')</weak_warning>;
+    <weak_warning descr="'PHP_VERSION_ID !== 70111' should be used instead.">version_compare(PHP_VERSION, '7.1.11', '!=')</weak_warning>;
+
     version_compare(PHP_VERSION, '7.1.11-whatever', '>=');

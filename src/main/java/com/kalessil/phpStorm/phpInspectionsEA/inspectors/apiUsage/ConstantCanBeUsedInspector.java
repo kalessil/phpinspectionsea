@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -25,7 +27,8 @@ import java.util.Map;
  */
 
 public class ConstantCanBeUsedInspector extends BasePhpInspection {
-    private static final String messagePattern = "%c% constant should be used instead.";
+    private static final String useConstantPattern           = "%s constant should be used instead.";
+    private static final String usePhpVersionConstantPattern = "'%s' should be used instead.";
 
     static private final Map<String, String> functions = new HashMap<>();
     static private final Map<String, String> operators = new HashMap<>();
@@ -50,6 +53,12 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
         operators.put("!=", "!==");
         operators.put("<>", "!==");
         operators.put("ne", "!==");
+    }
+
+    final static private Pattern versionRegex;
+    static {
+        /* ^(\d)(\.(\d)(\.(\d+))?)?$ */
+        versionRegex = Pattern.compile("^(\\d)(\\.(\\d)(\\.(\\d+))?)?$");
     }
 
     @NotNull
@@ -79,7 +88,7 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
                         /* reporting part */
                         if (canUseConstant) {
                             final String constant = functions.get(functionName);
-                            final String message = messagePattern.replace("%c%", constant);
+                            final String message  = String.format(useConstantPattern, constant);
                             holder.registerProblem(reference, message, new UseConstantFix(constant));
                         }
                     } else if (arguments.length == 3 && functionName.equals("version_compare")) {
@@ -90,11 +99,19 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
                                 if (arguments[2] instanceof StringLiteralExpression) {
                                     final String operator = ((StringLiteralExpression) arguments[2]).getContents();
                                     if (operators.containsKey(operator)) {
-                                        /*
-                                        PHP_VERSION_ID
-                                        Version string:            %d(.%d)?(.%d{1,2})?(-.+)?
-                                        5.2, 5.2.7, 5.2.7-extra -> $10$20$3
-                                        */
+                                        final Matcher versionMatcher = versionRegex.matcher(version);
+                                        if (versionMatcher.find()) {
+                                            final String minor       = versionMatcher.group(3) == null ? "0" : versionMatcher.group(3);
+                                            final String patch       = versionMatcher.group(5) == null ? "0" : versionMatcher.group(5);
+                                            final String replacement = String.format("PHP_VERSION_ID %s %s%s%s",
+                                                operators.get(operator),
+                                                versionMatcher.group(1),
+                                                minor.length() == 1 ? '0' + minor: minor,
+                                                patch.length() == 1 ? '0' + patch: patch
+                                            );
+                                            final String message = String.format(usePhpVersionConstantPattern, replacement);
+                                            holder.registerProblem(reference, message, new UseConstantFix(replacement));
+                                        }
                                     }
                                 }
                             }

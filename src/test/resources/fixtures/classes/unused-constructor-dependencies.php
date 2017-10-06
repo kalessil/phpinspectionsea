@@ -2,16 +2,20 @@
 
 class ClassUpdSimple
 {
+    use TraitUpd;
+
     private $p1;
-    public function __construct($p1)
+    private $usedByTraitOnly;
+    public function __construct($p1, $p2)
     {
         <weak_warning descr="Property is used only in constructor, perhaps we are dealing with dead code here.">$this->p1</weak_warning> = $p1;
+        $this->usedByTraitOnly = $p2;
     }
 }
 
 trait TraitUpd {
     public function getProperty() {
-        return $this->traitProperty;
+        return [$this->traitProperty, $this->usedByTraitOnly];
     }
 }
 
@@ -50,7 +54,7 @@ class ClassUpdComplex
     public function m2() { return [$this->p2]; }
     public function m3() { return [$this->p1, $this->p2]; }
 
-    static public function BreakIncapsulation() {
+    public static function BreakIncapsulation() {
         return function (ClassUpdComplex $instance) {
             return $instance->usedByLambda;
         };

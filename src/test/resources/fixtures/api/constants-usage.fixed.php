@@ -8,3 +8,9 @@
 
     echo phpversion('extension-name');
     echo phpversion($object);
+
+    PHP_VERSION_ID >= 70000;
+    PHP_VERSION_ID === 70100;
+    PHP_VERSION_ID !== 70111;
+
+    version_compare(PHP_VERSION, '7.1.11-whatever', '>=');

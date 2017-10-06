@@ -9,9 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /*
@@ -33,10 +31,12 @@ final public class OpensslRsaOraclePaddingStrategy {
         functions.add("openssl_private_decrypt");
     }
 
-    static public void apply(@NotNull ProblemsHolder holder, @NotNull FunctionReference reference) {
+    static public boolean apply(@NotNull ProblemsHolder holder, @NotNull FunctionReference reference) {
+        boolean result = false;
         final PsiElement[] arguments = reference.getParameters();
         if (arguments.length == 3 && isTargetCall(reference)) {
             holder.registerProblem(reference, message);
+            result = true;
         } else if (arguments.length == 4 && isTargetCall(reference)) {
             final Set<PsiElement> modeVariants = PossibleValuesDiscoveryUtil.discover(arguments[3]);
             if (!modeVariants.isEmpty()) {
@@ -45,6 +45,7 @@ final public class OpensslRsaOraclePaddingStrategy {
                         final String constantName = ((ConstantReference) variant).getName();
                         if (constantName != null && constantName.equals("OPENSSL_PKCS1_PADDING")) {
                             holder.registerProblem(reference, message);
+                            result = true;
                             break;
                         }
                     }
@@ -52,6 +53,7 @@ final public class OpensslRsaOraclePaddingStrategy {
                 modeVariants.clear();
             }
         }
+        return result;
     }
 
     static private boolean isTargetCall(@NotNull FunctionReference reference) {

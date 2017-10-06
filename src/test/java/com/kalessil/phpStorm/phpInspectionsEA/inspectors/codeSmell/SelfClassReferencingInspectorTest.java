@@ -8,16 +8,13 @@ final public class SelfClassReferencingInspectorTest extends PhpCodeInsightFixtu
     public void testDefault() {
         SelfClassReferencingInspector selfClassReferencingInspector = new SelfClassReferencingInspector();
         selfClassReferencingInspector.PREFER_CLASS_NAMES            = false;
-
         myFixture.enableInspections(selfClassReferencingInspector);
-
         myFixture.configureByFile("fixtures/codeStyle/self-class-referencing.php");
         myFixture.testHighlighting(true, false, true);
 
         for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
-
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/codeStyle/self-class-referencing.fixed.php");
     }
@@ -25,16 +22,13 @@ final public class SelfClassReferencingInspectorTest extends PhpCodeInsightFixtu
     public void testReverse() {
         SelfClassReferencingInspector selfClassReferencingInspector = new SelfClassReferencingInspector();
         selfClassReferencingInspector.PREFER_CLASS_NAMES            = true;
-
         myFixture.enableInspections(selfClassReferencingInspector);
-
         myFixture.configureByFile("fixtures/codeStyle/self-class-referencing.reverse.php");
         myFixture.testHighlighting(true, false, true);
 
         for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
-
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/codeStyle/self-class-referencing.reverse.fixed.php");
     }

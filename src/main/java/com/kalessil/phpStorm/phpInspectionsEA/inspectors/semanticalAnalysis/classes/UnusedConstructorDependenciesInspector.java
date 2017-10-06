@@ -38,8 +38,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
              */
             private Map<String, Field> getPrivateFields(@NotNull PhpClass clazz) {
                 final Map<String, Field> privateFields = new HashMap<>();
-
-                for (Field field : clazz.getOwnFields()) {
+                for (final Field field : clazz.getOwnFields()) {
                     final PhpModifier modifiers = field.getModifier();
                     if (field.isConstant() || !modifiers.isPrivate() || modifiers.isStatic()) {
                         continue;
@@ -47,7 +46,6 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
 
                     privateFields.put(field.getName(), field);
                 }
-
                 return  privateFields;
             }
 
@@ -62,7 +60,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                 }
 
                 final Collection<FieldReference> references = PsiTreeUtil.findChildrenOfType(method, FieldReference.class);
-                for (FieldReference ref : references) {
+                for (final FieldReference ref : references) {
                     /* if field name not in given list, skip heavy resolving */
                     final String fieldName = ref.getName();
                     if (null == fieldName || !privateFields.containsKey(fieldName)) {
@@ -86,19 +84,22 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
             /**
              * Orchestrates extraction of references from methods
              */
-            private Map<String, List<FieldReference>> getMethodsFieldReferences(@NotNull Method constructor, @NotNull Map<String, Field> privateFields) {
+            private Map<String, List<FieldReference>> getMethodsFieldReferences(
+                    @NotNull PhpClass clazz,
+                    @NotNull Method constructor,
+                    @NotNull Map<String, Field> privateFields
+            ) {
                 final Map<String, List<FieldReference>> filteredReferences = new HashMap<>();
 
                 /* collect methods to inspect, incl. once from traits */
                 final List<Method> methodsToCheck = new ArrayList<>();
-                //noinspection ConstantConditions as this checked in visitPhpMethod
-                Collections.addAll(methodsToCheck, constructor.getContainingClass().getOwnMethods());
-                for (final PhpClass trait : constructor.getContainingClass().getTraits()) {
+                Collections.addAll(methodsToCheck, clazz.getOwnMethods());
+                for (final PhpClass trait : clazz.getTraits()) {
                     Collections.addAll(methodsToCheck, trait.getOwnMethods());
                 }
 
                 /* find references */
-                for (Method method : methodsToCheck) {
+                for (final Method method : methodsToCheck) {
                     if (method == constructor) {
                         continue;
                     }
@@ -145,7 +146,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                 final Map<String, List<FieldReference>> constructorsReferences = getFieldReferences(constructor, clazzPrivateFields);
                 if (!constructorsReferences.isEmpty()) {
                     /* constructor's references being identified */
-                    final Map<String, List<FieldReference>> otherReferences = getMethodsFieldReferences(constructor, clazzPrivateFields);
+                    final Map<String, List<FieldReference>> otherReferences = getMethodsFieldReferences(clazz, constructor, clazzPrivateFields);
                     /* methods's references being identified, time to re-visit constructor's references */
                     constructorsReferences.forEach((fieldName, fields) -> {
                         /* field is not used, report in constructor, PS will cover unused fields detection */

@@ -33,15 +33,15 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
-                final Collection<BooleanSupplier> callbacks = new ArrayList<>();
+                final Collection<BooleanSupplier> callbacks = new ArrayList<>(8);
                 callbacks.add(() -> InstanceOfTraitStrategy.apply(expression, holder));
                 callbacks.add(() -> EqualsInAssignmentContextStrategy.apply(expression, holder));
                 callbacks.add(() -> GreaterOrEqualInHashElementStrategy.apply(expression, holder));
                 callbacks.add(() -> IdenticalOperandsStrategy.apply(expression, holder));
                 callbacks.add(() -> MisplacedOperatorStrategy.apply(expression, holder));
+                callbacks.add(() -> NullCoalescingOperatorCorrectnessStrategy.apply(expression, holder));
                 callbacks.add(() -> HardcodedConstantValuesStrategy.apply(expression, holder));
                 callbacks.add(() -> UnclearOperationsPriorityStrategy.apply(expression, holder));
-                callbacks.add(() -> NullCoalescingOperatorCorrectnessStrategy.apply(expression, holder));
 
                 /* run through strategies until the first one fired something */
                 for (final BooleanSupplier strategy: callbacks) {
@@ -49,6 +49,8 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
                         break;
                     }
                 }
+
+                callbacks.clear();
             }
         };
     }

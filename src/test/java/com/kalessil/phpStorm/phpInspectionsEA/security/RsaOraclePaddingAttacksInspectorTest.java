@@ -7,6 +7,7 @@ final public class RsaOraclePaddingAttacksInspectorTest extends PhpCodeInsightFi
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new RsaOraclePaddingAttacksInspector());
         myFixture.configureByFile("fixtures/security/openssl-rsa-oracle-padding-attack.php");
+        myFixture.configureByFile("fixtures/security/mcrypt-rsa-oracle-padding-attack.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

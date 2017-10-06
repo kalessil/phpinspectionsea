@@ -22,6 +22,15 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class AccessModifierPresentedInspector extends BasePhpInspection {
     // Inspection options.
     public boolean ANALYZE_INTERFACES = true;
@@ -37,35 +46,36 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpClass(PhpClass clazz) {
+            @Override
+            public void visitPhpClass(@NotNull PhpClass clazz) {
                 /* community request: interfaces have only public methods, what is default access levels */
                 if (!ANALYZE_INTERFACES && clazz.isInterface()){
                     return;
                 }
 
                 /* inspect methods */
-                for (Method method : clazz.getOwnMethods()) {
+                for (final Method method : clazz.getOwnMethods()) {
                     final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
-                    if (null == methodName || !method.getAccess().isPublic()) {
+                    if (methodName == null || !method.getAccess().isPublic()) {
                         continue;
                     }
 
-                    PhpModifierList modifiers = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
-                    if (null != modifiers && !modifiers.getText().contains("public")) {
+                    final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
+                    if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
                         final String message = messagePattern.replace("%s%", method.getName());
                         holder.registerProblem(methodName, message, new TheLocalFix(modifiers));
                     }
                 }
 
                 /* inspect fields */
-                for (Field field : clazz.getOwnFields()) {
+                for (final Field field : clazz.getOwnFields()) {
                     final PsiElement fieldName = NamedElementUtil.getNameIdentifier(field);
-                    if (null == fieldName || field.isConstant() || !field.getModifier().isPublic()) {
+                    if (fieldName == null || field.isConstant() || !field.getModifier().isPublic()) {
                         continue;
                     }
 
-                    PhpModifierList modifiers = PsiTreeUtil.findChildOfType(field.getParent(), PhpModifierList.class);
-                    if (null != modifiers && !modifiers.getText().contains("public")) {
+                    final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(field.getParent(), PhpModifierList.class);
+                    if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
                         final String message = messagePattern.replace("%s%", field.getName());
                         holder.registerProblem(fieldName, message, new TheLocalFix(modifiers));
                     }
@@ -75,9 +85,9 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) -> {
-            component.addCheckbox("Analyze interfaces", ANALYZE_INTERFACES, (isSelected) -> ANALYZE_INTERFACES = isSelected);
-        });
+        return OptionsComponent.create(
+            (component) -> component.addCheckbox("Analyze interfaces", ANALYZE_INTERFACES, (isSelected) -> ANALYZE_INTERFACES = isSelected)
+        );
     }
 
     private static class TheLocalFix implements LocalQuickFix {

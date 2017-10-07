@@ -144,12 +144,18 @@ final public class NullableVariablesStrategy {
                 }
             }
             /* non-implicit null comparisons */
-            if (parent instanceof PhpEmpty || parent instanceof PhpIsset) {
+            else if (
+                parent instanceof PhpEmpty || parent instanceof PhpIsset ||
+                ExpressionSemanticUtil.isUsedAsLogicalOperand(variable)
+            ) {
                 return;
             }
-            /* logical operand context */
-            if (ExpressionSemanticUtil.isUsedAsLogicalOperand(variable)) {
-                return;
+            /* PhpUnit-specific null check */
+            else if (parent instanceof ParameterList && parent.getParent() instanceof MethodReference) {
+                final String methodName = ((MethodReference) parent.getParent()).getName();
+                if (methodName != null && methodName.equals("assertNotNull")) {
+                    return;
+                }
             }
 
             /* show stoppers: overriding the variable; except the variable declarations of course */
@@ -164,40 +170,33 @@ final public class NullableVariablesStrategy {
                     return;
                 }
             }
-
             /* cases when NPE can be introduced: array access */
-            if (parent instanceof ArrayAccessExpression) {
+            else if (parent instanceof ArrayAccessExpression) {
                 final PsiElement container = ((ArrayAccessExpression) parent).getValue();
                 if (variable == container) {
                     holder.registerProblem(variable, message);
                 }
-                continue;
             }
-
             /* cases when NPE can be introduced: member reference */
-            if (parent instanceof MemberReference) {
+            else if (parent instanceof MemberReference) {
                 final MemberReference reference = (MemberReference) parent;
                 final PsiElement subject        = reference.getClassReference();
                 if (subject instanceof Variable && ((Variable) subject).getName().equals(variableName)) {
                     holder.registerProblem(subject, message);
                 }
-                continue;
             }
             /* cases when NPE can be introduced: __invoke calls */
-            if (OpenapiTypesUtil.isFunctionReference(parent) && variable == parent.getFirstChild()) {
+            else if (OpenapiTypesUtil.isFunctionReference(parent) && variable == parent.getFirstChild()) {
                 holder.registerProblem(variable, message);
-                continue;
             }
             /* cases when NPE can be introduced: clone operator */
-            if (parent instanceof UnaryExpression) {
+            else if (parent instanceof UnaryExpression) {
                 if (OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.kwCLONE)) {
                     holder.registerProblem(variable, message);
                 }
-                continue;
             }
-
             /* cases when null dispatched into to non-null parameter */
-            if (parent instanceof ParameterList && parent.getParent() instanceof FunctionReference) {
+            else if (parent instanceof ParameterList && parent.getParent() instanceof FunctionReference) {
                 final FunctionReference reference = (FunctionReference) parent.getParent();
                 final PsiElement resolved         = OpenapiResolveUtil.resolveReference(reference);
                 if (resolved != null)  {
@@ -230,7 +229,6 @@ final public class NullableVariablesStrategy {
                     }
                     declaredTypes.clear();
                 }
-                // continue;
             }
         }
     }

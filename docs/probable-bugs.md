@@ -125,3 +125,12 @@ Following cases currently supported (we'll keep extending the list):
 - method local variables initialized with potentially nullable values;
 - to be continued (when funding is found);
 
+## 'mkdir(...)' race condition
+
+This issue is difficult to reproduce, as any of concurrency-related issues.
+It appears when several processes are attempting to create a directory which is not
+yet existing, but between is_dir() and mkdir() calls another process already
+managed to create a directory.
+
+Apart of different code constructs which vulnerable to this issue type, the safe 
+variant is following: `!is_dir($folder) && !mkdir($folder) && !is_dir($folder)`.

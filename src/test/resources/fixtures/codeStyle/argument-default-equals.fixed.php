@@ -37,3 +37,7 @@ in_array($x, $y, true);
 in_array($x, $y, false);
 array_search($x, $y, true);
 array_search($x, $y, false);
+
+/* false-positives: magic around dynamic variables manipulation */
+functionWithDefaults('default', 'whatever', 'undeclared');
+$object->method('default', 'whatever', 'undeclared');

@@ -72,16 +72,18 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                         final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                         if (resolved instanceof Function) {
                             final Parameter[] parameters = ((Function) resolved).getParameters();
-                            for (int index = Math.min(parameters.length, arguments.length) - 1; index >= 0; --index) {
-                                final PsiElement value    = parameters[index].getDefaultValue();
-                                final PsiElement argument = arguments[index];
-                                if (value == null || !OpeanapiEquivalenceUtil.areEqual(value, argument)) {
-                                    break;
-                                }
+                            if (arguments.length <= parameters.length) {
+                                for (int index = Math.min(parameters.length, arguments.length) - 1; index >= 0; --index) {
+                                    final PsiElement value    = parameters[index].getDefaultValue();
+                                    final PsiElement argument = arguments[index];
+                                    if (value == null || !OpeanapiEquivalenceUtil.areEqual(value, argument)) {
+                                        break;
+                                    }
 
-                                reportFrom = argument;
-                                if (reportTo == null) {
-                                    reportTo = argument;
+                                    reportFrom = argument;
+                                    if (reportTo == null) {
+                                        reportTo = argument;
+                                    }
                                 }
                             }
                         }

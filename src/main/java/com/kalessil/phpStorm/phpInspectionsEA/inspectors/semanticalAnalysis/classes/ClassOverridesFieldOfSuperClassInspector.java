@@ -30,7 +30,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
     public boolean REPORT_PRIVATE_REDEFINITION = true;
 
     private static final String patternShadows            = "Field '%p%' is already defined in %c%, check our online documentation for options.";
-    private static final String patternProtectedCandidate = "Likely needs to be protected (already defined in %c%).";
+    private static final String patternProtectedCandidate = "Likely needs to be renamed in sake of maintainability (already defined in %c%).";
 
     @NotNull
     public String getShortName() {

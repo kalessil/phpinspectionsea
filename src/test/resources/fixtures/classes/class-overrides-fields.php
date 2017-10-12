@@ -24,9 +24,9 @@ class ClassOverridesField extends ClassOverridesField2 {
     protected <weak_warning descr="Field 'protectedFrom1' is already defined in \ClassOverridesField1, check our online documentation for options.">$protectedFrom1</weak_warning>;
     protected <weak_warning descr="Field 'protectedFrom2' is already defined in \ClassOverridesField2, check our online documentation for options.">$protectedFrom2</weak_warning>;
 
-    private <weak_warning descr="Likely needs to be protected (already defined in \ClassOverridesField1).">$privateFrom1</weak_warning>;
+    private <weak_warning descr="Likely needs to be renamed in sake of maintainability (already defined in \ClassOverridesField1).">$privateFrom1</weak_warning>;
 
-    private <weak_warning descr="Likely needs to be protected (already defined in \TraitWithPrivateField).">$privateFromTrait</weak_warning>;
+    private <weak_warning descr="Likely needs to be renamed in sake of maintainability (already defined in \TraitWithPrivateField).">$privateFromTrait</weak_warning>;
 
     public $weakened;               // access level relaxed
     static protected $staticFrom1;  // static fields are not checked

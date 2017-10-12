@@ -102,6 +102,14 @@ class CasesHolder {
         self::assertNotNull($object);
         return $object->nonExistingField;
     }
+
+    public function npeSafeCatchCase() {
+        try {
+            $exception = null;
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
 }
 
 function cases_holder(?CasesHolder $object) {

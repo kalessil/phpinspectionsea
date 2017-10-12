@@ -150,6 +150,10 @@ final public class NullableVariablesStrategy {
             ) {
                 return;
             }
+            /* re-defined in catch-statements */
+            else if (parent instanceof Catch) {
+                return;
+            }
             /* PhpUnit-specific null check */
             else if (parent instanceof ParameterList && parent.getParent() instanceof MethodReference) {
                 final String methodName = ((MethodReference) parent.getParent()).getName();

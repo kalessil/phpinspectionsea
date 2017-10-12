@@ -101,6 +101,7 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                         argument instanceof MemberReference ||
                         argument instanceof UnaryExpression ||
                         argument instanceof NewExpression ||
+                        argument instanceof ConcatenationExpression ||
                         OpenapiTypesUtil.isLambda(argument)
                     )
                 ) {

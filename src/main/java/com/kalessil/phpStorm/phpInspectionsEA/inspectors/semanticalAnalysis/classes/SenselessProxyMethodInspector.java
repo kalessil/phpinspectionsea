@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
+import com.jetbrains.php.lang.psi.PhpPsiUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.DropMethodFix;
@@ -140,8 +141,8 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
 
                                 /* verify returned type declaration */
                                 if (!isChangingSignature) {
-                                    final PsiElement methodReturn = method.getReturnType();
-                                    final PsiElement parentReturn = nestedMethod.getReturnType();
+                                    final PsiElement methodReturn = PhpPsiUtil.getChildByCondition(method, ClassReference.INSTANCEOF);
+                                    final PsiElement parentReturn = PhpPsiUtil.getChildByCondition(nestedMethod, ClassReference.INSTANCEOF);
                                     if (methodReturn != parentReturn) {
                                         isChangingSignature =
                                                 methodReturn == null || parentReturn == null ||

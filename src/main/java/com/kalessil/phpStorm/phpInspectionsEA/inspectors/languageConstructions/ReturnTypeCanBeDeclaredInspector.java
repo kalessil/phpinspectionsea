@@ -14,6 +14,7 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.psi.PhpPsiUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -69,7 +70,10 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             public void visitPhpMethod(@NotNull Method method) {
                 final Project project      = holder.getProject();
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
-                if (php.hasFeature(PhpLanguageFeature.RETURN_TYPES) && !method.getDeclaredType().isEmpty()) {
+                if (
+                    php.hasFeature(PhpLanguageFeature.RETURN_TYPES) &&
+                    PhpPsiUtil.getChildByCondition(method, ClassReference.INSTANCEOF) == null
+                ) {
                     final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
                     final boolean isMagicFunction   = method.getName().startsWith("__");
                     if (!isMagicFunction && null != methodNameNode) {

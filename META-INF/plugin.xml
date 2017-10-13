@@ -275,6 +275,10 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
         shortName="ArrayUniqueCanBeUsedInspection"                 displayName="'array_unique(...)' can be used"
         groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayUniqueCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="CompactCanBeUsedInspection"                     displayName="'compact(...)' can be used"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.CompactCanBeUsedInspector"/>
 
 
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

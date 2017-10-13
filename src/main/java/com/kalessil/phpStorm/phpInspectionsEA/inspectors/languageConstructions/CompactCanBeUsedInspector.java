@@ -79,7 +79,6 @@ public class CompactCanBeUsedInspector extends BasePhpInspection {
         }
 
         UseCompactFix(@NotNull String replacement) {
-
             this.replacement = replacement;
         }
 

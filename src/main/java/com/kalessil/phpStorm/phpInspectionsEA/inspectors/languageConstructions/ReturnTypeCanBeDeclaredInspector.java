@@ -70,10 +70,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             public void visitPhpMethod(@NotNull Method method) {
                 final Project project      = holder.getProject();
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
-                if (
-                    php.hasFeature(PhpLanguageFeature.RETURN_TYPES) &&
-                    PhpPsiUtil.getChildByCondition(method, ClassReference.INSTANCEOF) == null
-                ) {
+                if (php.hasFeature(PhpLanguageFeature.RETURN_TYPES) && method.getReturnType() == null) {
                     final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
                     final boolean isMagicFunction   = method.getName().startsWith("__");
                     if (!isMagicFunction && null != methodNameNode) {

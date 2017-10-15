@@ -234,8 +234,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     }
                     if (null != injectionPoint) {
                         final Function donor = PhpPsiElementFactory.createFunction(project, "function(): " + type + "{}");
-                        PsiElement implant   = donor.getReturnType();
-                        while (null != implant && PhpTokenTypes.chRPAREN != implant.getNode().getElementType()) {
+                        PsiElement implant   = OpenapiElementsUtil.getReturnType(donor);
+                        while (implant != null && PhpTokenTypes.chRPAREN != implant.getNode().getElementType()) {
                             injectionPoint.getParent().addAfter(implant, injectionPoint);
                             implant = implant.getPrevSibling();
                         }

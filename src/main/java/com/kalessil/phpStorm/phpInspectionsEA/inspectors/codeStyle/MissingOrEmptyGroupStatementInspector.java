@@ -1,8 +1,12 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -80,7 +84,7 @@ public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
                     return;
                 }
 
-                holder.registerProblem(target, messageMissingBrackets);
+                holder.registerProblem(target, messageMissingBrackets, new WrapBodyFix());
             }
         };
     }
@@ -89,5 +93,38 @@ public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
         return OptionsComponent.create((component)
             -> component.addCheckbox("Report empty group statements", REPORT_EMPTY_BODY, (isSelected) -> REPORT_EMPTY_BODY = isSelected)
         );
+    }
+
+    private static class WrapBodyFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Add the group statement";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor problemDescriptor) {
+            PsiElement target = problemDescriptor.getPsiElement().getParent();
+            if (target instanceof ControlStatement) {
+                target = ((ControlStatement) target).getStatement();
+            } else if (target instanceof Else) {
+                target = ((Else) target).getStatement();
+            }
+
+            if (target != null && !project.isDisposed()) {
+                final String code        = String.format("if() { %s }", target.getText());
+                final If donor           = PhpPsiElementFactory.createPhpPsiFromText(project, If.class, code);
+                final PsiElement implant = donor.getStatement();
+                if (implant != null) {
+                    target.replace(implant);
+                }
+            }
+        }
     }
 }

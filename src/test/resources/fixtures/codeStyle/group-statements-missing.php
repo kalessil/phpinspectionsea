@@ -1,5 +1,6 @@
 <?php
 
+function cases_holder() {
     <weak_warning descr="Wrap constructs' body within a block (PSR-2 recommendations).">if</weak_warning> ($a) ;
     <weak_warning descr="Wrap constructs' body within a block (PSR-2 recommendations).">elseif</weak_warning> ($b) ;
     <weak_warning descr="Wrap constructs' body within a block (PSR-2 recommendations).">else</weak_warning> ;
@@ -12,3 +13,4 @@
     <weak_warning descr="Wrap constructs' body within a block (PSR-2 recommendations).">for</weak_warning> (;;) ;
     <weak_warning descr="Wrap constructs' body within a block (PSR-2 recommendations).">while</weak_warning> ($y) ;
     <weak_warning descr="Wrap constructs' body within a block (PSR-2 recommendations).">do</weak_warning> ; while($z);
+}

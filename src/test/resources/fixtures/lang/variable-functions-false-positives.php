@@ -14,3 +14,6 @@
     /* false-positives: relative addressing */
     call_user_func (array('ClassVFChild', 'parent::sum'), 1, 2, 3);
     call_user_func (array($object, 'parent::sum'), 1, 2, 3);
+
+    $string = '...';
+    call_user_func (array($string, 'sum'), 1, 2, 3);

@@ -9,11 +9,14 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +46,8 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* general requirements for calls */
                 final String function         = reference.getName();
                 final PsiElement[] parameters = reference.getParameters();
@@ -90,8 +94,22 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                         /* now expression themselves */
                         firstPart  = null == firstPart  ? null : firstPart.getFirstPsiChild();
                         secondPart = null == secondPart ? null : secondPart.getFirstPsiChild();
-                        if (null == firstPart || null == secondPart) {
+                        if (firstPart == null || secondPart == null) {
                             return;
+                        }
+                        /* false-positive: first part must not be a string - '<string>->...' is invalid code */
+                        if (firstPart instanceof PhpTypedElement) {
+                            final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) firstParam, holder.getProject());
+                            if (type != null) {
+                                /* incompletely resolved types, we shouldn't continue */
+                                if (type.hasUnknown()) {
+                                    return;
+                                }
+                                /* '<string>->method(...)' breaks at runtime */
+                                else if (type.getTypes().stream().map(Types::getType).anyMatch(t -> t.equals(Types.strString))) {
+                                    return;
+                                }
+                            }
                         }
 
                         callableParts.add(firstPart);

@@ -9,12 +9,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.PhpPsiUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
@@ -91,7 +91,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                     final PsiElement resolved = OpenapiResolveUtil.resolveReference((FunctionReference) expression);
                     if (resolved instanceof Function) {
                         final Function referencedFunction = (Function) resolved;
-                        final PsiElement returnedType     = PhpPsiUtil.getChildByCondition(referencedFunction, ClassReference.INSTANCEOF);
+                        final PsiElement returnedType     = OpenapiElementsUtil.getReturnType(referencedFunction);
                         if (returnedType != null) {
                             result = OpenapiResolveUtil.resolveType(referencedFunction, project);
                         }

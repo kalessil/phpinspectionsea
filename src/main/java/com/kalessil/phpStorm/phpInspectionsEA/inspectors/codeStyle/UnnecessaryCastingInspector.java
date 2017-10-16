@@ -103,10 +103,8 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                         PsiElement candidate = (PsiElement) expression;
                         while (candidate instanceof BinaryExpression) {
                             final BinaryExpression binary   = (BinaryExpression) candidate;
-                            final List<PsiElement> operands = Stream.of(
-                                ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getRightOperand()),
-                                ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getLeftOperand())
-                            )
+                            final List<PsiElement> operands = Stream.of(binary.getRightOperand(), binary.getLeftOperand())
+                                .map(ExpressionSemanticUtil::getExpressionTroughParenthesis)
                                 .filter(operand -> operand instanceof PhpTypedElement)
                                 .collect(Collectors.toList());
 

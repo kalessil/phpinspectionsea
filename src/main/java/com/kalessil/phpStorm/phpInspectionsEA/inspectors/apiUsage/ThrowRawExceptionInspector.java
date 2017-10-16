@@ -9,8 +9,11 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -22,6 +25,9 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ThrowRawExceptionInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean REPORT_MISSING_ARGUMENTS = true;
+
     private static final String messageRawException = "\\Exception is too general. Consider throwing one of SPL exceptions instead.";
     private static final String messageNoArguments  = "This exception is thrown without a message. Consider adding one to help clarify or troubleshoot the exception.";
 
@@ -44,7 +50,7 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
                     if (classFqn != null) {
                         if (classFqn.equals("\\Exception")) {
                             holder.registerProblem(classReference, messageRawException, new TheLocalFix());
-                        } else if (newExpression.getParameters().length == 0) {
+                        } else if (REPORT_MISSING_ARGUMENTS && newExpression.getParameters().length == 0) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference(classReference);
                             if (resolved instanceof PhpClass && this.isTarget((PhpClass) resolved)) {
                                 holder.registerProblem(newExpression, messageNoArguments);
@@ -60,6 +66,12 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
                     clazz.findOwnFieldByName("message", false) == null;
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component)
+                -> component.addCheckbox("Report omitted arguments", REPORT_MISSING_ARGUMENTS, (isSelected) -> REPORT_MISSING_ARGUMENTS = isSelected)
+        );
     }
 
     static private class TheLocalFix implements LocalQuickFix {

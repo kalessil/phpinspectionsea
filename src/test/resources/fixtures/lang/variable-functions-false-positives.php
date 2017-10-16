@@ -16,4 +16,5 @@
     call_user_func (array($object, 'parent::sum'), 1, 2, 3);
 
     /* false-positive: <string>->method(...) breaks at runtime */
-    call_user_func (array('...', 'sum'), 1, 2, 3);
+    $string = '...';
+    call_user_func (array($string, 'sum'), 1, 2, 3);

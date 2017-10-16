@@ -40,7 +40,8 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* general requirements */
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
@@ -84,21 +85,21 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                         break;
                     }
 
-                    final PsiElement[] currentParams = current.getParameters();
-                    if (currentParams.length == 1) {
-                        argument = currentParams[0];
+                    final PsiElement[] currentArguments = current.getParameters();
+                    if (currentArguments.length == 1) {
+                        argument = currentArguments[0];
                         ++directoryLevel;
-                    } else if (currentParams.length == 2) {
-                        argument = currentParams[0];
-                        levels.add(currentParams[1]);
+                    } else if (currentArguments.length == 2) {
+                        argument = currentArguments[0];
+                        levels.add(currentArguments[1]);
                     } else {
                         break;
                     }
 
-                    if (!(currentParams[0] instanceof FunctionReference)) {
+                    if (!(currentArguments[0] instanceof FunctionReference)) {
                         break;
                     }
-                    current = (FunctionReference) currentParams[0];
+                    current = (FunctionReference) currentArguments[0];
                 }
                 /* if no nested dirname calls, stop analysis */
                 if (current == reference) {
@@ -107,7 +108,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                 }
 
                 /* if we have 1+ nested call (top-level one is not considered) */
-                if (null != argument) {
+                if (null != argument && reference.getParameters()[0] != argument) {
                     /* process extracted level expressions: numbers to sum-up, expressions to stay */
                     final List<String> reported = new ArrayList<>();
                     for (PsiElement levelEntry : levels) {
@@ -163,7 +164,8 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof FunctionReference) {
-                ParenthesizedExpression replacement = PhpPsiElementFactory.createFromText(project, ParenthesizedExpression.class, '(' + this.expression + ')');
+                final ParenthesizedExpression replacement
+                    = PhpPsiElementFactory.createFromText(project, ParenthesizedExpression.class, '(' + this.expression + ')');
                 if (null != replacement) {
                     expression.replace(replacement.getArgument());
                 }

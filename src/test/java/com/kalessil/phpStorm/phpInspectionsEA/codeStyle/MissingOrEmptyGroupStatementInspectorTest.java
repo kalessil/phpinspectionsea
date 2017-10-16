@@ -10,7 +10,9 @@ final public class MissingOrEmptyGroupStatementInspectorTest extends PhpCodeInsi
         myFixture.testHighlighting(true, false, true);
     }
     public void testIfFindsEmptyStatements() {
-        myFixture.enableInspections(new MissingOrEmptyGroupStatementInspector());
+        final MissingOrEmptyGroupStatementInspector inspector = new MissingOrEmptyGroupStatementInspector();
+        inspector.REPORT_EMPTY_BODY                           = true;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("fixtures/codeStyle/group-statements-empty.php");
         myFixture.testHighlighting(true, false, true);
     }

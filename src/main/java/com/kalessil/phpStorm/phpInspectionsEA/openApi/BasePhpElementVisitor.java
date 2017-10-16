@@ -28,7 +28,9 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpFunctionCall(FunctionReference reference)  {}
 
     @Override public void visitPhpForeach(ForeachStatement foreachStatement) {}
-    @Override public void visitPhpFor(For forStatement) {}
+    @Override public void visitPhpFor(For forStatement)                      {}
+    @Override public void visitPhpWhile(While whileStatement)                {}
+    @Override public void visitPhpDoWhile(DoWhile doWhileStatement)          {}
 
     @Override public void visitPhpIf(If ifStatement)             {}
     @Override public void visitPhpElseIf(ElseIf elseIfStatement) {}

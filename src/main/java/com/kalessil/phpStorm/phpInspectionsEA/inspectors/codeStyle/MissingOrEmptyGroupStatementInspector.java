@@ -6,8 +6,11 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -19,6 +22,9 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean REPORT_EMPTY_BODY = true;
+
     private static final String messageMissingBrackets = "Wrap constructs' body within a block (PSR-2 recommendations).";
     private static final String messageEmptyBody       = "Statement has empty block.";
 
@@ -64,7 +70,7 @@ public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
                 final PsiElement target   = construct.getFirstChild();
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(construct);
                 if (body != null) {
-                    if (ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
+                    if (REPORT_EMPTY_BODY && ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
                         holder.registerProblem(target, messageEmptyBody);
                     }
                     return;
@@ -77,5 +83,11 @@ public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
                 holder.registerProblem(target, messageMissingBrackets);
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component)
+            -> component.addCheckbox("Report empty group statements", REPORT_EMPTY_BODY, (isSelected) -> REPORT_EMPTY_BODY = isSelected)
+        );
     }
 }

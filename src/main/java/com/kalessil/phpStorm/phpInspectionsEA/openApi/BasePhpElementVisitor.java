@@ -25,14 +25,17 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
 
     /* overrides to reduce amount of 'com.jetbrains.php.lang.psi.visitors.PhpElementVisitor.visitElement' calls */
     @Override public void visitPhpMethodReference(MethodReference reference) {}
-    @Override public void visitPhpFunctionCall(FunctionReference reference) {}
+    @Override public void visitPhpFunctionCall(FunctionReference reference)  {}
 
     @Override public void visitPhpForeach(ForeachStatement foreachStatement) {}
     @Override public void visitPhpFor(For forStatement) {}
-    @Override public void visitPhpIf(If ifStatement) {}
+
+    @Override public void visitPhpIf(If ifStatement)             {}
+    @Override public void visitPhpElseIf(ElseIf elseIfStatement) {}
+    @Override public void visitPhpElse(Else elseStatement)       {}
 
     @Override public void visitPhpIsset(PhpIsset issetExpression) {}
-    @Override public void visitPhpUnset(PhpUnset unsetStatement) {}
+    @Override public void visitPhpUnset(PhpUnset unsetStatement)  {}
 
     @Override public void visitPhpClass(PhpClass clazz) {}
 

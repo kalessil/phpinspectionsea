@@ -18,6 +18,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 final public class IssetAndNullComparisonStrategy {
     private final static String messagePattern = "It seems like '%e%' is already covered by 'isset(...)'.";
 

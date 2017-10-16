@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy.AndOrWordsUsageStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy.IssetAndNullComparisonStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy.NotEmptyCanBeUsedStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionsCouplingCheckUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -79,8 +80,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpIf(If ifStatement) {
-                List<PsiElement> objAllConditions = new ArrayList<>();
-                IElementType[] arrOperationHolder = { null };
+                final List<PsiElement> objAllConditions = new ArrayList<>();
+                final IElementType[] arrOperationHolder = { null };
 
                 List<PsiElement> objConditionsFromStatement = this.inspectExpressionsOrder(ifStatement.getCondition(), arrOperationHolder);
                 if (null != objConditionsFromStatement) {
@@ -98,6 +99,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     }
                     if (REPORT_ISSET_FLAWS) {
                         IssetAndNullComparisonStrategy.apply(objConditionsFromStatement, holder);
+                        NotEmptyCanBeUsedStrategy.apply(objConditionsFromStatement, arrOperationHolder[0], holder);
                     }
 
                     objConditionsFromStatement.clear();
@@ -124,6 +126,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         }
                         if (REPORT_ISSET_FLAWS) {
                             IssetAndNullComparisonStrategy.apply(objConditionsFromStatement, holder);
+                            NotEmptyCanBeUsedStrategy.apply(objConditionsFromStatement, arrOperationHolder[0], holder);
                         }
 
                         objConditionsFromStatement.clear();

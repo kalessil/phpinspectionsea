@@ -11,6 +11,6 @@ if (is_array_indexed($in) && is_array($in[0])) {}
 if (($count = $counter->count()) && $count > 0 && $count < 255) {}
 
 /* older code samples: weights estimation */
-if (isset($x) && $x)                     {}
-if (empty($x) && $x)                     {}
-if (isset($x[uniqid()]) && $x[uniqid()]) {}
+if (isset($x) && $y)                     {}
+if (empty($x) && $y)                     {}
+if (isset($x[uniqid()]) && $y[uniqid()]) {}

@@ -98,7 +98,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                             return;
                         }
                         /* false-positive: first part must not be a string - '<string>->...' is invalid code */
-                        if (firstPart instanceof PhpTypedElement) {
+                        if (firstPart instanceof Variable) {
                             final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) firstPart, holder.getProject());
                             if (type != null) {
                                 /* incompletely resolved types, we shouldn't continue */

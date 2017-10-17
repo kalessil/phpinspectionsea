@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.If;
+import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +53,17 @@ final public class UnclearOperationsPriorityStrategy {
                     holder.registerProblem(parent, message, new WrapItAsItIsFix(replacement));
                     return true;
                 }
+            } else if (PhpTokenTypes.tsCOMPARE_ORDER_OPS.contains(operator)) {
+                final PsiElement left = expression.getLeftOperand();
+                if (left instanceof UnaryExpression) {
+                    final UnaryExpression candidate = (UnaryExpression) left;
+                    if (OpenapiTypesUtil.is(candidate, PhpTokenTypes.opNOT)) {
+                        final String value       = candidate.getText();
+                        final String replacement = expression.getText().replace(value, '(' + value + ')');
+                        holder.registerProblem(expression, message, new WrapItAsItIsFix(replacement));
+                        return true;
+                    }
+                }
             }
         }
         return false;
@@ -61,7 +73,7 @@ final public class UnclearOperationsPriorityStrategy {
         @NotNull
         @Override
         public String getName() {
-            return "Wrap with parenthesises as it's";
+            return "Wrap with parenthesises as it is";
         }
 
         WrapItAsItIsFix(@NotNull String replacement) {

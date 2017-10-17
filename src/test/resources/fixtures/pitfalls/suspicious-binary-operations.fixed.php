@@ -59,7 +59,7 @@ if ($a || ($b && $c)) {}
 if ($a && ($b || $c)) {}
 $z = $x && $b;
 if ((! $a) > $b) {}
-if (!($a) > $b) {}
+if ((!($a)) > $b) {}
 if ((!$a) > $b) {}
 
 /* nullable/falsy values comparison cases */

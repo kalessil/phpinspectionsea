@@ -57,7 +57,7 @@ final public class UnclearOperationsPriorityStrategy {
                 final PsiElement left = expression.getLeftOperand();
                 if (left instanceof UnaryExpression) {
                     final UnaryExpression candidate = (UnaryExpression) left;
-                    if (OpenapiTypesUtil.is(candidate, PhpTokenTypes.opNOT)) {
+                    if (OpenapiTypesUtil.is(candidate.getOperation(), PhpTokenTypes.opNOT)) {
                         final String value       = candidate.getText();
                         final String replacement = expression.getText().replace(value, '(' + value + ')');
                         holder.registerProblem(expression, message, new WrapItAsItIsFix(replacement));

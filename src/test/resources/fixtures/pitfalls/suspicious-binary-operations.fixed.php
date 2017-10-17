@@ -58,7 +58,7 @@ if ($a = (function1() && $b && $c = function2())) {}
 if ($a || ($b && $c)) {}
 if ($a && ($b || $c)) {}
 $z = $x && $b;
-if ((! $a) > $b) {}
+if ((!$a) > $b) {}
 if ((!($a)) > $b) {}
 if ((!$a) > $b) {}
 

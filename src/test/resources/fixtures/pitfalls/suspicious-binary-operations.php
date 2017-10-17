@@ -58,3 +58,9 @@ if ($a = <error descr="Operations priority might differ from what you expect: pl
 if ($a || ($b && $c)) {}
 if ($a && ($b || $c)) {}
 $z = $x && $b;
+
+/* nullable/falsy values comparison cases */
+$nullable = null;
+$falsy    = false;
+if (<error descr="This might work not as expected (an argument can be null/false), use '$nullable >= 5' to be sure.">! $nullable < 5</error>) {}
+if (<error descr="This might work not as expected (an argument can be null/false), use '$falsy > 5' to be sure.">!((($falsy <= 5)))</error>) {}

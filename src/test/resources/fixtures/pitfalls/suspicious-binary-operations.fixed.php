@@ -58,3 +58,9 @@ if ($a = (function1() && $b && $c = function2())) {}
 if ($a || ($b && $c)) {}
 if ($a && ($b || $c)) {}
 $z = $x && $b;
+
+/* nullable/falsy values comparison cases */
+$nullable = null;
+$falsy    = false;
+if ($nullable >= 5) {}
+if ($falsy > 5) {}

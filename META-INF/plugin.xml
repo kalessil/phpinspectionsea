@@ -591,7 +591,7 @@ Like the plugin? Support us via <a href="https://www.patreon.com/kalessil">Patre
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.CallableReferenceNameMismatchInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="NestedPositiveIfStatementsInspection"          displayName="Nested positive ifs"
-        groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.NestedPositiveIfStatementsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="StaticInvocationViaThisInspection"             displayName="Static methods invocation via '->'"

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -16,8 +15,17 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "If statement can be merged into parent.";
+    private static final String message = "If statement can be merged into parent.";
 
     @NotNull
     public String getShortName() {
@@ -28,49 +36,35 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpIf(If ifStatement) {
+            @Override
+            public void visitPhpIf(@NotNull If ifStatement) {
                 /* meet pre-conditions */
-                PsiElement objParent = ifStatement.getParent();
-                if (!(objParent instanceof GroupStatement)) {
-                    return;
+                PsiElement parent = ifStatement.getParent();
+                if (parent instanceof GroupStatement) {
+                    parent = parent.getParent();
                 }
-                objParent = objParent.getParent();
-                if (!(objParent instanceof If)) {
-                    return;
-                }
-
                 /* ensure parent if and the expression has no alternative branches */
                 if (
-                    ExpressionSemanticUtil.hasAlternativeBranches(ifStatement) ||
-                    ExpressionSemanticUtil.hasAlternativeBranches((If) objParent)
+                    parent instanceof If && !ExpressionSemanticUtil.hasAlternativeBranches(ifStatement) &&
+                    !ExpressionSemanticUtil.hasAlternativeBranches((If) parent)
                 ) {
-                    return;
+                    /* ensure that if is single expression in group */
+                    final PsiElement directParent = ifStatement.getParent();
+                    if (directParent instanceof If || (
+                            directParent instanceof GroupStatement &&
+                            ExpressionSemanticUtil.countExpressionsInGroup((GroupStatement) directParent) == 1
+                    )) {
+                        /* ensure that the same logical operator being used (to not increase the visual complexity) */
+                        final PhpPsiElement ifCondition = ifStatement.getCondition();
+                        if (ifCondition != null && this.getOperator(ifStatement) == this.getOperator((If) parent)) {
+                            holder.registerProblem(ifStatement.getFirstChild(), message);
+                        }
+                    }
                 }
-
-                /* ensure that if is single expression in group */
-                GroupStatement objGroupStatement = (GroupStatement) ifStatement.getParent();
-                int intCountStatementsInParentGroup = ExpressionSemanticUtil.countExpressionsInGroup(objGroupStatement);
-                if (intCountStatementsInParentGroup > 1) {
-                    return;
-                }
-
-                /* ensure that the same logical operator being used (to not increase the visual complexity) */
-                IElementType operator       = getOperator(ifStatement);
-                IElementType parentOperator = getOperator((If) objParent);
-                if (operator != parentOperator) {
-                    return;
-                }
-
-                /* point on the issues */
-                PhpPsiElement objIfCondition = ifStatement.getCondition();
-                if (objIfCondition == null) {
-                    return;
-                }
-
-                holder.registerProblem(objIfCondition, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
             }
 
-            private @Nullable IElementType getOperator(final @NotNull If statement) {
+            @Nullable
+            private IElementType getOperator(final @NotNull If statement) {
                 /* no condition or single condition*/
                 final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(statement.getCondition());
                 if (null == condition) {
@@ -79,14 +73,12 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                 if (!(condition instanceof BinaryExpression)) {
                     return PhpTokenTypes.opAND;
                 }
-
                 /* we need only or/and operators to return */
-                final PsiElement operation = ((BinaryExpression) condition).getOperation();
-                if (null == operation) {
-                    return null;
-                }
-                final IElementType operationType = operation.getNode().getElementType();
-                if (operationType != PhpTokenTypes.opOR && operationType != PhpTokenTypes.opAND) {
+                final IElementType operationType = ((BinaryExpression) condition).getOperationType();
+                if (
+                    !PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operationType) &&
+                    !PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operationType)
+                ) {
                     return null;
                 }
                 return operationType;

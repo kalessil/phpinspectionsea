@@ -97,7 +97,7 @@ Inspections Lists (Code style)
 | Code Style           | SenselessCommaInArrayDefinitionInspection       | Unnecessary last comma in array definition          | yes | yes | yes  | no  |
 | Code Style           | AccessModifierPresentedInspection               | Access modifiers shall be defined                   | yes | yes | no   | no  |
 | Code Style           | CallableReferenceNameMismatchInspection         | Callable name case mismatched in a call             | yes | yes | yes  | no  |
-| Code Style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                 | no  |
+| Code Style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                 | yes | yes | yes  | no  |
 | Code Style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                  | yes | yes | no   | no  |
 | Code Style           | UnnecessaryParenthesesInspection                | Unnecessary parentheses                             | yes | yes | yes  | no  |
 | Code Style           | DynamicInvocationViaScopeResolutionInspection   | Dynamic methods invocation via '::'                 | yes | yes | no   | no  |

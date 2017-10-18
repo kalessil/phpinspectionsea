@@ -166,3 +166,12 @@ Php Inspection (EA Extended) also checks if dev-packages (e.g. PhpUnit) have bee
 
 ## RSA oracle padding vulnerability
 
+Padding oracle attack is an attack which is performed using the padding of a cryptographic message. In cryptography, 
+variable-length plaintext messages often have to be padded (expanded) to be compatible with the underlying cryptographic 
+primitive. The attack relies on having a "padding oracle" who freely responds to queries about whether a message is 
+correctly padded or not. Padding oracle attacks are mostly associated with CBC mode decryption used within block ciphers. 
+Padding modes for asymmetric algorithms such as OAEP may also be vulnerable to padding oracle attacks.
+
+Please reference following links for more details:
+- https://paragonie.com/blog/2016/12/everything-you-know-about-public-key-encryption-in-php-is-wrong (OpenSSL-specific)
+- https://paragonie.com/blog/2015/05/if-you-re-typing-word-mcrypt-into-your-code-you-re-doing-it-wrong (mcrypt-specific)

@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -43,7 +42,8 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpIf(If expression) {
+            @Override
+            public void visitPhpIf(@NotNull If expression) {
                 if (!ExpressionSemanticUtil.hasAlternativeBranches(expression)){
                     /* body has only assignment, which to be extracted */
                     final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
@@ -55,14 +55,14 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
                         }
 
                         /* expecting !function(...) in condition */
-                        PsiElement condition   = null;
-                        IElementType operation = null;
+                        PsiElement condition = null;
+                        PsiElement operation = null;
                         if (expression.getCondition() instanceof UnaryExpression) {
                             final UnaryExpression inversion = (UnaryExpression) expression.getCondition();
-                            operation                       = inversion.getOperation().getNode().getElementType();
+                            operation                       = inversion.getOperation();
                             condition                       = ExpressionSemanticUtil.getExpressionTroughParenthesis(inversion.getValue());
                         }
-                        if (operation != PhpTokenTypes.opNOT || !OpenapiTypesUtil.isFunctionReference(condition)) {
+                        if (!OpenapiTypesUtil.is(operation, PhpTokenTypes.opNOT) || !OpenapiTypesUtil.isFunctionReference(condition)) {
                             return;
                         }
 
@@ -82,14 +82,14 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
             }
 
             /* expecting !function(...), true and false expressions */
+            @Override
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
                 PsiElement trueExpression  = expression.getTrueVariant();
                 PsiElement falseExpression = expression.getFalseVariant();
                 PsiElement condition       = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
                 if (condition instanceof UnaryExpression) {
                     final UnaryExpression unary = (UnaryExpression) condition;
-                    final PsiElement operation  = unary.getOperation();
-                    if (operation != null && operation.getNode().getElementType() == PhpTokenTypes.opNOT) {
+                    if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
                         condition       = ExpressionSemanticUtil.getExpressionTroughParenthesis(unary.getValue());
                         trueExpression  = expression.getFalseVariant();
                         falseExpression = expression.getTrueVariant();
@@ -172,12 +172,23 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression != null) {
-                final PsiElement target = expression instanceof TernaryExpression ? expression : expression.getParent();
-                final String pattern    = '(' + this.expression + ')';
-                final ParenthesizedExpression replacement
-                        = PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, pattern);
-                target.replace(replacement.getArgument());
+            if (expression != null && !project.isDisposed()) {
+                final PsiElement target;
+                final PsiElement replacement;
+                if (expression instanceof TernaryExpression) {
+                    target      = expression;
+                    replacement = PhpPsiElementFactory.createPhpPsiFromText(
+                        project,
+                        ParenthesizedExpression.class,
+                        '(' + this.expression + ')'
+                    ).getArgument();
+                }
+                /* assignment */
+                else {
+                    target      = expression.getParent();
+                    replacement = PhpPsiElementFactory.createStatement(project, this.expression + ';');
+                }
+                target.replace(replacement);
             }
         }
     }

@@ -7,7 +7,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformatio
 final public class ArrayCastingEquivalentInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ArrayCastingEquivalentInspector());
-
         myFixture.configureByFile("fixtures/controlFlow/array-casting-equivalent.php");
         myFixture.testHighlighting(true, false, true);
 

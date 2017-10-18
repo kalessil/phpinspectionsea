@@ -163,3 +163,6 @@ are considered third-party.
 
 Php Inspection (EA Extended) also checks if dev-packages (e.g. PhpUnit) have been defined in "require" section instead of 
 "require-dev".
+
+## RSA oracle padding vulnerability
+

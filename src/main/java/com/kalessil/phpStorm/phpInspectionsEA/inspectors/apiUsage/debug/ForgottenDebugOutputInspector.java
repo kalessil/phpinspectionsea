@@ -136,7 +136,6 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         list.add("xdebug_code_coverage_started");
         list.add("xdebug_debug_zval");
         list.add("xdebug_debug_zval_stdout");
-        list.add("xdebug_disable");
         list.add("xdebug_dump_superglobals");
         list.add("xdebug_enable");
         list.add("xdebug_get_code_coverage");

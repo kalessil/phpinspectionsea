@@ -53,7 +53,7 @@ public class CompactCanBeUsedInspector extends BasePhpInspection {
                     variables.add(key.getText());
                 }
 
-                if (!variables.isEmpty()) {
+                if (variables.size() > 1) {
                     final String replacement = String.format("compact(%s)", variables.stream().collect(Collectors.joining(", ")));
                     final String message     = String.format(messagePattern, replacement);
                     holder.registerProblem(expression.getFirstChild(), message, new UseCompactFix(replacement));

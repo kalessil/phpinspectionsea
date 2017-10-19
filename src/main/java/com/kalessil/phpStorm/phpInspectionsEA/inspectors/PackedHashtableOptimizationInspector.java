@@ -38,7 +38,7 @@ final public class PackedHashtableOptimizationInspector extends BasePhpInspectio
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            /* TODO: docs, http://jpauli.github.io/2016/04/08/hashtables.html#packed-hashtable-optimization */
+            /* TODO: docs, http://blog.jpauli.tech/2016/04/08/hashtables.html#packed-hashtable-optimization */
 
             public void visitPhpArrayCreationExpression(ArrayCreationExpression expression) {
                 /* requires PHP7 */

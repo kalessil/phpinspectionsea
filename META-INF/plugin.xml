@@ -300,7 +300,7 @@ Performance optimization, bug-fixes and new inspections:
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayUniqueCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="CompactCanBeUsedInspection"                     displayName="'compact(...)' can be used"
-        groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
+        groupName="Control Flow"                                   enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.CompactCanBeUsedInspector"/>
 
 

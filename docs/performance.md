@@ -17,7 +17,7 @@ optimizations.
 
 > Note: you might want to check benchmarks first - [one](https://gist.github.com/Ocramius/8399625), [two](https://github.com/kalessil/phpinspectionsea/issues/138#issuecomment-279457133)
 
-Synopsys: merging arrays in a loop causes high CPU usage and takes pretty much time for execution.
+Synopsis: merging arrays in a loop is slow and causes high CPU usage.
 
 Let's start with an example demonstrating the case:
 ```php

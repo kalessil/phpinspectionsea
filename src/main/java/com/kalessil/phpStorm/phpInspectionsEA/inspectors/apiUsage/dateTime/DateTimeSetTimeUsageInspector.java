@@ -5,10 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -44,7 +41,10 @@ public class DateTimeSetTimeUsageInspector extends BasePhpInspection {
                     if (methodName != null && arguments.length == 4 && methodName.equals("setTime")) {
                         final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                         if (resolved instanceof Method && ((Method) resolved).getFQN().equals("\\DateTime.setTime")) {
-                            holder.registerProblem(arguments[3], message);
+                            final boolean canBeReported = arguments[3] instanceof PhpPsiElement;
+                            if (canBeReported) {
+                                holder.registerProblem(arguments[3], message);
+                            }
                         }
                     }
                 }

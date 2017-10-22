@@ -34,8 +34,10 @@ final public class OpenapiElementsUtil {
         try {
             /* PS 2017.3 has changed return type from PsiElement to PhpReturnType, so we use reflection here */
             result = (PsiElement) methodReturnType.invoke(function);
-        } catch (IllegalAccessException|InvocationTargetException failure) {
+        } catch (IllegalAccessException failure) {
             throw new RuntimeException(failure);
+        } catch (InvocationTargetException failure) {
+            throw new RuntimeException(failure.getTargetException());
         }
         return result;
     }

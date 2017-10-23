@@ -32,7 +32,7 @@ import java.util.Set;
  */
 
 public class UnqualifiedReferenceInspector extends BasePhpInspection {
-    private static final String messagePattern = "Using '\\%t%' would enable some of opcache optimizations";
+    private static final String messagePattern = "Using '\\%t%' would enable some of opcode optimizations";
 
     final private static Set<String> falsePositives              = new HashSet<>();
     final private static Map<String, Integer> callbacksPositions = new HashMap<>();
@@ -71,7 +71,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcache */
+                /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
                 final PhpLanguageLevel phpVersion
                         = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
                 if (phpVersion.compareTo(PhpLanguageLevel.PHP700) >= 0) {
@@ -80,7 +80,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 }
             }
             public void visitPhpConstantReference(ConstantReference reference) {
-                /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcache */
+                /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
                 final PhpLanguageLevel phpVersion
                         = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
                 if (phpVersion.compareTo(PhpLanguageLevel.PHP700) >= 0) {

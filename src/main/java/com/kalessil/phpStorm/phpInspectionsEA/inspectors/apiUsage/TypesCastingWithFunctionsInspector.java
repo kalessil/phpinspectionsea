@@ -11,10 +11,18 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
     private static final String messagePattern = "'(%s) ...' construction should be used instead (up to 6x times faster).";
@@ -37,29 +45,22 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
-                /* check construction requirements */
-                final PsiElement[] params   = reference.getParameters();
-                final String functionName   = reference.getName();
-                final int intArgumentsCount = params.length;
-                if ((intArgumentsCount != 1 && intArgumentsCount != 2) || StringUtils.isEmpty(functionName)) {
-                    return;
-                }
-                if (intArgumentsCount == 2 && !functionName.equals("settype")) {
-                    return;
-                }
-
-                /* check if inspection subject*/
-                if (mapping.containsKey(functionName)) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                final PsiElement[] arguments = reference.getParameters();
+                final String functionName    = reference.getName();
+                if (arguments.length > 0 && functionName != null && mapping.containsKey(functionName)) {
                     final String suggestedType = mapping.get(functionName);
                     final String message       = messagePattern.replace("%s", suggestedType);
 
                     if (functionName.equals("settype")) {
-                        if (params[1] instanceof StringLiteralExpression) {
+                        if (arguments.length == 2 && arguments[1] instanceof StringLiteralExpression) {
                             holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED);
                         }
                     } else {
-                        holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedType));
+                        if (arguments.length == 1) {
+                            holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedType));
+                        }
                     }
                 }
             }

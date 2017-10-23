@@ -50,39 +50,41 @@ final public class MisplacedOperatorStrategy {
         /* basic operator filter */
         if (parent instanceof FunctionReference && operations.contains(expression.getOperationType())) {
             final FunctionReference call = (FunctionReference) parent;
-            final PsiElement[] params    = call.getParameters();
-            final PsiElement candidate   = params.length > 0 ? params[params.length - 1] : null;
+            final PsiElement[] arguments = call.getParameters();
+            final PsiElement candidate   = arguments.length > 0 ? arguments[arguments.length - 1] : null;
             /* BO should be the last parameter of a call in logical contexts */
             if (candidate == expression && ExpressionSemanticUtil.isUsedAsLogicalOperand(parent)) {
                 final PsiElement resolved = OpenapiResolveUtil.resolveReference(call);
                 if (resolved instanceof Function) {
                     /* resolve the last parameter types: if bool not defined implicitly, continue */
-                    final Function function   = (Function) resolved;
-                    final Parameter parameter = function.getParameters()[params.length - 1];
-                    final Set<String> types   =
-                            parameter.getType().filterUnknown().getTypes().stream()
-                                    .map(Types::getType)
-                                    .collect(Collectors.toSet());
-                    if (!types.contains(Types.strBoolean)) {
-                        final PsiElement rightOperand = expression.getRightOperand();
-                        final PsiElement leftOperand  = expression.getLeftOperand();
-                        if (leftOperand != null && rightOperand instanceof PhpTypedElement) {
-                            final Project project      = holder.getProject();
-                            final PhpType allowedTypes = function.getType().global(project).filterUnknown();
-                            final PhpType operandTypes = ((PhpTypedElement) rightOperand).getType().global(project).filterUnknown();
-                            final PsiElement operator  = expression.getOperation();
-                            if (operator != null && allowedTypes.getTypes().containsAll(operandTypes.getTypes())) {
-                                final String replacement = "%c% %o% %r%"
-                                        .replace("%r%", rightOperand.getText())
-                                        .replace("%o%", operator.getText())
-                                        .replace("%c%", call.getText())
-                                        .replace(expression.getText(), leftOperand.getText());
-                                holder.registerProblem(operator, message, new MisplacedOperatorFix(replacement, call));
-                                return true;
+                    final Function function  = (Function) resolved;
+                    final Parameter[] params = function.getParameters();
+                    if (params.length >= arguments.length) {
+                        final Parameter parameter = params[arguments.length - 1];
+                        final Set<String> types   = parameter.getType().filterUnknown().getTypes().stream()
+                            .map(Types::getType)
+                            .collect(Collectors.toSet());
+                        if (!types.contains(Types.strBoolean)) {
+                            final PsiElement rightOperand = expression.getRightOperand();
+                            final PsiElement leftOperand  = expression.getLeftOperand();
+                            if (leftOperand != null && rightOperand instanceof PhpTypedElement) {
+                                final Project project      = holder.getProject();
+                                final PhpType allowedTypes = function.getType().global(project).filterUnknown();
+                                final PhpType operandTypes = ((PhpTypedElement) rightOperand).getType().global(project).filterUnknown();
+                                final PsiElement operator  = expression.getOperation();
+                                if (operator != null && allowedTypes.getTypes().containsAll(operandTypes.getTypes())) {
+                                    final String replacement = "%c% %o% %r%"
+                                            .replace("%r%", rightOperand.getText())
+                                            .replace("%o%", operator.getText())
+                                            .replace("%c%", call.getText())
+                                            .replace(expression.getText(), leftOperand.getText());
+                                    holder.registerProblem(operator, message, new MisplacedOperatorFix(replacement, call));
+                                    return true;
+                                }
                             }
                         }
+                        types.clear();
                     }
-                    types.clear();
                 }
             }
         }

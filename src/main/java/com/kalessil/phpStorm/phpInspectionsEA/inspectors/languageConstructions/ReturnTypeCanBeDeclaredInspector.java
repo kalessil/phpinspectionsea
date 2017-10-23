@@ -223,7 +223,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (null != expression) {
+            if (expression != null && !project.isDisposed()) {
                 final Method method = (Method) expression.getParent();
                 final PsiElement body
                         = method.isAbstract() ? method.getLastChild() : ExpressionSemanticUtil.getGroupStatement(method);

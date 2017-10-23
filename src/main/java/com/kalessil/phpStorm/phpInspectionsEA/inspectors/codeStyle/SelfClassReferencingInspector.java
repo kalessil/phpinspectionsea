@@ -120,7 +120,7 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target != null) {
+            if (target != null && !project.isDisposed()) {
                 if (replacement.endsWith("::class")) {
                     final String pattern = this.replacement + ';';
                     final ClassConstantReference replacement

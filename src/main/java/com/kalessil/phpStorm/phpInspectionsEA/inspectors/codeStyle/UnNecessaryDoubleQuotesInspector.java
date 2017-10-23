@@ -76,7 +76,7 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement literal = descriptor.getPsiElement();
-            if (literal instanceof StringLiteralExpression) {
+            if (literal instanceof StringLiteralExpression && !project.isDisposed()) {
                 final String rawText        = ((StringLiteralExpression) literal).getContents();
                 final String unescapedText  = PhpStringUtil.unescapeText(rawText, false);
                 final String textExpression = "'" + PhpStringUtil.escapeText(unescapedText, true) + "'";

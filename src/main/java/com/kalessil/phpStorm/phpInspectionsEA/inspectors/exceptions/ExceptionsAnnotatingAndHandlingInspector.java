@@ -227,7 +227,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final Method method = (null == this.method ? null : this.method.getElement());
-            if (null == method) {
+            if (null == method || project.isDisposed()) {
                 return;
             }
 

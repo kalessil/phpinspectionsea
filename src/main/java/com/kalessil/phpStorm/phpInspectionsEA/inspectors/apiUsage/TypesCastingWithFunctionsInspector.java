@@ -90,7 +90,7 @@ public class TypesCastingWithFunctionsInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference) {
+            if (expression instanceof FunctionReference && !project.isDisposed()) {
                 PsiElement parameter = ((FunctionReference) expression).getParameters()[0];
                 if (parameter instanceof BinaryExpression || parameter instanceof UnaryExpression || parameter instanceof TernaryExpression) {
                     PsiElement wrappedParameter = PhpPsiElementFactory.createFromText(project, ParenthesizedExpression.class, "(null)");

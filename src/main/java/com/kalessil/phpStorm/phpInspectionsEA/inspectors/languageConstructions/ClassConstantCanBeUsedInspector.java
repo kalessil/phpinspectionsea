@@ -191,7 +191,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target instanceof StringLiteralExpression) {
+            if (target instanceof StringLiteralExpression && !project.isDisposed()) {
                 String classForReplacement = fqn;
                 String className = classForReplacement.substring(1 + classForReplacement.lastIndexOf('\\'));
 

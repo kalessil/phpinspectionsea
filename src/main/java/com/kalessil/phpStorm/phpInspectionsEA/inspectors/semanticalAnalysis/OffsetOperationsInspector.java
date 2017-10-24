@@ -16,6 +16,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 /**
  * @author Denis Ryabov
  * @author Vladimir Reznichenko
@@ -34,14 +43,15 @@ public class OffsetOperationsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpArrayAccessExpression(ArrayAccessExpression expression) {
+            @Override
+            public void visitPhpArrayAccessExpression(@NotNull ArrayAccessExpression expression) {
                 final PsiElement bracketNode = expression.getLastChild();
                 if (null == bracketNode || null == expression.getValue()) {
                     return;
                 }
 
                 /* promote using [] instead of {} */
-                if (PhpTokenTypes.chRBRACE == bracketNode.getNode().getElementType()) {
+                if (OpenapiTypesUtil.is(bracketNode, PhpTokenTypes.chRBRACE)) {
                     holder.registerProblem(expression, messageUseSquareBrackets, ProblemHighlightType.WEAK_WARNING);
                     return;
                 }
@@ -68,20 +78,20 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                         TypeFromPlatformResolverUtil.resolveExpressionType(indexValue, possibleIndexTypes);
 
                         // now check if any type provided and check sets validity
-                        if (possibleIndexTypes.size() > 0) {
+                        if (!possibleIndexTypes.isEmpty()) {
                             // take possible and clean them respectively allowed to keep only conflicted
-                            if (allowedIndexTypes.size() > 0) {
+                            if (!allowedIndexTypes.isEmpty()) {
                                 filterPossibleTypesWhichAreNotAllowed(possibleIndexTypes, allowedIndexTypes);
                             }
 
-                            if (possibleIndexTypes.size() > 0) {
+                            if (!possibleIndexTypes.isEmpty()) {
                                 final String message = patternInvalidIndex
                                         .replace("%p%", possibleIndexTypes.toString())
                                         .replace("%a%", allowedIndexTypes.toString());
                                 holder.registerProblem(indexValue, message);
                             }
+                            possibleIndexTypes.clear();
                         }
-                        possibleIndexTypes.clear();
                     }
                 }
 
@@ -119,7 +129,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 );
             } else {
                 final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) container, container.getProject());
-                if (type != null) {
+                if (type != null && !type.hasUnknown()) {
                     type.getTypes().stream().map(Types::getType).forEach(containerTypes::add);
                 }
             }

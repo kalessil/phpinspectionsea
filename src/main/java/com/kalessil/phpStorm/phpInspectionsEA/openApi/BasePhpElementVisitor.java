@@ -44,4 +44,5 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpClass(PhpClass clazz) {}
 
     @Override public void visitPhpArrayCreationExpression(ArrayCreationExpression expression) {}
+    @Override public void visitPhpArrayAccessExpression(ArrayAccessExpression expression)     {}
 }

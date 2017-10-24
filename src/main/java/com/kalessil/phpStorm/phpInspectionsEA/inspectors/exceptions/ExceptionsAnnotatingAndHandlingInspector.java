@@ -76,9 +76,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 if (processedRegistry.size() > 0) {
                     processedRegistry.stream()
                         .filter(statement -> statement instanceof Try)
-                        .forEach(statement -> {
-                            holder.registerProblem(statement.getFirstChild(), messageFinallyExceptions, ProblemHighlightType.GENERIC_ERROR);
-                        });
+                        .forEach(statement -> holder.registerProblem(statement.getFirstChild(), messageFinallyExceptions, ProblemHighlightType.GENERIC_ERROR));
                     processedRegistry.clear();
                 }
             }
@@ -203,7 +201,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
     private static class MissingThrowAnnotationLocalFix implements LocalQuickFix {
         final private String exception;
-        private SmartPsiElementPointer<Method> method;
+        final private SmartPsiElementPointer<Method> method;
 
         MissingThrowAnnotationLocalFix(@NotNull Method method, @NotNull String exception){
             super();
@@ -235,13 +233,11 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
             final String  pattern      =  this.exception;
             final String  patternPlace = "@throws " + pattern.replaceAll("\\\\", "\\\\\\\\");
 
-            /* fix if phpDoc exists and not fixed yet */
+            /* fix if PhpDoc exists and not fixed yet */
             if (null != phpDoc && !phpDoc.getText().contains(pattern)) {
-                final String[] comment = phpDoc.getText().split("\\n");
-
                 boolean isInjected = false;
                 final LinkedList<String> newCommentLines = new LinkedList<>();
-                for (String line : comment) {
+                for (String line : phpDoc.getText().split("\\n")) {
                     /* injecting after return tag: probe 1 */
                     if (!isInjected && line.contains("@return")) {
                         newCommentLines.add(line);
@@ -270,15 +266,12 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 //noinspection ConstantConditions I' sure NPE will not happen as we get valid structure for input
                 phpDoc.replace(PhpPsiElementFactory.createFromText(project, PhpDocComment.class, newCommentText));
             }
-
-            /* release a tree node reference */
-            this.method = null;
         }
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) -> {
-            component.addCheckbox("Report non-thrown exceptions", REPORT_NON_THROWN_EXCEPTIONS, (isSelected) -> REPORT_NON_THROWN_EXCEPTIONS = isSelected);
-        });
+        return OptionsComponent.create((component)
+            -> component.addCheckbox("Report non-thrown exceptions", REPORT_NON_THROWN_EXCEPTIONS, (isSelected) -> REPORT_NON_THROWN_EXCEPTIONS = isSelected)
+        );
     }
 }

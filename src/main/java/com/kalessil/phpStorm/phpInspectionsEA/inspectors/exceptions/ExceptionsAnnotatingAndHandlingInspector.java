@@ -234,26 +234,26 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
             final String  patternPlace = "@throws " + pattern.replaceAll("\\\\", "\\\\\\\\");
 
             /* fix if PhpDoc exists and not fixed yet */
-            if (null != phpDoc && !phpDoc.getText().contains(pattern)) {
-                boolean isInjected = false;
+            if (phpDoc != null && !phpDoc.getText().contains(pattern)) {
+                boolean injected = false;
                 final LinkedList<String> newCommentLines = new LinkedList<>();
-                for (String line : phpDoc.getText().split("\\n")) {
+                for (final String line : phpDoc.getText().split("\\n")) {
                     /* injecting after return tag: probe 1 */
-                    if (!isInjected && line.contains("@return")) {
+                    if (!injected && line.contains("@return")) {
                         newCommentLines.add(line);
                         newCommentLines.add(line.replaceAll("@return[^\\r\\n]*", patternPlace));
 
-                        isInjected = true;
+                        injected = true;
                         continue;
                     }
 
                     /* injecting at the end of PhpDoc: probe 3 */
-                    if (!isInjected && line.contains("*/")) {
+                    if (!injected && line.contains("*/")) {
                         // no throw/return is declared
                         newCommentLines.add(line.replaceAll("/", patternPlace));
                         newCommentLines.add(line);
 
-                        isInjected = true;
+                        injected = true;
                         continue;
                     }
 

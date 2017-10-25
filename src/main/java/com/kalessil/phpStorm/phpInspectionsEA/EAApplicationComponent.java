@@ -2,19 +2,23 @@ package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.ui.LicensingFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.analytics.AnalyticsUtil;
 import com.wyday.turboactivate.TurboActivate;
-import com.wyday.turboactivate.TurboActivateException;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.*;
+import java.util.HashMap;
 
 public class EAApplicationComponent implements ApplicationComponent {
     private boolean updated;
@@ -28,19 +32,38 @@ public class EAApplicationComponent implements ApplicationComponent {
 
     /* TODO: separate component */
     private void initLicensing() {
-        final Application application = ApplicationManager.getApplication();
-        /* EAP and headless are not license for now */
-        if (!application.isEAP() && !application.isHeadlessEnvironment()) {
+        /* Headless mode: let allow execution from command line for now */
+        if (!ApplicationManager.getApplication().isHeadlessEnvironment()) {
             final LicensingFacade facade = LicensingFacade.getInstance();
-            final boolean isOssLicense   = facade != null && facade.getLicenseRestrictionsMessages().stream().anyMatch((s) -> s.contains("open source"));
-            final boolean isTrialLicense = facade != null && facade.isEvaluationLicense();
-            /* OSS: supported us, hence for free; TRIAL: let's don't bother with un-needed movements for our trials */
-            if (!isOssLicense && !isTrialLicense) {
+            /* IDE evaluation license: let's not bug end-users */
+            if (facade != null && !facade.isEvaluationLicense()) {
                 try {
-                    limelm = new TurboActivate("2d65930359df9afb6f9a54.36732074");
+                    final URL binaries = EAApplicationComponent.class.getResource("/TurboActivate/");
+                    if (binaries == null) {
+                        throw new RuntimeException("Licensing related resources are missing.");
+                    }
+
+                    final Path tempFolder        = Files.createTempDirectory("ea-ultimate-").toAbsolutePath();
+                    final String[] sourceDetails = binaries.toURI().toString().split("!");
+                    final FileSystem pluginJarFs = FileSystems.newFileSystem(URI.create(sourceDetails[0]), new HashMap<>());
+                    Files.walk(pluginJarFs.getPath(sourceDetails[1])).forEach(sourceFile -> {
+                        try {
+                            Files.copy(
+                                sourceFile,
+                                tempFolder.resolve(tempFolder.toString() + File.separator + sourceFile.toString()),
+                                StandardCopyOption.COPY_ATTRIBUTES
+                            );
+                        } catch (Throwable copyFailure) {
+                            throw new RuntimeException(copyFailure);
+                        }
+                    });
+                    pluginJarFs.close();
+
+                    final String limelmFiles = tempFolder.toString() + "/TurboActivate/";
+                    limelm = new TurboActivate("2d65930359df9afb6f9a54.36732074", limelmFiles);
                     // facade.getLicensedToMessage() => Licensed to <Company> / <Developer>
-                } catch (TurboActivateException failure) {
-                    // TODO: handle
+                } catch (Throwable licensingIntegrationFailure) {
+                    /* TODO: report failure */
                 }
             }
         }

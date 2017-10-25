@@ -43,7 +43,7 @@ public class EAUpdateComponent implements ProjectComponent {
                 )
             );
 
-            applicationComponent.setUpdateNotificationShown(true);
+            applicationComponent.setUpdateNotificationShown();
         }
     }
 

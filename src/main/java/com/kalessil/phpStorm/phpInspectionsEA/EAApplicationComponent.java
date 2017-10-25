@@ -31,10 +31,16 @@ public class EAApplicationComponent implements ApplicationComponent {
     /* TODO: separate component */
     private void initLicensing() {
         this.licenseService = new LicenseService();
-        /* Headless mode: let allow execution from command line for now */
         if (this.licenseService.shouldCheckPluginLicense()) {
             try {
-                this.limelm = this.licenseService.getLicenseClient();
+                this.limelm = this.licenseService.getClient();
+                if (!this.licenseService.isLicenseActive(this.limelm)) {
+                    if (this.limelm.IsActivated()) {
+                        throw new RuntimeException("Php Inspections (EA Ultimate) license has expired. Please renew.");
+                    } else {
+                        throw new RuntimeException("Php Inspections (EA Ultimate) needs a license (buy it or start a free trial).");
+                    }
+                }
             } catch (Throwable licensingIntegrationFailure) {
                 final String pluginName       = this.plugin.getName();
                 final NotificationGroup group = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);

@@ -3,8 +3,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.license;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.ui.LicensingFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.EAApplicationComponent;
+import com.wyday.turboactivate.IsGenuineResult;
 import com.wyday.turboactivate.TurboActivate;
 import com.wyday.turboactivate.TurboActivateException;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -25,7 +27,8 @@ final public class LicenseService {
         return result;
     }
 
-    public TurboActivate getLicenseClient() throws IOException, URISyntaxException, TurboActivateException {
+    @NotNull
+    public TurboActivate getClient() throws IOException, URISyntaxException, TurboActivateException {
         final URL binaries = EAApplicationComponent.class.getResource("/TurboActivate/");
         if (binaries == null) {
             throw new RuntimeException("Licensing related resources are missing.");
@@ -48,6 +51,14 @@ final public class LicenseService {
         pluginJarFs.close();
 
         return new TurboActivate("2d65930359df9afb6f9a54.36732074", tempFolder.toString() + "/TurboActivate/");
+    }
+
+    /* Based on https://wyday.com/limelm/help/using-turboactivate-with-java/ */
+    public boolean isLicenseActive(@NotNull TurboActivate client) throws TurboActivateException {
+        final IsGenuineResult result = client.IsGenuine(90, 14, true, false);
+        final boolean isGenuine      = result == IsGenuineResult.Genuine || result == IsGenuineResult.GenuineFeaturesChanged;
+        /* positive when  check succeeded or network error occurred and license activated */
+        return isGenuine || (result == IsGenuineResult.InternetError && client.IsActivated());
     }
 
     @Nullable

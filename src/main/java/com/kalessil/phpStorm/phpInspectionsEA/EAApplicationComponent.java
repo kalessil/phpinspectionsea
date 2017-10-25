@@ -2,10 +2,12 @@ package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
+import com.intellij.notification.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.ui.LicensingFacade;
+import com.kalessil.phpStorm.phpInspectionsEA.license.LicenseService;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.analytics.AnalyticsUtil;
 import com.wyday.turboactivate.TurboActivate;
 import org.apache.log4j.FileAppender;
@@ -23,7 +25,10 @@ import java.util.HashMap;
 public class EAApplicationComponent implements ApplicationComponent {
     private boolean updated;
     private boolean updateNotificationShown;
+
+    private IdeaPluginDescriptor plugin;
     private TurboActivate limelm;
+    private LicenseService licenseService;
 
     @NotNull
     public static EAApplicationComponent getInstance() {
@@ -63,7 +68,16 @@ public class EAApplicationComponent implements ApplicationComponent {
                     limelm = new TurboActivate("2d65930359df9afb6f9a54.36732074", limelmFiles);
                     // facade.getLicensedToMessage() => Licensed to <Company> / <Developer>
                 } catch (Throwable licensingIntegrationFailure) {
-                    /* TODO: report failure */
+                    final String pluginName       = this.plugin.getName();
+                    final NotificationGroup group = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);
+                    Notifications.Bus.notify(
+                        group.createNotification(
+                            "<b>" + pluginName + "</b> license",
+                            "Failed to initialize licensing sub-system: " + licensingIntegrationFailure.toString(),
+                            NotificationType.WARNING,
+                            NotificationListener.URL_OPENING_LISTENER
+                        )
+                    );
                 }
             }
         }
@@ -71,7 +85,7 @@ public class EAApplicationComponent implements ApplicationComponent {
 
     @Override
     public void initComponent() {
-        IdeaPluginDescriptor plugin = PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA"));
+        this.plugin = PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA"));
         if (null == plugin) {
             return;
         }
@@ -79,9 +93,9 @@ public class EAApplicationComponent implements ApplicationComponent {
         final EASettings settings = EASettings.getInstance();
 
         /* collect installation events (anonymous) */
-        this.updated = !plugin.getVersion().equals(settings.getVersion());
+        this.updated = !this.plugin.getVersion().equals(settings.getVersion());
         if (this.updated) {
-            settings.setVersion(plugin.getVersion());
+            settings.setVersion(this.plugin.getVersion());
             AnalyticsUtil.registerPluginEvent(settings, "install", settings.getOldestVersion());
         }
         AnalyticsUtil.registerPluginEvent(settings, "run", settings.getOldestVersion());

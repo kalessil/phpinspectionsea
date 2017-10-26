@@ -34,7 +34,7 @@ public class EAApplicationComponent implements ApplicationComponent {
         if (this.licenseService.shouldCheckPluginLicense()) {
             try {
                 this.limelm = this.licenseService.getClient();
-                if (!this.licenseService.isLicenseActive(this.limelm)) {
+                if (!this.licenseService.isActiveLicense(this.limelm)) {
                     if (this.limelm.IsActivated()) {
                         throw new RuntimeException("Php Inspections (EA Ultimate) license has expired. Please renew.");
                     } else {

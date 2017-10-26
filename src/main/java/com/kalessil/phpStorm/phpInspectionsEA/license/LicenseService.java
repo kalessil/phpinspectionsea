@@ -54,16 +54,27 @@ final public class LicenseService {
     }
 
     /* Based on https://wyday.com/limelm/help/using-turboactivate-with-java/ */
-    public boolean isLicenseActive(@NotNull TurboActivate client) throws TurboActivateException {
+    public boolean isActiveLicense(@NotNull TurboActivate client) throws TurboActivateException {
         final IsGenuineResult result = client.IsGenuine(90, 14, true, false);
         final boolean isGenuine      = result == IsGenuineResult.Genuine || result == IsGenuineResult.GenuineFeaturesChanged;
         /* positive when  check succeeded or network error occurred and license activated */
         return isGenuine || (result == IsGenuineResult.InternetError && client.IsActivated());
     }
 
+    public boolean isTrialLicense(@NotNull TurboActivate client) throws TurboActivateException {
+        //client.UseTrial(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL, this.getLicenseHolder());
+        //final int daysRemaining = client.TrialDaysRemaining(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL);
+        return false;
+    }
+
     @Nullable
-    public String ideHolder() {
-        final LicensingFacade facade = LicensingFacade.getInstance();
-        return facade == null ? null : facade.getLicensedToMessage();
+    private String getLicenseHolder() {
+        String result = null;
+        /* EAPs doesn't have license holder information */
+        if (!ApplicationManager.getApplication().isEAP()) {
+            final LicensingFacade facade = LicensingFacade.getInstance();
+            result = facade == null ? null : facade.getLicensedToMessage();
+        }
+        return result;
     }
 }

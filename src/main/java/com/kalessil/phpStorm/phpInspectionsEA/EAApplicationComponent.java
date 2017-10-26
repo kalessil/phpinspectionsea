@@ -34,11 +34,13 @@ public class EAApplicationComponent implements ApplicationComponent {
             try {
                 final TurboActivate client = this.licenseService.getClient();
                 if (!this.licenseService.isActiveLicense(client) && !this.licenseService.isActiveTrialLicense(client)) {
+                    final String message;
                     if (client.IsActivated()) {
-                        throw new RuntimeException("The license has expired. Please [renew].");
+                        message = "The license has expired. Please <a href='renew'>renew</a>.";
                     } else {
-                        throw new RuntimeException("A license need to be provided ([buy] one or [start] a free trial).");
+                        message = "A license need to be provided (<a href='buy'>buy</a> one or <a href='try'>start</a> a free trial).";
                     }
+                    throw new RuntimeException(message);
                 }
             } catch (Throwable failure) {
                 final String message          = failure.getMessage();

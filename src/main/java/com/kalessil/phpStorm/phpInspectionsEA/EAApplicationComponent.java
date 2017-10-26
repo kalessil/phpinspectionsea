@@ -20,7 +20,6 @@ public class EAApplicationComponent implements ApplicationComponent {
     private boolean updateNotificationShown;
 
     private IdeaPluginDescriptor plugin;
-    private TurboActivate limelm;
     private LicenseService licenseService;
 
     @NotNull
@@ -33,25 +32,24 @@ public class EAApplicationComponent implements ApplicationComponent {
         this.licenseService = new LicenseService();
         if (this.licenseService.shouldCheckPluginLicense()) {
             try {
-                this.limelm = this.licenseService.getClient();
-                if (!this.licenseService.isActiveLicense(this.limelm)) {
-                    if (this.limelm.IsActivated()) {
-                        throw new RuntimeException("Php Inspections (EA Ultimate) license has expired. Please renew.");
+                final TurboActivate client = this.licenseService.getClient();
+                if (!this.licenseService.isActiveLicense(client) && !this.licenseService.isActiveTrialLicense(client)) {
+                    if (client.IsActivated()) {
+                        throw new RuntimeException("The license has expired. Please [renew].");
                     } else {
-                        throw new RuntimeException("Php Inspections (EA Ultimate) needs a license (buy it or start a free trial).");
+                        throw new RuntimeException("A license need to be provided ([buy] one or [start] a free trial).");
                     }
                 }
-            } catch (Throwable licensingIntegrationFailure) {
+            } catch (Throwable failure) {
+                final String message          = failure.getMessage();
                 final String pluginName       = this.plugin.getName();
                 final NotificationGroup group = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);
-                Notifications.Bus.notify(
-                    group.createNotification(
-                        "<b>" + pluginName + "</b> license",
-                        "Failed to initialize licensing sub-system: " + licensingIntegrationFailure.toString(),
-                        NotificationType.WARNING,
-                        NotificationListener.URL_OPENING_LISTENER
-                    )
-                );
+                Notifications.Bus.notify(group.createNotification(
+                    "<b>" + pluginName + "</b>",
+                    message == null ? failure.getClass().getName() : message,
+                    NotificationType.WARNING,
+                    NotificationListener.URL_OPENING_LISTENER
+                ));
             }
         }
     }

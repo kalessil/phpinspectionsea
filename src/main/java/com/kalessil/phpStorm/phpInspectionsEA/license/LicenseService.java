@@ -17,7 +17,10 @@ import java.net.URL;
 import java.nio.file.*;
 import java.util.HashMap;
 
+/* Based on https://wyday.com/limelm/help/using-turboactivate-with-java/ */
 final public class LicenseService {
+    private int trialDaysRemaining = 0;
+
     public boolean shouldCheckPluginLicense() {
         boolean result = false;
         if (!ApplicationManager.getApplication().isHeadlessEnvironment()) {
@@ -53,7 +56,6 @@ final public class LicenseService {
         return new TurboActivate("2d65930359df9afb6f9a54.36732074", tempFolder.toString() + "/TurboActivate/");
     }
 
-    /* Based on https://wyday.com/limelm/help/using-turboactivate-with-java/ */
     public boolean isActiveLicense(@NotNull TurboActivate client) throws TurboActivateException {
         final IsGenuineResult result = client.IsGenuine(90, 14, true, false);
         final boolean isGenuine      = result == IsGenuineResult.Genuine || result == IsGenuineResult.GenuineFeaturesChanged;
@@ -61,10 +63,18 @@ final public class LicenseService {
         return isGenuine || (result == IsGenuineResult.InternetError && client.IsActivated());
     }
 
-    public boolean isTrialLicense(@NotNull TurboActivate client) throws TurboActivateException {
-        //client.UseTrial(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL, this.getLicenseHolder());
-        //final int daysRemaining = client.TrialDaysRemaining(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL);
-        return false;
+    private boolean isTrialLicense(@NotNull TurboActivate client) {
+        boolean result = true;
+        try {
+            trialDaysRemaining = client.TrialDaysRemaining(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL);
+        } catch (TurboActivateException failure) {
+            result = false;
+        }
+        return result;
+    }
+
+    public boolean isActiveTrialLicense(@NotNull TurboActivate client) {
+        return this.isTrialLicense(client) && this.trialDaysRemaining > 0;
     }
 
     @Nullable

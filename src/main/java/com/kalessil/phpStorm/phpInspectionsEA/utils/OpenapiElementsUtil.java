@@ -37,7 +37,8 @@ final public class OpenapiElementsUtil {
         } catch (IllegalAccessException failure) {
             throw new RuntimeException(failure);
         } catch (InvocationTargetException failure) {
-            throw new RuntimeException(failure.getTargetException());
+            final Throwable cause = failure.getTargetException();
+            throw (cause instanceof RuntimeException ? (RuntimeException)cause : new RuntimeException(cause));
         }
         return result;
     }

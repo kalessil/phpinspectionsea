@@ -6,6 +6,7 @@ import com.intellij.notification.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.extensions.PluginId;
+import com.kalessil.phpStorm.phpInspectionsEA.license.EaNotificationLinksHandler;
 import com.kalessil.phpStorm.phpInspectionsEA.license.LicenseService;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.analytics.AnalyticsUtil;
 import com.wyday.turboactivate.TurboActivate;
@@ -36,9 +37,9 @@ public class EAApplicationComponent implements ApplicationComponent {
                 if (!this.licenseService.isActiveLicense(client) && !this.licenseService.isActiveTrialLicense(client)) {
                     final String message;
                     if (client.IsActivated()) {
-                        message = "The license has expired. Please <a href='renew'>renew</a>.";
+                        message = "The license has expired. Please <a href='#renew'>renew</a>.";
                     } else {
-                        message = "A license need to be provided (<a href='buy'>buy</a> one or <a href='try'>start</a> a free trial).";
+                        message = "A license need to be provided (<a href='#buy'>buy</a> one or <a href='#try'>start</a> a free trial).";
                     }
                     throw new RuntimeException(message);
                 }
@@ -50,7 +51,14 @@ public class EAApplicationComponent implements ApplicationComponent {
                     "<b>" + pluginName + "</b>",
                     message == null ? failure.getClass().getName() : message,
                     NotificationType.WARNING,
-                    NotificationListener.URL_OPENING_LISTENER
+                    EaNotificationLinksHandler.TAKE_LICENSE_ACTION_LISTENER.withActionCallback(action ->
+                        Notifications.Bus.notify(group.createNotification(
+                            "<b>" + pluginName + "</b>",
+                            action,
+                            NotificationType.INFORMATION,
+                            NotificationListener.URL_OPENING_LISTENER
+                        ))
+                    )
                 ));
             }
         }

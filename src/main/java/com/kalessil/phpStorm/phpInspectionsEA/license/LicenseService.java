@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.license;
 
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.ui.LicensingFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.EAApplicationComponent;
@@ -22,10 +23,11 @@ final public class LicenseService {
     private int trialDaysRemaining = 0;
 
     public boolean shouldCheckPluginLicense() {
-        boolean result = false;
-        if (!ApplicationManager.getApplication().isHeadlessEnvironment()) {
+        boolean result                = false;
+        final Application application = ApplicationManager.getApplication();
+        if (!application.isHeadlessEnvironment()) {
             final LicensingFacade facade = LicensingFacade.getInstance();
-            result = facade != null && !facade.isEvaluationLicense();
+            result = application.isEAP() || (facade != null && !facade.isEvaluationLicense());
         }
         return result;
     }

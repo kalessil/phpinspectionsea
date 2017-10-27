@@ -6,8 +6,7 @@ import com.intellij.notification.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.extensions.PluginId;
-import com.kalessil.phpStorm.phpInspectionsEA.license.EaNotificationLinksHandler;
-import com.kalessil.phpStorm.phpInspectionsEA.license.LicenseService;
+import com.kalessil.phpStorm.phpInspectionsEA.license.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.analytics.AnalyticsUtil;
 import com.wyday.turboactivate.TurboActivate;
 import org.apache.log4j.FileAppender;
@@ -32,8 +31,9 @@ public class EAApplicationComponent implements ApplicationComponent {
     private void initLicensing() {
         this.licenseService = new LicenseService();
         if (this.licenseService.shouldCheckPluginLicense()) {
+            TurboActivate client = null;
             try {
-                final TurboActivate client = this.licenseService.getClient();
+                client = this.licenseService.getClient();
                 if (!this.licenseService.isActiveLicense(client) && !this.licenseService.isActiveTrialLicense(client)) {
                     final String message;
                     if (client.IsActivated()) {
@@ -44,6 +44,7 @@ public class EAApplicationComponent implements ApplicationComponent {
                     throw new RuntimeException(message);
                 }
             } catch (Throwable failure) {
+                final TurboActivate adapter   = client;
                 final String message          = failure.getMessage();
                 final String pluginName       = this.plugin.getName();
                 final NotificationGroup group = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);
@@ -51,14 +52,13 @@ public class EAApplicationComponent implements ApplicationComponent {
                     "<b>" + pluginName + "</b>",
                     message == null ? failure.getClass().getName() : message,
                     NotificationType.WARNING,
-                    EaNotificationLinksHandler.TAKE_LICENSE_ACTION_LISTENER.withActionCallback(action ->
-                        Notifications.Bus.notify(group.createNotification(
-                            "<b>" + pluginName + "</b>",
-                            action,
-                            NotificationType.INFORMATION,
-                            NotificationListener.URL_OPENING_LISTENER
-                        ))
-                    )
+                    EaNotificationLinksHandler.TAKE_LICENSE_ACTION_LISTENER.withActionCallback(action -> {
+                        switch (action) {
+                            case "#try":   (new StartTrialAction()).perform(adapter, plugin);      break;
+                            case "#buy":   (new PurchaseLicenseAction()).perform(adapter, plugin); break;
+                            case "#renew": (new RenewLicenseAction()).perform(adapter, plugin);    break;
+                        }
+                    })
                 ));
             }
         }

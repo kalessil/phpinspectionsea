@@ -44,7 +44,9 @@ public class EAApplicationComponent implements ApplicationComponent {
                     throw new RuntimeException(message);
                 }
             } catch (Throwable failure) {
+                final LicenseService service  = this.licenseService;
                 final TurboActivate adapter   = client;
+
                 final String message          = failure.getMessage();
                 final String pluginName       = this.plugin.getName();
                 final NotificationGroup group = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);
@@ -54,9 +56,9 @@ public class EAApplicationComponent implements ApplicationComponent {
                     NotificationType.WARNING,
                     EaNotificationLinksHandler.TAKE_LICENSE_ACTION_LISTENER.withActionCallback(action -> {
                         switch (action) {
-                            case "#try":   (new StartTrialAction()).perform(adapter, plugin);      break;
-                            case "#buy":   (new PurchaseLicenseAction()).perform(adapter, plugin); break;
-                            case "#renew": (new RenewLicenseAction()).perform(adapter, plugin);    break;
+                            case "#try":   (new StartTrialAction()).perform(service, adapter, plugin); break;
+                            case "#buy":   (new PurchaseLicenseAction()).perform(adapter, plugin);     break;
+                            case "#renew": (new RenewLicenseAction()).perform(adapter, plugin);        break;
                         }
                     })
                 ));

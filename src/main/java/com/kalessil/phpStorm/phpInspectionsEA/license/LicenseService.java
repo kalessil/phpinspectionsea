@@ -79,6 +79,23 @@ final public class LicenseService {
         return this.isTrialLicense(client) && this.trialDaysRemaining > 0;
     }
 
+    public int getTrialDaysRemaining() {
+        return this.trialDaysRemaining;
+    }
+
+    boolean startTrial(@NotNull TurboActivate client, @NotNull StringBuilder errorDetails) {
+        boolean result = true;
+        try {
+            client.UseTrial(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL, this.getLicenseHolder());
+            trialDaysRemaining = client.TrialDaysRemaining(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL);
+        } catch (TurboActivateException activationFailed) {
+            final String message = activationFailed.getMessage();
+            errorDetails.append(message == null ? activationFailed.getClass().getName(): message);
+            result = false;
+        }
+        return result;
+    }
+
     @Nullable
     private String getLicenseHolder() {
         String result = null;

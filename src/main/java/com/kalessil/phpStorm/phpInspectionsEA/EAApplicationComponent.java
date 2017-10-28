@@ -37,9 +37,9 @@ public class EAApplicationComponent implements ApplicationComponent {
                 if (!this.licenseService.isActiveLicense(client) && !this.licenseService.isActiveTrialLicense(client)) {
                     final String message;
                     if (client.IsActivated()) {
-                        message = "The license has expired. Please <a href='#renew'>renew</a>.";
+                        message = "The license has expired. Please <a href='#activate'>provide</a> a new one (you can purchase it <a href='#buy'>here</a>).";
                     } else {
-                        message = "A license need to be provided (<a href='#buy'>buy</a> one or <a href='#try'>start</a> a free trial).";
+                        message = "Please <a href='#activate'>provide</a> a license key (you can purchase one <a href='#buy'>here</a> or <a href='#try'>start</a> a free trial).";
                     }
                     throw new RuntimeException(message);
                 }
@@ -56,9 +56,9 @@ public class EAApplicationComponent implements ApplicationComponent {
                     NotificationType.WARNING,
                     EaNotificationLinksHandler.TAKE_LICENSE_ACTION_LISTENER.withActionCallback(action -> {
                         switch (action) {
-                            case "#try":   (new StartTrialAction()).perform(service, adapter, plugin); break;
-                            case "#buy":   (new PurchaseLicenseAction()).perform(adapter, plugin);     break;
-                            case "#renew": (new RenewLicenseAction()).perform(adapter, plugin);        break;
+                            case "#try":      (new StartTrialAction()).perform(service, adapter, plugin);      break;
+                            case "#buy":      (new PurchaseLicenseAction()).perform(adapter, plugin);          break;
+                            case "#activate": (new ActivateLicenseAction()).perform(service, adapter, plugin); break;
                         }
                     })
                 ));

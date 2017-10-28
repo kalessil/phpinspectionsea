@@ -4,20 +4,18 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.notification.*;
 import com.wyday.turboactivate.TurboActivate;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 final public class StartTrialAction {
     /* repetitive calls are succeeding, but the license stays the same */
     public void perform(
         @NotNull LicenseService service,
-        @Nullable TurboActivate client,
-        @Nullable IdeaPluginDescriptor plugin
+        @NotNull TurboActivate client,
+        @NotNull IdeaPluginDescriptor plugin
     ) {
         final StringBuilder trialError = new StringBuilder();
         final boolean trialStarted     = service.startTrial(client, trialError);
-
-        final String pluginName       = plugin.getName();
-        final NotificationGroup group = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);
+        final String pluginName        = plugin.getName();
+        final NotificationGroup group  = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);
         Notifications.Bus.notify(group.createNotification(
             "<b>" + pluginName + "</b>",
             trialStarted ?

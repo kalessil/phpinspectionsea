@@ -88,7 +88,7 @@ final public class LicenseService {
         return this.trialDaysRemaining;
     }
 
-    boolean applyLicenseKey(@NotNull TurboActivate client, @NotNull String key, @NotNull StringBuilder errorDetails) {
+    boolean applyLicenseKey(@NotNull TurboActivate client, @Nullable String key, @NotNull StringBuilder errorDetails) {
         boolean result;
         try {
             result = client.CheckAndSavePKey(key, TurboActivate.TA_SYSTEM);

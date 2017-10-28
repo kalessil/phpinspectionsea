@@ -4,6 +4,7 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.ui.LicensingFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.EAApplicationComponent;
+import com.wyday.turboactivate.BoolRef;
 import com.wyday.turboactivate.IsGenuineResult;
 import com.wyday.turboactivate.TurboActivate;
 import com.wyday.turboactivate.TurboActivateException;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 /* Based on https://wyday.com/limelm/help/using-turboactivate-with-java/ */
 final public class LicenseService {
     private int trialDaysRemaining = 0;
+    private int licenseDaysRemaining = 0;
 
     public boolean shouldCheckPluginLicense() {
         boolean result                = false;
@@ -61,6 +63,9 @@ final public class LicenseService {
     public boolean isActiveLicense(@NotNull TurboActivate client) throws TurboActivateException {
         final IsGenuineResult result = client.IsGenuine(90, 14, true, false);
         final boolean isGenuine      = result == IsGenuineResult.Genuine || result == IsGenuineResult.GenuineFeaturesChanged;
+        if (isGenuine) {
+            licenseDaysRemaining = client.GenuineDays(90, 14, new BoolRef());
+        }
         /* positive when  check succeeded or network error occurred and license activated */
         return isGenuine || (result == IsGenuineResult.InternetError && client.IsActivated());
     }
@@ -79,8 +84,26 @@ final public class LicenseService {
         return this.isTrialLicense(client) && this.trialDaysRemaining > 0;
     }
 
-    public int getTrialDaysRemaining() {
+    int getTrialDaysRemaining() {
         return this.trialDaysRemaining;
+    }
+
+    boolean applyLicenseKey(@NotNull TurboActivate client, @NotNull String key, @NotNull StringBuilder errorDetails) {
+        boolean result;
+        try {
+            result = client.CheckAndSavePKey(key, TurboActivate.TA_SYSTEM);
+            if (result) {
+                client.Activate(this.getLicenseHolder());
+                licenseDaysRemaining = client.GenuineDays(90, 14, new BoolRef());
+            } else {
+                errorDetails.append(String.format("key '%s' seems has a typo", key));
+            }
+        } catch (TurboActivateException activationFailed) {
+            final String message = activationFailed.getMessage();
+            errorDetails.append(message == null ? activationFailed.getClass().getName(): message);
+            result = false;
+        }
+        return result;
     }
 
     boolean startTrial(@NotNull TurboActivate client, @NotNull StringBuilder errorDetails) {

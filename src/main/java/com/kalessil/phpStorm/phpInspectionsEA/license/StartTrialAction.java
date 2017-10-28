@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 final public class StartTrialAction {
+    /* repetitive calls are succeeding, but the license stays the same */
     public void perform(
         @NotNull LicenseService service,
         @Nullable TurboActivate client,

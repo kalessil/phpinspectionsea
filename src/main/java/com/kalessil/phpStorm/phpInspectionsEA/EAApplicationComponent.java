@@ -16,27 +16,33 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class EAApplicationComponent implements ApplicationComponent {
     private boolean updated;
     private boolean updateNotificationShown;
 
-    private IdeaPluginDescriptor plugin;
-    private LicenseService licenseService;
+    static private IdeaPluginDescriptor plugin;
+    static private LicenseService licenseService;
 
+    @Nullable
+    public static LicenseService getLicenseService() {
+        return licenseService;
+    }
+    
     @NotNull
     public static EAApplicationComponent getInstance() {
         return ApplicationManager.getApplication().getComponent(EAApplicationComponent.class);
     }
 
     private void initLicensing() {
-        this.licenseService = new LicenseService();
-        if (this.licenseService.shouldCheckPluginLicense()) {
+        licenseService = licenseService == null ? new LicenseService() : licenseService;
+        if (licenseService.shouldCheckPluginLicense()) {
             try {
-                this.licenseService.initializeClient();
-                if (!this.licenseService.isActiveLicense() && !this.licenseService.isActiveTrialLicense()) {
+                licenseService.initializeClient();
+                if (!licenseService.isActiveLicense() && !licenseService.isActiveTrialLicense()) {
                     final String message;
-                    if (this.licenseService.isActivatedLicense()) {
+                    if (licenseService.isActivatedLicense()) {
                         message = "The license has expired. Please <a href='#activate'>provide</a> a new one (you can purchase it <a href='#buy'>here</a>).";
                     } else {
                         message = "Please <a href='#activate'>provide</a> a license key (you can purchase one <a href='#buy'>here</a> or <a href='#try'>start</a> a free trial).";
@@ -44,9 +50,9 @@ public class EAApplicationComponent implements ApplicationComponent {
                     throw new RuntimeException(message);
                 }
             } catch (Throwable failure) {
-                final LicenseService service  = this.licenseService;
+                final LicenseService service  = licenseService;
                 final String message          = failure.getMessage();
-                final String pluginName       = this.plugin.getName();
+                final String pluginName       = plugin.getName();
                 final NotificationGroup group = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);
                 Notifications.Bus.notify(group.createNotification(
                     "<b>" + pluginName + "</b>",
@@ -66,17 +72,17 @@ public class EAApplicationComponent implements ApplicationComponent {
 
     @Override
     public void initComponent() {
-        this.plugin = PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA"));
-        if (null == plugin) {
+        plugin = plugin == null ? PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA")) : plugin;
+        if (plugin == null) {
             return;
         }
 
         final EASettings settings = EASettings.getInstance();
 
         /* collect installation events (anonymous) */
-        this.updated = !this.plugin.getVersion().equals(settings.getVersion());
+        this.updated = !plugin.getVersion().equals(settings.getVersion());
         if (this.updated) {
-            settings.setVersion(this.plugin.getVersion());
+            settings.setVersion(plugin.getVersion());
             AnalyticsUtil.registerPluginEvent(settings, "install", settings.getOldestVersion());
         }
         AnalyticsUtil.registerPluginEvent(settings, "run", settings.getOldestVersion());

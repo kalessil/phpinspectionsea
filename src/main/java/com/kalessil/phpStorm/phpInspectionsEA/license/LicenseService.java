@@ -23,18 +23,22 @@ import java.util.HashMap;
 final public class LicenseService {
     private int trialDaysRemaining = 0;
     private int licenseDaysRemaining = 0;
+    private Boolean shouldCheckLicense = null;
 
-    @NotNull
+    @Nullable
     private TurboActivate client;
 
     public boolean shouldCheckPluginLicense() {
-        boolean result                = false;
-        final Application application = ApplicationManager.getApplication();
-        if (!application.isHeadlessEnvironment()) {
-            final LicensingFacade facade = LicensingFacade.getInstance();
-            result = application.isEAP() || (facade != null && !facade.isEvaluationLicense());
+        if (this.shouldCheckLicense == null) {
+            boolean result = false;
+            final Application application = ApplicationManager.getApplication();
+            if (!application.isHeadlessEnvironment()) {
+                final LicensingFacade facade = LicensingFacade.getInstance();
+                result = application.isEAP() || (facade != null && !facade.isEvaluationLicense());
+            }
+            this.shouldCheckLicense = result;
         }
-        return result;
+        return this.shouldCheckLicense;
     }
 
     public void initializeClient() throws IOException, URISyntaxException, TurboActivateException {
@@ -60,6 +64,10 @@ final public class LicenseService {
         pluginJarFs.close();
 
         this.client = new TurboActivate("2d65930359df9afb6f9a54.36732074", tempFolder.toString() + "/TurboActivate/");
+    }
+
+    public boolean isClientInitialized() {
+        return this.client != null;
     }
 
     public boolean isActiveLicense() throws TurboActivateException {

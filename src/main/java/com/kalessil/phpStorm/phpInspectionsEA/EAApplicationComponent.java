@@ -77,7 +77,7 @@ public class EAApplicationComponent implements ApplicationComponent {
 
     @Override
     public void initComponent() {
-        plugin = plugin == null ? PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA")) : plugin;
+        plugin = plugin == null ? PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsUltimate")) : plugin;
         if (plugin == null) {
             return;
         }

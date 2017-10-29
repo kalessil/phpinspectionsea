@@ -5,8 +5,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
 
-final public class DeactivateLicenseAction extends AnAction implements DumbAware {
-    public DeactivateLicenseAction() {
+final public class DeactivateLicenseMenuAction extends AnAction implements DumbAware {
+    public DeactivateLicenseMenuAction() {
         /* TODO: get ea app component -> get license server*/
     }
 

@@ -836,13 +836,16 @@ Performance optimization, bug-fixes and new inspections:
   <actions>
       <group id="EaUltimateLicensing" text="Php Inspections (EA Ultimate)" popup="true">
           <add-to-group group-id="RegistrationActions" anchor="first"/>
-          <separator/>
-              <action
-                  class="com.kalessil.phpStorm.phpInspectionsEA.license.DeactivateLicenseAction"
-                  id="com.kalessil.phpStorm.phpInspectionsEA.license.DeactivateLicenseAction"
-                  text="Deactivate license"
-              />
-          <separator/>
+          <action
+              class="com.kalessil.phpStorm.phpInspectionsEA.license.DeactivateLicenseMenuAction"
+              id="com.kalessil.phpStorm.phpInspectionsEA.license.DeactivateLicenseMenuAction"
+              text="Release the key (for reuse)"
+          />
+          <action
+              class="com.kalessil.phpStorm.phpInspectionsEA.license.ActivateLicenseMenuAction"
+              id="com.kalessil.phpStorm.phpInspectionsEA.license.ActivateLicenseMenuAction"
+              text="Activate with a product key"
+          />
       </group>
   </actions>
 

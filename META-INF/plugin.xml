@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.11</version>
+  <version>2.3.11.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -55,32 +55,7 @@ with a laptop.
 Performance optimization, bug-fixes and new inspections:
 <br/>
 <br/>
-- Fixed exceptions in PhpStorm EAP-versions<br/>
-- Cascading dirname(...) calls: resolved false-positives (QFed code gets reported)<br/>
-- Could be replaced with '(array) ...': QF bug-fix<br/>
-- Null reference: resolved false-positives (multiple cases)<br/>
-- Unnecessary call arguments specification: resolved false-positives (extra arguments)<br/>
-- Unnecessary parentheses: resolved false-positives (concatenation)<br/>
-- Security advisories for Composer packages: resolved false-positives (library type is implicitly declared)<br/>
-- Self class referencing: resolved false-positives (multiple cases)<br/>
-- Variable functions usage: resolved false-positives (`string`->method(...))<br/>
-- 'mkdir(...)' race condition: QF bug-fix<br/>
-<br/>
-- A constant can be used: new patterns<br/>
-- Forgotten debug statements: more debug functions (XDebug, typo3, Drupal, doctrine)<br/>
-- General '\Exception' is thrown: added settings<br/>
-- If-return-return could be simplified: new patterns<br/>
-- Missing or empty conditionals group statement: added settings<br/>
-- Non-optimal if conditions: new patterns<br/>
-- Non-optimal regular expression: new patterns<br/>
-- Suspicious binary operations: new patterns<br/>
-<br/>
-- Missing or empty conditionals group statement: QF implemented<br/>
-- Nested positive ifs: QF implemented<br/>
-- RSA oracle padding vulnerability: implemented<br/>
-- Unnecessary 'date(...)' arguments specification: implemented<br/>
-- Unnecessary isset arguments specification: implemented<br/>
-- 'compact(...)' can be used: implemented<br/>
+- Fixed multiple exceptions cases<br/>
 <br/>
 <hr/>
   ]]></change-notes>

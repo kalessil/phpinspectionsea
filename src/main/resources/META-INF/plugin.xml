@@ -834,7 +834,16 @@ Performance optimization, bug-fixes and new inspections:
   </project-components>
 
   <actions>
-    <!-- Add your actions here -->
+      <group id="EaUltimateLicensing" text="Php Inspections (EA Ultimate)" popup="true">
+          <add-to-group group-id="RegistrationActions" anchor="first"/>
+          <separator/>
+              <action
+                  class="com.kalessil.phpStorm.phpInspectionsEA.license.DeactivateLicenseAction"
+                  id="com.kalessil.phpStorm.phpInspectionsEA.license.DeactivateLicenseAction"
+                  text="Deactivate license"
+              />
+          <separator/>
+      </group>
   </actions>
 
 </idea-plugin>

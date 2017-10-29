@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -66,7 +67,7 @@ final public class LicenseService {
         this.client = new TurboActivate("2d65930359df9afb6f9a54.36732074", tempFolder.toString() + "/TurboActivate/");
     }
 
-    public boolean isClientInitialized() {
+    boolean isClientInitialized() {
         return this.client != null;
     }
 
@@ -114,7 +115,21 @@ final public class LicenseService {
             }
         } catch (TurboActivateException activationFailed) {
             final String message = activationFailed.getMessage();
-            errorDetails.append(message == null ? activationFailed.getClass().getName(): message);
+            errorDetails.append(message == null ? activationFailed.getClass().getName() : message);
+            result = false;
+        }
+        return result;
+    }
+
+    boolean deactivateLicenseKey(@NotNull StringBuilder key, @NotNull StringBuilder errorDetails) {
+        boolean result;
+        try {
+            key.append(client.GetPKey());
+            client.Deactivate(true);
+            result = true;
+        } catch (TurboActivateException|UnsupportedEncodingException deactivationFailed) {
+            final String message = deactivationFailed.getMessage();
+            errorDetails.append(message == null ? deactivationFailed.getClass().getName() : message);
             result = false;
         }
         return result;
@@ -127,7 +142,7 @@ final public class LicenseService {
             trialDaysRemaining = client.TrialDaysRemaining(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL);
         } catch (TurboActivateException activationFailed) {
             final String message = activationFailed.getMessage();
-            errorDetails.append(message == null ? activationFailed.getClass().getName(): message);
+            errorDetails.append(message == null ? activationFailed.getClass().getName() : message);
             result = false;
         }
         return result;

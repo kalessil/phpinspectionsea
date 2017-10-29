@@ -29,6 +29,11 @@ public class EAApplicationComponent implements ApplicationComponent {
     public static LicenseService getLicenseService() {
         return licenseService;
     }
+
+    @Nullable
+    public static IdeaPluginDescriptor getPluginDescriptor() {
+        return plugin;
+    }
     
     @NotNull
     public static EAApplicationComponent getInstance() {

@@ -18,6 +18,10 @@ final public class ActivateLicenseAction {
             String.format("%s activation", pluginName),
             JOptionPane.QUESTION_MESSAGE
         );
+        if (licenseKey == null) {
+            return;
+        }
+
         final StringBuilder activationError = new StringBuilder();
         final boolean licenseActivated      = service.applyLicenseKey(licenseKey, activationError);
 

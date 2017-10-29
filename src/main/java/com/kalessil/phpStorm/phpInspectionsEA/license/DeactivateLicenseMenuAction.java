@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.license;
 
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -19,7 +20,7 @@ final public class DeactivateLicenseMenuAction extends AnAction implements DumbA
         final LicenseService service = EAApplicationComponent.getLicenseService();
         if (service != null && service.shouldCheckPluginLicense() && service.isClientInitialized()) {
             try {
-                if (service.isActiveLicense() || service.isActiveTrialLicense()) {
+                if (service.isActiveLicense()) {
                     presentation.setEnabled(true);
                 }
             } catch (TurboActivateException serviceError) {
@@ -30,6 +31,11 @@ final public class DeactivateLicenseMenuAction extends AnAction implements DumbA
 
     @Override
     public void actionPerformed(AnActionEvent event) {
-        // deactivate
+        final LicenseService service      = EAApplicationComponent.getLicenseService();
+        final IdeaPluginDescriptor plugin = EAApplicationComponent.getPluginDescriptor();
+        if (service != null && plugin != null && service.isClientInitialized()) {
+            (new DeactivateLicenseAction()).perform(service, plugin);
+            this.update(event);
+        }
     }
 }

@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.license;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.notification.*;
-import com.wyday.turboactivate.TurboActivate;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -10,7 +9,6 @@ import javax.swing.*;
 final public class ActivateLicenseAction {
     public void perform(
         @NotNull LicenseService service,
-        @NotNull TurboActivate client,
         @NotNull IdeaPluginDescriptor plugin
     ) {
         final String pluginName = plugin.getName();
@@ -21,7 +19,7 @@ final public class ActivateLicenseAction {
             JOptionPane.QUESTION_MESSAGE
         );
         final StringBuilder activationError = new StringBuilder();
-        final boolean licenseActivated      = service.applyLicenseKey(client, licenseKey, activationError);
+        final boolean licenseActivated      = service.applyLicenseKey(licenseKey, activationError);
 
         final NotificationGroup group = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);
         Notifications.Bus.notify(group.createNotification(

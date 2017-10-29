@@ -2,13 +2,15 @@ package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
-import com.intellij.notification.*;
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.extensions.PluginId;
 import com.kalessil.phpStorm.phpInspectionsEA.license.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.analytics.AnalyticsUtil;
-import com.wyday.turboactivate.TurboActivate;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
@@ -27,16 +29,14 @@ public class EAApplicationComponent implements ApplicationComponent {
         return ApplicationManager.getApplication().getComponent(EAApplicationComponent.class);
     }
 
-    /* TODO: separate component */
     private void initLicensing() {
         this.licenseService = new LicenseService();
         if (this.licenseService.shouldCheckPluginLicense()) {
-            TurboActivate client = null;
             try {
-                client = this.licenseService.getClient();
-                if (!this.licenseService.isActiveLicense(client) && !this.licenseService.isActiveTrialLicense(client)) {
+                this.licenseService.initializeClient();
+                if (!this.licenseService.isActiveLicense() && !this.licenseService.isActiveTrialLicense()) {
                     final String message;
-                    if (client.IsActivated()) {
+                    if (this.licenseService.isActivatedLicense()) {
                         message = "The license has expired. Please <a href='#activate'>provide</a> a new one (you can purchase it <a href='#buy'>here</a>).";
                     } else {
                         message = "Please <a href='#activate'>provide</a> a license key (you can purchase one <a href='#buy'>here</a> or <a href='#try'>start</a> a free trial).";
@@ -45,8 +45,6 @@ public class EAApplicationComponent implements ApplicationComponent {
                 }
             } catch (Throwable failure) {
                 final LicenseService service  = this.licenseService;
-                final TurboActivate adapter   = client;
-
                 final String message          = failure.getMessage();
                 final String pluginName       = this.plugin.getName();
                 final NotificationGroup group = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);
@@ -56,9 +54,9 @@ public class EAApplicationComponent implements ApplicationComponent {
                     NotificationType.WARNING,
                     EaNotificationLinksHandler.TAKE_LICENSE_ACTION_LISTENER.withActionCallback(action -> {
                         switch (action) {
-                            case "#try":      (new StartTrialAction()).perform(service, adapter, plugin);      break;
-                            case "#buy":      (new PurchaseLicenseAction()).perform(adapter, plugin);          break;
-                            case "#activate": (new ActivateLicenseAction()).perform(service, adapter, plugin); break;
+                            case "#try":      (new StartTrialAction()).perform(service, plugin);      break;
+                            case "#buy":      (new PurchaseLicenseAction()).perform(plugin);          break;
+                            case "#activate": (new ActivateLicenseAction()).perform(service, plugin); break;
                         }
                     })
                 ));

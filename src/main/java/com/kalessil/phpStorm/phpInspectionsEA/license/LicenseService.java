@@ -24,6 +24,9 @@ final public class LicenseService {
     private int trialDaysRemaining = 0;
     private int licenseDaysRemaining = 0;
 
+    @NotNull
+    private TurboActivate client;
+
     public boolean shouldCheckPluginLicense() {
         boolean result                = false;
         final Application application = ApplicationManager.getApplication();
@@ -34,8 +37,7 @@ final public class LicenseService {
         return result;
     }
 
-    @NotNull
-    public TurboActivate getClient() throws IOException, URISyntaxException, TurboActivateException {
+    public void initializeClient() throws IOException, URISyntaxException, TurboActivateException {
         final URL binaries = EAApplicationComponent.class.getResource("/TurboActivate/");
         if (binaries == null) {
             throw new RuntimeException("Licensing related resources are missing.");
@@ -57,10 +59,10 @@ final public class LicenseService {
         });
         pluginJarFs.close();
 
-        return new TurboActivate("2d65930359df9afb6f9a54.36732074", tempFolder.toString() + "/TurboActivate/");
+        this.client = new TurboActivate("2d65930359df9afb6f9a54.36732074", tempFolder.toString() + "/TurboActivate/");
     }
 
-    public boolean isActiveLicense(@NotNull TurboActivate client) throws TurboActivateException {
+    public boolean isActiveLicense() throws TurboActivateException {
         final IsGenuineResult result = client.IsGenuine(90, 14, true, false);
         final boolean isGenuine      = result == IsGenuineResult.Genuine || result == IsGenuineResult.GenuineFeaturesChanged;
         if (isGenuine) {
@@ -70,7 +72,11 @@ final public class LicenseService {
         return isGenuine || (result == IsGenuineResult.InternetError && client.IsActivated());
     }
 
-    private boolean isTrialLicense(@NotNull TurboActivate client) {
+    public boolean isActivatedLicense() throws TurboActivateException {
+        return client.IsActivated();
+    }
+
+    private boolean isTrialLicense() {
         boolean result = true;
         try {
             trialDaysRemaining = client.TrialDaysRemaining(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL);
@@ -80,15 +86,15 @@ final public class LicenseService {
         return result;
     }
 
-    public boolean isActiveTrialLicense(@NotNull TurboActivate client) {
-        return this.isTrialLicense(client) && this.trialDaysRemaining > 0;
+    public boolean isActiveTrialLicense() {
+        return this.isTrialLicense() && this.trialDaysRemaining > 0;
     }
 
     int getTrialDaysRemaining() {
         return this.trialDaysRemaining;
     }
 
-    boolean applyLicenseKey(@NotNull TurboActivate client, @Nullable String key, @NotNull StringBuilder errorDetails) {
+    boolean applyLicenseKey(@Nullable String key, @NotNull StringBuilder errorDetails) {
         boolean result;
         try {
             result = client.CheckAndSavePKey(key, TurboActivate.TA_SYSTEM);
@@ -106,7 +112,7 @@ final public class LicenseService {
         return result;
     }
 
-    boolean startTrial(@NotNull TurboActivate client, @NotNull StringBuilder errorDetails) {
+    boolean startTrial(@NotNull StringBuilder errorDetails) {
         boolean result = true;
         try {
             client.UseTrial(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL, this.getLicenseHolder());

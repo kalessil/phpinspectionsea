@@ -2,11 +2,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.license;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.notification.*;
-import com.wyday.turboactivate.TurboActivate;
 import org.jetbrains.annotations.NotNull;
 
 final public class PurchaseLicenseAction {
-    public void perform(@NotNull TurboActivate client, @NotNull IdeaPluginDescriptor plugin) {
+    public void perform(@NotNull IdeaPluginDescriptor plugin) {
         final String pluginName       = plugin.getName();
         final NotificationGroup group = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);
         Notifications.Bus.notify(group.createNotification(

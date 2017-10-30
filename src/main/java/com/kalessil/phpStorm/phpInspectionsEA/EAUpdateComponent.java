@@ -27,7 +27,7 @@ public class EAUpdateComponent implements ProjectComponent {
     @Override
     public void projectOpened() {
         if (applicationComponent.isUpdated() && !applicationComponent.isUpdateNotificationShown()) {
-            final IdeaPluginDescriptor plugin = EAApplicationComponent.getPluginDescriptor();
+            IdeaPluginDescriptor plugin = PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA"));
             if (null == plugin) {
                 return;
             }

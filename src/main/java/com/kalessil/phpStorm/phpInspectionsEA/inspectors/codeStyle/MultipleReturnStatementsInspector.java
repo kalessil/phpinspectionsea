@@ -4,7 +4,6 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlow;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpExitPointInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpReturnInstruction;
@@ -13,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -40,12 +40,11 @@ public class MultipleReturnStatementsInspector extends BasePhpInspection {
             public void visitPhpMethod(Method method) {
                 final PhpClass clazz            = method.getContainingClass();
                 final PsiElement nameIdentifier = NamedElementUtil.getNameIdentifier(method);
-                if (null != nameIdentifier && null != clazz && !clazz.isTrait()) {
-                    final PhpControlFlow controlFlow        = method.getControlFlow();
-                    final PhpExitPointInstruction exitPoint = controlFlow.getExitPoint();
+                if (nameIdentifier != null && clazz != null && !clazz.isTrait()) {
+                    final PhpExitPointInstruction exitPoint = method.getControlFlow().getExitPoint();
 
                     int returnsCount = 0;
-                    for (final PhpInstruction instruction : exitPoint.getPredecessors()) {
+                    for (final PhpInstruction instruction : OpenapiElementsUtil.getPredecessors(exitPoint)) {
                         if (instruction instanceof PhpReturnInstruction) {
                             ++returnsCount;
                         }

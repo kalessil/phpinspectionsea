@@ -7,7 +7,9 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -21,10 +23,12 @@ import java.util.Set;
 public class PossibleValuesDiscoveryUtil {
     @NotNull
     static public Set<PsiElement> discover(@NotNull PsiElement expression) {
-        final Set<PsiElement> processed = new HashSet<>();
-        final Set<PsiElement> result    = discover(expression, processed);
+        final Set<PsiElement> processed      = new HashSet<>();
+        final Set<PsiElement> result         = discover(expression, processed);
+        final Set<PsiElement> filteredResult = result.stream().filter(Objects::nonNull).collect(Collectors.toSet());
         processed.clear();
-        return result;
+        result.clear();
+        return filteredResult;
     }
 
     @NotNull

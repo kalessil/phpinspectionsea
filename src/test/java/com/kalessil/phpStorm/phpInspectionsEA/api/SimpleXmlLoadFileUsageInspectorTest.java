@@ -7,7 +7,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SimpleXmlLoadF
 final public class SimpleXmlLoadFileUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new SimpleXmlLoadFileUsageInspector());
-
         myFixture.configureByFile("fixtures/api/simplexml_load_file-usage.php");
         myFixture.testHighlighting(true, false, true);
 

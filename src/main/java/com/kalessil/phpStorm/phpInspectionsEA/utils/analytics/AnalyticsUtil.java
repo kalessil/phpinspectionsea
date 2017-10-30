@@ -29,6 +29,7 @@ final public class AnalyticsUtil {
         stopList.add("com.intellij.openapi.progress.ProcessCanceledException");
         stopList.add("com.intellij.util.indexing.StorageException");
         stopList.add("com.intellij.psi.stubs.UpToDateStubIndexMismatch");
+        stopList.add("java.util.ConcurrentModificationException");
         stopList.add("OpeanapiEquivalenceUtil.java");
         stopList.add("OpenapiResolveUtil.java");
     }

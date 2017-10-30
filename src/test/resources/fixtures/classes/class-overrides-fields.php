@@ -41,3 +41,12 @@ class ClassOverridesFieldTest extends ClassOverridesField2 {
     protected $protectedFrom1;
     protected $protectedFrom2;
 }
+
+/* False-positive: doctrine entities*/
+class ParentEntity {
+    protected $id;
+}
+class ChildEntity extends ParentEntity {
+    /** @ORM\Column("...") */
+    protected $id;
+}

@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -57,6 +58,11 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
                 if (!(ExpressionSemanticUtil.getBlockScope(ownFieldNameId) instanceof PhpClass)) {
                     return;
                 }
+                /* ensure not doctrine entity field */
+                final PhpDocComment docBlock = ownField.getDocComment();
+                if (docBlock != null && docBlock.getText().contains("@ORM\\")) {
+                    return;
+                }
 
                 final PhpClass parent     = clazz.getSuperClass();
                 final String ownFieldName = ownField.getName();
@@ -77,8 +83,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
                         /* report only cases when access level is not changed */
                         if (!ownField.getModifier().getAccess().isWeakerThan(parentField.getModifier().getAccess())) {
                            /* fire common warning */
-                            final String message
-                                    = patternShadows.replace("%p%", ownFieldName).replace("%c%", parentFieldHolder.getFQN());
+                            final String message = patternShadows.replace("%p%", ownFieldName).replace("%c%", parentFieldHolder.getFQN());
                             holder.registerProblem(fieldNameNode, message, ProblemHighlightType.WEAK_WARNING);
                         }
                     }
@@ -88,8 +93,8 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) -> {
-            component.addCheckbox("Report re-defining private fields", REPORT_PRIVATE_REDEFINITION, (isSelected) -> REPORT_PRIVATE_REDEFINITION = isSelected);
-        });
+        return OptionsComponent.create((component)
+            -> component.addCheckbox("Report re-defining private fields", REPORT_PRIVATE_REDEFINITION, (isSelected) -> REPORT_PRIVATE_REDEFINITION = isSelected)
+        );
     }
 }

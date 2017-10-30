@@ -4,6 +4,7 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.ui.LicensingFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.EAApplicationComponent;
+import com.wyday.turboactivate.BoolRef;
 import com.wyday.turboactivate.IsGenuineResult;
 import com.wyday.turboactivate.TurboActivate;
 import com.wyday.turboactivate.TurboActivateException;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -21,19 +23,26 @@ import java.util.HashMap;
 /* Based on https://wyday.com/limelm/help/using-turboactivate-with-java/ */
 final public class LicenseService {
     private int trialDaysRemaining = 0;
+    private int licenseDaysRemaining = 0;
+    private Boolean shouldCheckLicense = null;
+
+    @Nullable
+    private TurboActivate client;
 
     public boolean shouldCheckPluginLicense() {
-        boolean result                = false;
-        final Application application = ApplicationManager.getApplication();
-        if (!application.isHeadlessEnvironment()) {
-            final LicensingFacade facade = LicensingFacade.getInstance();
-            result = application.isEAP() || (facade != null && !facade.isEvaluationLicense());
+        if (this.shouldCheckLicense == null) {
+            boolean result = false;
+            final Application application = ApplicationManager.getApplication();
+            if (!application.isHeadlessEnvironment()) {
+                final LicensingFacade facade = LicensingFacade.getInstance();
+                result = application.isEAP() || (facade != null && !facade.isEvaluationLicense());
+            }
+            this.shouldCheckLicense = result;
         }
-        return result;
+        return this.shouldCheckLicense;
     }
 
-    @NotNull
-    public TurboActivate getClient() throws IOException, URISyntaxException, TurboActivateException {
+    public void initializeClient() throws IOException, URISyntaxException, TurboActivateException {
         final URL binaries = EAApplicationComponent.class.getResource("/TurboActivate/");
         if (binaries == null) {
             throw new RuntimeException("Licensing related resources are missing.");
@@ -55,17 +64,28 @@ final public class LicenseService {
         });
         pluginJarFs.close();
 
-        return new TurboActivate("2d65930359df9afb6f9a54.36732074", tempFolder.toString() + "/TurboActivate/");
+        this.client = new TurboActivate("2d65930359df9afb6f9a54.36732074", tempFolder.toString() + "/TurboActivate/");
     }
 
-    public boolean isActiveLicense(@NotNull TurboActivate client) throws TurboActivateException {
+    boolean isClientInitialized() {
+        return this.client != null;
+    }
+
+    public boolean isActiveLicense() throws TurboActivateException {
         final IsGenuineResult result = client.IsGenuine(90, 14, true, false);
         final boolean isGenuine      = result == IsGenuineResult.Genuine || result == IsGenuineResult.GenuineFeaturesChanged;
+        if (isGenuine) {
+            licenseDaysRemaining = client.GenuineDays(90, 14, new BoolRef());
+        }
         /* positive when  check succeeded or network error occurred and license activated */
         return isGenuine || (result == IsGenuineResult.InternetError && client.IsActivated());
     }
 
-    private boolean isTrialLicense(@NotNull TurboActivate client) {
+    public boolean isActivatedLicense() throws TurboActivateException {
+        return client.IsActivated();
+    }
+
+    private boolean isTrialLicense() {
         boolean result = true;
         try {
             trialDaysRemaining = client.TrialDaysRemaining(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL);
@@ -75,8 +95,57 @@ final public class LicenseService {
         return result;
     }
 
-    public boolean isActiveTrialLicense(@NotNull TurboActivate client) {
-        return this.isTrialLicense(client) && this.trialDaysRemaining > 0;
+    public boolean isActiveTrialLicense() {
+        return this.isTrialLicense() && this.trialDaysRemaining > 0;
+    }
+
+    int getTrialDaysRemaining() {
+        return this.trialDaysRemaining;
+    }
+
+    boolean applyLicenseKey(@Nullable String key, @NotNull StringBuilder errorDetails) {
+        boolean result;
+        try {
+            result = client.CheckAndSavePKey(key, TurboActivate.TA_SYSTEM);
+            if (result) {
+                client.Activate(this.getLicenseHolder());
+                licenseDaysRemaining = client.GenuineDays(90, 14, new BoolRef());
+            } else {
+                errorDetails.append(String.format("key '%s' seems has a typo", key));
+            }
+        } catch (TurboActivateException activationFailed) {
+            final String message = activationFailed.getMessage();
+            errorDetails.append(message == null ? activationFailed.getClass().getName() : message);
+            result = false;
+        }
+        return result;
+    }
+
+    boolean deactivateLicenseKey(@NotNull StringBuilder key, @NotNull StringBuilder errorDetails) {
+        boolean result;
+        try {
+            key.append(client.GetPKey());
+            client.Deactivate(true);
+            result = true;
+        } catch (TurboActivateException|UnsupportedEncodingException deactivationFailed) {
+            final String message = deactivationFailed.getMessage();
+            errorDetails.append(message == null ? deactivationFailed.getClass().getName() : message);
+            result = false;
+        }
+        return result;
+    }
+
+    boolean startTrial(@NotNull StringBuilder errorDetails) {
+        boolean result = true;
+        try {
+            client.UseTrial(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL, this.getLicenseHolder());
+            trialDaysRemaining = client.TrialDaysRemaining(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL);
+        } catch (TurboActivateException activationFailed) {
+            final String message = activationFailed.getMessage();
+            errorDetails.append(message == null ? activationFailed.getClass().getName() : message);
+            result = false;
+        }
+        return result;
     }
 
     @Nullable

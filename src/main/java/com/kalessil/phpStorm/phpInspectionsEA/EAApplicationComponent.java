@@ -2,51 +2,62 @@ package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
-import com.intellij.notification.*;
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.extensions.PluginId;
 import com.kalessil.phpStorm.phpInspectionsEA.license.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.analytics.AnalyticsUtil;
-import com.wyday.turboactivate.TurboActivate;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class EAApplicationComponent implements ApplicationComponent {
     private boolean updated;
     private boolean updateNotificationShown;
 
-    private IdeaPluginDescriptor plugin;
-    private LicenseService licenseService;
+    static private IdeaPluginDescriptor plugin;
+    static private LicenseService licenseService;
 
+    @Nullable
+    public static LicenseService getLicenseService() {
+        return licenseService;
+    }
+
+    @Nullable
+    public static IdeaPluginDescriptor getPluginDescriptor() {
+        return plugin;
+    }
+    
     @NotNull
     public static EAApplicationComponent getInstance() {
         return ApplicationManager.getApplication().getComponent(EAApplicationComponent.class);
     }
 
-    /* TODO: separate component */
     private void initLicensing() {
-        this.licenseService = new LicenseService();
-        if (this.licenseService.shouldCheckPluginLicense()) {
-            TurboActivate client = null;
+        licenseService = licenseService == null ? new LicenseService() : licenseService;
+        if (licenseService.shouldCheckPluginLicense()) {
             try {
-                client = this.licenseService.getClient();
-                if (!this.licenseService.isActiveLicense(client) && !this.licenseService.isActiveTrialLicense(client)) {
+                licenseService.initializeClient();
+                if (!licenseService.isActiveLicense() && !licenseService.isActiveTrialLicense()) {
                     final String message;
-                    if (client.IsActivated()) {
-                        message = "The license has expired. Please <a href='#renew'>renew</a>.";
+                    if (licenseService.isActivatedLicense()) {
+                        message = "The license has expired. Please <a href='#activate'>provide</a> a new one (you can purchase it <a href='#buy'>here</a>).";
                     } else {
-                        message = "A license need to be provided (<a href='#buy'>buy</a> one or <a href='#try'>start</a> a free trial).";
+                        message = "Please <a href='#activate'>provide</a> a license key (you can purchase one <a href='#buy'>here</a> or <a href='#try'>start</a> a free trial).";
                     }
                     throw new RuntimeException(message);
                 }
             } catch (Throwable failure) {
-                final TurboActivate adapter   = client;
+                final LicenseService service  = licenseService;
                 final String message          = failure.getMessage();
-                final String pluginName       = this.plugin.getName();
+                final String pluginName       = plugin.getName();
                 final NotificationGroup group = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);
                 Notifications.Bus.notify(group.createNotification(
                     "<b>" + pluginName + "</b>",
@@ -54,9 +65,9 @@ public class EAApplicationComponent implements ApplicationComponent {
                     NotificationType.WARNING,
                     EaNotificationLinksHandler.TAKE_LICENSE_ACTION_LISTENER.withActionCallback(action -> {
                         switch (action) {
-                            case "#try":   (new StartTrialAction()).perform(adapter, plugin);      break;
-                            case "#buy":   (new PurchaseLicenseAction()).perform(adapter, plugin); break;
-                            case "#renew": (new RenewLicenseAction()).perform(adapter, plugin);    break;
+                            case "#try":      (new StartTrialAction()).perform(service, plugin);      break;
+                            case "#buy":      (new PurchaseLicenseAction()).perform(plugin);          break;
+                            case "#activate": (new ActivateLicenseAction()).perform(service, plugin); break;
                         }
                     })
                 ));
@@ -66,17 +77,17 @@ public class EAApplicationComponent implements ApplicationComponent {
 
     @Override
     public void initComponent() {
-        this.plugin = PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA"));
-        if (null == plugin) {
+        plugin = plugin == null ? PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsUltimate")) : plugin;
+        if (plugin == null) {
             return;
         }
 
         final EASettings settings = EASettings.getInstance();
 
         /* collect installation events (anonymous) */
-        this.updated = !this.plugin.getVersion().equals(settings.getVersion());
+        this.updated = !plugin.getVersion().equals(settings.getVersion());
         if (this.updated) {
-            settings.setVersion(this.plugin.getVersion());
+            settings.setVersion(plugin.getVersion());
             AnalyticsUtil.registerPluginEvent(settings, "install", settings.getOldestVersion());
         }
         AnalyticsUtil.registerPluginEvent(settings, "run", settings.getOldestVersion());

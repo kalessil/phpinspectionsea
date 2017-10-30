@@ -4,7 +4,7 @@ import com.intellij.codeInspection.InspectionToolProvider;
 
 /*
 Console reports some errors here:
-at com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromSignatureResolvingUtil.
+at com.kalessil.phpStorm.phpInspectionsUltimate.utils.TypeFromSignatureResolvingUtil.
 resolveSignature(TypeFromSignatureResolvingUtil.java:177)
 
 

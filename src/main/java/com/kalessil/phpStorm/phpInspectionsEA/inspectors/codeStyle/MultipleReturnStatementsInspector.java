@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class MultipleReturnStatementsInspector extends BasePhpInspection {
-    private static final String messagePattern = "Method has %c% return points, try to introduce just one to uncover complexity behind.";
+    private static final String messagePattern = "Method has %s return points, try to introduce just one to uncover complexity behind.";
 
     @NotNull
     public String getShortName() {
@@ -37,7 +37,8 @@ public class MultipleReturnStatementsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new PhpElementVisitor() {
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 final PhpClass clazz            = method.getContainingClass();
                 final PsiElement nameIdentifier = NamedElementUtil.getNameIdentifier(method);
                 if (nameIdentifier != null && clazz != null && !clazz.isTrait()) {
@@ -53,7 +54,7 @@ public class MultipleReturnStatementsInspector extends BasePhpInspection {
                     if (returnsCount > 1) {
                         final ProblemHighlightType level
                             = returnsCount > 3 ? ProblemHighlightType.GENERIC_ERROR : ProblemHighlightType.GENERIC_ERROR_OR_WARNING;
-                        final String message = messagePattern.replace("%c%", String.valueOf(returnsCount));
+                        final String message = String.format(messagePattern, returnsCount);
                         holder.registerProblem(nameIdentifier, message, level);
                     }
                 }

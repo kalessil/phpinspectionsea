@@ -19,7 +19,6 @@ import java.util.Collection;
  * file that was distributed with this source code.
  */
 
-
 final public class OpenapiElementsUtil {
     final private static Method methodReturnType;
     static {

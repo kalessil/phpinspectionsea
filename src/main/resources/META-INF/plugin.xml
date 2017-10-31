@@ -465,6 +465,10 @@ Performance optimization, bug-fixes and new inspections:
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureUniqidUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+         shortName="NonSecureArrayRandUsageInspection"             displayName="Insecure 'array_rand(...)' usage (Insufficient Entropy Vulnerability)"
+         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureArrayRandUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
          shortName="NonSecureParseStrUsageInspection"              displayName="Insecure 'parse_str(...)' usage (Variable extract Vulnerability)"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureParseStrUsageInspector"/>

@@ -198,22 +198,23 @@ Inspections Lists (Probable bugs)
 
 Inspections Lists (Security)
 ---
-| Group                | Short Name                                         | Full Name                                                         | QF  | UTs | QFTs | Doc |
-| :------------------- | :-------------------------------------------       | :---------------------------------------------------------------- | --: | --: | ---: | --: |
-| Security             | NonSecureUniqidUsageInspection                     | Insecure 'uniqid(...)' usage (Insufficient Entropy Vulnerability) | yes | yes | yes  | no  |
-| Security             | NonSecureExtractUsageInspection                    | Insecure 'extract(...)' usage (Variable extract Vulnerability)    | n/a | yes | n/a  | yes |
-| Security             | NonSecureParseStrUsageInspection                   | Insecure 'parse_str(...)' usage (Variable extract Vulnerability)  | n/a | yes | n/a  | yes |
-| Security             | UntrustedInclusionInspection                       | Untrusted files inclusion                                         | n/a | yes | n/a  | no  |
-| Security             | SecurityAdvisoriesInspection                       | Security advisories for Composer packages                         | no  | yes | no   | yes |
-| Security             | CurlSslServerSpoofingInspection                    | CURL: SSL server spoofing (SSL MITM and Spoofing Attacks)         | n/a | yes | n/a  | yes |
-| Security             | EncryptionInitializationVectorRandomnessInspection | Encryption initialization vector randomness                       | n/a | yes | n/a  | no  |
-| Security             | UnserializeExploitsInspection                      | Exploiting unserialize (PHP Object Injection Vulnerability)       | n/a | yes | n/a  | yes |
-| Security             | PotentialMalwareInspection                         | Basic malware patterns                                            | n/a | yes | n/a  | no  |
-| Security             | CryptographicallySecureRandomnessInspection        | Cryptographically secure randomness                               | n/a | yes | n/a  | yes |
-| Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage (Cryptographically weak algorithms)   | n/a | yes | n/a  | no  |
-| Security             | CryptographicallySecureAlgorithmsInspection        | Cryptographically secure algorithms                               | n/a | yes | n/a  | no  |
-| Security             | HostnameSubstitutionInspection                     | Hostname substitution                                             | n/a | yes | n/a  | no  |
-| Security             | RsaOraclePaddingAttacksInspection                  | RSA oracle padding vulnerability                                  | n/a | yes | n/a  | no  |
+| Group                | Short Name                                         | Full Name                                                             | QF  | UTs | QFTs | Doc |
+| :------------------- | :-------------------------------------------       | :-------------------------------------------------------------------- | --: | --: | ---: | --: |
+| Security             | NonSecureUniqidUsageInspection                     | Insecure 'uniqid(...)' usage (Insufficient Entropy Vulnerability)     | yes | yes | yes  | no  |
+| Security             | NonSecureExtractUsageInspection                    | Insecure 'extract(...)' usage (Variable extract Vulnerability)        | n/a | yes | n/a  | yes |
+| Security             | NonSecureParseStrUsageInspection                   | Insecure 'parse_str(...)' usage (Variable extract Vulnerability)      | n/a | yes | n/a  | yes |
+| Security             | UntrustedInclusionInspection                       | Untrusted files inclusion                                             | n/a | yes | n/a  | no  |
+| Security             | SecurityAdvisoriesInspection                       | Security advisories for Composer packages                             | no  | yes | no   | yes |
+| Security             | CurlSslServerSpoofingInspection                    | CURL: SSL server spoofing (SSL MITM and Spoofing Attacks)             | n/a | yes | n/a  | yes |
+| Security             | EncryptionInitializationVectorRandomnessInspection | Encryption initialization vector randomness                           | n/a | yes | n/a  | no  |
+| Security             | UnserializeExploitsInspection                      | Exploiting unserialize (PHP Object Injection Vulnerability)           | n/a | yes | n/a  | yes |
+| Security             | PotentialMalwareInspection                         | Basic malware patterns                                                | n/a | yes | n/a  | no  |
+| Security             | CryptographicallySecureRandomnessInspection        | Cryptographically secure randomness                                   | n/a | yes | n/a  | yes |
+| Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage (Cryptographically weak algorithms)       | n/a | yes | n/a  | no  |
+| Security             | CryptographicallySecureAlgorithmsInspection        | Cryptographically secure algorithms                                   | n/a | yes | n/a  | no  |
+| Security             | HostnameSubstitutionInspection                     | Hostname substitution                                                 | n/a | yes | n/a  | no  |
+| Security             | RsaOraclePaddingAttacksInspection                  | RSA oracle padding vulnerability                                      | n/a | yes | n/a  | no  |
+| Security             | NonSecureArrayRandUsageInspection                  | Insecure 'array_rand(...)' usage (Insufficient Entropy Vulnerability) | n/a | yes | n/a  | no  |
 
 Inspections Lists (Performance)
 ---

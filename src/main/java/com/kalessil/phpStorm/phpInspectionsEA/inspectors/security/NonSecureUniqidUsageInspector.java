@@ -28,7 +28,7 @@ import java.util.Map;
  */
 
 public class NonSecureUniqidUsageInspector extends BasePhpInspection {
-    private static final String message = "Please provide both prefix and more entropy parameters.";
+    private static final String message = "Insufficient entropy, please provide both prefix and more entropy parameters.";
 
     final private static Map<String, Integer> callbacksPositions = new HashMap<>();
     static {

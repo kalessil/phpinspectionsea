@@ -145,15 +145,15 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                 return result;
             }
 
-            private boolean isPeerVerifyDisabled(@NotNull PsiElement _value) {
+            private boolean isPeerVerifyDisabled(@NotNull PsiElement value) {
                 boolean result = false;
 
-                final Set<PsiElement> discovered = PossibleValuesDiscoveryUtil.discover(_value);
-                if (discovered.size() > 0) {
+                final Set<PsiElement> discovered = PossibleValuesDiscoveryUtil.discover(value);
+                if (!discovered.isEmpty()) {
                     int countDisables = 0;
                     int countEnables  = 0;
 
-                    for (PsiElement possibleValue : discovered) {
+                    for (final PsiElement possibleValue : discovered) {
                         if (possibleValue instanceof StringLiteralExpression) {
                             boolean disabled = !((StringLiteralExpression) possibleValue).getContents().equals("1");
                             int dummy        = disabled ? ++countDisables : ++countEnables;

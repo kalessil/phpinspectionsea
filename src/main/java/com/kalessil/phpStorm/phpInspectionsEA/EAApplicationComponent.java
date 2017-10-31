@@ -25,6 +25,10 @@ public class EAApplicationComponent implements ApplicationComponent {
     static private IdeaPluginDescriptor plugin;
     static private LicenseService licenseService;
 
+    public static boolean areFeaturesEnabled() {
+        return licenseService != null && licenseService.shouldAllowUsage();
+    }
+
     @Nullable
     public static LicenseService getLicenseService() {
         return licenseService;

@@ -24,7 +24,12 @@ import java.util.HashMap;
 final public class LicenseService {
     private int trialDaysRemaining = 0;
     private int licenseDaysRemaining = 0;
+
+    @Nullable
     private Boolean shouldCheckLicense = null;
+
+    @NotNull
+    private Boolean shouldAllowUsage   = false;
 
     @Nullable
     private TurboActivate client;
@@ -38,6 +43,7 @@ final public class LicenseService {
                 result = application.isEAP() || (facade != null && !facade.isEvaluationLicense());
             }
             this.shouldCheckLicense = result;
+            shouldAllowUsage        = !result || shouldAllowUsage;
         }
         return this.shouldCheckLicense;
     }
@@ -71,6 +77,10 @@ final public class LicenseService {
         return this.client != null;
     }
 
+    public boolean shouldAllowUsage() {
+        return shouldAllowUsage;
+    }
+
     public boolean isActiveLicense() throws TurboActivateException {
         final IsGenuineResult result = client.IsGenuine(90, 14, true, false);
         final boolean isGenuine      = result == IsGenuineResult.Genuine || result == IsGenuineResult.GenuineFeaturesChanged;
@@ -78,7 +88,9 @@ final public class LicenseService {
             licenseDaysRemaining = client.GenuineDays(90, 14, new BoolRef());
         }
         /* positive when  check succeeded or network error occurred and license activated */
-        return isGenuine || (result == IsGenuineResult.InternetError && client.IsActivated());
+        final boolean isActive = isGenuine || (result == IsGenuineResult.InternetError && client.IsActivated());
+        shouldAllowUsage       = isActive || shouldAllowUsage;
+        return isActive;
     }
 
     public boolean isActivatedLicense() throws TurboActivateException {
@@ -96,7 +108,9 @@ final public class LicenseService {
     }
 
     public boolean isActiveTrialLicense() {
-        return this.isTrialLicense() && this.trialDaysRemaining > 0;
+        final boolean isActive = this.isTrialLicense() && this.trialDaysRemaining > 0;
+        shouldAllowUsage       = isActive || shouldAllowUsage;
+        return isActive;
     }
 
     int getTrialDaysRemaining() {
@@ -110,6 +124,7 @@ final public class LicenseService {
             if (result) {
                 client.Activate(this.getLicenseHolder());
                 licenseDaysRemaining = client.GenuineDays(90, 14, new BoolRef());
+                shouldAllowUsage     = true;
             } else {
                 errorDetails.append(String.format("key '%s' seems has a typo", key));
             }
@@ -126,7 +141,8 @@ final public class LicenseService {
         try {
             key.append(client.GetPKey());
             client.Deactivate(true);
-            result = true;
+            result           = true;
+            shouldAllowUsage = false;
         } catch (TurboActivateException|UnsupportedEncodingException deactivationFailed) {
             final String message = deactivationFailed.getMessage();
             errorDetails.append(message == null ? deactivationFailed.getClass().getName() : message);
@@ -140,6 +156,7 @@ final public class LicenseService {
         try {
             client.UseTrial(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL, this.getLicenseHolder());
             trialDaysRemaining = client.TrialDaysRemaining(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL);
+            shouldAllowUsage   = true;
         } catch (TurboActivateException activationFailed) {
             final String message = activationFailed.getMessage();
             errorDetails.append(message == null ? activationFailed.getClass().getName() : message);

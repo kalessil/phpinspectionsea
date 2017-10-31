@@ -143,11 +143,9 @@ final public class NullableVariablesStrategy {
                     continue;
                 }
             }
-            /* non-implicit null comparisons */
-            else if (
-                parent instanceof PhpEmpty || parent instanceof PhpIsset ||
-                ExpressionSemanticUtil.isUsedAsLogicalOperand(variable)
-            ) {
+
+            /* non-implicit null comparisons; `else if` here would change semantics */
+            if (parent instanceof PhpEmpty || parent instanceof PhpIsset || ExpressionSemanticUtil.isUsedAsLogicalOperand(variable)) {
                 return;
             }
             /* re-defined in catch-statements */

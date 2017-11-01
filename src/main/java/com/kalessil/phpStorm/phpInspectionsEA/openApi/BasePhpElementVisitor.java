@@ -34,6 +34,8 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
 
     @Override public void visitPhpTernaryExpression(TernaryExpression expression) {}
 
+    @Override public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {}
+
     @Override public void visitPhpIf(If ifStatement)             {}
     @Override public void visitPhpElseIf(ElseIf elseIfStatement) {}
     @Override public void visitPhpElse(Else elseStatement)       {}

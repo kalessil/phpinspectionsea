@@ -43,4 +43,9 @@ class Container {
         $local2 = &$array[0];
         ++$local2;
     }
+
+    public function method4() {
+        $x = new UnknownClass($y = new ClassWithArrayAccess());
+        $y[] = null;
+    }
 }

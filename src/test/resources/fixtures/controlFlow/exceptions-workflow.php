@@ -24,9 +24,20 @@ abstract class _ClassWithTrait implements _Interface {
 }
 
 class CasesHolder {
-    /** PhpDoc with missing exceptions annotation */
-    public function method(_ClassWithInterface $one, _ClassWithTrait $two) {
+    /**
+     * PhpDoc with missing exceptions annotation
+     */
+    public function one(_ClassWithInterface $one, _ClassWithTrait $two) {
         <weak_warning descr="Throws a non-annotated/unhandled exception: '\Exception1'.">$one->method()</weak_warning>;
+        <weak_warning descr="Throws a non-annotated/unhandled exception: '\Exception2'.">$two->method()</weak_warning>;
+    }
+
+    /**
+     * PhpDoc with missing exceptions annotation
+     * @throws \Exception1
+     */
+    public function two(_ClassWithInterface $one, _ClassWithTrait $two) {
+        $one->method();
         <weak_warning descr="Throws a non-annotated/unhandled exception: '\Exception2'.">$two->method()</weak_warning>;
     }
 }

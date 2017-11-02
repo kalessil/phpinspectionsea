@@ -58,14 +58,12 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                 /* inspect methods */
                 for (final Method method : clazz.getOwnMethods()) {
                     final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
-                    if (methodName == null || !method.getAccess().isPublic()) {
-                        continue;
-                    }
-
-                    final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
-                    if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
-                        final String message = String.format(messagePattern, method.getName());
-                        holder.registerProblem(methodName, message, new MemberVisibilityFix(modifiers));
+                    if (methodName != null && method.getAccess().isPublic()) {
+                        final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
+                        if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
+                            final String message = String.format(messagePattern, method.getName());
+                            holder.registerProblem(methodName, message, new MemberVisibilityFix(modifiers));
+                        }
                     }
                 }
 
@@ -74,31 +72,21 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                 final boolean checkConstantVisibility = phpVersion.compareTo(PhpLanguageLevel.PHP710) >= 0;
                 for (final Field field : clazz.getOwnFields()) {
                     final PsiElement fieldName = NamedElementUtil.getNameIdentifier(field);
-                    if (fieldName == null) {
-                        continue;
-                    }
-
-                    if (field.isConstant()) {
-                        /* {const} inspection should be skipped if PHP version < 7.1.0. */
-                        /* {const}.isPublic() always returns true, even if visibility is not declared, so we need hardcode it. */
-                        if (!checkConstantVisibility || field.getPrevPsiSibling() != null) {
-                            continue;
+                    if (fieldName != null && field.getModifier().isPublic()) {
+                        if (field.isConstant()) {
+                            /* {const} inspection should be skipped if PHP version < 7.1.0. */
+                            /* {const}.isPublic() always returns true, even if visibility is not declared, so we need hardcode it. */
+                            if (checkConstantVisibility && field.getPrevPsiSibling() == null) {
+                                final String message = String.format(messagePattern, field.getName());
+                                holder.registerProblem(fieldName, message, new ConstantVisibilityFix(field));
+                            }
+                        } else {
+                            final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(field.getParent(), PhpModifierList.class);
+                            if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
+                                final String message = String.format(messagePattern, field.getName());
+                                holder.registerProblem(fieldName, message, new MemberVisibilityFix(modifiers));
+                            }
                         }
-
-                        final String message = String.format(messagePattern, field.getName());
-                        holder.registerProblem(fieldName, message, new ConstantVisibilityFix(field));
-
-                        continue;
-                    }
-
-                    if (!field.getModifier().isPublic()) {
-                        continue;
-                    }
-
-                    final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(field.getParent(), PhpModifierList.class);
-                    if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
-                        final String message = String.format(messagePattern, field.getName());
-                        holder.registerProblem(fieldName, message, new MemberVisibilityFix(modifiers));
                     }
                 }
             }

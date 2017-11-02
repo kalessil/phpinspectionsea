@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy;
 
 import org.jetbrains.annotations.NotNull;
 
-public class AssertCountStrategy extends BaseSameEqualsFunctionReferenceStrategy {
+final public class AssertCountStrategy extends BaseSameEqualsFunctionReferenceStrategy {
     @NotNull
     @Override
     protected String getRecommendedAssertionName() {

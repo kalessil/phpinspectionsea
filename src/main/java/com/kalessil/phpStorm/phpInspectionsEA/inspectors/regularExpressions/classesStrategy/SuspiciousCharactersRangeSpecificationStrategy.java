@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.explosiveStrategy;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.classesStrategy;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
  * file that was distributed with this source code.
  */
 
-public class GreedyCharactersSetCheckStrategy {
-    private static final String messagePattern = "[%e%] is 'greedy'. Please remove %c% as it's a subset of %p%.";
+public class SuspiciousCharactersRangeSpecificationStrategy {
+    private static final String messagePattern = "Did you mean [...A-Za-z...] instead of [...%s...]?";
 
     final static private Pattern regexGreedyCharacterSet;
     static {
@@ -34,10 +34,10 @@ public class GreedyCharactersSetCheckStrategy {
                 final String set = regexMatcher.group(1);
 
                 final String message;
-                if (set.contains("\\w") && set.contains("\\d")) {
-                   message = messagePattern.replace("%e%", set).replace("%c%", "\\d").replace("%p%", "\\w");
-                } else if (set.contains("\\W") && set.contains("\\D")) {
-                   message = messagePattern.replace("%e%", set).replace("%c%", "\\D").replace("%p%", "\\W");
+                if (set.contains("A-z")) {
+                    message = String.format(messagePattern, "A-z");
+                } else if (set.contains("a-Z")) {
+                    message = String.format(messagePattern, "a-Z");
                 } else {
                     message = null;
                 }

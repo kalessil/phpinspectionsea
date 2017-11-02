@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.FunctionCallCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.PlainApiUseCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.classesStrategy.ShortClassDefinitionStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.classesStrategy.SuspiciousCharactersRangeSpecificationStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.explosiveStrategy.GreedyCharactersSetCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.explosiveStrategy.QuantifierCompoundsQuantifierCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.modifiersStrategy.*;
@@ -24,6 +25,15 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
 
@@ -128,6 +138,8 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  * + [^\s] => \S
                  */
                 ShortClassDefinitionStrategy.apply(modifiers, regex, target, holder);
+                /* Suspicious characters specification:  [...A-z...]/[...a-Z...] */
+                SuspiciousCharactersRangeSpecificationStrategy.apply(regex, target, holder);
 
                 /* Optimizations:
                  * (...) => (?:...) (if there is no back-reference)

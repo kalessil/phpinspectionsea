@@ -191,8 +191,9 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         }
 
                         /* check classes: collect hierarchy of possible classes */
-                        final Set<PhpClass> poolToCheck     = new HashSet<>();
-                        final Collection<PhpClass> classes  = PhpIndexUtil.getObjectInterfaces(type, index, true);
+                        final Set<PhpClass> poolToCheck    = new HashSet<>();
+                        final Collection<PhpClass> classes = PhpIndexUtil.getObjectInterfaces(type, index, true);
+                        final boolean foundClass           = !classes.isEmpty();
                         if (!classes.isEmpty()) {
                             /* collect all interfaces*/
                             for (final PhpClass clazz : classes) {
@@ -202,7 +203,6 @@ public class ForeachSourceInspector extends BasePhpInspection {
                                     interfaces.clear();
                                 }
                             }
-
                             classes.clear();
                         }
 
@@ -217,7 +217,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                             }
                             poolToCheck.clear();
                         }
-                        if (!hasTraversable) {
+                        if (foundClass && !hasTraversable) {
                             final String message = patternObject.replace("%t%", type);
                             holder.registerProblem(container, message, ProblemHighlightType.GENERIC_ERROR);
                         }

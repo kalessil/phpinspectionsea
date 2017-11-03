@@ -150,6 +150,8 @@ curl_setopt($curlHandler, CURLOPT_CAPATH , '<path>/');
 
 > Best practices: consider adding `composer update` into your CI/CD to get informed about security issues early.
 
+> CI pipe-lines: `composer validate` has a flag `--no-check-all` to allow dev-master/* versions specification
+
 Security Advisories is a Vulnerability Database from SensioLabs (https://security.sensiolabs.org/database) which can 
 be integrated with your workflow in several ways.
 

@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
@@ -44,11 +45,43 @@ public class ForeachSourceInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpForeach(ForeachStatement foreach) {
-                final PsiElement container = ExpressionSemanticUtil.getExpressionTroughParenthesis(foreach.getArray());
-                if (container instanceof PhpTypedElement) {
-                    this.analyseContainer(container);
+            @Override
+            public void visitPhpForeach(@NotNull ForeachStatement foreach) {
+                final PsiElement source = ExpressionSemanticUtil.getExpressionTroughParenthesis(foreach.getArray());
+                if (source instanceof PhpTypedElement && !isEnsuredByPyParentIf(foreach, source)) {
+                    this.analyseContainer(source);
                 }
+            }
+
+            /* should cover is_array/is_iterable in direct parent if of the loop, while PS types resolving gets improved */
+            private boolean isEnsuredByPyParentIf(@NotNull ForeachStatement foreach, @NotNull PsiElement source) {
+                boolean result = false;
+                if (foreach.getPrevPsiSibling() == null) {
+                    final PsiElement ifCandidate = foreach.getParent() instanceof GroupStatement ? foreach.getParent().getParent() : null;
+                    final PsiElement conditions;
+                    if (ifCandidate instanceof If) {
+                        conditions = ((If) ifCandidate).getCondition();
+                    } else if (ifCandidate instanceof ElseIf) {
+                        conditions = ((ElseIf) ifCandidate).getCondition();
+                    } else {
+                        conditions = null;
+                    }
+                    if (conditions != null) {
+                        for (final PsiElement candidate : PsiTreeUtil.findChildrenOfType(conditions, source.getClass())) {
+                            if (OpeanapiEquivalenceUtil.areEqual(candidate, source)) {
+                                final PsiElement call = candidate.getParent() instanceof ParameterList ? candidate.getParent().getParent() : null;
+                                if (OpenapiTypesUtil.isFunctionReference(call)) {
+                                    final String functionName = ((FunctionReference) call).getName();
+                                    if (functionName != null && (functionName.equals("is_array") || functionName.equals("is_iterable"))) {
+                                        result = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                return result;
             }
 
             private void analyseContainer(@NotNull PsiElement container) {

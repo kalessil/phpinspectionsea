@@ -52,10 +52,18 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Hot-fix release:
-<br/>
+Bug-fix release:<br/>
 <br/>
 - Fixed multiple exceptions cases<br/>
+<br/>
+- Access modifiers shall be defined: new patterns (thank you David Rodrigues)<br/>
+- Class overrides a field of a parent class: resolved false-positives (doctrine annotations)<br/>
+- Exceptions handling and annotating: QF bug-fix<br/>
+- Foreach source to iterate over: resolved false-positives (multiple cases)<br/>
+- Non-optimal if conditions: resolved false-positives (multiple cases)<br/>
+- Null reference: resolved a false-positive (complex if-conditions)<br/>
+- Parameter/variable is not used: resolved false-positives (assignments as calls argument)<br/>
+- 'simplexml_load_file(...)' usage correctness: QF bug-fix<br/>
 <br/>
 <hr/>
   ]]></change-notes>

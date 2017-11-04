@@ -147,7 +147,7 @@ Bug-fix release:<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.PackedHashtableOptimizationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnqualifiedReferenceInspection"                displayName="Unqualified function/constant reference"
-        groupName="Performance"                                   enabledByDefault="false" level="WEAK WARNING"
+        groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnqualifiedReferenceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ExplodeMissUseInspection"                      displayName="'explode(...)' misused"

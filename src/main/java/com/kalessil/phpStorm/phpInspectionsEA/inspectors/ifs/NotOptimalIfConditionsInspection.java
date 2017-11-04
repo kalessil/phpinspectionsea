@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -372,46 +374,62 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
             }
 
-            /**
-             * Checks if duplicates are introduced, conditions collection will be modified so it's empty in the end
-             * @param objAllConditions to check
-             * @param ifStatement current scope
-             */
-            private void inspectDuplicatedConditions(List<PsiElement> objAllConditions, If ifStatement) {
-                List<PsiElement> objParentConditions = new ArrayList<>();
+            private List<String> getPreviouslyModifiedVariables(@NotNull If ifStatement) {
+
+            }
+
+            /* Checks if duplicates are introduced, conditions collection will be modified so it's empty in the end */
+            private void inspectDuplicatedConditions(@NotNull List<PsiElement> objAllConditions, @NotNull If ifStatement) {
+                final List<PsiElement> objParentConditions = new ArrayList<>();
+
+                /* pickup only expressions not depending on previously modified variables */
+                final List<String> modifiedVariables = this.getPreviouslyModifiedVariables(ifStatement);
+                final List<PsiElement> conditions    = objAllConditions.stream()
+                        .filter(expression -> {
+                            boolean result = modifiedVariables.isEmpty();
+                            if (!result) {
+                                for (final Variable variable : PsiTreeUtil.findChildrenOfType(expression, Variable.class)) {
+                                    if (modifiedVariables.contains(variable.getName())) {
+                                        result = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            return result;
+                        })
+                        .collect(Collectors.toList());
 
                 /* collect parent scopes conditions */
-                PsiElement objParent = ifStatement.getParent();
-                while (null != objParent && !(objParent instanceof PhpFile)) {
-                    if (objParent instanceof If) {
-                        List<PsiElement> tempList = ExpressionSemanticUtil.getConditions(((If) objParent).getCondition(), null);
-                        if (null != tempList) {
+                PsiElement parent = ifStatement.getParent();
+                while (parent != null && !(parent instanceof PhpFile) && !(parent instanceof Function)) {
+                    if (parent instanceof If) {
+                        List<PsiElement> tempList = ExpressionSemanticUtil.getConditions(((If) parent).getCondition(), null);
+                        if (tempList != null) {
                             objParentConditions.addAll(tempList);
                             tempList.clear();
                         }
 
-                        for (ElseIf objParentElseIf : ((If) objParent).getElseIfBranches()) {
+                        for (final ElseIf objParentElseIf : ((If) parent).getElseIfBranches()) {
                             tempList = ExpressionSemanticUtil.getConditions(objParentElseIf.getCondition(), null);
-                            if (null != tempList) {
+                            if (tempList != null) {
                                 objParentConditions.addAll(tempList);
                                 tempList.clear();
                             }
                         }
                     }
-
-                    objParent = objParent.getParent();
+                    parent = parent.getParent();
                 }
 
 
                 /* scan for duplicates */
-                for (PsiElement objExpression : objAllConditions) {
+                for (PsiElement objExpression : conditions) {
                     if (null == objExpression) {
                         continue;
                     }
 
                     /* put a stub */
-                    int intOuterIndex = objAllConditions.indexOf(objExpression);
-                    objAllConditions.set(intOuterIndex, null);
+                    int intOuterIndex = conditions.indexOf(objExpression);
+                    conditions.set(intOuterIndex, null);
 
 
                     /* ignore variables (even if inverted) */
@@ -449,32 +467,26 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
 
                     /* search duplicates in current scope */
-                    for (PsiElement objInnerLoopExpression : objAllConditions) {
-                        if (null == objInnerLoopExpression) {
-                            continue;
-                        }
+                    for (final PsiElement objInnerLoopExpression : conditions) {
+                        if (objInnerLoopExpression != null) {
+                            if (OpeanapiEquivalenceUtil.areEqual(objInnerLoopExpression, objExpression)) {
+                                holder.registerProblem(objInnerLoopExpression, messageDuplicateConditions);
 
-                        boolean isDuplicate = OpeanapiEquivalenceUtil.areEqual(objInnerLoopExpression, objExpression);
-                        if (isDuplicate) {
-                            holder.registerProblem(objInnerLoopExpression, messageDuplicateConditions);
-
-                            int intInnerIndex = objAllConditions.indexOf(objInnerLoopExpression);
-                            objAllConditions.set(intInnerIndex, null);
+                                int intInnerIndex = conditions.indexOf(objInnerLoopExpression);
+                                conditions.set(intInnerIndex, null);
+                            }
                         }
                     }
 
                     /* search duplicates in outer scopes */
-                    for (PsiElement objOuterScopeExpression : objParentConditions) {
-                        if (null == objOuterScopeExpression) {
-                            continue;
-                        }
+                    for (final PsiElement objOuterScopeExpression : objParentConditions) {
+                        if (objOuterScopeExpression != null) {
+                            if (OpeanapiEquivalenceUtil.areEqual(objOuterScopeExpression, objExpression)) {
+                                holder.registerProblem(objExpression, messageDuplicateConditions);
 
-                        boolean isDuplicate = OpeanapiEquivalenceUtil.areEqual(objOuterScopeExpression, objExpression);
-                        if (isDuplicate) {
-                            holder.registerProblem(objExpression, messageDuplicateConditions);
-
-                            int intOuterScopeIndex = objParentConditions.indexOf(objOuterScopeExpression);
-                            objParentConditions.set(intOuterScopeIndex, null);
+                                int intOuterScopeIndex = objParentConditions.indexOf(objOuterScopeExpression);
+                                objParentConditions.set(intOuterScopeIndex, null);
+                            }
                         }
                     }
                 }

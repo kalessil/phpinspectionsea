@@ -384,7 +384,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                             }
                         }
                     }
-                    previous = ifStatement.getPrevPsiSibling();
+                    previous = previous.getPrevSibling();
                 }
                 return result;
             }
@@ -397,8 +397,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 final List<String> modifiedVariables = this.getPreviouslyModifiedVariables(ifStatement);
                 final List<PsiElement> conditions    = objAllConditions.stream()
                         .filter(expression -> {
-                            boolean result = modifiedVariables.isEmpty();
-                            if (!result) {
+                            boolean result = true;
+                            if (!modifiedVariables.isEmpty()) {
                                 for (final Variable variable : PsiTreeUtil.findChildrenOfType(expression, Variable.class)) {
                                     if (modifiedVariables.contains(variable.getName())) {
                                         result = false;

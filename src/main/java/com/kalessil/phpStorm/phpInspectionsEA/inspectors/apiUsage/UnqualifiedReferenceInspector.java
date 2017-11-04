@@ -14,9 +14,11 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,7 +36,11 @@ import java.util.Set;
 public class UnqualifiedReferenceInspector extends BasePhpInspection {
     private static final String messagePattern = "Using '\\%t%' would enable some of opcode optimizations";
 
+    // Inspection options.
+    public boolean REPORT_ALL_FUNCTIONS = false;
+
     final private static Set<String> falsePositives              = new HashSet<>();
+    final private static Set<String> advancedOpcode              = new HashSet<>();
     final private static Map<String, Integer> callbacksPositions = new HashMap<>();
     static {
         falsePositives.add("true");
@@ -59,6 +65,46 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
         callbacksPositions.put("array_map", 0);
         callbacksPositions.put("array_walk", 1);
         callbacksPositions.put("array_reduce", 1);
+
+        /* https://github.com/php/php-src/blob/f2db305fa4e9bd7d04d567822687ec714aedcdb5/Zend/zend_compile.c#L3872 */
+        advancedOpcode.add("array_slice");
+        advancedOpcode.add("assert");
+        advancedOpcode.add("boolval");
+        advancedOpcode.add("call_user_func");
+        advancedOpcode.add("call_user_func_array");
+        advancedOpcode.add("chr");
+        advancedOpcode.add("count");
+        advancedOpcode.add("defined");
+        advancedOpcode.add("doubleval");
+        advancedOpcode.add("floatval");
+        advancedOpcode.add("func_get_args");
+        advancedOpcode.add("func_num_args");
+        advancedOpcode.add("get_called_class");
+        advancedOpcode.add("get_class");
+        advancedOpcode.add("gettype");
+        advancedOpcode.add("in_array");
+        advancedOpcode.add("intval");
+        advancedOpcode.add("is_array");
+        advancedOpcode.add("is_bool");
+        advancedOpcode.add("is_double");
+        advancedOpcode.add("is_float");
+        advancedOpcode.add("is_int");
+        advancedOpcode.add("is_integer");
+        advancedOpcode.add("is_long");
+        advancedOpcode.add("is_null");
+        advancedOpcode.add("is_object");
+        advancedOpcode.add("is_real");
+        advancedOpcode.add("is_resource");
+        advancedOpcode.add("is_string");
+        advancedOpcode.add("ord");
+        advancedOpcode.add("strlen");
+        advancedOpcode.add("strval");
+        advancedOpcode.add("function_exists");
+        advancedOpcode.add("is_callable");
+        advancedOpcode.add("extension_loaded");
+        advancedOpcode.add("dirname");
+        advancedOpcode.add("constant");
+        advancedOpcode.add("define");
     }
 
     @NotNull
@@ -70,35 +116,40 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
-                final PhpLanguageLevel phpVersion
-                        = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
-                if (phpVersion.compareTo(PhpLanguageLevel.PHP700) >= 0) {
-                    analyzeCall(reference);
-                    analyzeCallback(reference);
-                }
-            }
-            public void visitPhpConstantReference(ConstantReference reference) {
-                /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
-                final PhpLanguageLevel phpVersion
-                        = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
-                if (phpVersion.compareTo(PhpLanguageLevel.PHP700) >= 0) {
-                    analyzeCall(reference);
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
+                if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
+                    final String functionName = reference.getName();
+                    if (functionName != null) {
+                        if (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(functionName)) {
+                            analyzeReference(reference);
+                        }
+                        analyzeCallback(reference, functionName);
+                    }
                 }
             }
 
-            private void analyzeCallback(FunctionReference reference) {
+            @Override
+            public void visitPhpConstantReference(@NotNull ConstantReference reference) {
+                /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
+                if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
+                    analyzeReference(reference);
+                }
+            }
+
+            private void analyzeCallback(@NotNull FunctionReference reference, @NotNull String functionName) {
                 final PsiElement[] params = reference.getParameters();
-                final String functionName = reference.getName();
-                if (null != functionName && params.length >= 2 && callbacksPositions.containsKey(functionName)) {
+                if (params.length >= 2 && callbacksPositions.containsKey(functionName)) {
                     final Integer callbackPosition = callbacksPositions.get(functionName);
                     if (params[callbackPosition] instanceof StringLiteralExpression) {
                         final StringLiteralExpression callback = (StringLiteralExpression) params[callbackPosition];
                         if (null == callback.getFirstPsiChild()) {
                             final String function     = callback.getContents();
                             final boolean isCandidate = !function.startsWith("\\") && !function.contains("::");
-                            if (isCandidate) {
+                            if (isCandidate && (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(function))) {
                                 final PhpIndex index = PhpIndex.getInstance(holder.getProject());
                                 if (!index.getFunctionsByFQN('\\' + functionName).isEmpty()) {
                                     final String message = messagePattern.replace("%t%", function);
@@ -110,7 +161,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 }
             }
 
-            private void analyzeCall(PhpReference reference) {
+            private void analyzeReference(@NotNull PhpReference reference) {
                 /* constructs structure expectations */
                 final String referenceName = reference.getName();
                 if (null == referenceName || !reference.getImmediateNamespaceName().isEmpty()) {
@@ -164,12 +215,18 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
             if (target instanceof StringLiteralExpression) {
                 final StringLiteralExpression expression = (StringLiteralExpression) target;
                 final String quote                       = expression.isSingleQuote() ? "'" : "\"";
-                final String roootNs                     = expression.isSingleQuote() ? "\\" : "\\\\";
-                final String pattern                     = quote + roootNs + expression.getContents() + quote;
+                final String rootNs                      = expression.isSingleQuote() ? "\\" : "\\\\";
+                final String pattern                     = quote + rootNs + expression.getContents() + quote;
                 final StringLiteralExpression replacement
                         = PhpPsiElementFactory.createPhpPsiFromText(project, StringLiteralExpression.class, pattern);
                 target.replace(replacement);
             }
         }
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component)
+            -> component.addCheckbox("Report calls without opcode tweaks", REPORT_ALL_FUNCTIONS, (isSelected) -> REPORT_ALL_FUNCTIONS = isSelected)
+        );
     }
 }

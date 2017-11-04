@@ -19,10 +19,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionsCo
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -375,7 +372,21 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             }
 
             private List<String> getPreviouslyModifiedVariables(@NotNull If ifStatement) {
-
+                final List<String> result = new ArrayList<>();
+                PsiElement previous = ifStatement.getPrevPsiSibling();
+                while (previous != null) {
+                    if (OpenapiTypesUtil.isStatementImpl(previous)) {
+                        final PsiElement candidate = previous.getFirstChild();
+                        if (OpenapiTypesUtil.isAssignment(candidate)) {
+                            final PsiElement container = ((AssignmentExpression) candidate).getVariable();
+                            if (container instanceof Variable) {
+                                result.add(((Variable) container).getName());
+                            }
+                        }
+                    }
+                    previous = ifStatement.getPrevPsiSibling();
+                }
+                return result;
             }
 
             /* Checks if duplicates are introduced, conditions collection will be modified so it's empty in the end */

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -14,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -36,42 +36,41 @@ public class ParameterDefaultValueIsNotNullInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 visitPhpFunction(method);
             }
 
-            public void visitPhpFunction(Function function) {
+            @Override
+            public void visitPhpFunction(@NotNull Function function) {
                 final Parameter[] params = function.getParameters();
-                if (0 == params.length) {
-                    return;
-                }
-
-                /* collect violations */
-                final ArrayList<Parameter> violations = new ArrayList<>();
-                for (Parameter param : params) {
-                    final PsiElement defaultValue = param.getDefaultValue();
-                    if (null == defaultValue || PhpLanguageUtil.isNull(defaultValue)) {
-                        continue;
-                    }
-                    violations.add(param);
-                }
-
-                if (!violations.isEmpty()) {
-                    if (function instanceof Method) {
-                        final PhpClass clazz      = ((Method) function).getContainingClass();
-                        final PhpClass parent     = null == clazz ? null : clazz.getSuperClass();
-                        final Method parentMethod = null == parent ? null : parent.findMethodByName(function.getName());
-                        if (null != parentMethod && !parentMethod.getAccess().isPrivate()) {
-                            violations.clear();
-                            return;
+                if (params.length > 0) {
+                    /* collect violations */
+                    final List<Parameter> violations = new ArrayList<>();
+                    for (final Parameter param : params) {
+                        final PsiElement defaultValue = param.getDefaultValue();
+                        if (defaultValue != null && !PhpLanguageUtil.isNull(defaultValue)) {
+                            violations.add(param);
                         }
                     }
 
-                    /* report violations */
-                    for (Parameter param : violations) {
-                        holder.registerProblem(param, message, ProblemHighlightType.WEAK_WARNING);
+                    if (!violations.isEmpty()) {
+                        if (function instanceof Method) {
+                            final PhpClass clazz      = ((Method) function).getContainingClass();
+                            final PhpClass parent     = null == clazz ? null : clazz.getSuperClass();
+                            final Method parentMethod = null == parent ? null : parent.findMethodByName(function.getName());
+                            if (parentMethod != null && !parentMethod.getAccess().isPrivate()) {
+                                violations.clear();
+                                return;
+                            }
+                        }
+
+                        /* report violations */
+                        for (final Parameter param : violations) {
+                            holder.registerProblem(param, message);
+                        }
+                        violations.clear();
                     }
-                    violations.clear();
                 }
             }
         };

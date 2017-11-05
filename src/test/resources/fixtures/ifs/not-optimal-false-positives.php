@@ -14,3 +14,11 @@ if (($count = $counter->count()) && $count > 0 && $count < 255) {}
 if (isset($x) && $y)                     {}
 if (empty($x) && $y)                     {}
 if (isset($x[uniqid()]) && $y[uniqid()]) {}
+
+/* duplicate calls: variable gets overridden */
+if (!call($mixed)) {
+    $mixed = fallback($mixed);
+    if (!call($mixed)) {
+        /* something else */
+    }
+}

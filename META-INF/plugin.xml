@@ -65,6 +65,8 @@ Bug-fix release:<br/>
 - Parameter/variable is not used: resolved false-positives (assignments as calls argument)<br/>
 - 'simplexml_load_file(...)' usage correctness: QF bug-fix<br/>
 <br/>
+- Default value is hidden in else branch: QF implemented<br/>
+<br/>
 <hr/>
   ]]></change-notes>
 

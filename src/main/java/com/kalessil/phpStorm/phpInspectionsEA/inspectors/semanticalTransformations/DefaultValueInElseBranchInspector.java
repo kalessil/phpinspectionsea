@@ -211,7 +211,7 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
             if (expression != null && !project.isDisposed()) {
                 final PsiElement elseStatement = expression.getParent();
                 final PsiElement ifStatement   = elseStatement.getParent();
-                final GroupStatement elseBody = ExpressionSemanticUtil.getGroupStatement(elseStatement);
+                final GroupStatement elseBody  = ExpressionSemanticUtil.getGroupStatement(elseStatement);
                 if (elseBody != null) {
                     final PsiElement assignment = elseBody.getFirstPsiChild();
                     if (assignment != null) {

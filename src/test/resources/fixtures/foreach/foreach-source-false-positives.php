@@ -43,4 +43,14 @@
 
         /* pre-defined variables support */
         foreach ($_REQUEST as $value) {}
+
+        /* types confusion when parent if has implicit validity check */
+        /* @var $objectOrIterable object|iterable */
+        if (false || is_iterable($objectOrIterable)) {
+            foreach ($objectOrIterable as $value) {}
+        }
+        /* @var $objectOrArray object|array */
+        if (false || is_array($objectOrArray)) {
+            foreach ($objectOrArray as $value) {}
+        }
     }

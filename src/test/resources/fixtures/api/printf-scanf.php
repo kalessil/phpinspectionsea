@@ -35,11 +35,17 @@ class aClass {
         echo sprintf("%% %1$'.-9d %1$'.-9d %s", $arg);
         echo sprintf('%% %1$\'.-9d %1$\'.-9d %s', $arg);
 
-        /* false-positive: sscanf/fscanf returning array */
+        /* false-positive: sscanf returning array */
         list($first, $second) = sscanf($arg, $pattern4);
         $values               = sscanf($arg, $pattern4);
+        call(sscanf($arg, $pattern4));
+        $object->method(sscanf($arg, $pattern4));
+
+        /* false-positive: fscanf returning array */
         list($first, $second) = fscanf($handle, $pattern4);
         $values               = fscanf($handle, $pattern4);
+        call(fscanf($handle, $pattern4));
+        $object->method(fscanf($handle, $pattern4));
 
         /* variadic variables */
         printf('%d %d %d', ...$i);

@@ -35,7 +35,7 @@ class aClass {
         echo sprintf("%% %1$'.-9d %1$'.-9d %s", $arg);
         echo sprintf('%% %1$\'.-9d %1$\'.-9d %s', $arg);
 
-        /* sscanf/fscanf without containers returning array */
+        /* false-positive: sscanf/fscanf returning array */
         list($first, $second) = sscanf($arg, $pattern4);
         $values               = sscanf($arg, $pattern4);
         list($first, $second) = fscanf($handle, $pattern4);

@@ -8,11 +8,13 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -83,7 +85,10 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                             final String trueCallName         = trueCall.getName();
                             final String falseCallName        = falseCall.getName();
                             /* match calls names and arguments */
-                            if (trueCallName != null && trueCallName.equalsIgnoreCase(falseCallName)) {
+                            if (
+                                trueCallName != null && trueCallName.equals(falseCallName) &&
+                                trueCall.getClass() == falseVariant.getClass()
+                            ) {
                                 final PsiElement[] trueArguments  = trueCall.getParameters();
                                 final PsiElement[] falseArguments = falseCall.getParameters();
                                 if (trueArguments.length > 0 && trueArguments.length == falseArguments.length) {
@@ -105,8 +110,16 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                                         }
                                     }
                                     if (mismatchedCount == 1) {
-                                        final String replacement     = String.format("%s(%s)", trueCallName, String.join(", ", fragments));
-                                        final String message         = String.format(messagePattern, replacement);
+                                        String prefix = "";
+                                        if (trueCall instanceof MethodReference) {
+                                            final MethodReference reference = (MethodReference) trueCall;
+                                            final PsiElement operator       = OpenapiPsiSearchUtil.findResolutionOperator(reference);
+                                            if (operator != null) {
+                                                prefix = reference.getFirstChild().getText() + operator.getText();
+                                            }
+                                        }
+                                        final String replacement = prefix + String.format("%s(%s)", trueCallName, String.join(", ", fragments));
+                                        final String message     = String.format(messagePattern, replacement);
                                         holder.registerProblem(expression, message, new SimplifyFix(replacement));
                                         // return;
                                     }

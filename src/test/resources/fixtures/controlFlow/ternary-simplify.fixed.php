@@ -12,3 +12,9 @@
 
     $x = $x > 0 ? true : null;
     $x = is_numeric($x) ? false : true;
+
+    $x = call($x ? $x : null);
+    $x = call($x ? $x : null, null);
+
+    $x = $x ? call($x, $y) : call(null, null);
+    $x = $x ? call1($x, null) : call2(null, null);

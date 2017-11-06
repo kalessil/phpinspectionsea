@@ -1,11 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
+import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -15,11 +17,22 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%r%' should be used instead";
+    private static final String messagePattern = "'%s' should be used instead.";
 
     private final static Map<IElementType, String> oppositeOperators = new HashMap<>();
     static {
@@ -44,16 +57,62 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
-                final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
-                if (condition instanceof BinaryExpression) {
-                    /* check branches; if both variants are identical, nested ternary inspection will spot it */
+                final PsiElement rawCondition = expression.getCondition();
+                final PsiElement condition    = ExpressionSemanticUtil.getExpressionTroughParenthesis(rawCondition);
+                if (rawCondition != null && condition != null) {
                     final PsiElement trueVariant  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
                     final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
-                    if (PhpLanguageUtil.isBoolean(trueVariant) && PhpLanguageUtil.isBoolean(falseVariant)) {
-                        final String replacement = this.generateReplacement((BinaryExpression) condition, trueVariant);
-                        if (replacement != null) {
-                            final String message = messagePattern.replace("%r%", replacement);
-                            holder.registerProblem(expression, message, new SimplifyFix(replacement));
+                    if (trueVariant != null && falseVariant != null) {
+                        /* case: can be replaced with condition itself */
+                        if (condition instanceof BinaryExpression) {
+                            /* check branches; if both variants are identical, nested ternary inspection will spot it */
+                            if (PhpLanguageUtil.isBoolean(trueVariant) && PhpLanguageUtil.isBoolean(falseVariant)) {
+                                final String replacement = this.generateReplacement((BinaryExpression) condition, trueVariant);
+                                if (replacement != null) {
+                                    final String message = String.format(messagePattern, replacement);
+                                    holder.registerProblem(expression, message, new SimplifyFix(replacement));
+                                    return;
+                                }
+                            }
+                        }
+
+                        /* case: ternary can be relocated into the call from true+false variants */
+                        if (trueVariant instanceof FunctionReference && falseVariant instanceof FunctionReference) {
+                            final FunctionReference trueCall  = (FunctionReference) trueVariant;
+                            final FunctionReference falseCall = (FunctionReference) falseVariant;
+                            final String trueCallName         = trueCall.getName();
+                            final String falseCallName        = falseCall.getName();
+                            /* match calls names and arguments */
+                            if (trueCallName != null && trueCallName.equalsIgnoreCase(falseCallName)) {
+                                final PsiElement[] trueArguments  = trueCall.getParameters();
+                                final PsiElement[] falseArguments = falseCall.getParameters();
+                                if (trueArguments.length > 0 && trueArguments.length == falseArguments.length) {
+                                    int mismatchedCount          = 0;
+                                    final List<String> fragments = new ArrayList<>(trueArguments.length);
+                                    for (int index = 0; index < trueArguments.length; ++index) {
+                                        if (!PsiEquivalenceUtil.areElementsEquivalent(trueArguments[index], falseArguments[index])) {
+                                            if (++mismatchedCount > 1) {
+                                                break;
+                                            }
+                                            fragments.add(String.format(
+                                                "%s ? %s : %s",
+                                                rawCondition.getText(),
+                                                trueArguments[index].getText(),
+                                                falseArguments[index].getText()
+                                            ));
+                                        } else {
+                                            fragments.add(trueArguments[index].getText());
+                                        }
+                                    }
+                                    if (mismatchedCount == 1) {
+                                        final String replacement     = String.format("%s(%s)", trueCallName, String.join(", ", fragments));
+                                        final String message         = String.format(messagePattern, replacement);
+                                        holder.registerProblem(expression, message, new SimplifyFix(replacement));
+                                        // return;
+                                    }
+                                    fragments.clear();
+                                }
+                            }
                         }
                     }
                 }

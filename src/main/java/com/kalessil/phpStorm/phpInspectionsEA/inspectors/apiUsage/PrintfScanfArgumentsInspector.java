@@ -122,7 +122,7 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
                             final PsiElement grandParent = parent == null ? null : parent.getParent();
                             if (returnsArray && parent != null) {
                                 /* false-positive: dispatching/deconstructing into containers */
-                                if (parent instanceof AssignmentExpression) {
+                                if (parent instanceof AssignmentExpression || grandParent instanceof AssignmentExpression) {
                                     return;
                                 }
                                 /* false-positive: dispatching into calls */

@@ -22,6 +22,15 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class StaticInvocationViaThisInspector extends BasePhpInspection {
     // Inspection options.
     public boolean RESPECT_PHPUNIT_STANDARDS = true;
@@ -38,7 +47,8 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMethodReference(MethodReference reference) {
+            @Override
+            public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 /* Basic structure validation */
                 final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
                 if (!OpenapiTypesUtil.is(operator, PhpTokenTypes.ARROW)) {
@@ -81,13 +91,12 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                     if (contextOfThis) {
                         final String message = messageThisUsed.replace("%m%", methodName);
                         holder.registerProblem(thisCandidate, message, new TheLocalFix(thisCandidate, operator));
-
-                        return;
                     }
-
                     /* Case 2: <expression>-><static method>(); no chained calls; no QF - needs looking into cases */
-                    final String message = messageExpressionUsed.replace("%m%", reference.getName());
-                    holder.registerProblem(reference, message);
+                    else {
+                        final String message = messageExpressionUsed.replace("%m%", methodName);
+                        holder.registerProblem(reference, message);
+                    }
                 }
             }
         };
@@ -120,23 +129,20 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement().getParent();
-            if (expression instanceof FunctionReference) {
+            if (expression instanceof FunctionReference && !project.isDisposed()) {
                 final PsiElement operator = this.operator.getElement();
                 final PsiElement variable = this.variable.getElement();
-                if (null == operator || null == variable) {
-                    return;
+                if (null != operator && null != variable) {
+                    operator.replace(PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "::"));
+                    variable.replace(PhpPsiElementFactory.createClassReference(project, "static"));
                 }
-
-                //noinspection ConstantConditions I' sure NPE will not happen as pattern hardcoded
-                operator.replace(PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "::"));
-                variable.replace(PhpPsiElementFactory.createClassReference(project, "static"));
             }
         }
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) -> {
-            component.addCheckbox("Follow PHPUnit standards", RESPECT_PHPUNIT_STANDARDS, (isSelected) -> RESPECT_PHPUNIT_STANDARDS = isSelected);
-        });
+        return OptionsComponent.create((component) ->
+            component.addCheckbox("Follow PHPUnit standards", RESPECT_PHPUNIT_STANDARDS, (isSelected) -> RESPECT_PHPUNIT_STANDARDS = isSelected)
+        );
     }
 }

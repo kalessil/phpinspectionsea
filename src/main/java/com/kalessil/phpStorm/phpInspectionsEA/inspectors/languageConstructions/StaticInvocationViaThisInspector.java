@@ -56,7 +56,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                 }
                 final PsiReference psiReference = reference.getReference();
                 final String methodName         = reference.getName();
-                if (null == psiReference || null == methodName) {
+                if (psiReference == null || methodName == null || methodName.startsWith("static")) {
                     return;
                 }
 

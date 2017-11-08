@@ -169,12 +169,10 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                 }
 
                 hasAdvisories = true;
-                break;
             }
 
             if (optionConfiguration.contains(packageName)) {
                 holder.registerProblem(component.getFirstChild(), useRequireDev);
-                continue;
             }
 
             if (packageName.indexOf('/') != -1) {

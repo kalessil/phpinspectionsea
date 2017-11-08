@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,9 +50,11 @@ final public class PlainApiUseCheckStrategy {
     }
 
     static public void apply(
-            final String functionName, @NotNull final FunctionReference reference,
-            final String modifiers, final String pattern,
-            @NotNull final ProblemsHolder holder
+        final String functionName,
+        @NotNull final FunctionReference reference,
+        @Nullable final String modifiers,
+        final String pattern,
+        @NotNull final ProblemsHolder holder
     ) {
         final PsiElement[] params = reference.getParameters();
         final int parametersCount = params.length;
@@ -118,6 +121,11 @@ final public class PlainApiUseCheckStrategy {
                 params[1] instanceof StringLiteralExpression && params[1].getText().length() == 2 &&
                 trimMatcher.find()
             ) {
+                /* false-positives: the `m` modifier make the replacement impossible */
+                if (modifiers != null && modifiers.indexOf('m') != -1) {
+                    return;
+                }
+
                 // mixed preg_replace ( mixed $pattern , mixed $replacement , mixed $subject [, int $limit = -1 [, int &$count ]] )
                 String function = "trim";
                 if (!pattern.startsWith("^")) {

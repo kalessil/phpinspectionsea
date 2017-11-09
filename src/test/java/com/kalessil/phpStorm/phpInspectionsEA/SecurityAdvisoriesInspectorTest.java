@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.SecurityAdvisoriesInspector;
 
 public final class SecurityAdvisoriesInspectorTest extends PhpCodeInsightFixtureTestCase {
@@ -26,6 +27,12 @@ public final class SecurityAdvisoriesInspectorTest extends PhpCodeInsightFixture
         myFixture.enableInspections(new SecurityAdvisoriesInspector());
         myFixture.configureByFile("fixtures/securityAdvisories/needsAdvisories/composer.json");
         myFixture.testHighlighting(true, false, true);
+
+        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
+            myFixture.launchAction(fix);
+        }
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/securityAdvisories/needsAdvisories/composer.fixed.json");
     }
 
     public void testLibraryType() {

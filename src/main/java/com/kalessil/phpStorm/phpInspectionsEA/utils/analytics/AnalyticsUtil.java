@@ -54,7 +54,10 @@ final public class AnalyticsUtil {
             if (!related.isEmpty()) {
                 final StackTraceElement entryPoint = related.get(0);
                 if (!stopList.contains(entryPoint.getFileName())) {
-                    final String description = String.format(
+                    final String message = error.getMessage();
+                    /* additional filter, specific string in messages */
+                    if (!message.contains("com.intellij.psi.impl.source.FileTrees.withExclusiveStub")) {
+                        final String description = String.format(
                             "[%s:%s@%s] %s.%s#%s: %s|%s",
                             entryPoint.getFileName(),
                             entryPoint.getLineNumber(),
@@ -62,10 +65,11 @@ final public class AnalyticsUtil {
                             stackTrace[0].getClassName(),
                             stackTrace[0].getMethodName(),
                             stackTrace[0].getLineNumber(),
-                            error.getMessage(),
+                            message,
                             error.getClass().getName()
-                    );
-                    invokeExceptionReporting(uuid, description);
+                        );
+                        invokeExceptionReporting(uuid, description);
+                    }
                 }
                 related.clear();
             }

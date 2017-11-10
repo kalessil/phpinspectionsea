@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 final public class AnalyticsUtil {
     private final static Set<String> stopList = new HashSet<>();
     static {
-        /* ugly, but: compatibility with PS 2016 and reducing crash reporting false-positives */
+        /* ugly, but: PhpStorm 2016 compatibility + reducing crash-reports rate */
         stopList.add("com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments");
         stopList.add("com.intellij.openapi.progress.ProcessCanceledException");
         stopList.add("com.intellij.util.indexing.StorageException");

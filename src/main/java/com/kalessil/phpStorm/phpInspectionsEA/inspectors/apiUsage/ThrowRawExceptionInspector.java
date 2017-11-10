@@ -90,7 +90,7 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof ClassReference) {
+            if (expression instanceof ClassReference && !project.isDisposed()) {
                 ((ClassReference) expression).handleElementRename("RuntimeException");
             }
         }

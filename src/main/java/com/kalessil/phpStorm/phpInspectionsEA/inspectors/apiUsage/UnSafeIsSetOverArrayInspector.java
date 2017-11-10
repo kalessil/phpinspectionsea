@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -46,7 +47,8 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpIsset(PhpIsset issetExpression) {
+            @Override
+            public void visitPhpIsset(@NotNull PhpIsset issetExpression) {
                 /*
                  * if no parameters, we don't check;
                  * if multiple parameters, perhaps if-inspection fulfilled and isset's were merged
@@ -94,7 +96,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
 
                 if (!(argument instanceof ArrayAccessExpression)) {
                     if (argument instanceof FieldReference) {
-                        /* if field is not resolved, it's probably dynamic and isset have a purpose */
+                        /* if field is not resolved, it's probably dynamic and isset has a purpose */
                         final PsiReference referencedField = argument.getReference();
                         final PsiElement resolvedField     = null == referencedField ? null : OpenapiResolveUtil.resolveReference(referencedField);
                         if (null == resolvedField || !(ExpressionSemanticUtil.getBlockScope(resolvedField) instanceof PhpClass)) {
@@ -103,9 +105,12 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                     }
 
                     if (SUGGEST_TO_USE_NULL_COMPARISON) {
-                        final String message = (issetInverted ? messageUseNullComparison : messageUseNotNullComparison)
-                                .replace("%s%", argument.getText());
-                        holder.registerProblem(argument, message, ProblemHighlightType.WEAK_WARNING);
+                        /* false-positives: finally, perhaps fallback to initialization in try */
+                        if (PsiTreeUtil.getParentOfType(issetExpression, Finally.class) == null) {
+                            final String message = (issetInverted ? messageUseNullComparison : messageUseNotNullComparison)
+                                    .replace("%s%", argument.getText());
+                            holder.registerProblem(argument, message, ProblemHighlightType.WEAK_WARNING);
+                        }
                     }
                     return;
                 }

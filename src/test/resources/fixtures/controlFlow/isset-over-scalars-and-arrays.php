@@ -23,7 +23,12 @@ if (isset(<warning descr="Concatenation is used in an index, it should be moved 
 /* case: variables in global/function/method scopes */
 function variablesScopeHolder(array $array)
 {
-    $x = isset(<weak_warning descr="'null !== $array' construction should be used instead.">$array</weak_warning>);
-    $y = !isset(<weak_warning descr="'null === $array' construction should be used instead.">$array</weak_warning>);
+    try {
+        $x = isset(<weak_warning descr="'null !== $array' construction should be used instead.">$array</weak_warning>);
+        $y = !isset(<weak_warning descr="'null === $array' construction should be used instead.">$array</weak_warning>);
+    } finally {
+        $x = isset($array);
+        $y = !isset($array);
+    }
 }
 $y = !isset($array);

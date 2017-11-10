@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.11.1</version>
+  <version>2.3.12</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -58,14 +58,24 @@ Bug-fix release:<br/>
 <br/>
 - Access modifiers shall be defined: new patterns (thank you David Rodrigues)<br/>
 - Class overrides a field of a parent class: resolved false-positives (doctrine annotations)<br/>
+- Default value is hidden in else branch: QF implemented<br/>
 - Exceptions handling and annotating: QF bug-fix<br/>
 - Foreach source to iterate over: resolved false-positives (multiple cases)<br/>
 - Non-optimal if conditions: resolved false-positives (multiple cases)<br/>
+- Non-optimal regular expression: resolved false-positives (wrongly suggested trim usage)<br/>
 - Null reference: resolved a false-positive (complex if-conditions)<br/>
 - Parameter/variable is not used: resolved false-positives (assignments as calls argument)<br/>
+- Security advisories for Composer packages: QF implemented<br/>
+- Statement could be decoupled from foreach: resolved false-positives (possible objects modification)<br/>
+- Static methods invocation via '->': resolved false-positives (method name starts with 'static')<br/>
+- Unqualified function/constant reference: added settings, default behaviour changed<br/>
+- 'in_array(...)' misused: added QF settings<br/>
+- 'isset(...)' usage: resolved false-positives (isset in finally-statements)<br/>
 - 'simplexml_load_file(...)' usage correctness: QF bug-fix<br/>
+- *printf/*scanf arguments count mismatches: resolved false-positives (sscanf as call argument)<br/>
 <br/>
 - Default value is hidden in else branch: QF implemented<br/>
+- Ternary operator could be simplified: new patterns<br/>
 <br/>
 <hr/>
   ]]></change-notes>

@@ -9,12 +9,29 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class InArrayMissUseInspector extends BasePhpInspection {
-    private static final String patternComparison = "'%e%' should be used instead.";
-    private static final String patternKeyExists  = "'%e%' should be used instead. It is safe to refactor for type-safe code when the indexes are integers/strings only.";
+    // Inspection options.
+    public boolean PREFER_YODA_STYLE    = true;
+    public boolean PREFER_REGULAR_STYLE = false;
+
+    private static final String patternComparison = "'%s' should be used instead.";
+    private static final String patternKeyExists  = "'%s' should be used instead. It is safe to refactor for type-safe code when the indexes are integers/strings only.";
 
     @NotNull
     public String getShortName() {
@@ -28,38 +45,33 @@ public class InArrayMissUseInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* general structure requirements */
-                final PsiElement[] params = reference.getParameters();
-                final String functionName = reference.getName();
-                if ((2 != params.length && 3 != params.length) || functionName == null || !functionName.equals("in_array")) {
+                final PsiElement[] arguments = reference.getParameters();
+                final String functionName   = reference.getName();
+                if ((2 != arguments.length && 3 != arguments.length) || functionName == null || !functionName.equals("in_array")) {
                     return;
                 }
 
-                /* Pattern: array_key_exists equivalence */
-                if (params[1] instanceof FunctionReference) {
-                    final FunctionReference subcall = (FunctionReference) params[1];
-                    final String subcallName        = subcall.getName();
-                    if (null != subcallName && subcallName.equals("array_keys")) {
-                        /* ensure the subcall is a complete expression */
-                        final PsiElement[] subcallParams = subcall.getParameters();
-                        if (1 != subcallParams.length) {
-                            return;
+                /* pattern: array_key_exists equivalence */
+                if (OpenapiTypesUtil.isFunctionReference(arguments[1])) {
+                    final FunctionReference nestedCall = (FunctionReference) arguments[1];
+                    final String nestedFunctionName    = nestedCall.getName();
+                    if (nestedFunctionName != null && nestedFunctionName.equals("array_keys")) {
+                        /* ensure the nested call is a complete expression */
+                        final PsiElement[] nestedCallParams = nestedCall.getParameters();
+                        if (nestedCallParams.length == 1) {
+                            final String replacement = "array_key_exists(%k%, %a%)"
+                                    .replace("%a%", nestedCallParams[0].getText())
+                                    .replace("%k%", arguments[0].getText());
+                            final String message = String.format(patternKeyExists, replacement);
+                            holder.registerProblem(reference, message, new UseArrayKeyExistsFix(replacement));
                         }
-
-                        final String replacement = "array_key_exists(%k%, %a%)"
-                            .replace("%a%", subcallParams[0].getText())
-                            .replace("%k%", params[0].getText());
-                        final String message     = patternKeyExists.replace("%e%", replacement);
-                        holder.registerProblem(reference, message, new UseArrayKeyExistsFix(replacement));
-
-                        return;
                     }
                 }
-
-                /* Pattern: comparison equivalence */
-                if (params[1] instanceof ArrayCreationExpression) {
+                /* pattern: comparison equivalence */
+                else if (arguments[1] instanceof ArrayCreationExpression) {
                     int itemsCount      = 0;
                     PsiElement lastItem = null;
-                    for (PsiElement oneItem : params[1].getChildren()) {
+                    for (final PsiElement oneItem : arguments[1].getChildren()) {
                         if (oneItem instanceof PhpPsiElement) {
                             ++itemsCount;
                             lastItem = oneItem;
@@ -102,18 +114,24 @@ public class InArrayMissUseInspector extends BasePhpInspection {
                             }
                         }
 
-                        final boolean isStrict   = 3 == params.length && PhpLanguageUtil.isTrue(params[2]);
-                        final String replacement = "%l% %o% %r%"
-                                .replace("%r%", params[0].getText())
+                        final boolean isStrict   = arguments.length == 3 && PhpLanguageUtil.isTrue(arguments[2]);
+                        final String replacement = (PREFER_YODA_STYLE ? "%l% %o% %r%" : "%r% %o% %l%")
+                                .replace("%r%", arguments[0].getText())
                                 .replace("%o%", (checkExists ? "==" : "!=") + (isStrict ? "=" : ""))
                                 .replace("%l%", lastItem.getText());
-                        final String message     = patternComparison.replace("%e%", replacement);
+                        final String message = String.format(patternComparison, replacement);
                         holder.registerProblem(target, message, new UseComparisonFix(replacement));
-                        // return;
                     }
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> component.delegateRadioCreation((radioComponent) -> {
+            radioComponent.addOption("Regular fix style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
+            radioComponent.addOption("Yoda fix style",    PREFER_YODA_STYLE,    (isSelected) -> PREFER_YODA_STYLE = isSelected);
+        }));
     }
 
     private class UseArrayKeyExistsFix extends UseSuggestedReplacementFixer {

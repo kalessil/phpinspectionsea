@@ -10,6 +10,7 @@ final public class UnqualifiedReferenceInspectorTest extends PhpCodeInsightFixtu
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         final UnqualifiedReferenceInspector inspector = new UnqualifiedReferenceInspector();
         inspector.REPORT_ALL_FUNCTIONS                = true;
+        inspector.REPORT_CONSTANTS                    = true;
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("fixtures/unqualified-function-refs-ns.php");
         myFixture.testHighlighting(true, false, true);
@@ -24,6 +25,7 @@ final public class UnqualifiedReferenceInspectorTest extends PhpCodeInsightFixtu
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         final UnqualifiedReferenceInspector inspector = new UnqualifiedReferenceInspector();
         inspector.REPORT_ALL_FUNCTIONS                = false;
+        inspector.REPORT_CONSTANTS                    = false;
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("fixtures/unqualified-function-refs-no-ns.php");
         myFixture.testHighlighting(true, false, true);

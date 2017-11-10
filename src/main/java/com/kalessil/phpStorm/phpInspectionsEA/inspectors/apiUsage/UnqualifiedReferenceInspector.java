@@ -38,6 +38,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
 
     // Inspection options.
     public boolean REPORT_ALL_FUNCTIONS = false;
+    public boolean REPORT_CONSTANTS     = false;
 
     final private static Set<String> falsePositives              = new HashSet<>();
     final private static Set<String> advancedOpcode              = new HashSet<>();
@@ -133,10 +134,12 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpConstantReference(@NotNull ConstantReference reference) {
-                /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
-                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
-                if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
-                    analyzeReference(reference);
+                if (REPORT_CONSTANTS) {
+                    /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
+                    final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
+                    if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
+                        analyzeReference(reference);
+                    }
                 }
             }
 
@@ -225,8 +228,9 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component)
-            -> component.addCheckbox("Report calls without opcode tweaks", REPORT_ALL_FUNCTIONS, (isSelected) -> REPORT_ALL_FUNCTIONS = isSelected)
-        );
+        return OptionsComponent.create(component -> {
+            component.addCheckbox("Report calls without opcode tweaks", REPORT_ALL_FUNCTIONS, (isSelected) -> REPORT_ALL_FUNCTIONS = isSelected);
+            component.addCheckbox("Report constants references", REPORT_CONSTANTS, (isSelected) -> REPORT_CONSTANTS = isSelected);
+        });
     }
 }

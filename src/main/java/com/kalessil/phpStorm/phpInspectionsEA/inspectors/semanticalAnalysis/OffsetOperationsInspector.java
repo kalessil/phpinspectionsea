@@ -31,7 +31,7 @@ import java.util.HashSet;
  */
 public class OffsetOperationsInspector extends BasePhpInspection {
     private static final String messageUseSquareBrackets = "Using [ ] instead of { } makes possible to analyze this expression.";
-    private static final String patternNoOffsetSupport   = "'%c%' may not support offset operations (or it's type not annotated properly: %t%).";
+    private static final String patternNoOffsetSupport   = "'%c%' may not support offset operations (or its type not annotated properly: %t%).";
     private static final String patternInvalidIndex      = "Resolved index type (%p%) is incompatible with possible %a%. Probably just proper type hinting needed.";
 
     @NotNull

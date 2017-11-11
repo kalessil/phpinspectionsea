@@ -105,7 +105,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     @Override
     @Nullable
     public ProblemDescriptor[] checkFile(@NotNull final PsiFile file, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
-        /* verify file name and it's validity */
+        /* verify file name and its validity */
         if (!"composer.json".equals(file.getName()) || !(file.getFirstChild() instanceof JsonObject)) {
             return null;
         }

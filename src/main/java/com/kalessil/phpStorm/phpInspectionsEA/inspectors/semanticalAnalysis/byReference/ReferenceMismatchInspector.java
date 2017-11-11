@@ -300,7 +300,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                         }
                     }
 
-                    /* test is assigned to a variable without stating it's reference (copy stored) */
+                    /* test is assigned to a variable without stating its reference (copy stored) */
                     if (objExpression instanceof AssignmentExpression) {
                         /* assignment structure verify */
                         AssignmentExpression assignment = (AssignmentExpression) objExpression;

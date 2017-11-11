@@ -42,9 +42,9 @@
             $arrContainer[]= 'a';
 
             $boolContainer = false;
-            <error descr="'$boolContainer' may not support offset operations (or it's type not annotated properly: [bool]).">$boolContainer[0]</error>
+            <error descr="'$boolContainer' may not support offset operations (or its type not annotated properly: [bool]).">$boolContainer[0]</error>
                 = 'a';
-            <error descr="'$boolContainer' may not support offset operations (or it's type not annotated properly: [bool]).">$boolContainer[explode('', '')]</error>
+            <error descr="'$boolContainer' may not support offset operations (or its type not annotated properly: [bool]).">$boolContainer[explode('', '')]</error>
                 = 'a';
 
             $objOffsetContainer = new OffsetSupport();
@@ -60,13 +60,13 @@
                 [<error descr="Resolved index type ([\stdClass]) is incompatible with possible [string, int]. Probably just proper type hinting needed.">new stdClass()</error>] = 0;
 
             $objStdContainer = new stdClass();
-            <error descr="'$objStdContainer' may not support offset operations (or it's type not annotated properly: [\stdClass]).">$objStdContainer[0]</error>
+            <error descr="'$objStdContainer' may not support offset operations (or its type not annotated properly: [\stdClass]).">$objStdContainer[0]</error>
                 = 0;
-            <error descr="'$objStdContainer' may not support offset operations (or it's type not annotated properly: [\stdClass]).">$objStdContainer[new stdClass()]</error>
+            <error descr="'$objStdContainer' may not support offset operations (or its type not annotated properly: [\stdClass]).">$objStdContainer[new stdClass()]</error>
                 = 0;
 
             $objTestObjectContainer = new PDO('','','');
-            <error descr="'$objTestObjectContainer' may not support offset operations (or it's type not annotated properly: [\PDO]).">$objTestObjectContainer[]</error>
+            <error descr="'$objTestObjectContainer' may not support offset operations (or its type not annotated properly: [\PDO]).">$objTestObjectContainer[]</error>
                 = "This is a message";
         }
     }

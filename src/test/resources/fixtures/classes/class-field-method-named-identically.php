@@ -2,7 +2,7 @@
 
 class NamesMatchesFieldTypeUnknown {
     private $entity;
-    public function <weak_warning descr="There is a field with the same name, but it's type can not be resolved.">entity</weak_warning> () {}
+    public function <weak_warning descr="There is a field with the same name, but its type can not be resolved.">entity</weak_warning> () {}
 }
 class NamesMatchesFieldsCallable {
     /* @var callable|closure */

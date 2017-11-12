@@ -34,6 +34,8 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
 
     @Override public void visitPhpTernaryExpression(TernaryExpression expression) {}
 
+    @Override public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {}
+
     @Override public void visitPhpIf(If ifStatement)             {}
     @Override public void visitPhpElseIf(ElseIf elseIfStatement) {}
     @Override public void visitPhpElse(Else elseStatement)       {}
@@ -41,8 +43,13 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpIsset(PhpIsset issetExpression) {}
     @Override public void visitPhpUnset(PhpUnset unsetStatement)  {}
 
-    @Override public void visitPhpClass(PhpClass clazz) {}
+    @Override public void visitPhpClass(PhpClass clazz)                          {}
+    @Override public void visitPhpConstantReference(ConstantReference reference) {}
 
     @Override public void visitPhpArrayCreationExpression(ArrayCreationExpression expression) {}
     @Override public void visitPhpArrayAccessExpression(ArrayAccessExpression expression)     {}
+
+    @Override public void visitPhpTry(Try tryStatement)    {}
+    @Override public void visitPhpCatch(Catch phpCatch)    {}
+    @Override public void visitPhpFinally(Finally element) {}
 }

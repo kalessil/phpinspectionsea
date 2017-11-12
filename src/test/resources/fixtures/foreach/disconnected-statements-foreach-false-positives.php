@@ -98,3 +98,10 @@ foreach ($links as $link) {
     echo $link;
     echo '</li>';
 }
+
+/* false-positives: object modifications */
+foreach ([] as $item) {
+    $object1->method1($item);
+    $object2->method2($object1);
+    $object3->method3($object2);
+}

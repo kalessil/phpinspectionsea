@@ -4,7 +4,6 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlow;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpExitPointInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpReturnInstruction;
@@ -13,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class MultipleReturnStatementsInspector extends BasePhpInspection {
-    private static final String messagePattern = "Method has %c% return points, try to introduce just one to uncover complexity behind.";
+    private static final String messagePattern = "Method has %s return points, try to introduce just one to uncover complexity behind.";
 
     @NotNull
     public String getShortName() {
@@ -37,15 +37,15 @@ public class MultipleReturnStatementsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new PhpElementVisitor() {
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 final PhpClass clazz            = method.getContainingClass();
                 final PsiElement nameIdentifier = NamedElementUtil.getNameIdentifier(method);
-                if (null != nameIdentifier && null != clazz && !clazz.isTrait()) {
-                    final PhpControlFlow controlFlow        = method.getControlFlow();
-                    final PhpExitPointInstruction exitPoint = controlFlow.getExitPoint();
+                if (nameIdentifier != null && clazz != null && !clazz.isTrait()) {
+                    final PhpExitPointInstruction exitPoint = method.getControlFlow().getExitPoint();
 
                     int returnsCount = 0;
-                    for (final PhpInstruction instruction : exitPoint.getPredecessors()) {
+                    for (final PhpInstruction instruction : OpenapiElementsUtil.getPredecessors(exitPoint)) {
                         if (instruction instanceof PhpReturnInstruction) {
                             ++returnsCount;
                         }
@@ -54,7 +54,7 @@ public class MultipleReturnStatementsInspector extends BasePhpInspection {
                     if (returnsCount > 1) {
                         final ProblemHighlightType level
                             = returnsCount > 3 ? ProblemHighlightType.GENERIC_ERROR : ProblemHighlightType.GENERIC_ERROR_OR_WARNING;
-                        final String message = messagePattern.replace("%c%", String.valueOf(returnsCount));
+                        final String message = String.format(messagePattern, returnsCount);
                         holder.registerProblem(nameIdentifier, message, level);
                     }
                 }

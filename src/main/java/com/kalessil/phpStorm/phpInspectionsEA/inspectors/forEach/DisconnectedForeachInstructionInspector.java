@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +54,8 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpForeach(ForeachStatement foreach) {
+            @Override
+            public void visitPhpForeach(@NotNull ForeachStatement foreach) {
                 final List<Variable> variables   = foreach.getVariables();
                 final GroupStatement foreachBody = ExpressionSemanticUtil.getGroupStatement(foreach);
                 /* ensure foreach structure is ready for inspection */
@@ -64,7 +66,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
                     final Map<PsiElement, Set<String>> instructionDependencies = new HashMap<>();
                     /* iteration 1 - investigate what are dependencies and influence */
-                    for (PsiElement oneInstruction : foreachBody.getStatements()) {
+                    for (final PsiElement oneInstruction : foreachBody.getStatements()) {
                         if (oneInstruction instanceof PhpPsiElement && !(oneInstruction instanceof PsiComment)) {
                             final Set<String> individualDependencies = new HashSet<>();
 
@@ -74,7 +76,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     }
 
                     /* iteration 2 - analyse dependencies */
-                    for (PsiElement oneInstruction : foreachBody.getStatements()) {
+                    for (final PsiElement oneInstruction : foreachBody.getStatements()) {
                         if (oneInstruction instanceof PhpPsiElement && !(oneInstruction instanceof PsiComment)) {
                             boolean isDependOnModifiedVariables = false;
 
@@ -82,7 +84,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             final Set<String> individualDependencies = instructionDependencies.get(oneInstruction);
                             if (null != individualDependencies && individualDependencies.size() > 0) {
                                 /* contains not only this */
-                                for (String dependencyName : individualDependencies) {
+                                for (final String dependencyName : individualDependencies) {
                                     if (allModifiedVariables.contains(dependencyName)) {
                                         isDependOnModifiedVariables = true;
                                         break;
@@ -148,90 +150,99 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 @NotNull Set<String> individualDependencies,
                 @NotNull Set<String> allModifiedVariables
             ) {
-                for (PsiElement variable : PsiTreeUtil.findChildrenOfType(oneInstruction, Variable.class)) {
+                for (final PsiElement variable : PsiTreeUtil.findChildrenOfType(oneInstruction, Variable.class)) {
                     final String variableName = ((Variable) variable).getName();
-                    if (variableName != null) {
-                        PsiElement valueContainer = variable;
-                        PsiElement parent         = variable.getParent();
-                        while (parent instanceof FieldReference) {
-                            valueContainer = parent;
-                            parent         = parent.getParent();
-                        }
+                    PsiElement valueContainer = variable;
+                    PsiElement parent         = variable.getParent();
+                    while (parent instanceof FieldReference) {
+                        valueContainer = parent;
+                        parent         = parent.getParent();
+                    }
+                    final PsiElement grandParent = parent.getParent();
 
-                        /* writing into variable */
-                        if (parent instanceof AssignmentExpression) {
-                            final AssignmentExpression assignment = (AssignmentExpression) parent;
-                            if (assignment.getVariable() == valueContainer) {
-                                /* we are modifying the variable */
-                                allModifiedVariables.add(variableName);
-                                /* self-assignment and field assignment makes the variable dependent on itself  */
-                                if (
-                                    parent instanceof SelfAssignmentExpression ||
-                                    valueContainer instanceof FieldReference
-                                ) {
-                                    individualDependencies.add(variableName);
-                                }
-
-                                continue;
-                            }
-                        }
-
-                        /* adding into an arrays; we both depend and modify the container */
-                        if (parent instanceof ArrayAccessExpression && valueContainer == ((ArrayAccessExpression) parent).getValue()) {
+                    /* writing into variable */
+                    if (parent instanceof AssignmentExpression) {
+                        final AssignmentExpression assignment = (AssignmentExpression) parent;
+                        if (assignment.getVariable() == valueContainer) {
+                            /* we are modifying the variable */
                             allModifiedVariables.add(variableName);
-                            individualDependencies.add(variableName);
-                        }
-
-                        /* php-specific list(...) = ... construction */
-                        if (parent instanceof MultiassignmentExpression) {
-                            final List<PhpPsiElement> variables = ((MultiassignmentExpression) parent).getVariables();
-                            if (variables.size() > 0) {
-                                if (variables.contains(variable)) {
-                                    allModifiedVariables.add(variableName);
-
-                                    variables.clear();
-                                    continue;
-                                }
-                                variables.clear();
-                            }
-                        }
-
-                        /* php-specific variables introduction: preg_match[_all] exporting results into 3rd argument */
-                        if (parent instanceof ParameterList && parent.getParent() instanceof FunctionReference) {
-                            final FunctionReference call  = (FunctionReference) parent.getParent();
-                            final String functionName     = call.getName();
-                            final PsiElement[] parameters = call.getParameters();
-
-                            // TODO: array_pop, array_shift, next, current, fwrite... -> use mapping function => argument modified
+                            /* self-assignment and field assignment makes the variable dependent on itself  */
                             if (
-                                3 == parameters.length && parameters[2] == variable &&
-                                functionName != null && functionName.startsWith("preg_match")
+                                parent instanceof SelfAssignmentExpression ||
+                                valueContainer instanceof FieldReference
                             ) {
-                                allModifiedVariables.add(variableName);
-                                continue;
+                                individualDependencies.add(variableName);
                             }
-                        }
 
-                        /* increment/decrement are also write operations */
-                        final ExpressionType type = getExpressionType(parent);
-                        if (ExpressionType.INCREMENT == type || ExpressionType.DECREMENT == type) {
-                            allModifiedVariables.add(variableName);
-                            individualDependencies.add(variableName);
                             continue;
                         }
-                        /* TODO: lookup for array access and property access */
+                    }
 
+                    /* adding into an arrays; we both depend and modify the container */
+                    if (parent instanceof ArrayAccessExpression && valueContainer == ((ArrayAccessExpression) parent).getValue()) {
+                        allModifiedVariables.add(variableName);
                         individualDependencies.add(variableName);
                     }
+
+                    /* php-specific `list(...) =` , `[...] =` construction */
+                    if (parent instanceof MultiassignmentExpression) {
+                        final List<PhpPsiElement> variables = ((MultiassignmentExpression) parent).getVariables();
+                        if (!variables.isEmpty()) {
+                            if (variables.contains(variable)) {
+                                allModifiedVariables.add(variableName);
+
+                                variables.clear();
+                                continue;
+                            }
+                            variables.clear();
+                        }
+                    }
+
+                    /* php-specific variables introduction: preg_match[_all] exporting results into 3rd argument */
+                    if (parent instanceof ParameterList && OpenapiTypesUtil.isFunctionReference(grandParent)) {
+                        final FunctionReference call  = (FunctionReference) grandParent;
+                        final String functionName     = call.getName();
+                        final PsiElement[] parameters = call.getParameters();
+
+                        // TODO: array_pop, array_shift, next, current, fwrite... -> use mapping function => argument modified
+                        if (
+                            3 == parameters.length && parameters[2] == variable &&
+                            functionName != null && functionName.startsWith("preg_match")
+                        ) {
+                            allModifiedVariables.add(variableName);
+                            continue;
+                        }
+                    }
+
+                    /* an object consumes the variable, perhaps modification takes place */
+                    if (parent instanceof ParameterList && grandParent instanceof MethodReference) {
+                        final MethodReference reference    = (MethodReference) grandParent;
+                        final PsiElement referenceOperator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
+                        if (OpenapiTypesUtil.is(referenceOperator, PhpTokenTypes.ARROW)) {
+                            final PsiElement variableCandidate = reference.getFirstPsiChild();
+                            if (variableCandidate instanceof Variable) {
+                                allModifiedVariables.add(((Variable) variableCandidate).getName());
+                                continue;
+                            }
+                        }
+                    }
+
+                    /* increment/decrement are also write operations */
+                    final ExpressionType type = this.getExpressionType(parent);
+                    if (ExpressionType.INCREMENT == type || ExpressionType.DECREMENT == type) {
+                        allModifiedVariables.add(variableName);
+                        individualDependencies.add(variableName);
+                        continue;
+                    }
+                    /* TODO: lookup for array access and property access */
+
+                    individualDependencies.add(variableName);
                 }
             }
 
             @NotNull
             private ExpressionType getExpressionType(@Nullable PsiElement expression) {
-                if (
-                    expression instanceof PhpBreak || expression instanceof PhpContinue ||
-                    expression instanceof PhpReturn
-                ) {
+                if (expression instanceof PhpBreak || expression instanceof PhpContinue || expression instanceof PhpReturn) {
                     return ExpressionType.CONTROL_STATEMENTS;
                 }
 
@@ -301,6 +312,6 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component)
-                -> component.addCheckbox("Suggest using clone", SUGGEST_USING_CLONE, (isSelected) -> SUGGEST_USING_CLONE = isSelected));
+            -> component.addCheckbox("Suggest using clone", SUGGEST_USING_CLONE, (isSelected) -> SUGGEST_USING_CLONE = isSelected));
     }
 }

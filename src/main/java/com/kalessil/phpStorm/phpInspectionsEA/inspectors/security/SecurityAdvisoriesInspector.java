@@ -1,15 +1,15 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.security;
 
-import com.intellij.codeInspection.InspectionManager;
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.json.psi.JsonObject;
-import com.intellij.json.psi.JsonProperty;
-import com.intellij.json.psi.JsonStringLiteral;
-import com.intellij.json.psi.JsonValue;
+import com.intellij.codeInspection.*;
+import com.intellij.json.psi.*;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -105,7 +105,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     @Override
     @Nullable
     public ProblemDescriptor[] checkFile(@NotNull final PsiFile file, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
-        /* verify file name and it's validity */
+        /* verify file name and its validity */
         if (!"composer.json".equals(file.getName()) || !(file.getFirstChild() instanceof JsonObject)) {
             return null;
         }
@@ -157,30 +157,26 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         for (final JsonProperty component : ((JsonObject) requiredPackagesList).getPropertyList()) {
             final JsonValue packageVersion = component.getValue();
-
             if (!(packageVersion instanceof JsonStringLiteral)) {
                 continue;
             }
 
             /* if advisories already there, verify usage of dev-master */
             final String packageName = component.getName().toLowerCase();
-
             if ("roave/security-advisories".equals(packageName)) {
                 if (!"dev-master".equals(((JsonStringLiteral) packageVersion).getValue().toLowerCase())) {
                     holder.registerProblem(packageVersion, useMaster);
                 }
 
                 hasAdvisories = true;
-                break;
             }
 
             if (optionConfiguration.contains(packageName)) {
                 holder.registerProblem(component.getFirstChild(), useRequireDev);
-                continue;
             }
 
             if (packageName.indexOf('/') != -1) {
-                if ((ownPackagePrefix == null) || !packageName.startsWith(ownPackagePrefix)) {
+                if (ownPackagePrefix == null || !packageName.startsWith(ownPackagePrefix)) {
                     hasThirdPartyPackages = true;
                 }
             }
@@ -188,9 +184,50 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         /* fire error message if we have any of 3rd-party packages */
         if (hasThirdPartyPackages && !hasAdvisories) {
-            holder.registerProblem(requireProperty.getFirstChild(), message);
+            holder.registerProblem(requireProperty.getFirstChild(), message, new AddAdvisoriesFix(requireProperty));
         }
 
         return holder.getResultsArray();
+    }
+
+    private static class AddAdvisoriesFix implements LocalQuickFix {
+        private final SmartPsiElementPointer<JsonProperty> require;
+
+        AddAdvisoriesFix(@NotNull JsonProperty require) {
+            final SmartPointerManager factory = SmartPointerManager.getInstance(require.getProject());
+            this.require                      = factory.createSmartPsiElementPointer(require);
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return "Require 'roave/security-advisories' package";
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return getFamilyName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor problemDescriptor) {
+            final JsonProperty require = this.require.getElement();
+            if (require != null && !project.isDisposed()) {
+                final PsiElement packages = require.getValue();
+                if (packages instanceof JsonObject) {
+                    final PsiElement marker = packages.getFirstChild();
+                    if (marker != null) {
+                        final LeafPsiElement comma = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
+                        if (comma != null) {
+                            final String code           = "\"roave/security-advisories\": \"dev-master\"";
+                            final PsiElement advisories = new JsonElementGenerator(project).createObject(code).getPropertyList().get(0);
+                            marker.getParent().addAfter(comma, marker);
+                            marker.getParent().addAfter(advisories, marker);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

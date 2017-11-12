@@ -15,6 +15,5 @@ final public class TernaryOperatorSimplifyInspectorTest extends PhpCodeInsightFi
         }
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/controlFlow/ternary-simplify.fixed.php");
-
     }
 }

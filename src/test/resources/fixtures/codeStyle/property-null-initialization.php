@@ -14,7 +14,7 @@ class NullInitChild extends NullInitParent {
     protected $overriddenProperty
         = <weak_warning descr="Null assignment can be safely removed. Define null in annotations if it's important.">null</weak_warning>;
 
-    private $overriddenNullableProperty1 // parent is not null, but it's a private one
+    private $overriddenNullableProperty1 // parent is not null, but its a private one
         = <weak_warning descr="Null assignment can be safely removed. Define null in annotations if it's important.">null</weak_warning>;
 
     protected $overriddenNullableProperty2

@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Ultimate)</name>
-  <version>2.3.11</version>
+  <version>2.3.12</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -52,35 +52,29 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Performance optimization, bug-fixes and new inspections:
+Bug-fix release:<br/>
 <br/>
+- Fixed multiple exceptions cases<br/>
 <br/>
-- Fixed exceptions in PhpStorm EAP-versions<br/>
-- Cascading dirname(...) calls: resolved false-positives (QFed code gets reported)<br/>
-- Could be replaced with '(array) ...': QF bug-fix<br/>
-- Null reference: resolved false-positives (multiple cases)<br/>
-- Unnecessary call arguments specification: resolved false-positives (extra arguments)<br/>
-- Unnecessary parentheses: resolved false-positives (concatenation)<br/>
-- Security advisories for Composer packages: resolved false-positives (library type is implicitly declared)<br/>
-- Self class referencing: resolved false-positives (multiple cases)<br/>
-- Variable functions usage: resolved false-positives (`string`->method(...))<br/>
-- 'mkdir(...)' race condition: QF bug-fix<br/>
+- Class overrides a field of a parent class: resolved false-positives (doctrine annotations)<br/>
+- Exceptions handling and annotating: QF bug-fix<br/>
+- Foreach source to iterate over: resolved false-positives (multiple cases)<br/>
+- Non-optimal if conditions: resolved false-positives (multiple cases)<br/>
+- Non-optimal regular expression: resolved false-positives (wrongly suggested trim usage)<br/>
+- Null reference: resolved a false-positive (complex if-conditions)<br/>
+- Parameter/variable is not used: resolved false-positives (assignments as calls argument)<br/>
+- Statement could be decoupled from foreach: resolved false-positives (possible objects modification)<br/>
+- Static methods invocation via '->': resolved false-positives (method name starts with 'static')<br/>
+- 'isset(...)' usage: resolved false-positives (isset in finally-statements)<br/>
+- 'simplexml_load_file(...)' usage correctness: QF bug-fix<br/>
+- *printf/*scanf arguments count mismatches: resolved false-positives (sscanf as call argument)<br/>
 <br/>
-- A constant can be used: new patterns<br/>
-- Forgotten debug statements: more debug functions (XDebug, typo3, Drupal, doctrine)<br/>
-- General '\Exception' is thrown: added settings<br/>
-- If-return-return could be simplified: new patterns<br/>
-- Missing or empty conditionals group statement: added settings<br/>
-- Non-optimal if conditions: new patterns<br/>
-- Non-optimal regular expression: new patterns<br/>
-- Suspicious binary operations: new patterns<br/>
-<br/>
-- Missing or empty conditionals group statement: QF implemented<br/>
-- Nested positive ifs: QF implemented<br/>
-- RSA oracle padding vulnerability: implemented<br/>
-- Unnecessary 'date(...)' arguments specification: implemented<br/>
-- Unnecessary isset arguments specification: implemented<br/>
-- 'compact(...)' can be used: implemented<br/>
+- Access modifiers shall be defined: new patterns (thank you David Rodrigues)<br/>
+- Default value is hidden in else branch: QF implemented<br/>
+- Security advisories for Composer packages: QF implemented<br/>
+- Ternary operator could be simplified: new patterns<br/>
+- Unqualified function/constant reference: added settings, default behaviour changed<br/>
+- 'in_array(...)' misused: added QF settings<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -164,7 +158,7 @@ Performance optimization, bug-fixes and new inspections:
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.PackedHashtableOptimizationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnqualifiedReferenceInspection"                displayName="Unqualified function/constant reference"
-        groupName="Performance"                                   enabledByDefault="false" level="WEAK WARNING"
+        groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnqualifiedReferenceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ExplodeMissUseInspection"                      displayName="'explode(...)' misused"

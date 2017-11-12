@@ -46,24 +46,26 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            /* re-dispatch to inspector */
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 this.checkParameters(method.getParameters(), method);
             }
 
-            public void visitPhpFunction(Function function) {
+            @Override
+            public void visitPhpFunction(@NotNull Function function) {
                 this.checkParameters(function.getParameters(), function);
 
                 final List<Variable> variables = ExpressionSemanticUtil.getUseListVariables(function);
-                if (null != variables) {
+                if (variables != null) {
                     this.checkUseVariables(variables, function);
                 }
             }
 
-            public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
+            @Override
+            public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
                 final PsiElement objVariable = assignmentExpression.getVariable();
                 /* check assignments containing variable as container */
-                if (objVariable instanceof Variable) {
+                if (objVariable instanceof Variable && OpenapiTypesUtil.isAssignment(assignmentExpression.getParent())) {
                     final String variableName = ((Variable) objVariable).getName();
                     if (StringUtils.isEmpty(variableName) || ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
                         return;
@@ -73,7 +75,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     final PsiElement parentScope = ExpressionSemanticUtil.getScope(assignmentExpression);
                     if (null != parentScope) {
                         /* ensure it's not parameter, as it checked anyway */
-                        for (Parameter objParameter : ((Function) parentScope).getParameters()) {
+                        for (final Parameter objParameter : ((Function) parentScope).getParameters()) {
                             final String parameterName = objParameter.getName();
                             if (StringUtils.isEmpty(parameterName)) {
                                 continue;
@@ -89,7 +91,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         final List<Variable> useList = ExpressionSemanticUtil.getUseListVariables((Function) parentScope);
                         if (null != useList) {
                             /* use-list is found */
-                            for (Variable useVariable : useList) {
+                            for (final Variable useVariable : useList) {
                                 final String useVariableName = useVariable.getName();
                                 if (StringUtils.isEmpty(useVariableName)) {
                                     continue;
@@ -111,7 +113,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
             }
 
             private void checkParameters(Parameter[] parameters, @NotNull PhpScopeHolder scopeHolder) {
-                for (Parameter parameter : parameters) {
+                for (final Parameter parameter : parameters) {
                     if (parameter.isPassByRef()) {
                         continue;
                     }
@@ -126,7 +128,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
             }
 
             private void checkUseVariables(@NotNull List<Variable> variables, @NotNull PhpScopeHolder scopeHolder) {
-                for (Variable variable : variables) {
+                for (final Variable variable : variables) {
                     final String parameterName = variable.getName();
                     if (StringUtils.isEmpty(parameterName)) {
                         continue;

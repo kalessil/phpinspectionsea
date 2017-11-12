@@ -24,11 +24,13 @@ import java.util.stream.Collectors;
 final public class AnalyticsUtil {
     private final static Set<String> stopList = new HashSet<>();
     static {
-        /* ugly, but: compatibility with PS 2016 and reducing crash reporting false-positives */
+        /* ugly, but: PhpStorm 2016 compatibility + reducing crash-reports rate */
         stopList.add("com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments");
         stopList.add("com.intellij.openapi.progress.ProcessCanceledException");
         stopList.add("com.intellij.util.indexing.StorageException");
         stopList.add("com.intellij.psi.stubs.UpToDateStubIndexMismatch");
+        stopList.add("java.util.ConcurrentModificationException");
+        stopList.add("java.lang.OutOfMemoryError");
         stopList.add("OpeanapiEquivalenceUtil.java");
         stopList.add("OpenapiResolveUtil.java");
     }
@@ -53,7 +55,10 @@ final public class AnalyticsUtil {
             if (!related.isEmpty()) {
                 final StackTraceElement entryPoint = related.get(0);
                 if (!stopList.contains(entryPoint.getFileName())) {
-                    final String description = String.format(
+                    final String message = error.getMessage();
+                    /* additional filter, specific string in messages */
+                    if (!message.contains("com.intellij.psi.impl.source.FileTrees.withExclusiveStub")) {
+                        final String description = String.format(
                             "[%s:%s@%s] %s.%s#%s: %s|%s",
                             entryPoint.getFileName(),
                             entryPoint.getLineNumber(),
@@ -61,10 +66,11 @@ final public class AnalyticsUtil {
                             stackTrace[0].getClassName(),
                             stackTrace[0].getMethodName(),
                             stackTrace[0].getLineNumber(),
-                            error.getMessage(),
+                            message,
                             error.getClass().getName()
-                    );
-                    invokeExceptionReporting(uuid, description);
+                        );
+                        invokeExceptionReporting(uuid, description);
+                    }
                 }
                 related.clear();
             }

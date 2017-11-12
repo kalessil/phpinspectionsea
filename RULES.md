@@ -25,7 +25,7 @@ Inspections Lists (Control flow)
 | Control Flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                                                | no  | yes | no   | no  |
 | Control Flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                                              | yes | yes | yes  | no  |
 | Control Flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                                              | yes | yes | yes  | no  |
-| Control Flow         | DefaultValueInElseBranchInspection              | Default value is hidden in else branch                                            | n/a | yes | n/a  | no  |
+| Control Flow         | DefaultValueInElseBranchInspection              | Default value is hidden in else branch                                            | yes | yes | yes  | no  |
 | Control Flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                                         | n/a |
 | Control Flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                                                          | n/a | yes | n/a  | no  |
 | Control Flow         | ThrowRawExceptionInspection                     | General '\Exception' is thrown                                                    | yes | yes | yes  | no  |
@@ -95,7 +95,7 @@ Inspections Lists (Code style)
 | Code Style           | UnNecessaryDoubleQuotesInspection               | Unnecessary double quotes                           | yes | yes | yes  | no  |
 | Code Style           | MissingOrEmptyGroupStatementInspection          | Missing or empty conditionals group statement       | no  | yes | no   | no  |
 | Code Style           | SenselessCommaInArrayDefinitionInspection       | Unnecessary last comma in array definition          | yes | yes | yes  | no  |
-| Code Style           | AccessModifierPresentedInspection               | Access modifiers shall be defined                   | yes | yes | no   | no  |
+| Code Style           | AccessModifierPresentedInspection               | Access modifiers shall be defined                   | yes | yes | yes  | no  |
 | Code Style           | CallableReferenceNameMismatchInspection         | Callable name case mismatched in a call             | yes | yes | yes  | no  |
 | Code Style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                 | yes | yes | yes  | no  |
 | Code Style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                  | yes | yes | no   | no  |
@@ -232,7 +232,7 @@ Inspections Lists (Performance)
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                                    | n/a |
 | Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                          | yes | yes | yes  | no  |
 | Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                                    | yes | yes | no   | no  |
-| Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                           | yes | yes | no   | no  |
+| Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                           | yes | yes | yes  | no  |
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos(...)/strripos(...)' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes | yes | yes  | no  |
 | Performance          | SubStrUsedAsArrayAccessInspection               | 'substr(...)' used as index-based access                                                          | yes | yes | yes  | no  |
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                                | yes | yes | yes  | no  |

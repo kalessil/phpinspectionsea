@@ -53,7 +53,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                         final String referencedQn  = reference.getText();
                         final PsiElement resolved  = validReferences.contains(referencedQn) ? null : OpenapiResolveUtil.resolveReference(clazz);
                         if (resolved instanceof PhpClass) {
-                            /* the resolved class will accumulate case issue in it's FQN */
+                            /* the resolved class will accumulate case issue in its FQN */
                             final List<String> variants = this.getVariants(clazz, (PhpClass) resolved);
                             if (!variants.isEmpty()) {
                                 final String implicitQn = variants.iterator().next();
@@ -111,7 +111,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                                     /* alias as it is */
                                     result.add(alias);
                                 } else if (what instanceof ClassReference) {
-                                    /* resolve the imported class, as it's the source for correct naming */
+                                    /* resolve the imported class, as its the source for correct naming */
                                     final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) what);
                                     if (resolved instanceof PhpClass) {
                                         final PhpClass resolvedImport = (PhpClass) resolved;

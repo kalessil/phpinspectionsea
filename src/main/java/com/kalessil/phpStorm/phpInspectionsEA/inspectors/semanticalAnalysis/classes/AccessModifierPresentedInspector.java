@@ -9,6 +9,8 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.Method;
@@ -32,10 +34,10 @@ import javax.swing.*;
  */
 
 public class AccessModifierPresentedInspector extends BasePhpInspection {
+    private static final String messagePattern = "'%s' should be declared with access modifier.";
+
     // Inspection options.
     public boolean ANALYZE_INTERFACES = true;
-
-    private static final String messagePattern = "'%s%' should be declared with access modifier.";
 
     @NotNull
     public String getShortName() {
@@ -44,40 +46,47 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
 
     @Override
     @NotNull
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+    public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpClass(@NotNull PhpClass clazz) {
                 /* community request: interfaces have only public methods, what is default access levels */
-                if (!ANALYZE_INTERFACES && clazz.isInterface()){
+                if (!ANALYZE_INTERFACES && clazz.isInterface()) {
                     return;
                 }
 
                 /* inspect methods */
                 for (final Method method : clazz.getOwnMethods()) {
                     final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
-                    if (methodName == null || !method.getAccess().isPublic()) {
-                        continue;
-                    }
-
-                    final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
-                    if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
-                        final String message = messagePattern.replace("%s%", method.getName());
-                        holder.registerProblem(methodName, message, new TheLocalFix(modifiers));
+                    if (methodName != null && method.getAccess().isPublic()) {
+                        final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
+                        if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
+                            final String message = String.format(messagePattern, method.getName());
+                            holder.registerProblem(methodName, message, new MemberVisibilityFix(modifiers));
+                        }
                     }
                 }
 
                 /* inspect fields */
+                final PhpLanguageLevel phpVersion     = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                final boolean checkConstantVisibility = phpVersion.compareTo(PhpLanguageLevel.PHP710) >= 0;
                 for (final Field field : clazz.getOwnFields()) {
                     final PsiElement fieldName = NamedElementUtil.getNameIdentifier(field);
-                    if (fieldName == null || field.isConstant() || !field.getModifier().isPublic()) {
-                        continue;
-                    }
-
-                    final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(field.getParent(), PhpModifierList.class);
-                    if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
-                        final String message = messagePattern.replace("%s%", field.getName());
-                        holder.registerProblem(fieldName, message, new TheLocalFix(modifiers));
+                    if (fieldName != null && field.getModifier().isPublic()) {
+                        if (field.isConstant()) {
+                            /* {const} inspection should be skipped if PHP version < 7.1.0. */
+                            /* {const}.isPublic() always returns true, even if visibility is not declared, so we need hardcode it. */
+                            if (checkConstantVisibility && field.getPrevPsiSibling() == null) {
+                                final String message = String.format(messagePattern, field.getName());
+                                holder.registerProblem(fieldName, message, new ConstantVisibilityFix(field));
+                            }
+                        } else {
+                            final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(field.getParent(), PhpModifierList.class);
+                            if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
+                                final String message = String.format(messagePattern, field.getName());
+                                holder.registerProblem(fieldName, message, new MemberVisibilityFix(modifiers));
+                            }
+                        }
                     }
                 }
             }
@@ -85,13 +94,13 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create(
-            (component) -> component.addCheckbox("Analyze interfaces", ANALYZE_INTERFACES, (isSelected) -> ANALYZE_INTERFACES = isSelected)
+        return OptionsComponent.create((component)
+            -> component.addCheckbox("Analyze interfaces", ANALYZE_INTERFACES, (isSelected) -> ANALYZE_INTERFACES = isSelected)
         );
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
-        final private SmartPsiElementPointer<PsiElement> modifiers;
+    private static class MemberVisibilityFix implements LocalQuickFix {
+        final private SmartPsiElementPointer<PhpModifierList> modifiersReference;
 
         @NotNull
         @Override
@@ -105,26 +114,58 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
             return getName();
         }
 
-        TheLocalFix(@NotNull PsiElement modifiers) {
-            super();
-            SmartPointerManager manager = SmartPointerManager.getInstance(modifiers.getProject());
-
-            this.modifiers = manager.createSmartPsiElementPointer(modifiers);
+        MemberVisibilityFix(@NotNull PhpModifierList modifiers) {
+            final SmartPointerManager manager = SmartPointerManager.getInstance(modifiers.getProject());
+            this.modifiersReference           = manager.createSmartPsiElementPointer(modifiers);
         }
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement modifiers = this.modifiers.getElement();
-            if (null != modifiers) {
-                final String access  = modifiers.getText().replace("var", "").trim();
-                final String pattern = "public %m% function x(){}"
-                        .replace("%m% ", 0 == access.length() ? "%m%" : "%m% ")
-                        .replace("%m%", access);
+            final PhpModifierList modifiers = this.modifiersReference.getElement();
+            if (modifiers != null) {
+                final String modifierFinal    = modifiers.hasFinal() ? "final " : "";
+                final String modifierAbstract = modifiers.hasAbstract() ? "abstract " : "";
+                final String modifierStatic   = modifiers.hasStatic() ? " static" : "";
+                final String pattern          = String.format("%s%spublic%s function x(){}", modifierFinal, modifierAbstract, modifierStatic);
 
-                final Method container       = PhpPsiElementFactory.createMethod(project, pattern);
-                PhpModifierList newModifiers = PsiTreeUtil.findChildOfType(container, PhpModifierList.class);
-                if (null != newModifiers) {
-                    modifiers.replace(newModifiers);
+                final Method donor            = PhpPsiElementFactory.createMethod(project, pattern);
+                final PhpModifierList implant = PsiTreeUtil.findChildOfType(donor, PhpModifierList.class);
+                if (implant != null) {
+                    modifiers.replace(implant);
+                }
+            }
+        }
+    }
+
+    private static class ConstantVisibilityFix implements LocalQuickFix {
+        private final SmartPsiElementPointer<Field> constFieldReference;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Declare public";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        ConstantVisibilityFix(@NotNull Field constField) {
+            final SmartPointerManager manager = SmartPointerManager.getInstance(constField.getProject());
+            this.constFieldReference          = manager.createSmartPsiElementPointer(constField);
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final Field constField = this.constFieldReference.getElement();
+            if (constField != null) {
+                final Method donor            = PhpPsiElementFactory.createMethod(project, "public function x(){}");
+                final PhpModifierList implant = PsiTreeUtil.findChildOfType(donor, PhpModifierList.class);
+                if (implant != null) {
+                    final PsiElement constKeyword = constField.getParent().getFirstChild();
+                    constKeyword.getParent().addBefore(implant, constKeyword);
                 }
             }
         }

@@ -87,7 +87,7 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference) {
+            if (expression instanceof FunctionReference && !project.isDisposed()) {
                 final FunctionReference replacement
                     = PhpPsiElementFactory.createFromText(project, FunctionReference.class, "f(null, null, true)");
                 if (null != replacement) {

@@ -7,16 +7,28 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class PrintfScanfArgumentsInspector extends BasePhpInspection {
     private static final String messagePattern    = "Pattern seems to be not valid.";
@@ -27,7 +39,7 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
         return "PrintfScanfArgumentsInspection";
     }
 
-    private static final HashMap<String, Integer> functions = new HashMap<>();
+    private static final Map<String, Integer> functions = new HashMap<>();
     static {
         /* pairs function name -> pattern position */
         functions.put("printf",  0);
@@ -47,9 +59,10 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (StringUtils.isEmpty(functionName) || !functions.containsKey(functionName)) {
+                if (functionName == null || !functions.containsKey(functionName)) {
                     return;
                 }
 
@@ -66,8 +79,8 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
                     return;
                 }
 
-                final String content = pattern.getContents();
-                if (!StringUtils.isEmpty(content)) {
+                final String content = pattern.getContents().trim();
+                if (!content.isEmpty()) {
                     /* find valid placeholders and extract positions specifiers as well */
                     int countWithoutPositionSpecifier = 0;
                     int maxPositionSpecifier          = 0;
@@ -91,7 +104,7 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
 
                         ++countWithoutPositionSpecifier;
                     }
-                    final int countParsingExpectedParameters = minimumArgumentsForAnalysis + Math.max(countWithoutPositionSpecifier, maxPositionSpecifier);
+                    final int expectedParametersCount = minimumArgumentsForAnalysis + Math.max(countWithoutPositionSpecifier, maxPositionSpecifier);
 
                     /* check for pattern validity */
                     final int parametersInPattern = StringUtils.countMatches(content.replace("%%", ""), "%");
@@ -101,25 +114,30 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
                     }
 
                     /* check for arguments matching */
-                    if (countParsingExpectedParameters != params.length) {
+                    if (expectedParametersCount != params.length) {
                         /* fscanf/sscanf will also return parsed values as an array if no values containers provided */
                         if (2 == params.length) {
-                            final boolean returnsArray = functionName.equals("fscanf") || functionName.equals("sscanf");
-                            final PsiElement parent    = returnsArray ? reference.getParent() : null;
-                            if (
-                                returnsArray &&  null != parent &&
-                                (parent instanceof AssignmentExpression || parent.getParent() instanceof AssignmentExpression)
-                            ) {
-                                return;
+                            final boolean returnsArray   = functionName.equals("fscanf") || functionName.equals("sscanf");
+                            final PsiElement parent      = returnsArray ? reference.getParent() : null;
+                            final PsiElement grandParent = parent == null ? null : parent.getParent();
+                            if (returnsArray && parent != null) {
+                                /* false-positive: dispatching/deconstructing into containers */
+                                if (parent instanceof AssignmentExpression || grandParent instanceof AssignmentExpression) {
+                                    return;
+                                }
+                                /* false-positive: dispatching into calls */
+                                else if (parent instanceof ParameterList && grandParent instanceof FunctionReference) {
+                                    return;
+                                }
                             }
                         }
 
-                        final PsiElement variadic = params[params.length - 1].getPrevSibling();
-                        if (null != variadic && PhpTokenTypes.opVARIADIC == variadic.getNode().getElementType()) {
+                        /* false-positives: variadic */
+                        if (OpenapiTypesUtil.is(params[params.length - 1].getPrevSibling(), PhpTokenTypes.opVARIADIC)) {
                             return;
                         }
 
-                        final String message = messageParameters.replace("%c%", String.valueOf(countParsingExpectedParameters));
+                        final String message = messageParameters.replace("%c%", String.valueOf(expectedParametersCount));
                         holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
                     }
                 }

@@ -1,10 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations;
 
-import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -40,7 +40,8 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpIf(If ifStatement) {
+            @Override
+            public void visitPhpIf(@NotNull If ifStatement) {
                 /* skip ifs without else */
                 final Else elseStatement = ifStatement.getElseBranch();
                 if (null == elseStatement) {
@@ -53,7 +54,7 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
                 final List<PhpPsiElement> conditionsList       = new ArrayList<>();
                 groupStatementsList.add(ExpressionSemanticUtil.getGroupStatement(ifStatement));
                 conditionsList.add(ifStatement.getCondition());
-                for (ControlStatement elseIf : ifStatement.getElseIfBranches()) {
+                for (final ControlStatement elseIf : ifStatement.getElseIfBranches()) {
                     groupStatementsList.add(ExpressionSemanticUtil.getGroupStatement(elseIf));
                     conditionsList.add(elseIf.getCondition());
                 }
@@ -62,7 +63,7 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
 
                 /* collect assignments or stop inspecting when structure expectations are not met */
                 final LinkedList<AssignmentExpression> assignmentsList = new LinkedList<>();
-                for (GroupStatement group : groupStatementsList) {
+                for (final GroupStatement group : groupStatementsList) {
                     /* only one expression in group statement */
                     if (null == group || 1 != ExpressionSemanticUtil.countExpressionsInGroup(group)) {
                         groupStatementsList.clear();
@@ -72,7 +73,7 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
 
                     /* find assignments, take comments in account */
                     AssignmentExpression assignmentExpression = null;
-                    for (PsiElement ifChild : group.getChildren()) {
+                    for (final PsiElement ifChild : group.getChildren()) {
                         /* assignment expression check */
                         if (ifChild instanceof Statement && ifChild.getFirstChild() instanceof AssignmentExpression) {
                             final AssignmentExpression branchAssignment  = (AssignmentExpression) ifChild.getFirstChild();
@@ -103,7 +104,7 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
                 }
                 /* now check all assignments against subject identity */
                 PhpPsiElement subjectFromExpression;
-                for (AssignmentExpression subjectAssignmentExpression : assignmentsList) {
+                for (final AssignmentExpression subjectAssignmentExpression : assignmentsList) {
                     /* ensure target variable is discoverable */
                     subjectFromExpression = subjectAssignmentExpression.getVariable();
                     if (null == subjectFromExpression) {
@@ -135,7 +136,7 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
                 final boolean isValidCandidate = null != candidate && isDefaultValueCandidateFits(candidate);
                 if (isValidCandidate && !isContainerUsedInConditions(conditionsList, subjectToCompareWith)) {
                     /* point the problem out */
-                    holder.registerProblem(elseStatement.getFirstChild(), message, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(elseStatement.getFirstChild(), message, new MoveDefaultValueFix());
                 }
                 assignmentsList.clear();
                 conditionsList.clear();
@@ -189,5 +190,36 @@ public class DefaultValueInElseBranchInspector extends BasePhpInspection {
                 return false;
             }
         };
+    }
+
+    private static class MoveDefaultValueFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Place default value before if";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression != null && !project.isDisposed()) {
+                final PsiElement elseStatement = expression.getParent();
+                final PsiElement ifStatement   = elseStatement.getParent();
+                final GroupStatement elseBody  = ExpressionSemanticUtil.getGroupStatement(elseStatement);
+                if (elseBody != null) {
+                    final PsiElement assignment = elseBody.getFirstPsiChild();
+                    if (assignment != null) {
+                        ifStatement.getParent().addBefore(assignment, ifStatement);
+                        elseStatement.delete();
+                    }
+                }
+            }
+        }
     }
 }

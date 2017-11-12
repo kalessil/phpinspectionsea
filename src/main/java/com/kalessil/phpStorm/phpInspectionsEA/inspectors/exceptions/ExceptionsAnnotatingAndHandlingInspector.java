@@ -29,6 +29,15 @@ import javax.swing.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection {
     // Inspection options.
     public boolean REPORT_NON_THROWN_EXCEPTIONS = false;
@@ -239,9 +248,9 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 final LinkedList<String> newCommentLines = new LinkedList<>();
                 for (final String line : phpDoc.getText().split("\\n")) {
                     /* injecting after return tag: probe 1 */
-                    if (!injected && line.contains("@return")) {
+                    if (!injected && line.contains("@throws")) {
+                        newCommentLines.add(line.replaceAll("@throws[^\\r\\n]*", patternPlace));
                         newCommentLines.add(line);
-                        newCommentLines.add(line.replaceAll("@return[^\\r\\n]*", patternPlace));
 
                         injected = true;
                         continue;

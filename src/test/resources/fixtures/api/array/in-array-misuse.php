@@ -1,5 +1,6 @@
 <?php
 
+function cases_holder() {
     /* comparison equivalent cases */
     $x = <error descr="''2' == '1'' should be used instead.">in_array('1', ['2'], false)</error>;
     $x = <error descr="''2' === '1'' should be used instead.">in_array('1', ['2'], true)</error>;
@@ -45,3 +46,4 @@
     /* false-positives */
     $x = in_array('1', array(), true);
     $x = in_array('1', array());
+}

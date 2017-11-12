@@ -110,6 +110,14 @@ class CasesHolder {
             return $exception->getMessage();
         }
     }
+
+    public function npeSafeChecks(?CasesHolder $first, ?CasesHolder $second) {
+        if ($first) {
+            return $first->nonExistingField;
+        } elseif($first && $second) {
+            return $second->nonExistingField;
+        }
+    }
 }
 
 function cases_holder(?CasesHolder $object) {

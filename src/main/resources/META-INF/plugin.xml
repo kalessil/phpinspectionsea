@@ -56,6 +56,7 @@ Bug-fix release:<br/>
 <br/>
 - Non-optimal regular expression: new patterns<br/>
 - Insecure 'array_rand(...)' usage: implemented<br/>
+- 'file_put_contents(...)' race condition: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -328,7 +329,11 @@ Bug-fix release:<br/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MkdirRaceConditionInspection"                  displayName="'mkdir(...)' race condition"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.MkdirRaceConditionInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.raceConditions.MkdirRaceConditionInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="FilePutContentsRaceConditionInspection"        displayName="'file_put_contents(...)' race condition"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.raceConditions.FilePutContentsRaceConditionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="InconsistentQueryBuildInspection"              displayName="Inconsistent 'http_build_query(...)' result"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"

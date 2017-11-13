@@ -57,7 +57,7 @@ final public class AnalyticsUtil {
                 if (!stopList.contains(entryPoint.getFileName())) {
                     final String message = error.getMessage();
                     /* additional filter, specific string in messages */
-                    if (!message.contains("com.intellij.psi.impl.source.FileTrees.withExclusiveStub")) {
+                    if (message == null || !message.contains("com.intellij.psi.impl.source.FileTrees.withExclusiveStub")) {
                         final String description = String.format(
                             "[%s:%s@%s] %s.%s#%s: %s|%s",
                             entryPoint.getFileName(),

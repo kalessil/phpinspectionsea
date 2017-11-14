@@ -79,7 +79,7 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Add SORT_STRING as a parameter";
+            return "Add SORT_STRING as an argument";
         }
 
         @NotNull
@@ -91,7 +91,7 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference) {
+            if (expression instanceof FunctionReference && !project.isDisposed()) {
                 final FunctionReference call = (FunctionReference) expression;
                 final PsiElement[] params    = call.getParameters();
 

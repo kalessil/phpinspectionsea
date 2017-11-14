@@ -1,9 +1,14 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.raceConditions;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
@@ -40,7 +45,7 @@ public class FilePutContentsRaceConditionInspector extends BasePhpInspection {
                     /* there is no solid patter, hence we are searching test fragments under the hood */
                     final boolean isTarget = this.match(arguments[0], ".php") || this.match(arguments[1], "<?php");
                     if (isTarget) {
-                        holder.registerProblem(reference, message);
+                        holder.registerProblem(reference, message, new AddLockExFlagFix());
                     }
                 }
             }
@@ -55,5 +60,39 @@ public class FilePutContentsRaceConditionInspector extends BasePhpInspection {
                 return result;
             }
         };
+    }
+
+    private static class AddLockExFlagFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Add LOCK_EX as an argument";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression instanceof FunctionReference && !project.isDisposed()) {
+                final FunctionReference call = (FunctionReference) expression;
+                final ParameterList target   = call.getParameterList();
+                if (target != null) {
+                    final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, "f(null, null, LOCK_EX)");
+                    final ParameterList implant         = replacement.getParameterList();
+                    if (implant != null) {
+                        final PsiElement[] placeholders = replacement.getParameters();
+                        final PsiElement[] arguments    = call.getParameters();
+                        placeholders[0].replace(arguments[0]);
+                        placeholders[1].replace(arguments[1]);
+                        target.replace(implant);
+                    }
+                }
+            }
+        }
     }
 }

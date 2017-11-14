@@ -156,7 +156,7 @@ final public class LicenseService {
         try {
             client.UseTrial(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL, this.getLicenseHolder());
             trialDaysRemaining = client.TrialDaysRemaining(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL);
-            shouldAllowUsage   = true;
+            shouldAllowUsage   = trialDaysRemaining > 0;
         } catch (TurboActivateException activationFailed) {
             final String message = activationFailed.getMessage();
             errorDetails.append(message == null ? activationFailed.getClass().getName() : message);

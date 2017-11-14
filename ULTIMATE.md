@@ -1,0 +1,6 @@
+- Uninstall Php Inspections (EA Extended)
+- Install Php Inspections (EA Ultimate) (https://github.com/kalessil/phpinspectionsea/raw/ultimate/PhpInspectionsEA.jar)
+  - it's 99% Php Inspection (EA Extended), so I expect your daily work to be not affected
+  - (+2 new inspections), currently only 3 inspections are feature-toggled
+- And challenging part: find your way to start trial/visit purchase page (I'll send test license keys later)
+- Looking for feedback of any sort, perhaps something is not obvious/unusable =)

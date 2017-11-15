@@ -100,7 +100,7 @@ final public class LicenseService {
     private boolean isTrialLicense() {
         boolean result = true;
         try {
-            trialDaysRemaining = client.TrialDaysRemaining(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL);
+            trialDaysRemaining = client.TrialDaysRemaining(TurboActivate.TA_USER | TurboActivate.TA_VERIFIED_TRIAL);
         } catch (TurboActivateException failure) {
             result = false;
         }
@@ -120,7 +120,7 @@ final public class LicenseService {
     boolean applyLicenseKey(@Nullable String key, @NotNull StringBuilder errorDetails) {
         boolean result;
         try {
-            result = client.CheckAndSavePKey(key, TurboActivate.TA_SYSTEM);
+            result = client.CheckAndSavePKey(key, TurboActivate.TA_USER);
             if (result) {
                 client.Activate(this.getLicenseHolder());
                 licenseDaysRemaining = client.GenuineDays(90, 14, new BoolRef());
@@ -154,8 +154,8 @@ final public class LicenseService {
     boolean startTrial(@NotNull StringBuilder errorDetails) {
         boolean result = true;
         try {
-            client.UseTrial(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL, this.getLicenseHolder());
-            trialDaysRemaining = client.TrialDaysRemaining(TurboActivate.TA_SYSTEM | TurboActivate.TA_VERIFIED_TRIAL);
+            client.UseTrial(TurboActivate.TA_USER | TurboActivate.TA_VERIFIED_TRIAL, this.getLicenseHolder());
+            trialDaysRemaining = client.TrialDaysRemaining(TurboActivate.TA_USER | TurboActivate.TA_VERIFIED_TRIAL);
             shouldAllowUsage   = true;
         } catch (TurboActivateException activationFailed) {
             final String message = activationFailed.getMessage();

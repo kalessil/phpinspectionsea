@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParameterList;
+import com.kalessil.phpStorm.phpInspectionsEA.EAApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
@@ -39,6 +40,8 @@ public class FilePutContentsRaceConditionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (!EAApplicationComponent.areFeaturesEnabled()) { return; }
+
                 final String functionName    = reference.getName();
                 final PsiElement[] arguments = reference.getParameters();
                 if (functionName != null && arguments.length == 2 && functionName.equals("file_put_contents")) {

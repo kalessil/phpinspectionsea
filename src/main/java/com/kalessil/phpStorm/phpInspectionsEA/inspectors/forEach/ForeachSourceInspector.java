@@ -148,7 +148,8 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         isStubFunction            = null != filePath && filePath.contains(".jar!") && filePath.contains("/stubs/");
                     }
 
-                    if (!isStubFunction) {
+                    /* false-positive: mixed definition from array type */
+                    if (!isStubFunction && !types.contains(Types.strArray)) {
                         final String message = patternMixedTypes.replace("%t%", Types.strMixed);
                         holder.registerProblem(container, message, ProblemHighlightType.WEAK_WARNING);
                     }

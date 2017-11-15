@@ -54,7 +54,8 @@ final public class LicenseService {
             throw new RuntimeException("Licensing related resources are missing.");
         }
 
-        final Path tempFolder        = Files.createTempDirectory("ea-ultimate-").toAbsolutePath();
+        final Path pluginFolder      = Paths.get(System.getProperty("user.home") + "/.ea-ultimate/");
+        final Path tempFolder        = Files.createTempDirectory(pluginFolder, "bin-").toAbsolutePath();
         final String[] sourceDetails = binaries.toURI().toString().split("!");
         final FileSystem pluginJarFs = FileSystems.newFileSystem(URI.create(sourceDetails[0]), new HashMap<>());
         Files.walk(pluginJarFs.getPath(sourceDetails[1])).forEach(sourceFile -> {
@@ -69,6 +70,7 @@ final public class LicenseService {
             }
         });
         pluginJarFs.close();
+        /* TODO: cleanup pluginFolder - older than 3 days, ignore failures */
 
         this.client = new TurboActivate("2d65930359df9afb6f9a54.36732074", tempFolder.toString() + "/TurboActivate/");
     }

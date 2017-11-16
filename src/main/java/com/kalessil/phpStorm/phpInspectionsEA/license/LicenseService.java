@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.license;
 
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PathManager;
 import com.intellij.ui.LicensingFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.EAApplicationComponent;
 import com.wyday.turboactivate.BoolRef;
@@ -54,7 +55,7 @@ final public class LicenseService {
             throw new RuntimeException("Licensing related resources are missing.");
         }
 
-        final Path ideTempFolder     = Paths.get(System.getProperty("idea.system.path") + "/tmp/");
+        final Path ideTempFolder     = Paths.get(PathManager.getTempPath());
         final Path tempFolder        = Files.createTempDirectory(ideTempFolder, "ea-ultimate-").toAbsolutePath();
         final String[] sourceDetails = binaries.toURI().toString().split("!");
         final FileSystem pluginJarFs = FileSystems.newFileSystem(URI.create(sourceDetails[0]), new HashMap<>());

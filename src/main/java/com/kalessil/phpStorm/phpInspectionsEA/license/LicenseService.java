@@ -4,6 +4,7 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.ui.LicensingFacade;
+import com.intellij.util.net.HttpConfigurable;
 import com.kalessil.phpStorm.phpInspectionsEA.EAApplicationComponent;
 import com.wyday.turboactivate.BoolRef;
 import com.wyday.turboactivate.IsGenuineResult;
@@ -34,6 +35,24 @@ final public class LicenseService {
 
     @Nullable
     private TurboActivate client;
+
+    @Nullable
+    private String getProxy() {
+        final HttpConfigurable proxySettings = HttpConfigurable.getInstance();
+        final String host                    = proxySettings.PROXY_HOST;
+        if (!proxySettings.USE_HTTP_PROXY || host == null || host.isEmpty()) {
+            return null;
+        }
+
+        String credentials = "";
+        final String login = proxySettings.getProxyLogin();
+        if (login != null && !login.isEmpty()) {
+            final String password = proxySettings.getPlainProxyPassword();
+            credentials = login + (password == null ? "" : (":" + password)) + "@";
+        }
+
+        return String.format("http://%s%s:%s/", credentials, host, proxySettings.PROXY_PORT);
+    }
 
     public boolean shouldCheckPluginLicense() {
         if (this.shouldCheckLicense == null) {
@@ -84,6 +103,7 @@ final public class LicenseService {
     }
 
     public boolean isActiveLicense() throws TurboActivateException {
+        client.SetCustomProxy(this.getProxy());
         final IsGenuineResult result = client.IsGenuine(90, 14, true, false);
         final boolean isGenuine      = result == IsGenuineResult.Genuine || result == IsGenuineResult.GenuineFeaturesChanged;
         if (isGenuine) {
@@ -102,6 +122,7 @@ final public class LicenseService {
     private boolean isTrialLicense() {
         boolean result = true;
         try {
+            client.SetCustomProxy(this.getProxy());
             trialDaysRemaining = client.TrialDaysRemaining(TurboActivate.TA_USER | TurboActivate.TA_VERIFIED_TRIAL);
         } catch (TurboActivateException failure) {
             result = false;
@@ -124,6 +145,7 @@ final public class LicenseService {
         try {
             result = client.CheckAndSavePKey(key, TurboActivate.TA_USER);
             if (result) {
+                client.SetCustomProxy(this.getProxy());
                 client.Activate(this.getLicenseHolder());
                 licenseDaysRemaining = client.GenuineDays(90, 14, new BoolRef());
                 shouldAllowUsage     = true;
@@ -142,6 +164,7 @@ final public class LicenseService {
         boolean result;
         try {
             key.append(client.GetPKey());
+            client.SetCustomProxy(this.getProxy());
             client.Deactivate(true);
             result           = true;
             shouldAllowUsage = false;
@@ -156,6 +179,7 @@ final public class LicenseService {
     boolean startTrial(@NotNull StringBuilder errorDetails) {
         boolean result = true;
         try {
+            client.SetCustomProxy(this.getProxy());
             client.UseTrial(TurboActivate.TA_USER | TurboActivate.TA_VERIFIED_TRIAL, this.getLicenseHolder());
             trialDaysRemaining = client.TrialDaysRemaining(TurboActivate.TA_USER | TurboActivate.TA_VERIFIED_TRIAL);
             shouldAllowUsage   = trialDaysRemaining > 0;

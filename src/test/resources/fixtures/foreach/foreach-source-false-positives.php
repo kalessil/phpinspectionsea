@@ -54,3 +54,12 @@
             foreach ($objectOrArray as $value) {}
         }
     }
+
+    /* false-positives: php-doc + type hint result */
+    /** @return string[][] */
+    function returns_array(): array {}
+    function consumes_array() {
+        foreach (returns_array() as $array) {
+            foreach ($array as $string) {}
+        }
+    }

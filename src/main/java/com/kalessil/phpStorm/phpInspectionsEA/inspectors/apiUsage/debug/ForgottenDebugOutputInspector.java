@@ -222,7 +222,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
 
             private boolean isInDebugFunction(@NotNull PsiElement debugStatement) {
                 final Function scope = ExpressionSemanticUtil.getScope(debugStatement);
-                return scope != null && configuration.contains(scope.getFQN());
+                return scope != null && configuration.contains(scope instanceof Method ? scope.getFQN() : scope.getName());
             }
 
             private boolean isBuffered(@NotNull PsiElement debugStatement) {

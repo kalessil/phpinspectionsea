@@ -1,4 +1,4 @@
-#!/bin/bash --verbose
+#!/bin/bash
 
 # bash strict mode is on
 set -euo pipefail

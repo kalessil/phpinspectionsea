@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.Method;
+import com.kalessil.phpStorm.phpInspectionsEA.EAApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.strategy.ChainedCallsStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.strategy.NullableVariablesStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -31,6 +32,8 @@ public class NullPointerExceptionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
+                if (!EAApplicationComponent.areFeaturesEnabled()) { return; }
+
                 if (!method.isAbstract()) {
                     NullableVariablesStrategy.applyToParameters(method, holder);
                     ChainedCallsStrategy.apply(method, holder);
@@ -40,9 +43,11 @@ public class NullPointerExceptionInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
-                    NullableVariablesStrategy.applyToParameters(function, holder);
-                    ChainedCallsStrategy.apply(function, holder);
-                    NullableVariablesStrategy.applyToLocalVariables(function, holder);
+                if (!EAApplicationComponent.areFeaturesEnabled()) { return; }
+
+                NullableVariablesStrategy.applyToParameters(function, holder);
+                ChainedCallsStrategy.apply(function, holder);
+                NullableVariablesStrategy.applyToLocalVariables(function, holder);
             }
         };
     }

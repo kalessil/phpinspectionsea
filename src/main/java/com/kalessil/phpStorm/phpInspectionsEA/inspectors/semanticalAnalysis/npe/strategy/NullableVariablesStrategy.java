@@ -62,30 +62,37 @@ final public class NullableVariablesStrategy {
         /* check if the variable has been written only once, inspect when null/void values are possible */
         final PhpEntryPointInstruction controlFlowStart = function.getControlFlow().getEntryPoint();
         final Project project                           = holder.getProject();
-        for (final String variableName : assignments.keySet()) {
-            final List<AssignmentExpression> variableAssignments = assignments.get(variableName);
-            if (variableAssignments.size() == 1) {
+        for (final Map.Entry<String, List<AssignmentExpression>> pair : assignments.entrySet()) {
+            final List<AssignmentExpression> variableAssignments = pair.getValue();
+            if (!variableAssignments.isEmpty()) {
                 final AssignmentExpression assignment = variableAssignments.iterator().next();
-                final PsiElement assignmentValue      = assignment.getValue();
-                if (assignmentValue instanceof PhpTypedElement) {
-                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) assignmentValue, project);
-                    if (resolved != null) {
-                        final Set<String> types = resolved.filterUnknown().getTypes().stream()
-                                .map(Types::getType)
-                                .collect(Collectors.toSet());
-                        if (types.contains(Types.strNull) || types.contains(Types.strVoid)) {
-                            types.remove(Types.strNull);
-                            types.remove(Types.strVoid);
-                            if (types.stream().filter(t -> !t.startsWith("\\") && !objectTypes.contains(t)).count() == 0) {
-                                apply(variableName, assignment, controlFlowStart, holder);
-                            }
-                        }
+                if (isNullableResult(assignment, project)) {
+                    apply(pair.getKey(), assignment, controlFlowStart, holder);
+                }
+                variableAssignments.clear();
+            }
+        }
+        assignments.clear();
+    }
+
+    static private boolean isNullableResult(@NotNull AssignmentExpression assignment, @NotNull Project project) {
+        boolean result                   = false;
+        final PsiElement assignmentValue = assignment.getValue();
+        if (assignmentValue instanceof PhpTypedElement) {
+            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) assignmentValue, project);
+            if (resolved != null) {
+                final Set<String> types = resolved.filterUnknown().getTypes().stream()
+                        .map(Types::getType)
+                        .collect(Collectors.toSet());
+                if (types.contains(Types.strNull) || types.contains(Types.strVoid)) {
+                    types.removeIf(type -> type.equals(Types.strNull) || type.equals(Types.strVoid));
+                    if (types.stream().filter(t -> !t.startsWith("\\") && !objectTypes.contains(t)).count() == 0) {
+                        result = true;
                     }
                 }
             }
-            variableAssignments.clear();
         }
-        assignments.clear();
+        return result;
     }
 
     public static void applyToParameters(@NotNull Function function, @NotNull ProblemsHolder holder) {
@@ -120,8 +127,8 @@ final public class NullableVariablesStrategy {
         @NotNull PhpEntryPointInstruction controlFlowStart,
         @NotNull ProblemsHolder holder
     ) {
-        final PhpAccessVariableInstruction[] uses
-                = PhpControlFlowUtil.getFollowingVariableAccessInstructions(controlFlowStart, variableName, false);
+        final Project project                     = holder.getProject();
+        final PhpAccessVariableInstruction[] uses = PhpControlFlowUtil.getFollowingVariableAccessInstructions(controlFlowStart, variableName, false);
         for (final PhpAccessVariableInstruction instruction : uses) {
             final PhpPsiElement variable = instruction.getAnchor();
             final PsiElement parent      = variable.getParent();
@@ -169,7 +176,9 @@ final public class NullableVariablesStrategy {
                 final AssignmentExpression assignment = (AssignmentExpression) parent;
                 final PsiElement candidate            = assignment.getVariable();
                 if (candidate instanceof Variable && ((Variable) candidate).getName().equals(variableName)) {
-                    return;
+                    if (!isNullableResult(assignment, project)) {
+                        return;
+                    }
                 }
             }
             /* cases when NPE can be introduced: array access */

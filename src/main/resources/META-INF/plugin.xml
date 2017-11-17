@@ -54,8 +54,9 @@ with a laptop.
   <change-notes><![CDATA[
 Bug-fix release:<br/>
 <br/>
-- Non-optimal regular expression: new patterns<br/>
 - Insecure 'array_rand(...)' usage: implemented<br/>
+- Non-optimal regular expression: new patterns<br/>
+- Null reference: new patterns<br/>
 - 'file_put_contents(...)' race condition: implemented<br/>
 <br/>
 <hr/>

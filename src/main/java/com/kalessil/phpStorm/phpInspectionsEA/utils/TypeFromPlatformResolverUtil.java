@@ -20,6 +20,7 @@ import java.util.HashSet;
  */
 
 final public class TypeFromPlatformResolverUtil {
+    /** @deprecated use platform OpenapiResolveUtil instead */
     public static void resolveExpressionType(@NotNull PsiElement expression, @NotNull HashSet<String> types) {
         if (expression instanceof PhpTypedElement) {
             final Project project = expression.getProject();

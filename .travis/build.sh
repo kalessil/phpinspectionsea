@@ -6,7 +6,7 @@ IFS=$'\n\t'
 
 ideUrl="IU-2017.2"
 if [ "$IDE_ID" == "IU-2017.2" ]; then
-    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.4.tar.gz"
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
 elif [ "$IDE_ID" == "IU-2017.1" ]; then
     ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
 elif [ "$IDE_ID" == "IU-2016.3" ]; then

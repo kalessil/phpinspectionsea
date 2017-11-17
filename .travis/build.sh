@@ -4,6 +4,15 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+# trap errors, so failed lines are getting reported
+function handle_error {
+    local retval=$?
+    local line=$1
+    echo "Failed at $line: $BASH_COMMAND"
+    exit $retval
+}
+trap 'handle_error $LINENO' ERR
+
 ideUrl="IU-2017.2"
 if [ "$IDE_ID" == "IU-2017.2" ]; then
     ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.4.tar.gz"

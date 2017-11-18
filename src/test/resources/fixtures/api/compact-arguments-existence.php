@@ -1,6 +1,6 @@
 <?php
 
-function buggyCompact($x, $y) {
+function buggy_compact($x, $y) {
     $z = $x + $y;
     return
         <error descr="$zz might not be defined in the scope.">compact</error> ('x', 'y', 'z', 'zz', 'zz', "$$z")
@@ -11,7 +11,7 @@ function buggyCompact($x, $y) {
     ;
 }
 
-function buggyCompactControlFlow($x, $y) {
+function buggy_compact_control_flow($x, $y) {
     $temp = <error descr="$z might not be defined in the scope.">compact</error>('x', 'y', 'z');
     $z    = $x + $y;
 

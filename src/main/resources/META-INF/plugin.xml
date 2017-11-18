@@ -57,6 +57,7 @@ Bug-fix release:<br/>
 - Insecure 'array_rand(...)' usage: implemented<br/>
 - Non-optimal regular expression: new patterns<br/>
 - Null reference: new patterns<br/>
+- 'compact(...)' variables existence: new patterns<br/>
 - 'file_put_contents(...)' race condition: implemented<br/>
 <br/>
 <hr/>

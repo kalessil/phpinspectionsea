@@ -31,6 +31,7 @@ final public class AnalyticsUtil {
         stopList.add("com.intellij.psi.stubs.UpToDateStubIndexMismatch");
         stopList.add("java.util.ConcurrentModificationException");
         stopList.add("java.lang.OutOfMemoryError");
+        stopList.add("com.intellij.psi.impl.source.FileTrees");
         stopList.add("OpeanapiEquivalenceUtil.java");
         stopList.add("OpenapiResolveUtil.java");
     }
@@ -54,23 +55,19 @@ final public class AnalyticsUtil {
                     .collect(Collectors.toList());
             if (!related.isEmpty()) {
                 final StackTraceElement entryPoint = related.get(0);
-                if (!stopList.contains(entryPoint.getFileName())) {
-                    final String message = error.getMessage();
-                    /* additional filter, specific string in messages */
-                    if (message == null || !message.contains("com.intellij.psi.impl.source.FileTrees.withExclusiveStub")) {
-                        final String description = String.format(
-                            "[%s:%s@%s] %s.%s#%s: %s|%s",
-                            entryPoint.getFileName(),
-                            entryPoint.getLineNumber(),
-                            version,
-                            stackTrace[0].getClassName(),
-                            stackTrace[0].getMethodName(),
-                            stackTrace[0].getLineNumber(),
-                            message,
-                            error.getClass().getName()
-                        );
-                        invokeExceptionReporting(uuid, description);
-                    }
+                if (!stopList.contains(entryPoint.getFileName()) && !stopList.contains(stackTrace[0].getClassName())) {
+                    final String description = String.format(
+                        "[%s:%s@%s] %s::%s#%s: %s|%s",
+                        entryPoint.getFileName(),
+                        entryPoint.getLineNumber(),
+                        version,
+                        stackTrace[0].getClassName(),
+                        stackTrace[0].getMethodName(),
+                        stackTrace[0].getLineNumber(),
+                        error.getMessage(),
+                        error.getClass().getName()
+                    );
+                    invokeExceptionReporting(uuid, description);
                 }
                 related.clear();
             }

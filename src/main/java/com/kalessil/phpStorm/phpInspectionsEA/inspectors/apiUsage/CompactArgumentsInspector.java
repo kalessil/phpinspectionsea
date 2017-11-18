@@ -59,7 +59,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                                 }
                             } else if (argument instanceof Variable) {
                                 final String message = String.format(patternStringExpected, ((Variable) argument).getName());
-                                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING);
+                                holder.registerProblem(argument, message, ProblemHighlightType.WEAK_WARNING);
                             }
                         }
 

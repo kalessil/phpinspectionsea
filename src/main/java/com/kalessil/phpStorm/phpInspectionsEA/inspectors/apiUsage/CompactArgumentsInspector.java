@@ -44,18 +44,18 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                 if (!EAApplicationComponent.areFeaturesEnabled()) { return; }
 
                 final PsiElement[] arguments = reference.getParameters();
-                final String function        = reference.getName();
-                if (arguments.length > 0 && function != null && function.equals("compact")) {
+                final String functionName    = reference.getName();
+                if (arguments.length > 0 && functionName != null && functionName.equals("compact")) {
                     final Function scope = ExpressionSemanticUtil.getScope(reference);
                     if (scope != null) {
                         /* extract variables names needed */
-                        final Set<String> variablesCompacted = new HashSet<>();
+                        final Set<String> compacted = new HashSet<>();
                         for (final PsiElement argument : arguments) {
                             if (argument instanceof StringLiteralExpression) {
                                 final StringLiteralExpression expression = (StringLiteralExpression) argument;
                                 final String name                        = expression.getContents();
                                 if (!name.isEmpty() && expression.getFirstPsiChild() == null) {
-                                    variablesCompacted.add(name);
+                                    compacted.add(name);
                                 }
                             } else if (argument instanceof Variable) {
                                 final String message = String.format(patternStringExpected, ((Variable) argument).getName());
@@ -64,7 +64,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                         }
 
                         /* if we have something to analyze, collect what scope provides */
-                        if (!variablesCompacted.isEmpty()) {
+                        if (!compacted.isEmpty()) {
                             final Set<String> declarations = Stream.of(scope.getParameters())
                                     .map(Parameter::getName)
                                     .collect(Collectors.toSet());
@@ -81,7 +81,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                             }
 
                             /* analyze and report suspicious parameters, release refs afterwards */
-                            variablesCompacted.stream()
+                            compacted.stream()
                                     .filter(subject  -> !declarations.contains(subject))
                                     .forEach(subject -> {
                                         final String message = String.format(patternUnknownVariable, subject);
@@ -89,7 +89,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                                     });
 
                             declarations.clear();
-                            variablesCompacted.clear();
+                            compacted.clear();
                         }
                     }
                 }

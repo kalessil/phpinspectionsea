@@ -52,3 +52,28 @@ Following changes can be applied to fix the case:
 
 - Apply a Quick-Fix to use PDO:exec() instead
 - Use the returned statement
+
+### General Exception is thrown 
+
+The inspection targets two cases:
+
+## Throw \Exception instance
+
+Generic exception are not helpful when maintain and debugging PHP-application.  
+Solution is to use more specific [SPL exceptions](https://secure.php.net/manual/en/spl.exceptions.php).
+
+## Exception is thrown without a message
+
+Informative and reasonably detailed exceptions messages are saving lots of debugging time, hence we spot places where 
+exception message are not provided at all.
+
+In case of well-structured domains, exception classes naming can be speaking as well. A couple ideas about raising them 
+Php Inspections (EA Extended) friendly way:
+
+```php
+    /* exception parameters injection (builder approach) */
+    throw (new UserNotFoundExeption())->withUserId($userId);
+    
+    /* custom constructor */
+    throw new UserNotFoundException($userId);
+```

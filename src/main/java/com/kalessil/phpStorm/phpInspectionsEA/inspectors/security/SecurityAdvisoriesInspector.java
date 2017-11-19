@@ -57,10 +57,12 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("yiisoft/yii2-debug");
 
         /* more dev-packages  */
-        developmentPackages.add("mockery/mockery");
         developmentPackages.add("behat/behat");
         developmentPackages.add("phpspec/prophecy");
         developmentPackages.add("phpspec/phpspec");
+        developmentPackages.add("humbug/humbug");
+        developmentPackages.add("infection/infection");
+        developmentPackages.add("mockery/mockery");
         developmentPackages.add("composer/composer");
         developmentPackages.add("satooshi/php-coveralls");
         developmentPackages.add("phpro/grumphp");

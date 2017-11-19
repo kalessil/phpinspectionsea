@@ -57,15 +57,15 @@ Following changes can be applied to fix the case:
 
 ### Throw \Exception instance
 
-Since generic exceptions are not helpful when maintain and debugging PHP-application, we would suggest using more 
+Since generic exceptions are not helpful when maintaining and debugging PHP-application, we would suggest using more 
 specific [SPL exceptions](https://secure.php.net/manual/en/spl.exceptions.php).
 
 ### Exception is thrown without a message
 
-Informative and reasonably detailed exceptions messages are saving lots of debugging time, hence we spot places where 
-exception message are not provided at all.
+Informative and reasonably detailed exception message saves debugging time a lot, hence we spot places where 
+exception messages are not provided at all.
 
-In case of well-structured domains, exception classes naming can be speaking as well. A couple ideas about raising them 
+In case of well-structured domains, exception classes naming can be speaking itself. A couple ideas about raising them 
 Php Inspections (EA Extended) friendly way:
 
 ```php

@@ -32,7 +32,7 @@ public class MissingUnderscoreStrategy {
     static public void apply(final Method method, final ProblemsHolder holder) {
         if (invalidNames.contains(method.getName())) {
             final String message = problemDescription.replace("%m%", method.getName());
-            holder.registerProblem(method.getNameIdentifier(), message, ProblemHighlightType.INFORMATION);
+            holder.registerProblem(method.getNameIdentifier(), message, ProblemHighlightType.WEAK_WARNING);
         }
     }
 }

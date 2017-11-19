@@ -57,8 +57,8 @@ Following changes can be applied to fix the case:
 
 ### Throw \Exception instance
 
-Generic exception are not helpful when maintain and debugging PHP-application.  
-Solution is to use more specific [SPL exceptions](https://secure.php.net/manual/en/spl.exceptions.php).
+Since generic exceptions are not helpful when maintain and debugging PHP-application, we would suggest using more 
+specific [SPL exceptions](https://secure.php.net/manual/en/spl.exceptions.php).
 
 ### Exception is thrown without a message
 

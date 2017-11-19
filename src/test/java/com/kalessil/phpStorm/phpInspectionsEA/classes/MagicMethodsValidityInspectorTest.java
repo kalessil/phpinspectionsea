@@ -33,6 +33,7 @@ final public class MagicMethodsValidityInspectorTest extends PhpCodeInsightFixtu
     }
 
     public void testMissingUnderscoreMethods() {
+        // TODO Test not validated for correctness
         myFixture.enableInspections(new MagicMethodsValidityInspector());
 
         myFixture.configureByFile("fixtures/classes/magicMethods/magic-methods-missing-underscore.php");

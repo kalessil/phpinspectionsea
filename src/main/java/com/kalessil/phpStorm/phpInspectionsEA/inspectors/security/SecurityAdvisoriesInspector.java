@@ -47,13 +47,15 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("phpunit/dbunit");
         developmentPackages.add("johnkary/phpunit-speedtrap");
 
-        /* frameworks: Symfony, ZF2 */
+        /* frameworks: Symfony, ZF2, Yii2 */
         developmentPackages.add("symfony/phpunit-bridge");
         developmentPackages.add("symfony/dotenv");
         developmentPackages.add("symfony/debug");
         developmentPackages.add("symfony/var-dumper");
         developmentPackages.add("zendframework/zend-test");
         developmentPackages.add("zendframework/zend-debug");
+        developmentPackages.add("yiisoft/yii2-gii");
+        developmentPackages.add("yiisoft/yii2-debug");
 
         /* more dev-packages  */
         developmentPackages.add("mockery/mockery");

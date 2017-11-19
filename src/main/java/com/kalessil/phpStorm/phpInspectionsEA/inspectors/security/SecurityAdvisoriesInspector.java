@@ -46,7 +46,12 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("phpunit/phpunit");
         developmentPackages.add("phpunit/dbunit");
         developmentPackages.add("johnkary/phpunit-speedtrap");
+
+        /* frameworks */
         developmentPackages.add("symfony/phpunit-bridge");
+        developmentPackages.add("symfony/dotenv");
+        developmentPackages.add("symfony/debug");
+        developmentPackages.add("symfony/var-dumper");
 
         /* more dev-packages  */
         developmentPackages.add("mockery/mockery");

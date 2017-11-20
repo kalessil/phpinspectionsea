@@ -34,3 +34,6 @@
     ('Class'.'::method')();
 
     $x = !($first = $x->prop)->with('data');
+
+    $x = !empty($x);
+    $x = !isset($x);

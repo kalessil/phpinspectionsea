@@ -75,6 +75,14 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     (parent instanceof ArrayAccessExpression && argument instanceof UnaryExpression)
                 ;
 
+                if (!knowsLegalCases && argument instanceof UnaryExpression) {
+                    final UnaryExpression unary = (UnaryExpression) argument;
+                    if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                        final PsiElement unaryArgument = unary.getValue();
+                        knowsLegalCases = unaryArgument instanceof PhpEmpty || unaryArgument instanceof PhpIsset;
+                    }
+                }
+
                 if (!knowsLegalCases && parent instanceof MemberReference) {
                     if (argument instanceof NewExpression) {
                         /* (new ...)->...: allow method/property access on newly created objects */

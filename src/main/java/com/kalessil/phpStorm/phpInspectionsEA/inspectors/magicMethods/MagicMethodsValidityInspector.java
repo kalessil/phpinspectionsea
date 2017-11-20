@@ -177,6 +177,8 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                     return;
                 }
 
+                MissingUnderscoreStrategy.apply(method, holder);
+
                 if (!knownNonMagic.contains(methodName)) {
                     holder.registerProblem(nameNode, messageNotMagic);
                 }

@@ -35,9 +35,8 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     public boolean PREFER_YODA_STYLE              = true;
     public boolean PREFER_REGULAR_STYLE           = false;
 
-    private static final String messageDoNotUse          = "'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.";
-    private static final String patternUseCount          = "You should probably use '%e%' instead.";
-    private static final String patternUseNullComparison = "You should probably use '%e%' instead.";
+    private static final String messageDoNotUse    = "'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.";
+    private static final String patternAlternative = "You should probably use '%s' instead.";
 
     @NotNull
     public String getShortName() {
@@ -76,9 +75,8 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                             final String replacement = (PREFER_YODA_STYLE ? "0 %o% count(%a%)" : "count(%a%) %o% 0")
                                 .replace("%a%", subject.getText())
                                 .replace("%o%", isInverted ? "!==": "===");
-                            final String message    = patternUseCount.replace("%e%", replacement);
-                            final PsiElement target = isInverted ? parent : emptyExpression;
-                            holder.registerProblem(target, message, new UseCountFix(replacement));
+                            final PsiElement target  = isInverted ? parent : emptyExpression;
+                            holder.registerProblem(target, String.format(patternAlternative, replacement), new UseCountFix(replacement));
                         }
 
                         return;
@@ -92,9 +90,8 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                             final String replacement = (PREFER_YODA_STYLE ? "null %o% %a%" : "%a% %o% null")
                                 .replace("%a%", subject.getText())
                                 .replace("%o%", isInverted ? "!==" : "===");
-                            final String message    = patternUseNullComparison.replace("%e%", replacement);
-                            final PsiElement target = isInverted ? parent : emptyExpression;
-                            holder.registerProblem(target, message, new CompareToNullFix(replacement));
+                            final PsiElement target  = isInverted ? parent : emptyExpression;
+                            holder.registerProblem(target, String.format(patternAlternative, replacement), new CompareToNullFix(replacement));
                         }
 
                         return;

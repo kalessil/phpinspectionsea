@@ -60,6 +60,7 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                             )
                             .forEach(reference -> {
                                 final PsiElement parent = reference.getParent();
+
                                 if (!PREFER_CLASS_NAMES && parent instanceof ClassConstantReference) {
                                     final String constantName = ((ClassConstantReference) parent).getName();
                                     if (constantName != null && constantName.equals("class")) {
@@ -70,8 +71,10 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                                     }
                                 }
 
-                                final String message = String.format(messagePattern, targetReference, targetReplacement);
-                                problemsHolder.registerProblem(reference, message, new TheLocalFix(targetReplacement));
+                                if (!(parent instanceof ExtendsList)) {
+                                    final String message = String.format(messagePattern, targetReference, targetReplacement);
+                                    problemsHolder.registerProblem(reference, message, new TheLocalFix(targetReplacement));
+                                }
                             });
 
                     if (PREFER_CLASS_NAMES) {

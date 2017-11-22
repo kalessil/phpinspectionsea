@@ -39,3 +39,10 @@ trait MyTrait
         Something::method(MyTrait::class, $object);
     }
 }
+
+class MyException extends \Exception
+{
+    public function method() {
+        return new class() extends MyException {};
+    }
+}

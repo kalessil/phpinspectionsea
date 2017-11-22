@@ -5,9 +5,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 ideUrl="IU-2017.2"
-if [ "$IDE_ID" == "IU-2017.3" ]; then
-    ideUrl="http://download-cf.jetbrains.com/webide/PhpStorm-EAP-173.3727.84.tar.gz"
-elif [ "$IDE_ID" == "IU-2017.2" ]; then
+if [ "$IDE_ID" == "IU-2017.2" ]; then
     ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
 elif [ "$IDE_ID" == "IU-2017.1" ]; then
     ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
@@ -65,10 +63,7 @@ fi
 
 mkdir plugins
 
-if [ "$IDE_ID" == "IU-2017.3" ]; then
-    download "http://plugins.jetbrains.com/files/6610/40772/php-173.3727.84.zip" "php-173.3727.84-2017.3.zip"
-    unzip -qo $travisCache/php-173.3727.84.zip -d ./plugins
-elif [ "$IDE_ID" == "IU-2017.2" ]; then
+if [ "$IDE_ID" == "IU-2017.2" ]; then
     download "http://plugins.jetbrains.com/files/6610/38775/php-172.4155.41.zip" "php-172.4155.41-2017.2.zip"
     unzip -qo $travisCache/php-172.4155.41.zip -d ./plugins
 elif [ "$IDE_ID" == "IU-2017.1" ]; then

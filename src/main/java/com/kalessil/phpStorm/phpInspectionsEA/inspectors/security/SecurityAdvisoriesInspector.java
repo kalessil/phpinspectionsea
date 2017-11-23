@@ -232,15 +232,14 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
             if (require != null && !project.isDisposed()) {
                 final PsiElement packages = require.getValue();
                 if (packages instanceof JsonObject) {
-                    final PsiElement marker = packages.getFirstChild();
-                    if (marker != null) {
-                        final LeafPsiElement comma = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
-                        if (comma != null) {
-                            final String code           = "\"roave/security-advisories\": \"dev-master\"";
-                            final PsiElement advisories = new JsonElementGenerator(project).createObject(code).getPropertyList().get(0);
-                            marker.getParent().addAfter(comma, marker);
-                            marker.getParent().addAfter(advisories, marker);
-                        }
+                    final PsiElement marker    = packages.getFirstChild();
+                    final LeafPsiElement comma = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
+                    if (marker != null && comma != null) {
+                        final PsiElement advisories = new JsonElementGenerator(project)
+                                .createObject("\"roave/security-advisories\": \"dev-master\"")
+                                .getPropertyList().get(0);
+                        marker.getParent().addAfter(comma, marker);
+                        marker.getParent().addAfter(advisories, marker);
                     }
                 }
             }

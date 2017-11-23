@@ -31,6 +31,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     // Inspection options.
     public boolean SUGGEST_TO_USE_ARRAY_KEY_EXISTS = false;
     public boolean SUGGEST_TO_USE_NULL_COMPARISON  = true;
+    public boolean REPORT_CONCATENATION_IN_INDEXES = true;
 
     // static messages for triggered messages
     private static final String messageUseArrayKeyExists    = "'array_key_exists(...)' construction should be used for better data *structure* control.";
@@ -116,7 +117,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                 }
 
                 /* TODO: has method/function reference as index */
-                if (!isResultStored && this.hasConcatenationAsIndex((ArrayAccessExpression) argument)) {
+                if (REPORT_CONCATENATION_IN_INDEXES && !isResultStored && this.hasConcatenationAsIndex((ArrayAccessExpression) argument)) {
                     holder.registerProblem(argument, messageConcatenationInIndex);
                     return;
                 }
@@ -191,6 +192,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
         return OptionsComponent.create((component) -> {
             component.addCheckbox("Suggest to use array_key_exists()", SUGGEST_TO_USE_ARRAY_KEY_EXISTS, (isSelected) -> SUGGEST_TO_USE_ARRAY_KEY_EXISTS = isSelected);
             component.addCheckbox("Suggest to use null-comparison", SUGGEST_TO_USE_NULL_COMPARISON, (isSelected) -> SUGGEST_TO_USE_NULL_COMPARISON = isSelected);
+            component.addCheckbox("Report concatenations in indexes", REPORT_CONCATENATION_IN_INDEXES, (isSelected) -> REPORT_CONCATENATION_IN_INDEXES = isSelected);
         });
     }
 }

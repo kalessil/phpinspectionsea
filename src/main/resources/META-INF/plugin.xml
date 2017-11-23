@@ -1,5 +1,5 @@
 <idea-plugin>
-  <id>com.kalessil.phpStorm.phpInspectionsEA</id>
+  <id>com.kalessil.phpStorm.phpInspectionsUltimate</id>
   <name>Php Inspections (EA Ultimate)</name>
   <version>0.0.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>

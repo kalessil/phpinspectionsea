@@ -169,7 +169,7 @@
             <jvmarg value="-Didea.home.path=${idea.build}"/>
             <jvmarg value="-Xbootclasspath/a:${idea.build}/lib/boot.jar"/>
             <jvmarg value="-Dfile.encoding=UTF-8"/>
-            <jvmarg value="-Didea.load.plugins.id=com.jetbrains.php,com.kalessil.phpStorm.phpInspectionsEA"/>
+            <jvmarg value="-Didea.load.plugins.id=com.jetbrains.php,com.kalessil.phpStorm.phpInspectionsUltimate"/>
             <jvmarg value="-ea"/>
             <jvmarg value="-Didea.plugins.path=${plugins}"/>
             <jvmarg line="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=${suspend},address=43251"/>

@@ -36,7 +36,9 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     private static final String useRequireDev = "Dev-packages have no security guaranties, invoke the package via require-dev instead.";
 
     // Inspection options.
-    public final List<String> optionConfiguration = new ArrayList<>();
+    public boolean REPORT_MISSING_ROAVE_ADVISORIES = true;
+    public boolean REPORT_MISPLACED_DEPENDENCIES   = true;
+    public final List<String> optionConfiguration  = new ArrayList<>();
     public boolean optionConfigurationMigrated;
 
     public static Collection<String> optionConfigurationDefaults() {
@@ -92,12 +94,19 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create(
-            (component) -> component.addList("Development packages:",
-                                             optionConfiguration, SecurityAdvisoriesInspector::optionConfigurationDefaults,
-                                             null,
-                                             "Adding custom development package...", "Examples: \"phpunit/phpunit\"")
-        );
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Report missing 'roave/security-advisories'", REPORT_MISSING_ROAVE_ADVISORIES, (isSelected) -> REPORT_MISSING_ROAVE_ADVISORIES = isSelected);
+            component.addCheckbox("Report dev-packages in require-section", REPORT_MISPLACED_DEPENDENCIES, (isSelected) -> REPORT_MISPLACED_DEPENDENCIES = isSelected);
+
+            component.addList(
+                "Development packages:",
+                optionConfiguration,
+                SecurityAdvisoriesInspector::optionConfigurationDefaults,
+                null,
+                "Adding custom development package...",
+                "Examples: 'phpunit/phpunit'"
+            );
+        });
     }
 
     @SuppressWarnings ("ThrowsRuntimeException")
@@ -147,14 +156,11 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         if (nameProperty != null) {
             final JsonValue namePropertyValue = nameProperty.getValue();
-
             if (namePropertyValue instanceof JsonStringLiteral) {
                 final String ownPackageName = ((JsonStringLiteral) namePropertyValue).getValue();
-
                 if (optionConfiguration.contains(ownPackageName)) {
                     return null;
                 }
-
                 if (ownPackageName.indexOf('/') != -1) {
                     ownPackagePrefix = ownPackageName.substring(0, ownPackageName.indexOf('/') + 1);
                 }
@@ -178,11 +184,10 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                 if (!"dev-master".equals(((JsonStringLiteral) packageVersion).getValue().toLowerCase())) {
                     holder.registerProblem(packageVersion, useMaster);
                 }
-
                 hasAdvisories = true;
             }
 
-            if (optionConfiguration.contains(packageName)) {
+            if (REPORT_MISPLACED_DEPENDENCIES && optionConfiguration.contains(packageName)) {
                 holder.registerProblem(component.getFirstChild(), useRequireDev);
             }
 
@@ -194,7 +199,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         }
 
         /* fire error message if we have any of 3rd-party packages */
-        if (hasThirdPartyPackages && !hasAdvisories) {
+        if (REPORT_MISSING_ROAVE_ADVISORIES && hasThirdPartyPackages && !hasAdvisories) {
             holder.registerProblem(requireProperty.getFirstChild(), message, new AddAdvisoriesFix(requireProperty));
         }
 

@@ -24,7 +24,10 @@ public final class SecurityAdvisoriesInspectorTest extends PhpCodeInsightFixture
     }
 
     public void testMissingAdvisory() {
-        myFixture.enableInspections(new SecurityAdvisoriesInspector());
+        final SecurityAdvisoriesInspector inspector = new SecurityAdvisoriesInspector();
+        inspector.REPORT_MISPLACED_DEPENDENCIES     = true;
+        inspector.REPORT_MISSING_ROAVE_ADVISORIES   = true;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("fixtures/securityAdvisories/needsAdvisories/composer.json");
         myFixture.testHighlighting(true, false, true);
 

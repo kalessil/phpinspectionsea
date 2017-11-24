@@ -27,21 +27,33 @@ public class EAUltimateUpdateComponent implements ProjectComponent {
     @Override
     public void projectOpened() {
         if (applicationComponent.isUpdated() && !applicationComponent.isUpdateNotificationShown()) {
-            IdeaPluginDescriptor plugin = PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsUltimate"));
-            if (null == plugin) {
+            final IdeaPluginDescriptor ultimatePlugin = PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsUltimate"));
+            if (ultimatePlugin == null) {
                 return;
             }
 
-            final String pluginName       = plugin.getName();
+            final String pluginName       = ultimatePlugin.getName();
             final NotificationGroup group = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);
             Notifications.Bus.notify(
                 group.createNotification(
-                    "<b>" + pluginName + "</b> update v" + plugin.getVersion(),
-                    plugin.getChangeNotes(),
+                    "<b>" + pluginName + "</b> update v" + ultimatePlugin.getVersion(),
+                    ultimatePlugin.getChangeNotes(),
                     NotificationType.INFORMATION,
                     NotificationListener.URL_OPENING_LISTENER
                 )
             );
+
+            final IdeaPluginDescriptor extendedPlugin = PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA"));
+            if (extendedPlugin != null) {
+                Notifications.Bus.notify(
+                    group.createNotification(
+                        "<b>" + pluginName + "</b>",
+                        "Please uninstall Php Inspections (EA Extended) in order to avoid unexpected surprises.",
+                        NotificationType.WARNING,
+                        NotificationListener.URL_OPENING_LISTENER
+                    )
+                );
+            }
 
             applicationComponent.setUpdateNotificationShown();
         }

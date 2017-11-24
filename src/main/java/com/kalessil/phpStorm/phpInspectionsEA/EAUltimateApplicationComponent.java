@@ -18,7 +18,7 @@ import org.apache.log4j.spi.ThrowableInformation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class EAApplicationComponent implements ApplicationComponent {
+public class EAUltimateApplicationComponent implements ApplicationComponent {
     private boolean updated;
     private boolean updateNotificationShown;
 
@@ -40,8 +40,8 @@ public class EAApplicationComponent implements ApplicationComponent {
     }
     
     @NotNull
-    public static EAApplicationComponent getInstance() {
-        return ApplicationManager.getApplication().getComponent(EAApplicationComponent.class);
+    public static EAUltimateApplicationComponent getInstance() {
+        return ApplicationManager.getApplication().getComponent(EAUltimateApplicationComponent.class);
     }
 
     private void initLicensing() {
@@ -86,7 +86,7 @@ public class EAApplicationComponent implements ApplicationComponent {
             return;
         }
 
-        final EASettings settings = EASettings.getInstance();
+        final EAUltimateSettings settings = EAUltimateSettings.getInstance();
 
         /* collect installation events (anonymous) */
         this.updated = !plugin.getVersion().equals(settings.getVersion());
@@ -123,7 +123,7 @@ public class EAApplicationComponent implements ApplicationComponent {
     @NotNull
     @Override
     public String getComponentName() {
-        return "EAApplicationComponent";
+        return "EAUltimateApplicationComponent";
     }
 
     boolean isUpdated() {

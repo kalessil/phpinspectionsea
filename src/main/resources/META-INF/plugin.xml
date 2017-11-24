@@ -803,19 +803,19 @@ Bug-fix release:<br/>
 
 
     <applicationService
-            serviceInterface="com.kalessil.phpStorm.phpInspectionsEA.EASettings"
-            serviceImplementation="com.kalessil.phpStorm.phpInspectionsEA.EASettings" />
+            serviceInterface="com.kalessil.phpStorm.phpInspectionsEA.EAUltimateSettings"
+            serviceImplementation="com.kalessil.phpStorm.phpInspectionsEA.EAUltimateSettings" />
   </extensions>
 
   <application-components>
       <component>
-          <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.EAApplicationComponent</implementation-class>
+          <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent</implementation-class>
       </component>
   </application-components>
 
   <project-components>
       <component>
-          <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.EAUpdateComponent</implementation-class>
+          <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.EAUltimateUpdateComponent</implementation-class>
       </component>
   </project-components>
 

@@ -7,12 +7,12 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.extensions.PluginId;
 import org.jetbrains.annotations.NotNull;
 
-public class EAUpdateComponent implements ProjectComponent {
-    private EAApplicationComponent applicationComponent;
+public class EAUltimateUpdateComponent implements ProjectComponent {
+    private EAUltimateApplicationComponent applicationComponent;
 
     @Override
     public void initComponent() {
-        applicationComponent = EAApplicationComponent.getInstance();
+        applicationComponent = EAUltimateApplicationComponent.getInstance();
     }
 
     @Override
@@ -21,7 +21,7 @@ public class EAUpdateComponent implements ProjectComponent {
     @NotNull
     @Override
     public String getComponentName() {
-        return "EAUpdateComponent";
+        return "EAUltimateUpdateComponent";
     }
 
     @Override

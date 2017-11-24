@@ -11,22 +11,22 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 @State(
-    name = "EASettings",
-    storages = @Storage(id = "other", file = "$APP_CONFIG$/ea_extended.xml")
+    name = "EAUltimateSettings",
+    storages = @Storage(id = "other", file = "$APP_CONFIG$/ea_ultimate.xml")
 )
-public class EASettings implements PersistentStateComponent<Element> {
+public class EAUltimateSettings implements PersistentStateComponent<Element> {
     private String versionOldest;
     private String version;
     private String uuid;
 
-    public static EASettings getInstance() {
-        return ServiceManager.getService(EASettings.class);
+    public static EAUltimateSettings getInstance() {
+        return ServiceManager.getService(EAUltimateSettings.class);
     }
 
     @Nullable
     @Override
     public Element getState() {
-        final Element element = new Element("EASettings");
+        final Element element = new Element("EAUltimateSettings");
 
         if (null != this.versionOldest) {
             element.setAttribute("version", this.version);

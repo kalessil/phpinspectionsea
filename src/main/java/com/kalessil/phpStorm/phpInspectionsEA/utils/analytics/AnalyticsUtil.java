@@ -9,7 +9,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils.analytics;
  * file that was distributed with this source code.
  */
 
-import com.kalessil.phpStorm.phpInspectionsEA.EASettings;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateSettings;
 import org.apache.http.client.fluent.Request;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -97,7 +97,7 @@ final public class AnalyticsUtil {
         }).start();
     }
 
-    public static void registerPluginEvent(@NotNull EASettings source, @NotNull String action, @NotNull String eventValue) {
+    public static void registerPluginEvent(@NotNull EAUltimateSettings source, @NotNull String action, @NotNull String eventValue) {
         new Thread(() -> {
             /* See https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event */
             final StringBuilder payload = new StringBuilder();

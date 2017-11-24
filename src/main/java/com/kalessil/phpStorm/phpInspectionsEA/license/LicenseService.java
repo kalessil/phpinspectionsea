@@ -5,7 +5,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.ui.LicensingFacade;
 import com.intellij.util.net.HttpConfigurable;
-import com.kalessil.phpStorm.phpInspectionsEA.EAApplicationComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.wyday.turboactivate.BoolRef;
 import com.wyday.turboactivate.IsGenuineResult;
 import com.wyday.turboactivate.TurboActivate;
@@ -69,7 +69,7 @@ final public class LicenseService {
     }
 
     public void initializeClient() throws IOException, URISyntaxException, TurboActivateException {
-        final URL binaries = EAApplicationComponent.class.getResource("/TurboActivate/");
+        final URL binaries = EAUltimateApplicationComponent.class.getResource("/TurboActivate/");
         if (binaries == null) {
             throw new RuntimeException("Licensing related resources are missing.");
         }

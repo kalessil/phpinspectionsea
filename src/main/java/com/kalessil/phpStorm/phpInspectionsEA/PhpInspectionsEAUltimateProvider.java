@@ -28,7 +28,7 @@ PHP 5 migration: reflection API usage (ReflectionClass):
         and not dealing with traits, annotations and so on. Mark deprecated.
 
 */
-public class PhpInspectionsEAProvider implements InspectionToolProvider {
+public class PhpInspectionsEAUltimateProvider implements InspectionToolProvider {
     @Override
     public Class[] getInspectionClasses() {
         return new Class[]{};

@@ -5,7 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
-import com.kalessil.phpStorm.phpInspectionsEA.EAApplicationComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.wyday.turboactivate.TurboActivateException;
 
 final public class DeactivateLicenseMenuAction extends AnAction implements DumbAware {
@@ -17,7 +17,7 @@ final public class DeactivateLicenseMenuAction extends AnAction implements DumbA
         presentation.setVisible(true);
         presentation.setEnabled(false);
 
-        final LicenseService service = EAApplicationComponent.getLicenseService();
+        final LicenseService service = EAUltimateApplicationComponent.getLicenseService();
         if (service != null && service.shouldCheckPluginLicense() && service.isClientInitialized()) {
             try {
                 if (service.isActiveLicense()) {
@@ -31,8 +31,8 @@ final public class DeactivateLicenseMenuAction extends AnAction implements DumbA
 
     @Override
     public void actionPerformed(AnActionEvent event) {
-        final LicenseService service      = EAApplicationComponent.getLicenseService();
-        final IdeaPluginDescriptor plugin = EAApplicationComponent.getPluginDescriptor();
+        final LicenseService service      = EAUltimateApplicationComponent.getLicenseService();
+        final IdeaPluginDescriptor plugin = EAUltimateApplicationComponent.getPluginDescriptor();
         if (service != null && plugin != null && service.isClientInitialized()) {
             (new DeactivateLicenseAction()).perform(service, plugin);
             this.update(event);

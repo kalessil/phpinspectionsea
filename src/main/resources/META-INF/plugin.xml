@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsUltimate</id>
   <name>Php Inspections (EA Ultimate)</name>
-  <version>0.0.2</version>
+  <version>0.0.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -19,28 +19,10 @@
   -->
 
   <description><![CDATA[
-For support and donations please visit <a href="https://github.com/kalessil/phpinspectionsea">Github</a> | <a href="https://github.com/kalessil/phpinspectionsea/issues">Issues</a> | <a href="https://www.paypal.me/VReznichenko">PayPal</a> | <a href="https://www.patreon.com/kalessil">Patreon</a>.<br />
-<br />
-Please follow me at <a href="https://twitter.com/kalessil">twitter</a> for status updates.<br />
-<br />
-This plugin is a Static Code Analysis tool for PHP (aka inspections in JetBrains products).<br />
-<br />
-It covers:<br />
-- architecture related issues<br />
-- weak types control and possible code construct simplifications<br />
-- performance issues<br />
-- non-optimal, duplicate and suspicious "if" conditions<br />
-- validation of magic methods usage<br />
-- regular expressions<br />
-- validation of exception handling workflow<br />
-- compatibility issues<br />
-- variety of time-consuming bugs<br />
-- PhpUnit API usage<br />
-- security issues<br />
-<br />
-Some of inspections are expecting conditional statements (e.g. "if") to use
-group statement for wrapping body expressions. If this requirement is met
-then additional inspections are applied to the source code.<br />
+A Static Code Analyzer based on <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-?">Php Inspections (EA Extended)</a>.
+<a href="https://twitter.com/kalessil">News</a> |
+<a href="https://github.com/kalessil/phpinspectionsea/issues">Support</a> |
+<a href="https://kalessil.github.io/php-inspections-ultimate.html">Pricing</a>.<br />
 <br />
 For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/help/keyboard-shortcuts-and-mouse-reference.html">this reference card</a>. Windows/Linux ones are:<br />
 <b>Alt + Shift + I</b> to <b>inspect current file</b> with current profile<br />
@@ -52,7 +34,7 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Bug-fix release:<br/>
+The very first version (new features):<br/>
 <br/>
 - Insecure 'array_rand(...)' usage: implemented<br/>
 - Non-optimal regular expression: new patterns<br/>

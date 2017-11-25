@@ -52,7 +52,7 @@ with a laptop.
     ]]></description>
 
   <change-notes><![CDATA[
-Bug-fix release:<br/>
+Bug-fixes:<br/>
 <br/>
 - A constant can be used: resolved false-positives (use-statements)<br/>
 - Array and string offset validity: resolved false-positives (switch to JB types resolver)<br/>

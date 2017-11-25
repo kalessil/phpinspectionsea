@@ -262,6 +262,10 @@ The very first version (new features):<br/>
         shortName="CompactCanBeUsedInspection"                     displayName="'compact(...)' can be used"
         groupName="Control Flow"                                   enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.CompactCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="UnnecessaryVariableOverridesInspection"         displayName="Unnecessary variable overrides"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessaryVariableOverridesInspector"/>
 
 
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

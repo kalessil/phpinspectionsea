@@ -1,9 +1,9 @@
 <?php
 
 /* [mb_]strlen($path) can be dropped */
-substr($path, 0, <warning descr="'-1' can be used instead.">strlen($path) - 2</warning>);
-mb_substr($path, 0, <warning descr="'-1' can be used instead.">mb_strlen($path) - 2</warning>);
-mb_substr($path, 0, <warning descr="'-1' can be used instead.">mb_strlen($path) - 2</warning>, 'encoding');
+substr($path, 0, <warning descr="'-2' can be used instead.">strlen($path) - 2</warning>);
+mb_substr($path, 0, <warning descr="'-2' can be used instead.">mb_strlen($path) - 2</warning>);
+mb_substr($path, 0, <warning descr="'-2' can be used instead.">mb_strlen($path) - 2</warning>, 'encoding');
 
 /* false-positives: over-complication, e.g. -(strlen($pathPrefix) - 1) */
 substr($path, 0, strlen($path) - strlen($pathPrefix));

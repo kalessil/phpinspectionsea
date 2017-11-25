@@ -43,7 +43,8 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* check if it's the target function: amount of parameters and name */
                 final String functionName = reference.getName();
                 final PsiElement[] params = reference.getParameters();
@@ -88,7 +89,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                             /* 3rd parameter can be simplified */
                             final String replacement;
                             try {
-                                replacement = "-" + (Integer.parseInt(candidate.getRightOperand().getText()) - 1);
+                                replacement = "-" + Integer.parseInt(candidate.getRightOperand().getText());
                             } catch (NumberFormatException notNumericOffset) {
                                 return;
                             }

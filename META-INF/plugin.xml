@@ -54,27 +54,17 @@ with a laptop.
   <change-notes><![CDATA[
 Bug-fix release:<br/>
 <br/>
-- Fixed multiple exceptions cases<br/>
-<br/>
-- Class overrides a field of a parent class: resolved false-positives (doctrine annotations)<br/>
-- Exceptions handling and annotating: QF bug-fix<br/>
-- Foreach source to iterate over: resolved false-positives (multiple cases)<br/>
-- Non-optimal if conditions: resolved false-positives (multiple cases)<br/>
-- Non-optimal regular expression: resolved false-positives (wrongly suggested trim usage)<br/>
-- Null reference: resolved a false-positive (complex if-conditions)<br/>
-- Parameter/variable is not used: resolved false-positives (assignments as calls argument)<br/>
-- Statement could be decoupled from foreach: resolved false-positives (possible objects modification)<br/>
-- Static methods invocation via '->': resolved false-positives (method name starts with 'static')<br/>
-- 'isset(...)' usage: resolved false-positives (isset in finally-statements)<br/>
-- 'simplexml_load_file(...)' usage correctness: QF bug-fix<br/>
-- *printf/*scanf arguments count mismatches: resolved false-positives (sscanf as call argument)<br/>
-<br/>
-- Access modifiers shall be defined: new patterns (thank you David Rodrigues)<br/>
-- Default value is hidden in else branch: QF implemented<br/>
-- Security advisories for Composer packages: QF implemented<br/>
-- Ternary operator could be simplified: new patterns<br/>
-- Unqualified function/constant reference: added settings, default behaviour changed<br/>
-- 'in_array(...)' misused: added QF settings<br/>
+- A constant can be used: resolved false-positives (use-statements)<br/>
+- Array and string offset validity: resolved false-positives (switch to JB types resolver)<br/>
+- Foreach source to iterate over: resolved a false-positive (multiple cases)<br/>
+- Forgotten debug statements: resolved false-positives (debug calls inside debug-wrappers)<br/>
+- Magic methods validity: new patterns (thank you @zf2timo)<br/>
+- Security advisories for Composer packages: new dev-packages, new settings<br/>
+- Self class referencing: resolved false-positives (extends list)<br/>
+- Unnecessary parentheses: resolved a false-positive, new patterns<br/>
+- 'empty(...)' usage: QF settings<br/>
+- 'isset(...)' usage: new settings (report index concatenation)<br/>
+- 'substr(...)' short-hand usage: bug-fix incorrect index calculation<br/>
 <br/>
 <hr/>
   ]]></change-notes>

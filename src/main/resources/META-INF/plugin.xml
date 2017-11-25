@@ -39,6 +39,7 @@ The very first version (new features):<br/>
 - Insecure 'array_rand(...)' usage: implemented<br/>
 - Non-optimal regular expression: new patterns<br/>
 - Null reference: new patterns<br/>
+- Unnecessary variable overrides: implemented<br/>
 - 'compact(...)' variables existence: new patterns<br/>
 - 'file_put_contents(...)' race condition: implemented<br/>
 <br/>

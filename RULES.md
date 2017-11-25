@@ -227,7 +227,7 @@ Inspections Lists (Performance)
 | Performance          | StrStrUsedAsStrPosInspection                    | 'str(i)str(...)' could be replaced with 'str(i)pos(...)'                                          | yes | yes | no   | no  |
 | Performance          | AlterInForeachInspection                        | Slow alter in foreach                                                                             | n/a | yes | n/a  | no  |
 | Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused                                                                         | yes | yes | no   | no  |
-| Performance          | FileFunctionMissUseInspection                   | 'file(...)' misused                                                                               | yes | yes | no   | no  |
+| Performance          | FileFunctionMissUseInspection                   | 'file(...)' misused                                                                               | yes | yes | yes  | no  |
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                                    | n/a |
 | Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                          | yes | yes | yes  | no  |
 | Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                                    | yes | yes | yes  | no  |

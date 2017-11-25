@@ -17,7 +17,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -30,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class FileFunctionMissUseInspector extends BasePhpInspection {
-    private static final String messagePattern = "'file_get_contents(%p%)' would consume less cpu and memory resources here.";
+    private static final String messagePattern = "'file_get_contents(%s)' would consume less cpu and memory resources here.";
 
     @NotNull
     public String getShortName() {
@@ -41,11 +40,12 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* validate parameters amount and function name (file) */
                 final PsiElement[] params = reference.getParameters();
                 final String functionName = reference.getName();
-                if (params.length != 1 || StringUtils.isEmpty(functionName) || !functionName.equals("file")) {
+                if (params.length != 1 || functionName == null || !functionName.equals("file")) {
                     return;
                 }
 
@@ -53,7 +53,7 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
                 PsiElement parent = reference.getParent();
                 if (parent instanceof UnaryExpression) {
                     final PsiElement operation = ((UnaryExpression) parent).getOperation();
-                    if (null != operation && PhpTokenTypes.opSILENCE == operation.getNode().getElementType()) {
+                    if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opSILENCE)) {
                         parent = parent.getParent();
                     }
                 }
@@ -66,19 +66,19 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
                 final PsiElement[] parentParams         = parentReference.getParameters();
                 final String parentFunctionName         = parentReference.getName();
                 if (
-                    parentParams.length != 2 || StringUtils.isEmpty(parentFunctionName) ||
+                    parentParams.length != 2 || parentFunctionName == null ||
                     (!parentFunctionName.equals("implode") && !parentFunctionName.equals("join"))) {
                     return;
                 }
 
                 /* validate if glue is not empty */
                 final StringLiteralExpression glue = ExpressionSemanticUtil.resolveAsStringLiteral(parentParams[0]);
-                if (null != glue && !StringUtils.isEmpty(glue.getContents())) {
+                if (glue != null && !glue.getContents().isEmpty()) {
                     return;
                 }
 
-                final String message = messagePattern.replace("%p%", params[0].getText());
-                holder.registerProblem(parentReference, message, ProblemHighlightType.GENERIC_ERROR, new FileFunctionMissUseInspector.TheLocalFix());
+                final String message = String.format(messagePattern, params[0].getText());
+                holder.registerProblem(parentReference, message, ProblemHighlightType.GENERIC_ERROR, new TheLocalFix());
             }
         };
     }

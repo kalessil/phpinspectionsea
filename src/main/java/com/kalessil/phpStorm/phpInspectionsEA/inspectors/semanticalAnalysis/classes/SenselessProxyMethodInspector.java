@@ -13,6 +13,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -25,6 +28,18 @@ import org.jetbrains.annotations.NotNull;
 public class SenselessProxyMethodInspector extends BasePhpInspection {
     private static final String messagePattern = "'%s%' method can be dropped, as it only calls parent's one.";
 
+    final private static Set<String> constants = new HashSet<>();
+    static {
+        constants.add("__LINE__");
+        constants.add("__FILE__");
+        constants.add("__DIR__");
+        constants.add("__FUNCTION__");
+        constants.add("__CLASS__");
+        constants.add("__TRAIT__");
+        constants.add("__METHOD__");
+        constants.add("__NAMESPACE__");
+    }
+
     @NotNull
     public String getShortName() {
         return "SenselessProxyMethodInspection";
@@ -34,12 +49,13 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpClass(PhpClass clazz) {
+            @Override
+            public void visitPhpClass(@NotNull PhpClass clazz) {
                 if (clazz.isInterface() || clazz.isTrait()) {
                     return;
                 }
 
-                for (Method method : clazz.getOwnMethods()) {
+                for (final Method method : clazz.getOwnMethods()) {
                     final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
                     if (null == methodNameNode || method.isAbstract() || method.getAccess().isPrivate()) {
                         continue;
@@ -116,13 +132,21 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                                         /* default values changes */
                                         final PsiElement parentDefault = parentParameters[index].getDefaultValue();
                                         final PsiElement methodDefault = methodParameters[index].getDefaultValue();
-                                        if ((null == parentDefault || null == methodDefault) && parentDefault != methodDefault) {
+                                        if ((parentDefault == null || methodDefault == null) && parentDefault != methodDefault) {
                                             isChangingSignature = true;
                                             break;
                                         }
-                                        if (null != methodDefault && !OpeanapiEquivalenceUtil.areEqual(parentDefault, methodDefault)) {
+                                        if (methodDefault != null && !OpeanapiEquivalenceUtil.areEqual(parentDefault, methodDefault)) {
                                             isChangingSignature = true;
                                             break;
+                                        }
+                                        /* false-positive: magic constants ARE changing signature  */
+                                        if (methodDefault != null && methodDefault instanceof ConstantReference) {
+                                            final String constant = ((ConstantReference) methodDefault).getName();
+                                            if (constants.contains(constant)) {
+                                                isChangingSignature = true;
+                                                break;
+                                            }
                                         }
 
                                         /* type definition changes */

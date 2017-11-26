@@ -12,6 +12,7 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -69,7 +70,16 @@ public class UnnecessaryVariableOverridesInspector extends BasePhpInspection {
                                     if (candidateValue != null && candidate instanceof Variable) {
                                         final String candidateName = ((Variable) candidate).getName();
                                         if (candidateName.equals(sourceName)) {
-                                            /* TODO: false-positive - call argument is by reference */
+                                            /* false-positive: parameter by reference */
+                                            final FunctionReference call = (FunctionReference) variable.getParent().getParent();
+                                            final PsiElement function    = OpenapiResolveUtil.resolveReference(call);
+                                            if (function instanceof Function) {
+                                                final Parameter[] parameters = ((Function) function).getParameters();
+                                                if (parameters.length > 0 && parameters[0].isPassByRef()) {
+                                                    return;
+                                                }
+                                            }
+
                                             holder.registerProblem(
                                                 candidate,
                                                 message,

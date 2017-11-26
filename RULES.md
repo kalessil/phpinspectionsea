@@ -47,7 +47,7 @@ Inspections Lists (Control flow)
 | Control Flow         | StringCaseManipulationInspection                | Unnecessary string case manipulation                                              | yes | yes | yes  | yes |
 | Control Flow         | ArrayUniqueCanBeUsedInspection                  | 'array_unique(...)' can be used                                                   | yes | yes | yes  | no  |
 | Control Flow         | CompactCanBeUsedInspection                      | 'compact(...)' can be used                                                        | yes | yes | yes  | no  |
-| Control Flow         | UnnecessaryVariableOverridesInspection          | Unnecessary variable overrides                                                    | yes | no  | no   | no  |
+| Control Flow         | UnnecessaryVariableOverridesInspection          | Unnecessary variable overrides                                                    | yes | yes | yes  | no  |
 
 Inspections Lists (PhpUnit)
 ---

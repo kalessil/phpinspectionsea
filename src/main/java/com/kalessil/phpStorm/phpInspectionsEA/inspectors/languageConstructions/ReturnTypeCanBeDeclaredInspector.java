@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
@@ -62,6 +63,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
+            /* TODO: support functions - see https://github.com/kalessil/phpinspectionsea/pull/320 */
+
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 final Project project      = holder.getProject();
@@ -174,16 +177,29 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 return result;
             }
 
+            @NotNull
             private String compactType(@NotNull String type, @NotNull Method method) {
-                String compacted = type;
+                String result = null;
                 if (type.startsWith("\\")) {
-                    final PhpClass clazz   = method.getContainingClass();
-                    final String nameSpace = null == clazz ? null : clazz.getNamespaceName();
-                    if (null != nameSpace && nameSpace.length() > 1 && type.startsWith(nameSpace)) {
-                        compacted = compacted.replace(nameSpace, "");
+                    /* Strategy 1: scan imports */
+                    for (final PhpUse useItem : PsiTreeUtil.findChildrenOfType(method.getContainingFile(), PhpUse.class)) {
+                        final PhpReference useReference = useItem.getTargetReference();
+                        if (useReference instanceof ClassReference && type.equals(useReference.getFQN())) {
+                            final String useAlias = useItem.getAliasName();
+                            result                = useAlias == null ? useReference.getName() : useAlias;
+                            break;
+                        }
+                    }
+                    /* Strategy 2: relative QN for classes in sub-namespace */
+                    if (result == null || result.isEmpty()) {
+                        final PhpClass clazz   = method.getContainingClass();
+                        final String nameSpace = null == clazz ? null : clazz.getNamespaceName();
+                        if (nameSpace != null && nameSpace.length() > 1 && type.startsWith(nameSpace)) {
+                            result = type.replace(nameSpace, "");
+                        }
                     }
                 }
-                return compacted;
+                return result == null ? type : result;
             }
 
             private void checkNonImplicitNullReturn(@NotNull Method method, @NotNull Set<String> types) {

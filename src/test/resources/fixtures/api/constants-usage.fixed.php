@@ -1,5 +1,7 @@
 <?php
 
+    use function get_class;
+
     echo PHP_SAPI;
     echo PHP_VERSION;
     echo __CLASS__;

@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.PhpUse;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -72,11 +73,11 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final String functionName    = reference.getName();
-                final PsiElement[] arguments = reference.getParameters();
-                if (functionName != null) {
+                final String functionName = reference.getName();
+                if (functionName != null && !(reference.getParent() instanceof PhpUse)) {
+                    final PsiElement[] arguments = reference.getParameters();
                     if (functions.containsKey(functionName)) {
-                    /* classification part */
+                        /* classification part */
                         boolean canUseConstant = false;
                         if (arguments.length == 0) {
                             canUseConstant = true;

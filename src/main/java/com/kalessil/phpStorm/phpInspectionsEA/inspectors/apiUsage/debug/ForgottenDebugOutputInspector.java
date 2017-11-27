@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jdom.Element;
@@ -185,7 +186,8 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMethodReference(MethodReference reference) {
+            @Override
+            public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 final String methodName = reference.getName();
                 if (customMethods.isEmpty() || methodName == null || !customMethodsNames.contains(methodName)) {
                     return;
@@ -196,7 +198,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                         = methodName.equals(match.getSecond()) ? OpenapiResolveUtil.resolveReference(reference) : null;
                     if (resolved instanceof Method) {
                         final PhpClass clazz = ((Method) resolved).getContainingClass();
-                        if (clazz != null && match.getFirst().equals(clazz.getFQN())) {
+                        if (clazz != null && match.getFirst().equals(clazz.getFQN()) && !this.isInDebugFunction(reference)) {
                             holder.registerProblem(reference, message);
                             return;
                         }
@@ -204,17 +206,23 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                 }
             }
 
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
                 if (functionName != null && customFunctions.contains(functionName)) {
                     final Integer paramsNeeded = functionsRequirements.get(functionName);
                     if (paramsNeeded != null && reference.getParameters().length == paramsNeeded) {
                         return;
                     }
-                    if (!this.isBuffered(reference)) {
+                    if (!this.isBuffered(reference) && !this.isInDebugFunction(reference)) {
                         holder.registerProblem(reference, message);
                     }
                 }
+            }
+
+            private boolean isInDebugFunction(@NotNull PsiElement debugStatement) {
+                final Function scope = ExpressionSemanticUtil.getScope(debugStatement);
+                return scope != null && configuration.contains(scope instanceof Method ? scope.getFQN() : scope.getName());
             }
 
             private boolean isBuffered(@NotNull PsiElement debugStatement) {
@@ -246,11 +254,15 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create(
-            (component) -> component.addList("Custom debug methods:",
-                                             configuration, ForgottenDebugOutputInspector::optionConfigurationDefaults,
-                                             this::recompileConfiguration,
-                                             "Adding custom debug function...", "Examples: \"function_name\" or \"\\Namespace\\Class::method\"")
+        return OptionsComponent.create((component)
+            -> component.addList(
+                "Custom debug methods:",
+                configuration,
+                ForgottenDebugOutputInspector::optionConfigurationDefaults,
+                this::recompileConfiguration,
+                "Adding custom debug function...",
+                "Examples: 'function_name' or '\\Namespace\\Class::method'"
+            )
         );
     }
 }

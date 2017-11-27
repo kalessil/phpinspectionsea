@@ -11,14 +11,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.HashSet;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -34,10 +32,11 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     public boolean REPORT_EMPTY_USAGE             = false;
     public boolean SUGGEST_TO_USE_COUNT_CHECK     = false;
     public boolean SUGGEST_TO_USE_NULL_COMPARISON = true;
+    public boolean PREFER_YODA_STYLE              = true;
+    public boolean PREFER_REGULAR_STYLE           = false;
 
-    private static final String messageDoNotUse          = "'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.";
-    private static final String patternUseCount          = "You should probably use '%e%' instead.";
-    private static final String patternUseNullComparison = "You should probably use '%e%' instead.";
+    private static final String messageDoNotUse    = "'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.";
+    private static final String patternAlternative = "You should probably use '%s' instead.";
 
     @NotNull
     public String getShortName() {
@@ -48,18 +47,19 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpEmpty(PhpEmpty emptyExpression) {
+            @Override
+            public void visitPhpEmpty(@NotNull PhpEmpty emptyExpression) {
                 final PhpExpression[] values = emptyExpression.getVariables();
                 if (values.length == 1) {
                     final PsiElement subject = ExpressionSemanticUtil.getExpressionTroughParenthesis(values[0]);
-                    if (null == subject || subject instanceof ArrayAccessExpression) {
+                    if (subject == null || subject instanceof ArrayAccessExpression) {
                         /* currently php docs lacks of array structure notations, skip it */
                         return;
                     }
 
                     final PsiElement parent    = emptyExpression.getParent();
                     final PsiElement operation = parent instanceof UnaryExpression ? ((UnaryExpression) parent).getOperation() : null;
-                    final boolean isInverted   = null != operation && PhpTokenTypes.opNOT == operation.getNode().getElementType();
+                    final boolean isInverted   = OpenapiTypesUtil.is(operation, PhpTokenTypes.opNOT);
 
                     /* extract types */
                     final PhpIndex index                = PhpIndex.getInstance(holder.getProject());
@@ -72,12 +72,11 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         resolvedTypes.clear();
 
                         if (SUGGEST_TO_USE_COUNT_CHECK) {
-                            final String replacement = "0 %o% count(%a%)"
+                            final String replacement = (PREFER_YODA_STYLE ? "0 %o% count(%a%)" : "count(%a%) %o% 0")
                                 .replace("%a%", subject.getText())
                                 .replace("%o%", isInverted ? "!==": "===");
-                            final String message    = patternUseCount.replace("%e%", replacement);
-                            final PsiElement target = isInverted ? parent : emptyExpression;
-                            holder.registerProblem(target, message, new UseCountFix(replacement));
+                            final PsiElement target  = isInverted ? parent : emptyExpression;
+                            holder.registerProblem(target, String.format(patternAlternative, replacement), new UseCountFix(replacement));
                         }
 
                         return;
@@ -88,12 +87,11 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         resolvedTypes.clear();
 
                         if (SUGGEST_TO_USE_NULL_COMPARISON) {
-                            final String replacement = "null %o% %a%"
+                            final String replacement = (PREFER_YODA_STYLE ? "null %o% %a%" : "%a% %o% null")
                                 .replace("%a%", subject.getText())
-                                .replace("%o%", isInverted ? "!==": "===");
-                            final String message    = patternUseNullComparison.replace("%e%", replacement);
-                            final PsiElement target = isInverted ? parent : emptyExpression;
-                            holder.registerProblem(target, message, new CompareToNullFix(replacement));
+                                .replace("%o%", isInverted ? "!==" : "===");
+                            final PsiElement target  = isInverted ? parent : emptyExpression;
+                            holder.registerProblem(target, String.format(patternAlternative, replacement), new CompareToNullFix(replacement));
                         }
 
                         return;
@@ -109,14 +107,14 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
 
 
             /** check if only array type possible */
-            private boolean isArrayType(HashSet<String> resolvedTypesSet) {
+            private boolean isArrayType(@NotNull Set<String> resolvedTypesSet) {
                 return resolvedTypesSet.size() == 1 && resolvedTypesSet.contains(Types.strArray);
             }
 
             /** check if nullable int, float, resource */
-            private boolean isNullableCoreType(HashSet<String> resolvedTypesSet) {
+            private boolean isNullableCoreType(@NotNull Set<String> resolvedTypesSet) {
                 //noinspection SimplifiableIfStatement
-                if (2 != resolvedTypesSet.size() || !resolvedTypesSet.contains(Types.strNull)) {
+                if (resolvedTypesSet.size() != 2 || !resolvedTypesSet.contains(Types.strNull)) {
                     return false;
                 }
 
@@ -134,6 +132,11 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
             component.addCheckbox("Report empty() usage", REPORT_EMPTY_USAGE, (isSelected) -> REPORT_EMPTY_USAGE = isSelected);
             component.addCheckbox("Suggest to use count()-comparison", SUGGEST_TO_USE_COUNT_CHECK, (isSelected) -> SUGGEST_TO_USE_COUNT_CHECK = isSelected);
             component.addCheckbox("Suggest to use null-comparison", SUGGEST_TO_USE_NULL_COMPARISON, (isSelected) -> SUGGEST_TO_USE_NULL_COMPARISON = isSelected);
+
+            component.delegateRadioCreation((radioComponent) -> {
+                radioComponent.addOption("Regular fix style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
+                radioComponent.addOption("Yoda fix style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
+            });
         });
     }
 

@@ -7,6 +7,7 @@ final public class UnusedConstructorDependenciesInspectorTest extends PhpCodeIns
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new UnusedConstructorDependenciesInspector());
         myFixture.configureByFile("fixtures/classes/unused-constructor-dependencies.php");
+        myFixture.configureByFile("fixtures/classes/unused-constructor-dependencies.smart-reporting.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

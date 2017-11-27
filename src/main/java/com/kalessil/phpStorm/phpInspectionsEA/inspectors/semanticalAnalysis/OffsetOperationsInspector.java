@@ -15,24 +15,23 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
  * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ * (c) Denis Ryabov <...>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-/**
- * @author Denis Ryabov
- * @author Vladimir Reznichenko
- */
 public class OffsetOperationsInspector extends BasePhpInspection {
     private static final String messageUseSquareBrackets = "Using [ ] instead of { } makes possible to analyze this expression.";
     private static final String patternNoOffsetSupport   = "'%c%' may not support offset operations (or its type not annotated properly: %t%).";
-    private static final String patternInvalidIndex      = "Resolved index type (%p%) is incompatible with possible %a%. Probably just proper type hinting needed.";
+    private static final String patternInvalidIndex      = "Resolved index type (%s) is incompatible with possible %s. Probably just proper type hinting needed.";
 
     @NotNull
     public String getShortName() {
@@ -70,27 +69,26 @@ public class OffsetOperationsInspector extends BasePhpInspection {
 
                 // ensure index is one of (string, float, bool, null) when we acquired possible types information
                 // TODO: hash-elements e.g. array initialization
-                if (null != expression.getIndex()) {
+                if (!allowedIndexTypes.isEmpty() && expression.getIndex() != null) {
                     final PhpPsiElement indexValue = expression.getIndex().getValue();
-                    if (null != indexValue && allowedIndexTypes.size() > 0) {
-                        // resolve types with custom resolver, native gives type sets which not comparable properly
-                        final HashSet<String> possibleIndexTypes = new HashSet<>();
-                        TypeFromPlatformResolverUtil.resolveExpressionType(indexValue, possibleIndexTypes);
-
-                        // now check if any type provided and check sets validity
-                        if (!possibleIndexTypes.isEmpty()) {
-                            // take possible and clean them respectively allowed to keep only conflicted
-                            if (!allowedIndexTypes.isEmpty()) {
-                                filterPossibleTypesWhichAreNotAllowed(possibleIndexTypes, allowedIndexTypes);
+                    if (indexValue instanceof PhpTypedElement) {
+                        final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) indexValue, indexValue.getProject());
+                        if (resolved != null) {
+                            final Set<String> indexTypes = resolved.filterUnknown().getTypes().stream()
+                                    .map(Types::getType)
+                                    .collect(Collectors.toSet());
+                            if (!indexTypes.isEmpty()) {
+                                filterPossibleTypesWhichAreNotAllowed(indexTypes, allowedIndexTypes);
+                                if (!indexTypes.isEmpty()) {
+                                    final String message = String.format(
+                                        patternInvalidIndex,
+                                        indexTypes.toString(),
+                                        allowedIndexTypes.toString()
+                                    );
+                                    holder.registerProblem(indexValue, message);
+                                    indexTypes.clear();
+                                }
                             }
-
-                            if (!possibleIndexTypes.isEmpty()) {
-                                final String message = patternInvalidIndex
-                                        .replace("%p%", possibleIndexTypes.toString())
-                                        .replace("%a%", allowedIndexTypes.toString());
-                                holder.registerProblem(indexValue, message);
-                            }
-                            possibleIndexTypes.clear();
                         }
                     }
                 }
@@ -243,8 +241,8 @@ public class OffsetOperationsInspector extends BasePhpInspection {
     }
 
     private void filterPossibleTypesWhichAreNotAllowed(
-            @NotNull HashSet<String> possibleIndexTypes,
-            @NotNull HashSet<String> allowedIndexTypes
+            @NotNull Set<String> possibleIndexTypes,
+            @NotNull Set<String> allowedIndexTypes
     ) {
         final HashSet<String> secureIterator = new HashSet<>();
 

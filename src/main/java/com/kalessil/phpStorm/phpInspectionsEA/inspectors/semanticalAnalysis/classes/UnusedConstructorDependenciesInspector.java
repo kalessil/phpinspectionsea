@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -36,6 +37,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
              * Extracts private fields list as map name => field object, so we could use name as glue
              * and direct comparision of object pointers unique for field objects.
              */
+            @NotNull
             private Map<String, Field> getPrivateFields(@NotNull PhpClass clazz) {
                 final Map<String, Field> privateFields = new HashMap<>();
                 for (final Field field : clazz.getOwnFields()) {
@@ -52,6 +54,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
             /**
              * Extracts private fields references from method as field name => reference objects, so we could use name as glue.
              */
+            @NotNull
             private Map<String, List<FieldReference>> getFieldReferences(@NotNull Method method, @NotNull Map<String, Field> privateFields) {
                 final Map<String, List<FieldReference>> filteredReferences = new HashMap<>();
                 /* not all methods needs to be analyzed */
@@ -84,6 +87,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
             /**
              * Orchestrates extraction of references from methods
              */
+            @NotNull
             private Map<String, List<FieldReference>> getMethodsFieldReferences(
                     @NotNull PhpClass clazz,
                     @NotNull Method constructor,
@@ -121,7 +125,8 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                 return filteredReferences;
             }
 
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 /* filter classes which needs to be analyzed */
                 final PhpClass clazz = method.getContainingClass();
                 if (
@@ -149,9 +154,9 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                     final Map<String, List<FieldReference>> otherReferences = getMethodsFieldReferences(clazz, constructor, clazzPrivateFields);
                     /* methods's references being identified, time to re-visit constructor's references */
                     constructorsReferences.forEach((fieldName, fields) -> {
-                        /* field is not used, report in constructor, PS will cover unused fields detection */
+                        /* field is not used, report in constructor, IDE detects unused fields */
                         if (!otherReferences.containsKey(fieldName)) {
-                            fields.forEach(reference -> holder.registerProblem(reference, message));
+                            this.doSmartReport(holder, fields);
                         }
                         fields.clear();
                     });
@@ -160,6 +165,41 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                     otherReferences.clear();
                     /* release references found in the constructor */
                     constructorsReferences.clear();
+                }
+            }
+
+            private void doSmartReport(@NotNull ProblemsHolder holder, @NotNull List<FieldReference> fields) {
+                int assignmentsCount  = 0;
+                int methodCallsCount  = 0;
+                FieldReference target = null;
+                for (final FieldReference reference : fields) {
+                    final PsiElement parent = reference.getParent();
+                    if (parent instanceof MethodReference) {
+                        /* calls performed on the field */
+                        final MethodReference parentCall = (MethodReference) parent;
+                        if (parentCall.getFirstPsiChild() == reference) {
+                            ++methodCallsCount;
+                        }
+                    } else if (OpenapiTypesUtil.isAssignment(parent)) {
+                        /* field value overwrites */
+                        final AssignmentExpression parentAssignment = (AssignmentExpression) parent;
+                        if (parentAssignment.getVariable() == reference) {
+                            target = reference;
+                            if (++assignmentsCount > 1) {
+                                break;
+                            }
+                        }
+                    } else {
+                        /* another expression, break the loop */
+                        break;
+                    }
+                }
+                if (target != null && assignmentsCount == 1 && fields.size() == assignmentsCount + methodCallsCount) {
+                    /* report only assignment, when single write + multiple invocations are performed */
+                    holder.registerProblem(target, message);
+                } else {
+                    /* report all entries, general behaviour */
+                    fields.forEach(reference -> holder.registerProblem(reference, message));
                 }
             }
         };

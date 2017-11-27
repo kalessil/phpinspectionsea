@@ -102,12 +102,23 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                         argument instanceof UnaryExpression ||
                         argument instanceof NewExpression ||
                         argument instanceof ConcatenationExpression ||
+                        argument instanceof AssignmentExpression ||
                         OpenapiTypesUtil.isLambda(argument)
                     )
                 ) {
                     return;
                 }
 
+                /* false negatives: certain cases needs re-evaluation ... */
+                if (knowsLegalCases && argument instanceof UnaryExpression) {
+                    final UnaryExpression unary = (UnaryExpression) argument;
+                    if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                        final PsiElement unaryArgument = unary.getValue();
+                        if (unaryArgument instanceof PhpEmpty || unaryArgument instanceof PhpIsset) {
+                            knowsLegalCases = false;
+                        }
+                    }
+                }
                 if (!knowsLegalCases) {
                     holder.registerProblem(expression, message, new TheLocalFix());
                 }

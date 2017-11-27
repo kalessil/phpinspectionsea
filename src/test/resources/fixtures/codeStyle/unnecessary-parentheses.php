@@ -30,6 +30,10 @@
     $mixedIncludeReturn = (include __DIR__ . '/foo.php');
 
     (function(){})();
+    ($x = function(){})();
     ('Class'.'::method')();
 
     $x = !($first = $x->prop)->with('data');
+
+    $x = <weak_warning descr="Unnecessary parentheses.">(!empty($x))</weak_warning>;
+    $x = <weak_warning descr="Unnecessary parentheses.">(!isset($x))</weak_warning>;

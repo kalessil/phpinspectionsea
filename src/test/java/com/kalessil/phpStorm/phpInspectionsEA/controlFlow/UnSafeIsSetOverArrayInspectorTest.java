@@ -10,6 +10,7 @@ final public class UnSafeIsSetOverArrayInspectorTest extends PhpCodeInsightFixtu
         UnSafeIsSetOverArrayInspector inspector   = new UnSafeIsSetOverArrayInspector();
         inspector.SUGGEST_TO_USE_ARRAY_KEY_EXISTS = true;
         inspector.SUGGEST_TO_USE_NULL_COMPARISON  = true;
+        inspector.REPORT_CONCATENATION_IN_INDEXES = true;
         return inspector;
     }
 

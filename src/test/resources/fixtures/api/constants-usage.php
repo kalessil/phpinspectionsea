@@ -1,5 +1,7 @@
 <?php
 
+    use function get_class;
+
     echo <weak_warning descr="PHP_SAPI constant should be used instead.">php_sapi_name()</weak_warning>;
     echo <weak_warning descr="PHP_VERSION constant should be used instead.">phpversion()</weak_warning>;
     echo <weak_warning descr="__CLASS__ constant should be used instead.">get_class()</weak_warning>;

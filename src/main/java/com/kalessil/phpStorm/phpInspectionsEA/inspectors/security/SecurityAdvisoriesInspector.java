@@ -36,7 +36,9 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     private static final String useRequireDev = "Dev-packages have no security guaranties, invoke the package via require-dev instead.";
 
     // Inspection options.
-    public final List<String> optionConfiguration = new ArrayList<>();
+    public boolean REPORT_MISSING_ROAVE_ADVISORIES = true;
+    public boolean REPORT_MISPLACED_DEPENDENCIES   = true;
+    public final List<String> optionConfiguration  = new ArrayList<>();
     public boolean optionConfigurationMigrated;
 
     public static Collection<String> optionConfigurationDefaults() {
@@ -46,13 +48,23 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("phpunit/phpunit");
         developmentPackages.add("phpunit/dbunit");
         developmentPackages.add("johnkary/phpunit-speedtrap");
+
+        /* frameworks: Symfony, ZF2, Yii2 */
         developmentPackages.add("symfony/phpunit-bridge");
+        developmentPackages.add("symfony/debug");
+        developmentPackages.add("symfony/var-dumper");
+        developmentPackages.add("zendframework/zend-test");
+        developmentPackages.add("zendframework/zend-debug");
+        developmentPackages.add("yiisoft/yii2-gii");
+        developmentPackages.add("yiisoft/yii2-debug");
 
         /* more dev-packages  */
-        developmentPackages.add("mockery/mockery");
         developmentPackages.add("behat/behat");
         developmentPackages.add("phpspec/prophecy");
         developmentPackages.add("phpspec/phpspec");
+        developmentPackages.add("humbug/humbug");
+        developmentPackages.add("infection/infection");
+        developmentPackages.add("mockery/mockery");
         developmentPackages.add("composer/composer");
         developmentPackages.add("satooshi/php-coveralls");
         developmentPackages.add("phpro/grumphp");
@@ -68,6 +80,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("pdepend/pdepend");
         developmentPackages.add("sebastian/phpcpd");
         developmentPackages.add("povils/phpmnd");
+        developmentPackages.add("phan/phan");
 
         /* build tools */
         developmentPackages.add("phing/phing");
@@ -81,12 +94,19 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create(
-            (component) -> component.addList("Development packages:",
-                                             optionConfiguration, SecurityAdvisoriesInspector::optionConfigurationDefaults,
-                                             null,
-                                             "Adding custom development package...", "Examples: \"phpunit/phpunit\"")
-        );
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Report missing 'roave/security-advisories'", REPORT_MISSING_ROAVE_ADVISORIES, (isSelected) -> REPORT_MISSING_ROAVE_ADVISORIES = isSelected);
+            component.addCheckbox("Report dev-packages in require-section", REPORT_MISPLACED_DEPENDENCIES, (isSelected) -> REPORT_MISPLACED_DEPENDENCIES = isSelected);
+
+            component.addList(
+                "Development packages:",
+                optionConfiguration,
+                SecurityAdvisoriesInspector::optionConfigurationDefaults,
+                null,
+                "Adding custom development package...",
+                "Examples: 'phpunit/phpunit'"
+            );
+        });
     }
 
     @SuppressWarnings ("ThrowsRuntimeException")
@@ -136,14 +156,11 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         if (nameProperty != null) {
             final JsonValue namePropertyValue = nameProperty.getValue();
-
             if (namePropertyValue instanceof JsonStringLiteral) {
                 final String ownPackageName = ((JsonStringLiteral) namePropertyValue).getValue();
-
                 if (optionConfiguration.contains(ownPackageName)) {
                     return null;
                 }
-
                 if (ownPackageName.indexOf('/') != -1) {
                     ownPackagePrefix = ownPackageName.substring(0, ownPackageName.indexOf('/') + 1);
                 }
@@ -167,11 +184,10 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                 if (!"dev-master".equals(((JsonStringLiteral) packageVersion).getValue().toLowerCase())) {
                     holder.registerProblem(packageVersion, useMaster);
                 }
-
                 hasAdvisories = true;
             }
 
-            if (optionConfiguration.contains(packageName)) {
+            if (REPORT_MISPLACED_DEPENDENCIES && optionConfiguration.contains(packageName)) {
                 holder.registerProblem(component.getFirstChild(), useRequireDev);
             }
 
@@ -183,7 +199,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         }
 
         /* fire error message if we have any of 3rd-party packages */
-        if (hasThirdPartyPackages && !hasAdvisories) {
+        if (REPORT_MISSING_ROAVE_ADVISORIES && hasThirdPartyPackages && !hasAdvisories) {
             holder.registerProblem(requireProperty.getFirstChild(), message, new AddAdvisoriesFix(requireProperty));
         }
 
@@ -216,15 +232,14 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
             if (require != null && !project.isDisposed()) {
                 final PsiElement packages = require.getValue();
                 if (packages instanceof JsonObject) {
-                    final PsiElement marker = packages.getFirstChild();
-                    if (marker != null) {
-                        final LeafPsiElement comma = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
-                        if (comma != null) {
-                            final String code           = "\"roave/security-advisories\": \"dev-master\"";
-                            final PsiElement advisories = new JsonElementGenerator(project).createObject(code).getPropertyList().get(0);
-                            marker.getParent().addAfter(comma, marker);
-                            marker.getParent().addAfter(advisories, marker);
-                        }
+                    final PsiElement marker    = packages.getFirstChild();
+                    final LeafPsiElement comma = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
+                    if (marker != null && comma != null) {
+                        final PsiElement advisories = new JsonElementGenerator(project)
+                                .createObject("\"roave/security-advisories\": \"dev-master\"")
+                                .getPropertyList().get(0);
+                        marker.getParent().addAfter(comma, marker);
+                        marker.getParent().addAfter(advisories, marker);
                     }
                 }
             }

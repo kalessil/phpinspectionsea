@@ -61,6 +61,7 @@ Bug-fixes:<br/>
 - Magic methods validity: new patterns (thank you @zf2timo)<br/>
 - Security advisories for Composer packages: new dev-packages, new settings<br/>
 - Self class referencing: resolved false-positives (extends list)<br/>
+- Senseless proxy function: resolved false-positives (magic constants as parameters defaults)<br/>
 - Unnecessary parentheses: resolved a false-positive, new patterns<br/>
 - 'empty(...)' usage: QF settings<br/>
 - 'isset(...)' usage: new settings (report index concatenation)<br/>

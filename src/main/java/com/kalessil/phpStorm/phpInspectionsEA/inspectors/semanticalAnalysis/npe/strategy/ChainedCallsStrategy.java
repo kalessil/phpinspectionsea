@@ -52,14 +52,14 @@ final public class ChainedCallsStrategy {
                         final String type = Types.getType(resolvedType);
                         if (type.equals(Types.strNull) || type.equals(Types.strVoid)) {
                             boolean isNullTested = false;
-                            for (final MethodReference nullTestedReference : nullTestedReferences.keySet()) {
-                                final String nullTestedMethodName = nullTestedReferences.get(nullTestedReference);
-                                if (
-                                    nullTestedMethodName != null && nullTestedMethodName.equals(methodName) &&
-                                    OpeanapiEquivalenceUtil.areEqual(nullTestedReference, baseCall)
-                                ) {
-                                    isNullTested = true;
-                                    break;
+                            for (final Map.Entry<MethodReference, String> entry : nullTestedReferences.entrySet()) {
+                                final String nullTestedMethodName = entry.getValue();
+                                if (nullTestedMethodName != null && nullTestedMethodName.equals(methodName)) {
+                                    final boolean areEqual = OpeanapiEquivalenceUtil.areEqual(entry.getKey(), baseCall);
+                                    if (areEqual) {
+                                        isNullTested = true;
+                                        break;
+                                    }
                                 }
                             }
                             if (!isNullTested) {

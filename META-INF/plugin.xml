@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.12.1</version>
+  <version>2.3.13</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -48,11 +48,15 @@ For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/help/keyboard
 <b>Ctrl + Shift + F4</b> to <b>close results</b> of inspection.<br />
 <br />
 On some projects CPU and therefore battery usage could be intensive, so it should be taken into account when traveling
-with a laptop.
+with a laptop.<br />
+<br />
+Note: we are sending anonymous crash-reports and installation statistics to Google Analytics. You are welcome to
+<a href="https://github.com/kalessil/phpinspectionsea/blob/master/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/utils/analytics/AnalyticsUtil.java#L77">review</a>
+the implementation.
     ]]></description>
 
   <change-notes><![CDATA[
-Bug-fixes:<br/>
+Bug-fixes and enhancements:<br/>
 <br/>
 - A constant can be used: resolved false-positives (use-statements)<br/>
 - Array and string offset validity: resolved false-positives (switch to JB types resolver)<br/>
@@ -62,6 +66,7 @@ Bug-fixes:<br/>
 - Security advisories for Composer packages: new dev-packages, new settings<br/>
 - Self class referencing: resolved false-positives (extends list)<br/>
 - Senseless proxy function: resolved false-positives (magic constants as parameters defaults)<br/>
+- Suspicious loop: resolved false-positives (complimentary operations with joda conditions)<br/>
 - Unnecessary parentheses: resolved a false-positive, new patterns<br/>
 - 'empty(...)' usage: QF settings<br/>
 - 'isset(...)' usage: new settings (report index concatenation)<br/>

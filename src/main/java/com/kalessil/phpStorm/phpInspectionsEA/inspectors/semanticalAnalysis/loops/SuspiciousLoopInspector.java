@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -150,54 +151,67 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                 /* currently supported simple for-loops: one condition and one repeated operation */
                 final PsiElement[] repeated   = forStatement.getRepeatedExpressions();
                 final PsiElement[] conditions = forStatement.getConditionalExpressions();
-                if (1 != repeated.length || 1 != conditions.length) {
+                if (repeated.length != 1 || conditions.length != 1 || !(conditions[0] instanceof BinaryExpression)) {
                     return;
                 }
 
-                /* based on the condition, populate expected operations */
-                final List<IElementType> expectedRepeatedOperator = new ArrayList<>();
-                if (conditions[0] instanceof BinaryExpression) {
-                    IElementType checkOperator = ((BinaryExpression) conditions[0]).getOperationType();
-
-                    /* false-positives: joda conditions applied, invert the operator */
-                    final PsiElement left = ((BinaryExpression) conditions[0]).getLeftOperand();
-                    if (OpenapiTypesUtil.isNumber(left) && operationsInversion.containsKey(checkOperator)) {
-                        checkOperator = operationsInversion.get(checkOperator);
-                    }
-
-                    if (checkOperator == PhpTokenTypes.opGREATER || checkOperator == PhpTokenTypes.opGREATER_OR_EQUAL) {
-                        expectedRepeatedOperator.add(PhpTokenTypes.opDECREMENT);
-                        expectedRepeatedOperator.add(PhpTokenTypes.opMINUS);
-                        expectedRepeatedOperator.add(PhpTokenTypes.opMINUS_ASGN);
-                    }
-                    if (checkOperator == PhpTokenTypes.opLESS || checkOperator == PhpTokenTypes.opLESS_OR_EQUAL) {
-                        expectedRepeatedOperator.add(PhpTokenTypes.opINCREMENT);
-                        expectedRepeatedOperator.add(PhpTokenTypes.opPLUS);
-                        expectedRepeatedOperator.add(PhpTokenTypes.opPLUS_ASGN);
-                    }
-                }
-                if (expectedRepeatedOperator.isEmpty()) {
-                    return;
-                }
-
+                /* extract index and repeated operator */
+                final PsiElement index;
                 final IElementType repeatedOperator;
                 if (repeated[0] instanceof UnaryExpression) {
-                    PsiElement operation = ((UnaryExpression) repeated[0]).getOperation();
-                    repeatedOperator     = null == operation ? null : operation.getNode().getElementType();
+                    final UnaryExpression unary = (UnaryExpression) repeated[0];
+                    final PsiElement operation  = unary.getOperation();
+                    repeatedOperator            = operation == null ? null : operation.getNode().getElementType();
+                    index                       = unary.getValue();
                 } else if (repeated[0] instanceof SelfAssignmentExpression) {
-                    repeatedOperator = ((SelfAssignmentExpression) repeated[0]).getOperationType();
+                    final SelfAssignmentExpression selfAssign = (SelfAssignmentExpression) repeated[0];
+                    repeatedOperator                          = selfAssign.getOperationType();
+                    index                                     = selfAssign.getVariable();
                 } else if (repeated[0] instanceof AssignmentExpression) {
-                    PsiElement value = ((AssignmentExpression) repeated[0]).getValue();
-                    repeatedOperator = value instanceof BinaryExpression ? ((BinaryExpression) value).getOperationType() : null;
+                    final AssignmentExpression assignment = (AssignmentExpression) repeated[0];
+                    final PsiElement value                = assignment.getValue();
+                    repeatedOperator                      = value instanceof BinaryExpression ? ((BinaryExpression) value).getOperationType() : null;
+                    index                                 = assignment.getVariable();
                 } else {
                     repeatedOperator = null;
+                    index            = null;
                 }
-                if (null == repeatedOperator || expectedRepeatedOperator.contains(repeatedOperator)) {
-                    expectedRepeatedOperator.clear();
+                if (repeatedOperator == null || index == null) {
                     return;
                 }
 
-                holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundaries);
+                /* analyze condition and extract expected operations */
+                final List<IElementType> expectedRepeatedOperator = new ArrayList<>();
+                final BinaryExpression condition                  = (BinaryExpression) conditions[0];
+                final PsiElement right                            = condition.getRightOperand();
+                IElementType checkOperator                        = condition.getOperationType();
+
+                /* false-positives: joda conditions applied, invert the operator */
+                if (operationsInversion.containsKey(checkOperator)) {
+                    if (OpenapiTypesUtil.isNumber(condition.getLeftOperand())) {
+                        checkOperator = operationsInversion.get(checkOperator);
+                    } else if (right != null && OpeanapiEquivalenceUtil.areEqual(index, right)) {
+                        checkOperator = operationsInversion.get(checkOperator);
+                    }
+                }
+
+                if (checkOperator == PhpTokenTypes.opGREATER || checkOperator == PhpTokenTypes.opGREATER_OR_EQUAL) {
+                    expectedRepeatedOperator.add(PhpTokenTypes.opDECREMENT);
+                    expectedRepeatedOperator.add(PhpTokenTypes.opMINUS);
+                    expectedRepeatedOperator.add(PhpTokenTypes.opMINUS_ASGN);
+                }
+                else if (checkOperator == PhpTokenTypes.opLESS || checkOperator == PhpTokenTypes.opLESS_OR_EQUAL) {
+                    expectedRepeatedOperator.add(PhpTokenTypes.opINCREMENT);
+                    expectedRepeatedOperator.add(PhpTokenTypes.opPLUS);
+                    expectedRepeatedOperator.add(PhpTokenTypes.opPLUS_ASGN);
+                }
+
+                if (!expectedRepeatedOperator.isEmpty()) {
+                    if (!expectedRepeatedOperator.contains(repeatedOperator)) {
+                        holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundaries);
+                    }
+                    expectedRepeatedOperator.clear();
+                }
             }
 
             private void inspectVariables(@NotNull PhpPsiElement loop) {

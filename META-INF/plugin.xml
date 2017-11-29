@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.13</version>
+  <version>2.3.13.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -57,6 +57,8 @@ the implementation.
 
   <change-notes><![CDATA[
 Bug-fixes and enhancements:<br/>
+<br/>
+- Exceptions handling and annotating: PhpStrom 2017.3 compatibility fixes<br/>
 <br/>
 - A constant can be used: resolved false-positives (use-statements)<br/>
 - Array and string offset validity: resolved false-positives (switch to JB types resolver)<br/>

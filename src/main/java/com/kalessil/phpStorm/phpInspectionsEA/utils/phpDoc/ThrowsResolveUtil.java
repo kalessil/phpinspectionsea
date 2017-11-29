@@ -4,7 +4,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocReturnTag;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -44,7 +44,7 @@ final public class ThrowsResolveUtil {
         final PhpDocComment annotations = method.getDocComment();
         if (annotations != null) {
             /* find all @throws and remember FQNs, @throws can be combined with @inheritdoc */
-            for (final PhpDocReturnTag candidate : PsiTreeUtil.findChildrenOfType(annotations, PhpDocReturnTag.class)) {
+            for (final PhpDocTag candidate : PsiTreeUtil.findChildrenOfType(annotations, PhpDocTag.class)) {
                 if (candidate.getName().equalsIgnoreCase("@throws")) {
                     /* definition styles can differ: single tags, pipe concatenated or combined  */
                     for (final PhpDocType type : PsiTreeUtil.findChildrenOfType(candidate, PhpDocType.class)) {

@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsUltimate</id>
   <name>Php Inspections (EA Ultimate)</name>
-  <version>1.0.0</version>
+  <version>1.0.0.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -43,6 +43,7 @@ the implementation.
   <change-notes><![CDATA[
 New inspections and bug-fixes:<br/>
 <br/>
+- Exceptions handling and annotating: PhpStorm 2017.3 compatibility fixes<br/>
 - Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/41000">v2.3.13</a><br/>
 <br/>
 - Insecure 'array_rand(...)' usage: implemented<br/>

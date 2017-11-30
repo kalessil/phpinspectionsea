@@ -7,7 +7,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
-import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
@@ -51,7 +50,7 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
                 final IElementType operator = expression.getOperationType();
                 final PsiElement left       = expression.getLeftOperand();
                 final PsiElement right      = expression.getRightOperand();
-                if (left != null && right != null && operator != null && PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
+                if (left != null && right != null && operator != null && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
                     final boolean isLeftConstant =
                         left instanceof StringLiteralExpression || left instanceof ConstantReference ||
                         OpenapiTypesUtil.isNumber(left);

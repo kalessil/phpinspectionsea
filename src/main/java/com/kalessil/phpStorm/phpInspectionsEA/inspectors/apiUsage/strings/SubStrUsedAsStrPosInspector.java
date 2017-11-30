@@ -3,7 +3,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParameterList;
@@ -81,7 +80,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                 /* check parent expression, to ensure pattern matched */
                 if (parentExpression instanceof BinaryExpression) {
                     final BinaryExpression parent = (BinaryExpression) parentExpression;
-                    if (PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(parent.getOperationType())) {
+                    if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(parent.getOperationType())) {
                         /* get second operand */
                         PsiElement secondOperand = parent.getLeftOperand();
                         if (secondOperand == highLevelCall) {

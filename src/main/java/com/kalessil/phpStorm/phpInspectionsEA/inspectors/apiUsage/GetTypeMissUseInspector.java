@@ -19,6 +19,7 @@ import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -77,7 +78,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
                 /* ensure valid operations being analyzed */
                 final BinaryExpression expression = (BinaryExpression) parent;
                 final IElementType operator       = expression.getOperationType();
-                if (!PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
+                if (!OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
                     return;
                 }
 

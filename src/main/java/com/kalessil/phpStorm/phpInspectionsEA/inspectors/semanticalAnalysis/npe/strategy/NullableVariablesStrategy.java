@@ -140,7 +140,7 @@ final public class NullableVariablesStrategy {
                 if (PhpTokenTypes.kwINSTANCEOF == operation) {
                     return;
                 }
-                if (PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operation)) {
+                if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operation)) {
                     PsiElement second = expression.getLeftOperand();
                     second            = second == variable ? expression.getRightOperand() : second;
                     if (PhpLanguageUtil.isNull(second)) {

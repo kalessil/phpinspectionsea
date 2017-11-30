@@ -15,6 +15,7 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -43,7 +44,7 @@ public class AssertBoolOfComparisonStrategy {
                 final PsiElement left           = argument.getLeftOperand();
                 final PsiElement right          = argument.getRightOperand();
                 final IElementType operation    = argument.getOperationType();
-                if (left != null && right != null && PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operation)) {
+                if (left != null && right != null && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operation)) {
                     final boolean isMethodInverting    = function.equals("assertFalse") || function.equals("assertNotTrue");
                     final boolean isOperationInverting = operation == PhpTokenTypes.opNOT_EQUAL || operation == PhpTokenTypes.opNOT_IDENTICAL;
                     final boolean isTypeStrict         = operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL;

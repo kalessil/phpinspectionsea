@@ -278,7 +278,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                             final PsiElement right                  = binaryExpression.getRightOperand();
                             if (
                                 left != null && right != null &&
-                                PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(binaryExpression.getOperationType())
+                                OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(binaryExpression.getOperationType())
                             ) {
                                 if (
                                     OpeanapiEquivalenceUtil.areEqual(testSubject, left) ||

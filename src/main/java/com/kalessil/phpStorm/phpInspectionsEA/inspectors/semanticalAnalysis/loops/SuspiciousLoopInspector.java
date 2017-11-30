@@ -109,7 +109,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                         } else if (outerContext instanceof BinaryExpression) {
                             final IElementType operation = ((BinaryExpression) outerContext).getOperationType();
                             /* skip analyzing comparisons - I don't want to invest my time into this right now*/
-                            if (PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operation)) {
+                            if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operation)) {
                                 return null;
                             }
                         }

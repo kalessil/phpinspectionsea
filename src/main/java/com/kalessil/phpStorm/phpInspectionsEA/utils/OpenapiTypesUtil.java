@@ -3,12 +3,21 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 final public class OpenapiTypesUtil {
+    final public static TokenSet tsCOMPARE_EQUALITY_OPS = TokenSet.create(
+            PhpTokenTypes.opEQUAL,
+            PhpTokenTypes.opNOT_EQUAL,
+            PhpTokenTypes.opIDENTICAL,
+            PhpTokenTypes.opNOT_IDENTICAL,
+            PhpTokenTypes.kwINSTANCEOF
+    );
+
     final public static TokenSet DEFAULT_VALUES = TokenSet.create(
             PhpElementTypes.CONSTANT_REF,
             PhpElementTypes.STRING,

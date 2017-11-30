@@ -70,7 +70,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                         }
 
                         /* check cases when comparing with 0 */
-                        if (!isMatchedPattern && PhpTokenTypes.tsCOMPARE_EQUALITY_OPS.contains(operationType)) {
+                        if (!isMatchedPattern && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operationType)) {
                             isMatchedPattern = strNumber.equals("0");
                             warningTarget    = parent;
                             isEmptyString    = operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opEQUAL;

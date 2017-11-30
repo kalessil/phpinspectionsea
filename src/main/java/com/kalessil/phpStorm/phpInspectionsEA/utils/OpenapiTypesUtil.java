@@ -14,8 +14,8 @@ final public class OpenapiTypesUtil {
             PhpTokenTypes.opEQUAL,
             PhpTokenTypes.opNOT_EQUAL,
             PhpTokenTypes.opIDENTICAL,
-            PhpTokenTypes.opNOT_IDENTICAL,
-            PhpTokenTypes.kwINSTANCEOF
+            PhpTokenTypes.opNOT_IDENTICAL
+            /* PS 2017.3 included instanceof here, hence we are duplicating the TS */
     );
 
     final public static TokenSet DEFAULT_VALUES = TokenSet.create(

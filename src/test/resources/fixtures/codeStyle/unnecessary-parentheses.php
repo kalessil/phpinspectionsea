@@ -4,6 +4,10 @@
     $x = <weak_warning descr="Unnecessary parentheses.">($x)</weak_warning> + 1;
     $x = <weak_warning descr="Unnecessary parentheses.">(file_get_contents())</weak_warning>;
     $x = clone<weak_warning descr="Unnecessary parentheses.">($object)</weak_warning>;
+    foreach ([] as $value) {
+        continue<weak_warning descr="Unnecessary parentheses.">(2)</weak_warning>;
+        break<weak_warning descr="Unnecessary parentheses.">(2)</weak_warning>;
+    }
 
     $x = ($x + 1) / 2;
     $x = ((array) $x)[0];

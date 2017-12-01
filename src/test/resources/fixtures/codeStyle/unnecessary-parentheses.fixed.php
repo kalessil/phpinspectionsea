@@ -4,6 +4,10 @@
     $x = $x + 1;
     $x = file_get_contents();
     $x = clone $object;
+    foreach ([] as $value) {
+        continue 2;
+        break 2;
+    }
 
     $x = ($x + 1) / 2;
     $x = ((array) $x)[0];

@@ -2,18 +2,18 @@ package com.kalessil.phpStorm.phpInspectionsEA.api;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayUniqueMissUseInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayKeysMissUseInspector;
 
-final public class ArrayUniqueMissUseInspectorTest extends PhpCodeInsightFixtureTestCase {
+final public class ArrayKeysMissUseInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(new ArrayUniqueMissUseInspector());
-        myFixture.configureByFile("fixtures/api/array/array-unique-misused.php");
+        myFixture.enableInspections(new ArrayKeysMissUseInspector());
+        myFixture.configureByFile("fixtures/api/array/array-keys-misused.php");
         myFixture.testHighlighting(true, false, true);
 
         for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
             myFixture.launchAction(fix);
         }
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/array/array-unique-misused.fixed.php");
+        myFixture.checkResultByFile("fixtures/api/array/array-keys-misused.fixed.php");
     }
 }

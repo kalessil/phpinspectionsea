@@ -6,6 +6,10 @@ function cases_holder() {
         array_keys(),
 
         array_unique(array_keys(), SORT_STRING),
-        array_unique(array_keyz(), SORT_STRING)
+        array_unique(array_keyz(), SORT_STRING),
+
+       count([]),
+
+       count(array_keys([], 'search'))
     ];
 }

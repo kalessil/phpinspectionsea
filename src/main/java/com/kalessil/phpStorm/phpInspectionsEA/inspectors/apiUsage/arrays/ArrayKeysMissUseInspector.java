@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -20,12 +21,13 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class ArrayUniqueMissUseInspector extends BasePhpInspection {
-    private static final String message = "'array_unique(...)' is not making any sense here (array keys are unique).";
+public class ArrayKeysMissUseInspector extends BasePhpInspection {
+    private static final String messageArrayUnique = "'array_unique(...)' is not making any sense here (array keys are unique).";
+    private static final String messageCount       = "'array_keys(...)' is not making any sense here (just count it's argument).";
 
     @NotNull
     public String getShortName() {
-        return "ArrayUniqueMissUseInspection";
+        return "ArrayKeysMissUseInspection";
     }
 
     @Override
@@ -38,12 +40,20 @@ public class ArrayUniqueMissUseInspector extends BasePhpInspection {
 
                 final String functionName    = reference.getName();
                 final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length == 1 && functionName != null && functionName.equals("array_unique")) {
-                    final boolean isTarget = OpenapiTypesUtil.isFunctionReference(arguments[0]);
-                    if (isTarget) {
-                        final String innerName = ((FunctionReference) arguments[0]).getName();
-                        if (innerName != null && innerName.equals("array_keys")) {
-                            holder.registerProblem(reference, message, new ReplaceFix(arguments[0].getText()));
+                if (arguments.length == 1 && functionName != null && functionName.equals("array_keys")) {
+                    final PsiElement parent = reference.getParent();
+                    if (parent instanceof ParameterList) {
+                        final PsiElement grandParent = parent.getParent();
+                        if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
+                            final FunctionReference parentCall = (FunctionReference) grandParent;
+                            final String parentCallName        = parentCall.getName();
+                            if (parentCallName != null) {
+                                if (parentCallName.equals("array_unique")) {
+                                    holder.registerProblem(parentCall, messageArrayUnique, new ReplaceFix(reference.getText()));
+                                } else if (parentCallName.equals("count")) {
+                                    holder.registerProblem(reference, messageCount, new ReplaceFix(arguments[0].getText()));
+                                }
+                            }
                         }
                     }
                 }
@@ -55,7 +65,7 @@ public class ArrayUniqueMissUseInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Remove unnecessary 'array_unique(...)' call";
+            return "Remove unnecessary calls";
         }
 
         ReplaceFix(@NotNull String expression) {

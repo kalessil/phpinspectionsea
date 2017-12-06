@@ -59,3 +59,22 @@ function immediateOverrides()
 
     return [$y1, $y2, $y3, $y4, $y5, $y6, $y7, $y8, $y9, $y10, $y10, $y11];
 }
+
+function increments_decrements_cases_holder ()
+{
+    $index = 0;
+
+    $x[$index++] = '';
+    $x[$index++] = '';
+
+    $y[++$index] = '';
+    $y[++$index] = '';
+
+    $z[$index--] = '';
+    $z[$index--] = '';
+
+    $t[--$index] = '';
+    $t[--$index] = '';
+
+    return [$x, $y, $z, $t];
+}

@@ -46,12 +46,8 @@ New inspections and bug-fixes:<br/>
 - Multiple PhpStorm 2017.3 compatibility fixes<br/>
 - Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/41000">v2.3.13</a><br/>
 <br/>
-- Insecure 'array_rand(...)' usage: implemented<br/>
-- Non-optimal regular expression: new patterns<br/>
-- Null reference: new patterns<br/>
-- Unnecessary variable overrides: implemented<br/>
-- 'compact(...)' variables existence: new patterns<br/>
-- 'file_put_contents(...)' race condition: implemented<br/>
+- ArrayKeysMissUseInspector: implemented<br/>
+- CoreInterfacesUsageInspector: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>

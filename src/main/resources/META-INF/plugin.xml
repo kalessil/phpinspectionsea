@@ -441,6 +441,10 @@ New inspections and bug-fixes:<br/>
         shortName="DateTimeSetTimeUsageInspection"                displayName="'DateTime::setTime(...)' usage correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.DateTimeSetTimeUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="CoreInterfacesUsageInspection"                 displayName="Core interfaces usage correctness"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.CoreInterfacesUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

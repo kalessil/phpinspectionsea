@@ -27,23 +27,28 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpSwitch(PhpSwitch switchStatement) {
+            @Override
+            public void visitPhpSwitch(@NotNull PhpSwitch switchStatement) {
                 SwitchFallThroughStrategy.apply(switchStatement, holder);
             }
 
-            public void visitPhpSelfAssignmentExpression(SelfAssignmentExpression expression) {
+            @Override
+            public void visitPhpSelfAssignmentExpression(@NotNull SelfAssignmentExpression expression) {
                 SelfAssignmentStrategy.apply(expression, holder);
             }
 
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 ParameterImmediateOverrideStrategy.apply(method, holder);
             }
 
-            public void visitPhpFunction(Function function) {
+            @Override
+            public void visitPhpFunction(@NotNull Function function) {
                 ParameterImmediateOverrideStrategy.apply(function, holder);
             }
 
-            public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
+            @Override
+            public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
                 SuspiciousOperatorFormattingStrategy.apply(assignmentExpression, holder);
                 SequentialAssignmentsStrategy.apply(assignmentExpression, holder);
             }

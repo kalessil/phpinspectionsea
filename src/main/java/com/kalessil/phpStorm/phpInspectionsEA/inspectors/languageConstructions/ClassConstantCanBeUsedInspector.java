@@ -22,6 +22,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -130,9 +131,9 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         final PhpIndex index     = PhpIndex.getInstance(project);
 
                         /* try searching interfaces and classes for the given FQN */
-                        Collection<PhpClass> classes = index.getClassesByFQN(fqnToLookup);
+                        Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(fqnToLookup, index);
                         if (classes.isEmpty()) {
-                            classes = index.getInterfacesByFQN(fqnToLookup);
+                            classes = OpenapiResolveUtil.resolveInterfacesByFQN(fqnToLookup, index);
                         }
 
                         /* check resolved items */

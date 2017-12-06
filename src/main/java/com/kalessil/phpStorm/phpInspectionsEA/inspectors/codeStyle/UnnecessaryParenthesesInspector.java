@@ -145,15 +145,23 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
             if (expression instanceof ParenthesizedExpression && !project.isDisposed()) {
                 PsiElement target      = expression;
                 PsiElement replacement = ((ParenthesizedExpression) expression).getArgument();
-                /* clone replacement is a special case */
+
+                /* in some constructs QF can produce wrong results: deal with it */
                 final PsiElement parent = expression.getParent();
                 if (parent instanceof UnaryExpression) {
-                    if (OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.kwCLONE)) {
-                        target             = parent;
-                        final String clone = "clone " + replacement.getText();
-                        replacement        = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, clone);
+                    final PsiElement operation = ((UnaryExpression) parent).getOperation();
+                    if (OpenapiTypesUtil.is(operation, PhpTokenTypes.kwCLONE)) {
+                        target      = parent;
+                        replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "clone " + replacement.getText());
                     }
+                } else if (parent instanceof PhpContinue) {
+                    target      = parent;
+                    replacement = PhpPsiElementFactory.createFromText(project, PhpContinue.class, "continue " + replacement.getText() + ';');
+                } else if (parent instanceof PhpBreak) {
+                    target      = parent;
+                    replacement = PhpPsiElementFactory.createFromText(project, PhpBreak.class, "break " + replacement.getText() + ';');
                 }
+
                 /* replace now */
                 if (replacement != null) {
                     target.replace(replacement);

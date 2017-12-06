@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -112,8 +113,20 @@ final public class SequentialAssignmentsStrategy {
             while (operation != null && operation.getNode().getElementType() != PhpTokenTypes.opASGN) {
                 operation = operation.getNextSibling();
             }
-            /* preceding assignments by reference are totally making sense */
-            if (operation != null && !operation.getText().replaceAll("\\s+", "").equals("=&")) {
+            if (operation != null) {
+                /* false-positives: preceding assignments by reference */
+                if (operation.getText().replaceAll("\\s+", "").equals("=&")) {
+                    return;
+                }
+                /* false-positives: ++/-- are used inside the container expression */
+                for (final UnaryExpression unary : PsiTreeUtil.findChildrenOfType(container, UnaryExpression.class)) {
+                    final PsiElement unaryOperation = unary.getOperation();
+                    final IElementType unaryType    = unaryOperation == null ? null : unaryOperation.getNode().getElementType();
+                    if (unaryOperation != null && PhpTokenTypes.tsUNARY_POSTFIX_OPS.contains(unaryType)) {
+                        return;
+                    }
+                }
+
                 final String message = patternGeneral.replace("%c%", container.getText());
                 holder.registerProblem(container, message, ProblemHighlightType.GENERIC_ERROR);
             }

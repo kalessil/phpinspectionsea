@@ -12,5 +12,5 @@ class NonFinalClass
 final class FinalClass
 {
     public function x() {}
-    public function __construct() {}
+    private function __construct() {}
 }

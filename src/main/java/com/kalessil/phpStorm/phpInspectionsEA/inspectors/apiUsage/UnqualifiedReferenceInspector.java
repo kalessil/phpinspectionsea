@@ -10,12 +10,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -167,14 +169,23 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
             private void analyzeReference(@NotNull PhpReference reference) {
                 /* constructs structure expectations */
                 final String referenceName = reference.getName();
-                if (null == referenceName || !reference.getImmediateNamespaceName().isEmpty()) {
+                if (referenceName == null) {
                     return;
                 }
+                /* NS specification is identified differently for { define } and { call, constant } */
+                final PsiElement nsCandidate = reference.getFirstChild();
+                if (
+                    !(nsCandidate instanceof PhpNamespaceReference) &&
+                    !OpenapiTypesUtil.is(nsCandidate, PhpTokenTypes.NAMESPACE_RESOLUTION)
+                ) {
+                    return;
+                }
+                /* some constants prefixing is making no sense IMO */
                 if (reference instanceof ConstantReference && falsePositives.contains(referenceName)) {
                     return;
                 }
                 final PhpNamespace ns = PsiTreeUtil.findChildOfType(reference.getContainingFile(), PhpNamespace.class);
-                if (null == ns) {
+                if (ns == null) {
                     return;
                 }
 

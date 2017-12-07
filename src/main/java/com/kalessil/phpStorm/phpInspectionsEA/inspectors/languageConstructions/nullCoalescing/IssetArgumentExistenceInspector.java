@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -47,30 +48,39 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
-                final PsiElement leftOperand = expression.getLeftOperand();
-                if (PhpTokenTypes.opCOALESCE == expression.getOperationType() && leftOperand instanceof Variable) {
-                    final Variable variable = (Variable) leftOperand;
-                    if (!this.isSuppliedFromOutside(variable, this.getSuppliedVariables(expression))) {
-                        analyzeExistence(variable);
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    final PsiElement argument = expression.getLeftOperand();
+                    if (argument != null && PhpTokenTypes.opCOALESCE == expression.getOperationType()) {
+                        this.analyzeArgumentsExistence(new PhpExpression[]{(PhpExpression) argument});
                     }
                 }
             }
 
             @Override
             public void visitPhpEmpty(@NotNull PhpEmpty expression) {
-                this.analyzeArgumentsExistence(expression.getVariables());
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    this.analyzeArgumentsExistence(expression.getVariables());
+                }
             }
 
             @Override
             public void visitPhpIsset(@NotNull PhpIsset expression) {
-                this.analyzeArgumentsExistence(expression.getVariables());
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    this.analyzeArgumentsExistence(expression.getVariables());
+                }
             }
 
             private void analyzeArgumentsExistence(@NotNull PhpExpression[] arguments) {
                 final Set<String> parameters = arguments.length > 0 ? this.getSuppliedVariables(arguments[0]) : null;
                 for (final PhpExpression argument : arguments) {
-                    if (argument instanceof Variable) {
-                        final Variable variable = (Variable) argument;
+                    /* support array accesses: extract variables */
+                    PsiElement normalizedArgument = argument;
+                    while (normalizedArgument instanceof ArrayAccessExpression) {
+                        normalizedArgument = ((ArrayAccessExpression) normalizedArgument).getValue();
+                    }
+                    /* now check variable existence */
+                    if (normalizedArgument instanceof Variable) {
+                        final Variable variable = (Variable) normalizedArgument;
                         if (!this.isSuppliedFromOutside(variable, parameters)) {
                             analyzeExistence(variable);
                         }

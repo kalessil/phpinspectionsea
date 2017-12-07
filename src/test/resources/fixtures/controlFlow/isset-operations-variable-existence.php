@@ -31,4 +31,12 @@ class CasesHolder
         echo $x;
         echo $x ?? '';
     }
+
+    public function reportArrayAccessCases() {
+        $x = <error descr="'$x' seems to be not defined in the scope.">$x</error>[0][0] ?? null;
+        $e = empty(<error descr="'$e' seems to be not defined in the scope.">$e</error>[0][0]);
+        $i = isset(<error descr="'$i' seems to be not defined in the scope.">$i</error>[0][0]);
+
+        return [ $x, $e, $i ];
+    }
 }

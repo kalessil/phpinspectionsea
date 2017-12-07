@@ -48,6 +48,7 @@ New inspections and bug-fixes:<br/>
 <br/>
 - ArrayKeysMissUseInspector: implemented<br/>
 - CoreInterfacesUsageInspector: implemented<br/>
+- IssetArgumentExistenceInspector: new patterns<br/>
 <br/>
 <hr/>
   ]]></change-notes>

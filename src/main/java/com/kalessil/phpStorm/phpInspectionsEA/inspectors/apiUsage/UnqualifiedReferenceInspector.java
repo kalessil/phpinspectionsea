@@ -172,16 +172,16 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 if (referenceName == null) {
                     return;
                 }
+                /* some constants prefixing is making no sense IMO */
+                if (reference instanceof ConstantReference && falsePositives.contains(referenceName)) {
+                    return;
+                }
                 /* NS specification is identified differently for { define } and { call, constant } */
                 final PsiElement nsCandidate = reference.getFirstChild();
                 if (
                     !(nsCandidate instanceof PhpNamespaceReference) &&
                     !OpenapiTypesUtil.is(nsCandidate, PhpTokenTypes.NAMESPACE_RESOLUTION)
                 ) {
-                    return;
-                }
-                /* some constants prefixing is making no sense IMO */
-                if (reference instanceof ConstantReference && falsePositives.contains(referenceName)) {
                     return;
                 }
                 final PhpNamespace ns = PsiTreeUtil.findChildOfType(reference.getContainingFile(), PhpNamespace.class);

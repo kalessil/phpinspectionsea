@@ -7,7 +7,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessaryFi
 final public class UnnecessaryFinalModifierInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new UnnecessaryFinalModifierInspector());
-
         myFixture.configureByFile("fixtures/codeStyle/unnecessary-final-modifier.php");
         myFixture.testHighlighting(true, false, true);
 

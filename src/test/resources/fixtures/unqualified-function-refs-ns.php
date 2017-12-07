@@ -16,7 +16,12 @@ namespace Unqualified\References {
     echo \array_walk([], <weak_warning descr="Using '\my_function' would enable some of opcode optimizations">'my_function'</weak_warning>);
     echo \array_reduce([], <weak_warning descr="Using '\my_function' would enable some of opcode optimizations">'my_function'</weak_warning>);
 
+    /* case with double quotes */
     echo \array_reduce([], <weak_warning descr="Using '\my_function' would enable some of opcode optimizations">"my_function"</weak_warning>);
+
+    /* define calls tree structure differs, special case */
+    <weak_warning descr="Using '\define(...)' would enable some of opcode optimizations">define('', '')</weak_warning>;
+    \define('', '');
 
     /* false-positives: a qualified call */
     echo \uniqid();

@@ -1,14 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
-/*
- * This file is part of the Php Inspections (EA Extended) package.
- *
- * (c) Vladimir Reznichenko <kalessil@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -22,6 +13,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class UnnecessaryFinalModifierInspector extends BasePhpInspection {
     private static final String message = "Unnecessary final modifier.";
@@ -37,12 +37,16 @@ public class UnnecessaryFinalModifierInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                final PhpClass clazz      = method.getContainingClass();
-                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
-                if (null != clazz && null != nameNode) {
-                    final boolean isTarget = method.isFinal() && (clazz.isFinal() || method.getAccess().isPrivate());
-                    if (isTarget) {
-                        holder.registerProblem(nameNode, message, new TheLocalFix());
+                if (method.isFinal()) {
+                    final PhpClass clazz = method.getContainingClass();
+                    if (
+                        (clazz != null && clazz.isFinal()) ||
+                        (!method.getName().startsWith("__") && method.getAccess().isPrivate())
+                    ) {
+                        final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
+                        if (nameNode != null) {
+                            holder.registerProblem(nameNode, message, new TheLocalFix());
+                        }
                     }
                 }
             }

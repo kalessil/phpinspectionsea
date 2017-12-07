@@ -16,7 +16,12 @@ namespace Unqualified\References {
     echo \array_walk([], '\my_function');
     echo \array_reduce([], '\my_function');
 
+    /* case with double quotes */
     echo \array_reduce([], "\\my_function");
+
+    /* define calls tree structure differs, special case */
+    \define('', '');
+    \define('', '');
 
     /* false-positives: a qualified call */
     echo \uniqid();

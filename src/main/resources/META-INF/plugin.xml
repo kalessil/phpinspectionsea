@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsUltimate</id>
   <name>Php Inspections (EA Ultimate)</name>
-  <version>1.0.0.2</version>
+  <version>1.0.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -43,12 +43,11 @@ the implementation.
   <change-notes><![CDATA[
 New inspections and bug-fixes:<br/>
 <br/>
-- Multiple PhpStorm 2017.3 compatibility fixes<br/>
-- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/41000">v2.3.13</a><br/>
+- Bug-fixes from Php Inspections (EA Extended) <a href="https://github.com/kalessil/phpinspectionsea/milestone/21?closed=1">v2.3.14</a><br/>
 <br/>
-- ArrayKeysMissUseInspector: implemented<br/>
-- CoreInterfacesUsageInspector: implemented<br/>
-- IssetArgumentExistenceInspector: new patterns<br/>
+- Core interfaces usage correctness: implemented<br/>
+- Isset operations variables existence: new patterns<br/>
+- 'array_keys(...)' misused: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>

@@ -163,7 +163,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                             if (isCandidate && (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(function))) {
                                 final PhpIndex index = PhpIndex.getInstance(holder.getProject());
                                 if (!index.getFunctionsByFQN('\\' + functionName).isEmpty()) {
-                                    final String message = messagePattern.replace("%t%", function);
+                                    final String message = String.format(messagePattern, function);
                                     holder.registerProblem(callback, message, new TheLocalFix());
                                 }
                             }

@@ -35,3 +35,8 @@ namespace Unqualified\References {
     const PHP_INT_ZERO = 0;
     echo PHP_INT_ZERO;
 }
+
+namespace WithFunctionImports {
+    use function define;
+    define('', '');
+}

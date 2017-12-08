@@ -4,6 +4,7 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -36,7 +37,7 @@ import java.util.Set;
  */
 
 public class UnqualifiedReferenceInspector extends BasePhpInspection {
-    private static final String messagePattern = "Using '\\%t%' would enable some of opcode optimizations";
+    private static final String messagePattern = "Using '\\%s' would enable some of opcode optimizations.";
 
     // Inspection options.
     public boolean REPORT_ALL_FUNCTIONS = false;
@@ -110,6 +111,11 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
         advancedOpcode.add("define");
     }
 
+    final private static Condition<PsiElement> PARENT_NAMESPACE = new Condition<PsiElement>() {
+        public boolean value(PsiElement element) { return element instanceof PhpNamespace; }
+        public String toString()                 { return "Condition.PARENT_NAMESPACE";    }
+    };
+
     @NotNull
     public String getShortName() {
         return "UnqualifiedReferenceInspection";
@@ -157,7 +163,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                             if (isCandidate && (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(function))) {
                                 final PhpIndex index = PhpIndex.getInstance(holder.getProject());
                                 if (!index.getFunctionsByFQN('\\' + functionName).isEmpty()) {
-                                    final String message = messagePattern.replace("%t%", function);
+                                    final String message = String.format(messagePattern, function);
                                     holder.registerProblem(callback, message, new TheLocalFix());
                                 }
                             }
@@ -181,7 +187,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 if (nsCandidate instanceof PhpNamespaceReference || OpenapiTypesUtil.is(nsCandidate, PhpTokenTypes.NAMESPACE_RESOLUTION)) {
                     return;
                 }
-                final PhpNamespace ns = PsiTreeUtil.findChildOfType(reference.getContainingFile(), PhpNamespace.class);
+                final PhpNamespace ns = (PhpNamespace) PsiTreeUtil.findFirstParent(reference, PARENT_NAMESPACE);
                 if (ns == null) {
                     return;
                 }
@@ -190,12 +196,25 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 final PsiElement function = OpenapiResolveUtil.resolveReference(reference);
                 final boolean isFunction  = function instanceof Function;
                 if (isFunction || function instanceof Constant) {
+                    /* false-positives: non-root NS function/constant referenced */
                     final String fqn = ((PhpNamedElement) function).getFQN();
                     if (fqn.length() != 1 + referenceName.length() || !fqn.equals('\\' + referenceName)) {
                         return;
                     }
+                    /* false-positive: opcode-ed functions are imported already */
+                    if (isFunction && advancedOpcode.contains(referenceName)) {
+                        for (final PhpUse use : PsiTreeUtil.findChildrenOfType(ns, PhpUse.class)) {
+                            final PsiElement candidate = use.getFirstPsiChild();
+                            if (candidate instanceof FunctionReference) {
+                                final String importedFunction = ((FunctionReference) candidate).getName();
+                                if (importedFunction != null && referenceName.equals(importedFunction)) {
+                                    return;
+                                }
+                            }
+                        }
+                    }
 
-                    final String message = messagePattern.replace("%t%", referenceName + (isFunction ? "(...)" : ""));
+                    final String message = String.format(messagePattern, referenceName + (isFunction ? "(...)" : ""));
                     holder.registerProblem(reference, message, new TheLocalFix());
                 }
             }

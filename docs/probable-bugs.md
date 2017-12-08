@@ -134,3 +134,13 @@ managed to create a directory.
 
 Apart of different code constructs which vulnerable to this issue type, the safe 
 variant is following: `!is_dir($folder) && !mkdir($folder) && !is_dir($folder)`.
+
+## 'file_put_contents(...)' race condition
+
+> Note: the inspection is part of Php Inspections (EA Ultimate)
+
+> Note: in Vagrant environment using LOCK_EX might cause warnings: `file_put_contents(): Exclusive locks are not supported for this stream`
+> , which can be solved [in multiple ways](https://github.com/thephpleague/flysystem/issues/445#issuecomment-191160239)
+
+This issue is similar to `'mkdir(...)' race condition` case, but we are reporting only cases when php-content is 
+written into a file - in this case concurrency issues can result into compromised or corrupted application state.

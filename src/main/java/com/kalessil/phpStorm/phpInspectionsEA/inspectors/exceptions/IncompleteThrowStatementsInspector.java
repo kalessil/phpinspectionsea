@@ -40,43 +40,41 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpNewExpression(NewExpression expression) {
+            @Override
+            public void visitPhpNewExpression(@NotNull NewExpression expression) {
                 final PsiElement parent       = expression.getParent();
                 final ClassReference argument = expression.getClassReference();
-                if (null == argument || null == parent) {
-                    return;
-                }
-
-                /* pattern '... new Exception('...%s...'[, ...]);' */
-                final PsiElement[] params = expression.getParameters();
-                if (params.length > 0 && params[0] instanceof StringLiteralExpression) {
-                    boolean containsPlaceholders = ((StringLiteralExpression) params[0]).getContents().contains("%s");
-                    if (containsPlaceholders && isExceptionClass(argument)) {
-                        final String replacement = "sprintf(" + params[0].getText() + ", )";
-                        holder.registerProblem(params[0], messageSprintf, new AddMissingSprintfFix(replacement));
+                if (argument != null && parent != null) {
+                    /* pattern '... new Exception('...%s...'[, ...]);' */
+                    final PsiElement[] params = expression.getParameters();
+                    if (params.length > 0 && params[0] instanceof StringLiteralExpression) {
+                        boolean containsPlaceholders = ((StringLiteralExpression) params[0]).getContents().contains("%s");
+                        if (containsPlaceholders && this.isExceptionClass(argument)) {
+                            final String replacement = "sprintf(" + params[0].getText() + ", )";
+                            holder.registerProblem(params[0], messageSprintf, new AddMissingSprintfFix(replacement));
+                        }
                     }
-                }
-
-                /* pattern 'new Exception(...);' */
-                if (OpenapiTypesUtil.isStatementImpl(parent) && this.isExceptionClass(argument)) {
-                    holder.registerProblem(expression, messageThrow, new AddMissingThrowFix());
+                    /* pattern 'new Exception(...);' */
+                    if (OpenapiTypesUtil.isStatementImpl(parent) && this.isExceptionClass(argument)) {
+                        holder.registerProblem(expression, messageThrow, new AddMissingThrowFix());
+                    }
                 }
             }
 
             private boolean isExceptionClass(@NotNull ClassReference reference) {
+                boolean result            = false;
                 final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                 if (resolved instanceof PhpClass) {
                     final Set<PhpClass> inheritanceChain = InterfacesExtractUtil.getCrawlInheritanceTree((PhpClass) resolved, true);
-                    for (PhpClass clazz : inheritanceChain) {
+                    for (final PhpClass clazz : inheritanceChain) {
                         if (clazz.getFQN().equals("\\Exception")) {
-                            inheritanceChain.clear();
-                            return true;
+                            result = true;
+                            break;
                         }
                     }
                     inheritanceChain.clear();
                 }
-
-                return false;
+                return result;
             }
         };
     }
@@ -109,12 +107,14 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (null != expression) {
-                final PhpThrow throwExpression = PhpPsiElementFactory.createFromText(project, PhpThrow.class, "throw $x;");
-                if (null != throwExpression) {
-                    //noinspection ConstantConditions as we dealing with hard-coded expressions here
-                    throwExpression.getArgument().replace(expression.copy());
-                    expression.getParent().replace(throwExpression);
+            if (expression != null && !project.isDisposed()) {
+                final PhpThrow implant = PhpPsiElementFactory.createFromText(project, PhpThrow.class, "throw $x;");
+                if (implant != null) {
+                    final PsiElement socket = implant.getArgument();
+                    if (socket != null) {
+                        socket.replace(expression.copy());
+                        expression.getParent().replace(implant);
+                    }
                 }
             }
         }

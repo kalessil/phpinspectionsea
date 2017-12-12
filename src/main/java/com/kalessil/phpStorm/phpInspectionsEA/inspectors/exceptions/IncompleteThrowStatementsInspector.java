@@ -29,6 +29,7 @@ import java.util.Set;
 
 public class IncompleteThrowStatementsInspector extends BasePhpInspection {
     private static final String messageThrow   = "It's probably intended to throw an exception here.";
+    private static final String messageNew     = "It's probably intended to instantiate the exception here.";
     private static final String messageSprintf = "It's probably intended to use 'sprintf(...)' here.";
 
     @NotNull
@@ -41,10 +42,24 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
+            public void visitPhpThrow(@NotNull PhpThrow expression) {
+                final PsiElement argument = expression.getArgument();
+                if (!(argument instanceof NewExpression) && OpenapiTypesUtil.isFunctionReference(argument)) {
+                    final FunctionReference call = (FunctionReference) argument;
+                    final String functionName    = call.getName();
+                    if (functionName != null && !functionName.isEmpty()) {
+                        final boolean startsWithUppercase = Character.isUpperCase(functionName.charAt(0));
+                        if (startsWithUppercase && OpenapiResolveUtil.resolveReference(call) == null) {
+                            holder.registerProblem(argument, messageNew, new AddMissingNewFix());
+                        }
+                    }
+                }
+            }
+
+            @Override
             public void visitPhpNewExpression(@NotNull NewExpression expression) {
-                final PsiElement parent       = expression.getParent();
                 final ClassReference argument = expression.getClassReference();
-                if (argument != null && parent != null) {
+                if (argument != null) {
                     /* pattern '... new Exception('...%s...'[, ...]);' */
                     final PsiElement[] params = expression.getParameters();
                     if (params.length > 0 && params[0] instanceof StringLiteralExpression) {
@@ -55,7 +70,7 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
                         }
                     }
                     /* pattern 'new Exception(...);' */
-                    if (OpenapiTypesUtil.isStatementImpl(parent) && this.isExceptionClass(argument)) {
+                    if (OpenapiTypesUtil.isStatementImpl(expression.getParent()) && this.isExceptionClass(argument)) {
                         holder.registerProblem(expression, messageThrow, new AddMissingThrowFix());
                     }
                 }
@@ -115,6 +130,32 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
                         socket.replace(expression.copy());
                         expression.getParent().replace(implant);
                     }
+                }
+            }
+        }
+    }
+
+    private static class AddMissingNewFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Add missing new keyword";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression != null && !project.isDisposed()) {
+                final String replacement = String.format("throw new %s;", expression.getText());
+                final PhpThrow implant   = PhpPsiElementFactory.createFromText(project, PhpThrow.class, replacement);
+                if (implant != null) {
+                    expression.getParent().replace(implant);
                 }
             }
         }

@@ -53,9 +53,10 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpArrayCreationExpression(ArrayCreationExpression expression) {}
     @Override public void visitPhpArrayAccessExpression(ArrayAccessExpression expression)     {}
 
-    @Override public void visitPhpTry(Try tryStatement)    {}
-    @Override public void visitPhpCatch(Catch phpCatch)    {}
-    @Override public void visitPhpFinally(Finally element) {}
+    @Override public void visitPhpTry(Try tryStatement)          {}
+    @Override public void visitPhpCatch(Catch phpCatch)          {}
+    @Override public void visitPhpFinally(Finally element)       {}
+    @Override public void visitPhpThrow(PhpThrow throwStatement) {}
 
     @Override public void visitPhpSwitch(PhpSwitch switchStatement) {}
 }

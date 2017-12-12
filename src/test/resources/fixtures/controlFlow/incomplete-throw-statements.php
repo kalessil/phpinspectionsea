@@ -1,12 +1,15 @@
 <?php
 
 class MyException extends RuntimeException {}
-throw new MyException();
+class MyStdClass extends stdClass          {}
 
-<error descr="It's probably intended to throw an exception here.">new MyException()</error>;
-throw <error descr="It's probably intended to instantiate the exception here.">MyException()</error>;
-throw new MyException(<error descr="It's probably intended to use sprintf here.">'%s'</error>);
+function cases_holder() {
+    <error descr="It's probably intended to throw an exception here.">new MyException()</error>;
+    throw <error descr="It's probably intended to instantiate the exception here.">MyException()</error>;
+    throw new MyException(<error descr="It's probably intended to use 'sprintf(...)' here.">'%s'</error>);
 
-class MyStdClass extends stdClass {}
-new MyStdClass();
-new MyStdClass('%s');
+    throw new MyException();
+
+    new MyStdClass();
+    new MyStdClass('%s');
+}

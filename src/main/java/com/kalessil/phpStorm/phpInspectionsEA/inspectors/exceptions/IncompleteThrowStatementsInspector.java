@@ -29,7 +29,7 @@ import java.util.Set;
 
 public class IncompleteThrowStatementsInspector extends BasePhpInspection {
     private static final String messageThrow   = "It's probably intended to throw an exception here.";
-    private static final String messageSprintf = "It's probably intended to use sprintf here.";
+    private static final String messageSprintf = "It's probably intended to use 'sprintf(...)' here.";
 
     @NotNull
     public String getShortName() {
@@ -48,8 +48,8 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
                     /* pattern '... new Exception('...%s...'[, ...]);' */
                     final PsiElement[] params = expression.getParameters();
                     if (params.length > 0 && params[0] instanceof StringLiteralExpression) {
-                        boolean containsPlaceholders = ((StringLiteralExpression) params[0]).getContents().contains("%s");
-                        if (containsPlaceholders && this.isExceptionClass(argument)) {
+                        final String exceptionMessage = ((StringLiteralExpression) params[0]).getContents();
+                        if (exceptionMessage.contains("%s") && this.isExceptionClass(argument)) {
                             final String replacement = "sprintf(" + params[0].getText() + ", )";
                             holder.registerProblem(params[0], messageSprintf, new AddMissingSprintfFix(replacement));
                         }

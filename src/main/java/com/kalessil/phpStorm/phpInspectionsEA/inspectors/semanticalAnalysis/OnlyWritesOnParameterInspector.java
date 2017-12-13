@@ -210,7 +210,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                                 }
                                 /* false-negative: inline assignment result has been used */
                                 if (usages.length == 2 && usages[0].getAnchor() == usages[1].getAnchor()) {
-                                    holder.registerProblem(sameVariableCandidate, messageOnlyWrites, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                    holder.registerProblem(sameVariableCandidate, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                                     return 1;
                                 }
                                 continue;

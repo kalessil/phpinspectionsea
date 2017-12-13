@@ -136,7 +136,7 @@ Inspections Lists (Language level migration)
 | Language level migration | ConstantCanBeUsedInspection                     | A constant can be used                              | yes | yes | yes  | no  |
 | Language level migration | ArgumentUnpackingCanBeUsedInspection            | Argument unpacking can be used                      | yes | yes | no   | no  |
 | Language level migration | ReturnTypeCanBeDeclaredInspection               | Return type hint can be used                        | yes | yes | yes  | no  |
-| Language level migration | GetClassUsageInspection                         | 'get_class(...)' usage correctness                  | n/a | no  | n/a  | no  |
+| Language level migration | GetClassUsageInspection                         | 'get_class(...)' usage correctness                  | n/a | yes | n/a  | no  |
 
 Inspections Lists (Architecture)
 ---

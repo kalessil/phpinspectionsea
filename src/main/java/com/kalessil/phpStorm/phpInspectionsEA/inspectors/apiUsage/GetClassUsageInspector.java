@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class GetClassUsageInspector extends BasePhpInspection {
 
-    private static final String message = "'get_class(...)' does not accept null in PHP 7.2+ versions.";
+    private static final String message = "'get_class(...)' does not accept null as argument in PHP 7.2+ versions.";
 
     @NotNull
     public String getShortName() {
@@ -38,10 +39,11 @@ public class GetClassUsageInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("get_class")) {
                     final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length == 1) {
-                        final PhpType resolved = OpenapiResolveUtil.resolveType(reference, reference.getProject());
+                    if (arguments.length == 1 && arguments[0] instanceof PhpTypedElement) {
+                        final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) arguments[0], reference.getProject());
                         if (resolved != null) {
-                            final boolean hasNull = resolved.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strNull));
+                            final boolean hasNull = resolved.filterUnknown().getTypes().stream()
+                                    .anyMatch(t -> Types.getType(t).equals(Types.strNull));
                             if (hasNull) {
                                 holder.registerProblem(reference, message);
                             }

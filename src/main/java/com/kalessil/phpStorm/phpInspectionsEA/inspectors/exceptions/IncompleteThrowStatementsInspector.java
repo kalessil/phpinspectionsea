@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -43,6 +44,8 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpThrow(@NotNull PhpThrow expression) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
                 final PsiElement argument = expression.getArgument();
                 if (!(argument instanceof NewExpression) && OpenapiTypesUtil.isFunctionReference(argument)) {
                     final FunctionReference call = (FunctionReference) argument;
@@ -58,6 +61,8 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpNewExpression(@NotNull NewExpression expression) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
                 final ClassReference argument = expression.getClassReference();
                 if (argument != null) {
                     /* pattern '... new Exception('...%s...'[, ...]);' */

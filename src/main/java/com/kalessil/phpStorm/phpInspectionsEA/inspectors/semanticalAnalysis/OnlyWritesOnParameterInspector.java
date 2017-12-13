@@ -84,7 +84,6 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         final Function function   = (Function) scope;
                         final boolean isParameter = Arrays.stream(function.getParameters()).anyMatch(p -> p.getName().equals(variableName));
                         if (!isParameter) {
-                            /* ensure it's not use list parameter of closure */
                             final List<Variable> uses   = ExpressionSemanticUtil.getUseListVariables(function);
                             final boolean isUseVariable = uses != null && uses.stream().anyMatch(v -> v.getName().equals(variableName));
                             if (!isUseVariable) {

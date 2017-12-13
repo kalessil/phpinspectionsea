@@ -10,7 +10,6 @@ import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
-import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
@@ -67,48 +66,31 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
-                final PsiElement objVariable = assignmentExpression.getVariable();
-                /* check assignments containing variable as container */
-                if (objVariable instanceof Variable) {
+                final PsiElement variable = assignmentExpression.getVariable();
+                if (variable instanceof Variable) {
+                    /* false-positives: predefined and global variables */
+                    final String variableName = ((Variable) variable).getName();
+                    if (variableName.isEmpty() || ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
+                        return;
+                    }
+                    /* filter target contexts: we are supporting only certain of them */
                     final PsiElement parent = assignmentExpression.getParent();
                     if (!(parent instanceof ParenthesizedExpression) && !OpenapiTypesUtil.isAssignment(parent)) {
                         return;
                     }
 
-                    final String variableName = ((Variable) objVariable).getName();
-                    if (variableName.isEmpty() || ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
-                        return;
-                    }
-
-                    /* expression is located in function/method */
-                    final PsiElement parentScope = ExpressionSemanticUtil.getScope(assignmentExpression);
-                    if (parentScope != null) {
-                        /* ensure it's not parameter, as it checked anyway */
-                        for (final Parameter objParameter : ((Function) parentScope).getParameters()) {
-                            final String parameterName = objParameter.getName();
-                            if (!parameterName.isEmpty() && parameterName.equals(variableName)) {
-                                /* skip assignment check - it writes to parameter */
-                                return;
+                    final PsiElement scope = ExpressionSemanticUtil.getScope(assignmentExpression);
+                    if (scope != null) {
+                        final Function function   = (Function) scope;
+                        final boolean isParameter = Arrays.stream(function.getParameters()).anyMatch(p -> p.getName().equals(variableName));
+                        if (!isParameter) {
+                            /* ensure it's not use list parameter of closure */
+                            final List<Variable> uses   = ExpressionSemanticUtil.getUseListVariables(function);
+                            final boolean isUseVariable = uses != null && uses.stream().anyMatch(v -> v.getName().equals(variableName));
+                            if (!isUseVariable) {
+                                this.analyzeAndReturnUsagesCount(variableName, function);
                             }
                         }
-
-                        /* ensure it's not use list parameter of closure */
-                        final List<Variable> useList = ExpressionSemanticUtil.getUseListVariables((Function) parentScope);
-                        if (useList != null) {
-                            /* use-list is found */
-                            for (final Variable useVariable : useList) {
-                                final String useVariableName = useVariable.getName();
-                                if (!useVariableName.isEmpty() && useVariableName.equals(variableName)) {
-                                    /* skip assignment check - it writes to used variable */
-                                    useList.clear();
-                                    return;
-                                }
-                            }
-                            useList.clear();
-                        }
-
-                        /* verify variable usage */
-                        this.analyzeAndReturnUsagesCount(variableName, (PhpScopeHolder) parentScope);
                     }
                 }
             }
@@ -276,7 +258,10 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
     @NotNull
     static private PhpAccessVariableInstruction[] getVariableUsages(@NotNull String parameterName, @NotNull PhpScopeHolder scopeHolder) {
-        PhpEntryPointInstruction objEntryPoint = scopeHolder.getControlFlow().getEntryPoint();
-        return PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, parameterName, false);
+        return PhpControlFlowUtil.getFollowingVariableAccessInstructions(
+                scopeHolder.getControlFlow().getEntryPoint(),
+                parameterName,
+                false
+        );
     }
 }

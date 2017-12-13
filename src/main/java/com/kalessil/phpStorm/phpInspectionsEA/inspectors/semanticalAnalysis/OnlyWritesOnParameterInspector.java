@@ -18,7 +18,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -65,9 +64,14 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
                 final PsiElement objVariable = assignmentExpression.getVariable();
                 /* check assignments containing variable as container */
-                if (objVariable instanceof Variable && OpenapiTypesUtil.isAssignment(assignmentExpression.getParent())) {
+                if (objVariable instanceof Variable) {
+                    final PsiElement parent = assignmentExpression.getParent();
+                    if (!(parent instanceof ParenthesizedExpression) && !OpenapiTypesUtil.isAssignment(parent)) {
+                        return;
+                    }
+
                     final String variableName = ((Variable) objVariable).getName();
-                    if (StringUtils.isEmpty(variableName) || ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
+                    if (variableName.isEmpty() || ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
                         return;
                     }
 
@@ -77,28 +81,20 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         /* ensure it's not parameter, as it checked anyway */
                         for (final Parameter objParameter : ((Function) parentScope).getParameters()) {
                             final String parameterName = objParameter.getName();
-                            if (StringUtils.isEmpty(parameterName)) {
-                                continue;
-                            }
-
-                            /* skip assignment check - it writes to parameter */
-                            if (parameterName.equals(variableName)) {
+                            if (!parameterName.isEmpty() && parameterName.equals(variableName)) {
+                                /* skip assignment check - it writes to parameter */
                                 return;
                             }
                         }
 
                         /* ensure it's not use list parameter of closure */
                         final List<Variable> useList = ExpressionSemanticUtil.getUseListVariables((Function) parentScope);
-                        if (null != useList) {
+                        if (useList != null) {
                             /* use-list is found */
                             for (final Variable useVariable : useList) {
                                 final String useVariableName = useVariable.getName();
-                                if (StringUtils.isEmpty(useVariableName)) {
-                                    continue;
-                                }
-
-                                /* skip assignment check - it writes to used variable */
-                                if (useVariableName.equals(variableName)) {
+                                if (!useVariableName.isEmpty() && useVariableName.equals(variableName)) {
+                                    /* skip assignment check - it writes to used variable */
                                     useList.clear();
                                     return;
                                 }
@@ -114,42 +110,29 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
             private void checkParameters(Parameter[] parameters, @NotNull PhpScopeHolder scopeHolder) {
                 for (final Parameter parameter : parameters) {
-                    if (parameter.isPassByRef()) {
-                        continue;
-                    }
-
                     final String parameterName = parameter.getName();
-                    if (StringUtils.isEmpty(parameterName)) {
-                        continue;
+                    if (!parameterName.isEmpty() && !parameter.isPassByRef()) {
+                        this.analyzeAndReturnUsagesCount(parameterName, scopeHolder);
                     }
-
-                    this.analyzeAndReturnUsagesCount(parameterName, scopeHolder);
                 }
             }
 
             private void checkUseVariables(@NotNull List<Variable> variables, @NotNull PhpScopeHolder scopeHolder) {
                 for (final Variable variable : variables) {
                     final String parameterName = variable.getName();
-                    if (StringUtils.isEmpty(parameterName)) {
-                        continue;
-                    }
-
-                    PsiElement previous = variable.getPrevSibling();
-                    if (previous instanceof PsiWhiteSpace) {
-                        previous = previous.getPrevSibling();
-                    }
-                    if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
-                        final PhpAccessVariableInstruction[] usages = getVariableUsages(parameterName, scopeHolder);
-                        if (0 == usages.length) {
-                            holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                    if (!parameterName.isEmpty()) {
+                        PsiElement previous = variable.getPrevSibling();
+                        if (previous instanceof PsiWhiteSpace) {
+                            previous = previous.getPrevSibling();
                         }
 
-                        continue;
-                    }
-
-                    final int variableUsages = this.analyzeAndReturnUsagesCount(parameterName, scopeHolder);
-                    if (0 == variableUsages) {
-                        holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                        if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
+                            if (getVariableUsages(parameterName, scopeHolder).length == 0) {
+                                holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                            }
+                        } else if (this.analyzeAndReturnUsagesCount(parameterName, scopeHolder) == 0) {
+                            holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                        }
                     }
                 }
             }

@@ -2,9 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
-import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
-import com.jetbrains.php.lang.psi.elements.MultiassignmentExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -116,6 +114,28 @@ final public class ExpressionsCouplingCheckUtil {
             }
 
             arrayAccess.clear();
+        }
+        if (isCoupled) {
+            return true;
+        }
+
+        /* Scenario 3: the first argument is isset */
+        final Set<String> dependencies = new HashSet<>();
+        PsiTreeUtil.findChildrenOfType(first, PhpIsset.class).forEach(
+            isset -> PsiTreeUtil.findChildrenOfType(isset, ArrayAccessExpression.class).forEach(array -> {
+                PsiElement container = array.getValue();
+                while (container instanceof ArrayAccessExpression) {
+                    container = ((ArrayAccessExpression) container).getValue();
+                }
+                if (container instanceof Variable) {
+                    dependencies.add(((Variable) container).getName());
+                }
+            })
+        );
+        /* check if second depends on any of them */
+        if (!dependencies.isEmpty()) {
+            isCoupled = PsiTreeUtil.findChildrenOfType(second, Variable.class).stream().anyMatch(v -> dependencies.contains(v.getName()));
+            dependencies.clear();
         }
 
         return isCoupled;

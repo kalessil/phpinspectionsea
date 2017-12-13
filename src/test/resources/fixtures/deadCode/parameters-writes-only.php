@@ -48,4 +48,8 @@ class Container {
         $x = new UnknownClass($y = new ClassWithArrayAccess());
         $y[] = null;
     }
+
+    public function method5() {
+        return false === (<weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$x</weak_warning> = array_search('', []));
+    }
 }

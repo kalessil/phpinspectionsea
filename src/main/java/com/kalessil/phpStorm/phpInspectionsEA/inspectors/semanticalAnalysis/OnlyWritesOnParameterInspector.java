@@ -21,6 +21,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -47,12 +48,16 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                this.checkParameters(method.getParameters(), method);
+                Arrays.stream(method.getParameters())
+                        .filter(parameter  -> !parameter.getName().isEmpty() && !parameter.isPassByRef())
+                        .forEach(parameter -> this.analyzeAndReturnUsagesCount(parameter.getName(), method));
             }
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
-                this.checkParameters(function.getParameters(), function);
+                Arrays.stream(function.getParameters())
+                        .filter(parameter  -> !parameter.getName().isEmpty() && !parameter.isPassByRef())
+                        .forEach(parameter -> this.analyzeAndReturnUsagesCount(parameter.getName(), function));
 
                 final List<Variable> variables = ExpressionSemanticUtil.getUseListVariables(function);
                 if (variables != null) {
@@ -77,7 +82,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
                     /* expression is located in function/method */
                     final PsiElement parentScope = ExpressionSemanticUtil.getScope(assignmentExpression);
-                    if (null != parentScope) {
+                    if (parentScope != null) {
                         /* ensure it's not parameter, as it checked anyway */
                         for (final Parameter objParameter : ((Function) parentScope).getParameters()) {
                             final String parameterName = objParameter.getName();
@@ -104,15 +109,6 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
                         /* verify variable usage */
                         this.analyzeAndReturnUsagesCount(variableName, (PhpScopeHolder) parentScope);
-                    }
-                }
-            }
-
-            private void checkParameters(Parameter[] parameters, @NotNull PhpScopeHolder scopeHolder) {
-                for (final Parameter parameter : parameters) {
-                    final String parameterName = parameter.getName();
-                    if (!parameterName.isEmpty() && !parameter.isPassByRef()) {
-                        this.analyzeAndReturnUsagesCount(parameterName, scopeHolder);
                     }
                 }
             }
@@ -174,7 +170,6 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                                 /* when modifying non non-reference, register as write only access for reporting */
                                 targetExpressions.add(objLastSemanticExpression);
                             }
-
                             continue;
                         }
 
@@ -188,7 +183,6 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                                 continue;
                             }
                         }
-
                         intCountReadAccesses++;
                         continue;
                     }
@@ -210,7 +204,6 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         if (!OpenapiTypesUtil.isStatementImpl(parent.getParent())) {
                             ++intCountReadAccesses;
                         }
-
                         continue;
                     }
 
@@ -226,16 +219,19 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                                     /* when modifying the reference it's link READ and linked WRITE semantics */
                                     ++intCountReadAccesses;
                                 }
-
                                 /* now ensure operation is assignment of reference */
                                 PsiElement operation = sameVariableCandidate.getNextSibling();
-                                while (operation != null && operation.getNode().getElementType() != PhpTokenTypes.opASGN) {
+                                while (operation != null && !OpenapiTypesUtil.is(operation, PhpTokenTypes.opASGN)) {
                                     operation = operation.getNextSibling();
                                 }
                                 if (operation != null && operation.getText().replaceAll("\\s+", "").equals("=&")) {
                                     isReference = true;
                                 }
-
+                                /* false-negative: inline assignment result has been used */
+                                if (usages.length == 2 && usages[0].getAnchor() == usages[1].getAnchor()) {
+                                    holder.registerProblem(sameVariableCandidate, messageOnlyWrites, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                    return 1;
+                                }
                                 continue;
                             }
                         }

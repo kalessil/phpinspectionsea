@@ -15,6 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
@@ -84,6 +85,14 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     }
                     if (paramTypes.isEmpty()) {
                         continue;
+                    }
+
+                    /* false-positive: type is not resolved correctly, default null is taken */
+                    if (paramTypes.size() == 1 && paramTypes.contains(Types.strNull)) {
+                        final PsiElement defaultValue = parameter.getDefaultValue();
+                        if (defaultValue != null && PhpLanguageUtil.isNull(defaultValue)) {
+                            continue;
+                        }
                     }
 
                     /* now find instructions operating on the parameter and perform analysis */

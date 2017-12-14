@@ -147,12 +147,9 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 boolean isReversedCheck     = false;
                                 if (callParent instanceof UnaryExpression) {
                                     final PsiElement operation = ((UnaryExpression) callParent).getOperation();
-                                    isReversedCheck
-                                        = operation != null && PhpTokenTypes.opNOT == operation.getNode().getElementType();
+                                    isReversedCheck            = OpenapiTypesUtil.is(operation, PhpTokenTypes.opNOT);
                                 }
-
-                                final String message = isReversedCheck ? messageNoSense : messageViolationInCheck;
-                                holder.registerProblem(functionCall, message);
+                                holder.registerProblem(functionCall, isReversedCheck ? messageNoSense : messageViolationInCheck);
                             }
 
                             continue;

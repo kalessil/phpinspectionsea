@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class AutoloadingIssuesInspector extends BasePhpInspection {
     private static final String message = "Class autoloading might be broken: file and class names are not identical.";
 
-    final static private Pattern laravelMigration        = Pattern.compile("\\d{4}_\\d{2}_\\d{2}_\\d{6}_.+_?\\.php");
+    final static private Pattern laravelMigration        = Pattern.compile("\\d{4}_\\d{2}_\\d{2}_\\d{6}_.+\\.php");
     private static final Collection<String> ignoredFiles = new HashSet<>();
     static {
         ignoredFiles.add("index.php");

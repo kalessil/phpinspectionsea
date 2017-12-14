@@ -38,9 +38,12 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final String functionName    = reference.getName();
+                final String functionName = reference.getName();
+                if (functionName == null || !functionName.equals("mkdir")) {
+                    return;
+                }
                 final PsiElement[] arguments = reference.getParameters();
-                if (functionName == null || arguments.length != 1 || !functionName.equals("mkdir")) {
+                if (arguments.length == 0 || arguments.length > 3) {
                     return;
                 }
 

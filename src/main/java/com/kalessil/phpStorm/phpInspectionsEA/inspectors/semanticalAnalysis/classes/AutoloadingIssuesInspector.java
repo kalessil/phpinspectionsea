@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /*
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 public class AutoloadingIssuesInspector extends BasePhpInspection {
     private static final String message = "Class autoloading might be broken: file and class names are not identical.";
 
+    final static private Pattern laravelMigration        = Pattern.compile("\\d{4}_\\d{2}_\\d{2}_\\d{6}_.+_?\\.php");
     private static final Collection<String> ignoredFiles = new HashSet<>();
     static {
         ignoredFiles.add("index.php");
@@ -43,15 +45,14 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFile(PhpFile file) {
-                final String fileName      = file.getName();
-                final boolean skipAnalysis = fileName.matches("\\d{4}_\\d{2}_\\d{2}_\\d{6}_.+_.php");
-                if (!skipAnalysis && fileName.endsWith(".php") && !ignoredFiles.contains(fileName)) {
+            @Override
+            public void visitPhpFile(@NotNull PhpFile file) {
+                final String fileName = file.getName();
+                if (fileName.endsWith(".php") && !ignoredFiles.contains(fileName) && !laravelMigration.matcher(fileName).matches()) {
                     /* find out how many named classes has been defined in the file */
-                    final List<PhpClass> classes =
-                            PsiTreeUtil.findChildrenOfAnyType(file, PhpClass.class).stream()
-                                    .filter(clazz -> NamedElementUtil.getNameIdentifier(clazz) != null)
-                                    .collect(Collectors.toList());
+                    final List<PhpClass> classes = PsiTreeUtil.findChildrenOfType(file, PhpClass.class).stream()
+                                .filter(clazz -> NamedElementUtil.getNameIdentifier(clazz) != null)
+                                .collect(Collectors.toList());
 
                     /* multiple classes defined, do nothing - this is not PSR compatible */
                     if (classes.size() == 1) {

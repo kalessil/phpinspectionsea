@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.openApi;
 
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
+import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +25,8 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     public void visitPhpDocTag(@NotNull PhpDocTag tag)    {}
 
     /* overrides to reduce amount of 'com.jetbrains.php.lang.psi.visitors.PhpElementVisitor.visitElement' calls */
+    @Override public void visitPhpFile(PhpFile PhpFile) {}
+
     @Override public void visitPhpMethodReference(MethodReference reference) {}
     @Override public void visitPhpFunctionCall(FunctionReference reference)  {}
 

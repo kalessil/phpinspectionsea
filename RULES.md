@@ -218,7 +218,7 @@ Inspections Lists (Security)
 | Security             | HostnameSubstitutionInspection                     | Hostname substitution                                                  | n/a | yes | n/a  | no  |
 | Security             | RsaOraclePaddingAttacksInspection                  | RSA oracle padding vulnerability                                       | n/a | yes | n/a  | no  |
 | Security             | NonSecureArrayRandUsageInspection                  | Insecure 'array_rand(...)' usage (Insufficient Entropy Vulnerability)  | n/a | yes | n/a  | no  |
-| Security             | NonSecureStrShuffleUsageInspection                 | Insecure 'str_shuffle(...)' usage (Insufficient Entropy Vulnerability) | no  | no  | no   | no  |
+| Security             | NonSecureStrShuffleUsageInspection                 | Insecure 'str_shuffle(...)' usage (Insufficient Entropy Vulnerability) | n/a | yes | n/a  | no  |
 
 Inspections Lists (Performance)
 ---

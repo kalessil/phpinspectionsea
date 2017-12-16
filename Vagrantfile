@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
     sudo rm -rf PhpStorm-* && wget --quiet --no-verbose https://download.jetbrains.com/webide/PhpStorm-2016.2.2.tar.gz && tar -xf PhpStorm-*.tar.gz
     sudo chown -R vagrant PhpStorm-*
     cd PhpStorm-*/plugins && ls | grep -Evi "^(css|php)?$" | xargs rm -rf
-    wget --quiet --no-verbose https://download.plugins.jetbrains.com/7622/38887/PhpInspectionsEA.jar
+    wget --quiet --no-verbose https://download.plugins.jetbrains.com/7622/41075/PhpInspectionsEA.jar
 
     ### Feed license to PhpStorm ###
     # TODO: place phpstorm.key from your ~/.PhpStorm2016.2/config near this vagrant file (that's your license)

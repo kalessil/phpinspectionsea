@@ -46,7 +46,9 @@ New inspections and bug-fixes:<br/>
 <br/>
 - Bug-fixes from Php Inspections (EA Extended) <a href="https://github.com/kalessil/phpinspectionsea/milestone/21?closed=1">v2.3.14</a><br/>
 <br/>
-- IncompleteThrowStatementsInspector: new patterns<br/>
+- Incomplete throw statements: new patterns<br/>
+- Insecure 'htmlentities(...)' usage: implemented<br/>
+- Insecure 'str_shuffle(...)' usage: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>

@@ -85,11 +85,6 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
         UseLambdaFix () {
             super("function($value){ return uniqid($value, true); }");
         }
-
-        @Override
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            super.applyFix(project, descriptor);
-        }
     }
 
     private static class AddMissingParametersFix implements LocalQuickFix {

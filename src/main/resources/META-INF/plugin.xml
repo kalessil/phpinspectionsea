@@ -502,6 +502,10 @@ New inspections and bug-fixes:<br/>
          shortName="RsaOraclePaddingAttacksInspection"             displayName="RSA oracle padding vulnerability"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.RsaOraclePaddingAttacksInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+         shortName="NonSecureStrShuffleUsageInspection"            displayName="Insecure 'str_shuffle(...)' usage (Insufficient Entropy Vulnerability)"
+         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureStrShuffleUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

@@ -512,6 +512,10 @@ New inspections and bug-fixes:<br/>
          shortName="NonSecureHtmlentitiesUsageInspection"          displayName="Insecure 'htmlentities(...)' usage (XSS attacks)"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureHtmlentitiesUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+         shortName="NonSecureShuffleUsageInspection"               displayName="Insecure 'shuffle(...)' usage (Insufficient Entropy Vulnerability)"
+         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureShuffleUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

@@ -25,7 +25,7 @@ A commercial Static Code Analyzer based on <a href="https://plugins.jetbrains.co
 <a href="https://kalessil.github.io/php-inspections-ultimate.html#pricing-mark">Pricing</a>.<br />
 <br />
 Php Inspections (EA Ultimate) is further extending IDE code analysis capabilities, with focus on finding defects,
-security, performance issues and maintainability. To get a closer look at features (10 new and 5 enhanced inspections)
+security, performance issues and maintainability. To get a closer look at features (11 new and 5 enhanced inspections)
 you are welcome to try it 2 weeks for free.<br />
 <br />
 For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/help/keyboard-shortcuts-and-mouse-reference.html">this reference card</a>. Windows/Linux ones are:<br />
@@ -47,10 +47,11 @@ New inspections and bug-fixes:<br/>
 - Bug-fixes from Php Inspections (EA Extended) <a href="https://github.com/kalessil/phpinspectionsea/milestone/21?closed=1">v2.3.14</a><br/>
 <br/>
 - Incomplete throw statements: new patterns<br/>
+- Substring comparison flaws: implemented<br/>
 - Insecure 'htmlentities(...)' usage: implemented<br/>
 - Insecure 'htmlspecialchars(...)' usage: implemented<br/>
-- Insecure 'str_shuffle(...)' usage: implemented<br/>
 - Insecure 'shuffle(...)' usage: implemented<br/>
+- Insecure 'str_shuffle(...)' usage: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -444,6 +445,10 @@ New inspections and bug-fixes:<br/>
         shortName="CoreInterfacesUsageInspection"                 displayName="Core interfaces usage correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.CoreInterfacesUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="SubstringCompareInspection"                    displayName="Substring comparison flaws"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.SubstringCompareInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

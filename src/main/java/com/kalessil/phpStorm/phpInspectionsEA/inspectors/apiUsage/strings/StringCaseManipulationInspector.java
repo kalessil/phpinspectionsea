@@ -54,17 +54,19 @@ public class StringCaseManipulationInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (params.length == 2 && functionName != null && functions.containsKey(functionName)) {
-                    final PsiElement first  = this.getSubject(params[0]);
-                    final PsiElement second = this.getSubject(params[1]);
-                    if (first != null || second != null) {
-                        final String replacement = "%f%(%a1%, %a2%)"
-                            .replace("%a2%", (second == null ? params[1] : second).getText())
-                            .replace("%a1%", (first == null ? params[0] : first).getText())
-                            .replace("%f%", functions.get(functionName));
-                        final String message = messagePattern.replace("%e%", replacement);
-                        holder.registerProblem(reference, message, new SimplifyFix(replacement));
+                if (functionName != null && functions.containsKey(functionName)) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 2) {
+                        final PsiElement first  = this.getSubject(arguments[0]);
+                        final PsiElement second = this.getSubject(arguments[1]);
+                        if (first != null || second != null) {
+                            final String replacement = "%f%(%a1%, %a2%)"
+                                    .replace("%a2%", (second == null ? arguments[1] : second).getText())
+                                    .replace("%a1%", (first == null ? arguments[0] : first).getText())
+                                    .replace("%f%", functions.get(functionName));
+                            final String message = messagePattern.replace("%e%", replacement);
+                            holder.registerProblem(reference, message, new SimplifyFix(replacement));
+                        }
                     }
                 }
             }

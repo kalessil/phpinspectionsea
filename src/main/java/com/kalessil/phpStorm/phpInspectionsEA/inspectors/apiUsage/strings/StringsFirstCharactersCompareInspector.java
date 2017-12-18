@@ -61,9 +61,9 @@ public class StringsFirstCharactersCompareInspector extends BasePhpInspection {
                             isTarget            = stringLength != Integer.parseInt(arguments[2].getText());
                         } catch (NumberFormatException lengthParsingHasFailed) {
                             isTarget     = false;
-                            stringLength = 0;
+                            stringLength = -1;
                         }
-                        if (isTarget && stringLength > 0) {
+                        if (isTarget && stringLength != -1) {
                             holder.registerProblem(arguments[2], message, new LengthFix(String.valueOf(stringLength)));
                         }
                     }

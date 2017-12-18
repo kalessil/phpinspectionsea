@@ -33,8 +33,9 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpDoWhile(DoWhile doWhileStatement)          {}
 
     @Override public void visitPhpTernaryExpression(TernaryExpression expression)                 {}
-    @Override public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {}
+    @Override public void visitPhpAssignmentExpression(AssignmentExpression expression)           {}
     @Override public void visitPhpSelfAssignmentExpression(SelfAssignmentExpression expression)   {}
+    @Override public void visitPhpMultiassignmentExpression(MultiassignmentExpression expression) {}
     @Override public void visitPhpParenthesizedExpression(ParenthesizedExpression expression)     {}
 
     @Override public void visitPhpIf(If ifStatement)             {}

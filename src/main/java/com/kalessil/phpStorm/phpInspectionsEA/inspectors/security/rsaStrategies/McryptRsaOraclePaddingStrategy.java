@@ -43,11 +43,11 @@ final public class McryptRsaOraclePaddingStrategy {
     }
 
     static private boolean isTargetCall(@NotNull FunctionReference reference) {
-        boolean result = false;
-        final PsiElement[] arguments = reference.getParameters();
-        final String functionName    = reference.getName();
-        if (arguments.length >= 4 && functionName != null && functionName.equals("mcrypt_encrypt")) {
-            if (arguments[0] instanceof ConstantReference) {
+        boolean result            = false;
+        final String functionName = reference.getName();
+        if (functionName != null && functionName.equals("mcrypt_encrypt")) {
+            final PsiElement[] arguments = reference.getParameters();
+            if (arguments.length >= 4 && arguments[0] instanceof ConstantReference) {
                 final String constantName = ((ConstantReference) arguments[0]).getName();
                 result = constantName != null && constantName.equals("MCRYPT_RIJNDAEL_128");
             }

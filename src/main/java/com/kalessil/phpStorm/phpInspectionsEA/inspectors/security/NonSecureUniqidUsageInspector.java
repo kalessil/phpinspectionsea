@@ -52,21 +52,26 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (null != functionName) {
-                    final PsiElement[] params = reference.getParameters();
-                    if (params.length < 2 && functionName.equals("uniqid")) {
-                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new AddMissingParametersFix());
-                    }
-
-                    if (params.length >= 2 && callbacksPositions.containsKey(functionName)) {
-                        final int neededIndex = callbacksPositions.get(functionName);
-                        if (params[neededIndex] instanceof StringLiteralExpression) {
-                            String callback = ((StringLiteralExpression) params[neededIndex]).getContents();
-                            if (callback.startsWith("\\")) {
-                                callback = callback.substring(1);
-                            }
-                            if (callback.equals("uniqid")) {
-                                holder.registerProblem(params[neededIndex], message, ProblemHighlightType.GENERIC_ERROR, new UseLambdaFix());
+                if (functionName != null) {
+                    if (functionName.equals("uniqid")) {
+                        /* direct call */
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length < 2) {
+                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new AddMissingParametersFix());
+                        }
+                    } else if (callbacksPositions.containsKey(functionName)) {
+                        /* calling in callbacks */
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length >= 2) {
+                            final int neededIndex = callbacksPositions.get(functionName);
+                            if (arguments[neededIndex] instanceof StringLiteralExpression) {
+                                String callback = ((StringLiteralExpression) arguments[neededIndex]).getContents();
+                                if (callback.startsWith("\\")) {
+                                    callback = callback.substring(1);
+                                }
+                                if (callback.equals("uniqid")) {
+                                    holder.registerProblem(arguments[neededIndex], message, ProblemHighlightType.GENERIC_ERROR, new UseLambdaFix());
+                                }
                             }
                         }
                     }

@@ -37,19 +37,20 @@ public class NonSecureExtractUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final String function     = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (1 == params.length && function != null && function.equals("extract")) {
-                    /* ignore test classes */
-                    final Function scope = ExpressionSemanticUtil.getScope(reference);
-                    if (scope instanceof Method) {
-                        final PhpClass clazz = ((Method) scope).getContainingClass();
-                        if (null != clazz && FileSystemUtil.isTestClass(clazz)) {
-                            return;
+                final String function = reference.getName();
+                if (function != null && function.equals("extract")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 1) {
+                        /* ignore test classes */
+                        final Function scope = ExpressionSemanticUtil.getScope(reference);
+                        if (scope instanceof Method) {
+                            final PhpClass clazz = ((Method) scope).getContainingClass();
+                            if (clazz != null && FileSystemUtil.isTestClass(clazz)) {
+                                return;
+                            }
                         }
+                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
                     }
-
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
                 }
             }
         };

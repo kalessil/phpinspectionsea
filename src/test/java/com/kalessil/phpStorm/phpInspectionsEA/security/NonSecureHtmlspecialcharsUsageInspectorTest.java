@@ -4,7 +4,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureHtmlspecialcharsUsageInspector;
 
-public class NonSecureHtmlspecialcharsUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
+final public class NonSecureHtmlspecialcharsUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new NonSecureHtmlspecialcharsUsageInspector());
         myFixture.configureByFile("fixtures/security/htmlspecialchars.php");

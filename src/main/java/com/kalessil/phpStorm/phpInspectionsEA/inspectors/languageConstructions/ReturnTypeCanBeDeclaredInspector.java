@@ -72,7 +72,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 if (php.hasFeature(PhpLanguageFeature.RETURN_TYPES) && OpenapiElementsUtil.getReturnType(method) == null) {
                     final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
                     final boolean isMagicFunction   = method.getName().startsWith("__");
-                    if (!isMagicFunction && null != methodNameNode) {
+                    if (!isMagicFunction && methodNameNode != null) {
                         final boolean supportNullableTypes = php.hasFeature(PhpLanguageFeature.NULLABLES);
                         if (method.isAbstract()) {
                             handleAbstractMethod(method, methodNameNode, supportNullableTypes);
@@ -83,22 +83,14 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 }
             }
 
-            private void handleAbstractMethod(
-                @NotNull Method method,
-                @NotNull PsiElement target,
-                boolean supportNullableTypes
-            ) {
+            private void handleAbstractMethod(@NotNull Method method, @NotNull PsiElement target, boolean supportNullableTypes) {
                 final PhpDocComment docBlock = method.getDocComment();
                 if (docBlock != null && docBlock.getReturnTag() != null) {
                     handleMethod(method, target, supportNullableTypes);
                 }
             }
 
-            private void handleMethod(
-                @NotNull Method method,
-                @NotNull PsiElement target,
-                boolean supportNullableTypes
-            ) {
+            private void handleMethod(@NotNull Method method, @NotNull PsiElement target, boolean supportNullableTypes) {
                 /* suggest nothing when the type is only partially resolved */
                 final PhpType resolvedReturnType = OpenapiResolveUtil.resolveType(method, holder.getProject());
                 if (resolvedReturnType == null || resolvedReturnType.hasUnknown()) {
@@ -109,6 +101,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 final Set<String> normalizedTypes = resolvedReturnType.filterUnknown().getTypes().stream().
                         map(Types::getType).collect(Collectors.toSet());
                 checkNonImplicitNullReturn(method, normalizedTypes);
+                checkUnrecognizedGenerator(method, normalizedTypes);
 
                 final int typesCount = normalizedTypes.size();
                 /* case 1: offer using void */
@@ -124,9 +117,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 /* case 2: offer using type */
                 if (1 == typesCount) {
                     final String singleType    = normalizedTypes.iterator().next();
-                    final String suggestedType
-                        = voidTypes.contains(singleType) ? Types.strVoid : compactType(singleType, method);
-
+                    final String suggestedType = voidTypes.contains(singleType) ? Types.strVoid : compactType(singleType, method);
                     final boolean isLegitBasic = singleType.startsWith("\\") || returnTypes.contains(singleType);
                     final boolean isLegitVoid  = supportNullableTypes && suggestedType.equals(Types.strVoid);
                     if (isLegitBasic || isLegitVoid) {
@@ -202,14 +193,18 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 return result == null ? type : result;
             }
 
+            private void checkUnrecognizedGenerator(@NotNull Method method, @NotNull Set<String> types) {
+                final PhpYield yield = PsiTreeUtil.findChildOfType(method, PhpYield.class);
+                if (yield != null && ExpressionSemanticUtil.getScope(yield) == method) {
+                    types.add("\\Generator");
+                }
+            }
+
             private void checkNonImplicitNullReturn(@NotNull Method method, @NotNull Set<String> types) {
-                if (
-                    !method.isAbstract() && !types.isEmpty() &&
-                    !types.contains(Types.strNull) && !types.contains(Types.strVoid)
-                ) {
+                if (!method.isAbstract() && !types.isEmpty() && !types.contains(Types.strNull) && !types.contains(Types.strVoid)) {
                     final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
-                    final PsiElement last     = null == body ? null : ExpressionSemanticUtil.getLastStatement(body);
-                    if (null == last || (!(last instanceof PhpReturn) && !(last instanceof PhpThrow))) {
+                    final PsiElement last     = body == null ? null : ExpressionSemanticUtil.getLastStatement(body);
+                    if (last == null || (!(last instanceof PhpReturn) && !(last instanceof PhpThrow))) {
                         types.add(Types.strNull);
                     }
                 }
@@ -240,18 +235,17 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression != null && !project.isDisposed()) {
-                final Method method = (Method) expression.getParent();
-                final PsiElement body
-                        = method.isAbstract() ? method.getLastChild() : ExpressionSemanticUtil.getGroupStatement(method);
-                if (null != body) {
+                final Method method   = (Method) expression.getParent();
+                final PsiElement body = method.isAbstract() ? method.getLastChild() : ExpressionSemanticUtil.getGroupStatement(method);
+                if (body != null) {
                     PsiElement injectionPoint = body.getPrevSibling();
                     if (injectionPoint instanceof PsiWhiteSpace) {
                         injectionPoint = injectionPoint.getPrevSibling();
                     }
-                    if (null != injectionPoint) {
+                    if (injectionPoint != null) {
                         final Function donor = PhpPsiElementFactory.createFunction(project, "function(): " + type + "{}");
                         PsiElement implant   = OpenapiElementsUtil.getReturnType(donor);
-                        while (implant != null && PhpTokenTypes.chRPAREN != implant.getNode().getElementType()) {
+                        while (implant != null && !OpenapiTypesUtil.is(implant, PhpTokenTypes.chRPAREN)) {
                             injectionPoint.getParent().addAfter(implant, injectionPoint);
                             implant = implant.getPrevSibling();
                         }

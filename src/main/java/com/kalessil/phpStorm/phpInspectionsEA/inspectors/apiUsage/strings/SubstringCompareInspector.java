@@ -85,17 +85,22 @@ public class SubstringCompareInspector extends BasePhpInspection {
                                 final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(stringCandidate);
                                 if (literal != null) {
                                     boolean isTarget;
-                                    int stringLength;
+                                    int givenOffset;
+                                    int stringLength = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote()).length();
                                     try {
-                                        final String string = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
-                                        stringLength        = string.length();
-                                        isTarget            = stringLength != Integer.parseInt(offset.getText());
+                                        isTarget = stringLength != Math.abs(givenOffset = Integer.parseInt(offset.getText()));
                                     } catch (NumberFormatException lengthParsingHasFailed) {
                                         isTarget     = false;
                                         stringLength = -1;
+                                        givenOffset  = 0;
                                     }
                                     if (isTarget && stringLength != -1) {
-                                        holder.registerProblem(offset, message, new LengthFix(String.valueOf(stringLength)));
+                                        final String replacement = String.format(
+                                            "%s%s",
+                                            givenOffset > 0 || stringLength == 0 ? "" : "-",
+                                            stringLength
+                                        );
+                                        holder.registerProblem(offset, message, new LengthFix(replacement));
                                     }
                                 }
                             }

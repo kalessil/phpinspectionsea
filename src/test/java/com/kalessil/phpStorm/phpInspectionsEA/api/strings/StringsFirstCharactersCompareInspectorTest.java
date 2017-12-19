@@ -7,7 +7,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.String
 final public class StringsFirstCharactersCompareInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new StringsFirstCharactersCompareInspector());
-
         myFixture.configureByFile("fixtures/api/strings/string-n-compare.php");
         myFixture.testHighlighting(true, false, true);
 

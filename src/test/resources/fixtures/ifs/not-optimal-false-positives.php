@@ -10,6 +10,9 @@ if (is_array_indexed($in) && is_array($in[0])) {}
 /* interconnected statements: assigned variable case */
 if (($count = $counter->count()) && $count > 0 && $count < 255) {}
 
+/* interconnected statements: leading isset case */
+if (!isset($array[$index]) && !array_key_exists($index, $array)) {}
+
 /* older code samples: weights estimation */
 if (isset($x) && $y)                     {}
 if (empty($x) && $y)                     {}

@@ -48,4 +48,8 @@ class Container {
         $x = new UnknownClass($y = new ClassWithArrayAccess());
         $y[] = null;
     }
+
+    public function method5() {
+        return false === (<weak_warning descr="The variable seems to be not used.">$x</weak_warning> = array_search('', []));
+    }
 }

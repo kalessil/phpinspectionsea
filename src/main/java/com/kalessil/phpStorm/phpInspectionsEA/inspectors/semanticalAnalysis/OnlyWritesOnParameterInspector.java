@@ -10,7 +10,6 @@ import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
-import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
@@ -18,10 +17,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -48,12 +47,16 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                this.checkParameters(method.getParameters(), method);
+                Arrays.stream(method.getParameters())
+                        .filter(parameter  -> !parameter.getName().isEmpty() && !parameter.isPassByRef())
+                        .forEach(parameter -> this.analyzeAndReturnUsagesCount(parameter.getName(), method));
             }
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
-                this.checkParameters(function.getParameters(), function);
+                Arrays.stream(function.getParameters())
+                        .filter(parameter  -> !parameter.getName().isEmpty() && !parameter.isPassByRef())
+                        .forEach(parameter -> this.analyzeAndReturnUsagesCount(parameter.getName(), function));
 
                 final List<Variable> variables = ExpressionSemanticUtil.getUseListVariables(function);
                 if (variables != null) {
@@ -63,93 +66,50 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
-                final PsiElement objVariable = assignmentExpression.getVariable();
-                /* check assignments containing variable as container */
-                if (objVariable instanceof Variable && OpenapiTypesUtil.isAssignment(assignmentExpression.getParent())) {
-                    final String variableName = ((Variable) objVariable).getName();
-                    if (StringUtils.isEmpty(variableName) || ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
+                final PsiElement variable = assignmentExpression.getVariable();
+                if (variable instanceof Variable) {
+                    /* false-positives: predefined and global variables */
+                    final String variableName = ((Variable) variable).getName();
+                    if (variableName.isEmpty() || ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
+                        return;
+                    }
+                    /* filter target contexts: we are supporting only certain of them */
+                    final PsiElement parent = assignmentExpression.getParent();
+                    if (!(parent instanceof ParenthesizedExpression) && !OpenapiTypesUtil.isAssignment(parent)) {
                         return;
                     }
 
-                    /* expression is located in function/method */
-                    final PsiElement parentScope = ExpressionSemanticUtil.getScope(assignmentExpression);
-                    if (null != parentScope) {
-                        /* ensure it's not parameter, as it checked anyway */
-                        for (final Parameter objParameter : ((Function) parentScope).getParameters()) {
-                            final String parameterName = objParameter.getName();
-                            if (StringUtils.isEmpty(parameterName)) {
-                                continue;
-                            }
-
-                            /* skip assignment check - it writes to parameter */
-                            if (parameterName.equals(variableName)) {
-                                return;
+                    final PsiElement scope = ExpressionSemanticUtil.getScope(assignmentExpression);
+                    if (scope != null) {
+                        final Function function   = (Function) scope;
+                        final boolean isParameter = Arrays.stream(function.getParameters()).anyMatch(p -> p.getName().equals(variableName));
+                        if (!isParameter) {
+                            final List<Variable> uses   = ExpressionSemanticUtil.getUseListVariables(function);
+                            final boolean isUseVariable = uses != null && uses.stream().anyMatch(v -> v.getName().equals(variableName));
+                            if (!isUseVariable) {
+                                this.analyzeAndReturnUsagesCount(variableName, function);
                             }
                         }
-
-                        /* ensure it's not use list parameter of closure */
-                        final List<Variable> useList = ExpressionSemanticUtil.getUseListVariables((Function) parentScope);
-                        if (null != useList) {
-                            /* use-list is found */
-                            for (final Variable useVariable : useList) {
-                                final String useVariableName = useVariable.getName();
-                                if (StringUtils.isEmpty(useVariableName)) {
-                                    continue;
-                                }
-
-                                /* skip assignment check - it writes to used variable */
-                                if (useVariableName.equals(variableName)) {
-                                    useList.clear();
-                                    return;
-                                }
-                            }
-                            useList.clear();
-                        }
-
-                        /* verify variable usage */
-                        this.analyzeAndReturnUsagesCount(variableName, (PhpScopeHolder) parentScope);
                     }
-                }
-            }
-
-            private void checkParameters(Parameter[] parameters, @NotNull PhpScopeHolder scopeHolder) {
-                for (final Parameter parameter : parameters) {
-                    if (parameter.isPassByRef()) {
-                        continue;
-                    }
-
-                    final String parameterName = parameter.getName();
-                    if (StringUtils.isEmpty(parameterName)) {
-                        continue;
-                    }
-
-                    this.analyzeAndReturnUsagesCount(parameterName, scopeHolder);
                 }
             }
 
             private void checkUseVariables(@NotNull List<Variable> variables, @NotNull PhpScopeHolder scopeHolder) {
                 for (final Variable variable : variables) {
                     final String parameterName = variable.getName();
-                    if (StringUtils.isEmpty(parameterName)) {
-                        continue;
-                    }
-
-                    PsiElement previous = variable.getPrevSibling();
-                    if (previous instanceof PsiWhiteSpace) {
-                        previous = previous.getPrevSibling();
-                    }
-                    if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
-                        final PhpAccessVariableInstruction[] usages = getVariableUsages(parameterName, scopeHolder);
-                        if (0 == usages.length) {
-                            holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                    if (!parameterName.isEmpty()) {
+                        PsiElement previous = variable.getPrevSibling();
+                        if (previous instanceof PsiWhiteSpace) {
+                            previous = previous.getPrevSibling();
                         }
 
-                        continue;
-                    }
-
-                    final int variableUsages = this.analyzeAndReturnUsagesCount(parameterName, scopeHolder);
-                    if (0 == variableUsages) {
-                        holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                        if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
+                            if (getVariableUsages(parameterName, scopeHolder).length == 0) {
+                                holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                            }
+                        } else if (this.analyzeAndReturnUsagesCount(parameterName, scopeHolder) == 0) {
+                            holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                        }
                     }
                 }
             }
@@ -191,7 +151,6 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                                 /* when modifying non non-reference, register as write only access for reporting */
                                 targetExpressions.add(objLastSemanticExpression);
                             }
-
                             continue;
                         }
 
@@ -205,7 +164,6 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                                 continue;
                             }
                         }
-
                         intCountReadAccesses++;
                         continue;
                     }
@@ -227,7 +185,6 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         if (!OpenapiTypesUtil.isStatementImpl(parent.getParent())) {
                             ++intCountReadAccesses;
                         }
-
                         continue;
                     }
 
@@ -243,16 +200,19 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                                     /* when modifying the reference it's link READ and linked WRITE semantics */
                                     ++intCountReadAccesses;
                                 }
-
                                 /* now ensure operation is assignment of reference */
                                 PsiElement operation = sameVariableCandidate.getNextSibling();
-                                while (operation != null && operation.getNode().getElementType() != PhpTokenTypes.opASGN) {
+                                while (operation != null && !OpenapiTypesUtil.is(operation, PhpTokenTypes.opASGN)) {
                                     operation = operation.getNextSibling();
                                 }
                                 if (operation != null && operation.getText().replaceAll("\\s+", "").equals("=&")) {
                                     isReference = true;
                                 }
-
+                                /* false-negative: inline assignment result has been used */
+                                if (usages.length == 2 && usages[0].getAnchor() == usages[1].getAnchor()) {
+                                    holder.registerProblem(sameVariableCandidate, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                    return 1;
+                                }
                                 continue;
                             }
                         }
@@ -297,7 +257,10 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
     @NotNull
     static private PhpAccessVariableInstruction[] getVariableUsages(@NotNull String parameterName, @NotNull PhpScopeHolder scopeHolder) {
-        PhpEntryPointInstruction objEntryPoint = scopeHolder.getControlFlow().getEntryPoint();
-        return PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, parameterName, false);
+        return PhpControlFlowUtil.getFollowingVariableAccessInstructions(
+                scopeHolder.getControlFlow().getEntryPoint(),
+                parameterName,
+                false
+        );
     }
 }

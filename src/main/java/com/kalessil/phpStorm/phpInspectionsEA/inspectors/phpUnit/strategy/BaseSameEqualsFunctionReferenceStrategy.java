@@ -10,7 +10,9 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -43,14 +45,23 @@ abstract class BaseSameEqualsFunctionReferenceStrategy {
             isTargetSecond = !StringUtils.isEmpty(referenceName) && referenceName.equals(functionName);
         }
 
-        /* fire assertCount warning when needed */
+        /* fire warning when needed */
         if ((isTargetFirst && !isTargetSecond) || (!isTargetFirst && isTargetSecond)) {
             final PsiElement[] processedParams = ((FunctionReference) (isTargetSecond ? params[1] : params[0])).getParameters();
             if (0 == processedParams.length) {
                 return false;
             }
 
-            final String replacement        = getRecommendedAssertionName();
+            /* false-positives: do not report inside target methods ^_^ */
+            final String replacement = getRecommendedAssertionName();
+            final PsiElement scope   = ExpressionSemanticUtil.getScope(reference);
+            if (scope instanceof Method) {
+                final boolean isInsideTarget = replacement.equals(((Method) scope).getName());
+                if (isInsideTarget) {
+                    return false;
+                }
+            }
+
             final PsiElement processedValue = processedParams[0];
             final PsiElement otherValue     = isTargetSecond ? params[0] : params[1];
             final boolean isProcessedFirst  = isTargetFunctionProcessesGivenValue();

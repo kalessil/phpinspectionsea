@@ -94,3 +94,9 @@
             $parameter = <warning descr="New value type (null) is not in annotated types.">null</warning>;
         }
     }
+
+    /* false-positive: incomplete types influenced by null as default value */
+    function incomplete_types($one = null, $two = []) {
+        $one = '';
+        $two = <warning descr="New value type (string) is not in annotated types.">''</warning>;
+    }

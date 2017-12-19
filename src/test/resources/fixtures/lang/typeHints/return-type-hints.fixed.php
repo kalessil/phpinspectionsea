@@ -103,3 +103,12 @@ class ClassCasesHolderImplementation extends ClassCasesHolder {
     public function overriddenReturnString($x): string
     { return $x; }
 }
+
+class GeneratorCaseHolder {
+    public function generator($string)
+    {
+        if ($string != null) {
+            return trim(yield $string);
+        }
+    }
+}

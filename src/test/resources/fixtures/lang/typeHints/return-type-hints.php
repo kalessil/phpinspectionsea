@@ -84,3 +84,12 @@ abstract class ClassCasesHolder {
 class ClassCasesHolderImplementation extends ClassCasesHolder {
     public function <weak_warning descr="': string' can be declared as return type hint.">overriddenReturnString</weak_warning>($x) { return $x; }
 }
+
+class GeneratorCaseHolder {
+    public function generator($string)
+    {
+        if ($string != null) {
+            return trim(yield $string);
+        }
+    }
+}

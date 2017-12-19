@@ -38,6 +38,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
 
     // Inspection options.
     public boolean ANALYZE_INTERFACES = true;
+    public boolean ANALYZE_CONSTANTS  = true;
 
     @NotNull
     public String getShortName() {
@@ -75,8 +76,8 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                     if (fieldName != null && field.getModifier().isPublic()) {
                         if (field.isConstant()) {
                             /* {const} inspection should be skipped if PHP version < 7.1.0. */
-                            /* {const}.isPublic() always returns true, even if visibility is not declared, so we need hardcode it. */
-                            if (checkConstantVisibility && field.getPrevPsiSibling() == null) {
+                            /* {const}.isPublic() always returns true, even if visibility is not declared */
+                            if (ANALYZE_CONSTANTS && checkConstantVisibility && field.getPrevPsiSibling() == null) {
                                 final String message = String.format(messagePattern, field.getName());
                                 holder.registerProblem(fieldName, message, new ConstantVisibilityFix(field));
                             }
@@ -94,9 +95,10 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component)
-            -> component.addCheckbox("Analyze interfaces", ANALYZE_INTERFACES, (isSelected) -> ANALYZE_INTERFACES = isSelected)
-        );
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Analyze interfaces", ANALYZE_INTERFACES, (isSelected) -> ANALYZE_INTERFACES = isSelected);
+            component.addCheckbox("Analyze constants", ANALYZE_CONSTANTS, (isSelected) -> ANALYZE_CONSTANTS = isSelected);
+        });
     }
 
     private static class MemberVisibilityFix implements LocalQuickFix {
@@ -160,7 +162,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final Field constField = this.constFieldReference.getElement();
-            if (constField != null) {
+            if (constField != null && !project.isDisposed()) {
                 final Method donor            = PhpPsiElementFactory.createMethod(project, "public function x(){}");
                 final PhpModifierList implant = PsiTreeUtil.findChildOfType(donor, PhpModifierList.class);
                 if (implant != null) {

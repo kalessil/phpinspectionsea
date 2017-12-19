@@ -18,4 +18,10 @@ class TestAssertStringEqualsFile {
         <weak_warning descr="assertStringEqualsFile should be used instead.">$this->assertSame ('', file_get_contents(''), 'message')</weak_warning>;
         <weak_warning descr="assertStringEqualsFile should be used instead.">$this->assertEquals ('', file_get_contents(''), 'message')</weak_warning>;
     }
+
+    public function assertStringEqualsFile()
+    {
+        $this->assertSame (file_get_contents(''), '', 'message');
+        $this->assertEquals ('', file_get_contents(''), 'message');
+    }
 }

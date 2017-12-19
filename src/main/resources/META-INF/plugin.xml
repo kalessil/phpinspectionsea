@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsUltimate</id>
   <name>Php Inspections (EA Ultimate)</name>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -44,7 +44,7 @@ the implementation.
   <change-notes><![CDATA[
 New inspections and bug-fixes:<br/>
 <br/>
-- Bug-fixes from Php Inspections (EA Extended) <a href="https://github.com/kalessil/phpinspectionsea/milestone/21?closed=1">v2.3.14</a><br/>
+- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/41638">v2.3.14</a><br/>
 <br/>
 - Incomplete throw statements: new patterns<br/>
 - Substring comparison flaws: implemented<br/>

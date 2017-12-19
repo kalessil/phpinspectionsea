@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.13.2</version>
+  <version>2.3.14</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -58,9 +58,22 @@ the implementation.
   <change-notes><![CDATA[
 Bug-fixes and enhancements:<br/>
 <br/>
-- Multiple PhpStorm 2017.3 compatibility fixes<br/>
+- Callable parameter usage violates definition: resolved false-positives (incomplete type with null default value)<br/>
+- Class autoloading correctness: resolved false-positives (Laravel migrations)<br/>
+- Non-optimal if conditions: resolved false-positive (interconnected statements case)<br/>
+- PhpUnit: bugs and best practices: resolved false-positives (suggestions inside the target function)<br/>
+- Return type hint can be used: resolve false-positives (recognize generators)<br/>
+- Suspicious assignments: resolved false-positives (++/-- in container expression)<br/>
+- Unqualified function/constant reference: resolved false-positive (multiple cases)<br/>
+- Unnecessary parentheses: QF bug-fix<br/>
+- Unnecessary final modifiers: resolved false-positives (final magic methods)<br/>
 <br/>
-- OnlyWritesOnParameterInspector: new patterns<br/>
+- Access modifiers shall be defined: new settings<br/>
+- Parameter/variable is not used: new patterns<br/>
+- Ternary operator could be simplified: drop calls merging pattern<br/>
+- 'mkdir(...)' race condition: new patterns<br/>
+<br/>
+- 'get_class(...)' usage correctness: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>

@@ -146,7 +146,7 @@ final public class LicenseService {
             result = client.CheckAndSavePKey(key, TurboActivate.TA_USER);
             if (result) {
                 client.SetCustomProxy(this.getProxy());
-                client.Activate(this.getLicenseHolder());
+                client.Activate(null);
                 licenseDaysRemaining = client.GenuineDays(90, 14, new BoolRef());
                 shouldAllowUsage     = true;
             } else {
@@ -180,24 +180,13 @@ final public class LicenseService {
         boolean result = true;
         try {
             client.SetCustomProxy(this.getProxy());
-            client.UseTrial(TurboActivate.TA_USER | TurboActivate.TA_VERIFIED_TRIAL, this.getLicenseHolder());
+            client.UseTrial(TurboActivate.TA_USER | TurboActivate.TA_VERIFIED_TRIAL, null);
             trialDaysRemaining = client.TrialDaysRemaining(TurboActivate.TA_USER | TurboActivate.TA_VERIFIED_TRIAL);
             shouldAllowUsage   = trialDaysRemaining > 0;
         } catch (TurboActivateException activationFailed) {
             final String message = activationFailed.getMessage();
             errorDetails.append(message == null ? activationFailed.getClass().getName() : message);
             result = false;
-        }
-        return result;
-    }
-
-    @Nullable
-    private String getLicenseHolder() {
-        String result = null;
-        /* EAPs doesn't have license holder information */
-        if (!ApplicationManager.getApplication().isEAP()) {
-            final LicensingFacade facade = LicensingFacade.getInstance();
-            result = facade == null ? null : facade.getLicensedToMessage();
         }
         return result;
     }

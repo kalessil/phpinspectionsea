@@ -757,6 +757,11 @@ New inspections and bug-fixes:<br/>
         shortName="ReturnTypeCanBeDeclaredInspection"             displayName="Return type hint can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ReturnTypeCanBeDeclaredInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="GetClassUsageInspection"                       displayName="'get_class(...)' usage correctness"
+        groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.GetClassUsageInspector"/>
+
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="BadExceptionsProcessingInspection"               displayName="Badly organized exception handling"

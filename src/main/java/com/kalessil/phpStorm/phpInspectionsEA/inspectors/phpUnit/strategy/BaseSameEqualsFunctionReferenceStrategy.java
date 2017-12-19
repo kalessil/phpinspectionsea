@@ -56,7 +56,7 @@ abstract class BaseSameEqualsFunctionReferenceStrategy {
             final String replacement = getRecommendedAssertionName();
             final PsiElement scope   = ExpressionSemanticUtil.getScope(reference);
             if (scope instanceof Method) {
-                final boolean isInsideTarget = reference.equals(((Method) scope).getName());
+                final boolean isInsideTarget = replacement.equals(((Method) scope).getName());
                 if (isInsideTarget) {
                     return false;
                 }

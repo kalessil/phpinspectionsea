@@ -10,6 +10,7 @@ final public class AccessModifierPresentedInspectorTest extends PhpCodeInsightFi
     public void testIfFindsAllPatterns() {
         final AccessModifierPresentedInspector inspector = new AccessModifierPresentedInspector();
         inspector.ANALYZE_INTERFACES                     = true;
+        inspector.ANALYZE_CONSTANTS                      = true;
         myFixture.configureByFile("fixtures/classes/access-modifiers.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
@@ -25,6 +26,7 @@ final public class AccessModifierPresentedInspectorTest extends PhpCodeInsightFi
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         final AccessModifierPresentedInspector inspector = new AccessModifierPresentedInspector();
         inspector.ANALYZE_INTERFACES                     = true;
+        inspector.ANALYZE_CONSTANTS                      = true;
         myFixture.configureByFile("fixtures/classes/access-modifiers.710.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);

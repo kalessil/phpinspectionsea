@@ -200,6 +200,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | FilePutContentsRaceConditionInspection          | 'file_put_contents(...)' race condition                   | yes | yes | yes  | no  |
 | Probable bugs        | CoreInterfacesUsageInspection                   | Core interfaces usage correctness                         | n/a | yes | n/a  | no  |
 | Probable bugs        | SubstringCompareInspection                      | Substring comparison flaws                                | yes | yes | yes  | no  |
+| Probable bugs        | ClassExistenceCheckInspection                   | Class existence and relation check correctness            | n/a | yes | n/a  | no  |
 
 Inspections Lists (Security)
 ---

@@ -4,10 +4,14 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.config.PhpLanguageFeature;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.ClassConstantReference;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -35,6 +39,7 @@ public class ClassExistenceCheckInspector extends BasePhpInspection {
         callbacks.put("interface_exists", PhpClass::isInterface);
         callbacks.put("trait_exists",     PhpClass::isTrait);
         callbacks.put("is_subclass_of",   (clazz) -> !clazz.isTrait());
+        callbacks.put("is_a",             (clazz) -> !clazz.isTrait());
     }
 
     @NotNull
@@ -48,8 +53,12 @@ public class ClassExistenceCheckInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final String functionName = reference.getName();
-                if (functionName != null && callbacks.containsKey(functionName)) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
+                final PhpLanguageLevel php     = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                final boolean hasClassConstant = php.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST);
+                final String functionName      = reference.getName();
+                if (hasClassConstant && functionName != null && callbacks.containsKey(functionName)) {
                     final PsiElement candidate;
                     final PsiElement[] arguments = reference.getParameters();
                     /* get target expression */

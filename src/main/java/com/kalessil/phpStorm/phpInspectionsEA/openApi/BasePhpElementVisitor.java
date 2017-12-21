@@ -1,5 +1,8 @@
 package com.kalessil.phpStorm.phpInspectionsEA.openApi;
 
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -63,4 +66,22 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpThrow(PhpThrow throwStatement) {}
 
     @Override public void visitPhpSwitch(PhpSwitch switchStatement) {}
+
+    protected boolean isTestContext(@NotNull PsiElement expression) {
+        boolean result        = false;
+        final String fileName = expression.getContainingFile().getName();
+        if (fileName.endsWith("Test.php") || fileName.endsWith("Spec.php") || fileName.endsWith(".phpt")) {
+            result = true;
+        } else {
+            /* identify class */
+            final PhpClass clazz = expression instanceof PhpClass ?
+                (PhpClass) expression : PsiTreeUtil.getParentOfType(expression, PhpClass.class, false, PsiFile.class);
+            /* if identified, check its' FQN */
+            final String clazzFqn = clazz == null ? null : clazz.getFQN();
+            if (clazzFqn != null) {
+                result = clazzFqn.endsWith("Test") || clazzFqn.contains("\\Tests\\") || clazzFqn.contains("\\Test\\");
+            }
+        }
+        return result;
+    }
 }

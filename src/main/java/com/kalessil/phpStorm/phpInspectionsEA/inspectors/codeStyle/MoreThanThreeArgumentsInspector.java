@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -39,7 +39,7 @@ public class MoreThanThreeArgumentsInspector extends PhpTooManyParametersInspect
         return new ProxyVisitor((PhpElementVisitor) super.buildVisitor(holder, isOnTheFly));
     }
 
-    private class ProxyVisitor extends PhpElementVisitor {
+    private class ProxyVisitor extends BasePhpElementVisitor {
         @NotNull
         final PhpElementVisitor visitor;
 
@@ -54,15 +54,14 @@ public class MoreThanThreeArgumentsInspector extends PhpTooManyParametersInspect
 
         @Override
         public void visitPhpClass(@NotNull PhpClass clazz) {
-            if (!FileSystemUtil.isTestClass(clazz)) {
+            if (!this.isTestContext(clazz)) {
                 visitor.visitPhpClass(clazz);
             }
         }
 
         @Override
         public void visitPhpMethod(@NotNull Method method) {
-            final PhpClass clazz = method.getContainingClass();
-            if (clazz == null || !FileSystemUtil.isTestClass(clazz)) {
+            if (!this.isTestContext(method)) {
                 visitor.visitPhpMethod(method);
             }
         }

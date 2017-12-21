@@ -7,7 +7,6 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,7 +51,7 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
                 final PsiElement psiClassName = NamedElementUtil.getNameIdentifier(clazz);
                 final String className        = clazz.getName();
                 /* skip un-reportable, exception and test classes */
-                if (null == psiClassName || FileSystemUtil.isTestClass(clazz) || className.endsWith("Exception")) {
+                if (psiClassName == null || className.endsWith("Exception") || this.isTestContext(clazz)) {
                     return;
                 }
 

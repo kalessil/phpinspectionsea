@@ -36,14 +36,16 @@ public class RealpathInSteamContextInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
-                /* check general requirements */
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (1 != params.length || null == functionName || !functionName.equals("realpath")) {
+                if (functionName == null || !functionName.equals("realpath")) {
                     return;
                 }
-
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length != 1 || this.isTestContext(reference)) {
+                    return;
+                }
 
                 /* case 1: include/require context */
                 /* get parent expression through () */
@@ -52,32 +54,29 @@ public class RealpathInSteamContextInspector extends BasePhpInspection {
                     parent = parent.getParent();
                 }
                 if (parent instanceof Include) {
-                    final String replacement = generateReplacement(params[0]);
+                    final String replacement = generateReplacement(arguments[0]);
                     if (null == replacement) {
                         holder.registerProblem(reference, messageUseDirname, ProblemHighlightType.GENERIC_ERROR);
                     } else {
                         final String message = patternUseDirname.replace("%e%", replacement);
                         holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new SecureRealpathFix(replacement));
                     }
-
                     return;
                 }
-
 
                 /* case 2: realpath applied to a relative path '..' */
                 final Collection<StringLiteralExpression> strings
                         = PsiTreeUtil.findChildrenOfType(reference, StringLiteralExpression.class);
                 if (strings.size() > 0) {
-                    for (StringLiteralExpression oneString : strings) {
+                    for (final StringLiteralExpression oneString : strings) {
                         if (oneString.getContents().contains("..")) {
-                            final String replacement = generateReplacement(params[0]);
+                            final String replacement = generateReplacement(arguments[0]);
                             if (null == replacement) {
                                 holder.registerProblem(reference, messageUseDirname, ProblemHighlightType.GENERIC_ERROR);
                             } else {
                                 final String message = patternUseDirname.replace("%e%", replacement);
                                 holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new SecureRealpathFix(replacement));
                             }
-
                             break;
                         }
                     }

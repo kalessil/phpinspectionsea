@@ -33,9 +33,9 @@ public class NonSecureExtractUsageInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String function = reference.getName();
-                if (function != null && function.equals("extract") && !this.isTestContext(reference)) {
+                if (function != null && function.equals("extract")) {
                     final PsiElement[] params = reference.getParameters();
-                    if (params.length == 1) {
+                    if (params.length == 1 && !this.isTestContext(reference)) {
                         holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
                     }
                 }

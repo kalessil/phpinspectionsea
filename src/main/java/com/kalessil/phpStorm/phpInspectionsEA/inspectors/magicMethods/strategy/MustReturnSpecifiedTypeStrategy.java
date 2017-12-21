@@ -36,30 +36,29 @@ final public class MustReturnSpecifiedTypeStrategy {
             if (nameNode != null) {
                 holder.registerProblem(nameNode, message, ProblemHighlightType.ERROR);
             }
-            return;
-        }
-
-        final Project project = holder.getProject();
-        for (final PhpReturn expression : returns) {
-            PsiElement returnValue = ExpressionSemanticUtil.getReturnValue(expression);
-            returnValue            = ExpressionSemanticUtil.getExpressionTroughParenthesis(returnValue);
-            if (returnValue instanceof PhpTypedElement) {
-                /* previously we had issue with https://youtrack.jetbrains.com/issue/WI-31249 here */
-                final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) returnValue, project);
-                if (resolved != null) {
-                    final PhpType normalized = resolved.filterUnknown();
-                    /* case: resolve has failed or resolved types are compatible */
-                    if (normalized.isEmpty() || PhpType.isSubType(normalized, allowedTypes)) {
-                        continue;
-                    }
-                    /* case: closure or anonymous class */
-                    else if (method != ExpressionSemanticUtil.getScope(expression)) {
-                        continue;
+        } else {
+            final Project project = holder.getProject();
+            for (final PhpReturn expression : returns) {
+                PsiElement returnValue = ExpressionSemanticUtil.getReturnValue(expression);
+                returnValue            = ExpressionSemanticUtil.getExpressionTroughParenthesis(returnValue);
+                if (returnValue instanceof PhpTypedElement) {
+                    /* previously we had an issue with https://youtrack.jetbrains.com/issue/WI-31249 here */
+                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) returnValue, project);
+                    if (resolved != null) {
+                        final PhpType normalized = resolved.filterUnknown();
+                        /* case: resolve has failed or resolved types are compatible */
+                        if (normalized.isEmpty() || PhpType.isSubType(normalized, allowedTypes)) {
+                            continue;
+                        }
+                        /* case: closure or anonymous class */
+                        else if (method != ExpressionSemanticUtil.getScope(expression)) {
+                            continue;
+                        }
                     }
                 }
+                holder.registerProblem(expression, message, ProblemHighlightType.ERROR);
             }
-            holder.registerProblem(expression, message, ProblemHighlightType.ERROR);
+            returns.clear();
         }
-        returns.clear();
     }
 }

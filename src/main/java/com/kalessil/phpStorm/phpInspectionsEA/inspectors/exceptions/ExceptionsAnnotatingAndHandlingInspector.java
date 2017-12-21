@@ -18,7 +18,6 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpDoc.ThrowsResolveUtil;
@@ -91,8 +90,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
             }
 
             public void visitPhpMethod(Method method) {
-                final PhpClass clazz = method.getContainingClass();
-                if (null == clazz || method.isAbstract() || FileSystemUtil.isTestClass(clazz)) {
+                if (method.isAbstract() || this.isTestContext(method)) {
                     return;
                 }
 

@@ -4,14 +4,9 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -37,19 +32,12 @@ public class NonSecureExtractUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final String function     = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (1 == params.length && function != null && function.equals("extract")) {
-                    /* ignore test classes */
-                    final Function scope = ExpressionSemanticUtil.getScope(reference);
-                    if (scope instanceof Method) {
-                        final PhpClass clazz = ((Method) scope).getContainingClass();
-                        if (null != clazz && FileSystemUtil.isTestClass(clazz)) {
-                            return;
-                        }
+                final String function = reference.getName();
+                if (function != null && function.equals("extract") && !this.isTestContext(reference)) {
+                    final PsiElement[] params = reference.getParameters();
+                    if (params.length == 1) {
+                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
                     }
-
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
                 }
             }
         };

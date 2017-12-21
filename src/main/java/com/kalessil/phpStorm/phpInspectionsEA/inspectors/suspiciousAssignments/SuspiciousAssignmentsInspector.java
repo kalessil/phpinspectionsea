@@ -39,12 +39,16 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                ParameterImmediateOverrideStrategy.apply(method, holder);
+                if (!this.isTestContext(method)) {
+                    ParameterImmediateOverrideStrategy.apply(method, holder);
+                }
             }
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
-                ParameterImmediateOverrideStrategy.apply(function, holder);
+                if (!this.isTestContext(function)) {
+                    ParameterImmediateOverrideStrategy.apply(function, holder);
+                }
             }
 
             @Override

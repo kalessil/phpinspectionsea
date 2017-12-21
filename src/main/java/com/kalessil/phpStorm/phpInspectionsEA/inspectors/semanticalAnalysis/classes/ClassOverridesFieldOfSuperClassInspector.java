@@ -11,7 +11,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +44,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
             public void visitPhpField(Field ownField) {
                 /* skip un-explorable and test classes */
                 final PhpClass clazz = ownField.getContainingClass();
-                if (null == clazz || FileSystemUtil.isTestClass(clazz)) {
+                if (clazz == null || this.isTestContext(clazz)) {
                     return;
                 }
 

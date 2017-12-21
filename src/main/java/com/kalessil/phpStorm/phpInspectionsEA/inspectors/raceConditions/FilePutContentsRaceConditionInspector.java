@@ -42,13 +42,14 @@ public class FilePutContentsRaceConditionInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
 
-                final String functionName    = reference.getName();
-                final PsiElement[] arguments = reference.getParameters();
-                if (functionName != null && arguments.length == 2 && functionName.equals("file_put_contents")) {
-                    /* there is no solid patter, hence we are searching test fragments under the hood */
-                    final boolean isTarget = this.match(arguments[0], ".php") || this.match(arguments[1], "<?php");
-                    if (isTarget) {
-                        holder.registerProblem(reference, message, new AddLockExFlagFix());
+                final String functionName = reference.getName();
+                if (functionName != null && functionName.equals("file_put_contents")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 2 && !this.isTestContext(reference)) {
+                        /* there is no solid patter, hence we are searching test fragments under the hood */
+                        if (this.match(arguments[0], ".php") || this.match(arguments[1], "<?php")) {
+                            holder.registerProblem(reference, message, new AddLockExFlagFix());
+                        }
                     }
                 }
             }

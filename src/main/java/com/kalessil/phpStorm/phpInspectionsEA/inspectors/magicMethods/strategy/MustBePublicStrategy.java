@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.Method;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -20,7 +21,7 @@ final public class MustBePublicStrategy {
 
     static public void apply(@NotNull Method method, @NotNull ProblemsHolder holder) {
         if (!method.getAccess().isPublic()) {
-            final PsiElement nameNode = method.getNameIdentifier();
+            final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
             if (nameNode != null) {
                 final String message = String.format(messagePattern, method.getName());
                 holder.registerProblem(nameNode, message, ProblemHighlightType.ERROR);

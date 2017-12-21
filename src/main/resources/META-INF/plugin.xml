@@ -46,12 +46,7 @@ New inspections and bug-fixes:<br/>
 <br/>
 - Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/41638">v2.3.14</a><br/>
 <br/>
-- Incomplete throw statements: new patterns<br/>
-- Substring comparison flaws: implemented<br/>
-- Insecure 'htmlentities(...)' usage: implemented<br/>
-- Insecure 'htmlspecialchars(...)' usage: implemented<br/>
-- Insecure 'shuffle(...)' usage: implemented<br/>
-- Insecure 'str_shuffle(...)' usage: implemented<br/>
+- ClassExistenceCheckInspector: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>

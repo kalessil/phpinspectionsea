@@ -13,8 +13,6 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,13 +45,9 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* ignore test classes */
-                final Function scope = ExpressionSemanticUtil.getScope(reference);
-                if (scope instanceof Method) {
-                    final PhpClass clazz = ((Method) scope).getContainingClass();
-                    if (null != clazz && FileSystemUtil.isTestClass(clazz)) {
-                        return;
-                    }
+                /* false-positives: test classes */
+                if (this.isTestContext(reference)) {
+                    return;
                 }
 
                 /* ind out expression where the call is contained - quite big set of variations */

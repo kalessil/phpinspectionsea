@@ -8,8 +8,6 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.FileSystemUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,24 +44,21 @@ final public class PackedHashtableOptimizationInspector extends BasePhpInspectio
                 if (phpVersion.compareTo(PhpLanguageLevel.PHP700) < 0) {
                     return;
                 }
-                /* requires at least 3 children - let array togrow enough */
+                /* requires at least 3 children - let array to grow enough */
                 final PsiElement[] children = expression.getChildren();
                 if (children.length < 3) {
                     return;
                 }
-                /* ignore test classes */
-                final Function scope = ExpressionSemanticUtil.getScope(expression);
-                if (scope instanceof Method) {
-                    final PhpClass clazz = ((Method) scope).getContainingClass();
-                    if (null != clazz && FileSystemUtil.isTestClass(clazz)) {
-                        return;
-                    }
+
+                /* false-positives: test classes */
+                if (this.isTestContext(expression)) {
+                    return;
                 }
 
                 /* step 1: collect indexes and verify array structure */
                 boolean isTarget                  = true;
                 final List<PhpPsiElement> indexes = new ArrayList<>();
-                for (PsiElement pairCandidate : children) {
+                for (final PsiElement pairCandidate : children) {
                     /* inspect only associative arrays */
                     if (!(pairCandidate instanceof ArrayHashElement)) {
                         isTarget = false;

@@ -17,7 +17,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -49,42 +48,44 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* general requirements for calls */
-                final String function         = reference.getName();
-                final PsiElement[] parameters = reference.getParameters();
-                if (0 == parameters.length || StringUtils.isEmpty(function) || !function.startsWith("call_user_func")) {
+                final String functionName    = reference.getName();
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length == 0 || functionName == null || !functionName.startsWith("call_user_func")) {
                     return;
                 }
 
                 /* only `call_user_func_array(..., array(...))` needs to be checked */
-                if (2 == parameters.length && function.equals("call_user_func_array")) {
-                    if (parameters[1] instanceof ArrayCreationExpression) {
+                if (arguments.length == 2 && functionName.equals("call_user_func_array")) {
+                    if (arguments[1] instanceof ArrayCreationExpression) {
                         final List<String> parametersUsed = new ArrayList<>();
-                        for (PsiElement item : parameters[1].getChildren()) {
-                            if (item instanceof PhpPsiElement) {
-                                final PhpPsiElement itemValue = ((PhpPsiElement) item).getFirstPsiChild();
-                                if (null != itemValue) {
-                                    parametersUsed.add(parameterAsString(itemValue));
+                        for (final PsiElement argument : arguments[1].getChildren()) {
+                            if (argument instanceof PhpPsiElement) {
+                                final PhpPsiElement itemValue = ((PhpPsiElement) argument).getFirstPsiChild();
+                                final String itemValueString  = itemValue == null ? null : parameterAsString(itemValue);
+                                if (itemValueString != null) {
+                                    /* false-positives: call_user_func does not support arguments by reference */
+                                    if (itemValueString.startsWith("&")) {
+                                        parametersUsed.clear();
+                                        return;
+                                    }
+                                    parametersUsed.add(itemValueString);
                                 }
                             }
                         }
 
-                        final String replacement = "call_user_func(%c%, %p%)"
-                                .replace("%c%", parameters[0].getText())
-                                .replace("%p%", String.join(", ", parametersUsed));
-                        parametersUsed.clear();
-
-                        final String message = patternInlineArgs.replace("%e%", replacement);
+                        final String replacement = String.format("call_user_func(%s, %s)", arguments[0].getText(), String.join(", ", parametersUsed));
+                        final String message     = patternInlineArgs.replace("%e%", replacement);
                         holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new InlineFix(replacement));
+                        parametersUsed.clear();
                     }
                     return;
                 }
 
 
                 /* TODO: `callReturningCallable()(...)` syntax not yet supported, re-evaluate */
-                /* TODO: search is_callable in the scope or report probable bugs */
-                if (function.equals("call_user_func")) {
+                if (functionName.equals("call_user_func")) {
                     /* collect callable parts */
-                    final PsiElement firstParam          = parameters[0];
+                    final PsiElement firstParam          = arguments[0];
                     final List<PsiElement> callableParts = new ArrayList<>();
                     if (firstParam instanceof ArrayCreationExpression) {
                         /* extract parts */
@@ -176,7 +177,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
 
 
                     final List<String> parametersToSuggest = new ArrayList<>();
-                    for (PsiElement parameter : Arrays.copyOfRange(parameters, 1, parameters.length)) {
+                    for (PsiElement parameter : Arrays.copyOfRange(arguments, 1, arguments.length)) {
                         parametersToSuggest.add(parameterAsString(parameter));
                     }
                     final String replacement = "%f%%o%%s%(%p%)"

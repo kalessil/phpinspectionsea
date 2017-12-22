@@ -47,6 +47,8 @@ New inspections and bug-fixes:<br/>
 - Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/41638">v2.3.14</a><br/>
 <br/>
 - ClassExistenceCheckInspector: implemented<br/>
+- UnserializeExploitsInspector: new patterns<br/>
+- FilePutContentsRaceConditionInspector: resolved false-positives (UTs)<br/>
 <br/>
 <hr/>
   ]]></change-notes>

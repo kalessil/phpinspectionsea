@@ -63,7 +63,9 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                     case "__construct":
                         CanNotBeStaticStrategy.apply(method, holder);
                         CanNotReturnTypeStrategy.apply(method, holder);
-                        NormallyCallsParentMethodStrategy.apply(method, holder);
+                        if (!this.isTestContext(clazz)) {
+                            NormallyCallsParentMethodStrategy.apply(method, holder);
+                        }
                         break;
                     case "__destruct":
                     case "__clone":

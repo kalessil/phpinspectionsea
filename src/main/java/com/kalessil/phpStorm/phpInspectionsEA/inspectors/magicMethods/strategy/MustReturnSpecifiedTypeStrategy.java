@@ -2,61 +2,63 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.PhpExpression;
 import com.jetbrains.php.lang.psi.elements.PhpReturn;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.HashSet;
 
-public class MustReturnSpecifiedTypeStrategy {
-    private static final String messagePattern = "%m% must return %t%.";
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+final public class MustReturnSpecifiedTypeStrategy {
+    private static final String messagePattern = "%s must return %s.";
 
     static public void apply(@NotNull PhpType allowedTypes, @NotNull Method method, @NotNull ProblemsHolder holder) {
-        final String message = messagePattern.replace("%m%", method.getName()).replace("%t%", allowedTypes.toString());
-        final Collection<PhpReturn> returnStatements = PsiTreeUtil.findChildrenOfType(method, PhpReturn.class);
-        if (0 == returnStatements.size()) {
+        final String message                = String.format(messagePattern, method.getName(), allowedTypes.toString());
+        final Collection<PhpReturn> returns = PsiTreeUtil.findChildrenOfType(method, PhpReturn.class);
+        if (returns.isEmpty()) {
             final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
-            if (null != nameNode) {
+            if (nameNode != null) {
                 holder.registerProblem(nameNode, message, ProblemHighlightType.ERROR);
             }
-
-            return;
-        }
-
-        for (PhpReturn returnExpression : returnStatements) {
-            PhpExpression returnValue        = ExpressionSemanticUtil.getReturnValue(returnExpression);
-            PsiElement returnValueExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(returnValue);
-            if (returnValueExpression instanceof PhpTypedElement) {
-                final HashSet<String> resolvedArgumentType = new HashSet<>();
-                TypeFromPlatformResolverUtil.resolveExpressionType(returnValueExpression, resolvedArgumentType);
-
-                /*
-                 * create type out of strings, resolved by plugin component handling magic in IDE internals,
-                 * @see https://youtrack.jetbrains.com/issue/WI-31249
-                 */
-                final PhpType argumentType = new PhpType();
-                if (resolvedArgumentType.size() > 0) {
-                    resolvedArgumentType.forEach(argumentType::add);
-                    resolvedArgumentType.clear();
+        } else {
+            final Project project = holder.getProject();
+            for (final PhpReturn expression : returns) {
+                PsiElement returnValue = ExpressionSemanticUtil.getReturnValue(expression);
+                returnValue            = ExpressionSemanticUtil.getExpressionTroughParenthesis(returnValue);
+                if (returnValue instanceof PhpTypedElement) {
+                    /* previously we had an issue with https://youtrack.jetbrains.com/issue/WI-31249 here */
+                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) returnValue, project);
+                    if (resolved != null) {
+                        final PhpType normalized = resolved.filterUnknown();
+                        /* case: resolve has failed or resolved types are compatible */
+                        if (normalized.isEmpty() || PhpType.isSubType(normalized, allowedTypes)) {
+                            continue;
+                        }
+                        /* case: closure or anonymous class */
+                        else if (method != ExpressionSemanticUtil.getScope(expression)) {
+                            continue;
+                        }
+                    }
                 }
-
-                if (PhpType.isSubType(argumentType, allowedTypes) || method != ExpressionSemanticUtil.getScope(returnExpression)) {
-                    /* safe escape path for legal cases */
-                    continue;
-                }
+                holder.registerProblem(expression, message, ProblemHighlightType.ERROR);
             }
-
-            holder.registerProblem(returnExpression, message, ProblemHighlightType.ERROR);
+            returns.clear();
         }
-        returnStatements.clear();
     }
 }

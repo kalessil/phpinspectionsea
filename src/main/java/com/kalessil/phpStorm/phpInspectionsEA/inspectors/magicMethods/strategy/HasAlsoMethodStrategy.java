@@ -2,25 +2,32 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import org.apache.commons.lang.StringUtils;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import org.jetbrains.annotations.NotNull;
 
-public class HasAlsoMethodStrategy {
-    private static final String strProblemDescription = "%m% should have pair method %p%.";
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-    static public void apply(final Method method, final String pair, final ProblemsHolder holder) {
-        final String methodName = method.getName();
-        final PhpClass clazz    = method.getContainingClass();
-        if (StringUtils.isEmpty(methodName) || null == clazz || null == method.getNameIdentifier()) {
-            return;
-        }
+final public class HasAlsoMethodStrategy {
+    private static final String messagePattern = "%s should have pair method %s.";
 
-        if (null == clazz.findMethodByName(pair)) {
-            String strMessage = strProblemDescription
-                    .replace("%m%", methodName)
-                    .replace("%p%", pair);
-            holder.registerProblem(method.getNameIdentifier(), strMessage, ProblemHighlightType.GENERIC_ERROR);
+    static public void apply(@NotNull Method method, @NotNull String companion, @NotNull ProblemsHolder holder) {
+        final PhpClass clazz = method.getContainingClass();
+        if (clazz != null && clazz.findMethodByName(companion) == null) {
+            final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
+            if (nameNode != null) {
+                final String message = String.format(messagePattern, method.getName(), companion);
+                holder.registerProblem(nameNode, message, ProblemHighlightType.GENERIC_ERROR);
+            }
         }
     }
 }

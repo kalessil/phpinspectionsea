@@ -111,7 +111,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                             for (final PsiElement operand : operands) {
                                 final PhpType resolved  = OpenapiResolveUtil.resolveType((PhpTypedElement)operand, project);
                                 final Set<String> types = resolved == null || resolved.hasUnknown() ? new HashSet<>() : resolved.getTypes();
-                                if (types.stream().map(Types::getType).collect(Collectors.toSet()).contains(Types.strFloat)) {
+                                if (types.stream().anyMatch(type -> Types.getType(type).equals(Types.strFloat))) {
                                     final Set<String> patchedTypes = new HashSet<>(result.getTypes());
                                     patchedTypes.addAll(PhpType.FLOAT.getTypes());
                                     patchedTypes.removeAll(PhpType.INT.getTypes());

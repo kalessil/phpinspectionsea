@@ -26,81 +26,66 @@ final public class Types {
     final static public String strResolvingAbortedOnPsiLevel = "\\aborted-on-psi-level";
     final static public String strClassNotResolved           = "\\class-not-resolved";
 
-    static private Map<String, String> mapTypes = null;
-    static private Map<String, String> getTypesMap () {
-        if (null == mapTypes) {
-            mapTypes = new HashMap<>();
+    final static private Map<String, String> mapping = new HashMap<>();
+    static  {
+        mapping.put(strArray,     strArray);
+        mapping.put("\\array",    strArray);
 
-            mapTypes.put(strArray,     strArray);
-            mapTypes.put("\\array",    strArray);
+        mapping.put(strIterable,  strIterable);
+        mapping.put("\\iterable", strIterable);
 
-            mapTypes.put(strIterable,  strIterable);
-            mapTypes.put("\\iterable", strIterable);
+        mapping.put(strString,    strString);
+        mapping.put("\\string",   strString);
 
-            mapTypes.put(strString,    strString);
-            mapTypes.put("\\string",   strString);
+        mapping.put(strBoolean,   strBoolean);
+        mapping.put("\\bool",     strBoolean);
+        mapping.put("boolean",    strBoolean);
+        mapping.put("\\boolean",  strBoolean);
+        mapping.put("false",      strBoolean);
+        mapping.put("\\false",    strBoolean);
+        mapping.put("true",       strBoolean);
+        mapping.put("\\true",     strBoolean);
 
-            mapTypes.put(strBoolean,   strBoolean);
-            mapTypes.put("\\bool",     strBoolean);
-            mapTypes.put("boolean",    strBoolean);
-            mapTypes.put("\\boolean",  strBoolean);
-            mapTypes.put("false",      strBoolean);
-            mapTypes.put("\\false",    strBoolean);
-            mapTypes.put("true",       strBoolean);
-            mapTypes.put("\\true",     strBoolean);
+        mapping.put(strInteger,   strInteger);
+        mapping.put("\\int",      strInteger);
+        mapping.put("integer",    strInteger);
+        mapping.put("\\integer",  strInteger);
 
-            mapTypes.put(strInteger,   strInteger);
-            mapTypes.put("\\int",      strInteger);
-            mapTypes.put("integer",    strInteger);
-            mapTypes.put("\\integer",  strInteger);
+        mapping.put(strFloat,     strFloat);
+        mapping.put("\\float",    strFloat);
 
-            mapTypes.put(strFloat,     strFloat);
-            mapTypes.put("\\float",    strFloat);
+        mapping.put(strNumber,    strNumber);
+        mapping.put("\\number",   strNumber);
 
-            mapTypes.put(strNumber,    strNumber);
-            mapTypes.put("\\number",   strNumber);
+        mapping.put(strNull,      strNull);
+        mapping.put("\\null",     strNull);
 
-            mapTypes.put(strNull,      strNull);
-            mapTypes.put("\\null",     strNull);
+        mapping.put(strVoid,      strVoid);
+        mapping.put("\\void",     strVoid);
 
-            mapTypes.put(strVoid,      strVoid);
-            mapTypes.put("\\void",     strVoid);
+        mapping.put(strMixed,     strMixed);
+        mapping.put("\\mixed",    strMixed);
 
-            mapTypes.put(strMixed,     strMixed);
-            mapTypes.put("\\mixed",    strMixed);
+        mapping.put(strCallable,  strCallable);
+        mapping.put("\\callable", strCallable);
+        mapping.put("\\closure",  strCallable);
 
-            mapTypes.put(strCallable,  strCallable);
-            mapTypes.put("\\callable", strCallable);
-            mapTypes.put("\\closure",  strCallable);
+        mapping.put(strResource,  strResource);
+        mapping.put("\\resource", strResource);
 
-            mapTypes.put(strResource,  strResource);
-            mapTypes.put("\\resource", strResource);
+        mapping.put(strStatic,    strStatic);
+        mapping.put("\\static",   strStatic);
+        mapping.put("$this",      strStatic);
 
-            mapTypes.put(strStatic,    strStatic);
-            mapTypes.put("\\static",   strStatic);
-            mapTypes.put("$this",      strStatic);
+        mapping.put(strSelf,      strSelf);
+        mapping.put("\\self",     strSelf);
 
-            mapTypes.put(strSelf,      strSelf);
-            mapTypes.put("\\self",     strSelf);
-
-            mapTypes.put(strObject,    strObject);
-            mapTypes.put("\\object",   strObject);
-        }
-
-        return mapTypes;
+        mapping.put(strObject,    strObject);
+        mapping.put("\\object",   strObject);
     }
 
-    public static String getType (@NotNull String givenType) {
-        /* special case: array definition */
-        if (givenType.contains("[]")) {
-            return strArray;
-        }
-
-        final String resolvedType = getTypesMap().get(givenType.toLowerCase());
-        if (null != resolvedType) {
-            return resolvedType;
-        }
-
-        return givenType;
+    @NotNull
+    public static String getType(@NotNull String givenType) {
+        return givenType.contains("[]") ? strArray : mapping.getOrDefault(givenType.toLowerCase(), givenType);
     }
 }

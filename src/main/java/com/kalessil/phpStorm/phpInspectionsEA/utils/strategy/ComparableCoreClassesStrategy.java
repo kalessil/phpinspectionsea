@@ -13,8 +13,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUt
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.List;
 
 final public class ComparableCoreClassesStrategy {
     private final static HashSet<String> comparableObjects = new HashSet<>();
@@ -53,8 +54,8 @@ final public class ComparableCoreClassesStrategy {
         }
 
         /* collect classes to check for \DateTime relationship */
-        final LinkedList<PhpClass> operandClasses = new LinkedList<>();
-        for (String classFQN : operandTypes) {
+        final List<PhpClass> operandClasses = new ArrayList<>();
+        for (final String classFQN : operandTypes) {
             if (classFQN.charAt(0) == '\\') {
                 operandClasses.addAll(PhpIndexUtil.getObjectInterfaces(classFQN, projectIndex, false));
             }
@@ -62,9 +63,9 @@ final public class ComparableCoreClassesStrategy {
         operandTypes.clear();
 
         /* inspect classes for being a/child of special once */
-        for (PhpClass clazz : operandClasses) {
+        for (final PhpClass clazz : operandClasses) {
             final HashSet<PhpClass> hierarchy = InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true);
-            for (PhpClass oneClass : hierarchy){
+            for (final PhpClass oneClass : hierarchy){
                 if (comparableObjects.contains(oneClass.getFQN())) {
                     return true;
                 }

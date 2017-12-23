@@ -39,7 +39,7 @@ public class NonSecureHtmlspecialcharsUsageInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("htmlspecialchars")) {
                     final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length == 1) {
+                    if (arguments.length == 1 && !this.isTestContext(reference)) {
                         final String replacement = String.format("htmlspecialchars(%s, ENT_QUOTES)", arguments[0].getText());
                         holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new EscapeAllQuotesFix(replacement));
                     }

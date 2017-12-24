@@ -6,10 +6,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.NewExpression;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpThrow;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,6 +48,15 @@ final public class ThrowsResolveUtil {
                     if (argument instanceof NewExpression) {
                         final PsiElement classReference = ((NewExpression) argument).getClassReference();
                         if (classReference != null) {
+                            /* false-positives: lambdas and anonymous classes */
+                            if (PsiTreeUtil.getParentOfType(thrown, Method.class) != method) {
+                                continue;
+                            }
+                            /* false-positives: ALL try-enclosed throw statements */
+                            else if (PsiTreeUtil.getParentOfType(thrown, Try.class, false, (Class) Method.class) != null) {
+                                continue;
+                            }
+
                             final PsiElement clazz = OpenapiResolveUtil.resolveReference((PsiReference) classReference);
                             if (clazz instanceof PhpClass) {
                                 exceptionsRegistry.add((PhpClass) clazz);

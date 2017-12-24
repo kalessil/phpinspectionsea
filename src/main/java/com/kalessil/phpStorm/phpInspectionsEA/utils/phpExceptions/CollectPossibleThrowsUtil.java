@@ -157,10 +157,10 @@ final public class CollectPossibleThrowsUtil {
                         for (String type : types) {
                             if (type.startsWith("\\")) {
                                 /* process classes references */
-                                Collection<PhpClass> classes = objIndex.getClassesByFQN(type);
-                                if (classes.size() > 0) {
+                                final Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(type, objIndex);
+                                if (!classes.isEmpty()) {
                                     /* put an expression, create container if necessary */
-                                    PhpClass exception = classes.iterator().next();
+                                    final PhpClass exception = classes.iterator().next();
                                     if (!exceptions.containsKey(exception)) {
                                         exceptions.put(exception, new HashSet<>());
                                     }

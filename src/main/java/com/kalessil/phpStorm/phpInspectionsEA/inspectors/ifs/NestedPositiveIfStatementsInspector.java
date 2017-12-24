@@ -140,8 +140,8 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                     );
                     final PsiElement implant = PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, code).getArgument();
                     if (implant != null) {
-                        parentCondition.replace(implant);
                         parentBody.replace(body);
+                        parentCondition.replace(implant);
                     }
                 }
             }

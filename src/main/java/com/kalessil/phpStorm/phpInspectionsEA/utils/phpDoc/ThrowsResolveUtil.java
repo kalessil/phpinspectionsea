@@ -49,7 +49,7 @@ final public class ThrowsResolveUtil {
                         final PsiElement classReference = ((NewExpression) argument).getClassReference();
                         if (classReference != null) {
                             /* false-positives: lambdas and anonymous classes */
-                            if (PsiTreeUtil.getParentOfType(thrown, Method.class) != method) {
+                            if (PsiTreeUtil.getParentOfType(thrown, Function.class) != method) {
                                 continue;
                             }
                             /* false-positives: ALL try-enclosed throw statements */

@@ -18,3 +18,6 @@
     /* false-positive: <string>->method(...) breaks at runtime */
     $string = '...';
     call_user_func (array($string, 'sum'), 1, 2, 3);
+
+    /* false-positive: call_user_func doesn't support arguments by reference */
+    call_user_func_array($callable, [ &$argument ]);

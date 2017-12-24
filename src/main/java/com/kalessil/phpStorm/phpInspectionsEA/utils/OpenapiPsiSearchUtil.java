@@ -45,20 +45,16 @@ final public class OpenapiPsiSearchUtil {
         return null;
     }
 
-    /**
-     * NOTE: get nodes even from inner lambdas
-     */
-    public static List<PsiElement> findEqual(@Nullable PsiElement where, @NotNull PsiElement what) {
+    /* NOTE: get nodes even from inner lambdas */
+    public static List<PsiElement> findEqual(@NotNull PsiElement where, @NotNull PsiElement what) {
         final List<PsiElement> result = new ArrayList<>();
-        if (where != null) {
-            if (what instanceof Variable && where instanceof Function) {
-                /* TODO: implement */
-                throw new RuntimeException("Implement, use PhpControlFlowUtil.getFollowingVariableAccessInstructions");
-            } else {
-                PsiTreeUtil.findChildrenOfType(where, what.getClass()).stream()
-                        .filter(expression -> OpeanapiEquivalenceUtil.areEqual(what, expression))
-                        .forEach(result::add);
-            }
+        if (what instanceof Variable && where instanceof Function) {
+            /* TODO: implement */
+            throw new RuntimeException("Implement, use PhpControlFlowUtil.getFollowingVariableAccessInstructions");
+        } else {
+            PsiTreeUtil.findChildrenOfType(where, what.getClass()).stream()
+                .filter(expression -> OpeanapiEquivalenceUtil.areEqual(what, expression))
+                .forEach(result::add);
         }
         return result;
     }

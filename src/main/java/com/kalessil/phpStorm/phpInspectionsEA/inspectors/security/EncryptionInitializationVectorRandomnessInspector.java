@@ -56,7 +56,7 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
                     /* discover and inspect possible values */
                     final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(params[4]);
                     if (values.size() > 0) {
-                        List<String> reporting = new LinkedList<>();
+                        final List<String> reporting = new ArrayList<>();
 
                         /* check all possible values */
                         for (final PsiElement source : values) {

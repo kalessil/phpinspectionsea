@@ -4,21 +4,22 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 final public class PhpIndexUtil {
 
-    static public LinkedList<PhpClass> getObjectInterfaces(@NotNull String strName, @NotNull PhpIndex objIndex, boolean strict) {
-        final LinkedList<PhpClass> collection = new LinkedList<>();
+    @NotNull
+    static public List<PhpClass> getObjectInterfaces(@NotNull String name, @NotNull PhpIndex index, boolean strict) {
+        final List<PhpClass> result = new ArrayList<>();
 
-        collection.addAll(objIndex.getClassesByFQN(strName));
-        collection.addAll(objIndex.getInterfacesByFQN(strName));
-
-        if (!strict && collection.isEmpty()) {
-            collection.addAll(objIndex.getClassesByName(strName));
-            collection.addAll(objIndex.getInterfacesByName(strName));
+        result.addAll(index.getClassesByFQN(name));
+        result.addAll(index.getInterfacesByFQN(name));
+        if (!strict && result.isEmpty()) {
+            result.addAll(index.getClassesByName(name));
+            result.addAll(index.getInterfacesByName(name));
         }
 
-        return collection;
+        return result;
     }
 }

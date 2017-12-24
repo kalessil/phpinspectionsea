@@ -243,7 +243,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
             /* fix if PhpDoc exists and not fixed yet */
             if (phpDoc != null && !phpDoc.getText().contains(pattern)) {
                 boolean injected = false;
-                final LinkedList<String> newCommentLines = new LinkedList<>();
+                final List<String> newCommentLines = new ArrayList<>();
                 for (final String line : phpDoc.getText().split("\\n")) {
                     /* injecting after return tag: probe 1 */
                     if (!injected && line.contains("@throws")) {

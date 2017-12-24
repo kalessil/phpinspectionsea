@@ -187,10 +187,6 @@ New inspections and bug-fixes:<br/>
         groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.IfReturnReturnSimplificationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="DefaultValueInElseBranchInspection"            displayName="Default value is hidden in else branch"
-        groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.DefaultValueInElseBranchInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="NotOptimalIfConditionsInspection"              displayName="Non-optimal if conditions"
         groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.NotOptimalIfConditionsInspection"/>

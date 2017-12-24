@@ -12,7 +12,7 @@ class CasesHolder {
     }
 
     public function trigger() {
-        <weak_warning descr="Throws a non-annotated/unhandled exception: '\RuntimeException'.">$this->emitter();</weak_warning>
+        <weak_warning descr="Throws a non-annotated/unhandled exception: '\RuntimeException'.">$this->emitter()</weak_warning>;
     }
 
 }

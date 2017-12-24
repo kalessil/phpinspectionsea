@@ -5,18 +5,9 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.Nullable;
 
 final public class NamedElementUtil {
-
-    /** returns name identifier, which is valid for reporting */
     @Nullable
     static public PsiElement getNameIdentifier(@Nullable PsiNameIdentifierOwner element) {
-        if (null != element) {
-            PsiElement id          = element.getNameIdentifier();
-            boolean isIdReportable = null != id && id.getTextLength() > 0;
-
-            return isIdReportable ? id : null;
-        }
-
-        return null;
+        final PsiElement nameNode = element == null ? null : element.getNameIdentifier();
+        return nameNode != null && nameNode.getTextLength() > 0 ? nameNode : null;
     }
-
 }

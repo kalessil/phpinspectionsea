@@ -45,9 +45,7 @@ final public class OpenapiPsiSearchUtil {
         return null;
     }
 
-    /**
-     * NOTE: get nodes even from inner lambdas
-     */
+    /* NOTE: get nodes even from inner lambdas */
     public static List<PsiElement> findEqual(@Nullable PsiElement where, @NotNull PsiElement what) {
         final List<PsiElement> result = new ArrayList<>();
         if (where != null) {

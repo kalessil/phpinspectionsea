@@ -11,13 +11,13 @@ interface _Interface {
 }
 abstract class _ClassWithInterface implements _Interface {
     /** @inheritdoc */
-    public function method() {}
+    public function <weak_warning descr="Following exceptions annotated, but not thrown: '\Exception1'.">method</weak_warning>() {}
 }
 
 /* transitive, kept in a trait */
 trait _Trait {
     /** @throws \Exception2 */
-    public function method() {}
+    public function <weak_warning descr="Following exceptions annotated, but not thrown: '\Exception2'.">method</weak_warning>() {}
 }
 abstract class _ClassWithTrait implements _Interface {
     use _Trait;

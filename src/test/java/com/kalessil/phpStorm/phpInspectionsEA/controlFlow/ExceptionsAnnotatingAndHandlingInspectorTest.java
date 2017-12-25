@@ -7,7 +7,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptions.ExceptionsAn
 final public class ExceptionsAnnotatingAndHandlingInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testAnnotationsProcessing() {
         final ExceptionsAnnotatingAndHandlingInspector inspector = new ExceptionsAnnotatingAndHandlingInspector();
-        inspector.REPORT_NON_THROWN_EXCEPTIONS = true;
+        inspector.REPORT_NON_THROWN_EXCEPTIONS = false;
         inspector.configuration.clear();
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("fixtures/controlFlow/exception-workflow/exceptions-workflow.php");

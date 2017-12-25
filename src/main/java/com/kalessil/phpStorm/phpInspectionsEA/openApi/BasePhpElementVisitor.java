@@ -75,7 +75,7 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
         } else {
             /* identify class */
             final PhpClass clazz = expression instanceof PhpClass ?
-                (PhpClass) expression : PsiTreeUtil.getParentOfType(expression, PhpClass.class, false, PsiFile.class);
+                (PhpClass) expression : PsiTreeUtil.getParentOfType(expression, PhpClass.class, false, (Class) PsiFile.class);
             /* if identified, check its' FQN */
             final String clazzFqn = clazz == null ? null : clazz.getFQN();
             if (clazzFqn != null) {

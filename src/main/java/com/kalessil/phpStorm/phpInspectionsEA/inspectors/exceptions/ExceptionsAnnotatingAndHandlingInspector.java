@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection {
     // Inspection options.
     public boolean REPORT_NON_THROWN_EXCEPTIONS = false;
+    public final List<String> configuration     = new ArrayList<>();
 
     private static final String messagePattern           = "Throws a non-annotated/unhandled exception: '%c%'.";
     private static final String messagePatternUnthrown   = "Following exceptions annotated, but not thrown: '%c%'.";
@@ -102,6 +103,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
                 /* collect announced cases */
                 final HashSet<PhpClass> annotatedExceptions = new HashSet<>();
+                final boolean hasPhpDoc                     = method.getDocComment() != null;
                 if (!ThrowsResolveUtil.resolveThrownExceptions(method, annotatedExceptions)) {
                     return;
                 }
@@ -111,12 +113,11 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                         CollectPossibleThrowsUtil.collectNestedAndWorkflowExceptions(method, processedRegistry, holder);
                 processedRegistry.clear();
 
-
                 /* exclude annotated exceptions, identify which has not been thrown */
                 final Set<PhpClass> annotatedButNotThrownExceptions = new HashSet<>(annotatedExceptions);
                 /* release bundled expressions *//* actualize un-thrown exceptions registry */
                 annotatedExceptions.stream()
-                        .filter(throwsExceptions::containsKey)
+                        .filter(key -> hasPhpDoc && throwsExceptions.containsKey(key))
                         .forEach(annotated -> {
                             /* release bundled expressions */
                             throwsExceptions.get(annotated).clear();
@@ -139,15 +140,14 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 }
                 annotatedButNotThrownExceptions.clear();
 
-
                 /* do reporting now: exceptions thrown but not annotated */
                 if (throwsExceptions.size() > 0) {
                     /* deeper analysis needed */
                     HashMap<PhpClass, HashSet<PsiElement>> unhandledExceptions = new HashMap<>();
-                    if (annotatedExceptions.size() > 0) {
+                    if (!annotatedExceptions.isEmpty() && hasPhpDoc) {
                         /* filter what to report based on annotated exceptions  */
-                        for (PhpClass annotated : annotatedExceptions) {
-                            for (Map.Entry<PhpClass, HashSet<PsiElement>> throwsExceptionsPair: throwsExceptions.entrySet()) {
+                        for (final PhpClass annotated : annotatedExceptions) {
+                            for (final Map.Entry<PhpClass, HashSet<PsiElement>> throwsExceptionsPair: throwsExceptions.entrySet()) {
                                 final PhpClass thrown = throwsExceptionsPair.getKey();
                                 /* already reported */
                                 if (unhandledExceptions.containsKey(thrown)) {
@@ -178,29 +178,22 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     }
 
                     if (unhandledExceptions.size() > 0) {
-                        final boolean suggestQuickFix = null != method.getDocComment();
-
-                        for (Map.Entry<PhpClass, HashSet<PsiElement>> unhandledExceptionsPair : unhandledExceptions.entrySet()) {
-                            final String thrown  = unhandledExceptionsPair.getKey().getFQN();
-                            final String message = messagePattern.replace("%c%", thrown);
-
+                        for (final Map.Entry<PhpClass, HashSet<PsiElement>> unhandledExceptionsPair : unhandledExceptions.entrySet()) {
+                            final String thrown                     = unhandledExceptionsPair.getKey().getFQN();
                             final Set<PsiElement> blamedExpressions = unhandledExceptionsPair.getValue();
-                            for (final PsiElement blame : blamedExpressions) {
-                                if (suggestQuickFix) {
-                                    final MissingThrowAnnotationLocalFix fix = new MissingThrowAnnotationLocalFix(method, thrown);
+                            if (!configuration.contains(thrown)) {
+                                final String message = messagePattern.replace("%c%", thrown);
+                                for (final PsiElement blame : blamedExpressions) {
+                                    final LocalQuickFix fix = hasPhpDoc ? new MissingThrowAnnotationLocalFix(method, thrown) : null;
                                     holder.registerProblem(blame, message, ProblemHighlightType.WEAK_WARNING, fix);
-                                } else {
-                                    holder.registerProblem(blame, message, ProblemHighlightType.WEAK_WARNING);
                                 }
                             }
                             blamedExpressions.clear();
                         }
                         unhandledExceptions.clear();
                     }
-
                     throwsExceptions.clear();
                 }
-
                 annotatedExceptions.clear();
             }
         };
@@ -277,8 +270,9 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component)
-            -> component.addCheckbox("Report non-thrown exceptions", REPORT_NON_THROWN_EXCEPTIONS, (isSelected) -> REPORT_NON_THROWN_EXCEPTIONS = isSelected)
-        );
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Report non-thrown exceptions", REPORT_NON_THROWN_EXCEPTIONS, (isSelected) -> REPORT_NON_THROWN_EXCEPTIONS = isSelected);
+            component.addList("Ignored exceptions:", configuration, null, null, "Adding exception class...", "Examples: '\\RuntimeException' or '\\Namespace\\Exception'");
+        });
     }
 }

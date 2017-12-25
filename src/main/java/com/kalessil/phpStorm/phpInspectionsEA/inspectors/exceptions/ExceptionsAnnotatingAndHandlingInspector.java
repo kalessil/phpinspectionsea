@@ -102,6 +102,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
                 /* collect announced cases */
                 final HashSet<PhpClass> annotatedExceptions = new HashSet<>();
+                final boolean hasPhpDoc                     = method.getDocComment() != null;
                 if (!ThrowsResolveUtil.resolveThrownExceptions(method, annotatedExceptions)) {
                     return;
                 }
@@ -111,12 +112,11 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                         CollectPossibleThrowsUtil.collectNestedAndWorkflowExceptions(method, processedRegistry, holder);
                 processedRegistry.clear();
 
-
                 /* exclude annotated exceptions, identify which has not been thrown */
                 final Set<PhpClass> annotatedButNotThrownExceptions = new HashSet<>(annotatedExceptions);
                 /* release bundled expressions *//* actualize un-thrown exceptions registry */
                 annotatedExceptions.stream()
-                        .filter(throwsExceptions::containsKey)
+                        .filter(key -> hasPhpDoc && throwsExceptions.containsKey(key))
                         .forEach(annotated -> {
                             /* release bundled expressions */
                             throwsExceptions.get(annotated).clear();
@@ -139,12 +139,11 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 }
                 annotatedButNotThrownExceptions.clear();
 
-
                 /* do reporting now: exceptions thrown but not annotated */
                 if (throwsExceptions.size() > 0) {
                     /* deeper analysis needed */
                     HashMap<PhpClass, HashSet<PsiElement>> unhandledExceptions = new HashMap<>();
-                    if (annotatedExceptions.size() > 0) {
+                    if (!annotatedExceptions.isEmpty() && hasPhpDoc) {
                         /* filter what to report based on annotated exceptions  */
                         for (PhpClass annotated : annotatedExceptions) {
                             for (Map.Entry<PhpClass, HashSet<PsiElement>> throwsExceptionsPair: throwsExceptions.entrySet()) {

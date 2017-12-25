@@ -8,7 +8,7 @@ class CasesHolder {
             $exception = new \LogicException();
             <weak_warning descr="Throws a non-annotated/unhandled exception: '\LogicException'.">throw $exception;</weak_warning>
         } else {
-            throw new \RuntimeException();
+            <weak_warning descr="Throws a non-annotated/unhandled exception: '\RuntimeException'.">throw new \RuntimeException();</weak_warning>
         }
     }
 
@@ -21,7 +21,7 @@ class CasesHolder {
             }
         } catch (\DomainException $exception) {}
 
-        throw new \UnexpectedValueException();
+        <weak_warning descr="Throws a non-annotated/unhandled exception: '\UnexpectedValueException'.">throw new \UnexpectedValueException();</weak_warning>
     }
 
     public function trigger() {

@@ -105,3 +105,8 @@ foreach ([] as $item) {
     $object2->method2($object1);
     $object3->method3($object2);
 }
+
+/* false-positives: compact function usage */
+foreach ([] as $variable) {
+    $object->method(compact('variable'));
+}

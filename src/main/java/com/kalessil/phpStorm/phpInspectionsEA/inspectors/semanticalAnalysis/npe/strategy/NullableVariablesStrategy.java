@@ -38,9 +38,8 @@ final public class NullableVariablesStrategy {
     }
 
     public static void applyToLocalVariables(@NotNull Function function, @NotNull ProblemsHolder holder) {
-        final Set<String> parameters
-                = Arrays.stream(function.getParameters()).map(Parameter::getName).collect(Collectors.toSet());
-        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
+        final Set<String> parameters = Arrays.stream(function.getParameters()).map(Parameter::getName).collect(Collectors.toSet());
+        final GroupStatement body    = ExpressionSemanticUtil.getGroupStatement(function);
 
         /* group variables assignments, except parameters */
         final Map<String, List<AssignmentExpression>> assignments = new HashMap<>();
@@ -85,7 +84,8 @@ final public class NullableVariablesStrategy {
                         .map(Types::getType)
                         .collect(Collectors.toSet());
                 if (types.contains(Types.strNull) || types.contains(Types.strVoid)) {
-                    types.removeIf(type -> type.equals(Types.strNull) || type.equals(Types.strVoid));
+                    types.remove(Types.strNull);
+                    types.remove(Types.strVoid);
                     if (types.stream().filter(t -> !t.startsWith("\\") && !objectTypes.contains(t)).count() == 0) {
                         result = true;
                     }
@@ -98,10 +98,9 @@ final public class NullableVariablesStrategy {
     public static void applyToParameters(@NotNull Function function, @NotNull ProblemsHolder holder) {
         final PhpEntryPointInstruction controlFlowStart = function.getControlFlow().getEntryPoint();
         for (final Parameter parameter : function.getParameters()) {
-            final Set<String> declaredTypes =
-                    parameter.getDeclaredType().getTypes().stream()
-                            .map(Types::getType)
-                            .collect(Collectors.toSet());
+            final Set<String> declaredTypes = parameter.getDeclaredType().getTypes().stream()
+                    .map(Types::getType)
+                    .collect(Collectors.toSet());
             if (declaredTypes.contains(Types.strNull) || PhpLanguageUtil.isNull(parameter.getDefaultValue())) {
                 declaredTypes.remove(Types.strNull);
 
@@ -146,7 +145,6 @@ final public class NullableVariablesStrategy {
                     if (PhpLanguageUtil.isNull(second)) {
                         return;
                     }
-
                     continue;
                 }
             }
@@ -220,10 +218,9 @@ final public class NullableVariablesStrategy {
 
                     /* lookup types, if no null declarations - report class-only declarations */
                     final Parameter parameter       = parameters[position];
-                    final Set<String> declaredTypes =
-                            parameter.getDeclaredType().getTypes().stream()
-                                    .map(Types::getType)
-                                    .collect(Collectors.toSet());
+                    final Set<String> declaredTypes = parameter.getDeclaredType().getTypes().stream()
+                            .map(Types::getType)
+                            .collect(Collectors.toSet());
                     if (!declaredTypes.contains(Types.strNull) && !PhpLanguageUtil.isNull(parameter.getDefaultValue())) {
                         declaredTypes.remove(Types.strNull);
 

@@ -29,10 +29,9 @@ final public class ChainedCallsStrategy {
     private static final String message = "Null pointer exception may occur here.";
 
     public static void apply(@NotNull Function function, @NotNull ProblemsHolder holder) {
-        final Map<MethodReference, String> nullTestedReferences = new HashMap<>();
-        PsiTreeUtil.findChildrenOfType(function, MethodReference.class)
-                .forEach(reference -> apply(reference, nullTestedReferences, holder));
-        nullTestedReferences.clear();
+        final Map<MethodReference, String> nullTested = new HashMap<>();
+        PsiTreeUtil.findChildrenOfType(function, MethodReference.class).forEach(reference -> apply(reference, nullTested, holder));
+        nullTested.clear();
     }
 
     private static void apply(

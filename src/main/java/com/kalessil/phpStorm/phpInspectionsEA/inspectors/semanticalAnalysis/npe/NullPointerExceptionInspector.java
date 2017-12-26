@@ -6,6 +6,7 @@ import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.strategy.ChainedCallsStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.strategy.NestedCallsStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.strategy.NullableVariablesStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -36,8 +37,9 @@ public class NullPointerExceptionInspector extends BasePhpInspection {
 
                 if (!method.isAbstract()) {
                     NullableVariablesStrategy.applyToParameters(method, holder);
-                    ChainedCallsStrategy.apply(method, holder);
                     NullableVariablesStrategy.applyToLocalVariables(method, holder);
+                    ChainedCallsStrategy.apply(method, holder);
+                    NestedCallsStrategy.apply(method, holder);
                 }
             }
 
@@ -46,8 +48,8 @@ public class NullPointerExceptionInspector extends BasePhpInspection {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
 
                 NullableVariablesStrategy.applyToParameters(function, holder);
-                ChainedCallsStrategy.apply(function, holder);
                 NullableVariablesStrategy.applyToLocalVariables(function, holder);
+                ChainedCallsStrategy.apply(function, holder);
             }
         };
     }

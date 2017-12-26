@@ -9,8 +9,9 @@ final public class NullPointerExceptionInspectorTest extends PhpCodeInsightFixtu
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new NullPointerExceptionInspector());
-        myFixture.configureByFile("fixtures/pitfalls/npe.php");
-        myFixture.configureByFile("fixtures/pitfalls/npe-overrides.php");
+        myFixture.configureByFile("fixtures/pitfalls/npe/npe.php");
+        myFixture.configureByFile("fixtures/pitfalls/npe/npe-overrides.php");
+        myFixture.configureByFile("fixtures/pitfalls/npe/npe-nested-calls.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

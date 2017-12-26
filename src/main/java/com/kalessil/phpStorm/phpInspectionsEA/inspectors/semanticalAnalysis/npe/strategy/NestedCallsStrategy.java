@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +40,9 @@ final public class NestedCallsStrategy {
         final Project project = holder.getProject();
         for (final FunctionReference reference : PsiTreeUtil.findChildrenOfType(function, FunctionReference.class)) {
             for (final PsiElement argument : reference.getParameters()) {
-                if (argument instanceof MethodReference) {
+                if (PhpLanguageUtil.isNull(argument)) {
+                    holder.registerProblem(argument, message);
+                } else if (argument instanceof MethodReference) {
                     final PhpType resolvedTypes = OpenapiResolveUtil.resolveType((MethodReference) argument, project);
                     if (resolvedTypes != null) {
                         final Set<String> types = resolvedTypes.filterUnknown().getTypes().stream()

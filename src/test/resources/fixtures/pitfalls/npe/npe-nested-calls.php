@@ -13,10 +13,10 @@ class CasesHolder
     }
 
     /** @return DateTime|null */
-    private abstract function triggerCorrectPhpDoc(): ?DateTime;
+    abstract function triggerCorrectPhpDoc(): ?DateTime;
 
     /** @return DateTime|false */
-    private abstract function triggerMessedPhpDoc(): ?DateTime;
+    abstract function triggerMessedPhpDoc(): ?DateTime;
 
-    private abstract function triggerNoPhpDoc(): ?DateTime;
+    abstract function triggerNoPhpDoc(): ?DateTime;
 }

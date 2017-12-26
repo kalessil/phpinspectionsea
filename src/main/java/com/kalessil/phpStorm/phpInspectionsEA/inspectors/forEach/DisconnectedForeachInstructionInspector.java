@@ -4,7 +4,6 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -122,7 +121,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                             = PsiTreeUtil.findChildOfAnyType(oneInstruction, true, PhpBreak.class, PhpContinue.class, PhpThrow.class, PhpReturn.class);
                                         /* operating with variables should be taken into account */
                                         final boolean isVariablesUsed
-                                            = null != PsiTreeUtil.findChildOfAnyType(oneInstruction, true, Variable.class);
+                                            = null != PsiTreeUtil.findChildOfAnyType(oneInstruction, true, (Class) Variable.class);
                                         if (null == loopInterrupter && isVariablesUsed) {
                                             holder.registerProblem(reportingTarget, messageDisconnected);
                                         }
@@ -238,6 +237,23 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
                     individualDependencies.add(variableName);
                 }
+
+                /* handle compact function usage */
+                for (final FunctionReference reference : PsiTreeUtil.findChildrenOfType(oneInstruction, FunctionReference.class)) {
+                    if (OpenapiTypesUtil.isFunctionReference(reference)) {
+                        final String functionName = reference.getName();
+                        if (functionName != null && functionName.equals("compact")) {
+                            for (final PsiElement argument : reference.getParameters()) {
+                                if (argument instanceof StringLiteralExpression) {
+                                    final String compactedVariableName = ((StringLiteralExpression) argument).getContents();
+                                    if (!compactedVariableName.isEmpty()) {
+                                        individualDependencies.add(compactedVariableName);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             @NotNull
@@ -254,14 +270,10 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 /* unary operations */
                 if (expression instanceof UnaryExpression) {
                     final PsiElement operation = ((UnaryExpression) expression).getOperation();
-                    IElementType operationType = null;
-                    if (null != operation) {
-                        operationType = operation.getNode().getElementType();
-                    }
-                    if (PhpTokenTypes.opINCREMENT == operationType) {
+                    if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opINCREMENT)) {
                         return ExpressionType.INCREMENT;
                     }
-                    if (PhpTokenTypes.opDECREMENT == operationType) {
+                    if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opDECREMENT)) {
                         return ExpressionType.DECREMENT;
                     }
                 }

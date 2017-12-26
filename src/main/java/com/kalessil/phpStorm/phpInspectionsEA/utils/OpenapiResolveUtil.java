@@ -5,6 +5,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.jetbrains.php.PhpIndex;
+import com.jetbrains.php.lang.psi.elements.Function;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
@@ -38,6 +40,17 @@ final public class OpenapiResolveUtil {
 
     @Nullable
     static public PhpType resolveType(@NotNull PhpTypedElement expression, @NotNull Project project) {
+        /* if method/function has return type declaration, rely on it only */
+        if (expression instanceof FunctionReference) {
+            final PsiElement resolved = resolveReference((FunctionReference) expression);
+            if (resolved instanceof Function) {
+                final PsiElement returnType = OpenapiElementsUtil.getReturnType((Function) resolved);
+                if (returnType instanceof PhpTypedElement) {
+                    expression = (PhpTypedElement) returnType;
+                }
+            }
+        }
+        /* default behaviour with PS type resolver */
         try {
             return expression.getType().global(project);
         } catch (Throwable error) {

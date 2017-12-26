@@ -2,7 +2,7 @@
 
 class CasesHolder
 {
-    private abstract function consumer(DateTime $dateTime): void;
+    abstract function consumer(DateTime $dateTime): void;
 
     public function scenario(): void
     {

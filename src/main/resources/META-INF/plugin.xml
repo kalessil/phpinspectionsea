@@ -49,6 +49,7 @@ New inspections and bug-fixes:<br/>
 - ClassExistenceCheckInspector: implemented<br/>
 - UnserializeExploitsInspector: new patterns<br/>
 - FilePutContentsRaceConditionInspector: resolved false-positives (UTs)<br/>
+- NullPointerExceptionInspector: new patterns<br/>
 <br/>
 <hr/>
   ]]></change-notes>

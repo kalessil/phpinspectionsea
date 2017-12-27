@@ -40,9 +40,7 @@ final public class NestedCallsStrategy {
         final Project project = holder.getProject();
         for (final FunctionReference reference : PsiTreeUtil.findChildrenOfType(function, FunctionReference.class)) {
             for (final PsiElement argument : reference.getParameters()) {
-                if (PhpLanguageUtil.isNull(argument)) {
-                    holder.registerProblem(argument, message);
-                } else if (argument instanceof MethodReference) {
+                 if (argument instanceof MethodReference) {
                     final PhpType resolvedTypes = OpenapiResolveUtil.resolveType((MethodReference) argument, project);
                     if (resolvedTypes != null) {
                         final Set<String> types = resolvedTypes.filterUnknown().getTypes().stream()
@@ -56,6 +54,8 @@ final public class NestedCallsStrategy {
                             }
                         }
                     }
+                } else if (PhpLanguageUtil.isNull(argument)) {
+                     holder.registerProblem(argument, message);
                 }
             }
         }

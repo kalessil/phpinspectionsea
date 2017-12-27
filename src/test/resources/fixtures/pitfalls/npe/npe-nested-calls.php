@@ -2,7 +2,7 @@
 
 class CasesHolder
 {
-    abstract function consumer(DateTime $dateTime): void;
+    private function consumer(DateTime $dateTime): void {}
 
     public function scenario(): void
     {
@@ -13,10 +13,10 @@ class CasesHolder
     }
 
     /** @return DateTime|null */
-    abstract function triggerCorrectPhpDoc(): ?DateTime;
+    private function triggerCorrectPhpDoc(): ?DateTime {}
 
     /** @return DateTime|false */
-    abstract function triggerMessedPhpDoc(): ?DateTime;
+    private abstract function triggerMessedPhpDoc(): ?DateTime {}
 
-    abstract function triggerNoPhpDoc(): ?DateTime;
+    private function triggerNoPhpDoc(): ?DateTime {}
 }

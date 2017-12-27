@@ -183,11 +183,11 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                 /* analyze condition and extract expected operations */
                 final List<IElementType> expectedRepeatedOperator = new ArrayList<>();
                 final BinaryExpression condition                  = (BinaryExpression) conditions[0];
-                final PsiElement right                            = condition.getRightOperand();
                 IElementType checkOperator                        = condition.getOperationType();
 
                 /* false-positives: joda conditions applied, invert the operator */
                 if (operationsInversion.containsKey(checkOperator)) {
+                    final PsiElement right = condition.getRightOperand();
                     if (OpenapiTypesUtil.isNumber(condition.getLeftOperand())) {
                         checkOperator = operationsInversion.get(checkOperator);
                     } else if (right != null && OpeanapiEquivalenceUtil.areEqual(index, right)) {

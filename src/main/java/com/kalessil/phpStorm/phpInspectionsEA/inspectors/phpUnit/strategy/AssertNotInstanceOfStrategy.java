@@ -25,16 +25,13 @@ public class AssertNotInstanceOfStrategy {
             final PsiElement param = ExpressionSemanticUtil.getExpressionTroughParenthesis(params[0]);
             if (param instanceof BinaryExpression) {
                 final BinaryExpression instance = (BinaryExpression) param;
-                if (
-                    null == instance.getOperation() || null == instance.getRightOperand() || null == instance.getLeftOperand() ||
-                    PhpTokenTypes.kwINSTANCEOF != instance.getOperation().getNode().getElementType()
-                ) {
+                final PsiElement left           = instance.getLeftOperand();
+                final PsiElement right          = instance.getRightOperand();
+                if (right == null || left == null || instance.getOperationType() != PhpTokenTypes.kwINSTANCEOF) {
                     return false;
                 }
 
-                final TheLocalFix fixer = new TheLocalFix(instance.getRightOperand(), instance.getLeftOperand());
-                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, fixer);
-
+                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(right, left));
                 return true;
             }
         }

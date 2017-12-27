@@ -104,9 +104,8 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
                 while (current instanceof ConcatenationExpression) {
                     final ConcatenationExpression concat = (ConcatenationExpression) current;
                     final PsiElement right               = ExpressionSemanticUtil.getExpressionTroughParenthesis(concat.getRightOperand());
-
-                    StringLiteralExpression part = ExpressionSemanticUtil.resolveAsStringLiteral(right);
-                    resolvedSaltValue.insert(0, null == part ? "<?>" : part.getContents());
+                    final StringLiteralExpression part   = ExpressionSemanticUtil.resolveAsStringLiteral(right);
+                    resolvedSaltValue.insert(0, part == null ? "<?>" : part.getContents());
 
                     current = ExpressionSemanticUtil.getExpressionTroughParenthesis(concat.getLeftOperand());
                 }

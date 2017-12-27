@@ -34,7 +34,7 @@ final public class HardcodedConstantValuesStrategy {
                 result = true;
             }
             /* no else-if, as it breaks proper processing */
-            if (right != null && (PhpLanguageUtil.isBoolean(right) || PhpLanguageUtil.isNull(right))) {
+            else if (right != null && (PhpLanguageUtil.isBoolean(right) || PhpLanguageUtil.isNull(right))) {
                 holder.registerProblem(right, message);
                 result = true;
             }

@@ -16,7 +16,7 @@ class CasesHolder
     private function triggerCorrectPhpDoc(): ?DateTime {}
 
     /** @return DateTime|false */
-    private abstract function triggerMessedPhpDoc(): ?DateTime {}
+    private function triggerMessedPhpDoc(): ?DateTime {}
 
     private function triggerNoPhpDoc(): ?DateTime {}
 }

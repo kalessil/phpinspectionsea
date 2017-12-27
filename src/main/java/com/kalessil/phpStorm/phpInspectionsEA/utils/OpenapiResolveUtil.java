@@ -40,17 +40,6 @@ final public class OpenapiResolveUtil {
 
     @Nullable
     static public PhpType resolveType(@NotNull PhpTypedElement expression, @NotNull Project project) {
-        /* if method/function has return type declaration, rely on it only */
-//        if (expression instanceof FunctionReference) {
-//            final PsiElement resolved = resolveReference((FunctionReference) expression);
-//            if (resolved instanceof Function) {
-//                final PsiElement returnType = OpenapiElementsUtil.getReturnType((Function) resolved);
-//                if (returnType instanceof PhpTypedElement) {
-//                    expression = (PhpTypedElement) returnType;
-//                }
-//            }
-//        }
-        /* default behaviour with PS type resolver */
         try {
             return expression.getType().global(project);
         } catch (Throwable error) {

@@ -19,4 +19,9 @@ final public class AssertStringEqualsFileStrategy extends BaseSameEqualsFunction
     protected boolean isTargetFunctionProcessesGivenValue() {
         return true;
     }
+
+    @Override
+    protected boolean isTarget(boolean isTargetFirst, boolean isTargetSecond) {
+        return isTargetFirst;
+    }
 }

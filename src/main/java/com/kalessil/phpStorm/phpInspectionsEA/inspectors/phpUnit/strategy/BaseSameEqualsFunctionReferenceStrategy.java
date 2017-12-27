@@ -26,6 +26,10 @@ abstract class BaseSameEqualsFunctionReferenceStrategy {
 
     abstract protected boolean isTargetFunctionProcessesGivenValue();
 
+    protected boolean isTarget(boolean isTargetFirst, boolean isTargetSecond) {
+        return (isTargetFirst && !isTargetSecond) || (!isTargetFirst && isTargetSecond);
+    }
+
     final public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
         if (params.length < 2 || (!function.equals("assertSame") && !function.equals("assertEquals"))) {
@@ -46,7 +50,7 @@ abstract class BaseSameEqualsFunctionReferenceStrategy {
         }
 
         /* fire warning when needed */
-        if ((isTargetFirst && !isTargetSecond) || (!isTargetFirst && isTargetSecond)) {
+        if (isTarget(isTargetFirst, isTargetSecond)) {
             final PsiElement[] processedParams = ((FunctionReference) (isTargetSecond ? params[1] : params[0])).getParameters();
             if (0 == processedParams.length) {
                 return false;

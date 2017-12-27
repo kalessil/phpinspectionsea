@@ -1,4 +1,6 @@
-class TestAssertCount
+<?php
+
+class TestAssertFileExists
 {
     public function test()
     {

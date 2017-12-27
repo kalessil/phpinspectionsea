@@ -96,7 +96,7 @@ public class InArrayMissUseInspector extends BasePhpInspection {
                         if (parent instanceof BinaryExpression) {
                             /* extract in_arrays' expression parts */
                             final BinaryExpression expression = (BinaryExpression) parent;
-                            PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(expression, reference);
+                            final PsiElement secondOperand    = OpenapiElementsUtil.getSecondOperand(expression, reference);
                             if (PhpLanguageUtil.isBoolean(secondOperand)) {
                                 final IElementType operation = expression.getOperationType();
                                 if (PhpTokenTypes.opEQUAL == operation || PhpTokenTypes.opIDENTICAL == operation) {

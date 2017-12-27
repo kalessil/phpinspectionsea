@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -95,11 +96,7 @@ public class InArrayMissUseInspector extends BasePhpInspection {
                         if (parent instanceof BinaryExpression) {
                             /* extract in_arrays' expression parts */
                             final BinaryExpression expression = (BinaryExpression) parent;
-                            PsiElement secondOperand          = expression.getLeftOperand();
-                            if (reference == secondOperand) {
-                                secondOperand = expression.getRightOperand();
-                            }
-
+                            PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(expression, reference);
                             if (PhpLanguageUtil.isBoolean(secondOperand)) {
                                 final IElementType operation = expression.getOperationType();
                                 if (PhpTokenTypes.opEQUAL == operation || PhpTokenTypes.opIDENTICAL == operation) {

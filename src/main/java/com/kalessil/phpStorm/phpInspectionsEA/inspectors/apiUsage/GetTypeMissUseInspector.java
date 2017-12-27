@@ -19,6 +19,7 @@ import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,8 +84,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
                 }
 
                 /* ensure the 2nd operator is string literal and we are taking care about it */
-                final PsiElement type =
-                        expression.getLeftOperand() == reference ? expression.getRightOperand() : expression.getLeftOperand();
+                final PsiElement type                     = OpenapiElementsUtil.getSecondOperand(expression, reference);
                 final StringLiteralExpression typeLiteral = ExpressionSemanticUtil.resolveAsStringLiteral(type);
                 if (typeLiteral == null) {
                     return;

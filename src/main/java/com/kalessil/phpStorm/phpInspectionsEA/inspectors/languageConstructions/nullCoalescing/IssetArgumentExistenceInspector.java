@@ -48,7 +48,7 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 final PsiElement leftOperand = expression.getLeftOperand();
-                if (PhpTokenTypes.opCOALESCE == expression.getOperationType() && leftOperand instanceof Variable) {
+                if (leftOperand instanceof Variable && PhpTokenTypes.opCOALESCE == expression.getOperationType()) {
                     final Variable variable = (Variable) leftOperand;
                     if (!this.isSuppliedFromOutside(variable, this.getSuppliedVariables(expression))) {
                         analyzeExistence(variable);

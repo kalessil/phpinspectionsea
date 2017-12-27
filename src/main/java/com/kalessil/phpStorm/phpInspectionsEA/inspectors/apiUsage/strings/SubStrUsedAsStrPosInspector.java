@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -82,11 +83,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                     final BinaryExpression parent = (BinaryExpression) parentExpression;
                     if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(parent.getOperationType())) {
                         /* get second operand */
-                        PsiElement secondOperand = parent.getLeftOperand();
-                        if (secondOperand == highLevelCall) {
-                            secondOperand = parent.getRightOperand();
-                        }
-
+                        final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(parent, highLevelCall);
                         final PsiElement operationNode = parent.getOperation();
                         if (secondOperand != null && operationNode != null) {
                             final String operator      = operationNode.getText();

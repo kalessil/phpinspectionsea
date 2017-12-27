@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,11 +67,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                 } else if (parent instanceof BinaryExpression) {
                     /* extract isnulls' expression parts */
                     final BinaryExpression expression = (BinaryExpression) parent;
-                    PsiElement secondOperand          = expression.getLeftOperand();
-                    if (reference == secondOperand) {
-                        secondOperand = expression.getRightOperand();
-                    }
-
+                    final PsiElement secondOperand    = OpenapiElementsUtil.getSecondOperand(expression, reference);
                     if (PhpLanguageUtil.isBoolean(secondOperand)) {
                         final IElementType operation = expression.getOperationType();
                         if (PhpTokenTypes.opEQUAL == operation || PhpTokenTypes.opIDENTICAL == operation) {

@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ClassInStringContextStrategy;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +56,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                 if (reference.getParent() instanceof BinaryExpression) {
                     final BinaryExpression parent  = (BinaryExpression) reference.getParent();
                     final PsiElement left          = parent.getLeftOperand();
-                    final PsiElement secondOperand = left == reference ? parent.getRightOperand() : left;
+                    final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(parent, reference);
                     /* second operand should be a number */
                     if (OpenapiTypesUtil.isNumber(secondOperand)) {
                         final String strNumber = secondOperand.getText();

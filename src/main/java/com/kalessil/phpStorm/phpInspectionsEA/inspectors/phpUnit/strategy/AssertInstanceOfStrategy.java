@@ -13,7 +13,6 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class AssertInstanceOfStrategy {
@@ -75,7 +74,7 @@ public class AssertInstanceOfStrategy {
                         this.classIdentity = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, pattern);
                     } else {
                         final String fqn = ((ClassReference) this.classIdentity).getFQN();
-                        if (!StringUtils.isEmpty(fqn)) {
+                        if (fqn != null) {
                             final String pattern = "'" + fqn.replaceAll("\\\\", "\\\\\\\\") + "'";
                             this.classIdentity = PhpPsiElementFactory.createFromText(project, StringLiteralExpression.class, pattern);
                         }

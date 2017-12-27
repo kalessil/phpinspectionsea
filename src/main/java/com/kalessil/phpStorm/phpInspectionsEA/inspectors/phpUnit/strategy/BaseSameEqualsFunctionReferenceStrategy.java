@@ -14,7 +14,6 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 abstract class BaseSameEqualsFunctionReferenceStrategy {
@@ -41,12 +40,12 @@ abstract class BaseSameEqualsFunctionReferenceStrategy {
         boolean isTargetFirst = false;
         if (OpenapiTypesUtil.isFunctionReference(params[0])) {
             final String referenceName = ((FunctionReference) params[0]).getName();
-            isTargetFirst = !StringUtils.isEmpty(referenceName) && referenceName.equals(functionName);
+            isTargetFirst = referenceName != null && referenceName.equals(functionName);
         }
         boolean isTargetSecond = false;
         if (OpenapiTypesUtil.isFunctionReference(params[1])) {
             final String referenceName = ((FunctionReference) params[1]).getName();
-            isTargetSecond = !StringUtils.isEmpty(referenceName) && referenceName.equals(functionName);
+            isTargetSecond = referenceName != null && referenceName.equals(functionName);
         }
 
         /* fire warning when needed */

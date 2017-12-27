@@ -10,7 +10,6 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class AssertFileExistsStrategy {
@@ -25,7 +24,7 @@ public class AssertFileExistsStrategy {
 
                 final PsiElement[] callParams = call.getParameters();
                 final String callName         = call.getName();
-                if (1 != callParams.length || StringUtils.isEmpty(callName) || !callName.equals("file_exists")) {
+                if (callParams.length != 1 || callName == null || !callName.equals("file_exists")) {
                     return false;
                 }
 

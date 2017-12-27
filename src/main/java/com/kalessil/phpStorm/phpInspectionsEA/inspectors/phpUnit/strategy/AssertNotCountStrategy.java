@@ -10,7 +10,6 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class AssertNotCountStrategy {
@@ -23,12 +22,12 @@ public class AssertNotCountStrategy {
             boolean isFirstCount = false;
             if (OpenapiTypesUtil.isFunctionReference(params[0])) {
                 final String referenceName = ((FunctionReference) params[0]).getName();
-                isFirstCount = !StringUtils.isEmpty(referenceName) && referenceName.equals("count");
+                isFirstCount = referenceName != null && referenceName.equals("count");
             }
             boolean isSecondCount = false;
             if (OpenapiTypesUtil.isFunctionReference(params[1])) {
                 final String referenceName = ((FunctionReference) params[1]).getName();
-                isSecondCount = !StringUtils.isEmpty(referenceName) && referenceName.equals("count");
+                isSecondCount = referenceName != null && referenceName.equals("count");
             }
             /* fire assertNotCount warning when needed */
             if ((isFirstCount && !isSecondCount) || (!isFirstCount && isSecondCount)) {

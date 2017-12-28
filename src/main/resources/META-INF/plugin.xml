@@ -533,6 +533,10 @@ New inspections and bug-fixes:<br/>
         shortName="PhpUnitTestsInspection"                        displayName="PhpUnit: bugs and best practices"
         groupName="PhpUnit"                                       enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitTestsInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="UnnecessaryAssertionInspection"                displayName="PhpUnit: unnecessary assertion"
+        groupName="PhpUnit"                                       enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.UnnecessaryAssertionInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

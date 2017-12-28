@@ -140,9 +140,8 @@ final public class NullableVariablesStrategy {
                     return;
                 }
                 if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operation)) {
-                    PsiElement second = expression.getLeftOperand();
-                    second            = second == variable ? expression.getRightOperand() : second;
-                    if (PhpLanguageUtil.isNull(second)) {
+                    final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(expression, variable);
+                    if (PhpLanguageUtil.isNull(secondOperand)) {
                         return;
                     }
                     continue;

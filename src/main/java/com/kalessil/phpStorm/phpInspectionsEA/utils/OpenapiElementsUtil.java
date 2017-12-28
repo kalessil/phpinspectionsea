@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpInstruction;
+import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -66,5 +67,11 @@ final public class OpenapiElementsUtil {
             throw (cause instanceof RuntimeException ? (RuntimeException)cause : new RuntimeException(cause));
         }
         return result;
+    }
+
+    @Nullable
+    static public PsiElement getSecondOperand(@NotNull BinaryExpression binary, @NotNull PsiElement first) {
+        final PsiElement left = binary.getLeftOperand();
+        return left == first ? binary.getRightOperand() : left;
     }
 }

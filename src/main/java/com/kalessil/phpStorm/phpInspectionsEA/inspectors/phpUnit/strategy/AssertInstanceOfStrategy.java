@@ -13,7 +13,6 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class AssertInstanceOfStrategy {
@@ -25,16 +24,13 @@ public class AssertInstanceOfStrategy {
             final PsiElement param = ExpressionSemanticUtil.getExpressionTroughParenthesis(params[0]);
             if (param instanceof BinaryExpression) {
                 final BinaryExpression instance = (BinaryExpression) param;
-                if (
-                    null == instance.getOperation() || null == instance.getRightOperand() || null == instance.getLeftOperand() ||
-                    PhpTokenTypes.kwINSTANCEOF != instance.getOperation().getNode().getElementType()
-                ) {
+                final PsiElement left           = instance.getLeftOperand();
+                final PsiElement right          = instance.getRightOperand();
+                if (right == null || left == null || instance.getOperationType() != PhpTokenTypes.kwINSTANCEOF) {
                     return false;
                 }
 
-                final TheLocalFix fixer = new TheLocalFix(instance.getRightOperand(), instance.getLeftOperand());
-                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, fixer);
-
+                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(right, left));
                 return true;
             }
         }
@@ -78,7 +74,7 @@ public class AssertInstanceOfStrategy {
                         this.classIdentity = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, pattern);
                     } else {
                         final String fqn = ((ClassReference) this.classIdentity).getFQN();
-                        if (!StringUtils.isEmpty(fqn)) {
+                        if (fqn != null) {
                             final String pattern = "'" + fqn.replaceAll("\\\\", "\\\\\\\\") + "'";
                             this.classIdentity = PhpPsiElementFactory.createFromText(project, StringLiteralExpression.class, pattern);
                         }

@@ -36,15 +36,9 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpBinaryExpression(BinaryExpression expression) {
-                final PsiElement operation = expression.getOperation();
-                final PsiElement left      = expression.getLeftOperand();
-                final PsiElement right     = expression.getRightOperand();
-                if (operation == null || left == null || right == null) {
-                    return;
-                }
-
-                final IElementType operationType = operation.getNode().getElementType();
+            @Override
+            public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
+                final IElementType operationType = expression.getOperationType();
                 if (
                     operationType == PhpTokenTypes.opMUL ||
                     operationType == PhpTokenTypes.opDIV ||
@@ -52,24 +46,19 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
                     operationType == PhpTokenTypes.opMINUS ||
                     operationType == PhpTokenTypes.opPLUS
                 ) {
-                    if (this.isTargetMagicNumber(right) && this.isTargetContext(right)) {
+                    final PsiElement left  = expression.getLeftOperand();
+                    final PsiElement right = expression.getRightOperand();
+                    if (right != null && this.isTargetMagicNumber(right) && this.isTargetContext(right)) {
                         holder.registerProblem(expression, message);
-                        return;
-                    }
-                    if (this.isTargetMagicNumber(left) && this.isTargetContext(left)) {
+                    } else if (left != null && this.isTargetMagicNumber(left) && this.isTargetContext(left)) {
                         holder.registerProblem(expression, message);
                     }
                 }
             }
 
-            public void visitPhpSelfAssignmentExpression(SelfAssignmentExpression expression) {
-                final PsiElement operation = expression.getOperation();
-                final PsiElement value     = expression.getValue();
-                if (operation == null || value == null) {
-                    return;
-                }
-
-                final IElementType operationType = operation.getNode().getElementType();
+            @Override
+            public void visitPhpSelfAssignmentExpression(@NotNull SelfAssignmentExpression expression) {
+                final IElementType operationType = expression.getOperationType();
                 if (
                     operationType == PhpTokenTypes.opMUL_ASGN ||
                     operationType == PhpTokenTypes.opDIV_ASGN ||
@@ -77,7 +66,8 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
                     operationType == PhpTokenTypes.opMINUS_ASGN ||
                     operationType == PhpTokenTypes.opPLUS_ASGN
                 ) {
-                    if (this.isTargetMagicNumber(value)) {
+                    final PsiElement value = expression.getValue();
+                    if (value !=null && this.isTargetMagicNumber(value)) {
                         holder.registerProblem(expression, message);
                     }
                 }

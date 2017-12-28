@@ -75,10 +75,7 @@ final public class ChainedCallsStrategy {
             if (parent instanceof BinaryExpression) {
                 final BinaryExpression parentExpression = (BinaryExpression) parent;
                 if (PhpTokenTypes.tsCOMPARE_OPS.contains(parentExpression.getOperationType())) {
-                    PsiElement secondOperand = parentExpression.getLeftOperand();
-                    if (secondOperand == reference) {
-                        secondOperand = parentExpression.getRightOperand();
-                    }
+                    final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(parentExpression, reference);
                     if (PhpLanguageUtil.isNull(secondOperand)) {
                         nullTestedReferences.put(reference, reference.getName());
                     }

@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -59,11 +60,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                     final IElementType operationType = parent.getOperationType();
                     if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operationType)) {
                         /* get second operand */
-                        PsiElement secondOperand = parent.getLeftOperand();
-                        if (secondOperand == reference) {
-                            secondOperand = parent.getRightOperand();
-                        }
-
+                        final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(parent, reference);
                         /* verify if operand is a boolean and report an issue */
                         final PsiElement operationNode = parent.getOperation();
                         if (operationNode != null && PhpLanguageUtil.isBoolean(secondOperand)) {

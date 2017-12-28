@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit;
 
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -67,7 +68,7 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
                             if (resolved != null && !resolved.hasUnknown() && resolved.size() == 1) {
                                 final String expected = targetType.get(methodName);
                                 if (expected == null || resolved.getTypes().stream().anyMatch(type -> Types.getType(type).equals(expected))) {
-                                    holder.registerProblem(reference, message);
+                                    holder.registerProblem(reference, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                                 }
                             }
                         }

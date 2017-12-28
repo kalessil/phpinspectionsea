@@ -50,6 +50,8 @@ New inspections and bug-fixes:<br/>
 - UnserializeExploitsInspector: new patterns<br/>
 - FilePutContentsRaceConditionInspector: resolved false-positives (UTs)<br/>
 - NullPointerExceptionInspector: new patterns<br/>
+- NonSecureHtmlspecialcharsUsageInspector: resolved false-positives (UTs)<br/>
+- NonSecureHtmlentitiesUsageInspector: resolved false-positives (UTs)<br/>
 <br/>
 <hr/>
   ]]></change-notes>

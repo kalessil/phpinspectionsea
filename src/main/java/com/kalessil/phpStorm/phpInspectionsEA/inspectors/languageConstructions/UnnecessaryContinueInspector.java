@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -31,15 +32,19 @@ public class UnnecessaryContinueInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpContinue(@NotNull PhpContinue continueStatement) {
-                final PsiElement continuedStatement = this.getContinuedStatement(continueStatement);
-                if (continuedStatement != null) {
-                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(continuedStatement);
-                    if (body != null) {
-                        final List<PsiElement> lastStatements = this.collectLastStatements(body, new ArrayList<>());
-                        if (lastStatements.stream().anyMatch(statement -> continueStatement == statement)) {
-                            holder.registerProblem(continueStatement, message);
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
+                if (continueStatement.getArgument() == null) {
+                    final PsiElement continuedStatement = this.getContinuedStatement(continueStatement);
+                    if (continuedStatement != null) {
+                        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(continuedStatement);
+                        if (body != null) {
+                            final List<PsiElement> lastStatements = this.collectLastStatements(body, new ArrayList<>());
+                            if (lastStatements.stream().anyMatch(statement -> continueStatement == statement)) {
+                                holder.registerProblem(continueStatement, message);
+                            }
+                            lastStatements.clear();
                         }
-                        lastStatements.clear();
                     }
                 }
             }

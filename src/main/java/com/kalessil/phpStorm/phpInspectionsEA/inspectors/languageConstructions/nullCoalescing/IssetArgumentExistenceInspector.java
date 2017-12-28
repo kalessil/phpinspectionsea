@@ -48,13 +48,10 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
-                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-
-                final PsiElement leftOperand = expression.getLeftOperand();
-                if (leftOperand instanceof Variable && PhpTokenTypes.opCOALESCE == expression.getOperationType()) {
-                    final Variable variable = (Variable) leftOperand;
-                    if (!this.isSuppliedFromOutside(variable, this.getSuppliedVariables(expression))) {
-                        analyzeExistence(variable);
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    final PsiElement argument = expression.getLeftOperand();
+                    if (argument != null && PhpTokenTypes.opCOALESCE == expression.getOperationType()) {
+                        this.analyzeArgumentsExistence(new PhpExpression[]{(PhpExpression) argument});
                     }
                 }
             }

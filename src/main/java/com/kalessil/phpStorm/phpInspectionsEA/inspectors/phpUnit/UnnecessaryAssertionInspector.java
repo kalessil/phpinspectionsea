@@ -22,6 +22,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class UnnecessaryAssertionInspector extends BasePhpInspection {
     private final static String message = "This assertion can probably be skipped (argument implicitly declares return type).";
 

@@ -61,6 +61,15 @@ Bug-fixes and enhancements:<br/>
 - PhpUnit: unnecessary assertion: implemented<br/>
 - PhpUnit: bugs and best practices: resolved false-positives (multiple cases)<br/>
 - PhpUnit: bugs and best practices: new patterns<br/>
+- DisconnectedForeachInstructionInspector: resolved false-positives (compact function)<br/>
+- ExceptionsAnnotatingAndHandlingInspector: new settings<br/>
+- ExceptionsAnnotatingAndHandlingInspector: new patterns (methods without PhpDoc)<br/>
+- SecurityAdvisoriesInspector: new packages (vfsStream)<br/>
+- DefaultValueInElseBranchInspector: dropped<br/>
+- VariableFunctionsUsageInspector: resolved false-positives (call_user_func suggestion in some cases)<br/>
+- MagicMethodsValidityInspector: resolved false-positives (multiple cases)<br/>
+- RealpathInSteamContextInspector: resolved false-positives (UTs)<br/>
+- UnserializeExploitsInspector: resolved false-positives (UTs)<br/>
 <br/>
 <hr/>
   ]]></change-notes>

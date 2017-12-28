@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,26 +55,17 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMethod(Method method) {
-                final PhpClass clazz = method.getContainingClass();
-                if (null == clazz) {
-                    return;
-                }
-
-                final String strMethodName     = method.getName();
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
+                final PhpClass clazz           = method.getContainingClass();
                 final PsiElement objMethodName = NamedElementUtil.getNameIdentifier(method);
-                if (null == objMethodName || StringUtils.isEmpty(strMethodName)) {
-                    return;
-                }
-                final boolean isMethodNamedAsTest = strMethodName.startsWith("test");
-
-                final PhpPsiElement previous = method.getPrevPsiSibling();
-                if (!(previous instanceof PhpDocComment)) {
+                final PhpDocComment phpDoc     = method.getDocComment();
+                if (null == clazz || null == objMethodName || phpDoc == null) {
                     return;
                 }
 
-                final Collection<PhpDocTag> tags  = PsiTreeUtil.findChildrenOfType(previous, PhpDocTag.class);
-                for (PhpDocTag tag : tags) {
+                final boolean isMethodNamedAsTest = method.getName().startsWith("test");
+                for (final PhpDocTag tag : PsiTreeUtil.findChildrenOfType(phpDoc, PhpDocTag.class)) {
                     final String tagName = tag.getName();
 
                     if (tagName.equals("@depends") && tag.getFirstPsiChild() instanceof PhpDocRef) {
@@ -83,11 +73,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         /* if resolved properly, it will have 1 reference */
                         if (1 != methodNeeded.getReferences().length) {
                             holder.registerProblem(objMethodName, messageDepends, ProblemHighlightType.GENERIC_ERROR);
-                            continue;
                         }
-                    }
-
-                    if (tagName.equals("@covers") && tag.getFirstPsiChild() instanceof PhpDocRef) {
+                    } else if (tagName.equals("@covers") && tag.getFirstPsiChild() instanceof PhpDocRef) {
                         final PhpDocRef referenceNeeded     = (PhpDocRef) tag.getFirstPsiChild();
                         final String referenceText          = referenceNeeded.getText();
                         final List<PsiReference> references = Arrays.asList(referenceNeeded.getReferences());
@@ -114,18 +101,15 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
                         if ((callableNeeded && !hasCallableReference) || (!callableNeeded && hasClassReference)) {
                             holder.registerProblem(objMethodName, messageCovers, ProblemHighlightType.GENERIC_ERROR);
-                            continue;
                         }
-                    }
-
-                    if (isMethodNamedAsTest && tagName.equals("@test")) {
+                    } else if (tagName.equals("@test") && isMethodNamedAsTest) {
                         holder.registerProblem(tag.getFirstChild(), messageTest, ProblemHighlightType.LIKE_DEPRECATED, new AmbiguousTestAnnotationLocalFix());
                     }
                 }
-                tags.clear();
             }
 
-            public void visitPhpMethodReference(MethodReference reference) {
+            @Override
+            public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 final String methodName = reference.getName();
                 if (StringUtils.isEmpty(methodName) || !methodName.startsWith("assert") || methodName.equals("assert")) {
                     return;
@@ -204,7 +188,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement().getParent();
-            if (expression instanceof PhpDocTag) {
+            if (expression instanceof PhpDocTag && !project.isDisposed()) {
                 /* drop preceding space */
                 if (expression.getPrevSibling() instanceof PsiWhiteSpace) {
                     expression.getPrevSibling().delete();

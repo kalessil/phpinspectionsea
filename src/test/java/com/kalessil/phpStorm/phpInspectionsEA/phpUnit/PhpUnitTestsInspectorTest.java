@@ -13,12 +13,17 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
     }
     public void testIfFindsCoversAnnotationPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
-        myFixture.configureByFile("fixtures/phpUnit/covers-annotation.php");
+        myFixture.configureByFile("fixtures/phpUnit/annotation-covers.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testIfFindsTestAnnotationPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
-        myFixture.configureByFile("fixtures/phpUnit/test-annotation.php");
+        myFixture.configureByFile("fixtures/phpUnit/annotation-test.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+    public void testIfFindsDependsAnnotationPatterns() {
+        myFixture.enableInspections(new PhpUnitTestsInspector());
+        myFixture.configureByFile("fixtures/phpUnit/annotation-depends.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testIfFindsAssetNullNotNullPatterns() {

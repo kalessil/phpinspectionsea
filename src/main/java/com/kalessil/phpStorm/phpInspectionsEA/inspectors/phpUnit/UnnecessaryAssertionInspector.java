@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UnnecessaryAssertionInspector extends BasePhpInspection {
-    private final static String message = "Perhaps this assertion can probably be skipped (argument implicitly declares return type).";
+    private final static String message = "This assertion can probably be skipped (argument implicitly declares return type).";
 
     final private static Map<String, Integer> targetPositions = new HashMap<>();
     final private static Map<String, String> targetType       = new HashMap<>();
@@ -68,7 +68,7 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
                             if (resolved != null && !resolved.hasUnknown() && resolved.size() == 1) {
                                 final String expected = targetType.get(methodName);
                                 if (expected == null || resolved.getTypes().stream().anyMatch(type -> Types.getType(type).equals(expected))) {
-                                    holder.registerProblem(reference, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                    holder.registerProblem(reference, message);
                                 }
                             }
                         }

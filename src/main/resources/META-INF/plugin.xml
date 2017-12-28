@@ -277,6 +277,10 @@ New inspections and bug-fixes:<br/>
         shortName="UnnecessaryVariableOverridesInspection"         displayName="Unnecessary variable overrides"
         groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessaryVariableOverridesInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="UnnecessaryContinueInspection"                  displayName="Unnecessary continue statements"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnnecessaryContinueInspector"/>
 
 
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

@@ -37,6 +37,8 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpFor(For forStatement)                      {}
     @Override public void visitPhpWhile(While whileStatement)                {}
     @Override public void visitPhpDoWhile(DoWhile doWhileStatement)          {}
+    @Override public void visitPhpContinue(PhpContinue continueStatement)    {}
+    @Override public void visitPhpBreak(PhpBreak breakStatement)             {}
 
     @Override public void visitPhpTernaryExpression(TernaryExpression expression)                 {}
     @Override public void visitPhpAssignmentExpression(AssignmentExpression expression)           {}

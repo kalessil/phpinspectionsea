@@ -42,16 +42,16 @@ final public class OpenapiTypesUtil {
     }
 
     static public boolean isLoop(@Nullable PsiElement expression) {
-        return null != expression &&
+        return expression != null &&
             (expression instanceof ForeachStatement || expression instanceof For || expression instanceof While || expression instanceof DoWhile);
     }
 
     static public boolean isStatementImpl(@Nullable PsiElement expression) {
-        return expression != null && expression.getNode().getElementType() == PhpElementTypes.STATEMENT;
+        return null != expression && expression.getNode().getElementType() == PhpElementTypes.STATEMENT;
     }
 
     static public boolean isPhpExpressionImpl(@Nullable PsiElement expression) {
-        return expression != null && expression.getNode().getElementType() == PhpElementTypes.EXPRESSION;
+        return null != expression && expression.getNode().getElementType() == PhpElementTypes.EXPRESSION;
     }
 
     static public boolean isNumber(@Nullable PsiElement expression) {

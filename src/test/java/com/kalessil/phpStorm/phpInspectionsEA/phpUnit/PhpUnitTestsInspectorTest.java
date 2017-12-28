@@ -66,9 +66,11 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.configureByFile("fixtures/phpUnit/assert-empty-not-empty.php");
         myFixture.testHighlighting(true, false, true);
     }
-//    public void testIfFindsAssertDirectoryExistsNotExistsPatterns() {
-//        ...
-//    }
+    public void testIfFindsAssertDirectoryExistsNotExistsPatterns() {
+        myFixture.enableInspections(new PhpUnitTestsInspector());
+        myFixture.configureByFile("fixtures/phpUnit/assert-directory-exists-not-exists.php");
+        myFixture.testHighlighting(true, false, true);
+    }
     public void testIfFindsNormalizationPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
         myFixture.configureByFile("fixtures/phpUnit/assert-normalization.php");

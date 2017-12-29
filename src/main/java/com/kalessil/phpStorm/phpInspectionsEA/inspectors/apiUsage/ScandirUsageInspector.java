@@ -3,10 +3,12 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -19,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ScandirUsageInspector extends BasePhpInspection {
-    private static final String messagePattern = "'scandir(...)' sorts results by default, please specify the second argument.";
+    private static final String message = "'scandir(...)' sorts results by default, please specify the second argument.";
 
     @NotNull
     public String getShortName() {
@@ -30,12 +32,18 @@ public class ScandirUsageInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
+            @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final String functionName    = reference.getName();
-                final PsiElement[] arguments = reference.getParameters();
-                if (functionName != null && arguments.length == 1 && functionName.equals("scandir")) {
-                    final String replacement = "scandir(%a%, SCANDIR_SORT_NONE)".replace("%a%", arguments[0].getText());
-                    holder.registerProblem(reference, messagePattern, new NoSortFix(replacement));
+                final String functionName = reference.getName();
+                if (functionName != null && functionName.equals("scandir")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 1) {
+                        final PsiElement function = OpenapiResolveUtil.resolveReference(reference);
+                        if (function instanceof Function && ((Function) function).getFQN().equals("\\scandir")) {
+                            final String replacement = String.format("scandir(%s, SCANDIR_SORT_NONE)", arguments[0].getText());
+                            holder.registerProblem(reference, message, new NoSortFix(replacement));
+                        }
+                    }
                 }
             }
         };

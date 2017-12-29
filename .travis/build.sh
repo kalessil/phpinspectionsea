@@ -4,17 +4,26 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+# trap errors, so failed lines are getting reported
+function handle_error {
+    local retval=$?
+    local line=$1
+    echo "Failed at $line: $BASH_COMMAND"
+    exit $retval
+}
+trap 'handle_error $LINENO' ERR
+
 ideUrl="IU-2017.3"
 if [ "$IDE_ID" == "IU-2017.3" ]; then
-    ideUrl="http://download-cf.jetbrains.com/idea/idea$IDE_ID.tar.gz"
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.tar.gz"
 elif [ "$IDE_ID" == "IU-2017.2" ]; then
-    ideUrl="http://download-cf.jetbrains.com/idea/idea$IDE_ID.6.tar.gz"
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.6.tar.gz"
 elif [ "$IDE_ID" == "IU-2017.1" ]; then
-    ideUrl="http://download-cf.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
 elif [ "$IDE_ID" == "IU-2016.3" ]; then
-    ideUrl="http://download-cf.jetbrains.com/idea/idea$IDE_ID.6.tar.gz"
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.6.tar.gz"
 elif [ "$IDE_ID" == "IU-2016.2" ]; then
-    ideUrl="http://download-cf.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
 fi
 
 travisCache=".cache"
@@ -49,12 +58,8 @@ if [ -d ./idea  ]; then
 fi
 mkdir idea
 
-echo "Get and extract IDE ($ideUrl)"
-
 # Download main idea folder
-echo "Download"
 download "$ideUrl" ""
-echo "Extract"
 tar zxf ${travisCache}/${ideUrl##*/} -C .
 echo "Successfully downloaded $ideUrl -> ${travisCache}/${ideUrl##*/}"
 
@@ -66,8 +71,6 @@ if [ -d ./plugins ]; then
   rm -rf plugins
 fi
 mkdir plugins
-
-echo "Get IDE plugins"
 
 if [ "$IDE_ID" == "IU-2017.3" ]; then
     download "http://plugins.jetbrains.com/files/6610/41019/php-173.3727.138.zip" "php-173.3727.138-2017.3.zip"
@@ -88,8 +91,6 @@ else
     echo "Unknown IDE_ID value: $IDE_ID"
     exit 1
 fi
-
-echo "Build and test our plugin"
 
 # run tests
 echo "Running from: " `pwd`

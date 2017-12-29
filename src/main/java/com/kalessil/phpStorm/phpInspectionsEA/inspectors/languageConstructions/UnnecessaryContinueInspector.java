@@ -55,16 +55,16 @@ public class UnnecessaryContinueInspector extends BasePhpInspection {
                 if (lastStatement instanceof PhpContinue) {
                     lastStatements.add(lastStatement);
                 } else if (lastStatement instanceof If) {
-                    /* collect bodies */
-                    final If ifStatement              = (If) lastStatement;
-                    final List<GroupStatement> bodies = new ArrayList<>();
-                    bodies.add(ExpressionSemanticUtil.getGroupStatement(ifStatement));
-                    Arrays.stream(ifStatement.getElseIfBranches())
-                            .forEach(elseIf -> bodies.add(ExpressionSemanticUtil.getGroupStatement(elseIf)));
-                    final Else elseStatement = ifStatement.getElseBranch();
-                    bodies.add(elseStatement == null ? null : ExpressionSemanticUtil.getGroupStatement(elseStatement));
+                    /* collect branches */
+                    final If ifStatement            = (If) lastStatement;
+                    final List<PsiElement> branches = new ArrayList<>();
+                    branches.addAll(Arrays.asList(ifStatement, ifStatement.getElseBranch()));
+                    branches.addAll(Arrays.asList(ifStatement.getElseIfBranches()));
                     /* iterate bodies, keep collecting statements */
-                    bodies.stream().filter(Objects::nonNull).forEach(block -> collectLastStatements(block, lastStatements));
+                    branches.stream()
+                            .filter(Objects::nonNull).map(ExpressionSemanticUtil::getGroupStatement)
+                            .filter(Objects::nonNull).forEach(block -> collectLastStatements(block, lastStatements));
+                    branches.clear();
                 }
                 return lastStatements;
             }

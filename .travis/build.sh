@@ -52,7 +52,9 @@ mkdir idea
 echo "Get and extract IDE ($ideUrl)"
 
 # Download main idea folder
+echo "Download"
 download "$ideUrl" ""
+echo "Extract"
 tar zxf ${travisCache}/${ideUrl##*/} -C .
 echo "Successfully downloaded $ideUrl -> ${travisCache}/${ideUrl##*/}"
 

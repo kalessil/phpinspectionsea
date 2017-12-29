@@ -40,7 +40,7 @@ function download {
   cachefile=${travisCache}/${ideUrl##*/}
 
   if [ ! -f ${cachefile} ]; then
-      ([[ ! -z "${failover}" ]] && cp ./.travis/failover/${failover} ${cachefile}) || wget $ideUrl -P ${travisCache};
+      ([[ ! -z "${failover}" ]] && cp ./.travis/failover/${failover} ${cachefile}) || wget --quiet --no-verbose $ideUrl -P ${travisCache};
     else
       echo "Cached file `ls -sh $cachefile` - `date -r $cachefile +'%Y-%m-%d %H:%M:%S'`"
   fi

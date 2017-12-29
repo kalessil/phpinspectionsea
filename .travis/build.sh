@@ -47,8 +47,9 @@ function download {
 if [ -d ./idea  ]; then
   rm -rf idea
 fi
-
 mkdir idea
+
+echo "Get and extract IDE"
 
 # Download main idea folder
 download "$ideUrl" ""
@@ -62,8 +63,9 @@ mv ${ideaPath}/* ./idea
 if [ -d ./plugins ]; then
   rm -rf plugins
 fi
-
 mkdir plugins
+
+echo "Get IDE plugins"
 
 if [ "$IDE_ID" == "IU-2017.3" ]; then
     download "http://plugins.jetbrains.com/files/6610/41019/php-173.3727.138.zip" "php-173.3727.138-2017.3.zip"
@@ -84,6 +86,8 @@ else
     echo "Unknown IDE_ID value: $IDE_ID"
     exit 1
 fi
+
+echo "Build and test our plugin"
 
 # run tests
 echo "Running from: " `pwd`

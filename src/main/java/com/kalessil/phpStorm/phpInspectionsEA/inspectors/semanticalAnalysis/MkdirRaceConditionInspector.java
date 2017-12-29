@@ -20,6 +20,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class MkdirRaceConditionInspector extends BasePhpInspection {
     private static final String patternDirectCall   = "Following construct should be used: 'if (!mkdir(%f%) && !is_dir(%f%)) { ... }'.";
     private static final String patternAndCondition = "Some check are missing: '!mkdir(%f%) && !is_dir(%f%)'.";
@@ -53,7 +62,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 /* ind out expression where the call is contained - quite big set of variations */
                 final ExpressionLocateResult searchResult = new ExpressionLocateResult();
                 this.locateExpression(reference, searchResult);
-                final PsiElement target  = searchResult.getReportingTarget();
+                final PsiElement target = searchResult.getReportingTarget();
                 if (target == null) {
                     return;
                 }
@@ -125,7 +134,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                         if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opNOT)) {
                             status.setInverted(!status.isInverted());
                             this.locateExpression(parent, status);
-                        } else if (OpenapiTypesUtil.is(parent, PhpTokenTypes.opSILENCE)) {
+                        } else if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opSILENCE)) {
                             this.locateExpression(parent, status);
                         }
                     }

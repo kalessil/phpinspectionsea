@@ -45,15 +45,12 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* general structure requirements */
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if ((1 != params.length && 2 != params.length) || functionName == null || !functionName.equals("crypt")) {
+                if (functionName == null || !functionName.equals("crypt")) {
                     return;
                 }
-                /* avoid complaining to imported functions */
-                final PsiElement function = OpenapiResolveUtil.resolveReference(reference);
-                if (function instanceof Function && !((Function) function).getFQN().equals("\\crypt")) {
+                final PsiElement[] params = reference.getParameters();
+                if ((1 != params.length && 2 != params.length) || !this.isFromRootNamespace(reference)) {
                     return;
                 }
 

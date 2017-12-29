@@ -47,11 +47,11 @@ final public class OpenapiTypesUtil {
     }
 
     static public boolean isStatementImpl(@Nullable PsiElement expression) {
-        return null != expression && expression.getNode().getElementType() == PhpElementTypes.STATEMENT;
+        return expression != null && expression.getNode().getElementType() == PhpElementTypes.STATEMENT;
     }
 
     static public boolean isPhpExpressionImpl(@Nullable PsiElement expression) {
-        return null != expression && expression.getNode().getElementType() == PhpElementTypes.EXPRESSION;
+        return expression != null && expression.getNode().getElementType() == PhpElementTypes.EXPRESSION;
     }
 
     static public boolean isNumber(@Nullable PsiElement expression) {

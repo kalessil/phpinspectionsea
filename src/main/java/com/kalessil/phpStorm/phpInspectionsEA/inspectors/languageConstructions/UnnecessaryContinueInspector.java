@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class UnnecessaryContinueInspector extends BasePhpInspection {
-    private static final String message = "...";
+    private static final String message = "It's not really makes sense placing continue here as loop will continue from here anyway.";
 
     @NotNull
     public String getShortName() {

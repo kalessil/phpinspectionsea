@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class BasePhpElementVisitor extends PhpElementVisitor {
@@ -77,6 +78,16 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
             if (clazzFqn != null) {
                 result = clazzFqn.endsWith("Test") || clazzFqn.contains("\\Tests\\") || clazzFqn.contains("\\Test\\");
             }
+        }
+        return result;
+    }
+
+    protected boolean isFromRootNamespace(@NotNull FunctionReference reference) {
+        boolean result            = false;
+        final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+        if (resolved instanceof Function) {
+            final Function function = (Function) resolved;
+            result = function.getFQN().equals('\\' + function.getName());
         }
         return result;
     }

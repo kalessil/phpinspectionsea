@@ -54,8 +54,8 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* false-positives: test classes */
-                if (this.isTestContext(reference)) {
+                /* false-positives: test classes and functions not from root NS */
+                if (this.isTestContext(reference) || !this.isFromRootNamespace(reference)) {
                     return;
                 }
 
@@ -195,7 +195,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target != null) {
+            if (target != null && !project.isDisposed()) {
                 final String throwPart = "throw new \\RuntimeException(sprintf('Directory \"%%s\" was not created', %s));";
                 final String pattern   = "if (!mkdir(%s) && !is_dir(%s)) { %s }";
                 final String code      = String.format(pattern, resource, resource, String.format(throwPart, resource));
@@ -226,7 +226,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target != null) {
+            if (target != null && !project.isDisposed()) {
                 final PsiElement parent = target.getParent();
                 if (parent instanceof If) {
                     final String code = String.format("(!mkdir(%s) && !is_dir(%s))", resource, resource);

@@ -3,12 +3,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -37,12 +35,9 @@ public class ScandirUsageInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("scandir")) {
                     final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length == 1) {
-                        final PsiElement function = OpenapiResolveUtil.resolveReference(reference);
-                        if (function instanceof Function && ((Function) function).getFQN().equals("\\scandir")) {
-                            final String replacement = String.format("scandir(%s, SCANDIR_SORT_NONE)", arguments[0].getText());
-                            holder.registerProblem(reference, message, new NoSortFix(replacement));
-                        }
+                    if (arguments.length == 1 && this.isFromRootNamespace(reference)) {
+                        final String replacement = String.format("scandir(%s, SCANDIR_SORT_NONE)", arguments[0].getText());
+                        holder.registerProblem(reference, message, new NoSortFix(replacement));
                     }
                 }
             }

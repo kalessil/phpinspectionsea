@@ -17,7 +17,7 @@ ideUrl="IU-2017.3"
 if [ "$IDE_ID" == "IU-2017.3" ]; then
     ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.tar.gz"
 elif [ "$IDE_ID" == "IU-2017.2" ]; then
-    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.6.tar.gz"
 elif [ "$IDE_ID" == "IU-2017.1" ]; then
     ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
 elif [ "$IDE_ID" == "IU-2016.3" ]; then
@@ -40,7 +40,7 @@ function download {
   cachefile=${travisCache}/${ideUrl##*/}
 
   if [ ! -f ${cachefile} ]; then
-      ([[ ! -z "${failover}" ]] && cp ./.travis/failover/${failover} ${cachefile}) || wget --quiet --no-verbose $ideUrl -P ${travisCache};
+      ([[ ! -z "${failover}" ]] && cp ./.travis/failover/${failover} ${cachefile}) || wget $ideUrl -P ${travisCache};
     else
       echo "Cached file `ls -sh $cachefile` - `date -r $cachefile +'%Y-%m-%d %H:%M:%S'`"
   fi
@@ -56,7 +56,6 @@ function download {
 if [ -d ./idea  ]; then
   rm -rf idea
 fi
-
 mkdir idea
 
 # Download main idea folder
@@ -71,7 +70,6 @@ mv ${ideaPath}/* ./idea
 if [ -d ./plugins ]; then
   rm -rf plugins
 fi
-
 mkdir plugins
 
 if [ "$IDE_ID" == "IU-2017.3" ]; then

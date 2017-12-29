@@ -49,7 +49,7 @@ if [ -d ./idea  ]; then
 fi
 mkdir idea
 
-echo "Get and extract IDE"
+echo "Get and extract IDE ($ideUrl)"
 
 # Download main idea folder
 download "$ideUrl" ""

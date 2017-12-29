@@ -8,7 +8,7 @@ ideUrl="IU-2017.3"
 if [ "$IDE_ID" == "IU-2017.3" ]; then
     ideUrl="http://download-cf.jetbrains.com/idea/idea$IDE_ID.tar.gz"
 elif [ "$IDE_ID" == "IU-2017.2" ]; then
-    ideUrl="http://download-cf.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
+    ideUrl="https://download-cf.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
 elif [ "$IDE_ID" == "IU-2017.1" ]; then
     ideUrl="http://download-cf.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
 elif [ "$IDE_ID" == "IU-2016.3" ]; then

@@ -1,9 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -41,7 +45,7 @@ public class UnnecessaryContinueInspector extends BasePhpInspection {
                         if (body != null) {
                             final List<PsiElement> lastStatements = this.collectLastStatements(body, new ArrayList<>());
                             if (lastStatements.stream().anyMatch(statement -> continueStatement == statement)) {
-                                holder.registerProblem(continueStatement, message);
+                                holder.registerProblem(continueStatement, message, new RemoveUnnecessaryStatementFix());
                             }
                             lastStatements.clear();
                         }
@@ -87,4 +91,31 @@ public class UnnecessaryContinueInspector extends BasePhpInspection {
             }
         };
     }
+
+    private static class RemoveUnnecessaryStatementFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Remove unnecessary statement";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression != null && !project.isDisposed()) {
+                final PsiElement previous = expression.getPrevSibling();
+                if (previous instanceof PsiWhiteSpace) {
+                    previous.delete();
+                }
+                expression.delete();
+            }
+        }
+    }
+
 }

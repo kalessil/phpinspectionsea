@@ -109,7 +109,6 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         map(Types::getType).collect(Collectors.toSet());
                 checkNonImplicitNullReturn(method, normalizedTypes);
                 checkUnrecognizedGenerator(method, normalizedTypes);
-holder.registerProblem(target, normalizedTypes.toString());
 
                 final int typesCount = normalizedTypes.size();
                 /* case 1: offer using void */
@@ -179,7 +178,7 @@ holder.registerProblem(target, normalizedTypes.toString());
             @NotNull
             private String compactType(@NotNull String type, @NotNull Method method) {
                 String result = null;
-                if (type.startsWith("\\")) {
+                if (type.startsWith("\\") || type.equals("static")) { /* PS 2016.2 resolves self as static */
                     /* Strategy 1: respect `@return self` */
                     if (LOOKUP_PHPDOC_RETURN_DECLARATIONS) {
                         final PhpDocComment phpDoc      = method.getDocComment();

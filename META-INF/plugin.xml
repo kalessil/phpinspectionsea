@@ -70,6 +70,10 @@ Bug-fixes and enhancements:<br/>
 - Security advisories for Composer packages: new packages (vfsStream)<br/>
 - Statement could be decoupled from foreach: resolved false-positives (compact function)<br/>
 - Variable functions usage: resolved false-positives (call_user_func suggestion in some cases)<br/>
+
+- ReturnTypeCanBeDeclaredInspector: use self when specified in PhpDoc<br/>
+- ScandirUsageInspector: resolved false-positives (imported functions)<br/>
+- MkdirRaceConditionInspector: resolved false-positives (imported functions)<br/>
 <br/>
 <hr/>
   ]]></change-notes>

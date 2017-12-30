@@ -109,6 +109,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         map(Types::getType).collect(Collectors.toSet());
                 checkNonImplicitNullReturn(method, normalizedTypes);
                 checkUnrecognizedGenerator(method, normalizedTypes);
+holder.registerProblem(target, normalizedTypes.toString());
 
                 final int typesCount = normalizedTypes.size();
                 /* case 1: offer using void */

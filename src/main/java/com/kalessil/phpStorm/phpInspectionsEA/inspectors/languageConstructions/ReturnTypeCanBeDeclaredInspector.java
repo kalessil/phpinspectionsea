@@ -50,6 +50,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
     static {
         /* +class/interface reference for PHP7.0+; +void for PHP7.1+ */
         returnTypes.add("self");
+        returnTypes.add("static");
         returnTypes.add("array");
         returnTypes.add("callable");
         returnTypes.add("bool");
@@ -109,7 +110,6 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         map(Types::getType).collect(Collectors.toSet());
                 checkNonImplicitNullReturn(method, normalizedTypes);
                 checkUnrecognizedGenerator(method, normalizedTypes);
-holder.registerProblem(target, normalizedTypes.toString());
 
                 final int typesCount = normalizedTypes.size();
                 /* case 1: offer using void */

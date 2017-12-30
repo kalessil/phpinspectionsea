@@ -26,7 +26,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -184,12 +183,10 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     if (LOOKUP_PHPDOC_RETURN_DECLARATIONS) {
                         final PhpDocComment phpDoc      = method.getDocComment();
                         final PhpDocReturnTag phpReturn = phpDoc == null ? null : phpDoc.getReturnTag();
-                        if (phpReturn != null) {
-                            final boolean useSelf = Arrays.stream(phpReturn.getChildren())
-                                    .anyMatch(docType -> docType.getText().equals("self"));
-                            if (useSelf) {
-                                result = "self";
-                            }
+                        final boolean hasSelfReference  = PsiTreeUtil.findChildrenOfType(phpReturn, PhpDocType.class).stream()
+                                .anyMatch(docType -> docType.getText().equals("self"));
+                        if (hasSelfReference) {
+                            result = "self";
                         }
                     }
                     /* Strategy 2: scan imports */

@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.14</version>
+  <version>2.3.15-dev</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -58,18 +58,18 @@ the implementation.
   <change-notes><![CDATA[
 Bug-fixes and enhancements:<br/>
 <br/>
-- PhpUnit: unnecessary assertion: implemented<br/>
-- PhpUnit: bugs and best practices: resolved false-positives (multiple cases)<br/>
+- Default value is hidden in else branch: dropped<br/>
+- Exceptions handling and annotating: new patterns (methods without PhpDoc)<br/>
+- Exceptions handling and annotating: new settings<br/>
+- Exploiting unserialize: resolved false-positives (UTs)<br/>
+- Magic methods validity: resolved false-positives (multiple cases)<br/>
+- Phar-incompatible 'realpath(...)' usage: resolved false-positives (UTs)<br/>
 - PhpUnit: bugs and best practices: new patterns<br/>
-- DisconnectedForeachInstructionInspector: resolved false-positives (compact function)<br/>
-- ExceptionsAnnotatingAndHandlingInspector: new settings<br/>
-- ExceptionsAnnotatingAndHandlingInspector: new patterns (methods without PhpDoc)<br/>
-- SecurityAdvisoriesInspector: new packages (vfsStream)<br/>
-- DefaultValueInElseBranchInspector: dropped<br/>
-- VariableFunctionsUsageInspector: resolved false-positives (call_user_func suggestion in some cases)<br/>
-- MagicMethodsValidityInspector: resolved false-positives (multiple cases)<br/>
-- RealpathInSteamContextInspector: resolved false-positives (UTs)<br/>
-- UnserializeExploitsInspector: resolved false-positives (UTs)<br/>
+- PhpUnit: bugs and best practices: resolved false-positives (multiple cases)<br/>
+- PhpUnit: unnecessary assertion: implemented<br/>
+- Security advisories for Composer packages: new packages (vfsStream)<br/>
+- Statement could be decoupled from foreach: resolved false-positives (compact function)<br/>
+- Variable functions usage: resolved false-positives (call_user_func suggestion in some cases)<br/>
 <br/>
 <hr/>
   ]]></change-notes>

@@ -13,15 +13,19 @@ import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocReturnTag;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,6 +41,9 @@ import java.util.stream.Collectors;
 
 public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
     private static final String messagePattern = "': %t%' can be declared as return type hint%n%.";
+
+    // Inspection options.
+    public boolean LOOKUP_PHPDOC_RETURN_DECLARATIONS = true;
 
     private static final Set<String> returnTypes = new HashSet<>();
     private static final Set<String> voidTypes   = new HashSet<>();
@@ -172,16 +179,28 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             private String compactType(@NotNull String type, @NotNull Method method) {
                 String result = null;
                 if (type.startsWith("\\")) {
-                    /* Strategy 1: scan imports */
-                    for (final PhpUse useItem : PsiTreeUtil.findChildrenOfType(method.getContainingFile(), PhpUse.class)) {
-                        final PhpReference useReference = useItem.getTargetReference();
-                        if (useReference instanceof ClassReference && type.equals(useReference.getFQN())) {
-                            final String useAlias = useItem.getAliasName();
-                            result                = useAlias == null ? useReference.getName() : useAlias;
-                            break;
+                    /* Strategy 1: respect `@return self` */
+                    if (LOOKUP_PHPDOC_RETURN_DECLARATIONS) {
+                        final PhpDocComment phpDoc      = method.getDocComment();
+                        final PhpDocReturnTag phpReturn = phpDoc == null ? null : phpDoc.getReturnTag();
+                        final boolean hasSelfReference  = PsiTreeUtil.findChildrenOfType(phpReturn, PhpDocType.class).stream()
+                                .anyMatch(docType -> docType.getText().equals("self"));
+                        if (hasSelfReference) {
+                            result = "self";
                         }
                     }
-                    /* Strategy 2: relative QN for classes in sub-namespace */
+                    /* Strategy 2: scan imports */
+                    if (result == null) {
+                        for (final PhpUse useItem : PsiTreeUtil.findChildrenOfType(method.getContainingFile(), PhpUse.class)) {
+                            final PhpReference useReference = useItem.getTargetReference();
+                            if (useReference instanceof ClassReference && type.equals(useReference.getFQN())) {
+                                final String useAlias = useItem.getAliasName();
+                                result                = useAlias == null ? useReference.getName() : useAlias;
+                                break;
+                            }
+                        }
+                    }
+                    /* Strategy 3: relative QN for classes in sub-namespace */
                     if (result == null || result.isEmpty()) {
                         final PhpClass clazz   = method.getContainingClass();
                         final String nameSpace = null == clazz ? null : clazz.getNamespaceName();
@@ -210,6 +229,12 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+            component.addCheckbox("Respect `@return self`", LOOKUP_PHPDOC_RETURN_DECLARATIONS, (isSelected) -> LOOKUP_PHPDOC_RETURN_DECLARATIONS = isSelected)
+        );
     }
 
     private static class DeclareReturnTypeFix implements LocalQuickFix {

@@ -16,6 +16,9 @@ namespace RootNamespace {
 
         /** @return \VendorNamespace\VendorComponent|null */
         abstract public function <weak_warning descr="': ?\VendorNamespace\VendorComponent' can be declared as return type hint.">methodVendor</weak_warning>();
+
+        /** @return self|null */
+        abstract public function <weak_warning descr="': ?self' can be declared as return type hint.">methodReturnsSelf</weak_warning>();
     }
 }
 

@@ -33,6 +33,10 @@ import java.util.stream.Stream;
 public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
     private static final String message = "...";
 
+    private static int STATE_DEFINED   = 1;
+    private static int STATE_NOT_NULL  = 2;
+    private static int STATE_NOT_FALCY = 4;
+
     @NotNull
     public String getShortName() {
         return "UnnecessaryEmptinessCheckInspection";
@@ -55,26 +59,19 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                     final HashMap<PsiElement, List<PsiElement>> grouping = this.group(this.extract(expression, operator));
                     grouping.forEach((argument, contexts) -> {
                         if (contexts.size() > 1) {
-                            final boolean isTarget = contexts.stream()
-                                    .anyMatch(context -> context instanceof PhpEmpty || context instanceof PhpIsset);
+                            final boolean isTarget = contexts.stream().anyMatch(e -> e instanceof PhpEmpty || e instanceof PhpIsset);
                             if (isTarget) {
-                                // ... + empty|isset
 
                                 // isset(...) && ...           => !empty(...) + anomalies
                                 // !isset(...) || !...         => empty(...)  + anomalies
-
                                 // isset(...) && ... !== null  => isset(...)  + anomalies
                                 // !isset(...) || ... === null => !isset(...) + anomalies
-
                                 // isset(...) && !empty(...)   => isset(...)  + anomalies
                                 // !isset(...) || empty(...)   => !isset(...)  + anomalies
-
                                 // empty(...) && !...          => empty(...)  + anomalies
                                 // !empty(...) || ...          => !empty(...)  + anomalies
-
                                 // empty(...) && ... === null  => empty(...)  + anomalies
                                 // !empty(...) || ... !== null => !empty(...) + anomalies
-
                                 // empty(...) && !isset(...)   => empty(...)  + anomalies
                                 // !empty(...) || isset(...)   => !empty(...)  + anomalies
 
@@ -85,6 +82,21 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                     });
                     grouping.clear();
                 }
+            }
+
+            private int calculateState(@NotNull PsiElement expression) {
+                final int result;
+                final boolean isInverted = expression.getParent() instanceof UnaryExpression;
+                if (expression instanceof PhpEmpty) {
+                    result =
+                } else if (expression instanceof PhpIsset) {
+                    result =
+                } else if (expression instanceof BinaryExpression) {
+
+                } else {
+                    result = STATE_DEFINED & (isInverted ? (~STATE_NOT_FALCY | ~STATE_NOT_NULL) : (STATE_NOT_FALCY & STATE_NOT_NULL));
+                }
+                return result;
             }
 
             @NotNull

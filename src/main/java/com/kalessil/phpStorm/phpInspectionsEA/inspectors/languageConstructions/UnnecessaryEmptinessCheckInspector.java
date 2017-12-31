@@ -12,15 +12,13 @@ import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 /*
@@ -87,7 +85,16 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
 
                     /* perform expression to contexts mapping */
                     if (arguments != null && arguments.length > 0) {
-
+                        for (final PsiElement argument : arguments) {
+                            final PsiElement context       = arguments.length == 1 ? argument : expression;
+                            final Optional<PsiElement> key = result.keySet().stream()
+                                    .filter(element -> OpeanapiEquivalenceUtil.areEqual(element, argument)).findFirst();
+                            if (!key.isPresent()) {
+                                result.put(argument, new ArrayList<>(Collections.singletonList(context)));
+                            } else {
+                                result.get(key.get()).add(context);
+                            }
+                        }
                     }
                 }
                 conditions.clear();

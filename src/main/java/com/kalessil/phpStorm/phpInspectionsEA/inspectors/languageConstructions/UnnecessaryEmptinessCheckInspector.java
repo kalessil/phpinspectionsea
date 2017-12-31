@@ -60,44 +60,37 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
             }
 
             @NotNull
-            private HashMap<PsiElement, List<PsiElement>> group(@NotNull List<PsiElement> parts) {
+            private HashMap<PsiElement, List<PsiElement>> group(@NotNull List<PsiElement> conditions) {
                 final HashMap<PsiElement, List<PsiElement>> result = new HashMap<>();
-                for (final PsiElement condition : parts) {
-                    PsiElement context          = null;
-                    List<PsiElement> expression = new ArrayList<>();
-                    /* populate expression to contexts mapping input */
-                    if (condition instanceof PhpEmpty) {
-                        final PhpEmpty empty         = (PhpEmpty) condition;
-                        final PsiElement[] arguments = empty.getVariables();
+                for (final PsiElement expression : conditions) {
+                    PsiElement[] arguments = null;
 
-                    } else if (condition instanceof PhpIsset) {
-                        final PhpIsset isset         = (PhpIsset) condition;
-                        final PsiElement[] arguments = isset.getVariables();
-
-                    } else if (condition instanceof BinaryExpression) {
-                        final BinaryExpression binary = (BinaryExpression) condition;
-                        final IElementType operation  = binary.getOperationType();
-                        if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operation)) {
+                    /* prepare expression to contexts mapping */
+                    if (expression instanceof BinaryExpression) {
+                        final BinaryExpression binary = (BinaryExpression) expression;
+                        if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(binary.getOperationType())) {
                             final PsiElement left  = binary.getLeftOperand();
                             final PsiElement right = binary.getRightOperand();
                             if (right != null && PhpLanguageUtil.isNull(left)) {
-                                context = binary;
-                                expression.add(right);
+                                arguments = new PsiElement[]{right};
                             } else if (left != null && PhpLanguageUtil.isNull(right)) {
-                                context = binary;
-                                expression.add(left);
+                                arguments = new PsiElement[]{left};
                             }
                         }
+                    } else if (expression instanceof PhpEmpty) {
+                        arguments = ((PhpEmpty) expression).getVariables();
+                    } else if (expression instanceof PhpIsset) {
+                        arguments = ((PhpIsset) expression).getVariables();
                     } else {
-                        context = condition;
-                        expression.add(condition);
+                        arguments = new PsiElement[]{expression};
                     }
+
                     /* perform expression to contexts mapping */
-                    if (context != null && !expression.isEmpty()) {
+                    if (arguments != null && arguments.length > 0) {
 
                     }
                 }
-                parts.clear();
+                conditions.clear();
                 return result;
             }
 

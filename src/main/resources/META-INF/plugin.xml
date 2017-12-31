@@ -282,6 +282,10 @@ New inspections and bug-fixes:<br/>
         shortName="UnnecessaryContinueInspection"                  displayName="Unnecessary continue statements"
         groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnnecessaryContinueInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="UnnecessaryEmptinessCheckInspection"            displayName="Unnecessary emptiness check"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnnecessaryEmptinessCheckInspector"/>
 
 
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

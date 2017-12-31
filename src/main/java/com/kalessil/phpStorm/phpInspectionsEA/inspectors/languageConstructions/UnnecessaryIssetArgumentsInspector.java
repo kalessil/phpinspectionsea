@@ -125,5 +125,4 @@ public class UnnecessaryIssetArgumentsInspector extends BasePhpInspection {
             }
         }
     }
-
 }

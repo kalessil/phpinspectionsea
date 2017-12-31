@@ -53,7 +53,17 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                     }
 
                     final HashMap<PsiElement, List<PsiElement>> grouping = this.group(this.extract(expression, operator));
-                    /* expression => contexts map build, process expressions with 2+ contexts */
+                    grouping.forEach((argument, contexts) -> {
+                        if (contexts.size() > 1) {
+                            final boolean isTarget = contexts.stream()
+                                    .anyMatch(context -> context instanceof PhpEmpty || context instanceof PhpIsset);
+                            if (isTarget) {
+                                holder.registerProblem(argument, contexts.toString());
+                            }
+                        }
+                        contexts.clear();
+                    });
+                    grouping.clear();
                 }
             }
 
@@ -86,7 +96,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                     /* perform expression to contexts mapping */
                     if (arguments != null && arguments.length > 0) {
                         for (final PsiElement argument : arguments) {
-                            final PsiElement context       = arguments.length == 1 ? argument : expression;
+                            final PsiElement context       = arguments.length == 1 ? expression : argument;
                             final Optional<PsiElement> key = result.keySet().stream()
                                     .filter(element -> OpeanapiEquivalenceUtil.areEqual(element, argument)).findFirst();
                             if (!key.isPresent()) {

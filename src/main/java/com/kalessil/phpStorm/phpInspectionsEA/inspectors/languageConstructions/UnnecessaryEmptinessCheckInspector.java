@@ -90,7 +90,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                 if (expression instanceof PhpEmpty) {
                     result = isInverted ? (STATE_DEFINED & STATE_NOT_FALCY & STATE_NOT_NULL) : (~STATE_DEFINED | ~STATE_NOT_FALCY | ~STATE_NOT_NULL);
                 } else if (expression instanceof PhpIsset) {
-                    result =
+                    result = isInverted ? (STATE_DEFINED & STATE_NOT_NULL) : (~STATE_DEFINED | ~STATE_NOT_NULL);
                 } else if (expression instanceof BinaryExpression) {
 
                 } else {

@@ -58,6 +58,26 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                             final boolean isTarget = contexts.stream()
                                     .anyMatch(context -> context instanceof PhpEmpty || context instanceof PhpIsset);
                             if (isTarget) {
+                                // ... + empty|isset
+
+                                // isset(...) && ...           => !empty(...) + anomalies
+                                // !isset(...) || !...         => empty(...)  + anomalies
+
+                                // isset(...) && ... !== null  => isset(...)  + anomalies
+                                // !isset(...) || ... === null => !isset(...) + anomalies
+
+                                // isset(...) && !empty(...)   => isset(...)  + anomalies
+                                // !isset(...) || empty(...)   => !isset(...)  + anomalies
+
+                                // empty(...) && !...          => empty(...)  + anomalies
+                                // !empty(...) || ...          => !empty(...)  + anomalies
+
+                                // empty(...) && ... === null  => empty(...)  + anomalies
+                                // !empty(...) || ... !== null => !empty(...) + anomalies
+
+                                // empty(...) && !isset(...)   => empty(...)  + anomalies
+                                // !empty(...) || isset(...)   => !empty(...)  + anomalies
+
                                 holder.registerProblem(argument, contexts.toString());
                             }
                         }

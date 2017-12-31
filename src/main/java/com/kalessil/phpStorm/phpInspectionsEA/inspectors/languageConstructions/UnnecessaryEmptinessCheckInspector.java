@@ -88,7 +88,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                 final int result;
                 final boolean isInverted = expression.getParent() instanceof UnaryExpression;
                 if (expression instanceof PhpEmpty) {
-                    result =
+                    result = isInverted ? (STATE_DEFINED & STATE_NOT_FALCY & STATE_NOT_NULL) : (~STATE_DEFINED | ~STATE_NOT_FALCY | ~STATE_NOT_NULL);
                 } else if (expression instanceof PhpIsset) {
                     result =
                 } else if (expression instanceof BinaryExpression) {

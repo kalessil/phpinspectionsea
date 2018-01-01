@@ -72,13 +72,6 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                 final int stateChange = calculateState(contexts.get(index));
 //holder.registerProblem(contexts.get(index), String.format("%s <- %s", accumulatedState, stateChange));
 
-                                /* stateChange & accumulatedState suppose to make NO difference (always false case) */
-                                /*if ((stateChange & accumulatedState) != stateChange) {
-                                    holder.registerProblem(contexts.get(index), "Seems to be always false.");
-                                    contexts.clear();
-                                    return;
-                                }*/
-
                                 /* accumulatedState [&, |] stateChange suppose to make SOME difference (always true case) */
                                 final int newState = operator == PhpTokenTypes.opAND
                                         ? (accumulatedState & stateChange)
@@ -88,6 +81,14 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                     contexts.clear();
                                     return;
                                 }
+
+                                /* stateChange & accumulatedState suppose to make NO difference (always false case) */
+                                if ((stateChange & accumulatedState) == stateChange) {
+                                    holder.registerProblem(contexts.get(index), "Seems to be always false.");
+                                    contexts.clear();
+                                    return;
+                                }
+
                                 accumulatedState = newState;
                             }
                             // isset(...) && ...           => !empty(...) + anomalies
@@ -127,9 +128,9 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                 } else if (expression instanceof BinaryExpression) {
                     final IElementType operation = ((BinaryExpression) expression).getOperationType();
                     if (operation == PhpTokenTypes.opIDENTICAL) {
-                        result = STATE_DEFINED | STATE_IS_NULL;
+                        result = STATE_DEFINED | STATE_NOT_FALSY | STATE_IS_NULL;
                     } else if (operation == PhpTokenTypes.opNOT_IDENTICAL) {
-                        result = STATE_DEFINED | STATE_NOT_NULL;
+                        result = STATE_DEFINED | STATE_IS_FALSY | STATE_NOT_NULL;
                     } else if (operation == PhpTokenTypes.opEQUAL) {
                         result = STATE_DEFINED | STATE_IS_FALSY | STATE_IS_NULL;
                     } else if (operation == PhpTokenTypes.opNOT_EQUAL) {

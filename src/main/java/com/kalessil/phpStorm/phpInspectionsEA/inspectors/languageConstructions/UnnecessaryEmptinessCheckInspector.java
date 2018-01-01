@@ -70,7 +70,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                             int accumulatedState = calculateState(contexts.get(0));
                             for (int index = 1, max = contexts.size(); index < max; ++index) {
                                 final int stateChange = calculateState(contexts.get(index));
-holder.registerProblem(contexts.get(index), String.format("%s <- %s", accumulatedState, stateChange));
+//holder.registerProblem(contexts.get(index), String.format("%s <- %s", accumulatedState, stateChange));
 
                                 /* stateChange & accumulatedState suppose to make NO difference (always false case) */
                                 if ((stateChange & accumulatedState) != stateChange) {
@@ -117,7 +117,9 @@ holder.registerProblem(argument, contexts.toString());
                 final int result;
                 final boolean isInverted = parent instanceof UnaryExpression;
                 if (expression instanceof PhpEmpty) {
-                    result = 0;
+                    result = isInverted
+                            ? (STATE_DEFINED | STATE_NOT_FALSY | STATE_NOT_NULL)
+                            : (STATE_NOT_DEFINED | STATE_IS_FALSY | STATE_IS_NULL);
                 } else if (expression instanceof PhpIsset) {
                     result = isInverted ? (STATE_NOT_DEFINED | STATE_IS_NULL) : (STATE_DEFINED | STATE_NOT_NULL);
                 } else if (expression instanceof BinaryExpression) {
@@ -127,14 +129,14 @@ holder.registerProblem(argument, contexts.toString());
                     } else if (operation == PhpTokenTypes.opNOT_IDENTICAL) {
                         result = STATE_DEFINED | STATE_NOT_NULL;
                     } else if (operation == PhpTokenTypes.opEQUAL) {
-                        result = 0;
+                        result = STATE_DEFINED | STATE_IS_FALSY | STATE_IS_NULL;
                     } else if (operation == PhpTokenTypes.opNOT_EQUAL) {
-                        result = 0;
+                        result = STATE_DEFINED | STATE_NOT_FALSY | STATE_NOT_NULL;
                     } else {
                         result = STATE_DEFINED;
                     }
                 } else {
-                    result = 0;
+                    result = STATE_DEFINED | (isInverted ? (STATE_IS_FALSY | STATE_IS_NULL) : (STATE_NOT_FALSY | STATE_NOT_NULL));
                 }
                 return result;
             }

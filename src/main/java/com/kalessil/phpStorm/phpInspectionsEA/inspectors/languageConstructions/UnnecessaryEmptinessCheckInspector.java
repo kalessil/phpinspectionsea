@@ -71,28 +71,26 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                             }
 
                             int accumulatedState = calculateState(contexts.get(0));
-//holder.registerProblem(contexts.get(0), String.valueOf(accumulatedState));
                             for (int index = 1, max = contexts.size(); index < max; ++index) {
                                 final int stateChange = calculateState(contexts.get(index));
-//holder.registerProblem(contexts.get(index), String.valueOf(stateChange));
-                                final int newState = accumulatedState | stateChange;
+                                final int newState    = accumulatedState | stateChange;
+                                /* non-contributing states resolution */
                                 if (accumulatedState == newState) {
                                     holder.registerProblem(contexts.get(index), "Seems to be always true.");
-                                    contexts.clear();
-                                    return;
+                                    break;
                                 }
-
                                 /* controversial states resolution */
-                                if (
+                                else if (
                                     (newState & STATE_CONFLICTING_IS_NULL)  == STATE_CONFLICTING_IS_NULL ||
                                     (newState & STATE_CONFLICTING_IS_FALSY) == STATE_CONFLICTING_IS_FALSY
                                 ) {
                                     holder.registerProblem(contexts.get(index), "Seems to be always false.");
-                                    contexts.clear();
-                                    return;
+                                    break;
                                 }
-
-                                accumulatedState = newState;
+                                /* all good, continue */
+                                else {
+                                    accumulatedState = newState;
+                                }
                             }
                         }
                         contexts.clear();

@@ -59,10 +59,10 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                     final HashMap<PsiElement, List<PsiElement>> grouping = this.group(this.extract(expression, operator));
                     grouping.forEach((argument, contexts) -> {
                         if (contexts.size() > 1) {
-                            final boolean isTraget = contexts.stream().anyMatch(
+                            final boolean isTarget = contexts.stream().anyMatch(
                                 e -> e instanceof PhpIsset || e instanceof PhpEmpty || e instanceof BinaryExpression
                             );
-                            if (!isTraget) {
+                            if (!isTarget) {
                                 contexts.clear();
                                 return;
                             }
@@ -82,8 +82,8 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                     return;
                                 }
 
-                                /* stateChange & accumulatedState suppose to make NO difference (always false case) */
-                                if ((stateChange & accumulatedState) == stateChange) {
+                                /* controversial states resolution */
+                                if ((newState & (STATE_IS_NULL | STATE_NOT_NULL | STATE_IS_FALSY | STATE_NOT_FALSY)) > 0) {
                                     holder.registerProblem(contexts.get(index), "Seems to be always false.");
                                     contexts.clear();
                                     return;
@@ -91,19 +91,6 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
 
                                 accumulatedState = newState;
                             }
-                            // isset(...) && ...           => !empty(...) + anomalies
-                            // !isset(...) || !...         => empty(...)  + anomalies
-                            // isset(...) && ... !== null  => isset(...)  + anomalies
-                            // !isset(...) || ... === null => !isset(...) + anomalies
-                            // isset(...) && !empty(...)   => isset(...)  + anomalies
-                            // !isset(...) || empty(...)   => !isset(...)  + anomalies
-                            // empty(...) && !...          => empty(...)  + anomalies
-                            // !empty(...) || ...          => !empty(...)  + anomalies
-                            // empty(...) && ... === null  => empty(...)  + anomalies
-                            // !empty(...) || ... !== null => !empty(...) + anomalies
-                            // empty(...) && !isset(...)   => empty(...)  + anomalies
-                            // !empty(...) || isset(...)   => !empty(...)  + anomalies
-//holder.registerProblem(argument, contexts.toString());
                         }
                         contexts.clear();
                     });

@@ -109,8 +109,8 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                 final boolean isInverted = parent instanceof UnaryExpression;
                 if (expression instanceof PhpEmpty) {
                     result = isInverted
-                            ? (STATE_DEFINED | STATE_NOT_FALSY)
-                            : (STATE_NOT_DEFINED | STATE_IS_FALSY);
+                            ? (STATE_DEFINED | STATE_NOT_FALSY | STATE_NOT_NULL)
+                            : (STATE_NOT_DEFINED | STATE_IS_FALSY | STATE_IS_NULL);
                 } else if (expression instanceof PhpIsset) {
                     result = isInverted
                             ? (STATE_NOT_DEFINED | STATE_IS_NULL)

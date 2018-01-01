@@ -37,6 +37,9 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
     private static int STATE_IS_FALSY    = 16;
     private static int STATE_NOT_FALSY   = 32;
 
+    private static int STATE_CONFLICTING_IS_NULL  = STATE_IS_NULL | STATE_NOT_NULL;
+    private static int STATE_CONFLICTING_IS_FALSY = STATE_IS_FALSY | STATE_NOT_FALSY;
+
     @NotNull
     public String getShortName() {
         return "UnnecessaryEmptinessCheckInspection";
@@ -84,7 +87,10 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                 }
 
                                 /* controversial states resolution */
-                                if ((newState & (STATE_IS_NULL | STATE_NOT_NULL | STATE_IS_FALSY | STATE_NOT_FALSY)) > 0) {
+                                if (
+                                    (newState & STATE_CONFLICTING_IS_NULL)  == STATE_CONFLICTING_IS_NULL ||
+                                    (newState & STATE_CONFLICTING_IS_FALSY) == STATE_CONFLICTING_IS_FALSY
+                                ) {
                                     holder.registerProblem(contexts.get(index), "Seems to be always false.");
                                     contexts.clear();
                                     return;
@@ -110,7 +116,9 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                             ? (STATE_DEFINED | STATE_NOT_FALSY | STATE_NOT_NULL)
                             : (STATE_NOT_DEFINED | STATE_IS_FALSY | STATE_IS_NULL);
                 } else if (expression instanceof PhpIsset) {
-                    result = isInverted ? (STATE_NOT_DEFINED | STATE_IS_NULL) : (STATE_DEFINED | STATE_NOT_NULL);
+                    result = isInverted
+                            ? (STATE_NOT_DEFINED | STATE_IS_NULL)
+                            : (STATE_DEFINED | STATE_NOT_NULL);
                 } else if (expression instanceof BinaryExpression) {
                     final IElementType operation = ((BinaryExpression) expression).getOperationType();
                     if (operation == PhpTokenTypes.opIDENTICAL) {
@@ -125,7 +133,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                         result = STATE_DEFINED;
                     }
                 } else {
-                    result = STATE_DEFINED | (isInverted ? (STATE_IS_FALSY | STATE_IS_NULL) : (STATE_NOT_FALSY | STATE_NOT_NULL));
+                    result = isInverted ? (STATE_IS_FALSY | STATE_IS_NULL) : (STATE_NOT_FALSY | STATE_NOT_NULL);
                 }
                 return result;
             }

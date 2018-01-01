@@ -5,10 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.PhpEmpty;
-import com.jetbrains.php.lang.psi.elements.PhpIsset;
-import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -33,9 +30,12 @@ import java.util.stream.Stream;
 public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
     private static final String message = "...";
 
-    private static int STATE_DEFINED   = 1;
-    private static int STATE_NOT_NULL  = 2;
-    private static int STATE_NOT_FALCY = 4;
+    private static int STATE_DEFINED     = 1;
+    private static int STATE_NOT_DEFINED = 2;
+    private static int STATE_IS_NULL     = 4;
+    private static int STATE_NOT_NULL    = 8;
+    private static int STATE_IS_FALSY    = 16;
+    private static int STATE_NOT_FALSY   = 32;
 
     @NotNull
     public String getShortName() {
@@ -111,27 +111,30 @@ holder.registerProblem(argument, contexts.toString());
             }
 
             private int calculateState(@NotNull PsiElement expression) {
+                PsiElement parent = expression.getParent();
+                parent            = parent instanceof ParenthesizedExpression ? parent.getParent() : parent;
+
                 final int result;
-                final boolean isInverted = expression.getParent() instanceof UnaryExpression;
+                final boolean isInverted = parent instanceof UnaryExpression;
                 if (expression instanceof PhpEmpty) {
-                    result = isInverted ? (STATE_DEFINED & STATE_NOT_FALCY & STATE_NOT_NULL) : (~STATE_DEFINED | ~STATE_NOT_FALCY | ~STATE_NOT_NULL);
+                    result = 0;
                 } else if (expression instanceof PhpIsset) {
-                    result = isInverted ? (STATE_DEFINED & STATE_NOT_NULL) : (~STATE_DEFINED | ~STATE_NOT_NULL);
+                    result = isInverted ? (STATE_NOT_DEFINED | STATE_IS_NULL) : (STATE_DEFINED | STATE_NOT_NULL);
                 } else if (expression instanceof BinaryExpression) {
                     final IElementType operation = ((BinaryExpression) expression).getOperationType();
                     if (operation == PhpTokenTypes.opIDENTICAL) {
-                        result = STATE_DEFINED & ~STATE_NOT_NULL;
+                        result = STATE_DEFINED | STATE_IS_NULL;
                     } else if (operation == PhpTokenTypes.opNOT_IDENTICAL) {
-                        result = STATE_DEFINED & STATE_NOT_NULL;
+                        result = STATE_DEFINED | STATE_NOT_NULL;
                     } else if (operation == PhpTokenTypes.opEQUAL) {
-                        result = STATE_DEFINED & (~STATE_NOT_FALCY | ~STATE_NOT_NULL);
+                        result = 0;
                     } else if (operation == PhpTokenTypes.opNOT_EQUAL) {
-                        result = STATE_DEFINED & ~STATE_NOT_FALCY & ~STATE_NOT_NULL;
+                        result = 0;
                     } else {
                         result = STATE_DEFINED;
                     }
                 } else {
-                    result = STATE_DEFINED & (isInverted ? (~STATE_NOT_FALCY | ~STATE_NOT_NULL) : (STATE_NOT_FALCY & STATE_NOT_NULL));
+                    result = 0;
                 }
                 return result;
             }

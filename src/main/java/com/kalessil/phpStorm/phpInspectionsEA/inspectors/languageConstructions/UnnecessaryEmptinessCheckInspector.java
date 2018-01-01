@@ -77,9 +77,8 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
 //holder.registerProblem(contexts.get(index), String.valueOf(stateChange));
 
                                 /* accumulatedState [&, |] stateChange suppose to make SOME difference (always true case) */
-                                final int newState = operator == PhpTokenTypes.opAND
-                                        ? (accumulatedState & stateChange)
-                                        : (accumulatedState | stateChange);
+                                final int newState = accumulatedState | stateChange;
+                                // operator == PhpTokenTypes.opAND ? (accumulatedState & stateChange) : (accumulatedState | stateChange);
                                 if (accumulatedState == newState) {
                                     holder.registerProblem(contexts.get(index), "Seems to be always true.");
                                     contexts.clear();
@@ -113,8 +112,8 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                 final boolean isInverted = parent instanceof UnaryExpression;
                 if (expression instanceof PhpEmpty) {
                     result = isInverted
-                            ? (STATE_DEFINED | STATE_NOT_FALSY | STATE_NOT_NULL)
-                            : (STATE_NOT_DEFINED | STATE_IS_FALSY | STATE_IS_NULL);
+                            ? (STATE_DEFINED | STATE_NOT_FALSY)
+                            : (STATE_NOT_DEFINED | STATE_IS_FALSY);
                 } else if (expression instanceof PhpIsset) {
                     result = isInverted
                             ? (STATE_NOT_DEFINED | STATE_IS_NULL)
@@ -133,7 +132,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                         result = STATE_DEFINED;
                     }
                 } else {
-                    result = isInverted ? (STATE_IS_FALSY | STATE_IS_NULL) : (STATE_NOT_FALSY | STATE_NOT_NULL);
+                    result = isInverted ? STATE_IS_FALSY : STATE_NOT_FALSY ;
                 }
                 return result;
             }

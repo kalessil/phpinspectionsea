@@ -49,7 +49,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 final IElementType operator = expression.getOperationType();
-                if (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opAND) {
+                if (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR) {
                     /* false-positives: part of another condition */
                     final PsiElement parent = expression.getParent();
                     if (parent instanceof BinaryExpression && ((BinaryExpression) parent).getOperationType() == operator) {
@@ -68,9 +68,10 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                             }
 
                             int accumulatedState = calculateState(contexts.get(0));
+//holder.registerProblem(contexts.get(0), String.valueOf(accumulatedState));
                             for (int index = 1, max = contexts.size(); index < max; ++index) {
                                 final int stateChange = calculateState(contexts.get(index));
-//holder.registerProblem(contexts.get(index), String.format("%s <- %s", accumulatedState, stateChange));
+//holder.registerProblem(contexts.get(index), String.valueOf(stateChange));
 
                                 /* accumulatedState [&, |] stateChange suppose to make SOME difference (always true case) */
                                 final int newState = operator == PhpTokenTypes.opAND

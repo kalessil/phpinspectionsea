@@ -75,10 +75,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                             for (int index = 1, max = contexts.size(); index < max; ++index) {
                                 final int stateChange = calculateState(contexts.get(index));
 //holder.registerProblem(contexts.get(index), String.valueOf(stateChange));
-
-                                /* accumulatedState [&, |] stateChange suppose to make SOME difference (always true case) */
                                 final int newState = accumulatedState | stateChange;
-                                // operator == PhpTokenTypes.opAND ? (accumulatedState & stateChange) : (accumulatedState | stateChange);
                                 if (accumulatedState == newState) {
                                     holder.registerProblem(contexts.get(index), "Seems to be always true.");
                                     contexts.clear();
@@ -121,9 +118,9 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                 } else if (expression instanceof BinaryExpression) {
                     final IElementType operation = ((BinaryExpression) expression).getOperationType();
                     if (operation == PhpTokenTypes.opIDENTICAL) {
-                        result = STATE_DEFINED | STATE_NOT_FALSY | STATE_IS_NULL;
+                        result = STATE_IS_NULL;
                     } else if (operation == PhpTokenTypes.opNOT_IDENTICAL) {
-                        result = STATE_DEFINED | STATE_IS_FALSY | STATE_NOT_NULL;
+                        result = STATE_NOT_NULL;
                     } else if (operation == PhpTokenTypes.opEQUAL) {
                         result = STATE_DEFINED | STATE_IS_FALSY | STATE_IS_NULL;
                     } else if (operation == PhpTokenTypes.opNOT_EQUAL) {

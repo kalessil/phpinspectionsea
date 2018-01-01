@@ -73,11 +73,11 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
 //holder.registerProblem(contexts.get(index), String.format("%s <- %s", accumulatedState, stateChange));
 
                                 /* stateChange & accumulatedState suppose to make NO difference (always false case) */
-                                if ((stateChange & accumulatedState) != stateChange) {
+                                /*if ((stateChange & accumulatedState) != stateChange) {
                                     holder.registerProblem(contexts.get(index), "Seems to be always false.");
                                     contexts.clear();
                                     return;
-                                }
+                                }*/
 
                                 /* accumulatedState [&, |] stateChange suppose to make SOME difference (always true case) */
                                 final int newState = operator == PhpTokenTypes.opAND
@@ -102,7 +102,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                             // !empty(...) || ... !== null => !empty(...) + anomalies
                             // empty(...) && !isset(...)   => empty(...)  + anomalies
                             // !empty(...) || isset(...)   => !empty(...)  + anomalies
-holder.registerProblem(argument, contexts.toString());
+//holder.registerProblem(argument, contexts.toString());
                         }
                         contexts.clear();
                     });

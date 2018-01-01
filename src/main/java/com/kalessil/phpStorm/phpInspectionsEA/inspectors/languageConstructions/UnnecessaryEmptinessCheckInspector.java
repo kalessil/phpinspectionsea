@@ -59,25 +59,33 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                     final HashMap<PsiElement, List<PsiElement>> grouping = this.group(this.extract(expression, operator));
                     grouping.forEach((argument, contexts) -> {
                         if (contexts.size() > 1) {
+                            final boolean isTraget = contexts.stream().anyMatch(
+                                e -> e instanceof PhpIsset || e instanceof PhpEmpty || e instanceof BinaryExpression
+                            );
+                            if (!isTraget) {
+                                contexts.clear();
+                                return;
+                            }
+
                             int accumulatedState = calculateState(contexts.get(0));
                             for (int index = 1, max = contexts.size(); index < max; ++index) {
                                 final int stateChange = calculateState(contexts.get(index));
+holder.registerProblem(contexts.get(index), String.format("%s <- %s", accumulatedState, stateChange));
 
                                 /* stateChange & accumulatedState suppose to make NO difference (always false case) */
                                 if ((stateChange & accumulatedState) != stateChange) {
                                     holder.registerProblem(contexts.get(index), "Seems to be always false.");
+                                    contexts.clear();
                                     return;
                                 }
 
                                 /* accumulatedState [&, |] stateChange suppose to make SOME difference (always true case) */
-                                final int newState;
-                                if (operator == PhpTokenTypes.opAND) {
-                                    newState = (accumulatedState & stateChange);
-                                } else {
-                                    newState = (accumulatedState | stateChange);
-                                }
+                                final int newState = operator == PhpTokenTypes.opAND
+                                        ? (accumulatedState & stateChange)
+                                        : (accumulatedState | stateChange);
                                 if (accumulatedState == newState) {
                                     holder.registerProblem(contexts.get(index), "Seems to be always true.");
+                                    contexts.clear();
                                     return;
                                 }
                                 accumulatedState = newState;
@@ -94,7 +102,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                             // !empty(...) || ... !== null => !empty(...) + anomalies
                             // empty(...) && !isset(...)   => empty(...)  + anomalies
                             // !empty(...) || isset(...)   => !empty(...)  + anomalies
-                            holder.registerProblem(argument, contexts.toString());
+holder.registerProblem(argument, contexts.toString());
                         }
                         contexts.clear();
                     });

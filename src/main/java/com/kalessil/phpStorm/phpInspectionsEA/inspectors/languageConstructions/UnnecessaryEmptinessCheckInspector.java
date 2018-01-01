@@ -121,7 +121,9 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                             ? (STATE_DEFINED | STATE_NOT_FALSY | STATE_NOT_NULL)
                             : (STATE_NOT_DEFINED | STATE_IS_FALSY | STATE_IS_NULL);
                 } else if (expression instanceof PhpIsset) {
-                    result = isInverted ? (STATE_NOT_DEFINED | STATE_IS_NULL) : (STATE_DEFINED | STATE_NOT_NULL);
+                    result = isInverted
+                            ? (STATE_NOT_DEFINED | STATE_IS_NULL)
+                            : (STATE_DEFINED | STATE_NOT_NULL | STATE_IS_FALSY);
                 } else if (expression instanceof BinaryExpression) {
                     final IElementType operation = ((BinaryExpression) expression).getOperationType();
                     if (operation == PhpTokenTypes.opIDENTICAL) {

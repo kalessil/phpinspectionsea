@@ -28,7 +28,10 @@ import java.util.stream.Stream;
  */
 
 public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
-    private static final String message = "...";
+    private static final String messageControvertialIsset = "Always false (isset-alike semantics)";
+    private static final String messageControvertialFalsy = "Always false (falsy value)";
+    private static final String messageControvertialNull  = "Always false (null value)";
+    private static final String messageNonContributing    = "Always true";
 
     private static int STATE_DEFINED     = 1;
     private static int STATE_NOT_DEFINED = 2;
@@ -37,8 +40,12 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
     private static int STATE_IS_FALSY    = 16;
     private static int STATE_NOT_FALSY   = 32;
 
+    private static int STATE_IS_SET      = 64;
+    private static int STATE_NOT_SET     = 128;
+
     private static int STATE_CONFLICTING_IS_NULL  = STATE_IS_NULL | STATE_NOT_NULL;
     private static int STATE_CONFLICTING_IS_FALSY = STATE_IS_FALSY | STATE_NOT_FALSY;
+    private static int STATE_CONFLICTING_IS_SET   = STATE_IS_SET | STATE_NOT_SET;
 
     @NotNull
     public String getShortName() {
@@ -75,19 +82,21 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                     final PsiElement context = contexts.get(index);
                                     final int stateChange    = states[index] = calculateState(context);
                                     final int newState       = accumulatedState | stateChange;
-                                    /* non-contributing states resolution */
                                     if (accumulatedState == newState) {
-                                        holder.registerProblem(context, "Seems to be always true.");
-                                    }
-                                    /* controversial states resolution */
-                                    else if (
-                                        (newState & STATE_CONFLICTING_IS_NULL)  == STATE_CONFLICTING_IS_NULL ||
-                                        (newState & STATE_CONFLICTING_IS_FALSY) == STATE_CONFLICTING_IS_FALSY
-                                    ) {
-                                        holder.registerProblem(context, "Seems to be always false.");
+                                        holder.registerProblem(context, messageNonContributing);
+                                    } else if ((newState & STATE_CONFLICTING_IS_NULL) == STATE_CONFLICTING_IS_NULL) {
+                                        holder.registerProblem(context, messageControvertialNull);
+                                    } else if ((newState & STATE_CONFLICTING_IS_FALSY) == STATE_CONFLICTING_IS_FALSY) {
+                                        holder.registerProblem(context, messageControvertialFalsy);
+                                    } else if ((newState & STATE_CONFLICTING_IS_SET) == STATE_CONFLICTING_IS_SET) {
+                                        holder.registerProblem(context, messageControvertialIsset);
                                     }
                                     accumulatedState = newState;
                                 }
+
+                                /*
+                                 * empty($argument) = !isset($argument) || !$argument
+                                 */
                             }
                         }
                         contexts.clear();
@@ -104,12 +113,12 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                 final boolean isInverted = parent instanceof UnaryExpression;
                 if (expression instanceof PhpEmpty) {
                     result = isInverted
-                            ? (STATE_DEFINED | STATE_NOT_FALSY)
-                            : (STATE_DEFINED | STATE_IS_FALSY);
+                            ? (STATE_IS_SET | STATE_DEFINED | STATE_NOT_FALSY)
+                            : (STATE_NOT_SET | STATE_DEFINED | STATE_IS_FALSY);
                 } else if (expression instanceof PhpIsset) {
                     result = isInverted
-                            ? (STATE_DEFINED | STATE_IS_NULL)
-                            : (STATE_DEFINED | STATE_NOT_NULL);
+                            ? (STATE_NOT_SET | STATE_DEFINED | STATE_IS_NULL)
+                            : (STATE_IS_SET | STATE_DEFINED | STATE_NOT_NULL);
                 } else if (expression instanceof BinaryExpression) {
                     final IElementType operation = ((BinaryExpression) expression).getOperationType();
                     if (operation == PhpTokenTypes.opIDENTICAL) {
@@ -124,7 +133,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                         result = STATE_DEFINED;
                     }
                 } else {
-                    result = isInverted ? STATE_IS_FALSY : STATE_NOT_FALSY ;
+                    result = isInverted ? (STATE_DEFINED | STATE_IS_FALSY) : (STATE_DEFINED | STATE_NOT_FALSY);
                 }
                 return result;
             }

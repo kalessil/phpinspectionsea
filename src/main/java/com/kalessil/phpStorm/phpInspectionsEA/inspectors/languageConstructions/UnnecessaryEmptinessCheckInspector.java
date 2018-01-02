@@ -81,11 +81,10 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                 e -> e instanceof PhpIsset || e instanceof PhpEmpty || e instanceof BinaryExpression
                             );
                             if (isTarget) {
-                                final int[] states   = new int[contextsCount];
-                                int accumulatedState = states[0] = calculateState(contexts.get(0));
+                                int accumulatedState = calculateState(contexts.get(0));
                                 for (int index = 1; index < contextsCount; ++index) {
                                     final PsiElement context = contexts.get(index);
-                                    final int stateChange    = states[index] = calculateState(context);
+                                    final int stateChange    = calculateState(context);
                                     final int newState       = accumulatedState | stateChange;
                                     if (accumulatedState == newState) {
                                         holder.registerProblem(context, messageNonContributing);

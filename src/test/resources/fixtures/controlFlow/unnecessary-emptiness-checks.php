@@ -25,5 +25,39 @@ class CasesHolder {
                 && !<warning descr="Seems to be always true when reached.">$x</warning>,
         ];
     }
-    //  <warning descr=""></warning>
+
+    private function issetEmptyMix() {
+        return[
+            isset($x) && !empty($x),
+            isset($x) && <warning descr="Doesn't match to previous isset-alike handling (perhaps always false when reached).">empty($x)</warning>,
+            isset($x) || !empty($x),
+            isset($x) || <warning descr="Doesn't match to previous isset-alike handling (perhaps always false when reached).">empty($x)</warning>,
+            !isset($x) || empty($x),
+            !isset($x) || !<warning descr="Doesn't match to previous isset-alike handling (perhaps always false when reached).">empty($x)</warning>,
+            !isset($x) && empty($x),
+            !isset($x) && !<warning descr="Doesn't match to previous isset-alike handling (perhaps always false when reached).">empty($x)</warning>,
+        ];
+    }
+
+    private function nullValueChecks() {
+        return [
+            isset($x) && <warning descr="Seems to be always true when reached.">$x !== null</warning>,
+            isset($x) || <warning descr="Seems to be always true when reached.">$x !== null</warning>,
+            !isset($x) || <warning descr="Seems to be always true when reached.">$x === null</warning>,
+            !isset($x) && <warning descr="Seems to be always true when reached.">$x === null</warning>,
+            isset($x) && <warning descr="Doesn't match to previous null value handling (perhaps always false when reached).">$x === null</warning>,
+            isset($x) || <warning descr="Doesn't match to previous null value handling (perhaps always false when reached).">$x === null</warning>,
+            !isset($x) || <warning descr="Doesn't match to previous null value handling (perhaps always false when reached).">$x !== null</warning>,
+            !isset($x) && <warning descr="Doesn't match to previous null value handling (perhaps always false when reached).">$x !== null</warning>,
+        ];
+    }
+
+    private function falsyValueChecks() {
+        return [
+            empty($x) && !<warning descr="Seems to be always true when reached.">$x</warning>,
+            !empty($x) || <warning descr="Seems to be always true when reached.">$x</warning>,
+            empty($x) && <warning descr="Doesn't match to previous falsy value handling (perhaps always false when reached).">$x</warning>,
+            !empty($x) || !<warning descr="Doesn't match to previous falsy value handling (perhaps always false when reached).">$x</warning>,
+        ];
+    }
 }

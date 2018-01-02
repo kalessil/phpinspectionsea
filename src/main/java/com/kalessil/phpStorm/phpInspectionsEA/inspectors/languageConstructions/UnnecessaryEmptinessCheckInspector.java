@@ -34,6 +34,8 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
     private static final String messageNonContributing    = "Always true";
     private static final String messageNotEmpty           = "'isset(...) && ...' here can be replaced with '!empty(...)'";
     private static final String messageEmpty              = "'!isset(...) || !...' here can be replaced with 'empty(...)'";
+    private static final String messageNotIsset           = "'empty(...) && ... === null' here can be replaced with '!isset(...)'";
+    private static final String messageIsset              = "!empty(...) || ... !== null' here can be replaced with 'isset(...)'";
 
     private static int STATE_DEFINED     = 1;
     private static int STATE_IS_NULL     = 2;
@@ -94,30 +96,46 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                 }
 
                                 if (contexts.stream().noneMatch(e -> e instanceof PhpEmpty)) {
-                                    final Optional<PsiElement> isset = contexts.stream().filter(e -> e instanceof PhpIsset).findFirst();
+                                    final Optional<PsiElement> isset
+                                            = contexts.stream().filter(e -> e instanceof PhpIsset).findFirst();
                                     if (isset.isPresent()) {
                                         final Optional<PsiElement> candidate = contexts.stream()
                                                 .filter(e -> e.getClass() == argument.getClass()).findFirst();
                                         if (candidate.isPresent()) {
                                             if (operator == PhpTokenTypes.opAND) {
-                                                final boolean isEmpty
-                                                        = !this.isInverted(isset.get()) && !this.isInverted(candidate.get());
-                                                if (isEmpty) {
+                                                if (!this.isInverted(isset.get()) && !this.isInverted(candidate.get())) {
                                                     holder.registerProblem(isset.get(), messageNotEmpty);
                                                 }
                                             } else {
-                                                final boolean isEmpty
-                                                        = this.isInverted(isset.get()) && this.isInverted(candidate.get());
-                                                if (isEmpty) {
+                                                if (this.isInverted(isset.get()) && this.isInverted(candidate.get())) {
                                                     holder.registerProblem(isset.get(), messageEmpty);
                                                 }
                                             }
                                         }
                                     }
                                 } else {
-                                    final Optional<PsiElement> empty = contexts.stream().filter(e -> e instanceof PhpEmpty).findFirst();
+                                    final Optional<PsiElement> empty
+                                            = contexts.stream().filter(e -> e instanceof PhpEmpty).findFirst();
                                     if (empty.isPresent()) {
-                                        /* find BOs */
+                                        IElementType targetOperator = null;
+                                        String targetMessage        = null;
+                                        if (operator == PhpTokenTypes.opAND && !this.isInverted(empty.get())) {
+                                            targetOperator = PhpTokenTypes.opIDENTICAL;
+                                            targetMessage  = messageNotIsset;
+                                        } else if (operator == PhpTokenTypes.opOR && this.isInverted(empty.get())) {
+                                            targetOperator = PhpTokenTypes.opNOT_IDENTICAL;
+                                            targetMessage  = messageIsset;
+                                        }
+                                        if (targetOperator != null) {
+                                            for (final PsiElement context : contexts) {
+                                                if (context instanceof BinaryExpression) {
+                                                    if (((BinaryExpression) context).getOperationType() == targetOperator) {
+                                                        holder.registerProblem(empty.get(), targetMessage);
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }

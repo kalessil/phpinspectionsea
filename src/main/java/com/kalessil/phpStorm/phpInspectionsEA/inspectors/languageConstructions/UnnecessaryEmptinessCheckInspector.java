@@ -36,14 +36,13 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
     private static final String messageEmpty              = "'!isset(...) || !...' here can be replaced with 'empty(...)'";
 
     private static int STATE_DEFINED     = 1;
-    private static int STATE_NOT_DEFINED = 2;
-    private static int STATE_IS_NULL     = 4;
-    private static int STATE_NOT_NULL    = 8;
-    private static int STATE_IS_FALSY    = 16;
-    private static int STATE_NOT_FALSY   = 32;
+    private static int STATE_IS_NULL     = 2;
+    private static int STATE_NOT_NULL    = 4;
+    private static int STATE_IS_FALSY    = 8;
+    private static int STATE_NOT_FALSY   = 16;
 
-    private static int STATE_IS_SET      = 64;
-    private static int STATE_NOT_SET     = 128;
+    private static int STATE_IS_SET      = 32;
+    private static int STATE_NOT_SET     = 64;
 
     private static int STATE_CONFLICTING_IS_NULL  = STATE_IS_NULL | STATE_NOT_NULL;
     private static int STATE_CONFLICTING_IS_FALSY = STATE_IS_FALSY | STATE_NOT_FALSY;
@@ -95,20 +94,30 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                 }
 
                                 if (contexts.stream().noneMatch(e -> e instanceof PhpEmpty)) {
-                                    final Optional<PsiElement> isset     = contexts.stream().filter(e -> e instanceof PhpIsset).findFirst();
-                                    final Optional<PsiElement> candidate = contexts.stream().filter(e -> e.getClass() == argument.getClass()).findFirst();
-                                    if (isset.isPresent() && candidate.isPresent()) {
-                                        if (operator == PhpTokenTypes.opAND) {
-                                            final boolean isEmpty = !this.isInverted(isset.get()) && !this.isInverted(candidate.get());
-                                            if (isEmpty) {
-                                                holder.registerProblem(isset.get(), messageNotEmpty);
-                                            }
-                                        } else {
-                                            final boolean isEmpty = this.isInverted(isset.get()) && this.isInverted(candidate.get());
-                                            if (isEmpty) {
-                                                holder.registerProblem(isset.get(), messageEmpty);
+                                    final Optional<PsiElement> isset = contexts.stream().filter(e -> e instanceof PhpIsset).findFirst();
+                                    if (isset.isPresent()) {
+                                        final Optional<PsiElement> candidate = contexts.stream()
+                                                .filter(e -> e.getClass() == argument.getClass()).findFirst();
+                                        if (candidate.isPresent()) {
+                                            if (operator == PhpTokenTypes.opAND) {
+                                                final boolean isEmpty
+                                                        = !this.isInverted(isset.get()) && !this.isInverted(candidate.get());
+                                                if (isEmpty) {
+                                                    holder.registerProblem(isset.get(), messageNotEmpty);
+                                                }
+                                            } else {
+                                                final boolean isEmpty
+                                                        = this.isInverted(isset.get()) && this.isInverted(candidate.get());
+                                                if (isEmpty) {
+                                                    holder.registerProblem(isset.get(), messageEmpty);
+                                                }
                                             }
                                         }
+                                    }
+                                } else {
+                                    final Optional<PsiElement> empty = contexts.stream().filter(e -> e instanceof PhpEmpty).findFirst();
+                                    if (empty.isPresent()) {
+                                        /* find BOs */
                                     }
                                 }
                             }

@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.15-dev</version>
+  <version>2.3.15</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -56,24 +56,25 @@ the implementation.
     ]]></description>
 
   <change-notes><![CDATA[
-Bug-fixes and enhancements:<br/>
+Happy new year! We've improved something for you:<br/>
 <br/>
-- Default value is hidden in else branch: dropped<br/>
-- Exceptions handling and annotating: new patterns (methods without PhpDoc)<br/>
-- Exceptions handling and annotating: new settings<br/>
 - Exploiting unserialize: resolved false-positives (UTs)<br/>
 - Magic methods validity: resolved false-positives (multiple cases)<br/>
 - Phar-incompatible 'realpath(...)' usage: resolved false-positives (UTs)<br/>
-- PhpUnit: bugs and best practices: new patterns<br/>
 - PhpUnit: bugs and best practices: resolved false-positives (multiple cases)<br/>
-- PhpUnit: unnecessary assertion: implemented<br/>
-- Security advisories for Composer packages: new packages (vfsStream)<br/>
 - Statement could be decoupled from foreach: resolved false-positives (compact function)<br/>
 - Variable functions usage: resolved false-positives (call_user_func suggestion in some cases)<br/>
-
-- ReturnTypeCanBeDeclaredInspector: use self when specified in PhpDoc<br/>
-- ScandirUsageInspector: resolved false-positives (imported functions)<br/>
-- MkdirRaceConditionInspector: resolved false-positives (imported functions)<br/>
+- 'scandir(...)' low performing usage: resolved false-positives (imported functions)<br/>
+- 'mkdir(...)' race condition: resolved false-positives (imported functions)<br/>
+<br/>
+- Exceptions handling and annotating: new patterns (methods without PhpDoc)<br/>
+- Exceptions handling and annotating: new settings (exceptions to ignore)<br/>
+- PhpUnit: bugs and best practices: new patterns<br/>
+- Return type hint can be used: use self when specified in PhpDoc<br/>
+- Security advisories for Composer packages: new packages (vfsStream)<br/>
+<br/>
+- Default value is hidden in else branch: dropped<br/>
+- PhpUnit: unnecessary assertion: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>

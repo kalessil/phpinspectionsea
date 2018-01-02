@@ -32,6 +32,8 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
     private static final String messageControvertialFalsy = "Always false (falsy value)";
     private static final String messageControvertialNull  = "Always false (null value)";
     private static final String messageNonContributing    = "Always true";
+    private static final String messageNotEmpty           = "'isset(...) && ...' here can be replaced with '!empty(...)'";
+    private static final String messageEmpty              = "'!isset(...) || !...' here can be replaced with 'empty(...)'";
 
     private static int STATE_DEFINED     = 1;
     private static int STATE_NOT_DEFINED = 2;
@@ -91,6 +93,24 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                     }
                                     accumulatedState = newState;
                                 }
+
+                                if (contexts.stream().noneMatch(e -> e instanceof PhpEmpty)) {
+                                    final Optional<PsiElement> isset     = contexts.stream().filter(e -> e instanceof PhpIsset).findFirst();
+                                    final Optional<PsiElement> candidate = contexts.stream().filter(e -> e.getClass() == argument.getClass()).findFirst();
+                                    if (isset.isPresent() && candidate.isPresent()) {
+                                        if (operator == PhpTokenTypes.opAND) {
+                                            final boolean isEmpty = !this.isInverted(isset.get()) && !this.isInverted(candidate.get());
+                                            if (isEmpty) {
+                                                holder.registerProblem(isset.get(), messageNotEmpty);
+                                            }
+                                        } else {
+                                            final boolean isEmpty = this.isInverted(isset.get()) && this.isInverted(candidate.get());
+                                            if (isEmpty) {
+                                                holder.registerProblem(isset.get(), messageEmpty);
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                         contexts.clear();
@@ -99,12 +119,14 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                 }
             }
 
-            private int calculateState(@NotNull PsiElement expression) {
-                PsiElement parent = expression.getParent();
-                parent            = parent instanceof ParenthesizedExpression ? parent.getParent() : parent;
+            private boolean isInverted (@NotNull PsiElement expression) {
+                final PsiElement parent = expression.getParent();
+                return (parent instanceof ParenthesizedExpression ? parent.getParent() : parent) instanceof UnaryExpression;
+            }
 
+            private int calculateState(@NotNull PsiElement expression) {
                 final int result;
-                final boolean isInverted = parent instanceof UnaryExpression;
+                final boolean isInverted = this.isInverted(expression);
                 if (expression instanceof PhpEmpty) {
                     result = isInverted
                             ? (STATE_IS_SET | STATE_DEFINED | STATE_NOT_FALSY)

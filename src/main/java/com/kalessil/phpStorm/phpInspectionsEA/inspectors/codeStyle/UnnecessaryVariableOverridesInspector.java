@@ -74,12 +74,15 @@ public class UnnecessaryVariableOverridesInspector extends BasePhpInspection {
                                         final String candidateName = ((Variable) candidate).getName();
                                         if (candidateName.equals(sourceName)) {
                                             /* false-positive: parameter by reference */
-                                            final FunctionReference call = (FunctionReference) value.getParent().getParent();
-                                            final PsiElement function    = OpenapiResolveUtil.resolveReference(call);
-                                            if (function instanceof Function) {
-                                                final Parameter[] parameters = ((Function) function).getParameters();
-                                                if (parameters.length > 0 && parameters[0].isPassByRef()) {
-                                                    return;
+                                            final PsiElement call = value.getParent().getParent();
+                                            if (call instanceof FunctionReference) {
+                                                final PsiElement function
+                                                        = OpenapiResolveUtil.resolveReference((FunctionReference) call);
+                                                if (function instanceof Function) {
+                                                    final Parameter[] parameters = ((Function) function).getParameters();
+                                                    if (parameters.length > 0 && parameters[0].isPassByRef()) {
+                                                        return;
+                                                    }
                                                 }
                                             }
 

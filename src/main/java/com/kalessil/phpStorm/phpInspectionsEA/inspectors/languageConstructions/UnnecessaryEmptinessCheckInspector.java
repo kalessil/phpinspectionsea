@@ -66,26 +66,23 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                 e -> e instanceof PhpIsset || e instanceof PhpEmpty || e instanceof BinaryExpression
                             );
                             if (!isTarget) {
-                                contexts.clear();
-                                return;
-                            }
-
-                            int accumulatedState = calculateState(contexts.get(0));
-                            for (int index = 1, max = contexts.size(); index < max; ++index) {
-                                final int stateChange = calculateState(contexts.get(index));
-                                final int newState    = accumulatedState | stateChange;
-                                /* non-contributing states resolution */
-                                if (accumulatedState == newState) {
-                                    holder.registerProblem(contexts.get(index), "Seems to be always true.");
+                                int accumulatedState = calculateState(contexts.get(0));
+                                for (int index = 1, max = contexts.size(); index < max; ++index) {
+                                    final int stateChange = calculateState(contexts.get(index));
+                                    final int newState    = accumulatedState | stateChange;
+                                    /* non-contributing states resolution */
+                                    if (accumulatedState == newState) {
+                                        holder.registerProblem(contexts.get(index), "Seems to be always true.");
+                                    }
+                                    /* controversial states resolution */
+                                    else if (
+                                        (newState & STATE_CONFLICTING_IS_NULL)  == STATE_CONFLICTING_IS_NULL ||
+                                        (newState & STATE_CONFLICTING_IS_FALSY) == STATE_CONFLICTING_IS_FALSY
+                                    ) {
+                                        holder.registerProblem(contexts.get(index), "Seems to be always false.");
+                                    }
+                                    accumulatedState = newState;
                                 }
-                                /* controversial states resolution */
-//                                else if (
-//                                    (newState & STATE_CONFLICTING_IS_NULL)  == STATE_CONFLICTING_IS_NULL ||
-//                                    (newState & STATE_CONFLICTING_IS_FALSY) == STATE_CONFLICTING_IS_FALSY
-//                                ) {
-//                                    holder.registerProblem(contexts.get(index), "Seems to be always false.");
-//                                }
-                                accumulatedState = newState;
                             }
                         }
                         contexts.clear();
@@ -103,17 +100,17 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                 if (expression instanceof PhpEmpty) {
                     result = isInverted
                             ? (STATE_DEFINED | STATE_NOT_FALSY)
-                            : (STATE_NOT_DEFINED | STATE_IS_FALSY);
+                            : (STATE_DEFINED | STATE_IS_FALSY);
                 } else if (expression instanceof PhpIsset) {
                     result = isInverted
-                            ? (STATE_NOT_DEFINED | STATE_IS_NULL)
+                            ? (STATE_DEFINED | STATE_IS_NULL)
                             : (STATE_DEFINED | STATE_NOT_NULL);
                 } else if (expression instanceof BinaryExpression) {
                     final IElementType operation = ((BinaryExpression) expression).getOperationType();
                     if (operation == PhpTokenTypes.opIDENTICAL) {
-                        result = STATE_IS_NULL;
+                        result = STATE_DEFINED | STATE_IS_NULL;
                     } else if (operation == PhpTokenTypes.opNOT_IDENTICAL) {
-                        result = STATE_NOT_NULL;
+                        result = STATE_DEFINED | STATE_NOT_NULL;
                     } else if (operation == PhpTokenTypes.opEQUAL) {
                         result = STATE_DEFINED | STATE_IS_FALSY | STATE_IS_NULL;
                     } else if (operation == PhpTokenTypes.opNOT_EQUAL) {

@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsUltimate</id>
   <name>Php Inspections (EA Ultimate)</name>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -25,7 +25,7 @@ A commercial Static Code Analyzer based on <a href="https://plugins.jetbrains.co
 <a href="https://kalessil.github.io/php-inspections-ultimate.html#pricing-mark">Pricing</a>.<br />
 <br />
 Php Inspections (EA Ultimate) is further extending IDE code analysis capabilities, with focus on finding defects,
-security, performance issues and maintainability. To get a closer look at features (13 new and 6 enhanced inspections)
+security, performance issues and maintainability. To get a closer look at features (14 new and 6 enhanced inspections)
 you are welcome to try it 2 weeks for free.<br />
 <br />
 For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/help/keyboard-shortcuts-and-mouse-reference.html">this reference card</a>. Windows/Linux ones are:<br />
@@ -42,18 +42,19 @@ the implementation.
     ]]></description>
 
   <change-notes><![CDATA[
-New inspections and bug-fixes:<br/>
+Happy new year! New ultimate features for you:<br/>
 <br/>
 - Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/41946">v2.3.15</a><br/>
 <br/>
-- UnnecessaryEmptinessCheckInspection: implemented<br/>
-- ClassExistenceCheckInspector: implemented<br/>
-- UnnecessaryContinueInspector: implemented<br/>
-- UnserializeExploitsInspector: new patterns<br/>
-- NullPointerExceptionInspector: new patterns<br/>
-- FilePutContentsRaceConditionInspector: resolved false-positives (UTs)<br/>
-- NonSecureHtmlspecialcharsUsageInspector: resolved false-positives (UTs)<br/>
-- NonSecureHtmlentitiesUsageInspector: resolved false-positives (UTs)<br/>
+- Insecure 'htmlentities(...)' usage: resolved false-positives (UTs)<br/>
+- Insecure 'htmlspecialchars(...)' usage: resolved false-positives (UTs)<br/>
+- 'file_put_contents(...)' race condition: resolved false-positives (UTs)<br/>
+<br/>
+- Class existence and relation check correctness: implemented<br/>
+- Exploiting unserialize: new patterns<br/>
+- Null reference: new patterns<br/>
+- Unnecessary continue statements: implemented<br/>
+- Unnecessary emptiness check: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>

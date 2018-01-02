@@ -66,7 +66,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                             final boolean isTarget = contexts.stream().anyMatch(
                                 e -> e instanceof PhpIsset || e instanceof PhpEmpty || e instanceof BinaryExpression
                             );
-                            if (!isTarget) {
+                            if (isTarget) {
                                 final int[] states = new int[contextsCount];
 
                                 /* Strategy 1: falsy values/null values  */

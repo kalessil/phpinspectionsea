@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
                         if (clazz != null && !clazz.isInterface()) {
                             final String methodName      = callable.getName();
                             final List<PhpClass> parents = new ArrayList<>(Arrays.asList(clazz.getImplementedInterfaces()));
-                            parents.add(clazz.getSuperClass());
+                            parents.add(OpenapiResolveUtil.resolveSuperClass(clazz));
                             for (final PhpClass parent : parents) {
                                 if (parent != null && parent.findMethodByName(methodName) != null) {
                                     return;

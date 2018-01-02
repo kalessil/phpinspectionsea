@@ -97,7 +97,7 @@ final public class ThrowsResolveUtil {
         if (clazz != null) {
             final String methodName = method.getName();
             /* inherited methods */
-            final PhpClass parent = clazz.getSuperClass();
+            final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
             if (parent != null) {
                 final Method parentMethod = parent.findMethodByName(methodName);
                 if (parentMethod != null && !processedMethods.contains(parentMethod)) {

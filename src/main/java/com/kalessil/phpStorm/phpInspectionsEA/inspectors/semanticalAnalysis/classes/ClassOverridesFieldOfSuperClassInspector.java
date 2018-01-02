@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -63,7 +64,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
                     return;
                 }
 
-                final PhpClass parent     = clazz.getSuperClass();
+                final PhpClass parent     = OpenapiResolveUtil.resolveSuperClass(clazz);
                 final String ownFieldName = ownField.getName();
                 final Field parentField   = parent == null ? null : parent.findFieldByName(ownFieldName, false);
                 if (parentField != null) {

@@ -52,7 +52,7 @@ final public class PropertyUsedInPrivateContextStrategy {
 
     public static void apply(@NotNull PhpClass clazz, @NotNull ProblemsHolder holder) {
         if (!clazz.isFinal() && !clazz.isInterface()) {
-            final PhpClass parent           = clazz.getSuperClass();
+            final PhpClass parent           = OpenapiResolveUtil.resolveSuperClass(clazz);
             final Map<String, Field> fields = new HashMap<>();
             for (final Field field : clazz.getOwnFields()) {
                 if (field.getModifier().isProtected()) {

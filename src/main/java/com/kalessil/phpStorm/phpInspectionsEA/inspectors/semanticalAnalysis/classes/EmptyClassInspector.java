@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +48,7 @@ public class EmptyClassInspector extends BasePhpInspection {
                 if (clazz.isInterface() || clazz.isDeprecated() || clazz.getTraits().length > 0) {
                     result = true;
                 } else {
-                    final PhpClass parent = clazz.getSuperClass();
+                    final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
                     if (parent != null) {
                         if (parent.isAbstract()) {
                             /* inheriting abstract classes - we can be forced to have it empty */

@@ -84,7 +84,7 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                         }
                     }
                 }
-                final PhpClass parent = clazz.getSuperClass();
+                final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
                 if (null == parent || useReportTargets.isEmpty()) {
                     useReportTargets.clear();
                     return;

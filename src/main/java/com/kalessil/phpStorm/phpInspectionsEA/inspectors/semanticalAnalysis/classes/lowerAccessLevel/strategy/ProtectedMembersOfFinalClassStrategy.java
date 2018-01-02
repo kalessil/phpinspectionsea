@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpClassMember;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.fixers.MakePrivateFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.utils.ModifierExtractionUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -24,7 +25,7 @@ final public class ProtectedMembersOfFinalClassStrategy {
     public static void apply(@NotNull PhpClassMember subject, @NotNull ProblemsHolder holder) {
         final PhpClass clazz          = subject.getContainingClass();
         final boolean isTargetContext = clazz != null && clazz.isFinal() && subject.getModifier().isProtected();
-        if (isTargetContext && clazz.getSuperClass() == null &&!isOverride(subject, clazz)) {
+        if (isTargetContext && OpenapiResolveUtil.resolveSuperClass(clazz) == null &&!isOverride(subject, clazz)) {
             final PsiElement modifier = ModifierExtractionUtil.getProtectedModifier(subject);
             if (modifier != null) {
                 holder.registerProblem(modifier, message, new MakePrivateFixer(modifier));
@@ -34,7 +35,7 @@ final public class ProtectedMembersOfFinalClassStrategy {
 
     private static boolean isOverride(@NotNull PhpClassMember member, @NotNull PhpClass clazz) {
         boolean result        = false;
-        final PhpClass parent = clazz.getSuperClass();
+        final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
         if (null != parent) {
             final String memberName = member.getName();
             final PhpClassMember parentMember

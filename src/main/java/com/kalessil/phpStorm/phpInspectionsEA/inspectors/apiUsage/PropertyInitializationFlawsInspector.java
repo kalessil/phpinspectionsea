@@ -49,7 +49,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
             public void visitPhpField(Field field) {
                 if (REPORT_DEFAULTS_FLAWS && !field.isConstant()) {
                     final PhpClass clazz       = field.getContainingClass();
-                    final PhpClass parentClazz = clazz == null ? null : clazz.getSuperClass();
+                    final PhpClass parentClazz = clazz == null ? null : OpenapiResolveUtil.resolveSuperClass(clazz);
                     final Field originField    = parentClazz == null ? null : parentClazz.findFieldByName(field.getName(), false);
 
                     final PsiElement fieldDefault  = field.getDefaultValue();

@@ -36,7 +36,7 @@ public class MktimeUsageInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName       = reference.getName();
                 final PsiElement[] params       = reference.getParameters();
-                final boolean neededParamsCount = params.length == 0 || params.length == 7;
+                final boolean neededParamsCount = params.length == 0 || (params.length == 7 && !params[6].getText().isEmpty());
                 if (neededParamsCount && functionName != null && (functionName.equals("mktime") || functionName.equals("gmmktime"))) {
                     if (params.length == 0) {
                         holder.registerProblem(reference, messageUseTime, ProblemHighlightType.WEAK_WARNING, new UseTimeFunctionLocalFix("time()"));

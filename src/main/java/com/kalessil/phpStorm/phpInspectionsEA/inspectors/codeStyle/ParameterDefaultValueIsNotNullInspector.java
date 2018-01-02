@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.Parameter;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +58,7 @@ public class ParameterDefaultValueIsNotNullInspector extends BasePhpInspection {
                     if (!violations.isEmpty()) {
                         if (function instanceof Method) {
                             final PhpClass clazz      = ((Method) function).getContainingClass();
-                            final PhpClass parent     = null == clazz ? null : clazz.getSuperClass();
+                            final PhpClass parent     = null == clazz ? null : OpenapiResolveUtil.resolveSuperClass(clazz);
                             final Method parentMethod = null == parent ? null : parent.findMethodByName(function.getName());
                             if (parentMethod != null && !parentMethod.getAccess().isPrivate()) {
                                 violations.clear();

@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -38,7 +39,7 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
                 final boolean canUseConstants = php.compareTo(PhpLanguageLevel.PHP560) >= 0;
 
                 /* parent class might already introduce fields */
-                final PhpClass parent = clazz.getSuperClass();
+                final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
                 for (final Field field : clazz.getOwnFields()) {
                     /* if we can report field at all */
                     final PsiElement nameNode = NamedElementUtil.getNameIdentifier(field);

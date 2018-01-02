@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -56,7 +57,7 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
                 }
 
                 PhpClass classToCheck = clazz;
-                PhpClass parent       = classToCheck.getSuperClass();
+                PhpClass parent       = OpenapiResolveUtil.resolveSuperClass(classToCheck);
                 /* false-positives: abstract class implementation */
                 if (null != parent && !classToCheck.isAbstract() && parent.isAbstract()) {
                     return;
@@ -66,7 +67,7 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
                 /* in source code class CAN extend itself, PS will report it but data structure is incorrect still */
                 while (null != parent && clazz != parent) {
                     classToCheck = parent;
-                    parent       = classToCheck.getSuperClass();
+                    parent       = OpenapiResolveUtil.resolveSuperClass(classToCheck);
                     ++parentsCount;
 
                     if (null != parent) {

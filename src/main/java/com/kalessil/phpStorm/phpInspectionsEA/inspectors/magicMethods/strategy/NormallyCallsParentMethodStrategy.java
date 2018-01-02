@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.apache.commons.lang.StringUtils;
 
 /*
@@ -30,7 +31,7 @@ public class NormallyCallsParentMethodStrategy {
         }
 
         /* find parent with protected/public method, if not overrides anything, terminate inspection */
-        final PhpClass parent       = clazz.getSuperClass();
+        final PhpClass parent       = OpenapiResolveUtil.resolveSuperClass(clazz);
         final Method   parentMethod = parent == null ? null : parent.findMethodByName(methodName);
         final PhpClass methodHolder = parentMethod == null ? null : parentMethod.getContainingClass();
         if (methodHolder == null || parentMethod.isAbstract() || parentMethod.getAccess().isPrivate()) {

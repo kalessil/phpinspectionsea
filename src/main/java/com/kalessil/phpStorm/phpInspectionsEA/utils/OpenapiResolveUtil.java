@@ -71,4 +71,16 @@ final public class OpenapiResolveUtil {
             return new ArrayList<>();
         }
     }
+
+    @Nullable
+    static public PhpClass resolveSuperClass(@NotNull PhpClass clazz) {
+        try {
+            return clazz.getSuperClass();
+        } catch (Throwable error) {
+            if (error instanceof ProcessCanceledException) {
+                throw error;
+            }
+            return null;
+        }
+    }
 }

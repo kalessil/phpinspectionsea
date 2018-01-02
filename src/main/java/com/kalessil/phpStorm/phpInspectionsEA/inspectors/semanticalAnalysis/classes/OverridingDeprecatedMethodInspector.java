@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -44,7 +45,7 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                 final String searchMethodName = method.getName();
 
                 /* search for deprecated parent methods */
-                final PhpClass parent     = clazz.getSuperClass();
+                final PhpClass parent     = OpenapiResolveUtil.resolveSuperClass(clazz);
                 final Method parentMethod = null == parent ? null : parent.findMethodByName(searchMethodName);
                 if (null != parentMethod) {
                     if (!method.isDeprecated() && parentMethod.isDeprecated()) {

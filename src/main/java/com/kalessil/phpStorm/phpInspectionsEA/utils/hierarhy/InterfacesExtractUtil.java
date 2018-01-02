@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy;
 
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -32,7 +33,7 @@ final public class InterfacesExtractUtil {
             }
 
             /* handle parent class */
-            final PhpClass parent = clazz.getSuperClass();
+            final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
             if (parent != null && clazz != parent) {
                 processClass(parent, processedItems, withClasses);
             }

@@ -48,6 +48,7 @@ Inspections Lists (Control flow)
 | Control Flow         | CompactCanBeUsedInspection                      | 'compact(...)' can be used                                                        | yes | yes | yes  | no  |
 | Control Flow         | UnnecessaryVariableOverridesInspection          | Unnecessary variable overrides                                                    | yes | yes | yes  | no  |
 | Control Flow         | UnnecessaryContinueInspection                   | Unnecessary continue statements                                                   | yes | yes | yes  | no  |
+| Control Flow         | UnnecessaryEmptinessCheckInspection             | Unnecessary emptiness check                                                       | n/a | yes | n/a  | no  |
 
 Inspections Lists (PhpUnit)
 ---

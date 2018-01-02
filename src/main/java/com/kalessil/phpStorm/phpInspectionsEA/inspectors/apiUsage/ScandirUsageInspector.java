@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ScandirUsageInspector extends BasePhpInspection {
-    private static final String messagePattern = "'scandir(...)' sorts results by default, please specify the second argument.";
+    private static final String message = "'scandir(...)' sorts results by default, please specify the second argument.";
 
     @NotNull
     public String getShortName() {
@@ -30,12 +30,15 @@ public class ScandirUsageInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
+            @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final String functionName    = reference.getName();
-                final PsiElement[] arguments = reference.getParameters();
-                if (functionName != null && arguments.length == 1 && functionName.equals("scandir")) {
-                    final String replacement = "scandir(%a%, SCANDIR_SORT_NONE)".replace("%a%", arguments[0].getText());
-                    holder.registerProblem(reference, messagePattern, new NoSortFix(replacement));
+                final String functionName = reference.getName();
+                if (functionName != null && functionName.equals("scandir")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 1 && this.isFromRootNamespace(reference)) {
+                        final String replacement = String.format("scandir(%s, SCANDIR_SORT_NONE)", arguments[0].getText());
+                        holder.registerProblem(reference, message, new NoSortFix(replacement));
+                    }
                 }
             }
         };

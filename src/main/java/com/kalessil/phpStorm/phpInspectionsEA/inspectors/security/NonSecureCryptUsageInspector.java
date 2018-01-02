@@ -16,13 +16,11 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.ConcatenationExpression;
-import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,15 +43,12 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* general structure requirements */
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if ((1 != params.length && 2 != params.length) || functionName == null || !functionName.equals("crypt")) {
+                if (functionName == null || !functionName.equals("crypt")) {
                     return;
                 }
-                /* avoid complaining to imported functions */
-                final PsiElement function = OpenapiResolveUtil.resolveReference(reference);
-                if (function instanceof Function && !((Function) function).getFQN().equals("\\crypt")) {
+                final PsiElement[] params = reference.getParameters();
+                if ((1 != params.length && 2 != params.length) || !this.isFromRootNamespace(reference)) {
                     return;
                 }
 

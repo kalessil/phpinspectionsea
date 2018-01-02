@@ -54,20 +54,20 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     return;
                 }
 
-                /* false-positives: test classes */
-                if (this.isTestContext(reference)) {
+                /* false-positives: test classes and functions not from root NS */
+                if (this.isTestContext(reference) || !this.isFromRootNamespace(reference)) {
                     return;
                 }
 
                 /* ind out expression where the call is contained - quite big set of variations */
                 final ExpressionLocateResult searchResult = new ExpressionLocateResult();
                 this.locateExpression(reference, searchResult);
-                final PsiElement target  = searchResult.getReportingTarget();
-                final PsiElement context = target == null ? null : target.getParent();
+                final PsiElement target = searchResult.getReportingTarget();
                 if (target == null) {
                     return;
                 }
 
+                final PsiElement context = target.getParent();
                 // case 1: if ([!]mkdir(...))
                 if (context instanceof If || OpenapiTypesUtil.isStatementImpl(context)) {
                     final String resource = arguments[0].getText();
@@ -86,8 +86,9 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
 
                     /* deal with nested conditions */
                     BinaryExpression binary = (BinaryExpression) context;
-                    if (binary.getRightOperand() == target && binary.getParent() instanceof BinaryExpression) {
-                        binary = (BinaryExpression) binary.getParent();
+                    final PsiElement parent = binary.getParent();
+                    if (binary.getRightOperand() == target && parent instanceof BinaryExpression) {
+                        binary = (BinaryExpression) parent;
                     }
 
                     /* check if following expression contains is_dir */
@@ -123,45 +124,30 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
 
             private void locateExpression(@NotNull PsiElement expression, @NotNull ExpressionLocateResult status) {
                 final PsiElement parent = expression.getParent();
-
-                if (
-                    parent instanceof If || parent instanceof AssignmentExpression ||
-                    OpenapiTypesUtil.isStatementImpl(parent)
-                ) {
+                if (parent instanceof If || parent instanceof AssignmentExpression || OpenapiTypesUtil.isStatementImpl(parent)) {
                     status.setReportingTarget(expression);
-                    return;
-                }
-                if (parent instanceof ParenthesizedExpression) {
+                } else if (parent instanceof ParenthesizedExpression) {
                     this.locateExpression(parent, status);
-                    return;
-                }
-                if (parent instanceof UnaryExpression) {
-                    final UnaryExpression unary = (UnaryExpression) parent;
-                    final PsiElement operation  = unary.getOperation();
+                } else if (parent instanceof UnaryExpression) {
+                    final PsiElement operation = ((UnaryExpression) parent).getOperation();
                     if (operation != null) {
-                        final IElementType operator = operation.getNode().getElementType();
-                        if (operator == PhpTokenTypes.opNOT) {
+                        if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opNOT)) {
                             status.setInverted(!status.isInverted());
-                            this.locateExpression(unary, status);
-                            return;
-                        }
-                        if (operator == PhpTokenTypes.opSILENCE) {
-                            this.locateExpression(unary, status);
+                            this.locateExpression(parent, status);
+                        } else if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opSILENCE)) {
+                            this.locateExpression(parent, status);
                         }
                     }
-                    return;
-                }
-                if (parent instanceof BinaryExpression) {
-                    final BinaryExpression binary = (BinaryExpression) parent;
-                    final IElementType operation  = binary.getOperationType();
+                } else if (parent instanceof BinaryExpression) {
+                    final IElementType operation = ((BinaryExpression) parent).getOperationType();
                     if (
                         PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation) ||
                         PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operation)
                     ) {
                         status.setReportingTarget(expression);
-                        return;
+                    } else {
+                        this.locateExpression(parent, status);
                     }
-                    this.locateExpression(binary, status);
                 }
             }
         };
@@ -209,7 +195,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target != null) {
+            if (target != null && !project.isDisposed()) {
                 final String throwPart = "throw new \\RuntimeException(sprintf('Directory \"%%s\" was not created', %s));";
                 final String pattern   = "if (!mkdir(%s) && !is_dir(%s)) { %s }";
                 final String code      = String.format(pattern, resource, resource, String.format(throwPart, resource));
@@ -240,7 +226,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target != null) {
+            if (target != null && !project.isDisposed()) {
                 final PsiElement parent = target.getParent();
                 if (parent instanceof If) {
                     final String code = String.format("(!mkdir(%s) && !is_dir(%s))", resource, resource);

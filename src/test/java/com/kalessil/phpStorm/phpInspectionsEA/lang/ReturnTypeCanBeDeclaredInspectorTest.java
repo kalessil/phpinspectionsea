@@ -30,7 +30,9 @@ final public class ReturnTypeCanBeDeclaredInspectorTest extends PhpCodeInsightFi
 
     public void testReturnTypeGeneration() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
-        myFixture.enableInspections(new ReturnTypeCanBeDeclaredInspector());
+        final ReturnTypeCanBeDeclaredInspector inspector = new ReturnTypeCanBeDeclaredInspector();
+        inspector.LOOKUP_PHPDOC_RETURN_DECLARATIONS      = true;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("fixtures/lang/typeHints/return-type-hints.replacement-generation.php");
         myFixture.testHighlighting(true, false, true);
     }

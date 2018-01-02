@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,8 +60,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                 boolean checksIsNull = true;
                 PsiElement target    = reference;
                 if (parent instanceof UnaryExpression) {
-                    final PsiElement operation = ((UnaryExpression) parent).getOperation();
-                    if (null != operation && PhpTokenTypes.opNOT == operation.getNode().getElementType()) {
+                    if (OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.opNOT)) {
                         checksIsNull = false;
                         target       = parent;
                     }

@@ -11,6 +11,7 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableI
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -164,12 +165,13 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             if (variable instanceof Variable && value instanceof PhpTypedElement) {
                                 final String variableName = variable.getName();
                                 if (variableName != null && variableName.equals(parameterName)) {
-                                    final Set<String> resolved =
-                                            ((PhpTypedElement) value).getType().global(project)
-                                                    .filterUnknown().getTypes().stream()
-                                                        .map(Types::getType)
-                                                        .filter(type -> !type.equals(Types.strMixed))
-                                                        .collect(Collectors.toSet());
+                                    final PhpType resolvedType = OpenapiResolveUtil.resolveType((PhpTypedElement) value, project);
+                                    final Set<String> resolved = resolvedType == null
+                                            ? new HashSet<>()
+                                            : resolvedType.filterUnknown().getTypes().stream()
+                                                    .map(Types::getType)
+                                                    .filter(type -> !type.equals(Types.strMixed))
+                                                    .collect(Collectors.toSet());
                                     final boolean valueIsMethodCall = value instanceof MethodReference;
                                     for (String type : resolved) {
                                         /* translate static/self into FQNs */

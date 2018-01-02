@@ -61,25 +61,30 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
 
                     final HashMap<PsiElement, List<PsiElement>> grouping = this.group(this.extract(expression, operator));
                     grouping.forEach((argument, contexts) -> {
-                        if (contexts.size() > 1) {
+                        final int contextsCount = contexts.size();
+                        if (contextsCount > 1) {
                             final boolean isTarget = contexts.stream().anyMatch(
                                 e -> e instanceof PhpIsset || e instanceof PhpEmpty || e instanceof BinaryExpression
                             );
                             if (!isTarget) {
-                                int accumulatedState = calculateState(contexts.get(0));
-                                for (int index = 1, max = contexts.size(); index < max; ++index) {
-                                    final int stateChange = calculateState(contexts.get(index));
-                                    final int newState    = accumulatedState | stateChange;
+                                final int[] states = new int[contextsCount];
+
+                                /* Strategy 1: falsy values/null values  */
+                                int accumulatedState = states[0] = calculateState(contexts.get(0));
+                                for (int index = 1; index < contextsCount; ++index) {
+                                    final PsiElement context = contexts.get(index);
+                                    final int stateChange    = states[index] = calculateState(context);
+                                    final int newState       = accumulatedState | stateChange;
                                     /* non-contributing states resolution */
                                     if (accumulatedState == newState) {
-                                        holder.registerProblem(contexts.get(index), "Seems to be always true.");
+                                        holder.registerProblem(context, "Seems to be always true.");
                                     }
                                     /* controversial states resolution */
                                     else if (
                                         (newState & STATE_CONFLICTING_IS_NULL)  == STATE_CONFLICTING_IS_NULL ||
                                         (newState & STATE_CONFLICTING_IS_FALSY) == STATE_CONFLICTING_IS_FALSY
                                     ) {
-                                        holder.registerProblem(contexts.get(index), "Seems to be always false.");
+                                        holder.registerProblem(context, "Seems to be always false.");
                                     }
                                     accumulatedState = newState;
                                 }

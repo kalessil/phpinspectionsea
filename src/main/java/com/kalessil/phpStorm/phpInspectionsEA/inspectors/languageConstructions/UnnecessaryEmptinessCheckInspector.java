@@ -74,9 +74,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                 e -> e instanceof PhpIsset || e instanceof PhpEmpty || e instanceof BinaryExpression
                             );
                             if (isTarget) {
-                                final int[] states = new int[contextsCount];
-
-                                /* Strategy 1: falsy values/null values  */
+                                final int[] states   = new int[contextsCount];
                                 int accumulatedState = states[0] = calculateState(contexts.get(0));
                                 for (int index = 1; index < contextsCount; ++index) {
                                     final PsiElement context = contexts.get(index);
@@ -93,10 +91,6 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                     }
                                     accumulatedState = newState;
                                 }
-
-                                /*
-                                 * empty($argument) = !isset($argument) || !$argument
-                                 */
                             }
                         }
                         contexts.clear();

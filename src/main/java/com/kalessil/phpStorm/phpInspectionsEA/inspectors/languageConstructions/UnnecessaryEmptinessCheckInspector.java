@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -16,6 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -33,11 +35,15 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
     private static final String messageControvertialFalsy = "Doesn't match to previous falsy value handling (perhaps always false when reached).";
     private static final String messageControvertialNull  = "Doesn't match to previous null value handling (perhaps always false when reached).";
     private static final String messageNonContributing    = "Seems to be always true when reached.";
-
     private static final String messageNotEmpty           = "'isset(...) && ...' here can be replaced with '!empty(...)'.";
     private static final String messageEmpty              = "'!isset(...) || !...' here can be replaced with 'empty(...)'.";
     private static final String messageNotIsset           = "'empty(...) && ... === null' here can be replaced with '!isset(...)'.";
     private static final String messageIsset              = "!empty(...) || ... !== null' here can be replaced with 'isset(...)'.";
+
+    // Inspection options.
+    public boolean SUGGEST_SIMPLIFICATIONS  = true;
+    public boolean REPORT_CONTROVERTIAL     = true;
+    public boolean REPORT_NON_CONTRIBUTIONG = true;
 
     private static int STATE_DEFINED     = 1;
     private static int STATE_IS_NULL     = 2;
@@ -87,54 +93,64 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                     final int stateChange    = calculateState(context);
                                     final int newState       = accumulatedState | stateChange;
                                     if (accumulatedState == newState) {
-                                        holder.registerProblem(context, messageNonContributing);
+                                        if (REPORT_NON_CONTRIBUTIONG) {
+                                            holder.registerProblem(context, messageNonContributing);
+                                        }
                                     } else if ((newState & STATE_CONFLICTING_IS_NULL) == STATE_CONFLICTING_IS_NULL) {
-                                        holder.registerProblem(context, messageControvertialNull);
+                                        if (REPORT_CONTROVERTIAL) {
+                                            holder.registerProblem(context, messageControvertialNull);
+                                        }
                                     } else if ((newState & STATE_CONFLICTING_IS_FALSY) == STATE_CONFLICTING_IS_FALSY) {
-                                        holder.registerProblem(context, messageControvertialFalsy);
+                                        if (REPORT_CONTROVERTIAL) {
+                                            holder.registerProblem(context, messageControvertialFalsy);
+                                        }
                                     } else if ((newState & STATE_CONFLICTING_IS_SET) == STATE_CONFLICTING_IS_SET) {
-                                        holder.registerProblem(context, messageControvertialIsset);
+                                        if (REPORT_CONTROVERTIAL) {
+                                            holder.registerProblem(context, messageControvertialIsset);
+                                        }
                                     }
                                     accumulatedState = newState;
                                 }
 
-                                if (contexts.stream().noneMatch(e -> e instanceof PhpEmpty)) {
-                                    final Optional<PsiElement> isset
-                                            = contexts.stream().filter(e -> e instanceof PhpIsset).findFirst();
-                                    if (isset.isPresent()) {
-                                        final Optional<PsiElement> candidate = contexts.stream()
-                                                .filter(e -> e.getClass() == argument.getClass()).findFirst();
-                                        if (candidate.isPresent()) {
-                                            if (operator == PhpTokenTypes.opAND) {
-                                                if (!this.isInverted(isset.get()) && !this.isInverted(candidate.get())) {
-                                                    holder.registerProblem(isset.get(), messageNotEmpty);
-                                                }
-                                            } else {
-                                                if (this.isInverted(isset.get()) && this.isInverted(candidate.get())) {
-                                                    holder.registerProblem(isset.get(), messageEmpty);
+                                if (SUGGEST_SIMPLIFICATIONS) {
+                                    if (contexts.stream().noneMatch(e -> e instanceof PhpEmpty)) {
+                                        final Optional<PsiElement> isset
+                                                = contexts.stream().filter(e -> e instanceof PhpIsset).findFirst();
+                                        if (isset.isPresent()) {
+                                            final Optional<PsiElement> candidate = contexts.stream()
+                                                    .filter(e -> e.getClass() == argument.getClass()).findFirst();
+                                            if (candidate.isPresent()) {
+                                                if (operator == PhpTokenTypes.opAND) {
+                                                    if (!this.isInverted(isset.get()) && !this.isInverted(candidate.get())) {
+                                                        holder.registerProblem(isset.get(), messageNotEmpty);
+                                                    }
+                                                } else {
+                                                    if (this.isInverted(isset.get()) && this.isInverted(candidate.get())) {
+                                                        holder.registerProblem(isset.get(), messageEmpty);
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
-                                } else {
-                                    final Optional<PsiElement> empty
-                                            = contexts.stream().filter(e -> e instanceof PhpEmpty).findFirst();
-                                    if (empty.isPresent()) {
-                                        IElementType targetOperator = null;
-                                        String targetMessage        = null;
-                                        if (operator == PhpTokenTypes.opAND && !this.isInverted(empty.get())) {
-                                            targetOperator = PhpTokenTypes.opIDENTICAL;
-                                            targetMessage  = messageNotIsset;
-                                        } else if (operator == PhpTokenTypes.opOR && this.isInverted(empty.get())) {
-                                            targetOperator = PhpTokenTypes.opNOT_IDENTICAL;
-                                            targetMessage  = messageIsset;
-                                        }
-                                        if (targetOperator != null) {
-                                            for (final PsiElement context : contexts) {
-                                                if (context instanceof BinaryExpression) {
-                                                    if (((BinaryExpression) context).getOperationType() == targetOperator) {
-                                                        holder.registerProblem(empty.get(), targetMessage);
-                                                        break;
+                                    } else {
+                                        final Optional<PsiElement> empty
+                                                = contexts.stream().filter(e -> e instanceof PhpEmpty).findFirst();
+                                        if (empty.isPresent()) {
+                                            IElementType targetOperator = null;
+                                            String targetMessage        = null;
+                                            if (operator == PhpTokenTypes.opAND && !this.isInverted(empty.get())) {
+                                                targetOperator = PhpTokenTypes.opIDENTICAL;
+                                                targetMessage  = messageNotIsset;
+                                            } else if (operator == PhpTokenTypes.opOR && this.isInverted(empty.get())) {
+                                                targetOperator = PhpTokenTypes.opNOT_IDENTICAL;
+                                                targetMessage  = messageIsset;
+                                            }
+                                            if (targetOperator != null) {
+                                                for (final PsiElement context : contexts) {
+                                                    if (context instanceof BinaryExpression) {
+                                                        if (((BinaryExpression) context).getOperationType() == targetOperator) {
+                                                            holder.registerProblem(empty.get(), targetMessage);
+                                                            break;
+                                                        }
                                                     }
                                                 }
                                             }
@@ -255,4 +271,13 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
             }
         };
     }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Suggest simplifications", SUGGEST_SIMPLIFICATIONS, (isSelected) -> SUGGEST_SIMPLIFICATIONS = isSelected);
+            component.addCheckbox("Report ambiguous statements", REPORT_NON_CONTRIBUTIONG, (isSelected) -> REPORT_NON_CONTRIBUTIONG = isSelected);
+            component.addCheckbox("Report controversial statements", REPORT_CONTROVERTIAL, (isSelected) -> REPORT_CONTROVERTIAL = isSelected);
+        });
+    }
+
 }

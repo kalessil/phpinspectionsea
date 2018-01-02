@@ -28,14 +28,15 @@ import java.util.stream.Stream;
  */
 
 public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
-    private static final String messageControvertialIsset = "Always false (isset-alike semantics)";
-    private static final String messageControvertialFalsy = "Always false (falsy value)";
-    private static final String messageControvertialNull  = "Always false (null value)";
-    private static final String messageNonContributing    = "Always true";
-    private static final String messageNotEmpty           = "'isset(...) && ...' here can be replaced with '!empty(...)'";
-    private static final String messageEmpty              = "'!isset(...) || !...' here can be replaced with 'empty(...)'";
-    private static final String messageNotIsset           = "'empty(...) && ... === null' here can be replaced with '!isset(...)'";
-    private static final String messageIsset              = "!empty(...) || ... !== null' here can be replaced with 'isset(...)'";
+    private static final String messageControvertialIsset = "Doesn't match to previous isset-alike handling (perhaps always false when reached).";
+    private static final String messageControvertialFalsy = "Doesn't match to previous falsy value handling (perhaps always false when reached).";
+    private static final String messageControvertialNull  = "Doesn't match to previous null value handling (perhaps always false when reached).";
+    private static final String messageNonContributing    = "Seems to be always true when reached.";
+
+    private static final String messageNotEmpty           = "'isset(...) && ...' here can be replaced with '!empty(...)'.";
+    private static final String messageEmpty              = "'!isset(...) || !...' here can be replaced with 'empty(...)'.";
+    private static final String messageNotIsset           = "'empty(...) && ... === null' here can be replaced with '!isset(...)'.";
+    private static final String messageIsset              = "!empty(...) || ... !== null' here can be replaced with 'isset(...)'.";
 
     private static int STATE_DEFINED     = 1;
     private static int STATE_IS_NULL     = 2;

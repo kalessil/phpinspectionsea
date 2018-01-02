@@ -77,7 +77,6 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                 /* non-contributing states resolution */
                                 if (accumulatedState == newState) {
                                     holder.registerProblem(contexts.get(index), "Seems to be always true.");
-                                    break;
                                 }
                                 /* controversial states resolution */
 //                                else if (
@@ -85,12 +84,8 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
 //                                    (newState & STATE_CONFLICTING_IS_FALSY) == STATE_CONFLICTING_IS_FALSY
 //                                ) {
 //                                    holder.registerProblem(contexts.get(index), "Seems to be always false.");
-//                                    break;
 //                                }
-                                /* all good, continue */
-                                else {
-                                    accumulatedState = newState;
-                                }
+                                accumulatedState = newState;
                             }
                         }
                         contexts.clear();

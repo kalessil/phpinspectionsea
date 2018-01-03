@@ -122,7 +122,6 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                             } else {
                                 holder.registerProblem(nameNode, messageDepends, ProblemHighlightType.GENERIC_ERROR);
                             }
-                            references.clear();
                         }
                     } else if (tagName.equals("@covers")) {
                         final PsiElement candidate = tag.getFirstPsiChild();
@@ -153,7 +152,6 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                 final String message = String.format(messageCovers, referenceText);
                                 holder.registerProblem(nameNode, message, ProblemHighlightType.GENERIC_ERROR);
                             }
-                            references.clear();
                         }
                     } else if (tagName.equals("@test")) {
                         if (isMethodNamedAsTest) {

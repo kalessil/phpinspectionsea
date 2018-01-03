@@ -7,5 +7,10 @@ class DependsAnnotationHolder {
     abstract function dependsCorrect();
 
     /** @depends outer */
-    abstract public function <error descr="@depends referencing to a non-existing entity.">dependsTypo</error>();
+    abstract public function <error descr="@depends referencing to a non-existing or inappropriate entity.">dependsTypo</error>();
+
+    abstract function dataProvider();
+
+    /** @depends dataProvider */
+    abstract public function <error descr="@depends referencing to a non-existing or inappropriate entity.">dependsInappropriate</error>();
 }

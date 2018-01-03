@@ -45,7 +45,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
     // Inspection options.
     public boolean SUGGEST_TO_USE_ASSERTSAME = false;
 
-    private final static String messageDepends = "@depends referencing to a non-existing entity.";
+    private final static String messageDepends = "@depends referencing to a non-existing or inappropriate entity.";
     private final static String messageCovers  = "@covers referencing to a non-existing entity";
     private final static String messageTest    = "@test is ambiguous because method name starts with 'test'.";
 
@@ -71,11 +71,25 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 for (final PhpDocTag tag : PsiTreeUtil.findChildrenOfType(phpDoc, PhpDocTag.class)) {
                     final String tagName = tag.getName();
 
-                    if (tagName.equals("@depends") && tag.getFirstPsiChild() instanceof PhpDocRef) {
-                        final PhpDocRef methodNeeded = (PhpDocRef) tag.getFirstPsiChild();
-                        /* if resolved properly, it will have 1 reference */
-                        if (1 != methodNeeded.getReferences().length) {
-                            holder.registerProblem(objMethodName, messageDepends, ProblemHighlightType.GENERIC_ERROR);
+                    if (tagName.equals("@depends")) {
+                        final PsiElement candidate = tag.getFirstPsiChild();
+                        if (candidate instanceof PhpDocRef) {
+                            /* if resolved properly, it will have 1 reference */
+                            final PsiReference[] references = candidate.getReferences();
+                            if (references.length == 1) {
+                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(references[0]);
+                                if (resolved instanceof Method) {
+                                    final Method dependency = (Method) resolved;
+                                    if (!dependency.getName().startsWith("test")) {
+                                        final PhpDocComment docBlock = dependency.getDocComment();
+                                        if (docBlock == null || docBlock.getTagElementsByName("@test").length == 0) {
+                                            holder.registerProblem(objMethodName, messageDepends, ProblemHighlightType.GENERIC_ERROR);
+                                        }
+                                    }
+                                }
+                            } else {
+                                holder.registerProblem(objMethodName, messageDepends, ProblemHighlightType.GENERIC_ERROR);
+                            }
                         }
                     } else if (tagName.equals("@covers") && tag.getFirstPsiChild() instanceof PhpDocRef) {
                         final PhpDocRef referenceNeeded     = (PhpDocRef) tag.getFirstPsiChild();

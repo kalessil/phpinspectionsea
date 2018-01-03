@@ -45,7 +45,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
     public boolean SUGGEST_TO_USE_ASSERTSAME     = false;
     public boolean SUGGEST_TO_USE_NAMED_DATASETS = false;
 
-    private final static String messageNamedProvider = "It would be better to use named datasets in @dataProvider.";
+    private final static String messageNamedProvider = "It would be better for maintainability to to use named datasets in @dataProvider.";
     private final static String messageDataProvider  = "@dataProvider referencing to a non-existing entity.";
     private final static String messageDepends       = "@depends referencing to a non-existing or inappropriate entity.";
     private final static String messageCovers        = "@covers referencing to a non-existing entity";

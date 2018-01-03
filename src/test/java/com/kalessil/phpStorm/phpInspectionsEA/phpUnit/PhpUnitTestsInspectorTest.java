@@ -26,6 +26,13 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.configureByFile("fixtures/phpUnit/annotation-depends.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testIfFindsDataProviderAnnotationPatterns() {
+        final PhpUnitTestsInspector inspector   = new PhpUnitTestsInspector();
+        inspector.SUGGEST_TO_USE_NAMED_DATASETS = true;
+        myFixture.enableInspections(inspector);
+        myFixture.configureByFile("fixtures/phpUnit/annotation-data-provider.php");
+        myFixture.testHighlighting(true, false, true);
+    }
     public void testIfFindsAssetNullNotNullPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
         myFixture.configureByFile("fixtures/phpUnit/assert-null-not-null.php");

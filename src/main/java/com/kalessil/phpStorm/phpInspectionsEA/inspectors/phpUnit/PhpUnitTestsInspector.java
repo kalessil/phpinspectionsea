@@ -87,8 +87,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                         if (last instanceof PhpReturn) {
                                             final PsiElement value = ExpressionSemanticUtil.getReturnValue((PhpReturn) last);
                                             if (value instanceof ArrayCreationExpression) {
-                                                boolean isNamedDataset      = false;
                                                 final PsiElement firstChild = ((ArrayCreationExpression) value).getFirstPsiChild();
+                                                boolean isNamedDataset      = firstChild == null;
                                                 if (firstChild instanceof ArrayHashElement) {
                                                     final PsiElement key = ((ArrayHashElement) firstChild).getKey();
                                                     isNamedDataset       = key instanceof StringLiteralExpression;

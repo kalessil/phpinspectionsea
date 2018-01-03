@@ -21,7 +21,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +47,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
     private final static String messageNamedProvider = "It would be better for maintainability to to use named datasets in @dataProvider.";
     private final static String messageDataProvider  = "@dataProvider referencing to a non-existing entity.";
     private final static String messageDepends       = "@depends referencing to a non-existing or inappropriate entity.";
-    private final static String messageCovers        = "@covers referencing to a non-existing entity";
+    private final static String messageCovers        = "@covers referencing to a non-existing entity '%s'";
     private final static String messageTest          = "@test is ambiguous because method name starts with 'test'.";
 
     @NotNull
@@ -62,10 +61,10 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                final PhpClass clazz           = method.getContainingClass();
-                final PsiElement objMethodName = NamedElementUtil.getNameIdentifier(method);
-                final PhpDocComment phpDoc     = method.getDocComment();
-                if (null == clazz || null == objMethodName || phpDoc == null) {
+                final PhpClass clazz       = method.getContainingClass();
+                final PsiElement nameNode  = NamedElementUtil.getNameIdentifier(method);
+                final PhpDocComment phpDoc = method.getDocComment();
+                if (null == clazz || null == nameNode || phpDoc == null) {
                     return;
                 }
 
@@ -94,14 +93,14 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                                     isNamedDataset       = key instanceof StringLiteralExpression;
                                                 }
                                                 if (!isNamedDataset) {
-                                                    holder.registerProblem(objMethodName, messageNamedProvider, ProblemHighlightType.WEAK_WARNING);
+                                                    holder.registerProblem(nameNode, messageNamedProvider, ProblemHighlightType.WEAK_WARNING);
                                                 }
                                             }
                                         }
                                     }
                                 }
                             } else {
-                                holder.registerProblem(objMethodName, messageDataProvider, ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(nameNode, messageDataProvider, ProblemHighlightType.GENERIC_ERROR);
                             }
                         }
                     } else if (tagName.equals("@depends")) {
@@ -116,12 +115,12 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                     if (!dependency.getName().startsWith("test")) {
                                         final PhpDocComment docBlock = dependency.getDocComment();
                                         if (docBlock == null || docBlock.getTagElementsByName("@test").length == 0) {
-                                            holder.registerProblem(objMethodName, messageDepends, ProblemHighlightType.GENERIC_ERROR);
+                                            holder.registerProblem(nameNode, messageDepends, ProblemHighlightType.GENERIC_ERROR);
                                         }
                                     }
                                 }
                             } else {
-                                holder.registerProblem(objMethodName, messageDepends, ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(nameNode, messageDepends, ProblemHighlightType.GENERIC_ERROR);
                             }
                         }
                     } else if (tagName.equals("@covers")) {
@@ -149,8 +148,9 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                             }
 
                             final boolean callableNeeded = referenceText.contains("::");
-                            if ((callableNeeded && !hasCallableReference) || (!callableNeeded && hasClassReference)) {
-                                holder.registerProblem(objMethodName, messageCovers, ProblemHighlightType.GENERIC_ERROR);
+                            if ((callableNeeded && !hasCallableReference) || (!callableNeeded && !hasClassReference)) {
+                                final String message = String.format(messageCovers, referenceText);
+                                holder.registerProblem(nameNode, message, ProblemHighlightType.GENERIC_ERROR);
                             }
                         }
                     } else if (tagName.equals("@test")) {

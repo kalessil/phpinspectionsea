@@ -106,10 +106,10 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     } else if (tagName.equals("@depends")) {
                         final PsiElement candidate = tag.getFirstPsiChild();
                         if (candidate instanceof PhpDocRef) {
-                            /* if resolved properly, it will have 1 reference */
-                            final PsiReference[] references = candidate.getReferences();
-                            if (references.length == 1) {
-                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(references[0]);
+                            final List<PsiReference> references = Arrays.asList(candidate.getReferences());
+                            if (!references.isEmpty()) {
+                                Collections.reverse(references);
+                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(references.get(0));
                                 if (resolved instanceof Method) {
                                     final Method dependency = (Method) resolved;
                                     if (!dependency.getName().startsWith("test")) {
@@ -122,6 +122,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                             } else {
                                 holder.registerProblem(nameNode, messageDepends, ProblemHighlightType.GENERIC_ERROR);
                             }
+                            references.clear();
                         }
                     } else if (tagName.equals("@covers")) {
                         final PsiElement candidate = tag.getFirstPsiChild();
@@ -152,6 +153,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                 final String message = String.format(messageCovers, referenceText);
                                 holder.registerProblem(nameNode, message, ProblemHighlightType.GENERIC_ERROR);
                             }
+                            references.clear();
                         }
                     } else if (tagName.equals("@test")) {
                         if (isMethodNamedAsTest) {

@@ -45,9 +45,10 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
     // Inspection options.
     public boolean SUGGEST_TO_USE_ASSERTSAME = false;
 
-    private final static String messageDepends = "@depends referencing to a non-existing or inappropriate entity.";
-    private final static String messageCovers  = "@covers referencing to a non-existing entity";
-    private final static String messageTest    = "@test is ambiguous because method name starts with 'test'.";
+    private final static String messageDataProvider = "@dataProvider referencing to a non-existing entity.";
+    private final static String messageDepends      = "@depends referencing to a non-existing or inappropriate entity.";
+    private final static String messageCovers       = "@covers referencing to a non-existing entity";
+    private final static String messageTest         = "@test is ambiguous because method name starts with 'test'.";
 
     @NotNull
     public String getShortName() {
@@ -71,7 +72,21 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 for (final PhpDocTag tag : PsiTreeUtil.findChildrenOfType(phpDoc, PhpDocTag.class)) {
                     final String tagName = tag.getName();
 
-                    if (tagName.equals("@depends")) {
+                    if (tagName.equals("@dataProvider")) {
+                        final PsiElement candidate = tag.getFirstPsiChild();
+                        if (candidate instanceof PhpDocRef) {
+                            /* if resolved properly, it will have 1 reference */
+                            final PsiReference[] references = candidate.getReferences();
+                            if (references.length == 1) {
+                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(references[0]);
+                                if (resolved instanceof Method) {
+                                    //... get return and it's argument, check keys
+                                }
+                            } else {
+                                holder.registerProblem(objMethodName, messageDataProvider, ProblemHighlightType.GENERIC_ERROR);
+                            }
+                        }
+                    } else if (tagName.equals("@depends")) {
                         final PsiElement candidate = tag.getFirstPsiChild();
                         if (candidate instanceof PhpDocRef) {
                             /* if resolved properly, it will have 1 reference */

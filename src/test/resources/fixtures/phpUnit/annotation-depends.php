@@ -1,6 +1,7 @@
 <?php
 
 class DependsAnnotationHolder {
+    /** @test */
     abstract function inner();
 
     /** @depends inner */

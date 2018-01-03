@@ -14,15 +14,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -79,8 +78,17 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                             final PsiReference[] references = candidate.getReferences();
                             if (references.length == 1) {
                                 final PsiElement resolved = OpenapiResolveUtil.resolveReference(references[0]);
-                                if (resolved instanceof Method) {
-                                    //... get return and it's argument, check keys
+                                if (resolved instanceof Method && !((Method) resolved).isAbstract()) {
+                                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(resolved);
+                                    if (body != null) {
+                                        final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
+                                        if (last instanceof PhpReturn) {
+                                            final PsiElement value = ExpressionSemanticUtil.getReturnValue((PhpReturn) last);
+                                            if (value instanceof ArrayCreationExpression) {
+                                                // ...
+                                            }
+                                        }
+                                    }
                                 }
                             } else {
                                 holder.registerProblem(objMethodName, messageDataProvider, ProblemHighlightType.GENERIC_ERROR);

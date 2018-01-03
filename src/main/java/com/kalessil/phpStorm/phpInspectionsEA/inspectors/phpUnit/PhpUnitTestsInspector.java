@@ -91,31 +91,34 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                 holder.registerProblem(objMethodName, messageDepends, ProblemHighlightType.GENERIC_ERROR);
                             }
                         }
-                    } else if (tagName.equals("@covers") && tag.getFirstPsiChild() instanceof PhpDocRef) {
-                        final PhpDocRef referenceNeeded     = (PhpDocRef) tag.getFirstPsiChild();
-                        final List<PsiReference> references = Arrays.asList(referenceNeeded.getReferences());
-                        Collections.reverse(references);
+                    } else if (tagName.equals("@covers")) {
+                        final PsiElement candidate = tag.getFirstPsiChild();
+                        if (candidate instanceof PhpDocRef) {
+                            final PhpDocRef referenceNeeded     = (PhpDocRef) candidate;
+                            final List<PsiReference> references = Arrays.asList(referenceNeeded.getReferences());
+                            Collections.reverse(references);
 
-                        /* resolve references, populate information about provided entries */
-                        boolean hasCallableReference = false;
-                        boolean hasClassReference    = false;
-                        final String referenceText   = referenceNeeded.getText();
-                        for (final PsiReference ref : references) {
-                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(ref);
-                            if (resolved instanceof PhpClass) {
-                                hasClassReference    = true;
-                                hasCallableReference = referenceText.endsWith("::");
-                                break;
-                            } else if (resolved instanceof Function) {
-                                hasCallableReference = true;
-                                hasClassReference    = resolved instanceof Method;
-                                break;
+                            /* resolve references, populate information about provided entries */
+                            boolean hasCallableReference = false;
+                            boolean hasClassReference    = false;
+                            final String referenceText   = referenceNeeded.getText();
+                            for (final PsiReference ref : references) {
+                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(ref);
+                                if (resolved instanceof PhpClass) {
+                                    hasClassReference    = true;
+                                    hasCallableReference = referenceText.endsWith("::");
+                                    break;
+                                } else if (resolved instanceof Function) {
+                                    hasCallableReference = true;
+                                    hasClassReference    = resolved instanceof Method;
+                                    break;
+                                }
                             }
-                        }
 
-                        final boolean callableNeeded = referenceText.contains("::");
-                        if ((callableNeeded && !hasCallableReference) || (!callableNeeded && hasClassReference)) {
-                            holder.registerProblem(objMethodName, messageCovers, ProblemHighlightType.GENERIC_ERROR);
+                            final boolean callableNeeded = referenceText.contains("::");
+                            if ((callableNeeded && !hasCallableReference) || (!callableNeeded && hasClassReference)) {
+                                holder.registerProblem(objMethodName, messageCovers, ProblemHighlightType.GENERIC_ERROR);
+                            }
                         }
                     } else if (tagName.equals("@test")) {
                         if (isMethodNamedAsTest) {

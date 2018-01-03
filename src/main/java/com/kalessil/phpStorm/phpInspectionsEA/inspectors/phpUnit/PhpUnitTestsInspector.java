@@ -93,34 +93,39 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         }
                     } else if (tagName.equals("@covers") && tag.getFirstPsiChild() instanceof PhpDocRef) {
                         final PhpDocRef referenceNeeded     = (PhpDocRef) tag.getFirstPsiChild();
-                        final String referenceText          = referenceNeeded.getText();
                         final List<PsiReference> references = Arrays.asList(referenceNeeded.getReferences());
                         Collections.reverse(references);
 
                         /* resolve references, populate information about provided entries */
                         boolean hasCallableReference = false;
                         boolean hasClassReference    = false;
-
-                        final boolean callableNeeded = referenceText.contains("::");
+                        final String referenceText   = referenceNeeded.getText();
                         for (final PsiReference ref : references) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference(ref);
                             if (resolved instanceof PhpClass) {
                                 hasClassReference    = true;
                                 hasCallableReference = referenceText.endsWith("::");
                                 break;
-                            }
-                            if (resolved instanceof Function) {
+                            } else if (resolved instanceof Function) {
                                 hasCallableReference = true;
                                 hasClassReference    = resolved instanceof Method;
                                 break;
                             }
                         }
 
+                        final boolean callableNeeded = referenceText.contains("::");
                         if ((callableNeeded && !hasCallableReference) || (!callableNeeded && hasClassReference)) {
                             holder.registerProblem(objMethodName, messageCovers, ProblemHighlightType.GENERIC_ERROR);
                         }
-                    } else if (tagName.equals("@test") && isMethodNamedAsTest) {
-                        holder.registerProblem(tag.getFirstChild(), messageTest, ProblemHighlightType.LIKE_DEPRECATED, new AmbiguousTestAnnotationLocalFix());
+                    } else if (tagName.equals("@test")) {
+                        if (isMethodNamedAsTest) {
+                            holder.registerProblem(
+                                    tag.getFirstChild(),
+                                    messageTest,
+                                    ProblemHighlightType.LIKE_DEPRECATED,
+                                    new AmbiguousTestAnnotationLocalFix()
+                            );
+                        }
                     }
                 }
             }

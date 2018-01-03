@@ -42,12 +42,14 @@ import java.util.List;
 
 public class PhpUnitTestsInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean SUGGEST_TO_USE_ASSERTSAME = false;
+    public boolean SUGGEST_TO_USE_ASSERTSAME     = false;
+    public boolean SUGGEST_TO_USE_NAMED_DATASETS = false;
 
-    private final static String messageDataProvider = "@dataProvider referencing to a non-existing entity.";
-    private final static String messageDepends      = "@depends referencing to a non-existing or inappropriate entity.";
-    private final static String messageCovers       = "@covers referencing to a non-existing entity";
-    private final static String messageTest         = "@test is ambiguous because method name starts with 'test'.";
+    private final static String messageNamedProvider = "It would be better to use named datasets in @dataProvider.";
+    private final static String messageDataProvider  = "@dataProvider referencing to a non-existing entity.";
+    private final static String messageDepends       = "@depends referencing to a non-existing or inappropriate entity.";
+    private final static String messageCovers        = "@covers referencing to a non-existing entity";
+    private final static String messageTest          = "@test is ambiguous because method name starts with 'test'.";
 
     @NotNull
     public String getShortName() {
@@ -77,15 +79,23 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                             /* if resolved properly, it will have 1 reference */
                             final PsiReference[] references = candidate.getReferences();
                             if (references.length == 1) {
-                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(references[0]);
-                                if (resolved instanceof Method && !((Method) resolved).isAbstract()) {
-                                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(resolved);
-                                    if (body != null) {
-                                        final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
+                                if (SUGGEST_TO_USE_NAMED_DATASETS) {
+                                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(references[0]);
+                                    if (resolved instanceof Method && !((Method) resolved).isAbstract()) {
+                                        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(resolved);
+                                        final PsiElement last     = body == null ? null : ExpressionSemanticUtil.getLastStatement(body);
                                         if (last instanceof PhpReturn) {
                                             final PsiElement value = ExpressionSemanticUtil.getReturnValue((PhpReturn) last);
                                             if (value instanceof ArrayCreationExpression) {
-                                                // ...
+                                                boolean isNamedDataset      = false;
+                                                final PsiElement firstChild = ((ArrayCreationExpression) value).getFirstPsiChild();
+                                                if (firstChild instanceof ArrayHashElement) {
+                                                    final PsiElement key = ((ArrayHashElement) firstChild).getKey();
+                                                    isNamedDataset       = key instanceof StringLiteralExpression;
+                                                }
+                                                if (!isNamedDataset) {
+                                                    holder.registerProblem(objMethodName, messageNamedProvider, ProblemHighlightType.WEAK_WARNING);
+                                                }
                                             }
                                         }
                                     }
@@ -217,6 +227,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
             component.addCheckbox("Suggest to use assertSame", SUGGEST_TO_USE_ASSERTSAME, (isSelected) -> SUGGEST_TO_USE_ASSERTSAME = isSelected);
+            component.addCheckbox("Suggest to use named datasets", SUGGEST_TO_USE_NAMED_DATASETS, (isSelected) -> SUGGEST_TO_USE_NAMED_DATASETS = isSelected);
         });
     }
 

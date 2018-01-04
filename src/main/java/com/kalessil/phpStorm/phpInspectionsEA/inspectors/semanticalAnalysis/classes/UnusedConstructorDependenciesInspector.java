@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -33,27 +34,24 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new PhpElementVisitor() {
-            /**
-             * Extracts private fields list as map name => field object, so we could use name as glue
-             * and direct comparision of object pointers unique for field objects.
-             */
             @NotNull
             private Map<String, Field> getPrivateFields(@NotNull PhpClass clazz) {
                 final Map<String, Field> privateFields = new HashMap<>();
                 for (final Field field : clazz.getOwnFields()) {
-                    final PhpModifier modifiers = field.getModifier();
-                    if (field.isConstant() || !modifiers.isPrivate() || modifiers.isStatic()) {
-                        continue;
+                    if (!field.isConstant()) {
+                        final PhpModifier modifiers = field.getModifier();
+                        if (modifiers.isPrivate() && !modifiers.isStatic()) {
+                            final PhpDocTag[] tags  = PsiTreeUtil.getChildrenOfType(field.getDocComment(), PhpDocTag.class);
+                            final boolean annotated = tags != null && Arrays.stream(tags).anyMatch(t -> !t.getName().equals(t.getName().toLowerCase()));
+                            if (!annotated) {
+                                privateFields.put(field.getName(), field);
+                            }
+                        }
                     }
-
-                    privateFields.put(field.getName(), field);
                 }
-                return  privateFields;
+                return privateFields;
             }
 
-            /**
-             * Extracts private fields references from method as field name => reference objects, so we could use name as glue.
-             */
             @NotNull
             private Map<String, List<FieldReference>> getFieldReferences(@NotNull Method method, @NotNull Map<String, Field> privateFields) {
                 final Map<String, List<FieldReference>> filteredReferences = new HashMap<>();
@@ -84,9 +82,6 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                 return filteredReferences;
             }
 
-            /**
-             * Orchestrates extraction of references from methods
-             */
             @NotNull
             private Map<String, List<FieldReference>> getMethodsFieldReferences(
                     @NotNull PhpClass clazz,

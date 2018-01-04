@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitTestsIns
 
 final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsSameNotSamePatterns() {
-        PhpUnitTestsInspector inspector     = new PhpUnitTestsInspector();
-        inspector.SUGGEST_TO_USE_ASSERTSAME = true;
+        final PhpUnitTestsInspector inspector = new PhpUnitTestsInspector();
+        inspector.SUGGEST_TO_USE_ASSERTSAME   = true;
+        inspector.PROMOTE_PHPUNIT_API         = true;
         myFixture.configureByFile("fixtures/phpUnit/assert-same-not-same.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
@@ -24,6 +25,13 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
     public void testIfFindsDependsAnnotationPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
         myFixture.configureByFile("fixtures/phpUnit/annotation-depends.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+    public void testIfFindsDataProviderAnnotationPatterns() {
+        final PhpUnitTestsInspector inspector   = new PhpUnitTestsInspector();
+        inspector.SUGGEST_TO_USE_NAMED_DATASETS = true;
+        myFixture.enableInspections(inspector);
+        myFixture.configureByFile("fixtures/phpUnit/annotation-data-provider.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testIfFindsAssetNullNotNullPatterns() {

@@ -5,8 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitTestsIns
 
 final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsSameNotSamePatterns() {
-        PhpUnitTestsInspector inspector     = new PhpUnitTestsInspector();
-        inspector.SUGGEST_TO_USE_ASSERTSAME = true;
+        final PhpUnitTestsInspector inspector = new PhpUnitTestsInspector();
+        inspector.SUGGEST_TO_USE_ASSERTSAME   = true;
+        inspector.PROMOTE_PHPUNIT_API         = true;
         myFixture.configureByFile("fixtures/phpUnit/assert-same-not-same.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);

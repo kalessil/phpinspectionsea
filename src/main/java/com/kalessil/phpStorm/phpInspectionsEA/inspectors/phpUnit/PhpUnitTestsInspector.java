@@ -26,9 +26,11 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -43,6 +45,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
     // Inspection options.
     public boolean SUGGEST_TO_USE_ASSERTSAME     = false;
     public boolean SUGGEST_TO_USE_NAMED_DATASETS = false;
+    public boolean PROMOTE_PHPUNIT_API           = true;
 
     private final static String messageNamedProvider = "It would be better for maintainability to to use named datasets in @dataProvider.";
     private final static String messageDataProvider  = "@dataProvider referencing to a non-existing entity.";
@@ -169,56 +172,39 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 final String methodName = reference.getName();
-                if (StringUtils.isEmpty(methodName) || !methodName.startsWith("assert") || methodName.equals("assert")) {
-                    return;
-                }
-
-                /* strategies injection; TODO: cases with custom messages needs to be handled in each one */
-
-                /* normalize first, no performance tweaks */
-                if (
-                    AssertBoolInvertedStrategy.apply(methodName, reference, holder)     ||
-                    AssertBoolOfComparisonStrategy.apply(methodName, reference, holder)
-                ) {
-                    return;
-                }
-                if (SUGGEST_TO_USE_ASSERTSAME) {
-                    @SuppressWarnings({"unused", "UnusedAssignment"})
-                    boolean strictAsserts =
-                        AssertSameStrategy.apply(methodName, reference, holder) ||
-                        AssertNotSameStrategy.apply(methodName, reference, holder)
-                    ;
-                }
-
-                /* now enhance API usage where possible, tweak performance */
-                if (
-                    (new AssertCountStrategy().apply(methodName, reference, holder)) ||
-                    AssertNotCountStrategy.apply(methodName, reference, holder)      ||
-
-                    AssertNullStrategy.apply(methodName, reference, holder)          ||
-                    AssertNotNullStrategy.apply(methodName, reference, holder)       ||
-
-                    AssertTrueStrategy.apply(methodName, reference, holder)          ||
-                    AssertNotTrueStrategy.apply(methodName, reference, holder)       ||
-
-                    AssertFalseStrategy.apply(methodName, reference, holder)         ||
-                    AssertNotFalseStrategy.apply(methodName, reference, holder)      ||
-
-                    AssertEmptyStrategy.apply(methodName, reference, holder)         ||
-                    AssertNotEmptyStrategy.apply(methodName, reference, holder)      ||
-
-                    AssertInstanceOfStrategy.apply(methodName, reference, holder)    ||
-                    AssertNotInstanceOfStrategy.apply(methodName, reference, holder) ||
-
-                    AssertResourceExistsStrategy.apply(methodName, reference, holder)    ||
-                    AssertResourceNotExistsStrategy.apply(methodName, reference, holder) ||
-
-                    (new AssertStringEqualsFileStrategy().apply(methodName, reference, holder))
-
-                    // TODO: assertInternalType, assertNotInternalType
-                ) {
-                    //noinspection UnnecessaryReturnStatement - compact performace tweak
-                    return;
+                if (methodName != null && methodName.startsWith("assert") && !methodName.equals("assert")) {
+                    final List<BooleanSupplier> callbacks = new ArrayList<>();
+                    /* normalize at first place first */
+                    callbacks.add(() -> AssertBoolInvertedStrategy.apply(methodName, reference, holder));
+                    callbacks.add(() -> AssertBoolOfComparisonStrategy.apply(methodName, reference, holder));
+                    if (SUGGEST_TO_USE_ASSERTSAME) {
+                        callbacks.add(() -> AssertSameStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertNotSameStrategy.apply(methodName, reference, holder));
+                    }
+                    if (PROMOTE_PHPUNIT_API) {
+                        callbacks.add(() -> (new AssertCountStrategy().apply(methodName, reference, holder)));
+                        callbacks.add(() -> AssertNotCountStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertNullStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertNotNullStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertTrueStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertNotTrueStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertFalseStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertNotFalseStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertEmptyStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertNotEmptyStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertInstanceOfStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertNotInstanceOfStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertResourceExistsStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertResourceNotExistsStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> (new AssertStringEqualsFileStrategy().apply(methodName, reference, holder)));
+                        /* TODO: assertInternalType, assertNotInternalType, assertFileEquals */
+                    }
+                    for (final BooleanSupplier callback : callbacks) {
+                        if (callback.getAsBoolean()) {
+                            break;
+                        }
+                    }
+                    callbacks.clear();
                 }
             }
         };
@@ -226,7 +212,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.addCheckbox("Suggest to use assertSame", SUGGEST_TO_USE_ASSERTSAME, (isSelected) -> SUGGEST_TO_USE_ASSERTSAME = isSelected);
+            component.addCheckbox("Promote dedicated asserts", PROMOTE_PHPUNIT_API, (isSelected) -> PROMOTE_PHPUNIT_API = isSelected);
+            component.addCheckbox("Suggest to use type safe asserts", SUGGEST_TO_USE_ASSERTSAME, (isSelected) -> SUGGEST_TO_USE_ASSERTSAME = isSelected);
             component.addCheckbox("Suggest to use named datasets", SUGGEST_TO_USE_NAMED_DATASETS, (isSelected) -> SUGGEST_TO_USE_NAMED_DATASETS = isSelected);
         });
     }

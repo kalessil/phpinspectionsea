@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsUltimate</id>
   <name>Php Inspections (EA Ultimate)</name>
-  <version>1.0.3</version>
+  <version>1.0.3.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -44,6 +44,7 @@ the implementation.
   <change-notes><![CDATA[
 Happy new year! New ultimate features for you:<br/>
 <br/>
+- Worked out crash-reports from December<br/>
 - Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/41946">v2.3.15</a><br/>
 <br/>
 - Insecure 'htmlentities(...)' usage: resolved false-positives (UTs)<br/>

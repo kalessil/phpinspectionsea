@@ -16,12 +16,14 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.List;
 
 /*
@@ -34,6 +36,9 @@ import java.util.List;
  */
 
 public class OneTimeUseVariablesInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean ALLOW_LONG_STATEMENTS = false;
+
     private static final String messagePattern = "Variable $%v% is redundant.";
 
     @NotNull
@@ -91,8 +96,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                         }
 
                         /* too long return/throw statements can be decoupled as a variable */
-                        final boolean isConstructDueToLongAssignment = assign.getText().length() > 80;
-                        if (isConstructDueToLongAssignment) {
+                        if (!ALLOW_LONG_STATEMENTS && assign.getText().length() > 80) {
                             return;
                         }
 
@@ -199,6 +203,12 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 return null;
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+            component.addCheckbox("Allow long statements (80+ chars)", ALLOW_LONG_STATEMENTS, (isSelected) -> ALLOW_LONG_STATEMENTS = isSelected)
+        );
     }
 
     private static class TheLocalFix implements LocalQuickFix {

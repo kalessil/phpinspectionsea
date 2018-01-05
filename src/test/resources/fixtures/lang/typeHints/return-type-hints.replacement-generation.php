@@ -20,6 +20,9 @@ namespace RootNamespace {
         /** @return self */
         abstract public function <weak_warning descr="': self' can be declared as return type hint.">methodReturnsSelf</weak_warning>();
 
+        /** @return self|null */
+        abstract public function <weak_warning descr="': ?self' can be declared as return type hint.">methodReturnsSelfOrNull</weak_warning>();
+
         /** @return $this */
         abstract public function methodReturnsDollarThis();
 

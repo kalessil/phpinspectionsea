@@ -125,7 +125,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 if (1 == typesCount) {
                     final String singleType    = normalizedTypes.iterator().next();
                     final String suggestedType = voidTypes.contains(singleType) ? Types.strVoid : compactType(singleType, method);
-                    final boolean isLegitBasic = singleType.startsWith("\\") || returnTypes.contains(singleType);
+                    final boolean isLegitBasic = singleType.startsWith("\\") || returnTypes.contains(singleType) || suggestedType.equals("self");
                     final boolean isLegitVoid  = supportNullableTypes && suggestedType.equals(Types.strVoid);
                     if (isLegitBasic || isLegitVoid) {
                         final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(suggestedType);
@@ -144,7 +144,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     final String suggestedType
                         = voidTypes.contains(nullableType) ? Types.strVoid : compactType(nullableType, method);
 
-                    final boolean isLegitNullable = nullableType.startsWith("\\") || returnTypes.contains(nullableType);
+                    final boolean isLegitNullable = nullableType.startsWith("\\") || returnTypes.contains(nullableType) || suggestedType.equals("self");
                     final boolean isLegitVoid     = suggestedType.equals(Types.strVoid);
                     if (isLegitNullable || isLegitVoid) {
                         final String typeHint     = isLegitVoid ? suggestedType : '?' + suggestedType;

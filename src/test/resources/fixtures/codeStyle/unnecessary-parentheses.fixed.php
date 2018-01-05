@@ -41,3 +41,6 @@
 
     $x = !empty($x);
     $x = !isset($x);
+
+    $object = new stdClass();
+    (function() { })->call($object);

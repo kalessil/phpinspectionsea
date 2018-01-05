@@ -50,7 +50,6 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
     static {
         /* +class/interface reference for PHP7.0+; +void for PHP7.1+ */
         returnTypes.add("self");
-        returnTypes.add("static");
         returnTypes.add("array");
         returnTypes.add("callable");
         returnTypes.add("bool");
@@ -190,6 +189,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                             result = "self";
                         }
                     }
+                    /* be sure to send back static for avoiding false-positives */
+                    result = (result == null && type.equals("static")) ? type : result;
                     /* Strategy 2: scan imports */
                     if (result == null) {
                         for (final PhpUse useItem : PsiTreeUtil.findChildrenOfType(method.getContainingFile(), PhpUse.class)) {

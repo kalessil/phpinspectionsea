@@ -28,6 +28,10 @@ namespace RootNamespace {
 
         /** @return static */
         abstract public function methodReturnsStatic();
+
+        private $unknownTypeProperty;
+        public function getUnknownTypeProperty() { return $this->unknownTypeProperty; }
+
     }
 }
 

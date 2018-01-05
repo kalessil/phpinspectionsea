@@ -112,14 +112,15 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
 
                 final int typesCount = normalizedTypes.size();
                 /* case 1: offer using void */
-                if (supportNullableTypes && 0 == typesCount) {
-                    final String suggestedType = Types.strVoid;
-                    final LocalQuickFix fixer  = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(suggestedType);
-                    final String message       = messagePattern
-                        .replace("%t%", suggestedType)
-                        .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "")
-                    ;
-                    holder.registerProblem(target, message, fixer);
+                if (supportNullableTypes && typesCount == 0) {
+                    final PsiElement firstReturn = PsiTreeUtil.findChildOfType(method, PhpReturn.class);
+                    if (firstReturn == null || ExpressionSemanticUtil.getScope(firstReturn) != method) {
+                        final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(Types.strVoid);
+                        final String message      = messagePattern
+                                .replace("%t%", Types.strVoid)
+                                .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "");
+                        holder.registerProblem(target, message, fixer);
+                    }
                 }
                 /* case 2: offer using type */
                 if (1 == typesCount) {

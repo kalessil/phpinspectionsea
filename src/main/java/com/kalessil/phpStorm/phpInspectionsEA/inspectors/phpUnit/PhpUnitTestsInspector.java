@@ -199,7 +199,6 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         callbacks.add(() -> AssertResourceNotExistsStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> (new AssertStringEqualsFileStrategy().apply(methodName, reference, holder)));
                         callbacks.add(() -> AssertInternalTypeStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertNotInternalTypeStrategy.apply(methodName, reference, holder));
                         /* TODO: assertFileEquals */
                     }
                     for (final BooleanSupplier callback : callbacks) {

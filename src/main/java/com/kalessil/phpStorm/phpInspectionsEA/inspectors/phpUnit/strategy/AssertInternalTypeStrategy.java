@@ -20,35 +20,48 @@ import java.util.Map;
  */
 
 final public class AssertInternalTypeStrategy {
-    final static private Map<String, String> targetMapping = new HashMap<>();
+    final static private Map<String, String> targetFunctionMapping = new HashMap<>();
+    final static private Map<String, String> targetMethodMapping    = new HashMap<>();
     static {
-        targetMapping.put("is_array",    "array");
-        targetMapping.put("is_bool",     "bool");
-        targetMapping.put("is_float",    "float");
-        targetMapping.put("is_int",      "int");
-        targetMapping.put("is_null",     "null");
-        targetMapping.put("is_numeric",  "numeric");
-        targetMapping.put("is_object",   "object");
-        targetMapping.put("is_resource", "resource");
-        targetMapping.put("is_string",   "string");
-        targetMapping.put("is_scalar",   "scalar");
-        targetMapping.put("is_callable", "callable");
+        targetFunctionMapping.put("is_array",    "array");
+        targetFunctionMapping.put("is_bool",     "bool");
+        targetFunctionMapping.put("is_float",    "float");
+        targetFunctionMapping.put("is_int",      "int");
+        targetFunctionMapping.put("is_null",     "null");
+        targetFunctionMapping.put("is_numeric",  "numeric");
+        targetFunctionMapping.put("is_object",   "object");
+        targetFunctionMapping.put("is_resource", "resource");
+        targetFunctionMapping.put("is_string",   "string");
+        targetFunctionMapping.put("is_scalar",   "scalar");
+        targetFunctionMapping.put("is_callable", "callable");
+
+        targetMethodMapping.put("assertTrue",     "assertInternalType");
+        targetMethodMapping.put("assertNotFalse", "assertInternalType");
+        targetMethodMapping.put("assertFalse",    "assertNotInternalType");
+        targetMethodMapping.put("assertNotTrue",  "assertNotInternalType");
     }
 
-    private final static String messagePattern = "'assertInternalType('%s', ...)' should be used instead.";
+    private final static String messagePattern = "'%s('%s', ...)' should be used instead.";
 
     static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         boolean result = false;
-        if (methodName.equals("assertTrue") || methodName.equals("assertNotFalse")) {
+        if (targetMethodMapping.containsKey(methodName)) {
             final PsiElement[] arguments = reference.getParameters();
             if (arguments.length > 0 && OpenapiTypesUtil.isFunctionReference(arguments[0])) {
                 final FunctionReference functionReference = (FunctionReference) arguments[0];
                 final String functionName                 = functionReference.getName();
-                if (functionName != null && targetMapping.containsKey(functionName)) {
+                if (functionName != null && targetFunctionMapping.containsKey(functionName)) {
                     final PsiElement[] functionArguments = functionReference.getParameters();
                     if (functionArguments.length > 0) {
                         result = true;
-                        holder.registerProblem(reference, String.format(messagePattern, targetMapping.get(functionName)));
+                        holder.registerProblem(
+                                reference,
+                                String.format(
+                                        messagePattern,
+                                        targetMethodMapping.get(methodName),
+                                        targetFunctionMapping.get(functionName)
+                                )
+                        );
                     }
                 }
             }

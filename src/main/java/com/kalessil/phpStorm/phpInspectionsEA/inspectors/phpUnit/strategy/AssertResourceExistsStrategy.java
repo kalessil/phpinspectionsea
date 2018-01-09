@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -38,7 +37,7 @@ public class AssertResourceExistsStrategy {
                 if (functionArguments.length == 1 && functionName != null && assertionMapping.containsKey(functionName)) {
                     final String suggestedAssertion = assertionMapping.get(functionName);
                     final String message            = String.format(messagePattern, suggestedAssertion);
-                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(suggestedAssertion, functionArguments[0]));
+                    holder.registerProblem(reference, message, new TheLocalFix(suggestedAssertion, functionArguments[0]));
                     return true;
                 }
             }

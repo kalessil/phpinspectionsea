@@ -95,7 +95,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                                     isNamedDataset       = key instanceof StringLiteralExpression;
                                                 }
                                                 if (!isNamedDataset) {
-                                                    holder.registerProblem(nameNode, messageNamedProvider, ProblemHighlightType.WEAK_WARNING);
+                                                    holder.registerProblem(nameNode, messageNamedProvider);
                                                 }
                                             }
                                         }
@@ -185,10 +185,12 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         callbacks.add(() -> AssertNotCountStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertNullStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertNotNullStrategy.apply(methodName, reference, holder));
+                        /* foundation cleanup */
                         callbacks.add(() -> AssertTrueStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertNotTrueStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertFalseStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertNotFalseStrategy.apply(methodName, reference, holder));
+                        /* API promotion */
                         callbacks.add(() -> AssertEmptyStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertNotEmptyStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertInstanceOfStrategy.apply(methodName, reference, holder));
@@ -196,7 +198,9 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         callbacks.add(() -> AssertResourceExistsStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertResourceNotExistsStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> (new AssertStringEqualsFileStrategy().apply(methodName, reference, holder)));
-                        /* TODO: assertInternalType, assertNotInternalType, assertFileEquals */
+                        callbacks.add(() -> AssertInternalTypeStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertNotInternalTypeStrategy.apply(methodName, reference, holder));
+                        /* TODO: assertFileEquals */
                     }
                     for (final BooleanSupplier callback : callbacks) {
                         if (callback.getAsBoolean()) {

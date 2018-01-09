@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -52,7 +51,7 @@ public class AssertBoolOfComparisonStrategy {
                     final String replacementMethod = "assert" +
                         (isMethodInverting == isOperationInverting ? "" : "Not") + (isTypeStrict ? "Same" : "Equals");
                     final String message = messagePattern.replace("%m%", replacementMethod);
-                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(replacementMethod, left, right));
+                    holder.registerProblem(reference, message, new TheLocalFix(replacementMethod, left, right));
 
                     return true;
                 }

@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -30,7 +29,7 @@ public class AssertNotInstanceOfStrategy {
                     return false;
                 }
 
-                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(right, left));
+                holder.registerProblem(reference, message, new TheLocalFix(right, left));
                 return true;
             }
         }

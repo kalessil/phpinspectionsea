@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -27,7 +26,7 @@ public class AssertNullStrategy {
             /* fire assertNull warning when needed */
             if ((isFirstNull && !isSecondNull) || (!isFirstNull && isSecondNull)) {
                 final TheLocalFix fixer = new TheLocalFix(isFirstNull ? params[1] : params[0]);
-                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, fixer);
+                holder.registerProblem(reference, message, fixer);
 
                 return true;
             }

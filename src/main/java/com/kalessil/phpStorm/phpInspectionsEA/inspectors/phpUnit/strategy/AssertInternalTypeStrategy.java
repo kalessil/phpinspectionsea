@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.PhpUnitAssertFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,22 +47,29 @@ final public class AssertInternalTypeStrategy {
     static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         boolean result = false;
         if (targetMethodMapping.containsKey(methodName)) {
-            final PsiElement[] arguments = reference.getParameters();
-            if (arguments.length > 0 && OpenapiTypesUtil.isFunctionReference(arguments[0])) {
-                final FunctionReference functionReference = (FunctionReference) arguments[0];
+            final PsiElement[] assertionArguments = reference.getParameters();
+            if (assertionArguments.length > 0 && OpenapiTypesUtil.isFunctionReference(assertionArguments[0])) {
+                final FunctionReference functionReference = (FunctionReference) assertionArguments[0];
                 final String functionName                 = functionReference.getName();
                 if (functionName != null && targetFunctionMapping.containsKey(functionName)) {
                     final PsiElement[] functionArguments = functionReference.getParameters();
                     if (functionArguments.length > 0) {
-                        result = true;
+                        /* generate QF arguments */
+                        final String suggestedAssertion   = targetMethodMapping.get(methodName);
+                        final String suggestedType        = targetFunctionMapping.get(functionName);
+                        final String[] suggestedArguments = new String[assertionArguments.length + 1];
+                        suggestedArguments[0] = String.format("'%s'", suggestedType);
+                        suggestedArguments[1] = functionArguments[0].getText();
+                        if (assertionArguments.length > 1) {
+                            suggestedArguments[2] = assertionArguments[1].getText();
+                        }
+                        /* register an issue */
                         holder.registerProblem(
                                 reference,
-                                String.format(
-                                        messagePattern,
-                                        targetMethodMapping.get(methodName),
-                                        targetFunctionMapping.get(functionName)
-                                )
+                                String.format(messagePattern, suggestedAssertion, suggestedType),
+                                new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
                         );
+                        result = true;
                     }
                 }
             }

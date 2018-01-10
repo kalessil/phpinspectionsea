@@ -78,10 +78,13 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         final PsiElement candidate = tag.getFirstPsiChild();
                         if (candidate instanceof PhpDocRef) {
                             /* if resolved properly, it will have 1 reference */
-                            final PsiReference[] references = candidate.getReferences();
-                            if (references.length == 1) {
+                            final List<PsiReference> references = Arrays.asList(candidate.getReferences());
+                            if (!references.isEmpty()) {
+                                Collections.reverse(references);
+                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(references.get(0));
+                                /* TODO: continue */
+
                                 if (SUGGEST_TO_USE_NAMED_DATASETS) {
-                                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(references[0]);
                                     if (resolved instanceof Method && !((Method) resolved).isAbstract()) {
                                         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(resolved);
                                         final PsiElement last     = body == null ? null : ExpressionSemanticUtil.getLastStatement(body);
@@ -183,9 +186,9 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     if (PROMOTE_PHPUNIT_API) {
                         callbacks.add(() -> (new AssertCountStrategy().apply(methodName, reference, holder)));
                         callbacks.add(() -> AssertNotCountStrategy.apply(methodName, reference, holder));
+                        /* foundation cleanup */
                         callbacks.add(() -> AssertNullStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertNotNullStrategy.apply(methodName, reference, holder));
-                        /* foundation cleanup */
                         callbacks.add(() -> AssertTrueStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertNotTrueStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertFalseStrategy.apply(methodName, reference, holder));

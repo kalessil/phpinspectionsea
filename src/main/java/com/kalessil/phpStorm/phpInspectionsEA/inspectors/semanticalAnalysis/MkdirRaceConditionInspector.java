@@ -18,7 +18,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -75,10 +77,12 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     final String message  = (context instanceof If ? binary : patternDirectCall)
                             .replace("%f%", resource)
                             .replace("%f%", resource);
-
-                    final LocalQuickFix fixer
-                        = (context instanceof If ? new HardenConditionFix(resource) : new ThrowExceptionFix(resource));
-                    holder.registerProblem(context instanceof If ? target : context, message, fixer);
+                    final List<String> fixerArguments = Arrays.stream(arguments).map(PsiElement::getText).collect(Collectors.toList());
+                    holder.registerProblem(
+                            context instanceof If ? target : context,
+                            message,
+                            context instanceof If ? new HardenConditionFix(fixerArguments) : new ThrowExceptionFix(fixerArguments)
+                    );
                 }
                 // case 2: && and || expressions
                 else if (context instanceof BinaryExpression) {
@@ -111,13 +115,15 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
 
                     /* report when needed */
                     if (!isSecondExistenceCheckExists) {
-                        final String resource        = arguments[0].getText();
-                        final IElementType operation = binary.getOperationType();
-                        final String message =
-                            (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation) ? patternAndCondition : patternOrCondition)
+                        final String resource = arguments[0].getText();
+                        final String message  =
+                            (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(binary.getOperationType()) ? patternAndCondition : patternOrCondition)
                                 .replace("%f%", resource)
                                 .replace("%f%", resource);
-                        holder.registerProblem(target, message, new HardenConditionFix(resource));
+                        final LocalQuickFix fixer = new HardenConditionFix(
+                                Arrays.stream(arguments).map(PsiElement::getText).collect(Collectors.toList())
+                        );
+                        holder.registerProblem(target, message, fixer);
                     }
                 }
             }
@@ -175,6 +181,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
 
     private static class ThrowExceptionFix implements LocalQuickFix {
         private final String resource;
+        private final String arguments;
 
         @NotNull
         @Override
@@ -188,8 +195,9 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
             return getName();
         }
 
-        ThrowExceptionFix(@NotNull String resource) {
-            this.resource = resource;
+        ThrowExceptionFix(@NotNull List<String> arguments) {
+            this.arguments = arguments.stream().collect(Collectors.joining(", "));
+            this.resource  = arguments.get(0);
         }
 
         @Override
@@ -198,7 +206,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
             if (target != null && !project.isDisposed()) {
                 final String throwPart = "throw new \\RuntimeException(sprintf('Directory \"%%s\" was not created', %s));";
                 final String pattern   = "if (!mkdir(%s) && !is_dir(%s)) { %s }";
-                final String code      = String.format(pattern, resource, resource, String.format(throwPart, resource));
+                final String code      = String.format(pattern, this.arguments, this.resource, String.format(throwPart, this.resource));
                 target.replace(PhpPsiElementFactory.createPhpPsiFromText(project, If.class, code));
             }
         }
@@ -206,6 +214,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
 
     private static class HardenConditionFix implements LocalQuickFix {
         private final String resource;
+        private final String arguments;
 
         @NotNull
         @Override
@@ -219,8 +228,9 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
             return getName();
         }
 
-        HardenConditionFix(@NotNull String resource) {
-            this.resource = resource;
+        HardenConditionFix(@NotNull List<String> arguments) {
+            this.arguments = arguments.stream().collect(Collectors.joining(", "));
+            this.resource  = arguments.get(0);
         }
 
         @Override
@@ -229,17 +239,17 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
             if (target != null && !project.isDisposed()) {
                 final PsiElement parent = target.getParent();
                 if (parent instanceof If) {
-                    final String code = String.format("(!mkdir(%s) && !is_dir(%s))", resource, resource);
+                    final String code = String.format("(!mkdir(%s) && !is_dir(%s))", this.arguments, this.resource);
                     target.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, code).getArgument());
                 } else if (parent instanceof BinaryExpression) {
                     final BinaryExpression binary = (BinaryExpression) parent;
                     final IElementType operation  = binary.getOperationType();
                     final String conditions       = binary.getLeftOperand().getText();
                     if (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation)) {
-                        final String code = String.format("(%s && !mkdir(%s) && !is_dir(%s))", conditions, resource, resource);
+                        final String code = String.format("(%s && !mkdir(%s) && !is_dir(%s))", conditions, this.arguments, this.resource);
                         parent.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, code).getArgument());
                     } else if (PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operation)) {
-                        final String code = String.format("(%s || mkdir(%s) || is_dir(%s))", conditions, resource, resource);
+                        final String code = String.format("(%s || mkdir(%s) || is_dir(%s))", conditions, this.arguments, this.resource);
                         parent.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, code).getArgument());
                     }
                 }

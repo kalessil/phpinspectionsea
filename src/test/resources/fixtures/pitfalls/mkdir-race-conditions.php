@@ -12,7 +12,7 @@ function cases_holder() {
     $result = mkdir('...');
 
     /* case: incomplete conditions */
-    if (<error descr="Some check are missing: 'mkdir('..., 0644') || is_dir('...')'.">(mkdir('...', 0644))</error>) {}
+    if (<error descr="Some check are missing: 'mkdir('...', 0644) || is_dir('...')'.">(mkdir('...', 0644))</error>) {}
     if (<error descr="Some check are missing: '!mkdir('...', 0644) && !is_dir('...')'.">(!mkdir('...', 0644))</error>) {}
     if (<error descr="Some check are missing: '!mkdir('...', 0644) && !is_dir('...')'.">(!@mkdir('...', 0644))</error>) {}
     if (!is_dir('...') && <error descr="Some check are missing: '!mkdir('...', 0644) && !is_dir('...')'.">!mkdir('...', 0644)</error>) {}

@@ -32,9 +32,9 @@ import java.util.stream.Collectors;
  */
 
 public class MkdirRaceConditionInspector extends BasePhpInspection {
-    private static final String patternDirectCall   = "Following construct should be used: 'if (!mkdir(%f%) && !is_dir(%f%)) { ... }'.";
-    private static final String patternAndCondition = "Some check are missing: '!mkdir(%f%) && !is_dir(%f%)'.";
-    private static final String patternOrCondition  = "Some check are missing: 'mkdir(%f%) || is_dir(%f%)'.";
+    private static final String patternDirectCall   = "Following construct should be used: 'if (!mkdir(%s) && !is_dir(%s)) { ... }'.";
+    private static final String patternAndCondition = "Some check are missing: '!mkdir(%s) && !is_dir(%s)'.";
+    private static final String patternOrCondition  = "Some check are missing: 'mkdir(%s) || is_dir(%s)'.";
 
     @NotNull
     public String getShortName() {
@@ -73,11 +73,9 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 // case 1: if ([!]mkdir(...))
                 if (context instanceof If || OpenapiTypesUtil.isStatementImpl(context)) {
                     final List<String> fixerArguments = Arrays.stream(arguments).map(PsiElement::getText).collect(Collectors.toList());
-                    final String resource             = arguments[0].getText();
                     final String binary               = searchResult.isInverted ? patternAndCondition : patternOrCondition;
-                    final String message              = (context instanceof If ? binary : patternDirectCall)
-                            .replace("%f%", String.join(", ", fixerArguments))
-                            .replace("%f%", resource);
+                    final String messagePattern       = (context instanceof If ? binary : patternDirectCall);
+                    final String message              = String.format(messagePattern, String.join(", ", fixerArguments), arguments[0].getText());
                     holder.registerProblem(
                             context instanceof If ? target : context,
                             message,
@@ -116,11 +114,8 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     /* report when needed */
                     if (!isSecondExistenceCheckExists) {
                         final List<String> fixerArguments = Arrays.stream(arguments).map(PsiElement::getText).collect(Collectors.toList());
-                        final String resource             = arguments[0].getText();
-                        final String message              =
-                            (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(binary.getOperationType()) ? patternAndCondition : patternOrCondition)
-                                .replace("%f%", String.join(", ", fixerArguments))
-                                .replace("%f%", resource);
+                        final String messagePattern       = (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(binary.getOperationType()) ? patternAndCondition : patternOrCondition);
+                        final String message              = String.format(messagePattern, String.join(", ", fixerArguments), arguments[0].getText());
                         holder.registerProblem(target, message, new HardenConditionFix(fixerArguments));
                     }
                 }

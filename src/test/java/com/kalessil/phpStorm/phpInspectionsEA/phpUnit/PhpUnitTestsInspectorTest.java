@@ -71,8 +71,12 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
     }
     public void testIfFindsAssertEmptyNotEmptyPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
-        myFixture.configureByFile("fixtures/phpUnit/assert-empty-not-empty.php");
+        myFixture.configureByFile("fixtures/phpUnit/assert-empty.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/phpUnit/assert-empty.fixed.php");
     }
     public void testIfFindsAssertInternalTypePatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());

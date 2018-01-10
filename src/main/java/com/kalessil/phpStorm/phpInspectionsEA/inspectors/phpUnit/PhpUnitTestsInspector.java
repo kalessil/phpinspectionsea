@@ -192,7 +192,6 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         callbacks.add(() -> AssertNotFalseStrategy.apply(methodName, reference, holder));
                         /* API promotion */
                         callbacks.add(() -> AssertEmptyStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertNotEmptyStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertInstanceOfStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertNotInstanceOfStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertResourceExistsStrategy.apply(methodName, reference, holder));

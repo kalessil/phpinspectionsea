@@ -196,7 +196,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         }
 
         ThrowExceptionFix(@NotNull List<String> arguments) {
-            this.arguments = arguments.stream().collect(Collectors.joining(", "));
+            this.arguments = String.join(", ", arguments);
             this.resource  = arguments.get(0);
         }
 
@@ -229,7 +229,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         }
 
         HardenConditionFix(@NotNull List<String> arguments) {
-            this.arguments = arguments.stream().collect(Collectors.joining(", "));
+            this.arguments = String.join(", ", arguments);
             this.resource  = arguments.get(0);
         }
 

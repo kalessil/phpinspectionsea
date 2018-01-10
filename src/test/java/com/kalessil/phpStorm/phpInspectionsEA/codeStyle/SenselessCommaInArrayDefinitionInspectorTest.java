@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.SenselessCommaInArrayDefinitionInspector;
 
@@ -10,9 +9,7 @@ public final class SenselessCommaInArrayDefinitionInspectorTest extends PhpCodeI
         myFixture.configureByFile("fixtures/codeStyle/last-comma-in-array.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/codeStyle/last-comma-in-array.fixed.php");
     }

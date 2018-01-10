@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.classes;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
@@ -13,9 +12,7 @@ final public class LowerAccessLevelInspectorTest extends PhpCodeInsightFixtureTe
         myFixture.configureByFile("fixtures/classes/weakerAccess/protected-with-final-class.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/classes/weakerAccess/protected-with-final-class.fixed.php");
     }
@@ -24,9 +21,7 @@ final public class LowerAccessLevelInspectorTest extends PhpCodeInsightFixtureTe
         myFixture.configureByFile("fixtures/classes/weakerAccess/protected-fields-in-private-context.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/classes/weakerAccess/protected-fields-in-private-context.fixed.php");
     }

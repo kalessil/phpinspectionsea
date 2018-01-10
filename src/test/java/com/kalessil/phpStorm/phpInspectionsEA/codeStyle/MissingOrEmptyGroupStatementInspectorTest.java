@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.MissingOrEmptyGroupStatementInspector;
 
@@ -10,9 +9,7 @@ final public class MissingOrEmptyGroupStatementInspectorTest extends PhpCodeInsi
         myFixture.configureByFile("fixtures/codeStyle/group-statements-missing.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/codeStyle/group-statements-missing.fixed.php");
     }

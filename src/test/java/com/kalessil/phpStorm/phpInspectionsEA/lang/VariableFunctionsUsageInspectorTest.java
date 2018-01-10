@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.lang;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
@@ -20,9 +19,7 @@ final public class VariableFunctionsUsageInspectorTest extends PhpCodeInsightFix
         myFixture.configureByFile("fixtures/lang/variable-functions-php54.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/lang/variable-functions-php54.fixed.php");
     }

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.controlFlow;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SequentialUnSetCallsInspector;
 
@@ -10,9 +9,7 @@ final public class SequentialUnSetCallsInspectorTest extends PhpCodeInsightFixtu
         myFixture.configureByFile("fixtures/controlFlow/unset-sequential.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/controlFlow/unset-sequential.fixed.php");
     }

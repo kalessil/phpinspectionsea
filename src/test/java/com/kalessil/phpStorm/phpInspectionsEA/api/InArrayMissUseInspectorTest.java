@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.InArrayMissUseInspector;
 
@@ -13,9 +12,7 @@ final public class InArrayMissUseInspectorTest extends PhpCodeInsightFixtureTest
         myFixture.configureByFile("fixtures/api/array/in-array-misuse.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/api/array/in-array-misuse.fixed.php");
     }

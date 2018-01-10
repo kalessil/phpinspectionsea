@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
@@ -15,9 +14,7 @@ final public class RandomApiMigrationInspectorTest extends PhpCodeInsightFixture
         myFixture.configureByFile("fixtures/api/random-api-mt.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/api/random-api-mt.fixed.php");
     }
@@ -28,9 +25,7 @@ final public class RandomApiMigrationInspectorTest extends PhpCodeInsightFixture
         myFixture.configureByFile("fixtures/api/random-api-edge.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/api/random-api-edge.fixed.php");
     }

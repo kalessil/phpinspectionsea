@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.controlFlow;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OneTimeUseVariablesInspector;
 
@@ -12,9 +11,7 @@ final public class OneTimeUseVariablesInspectorTest extends PhpCodeInsightFixtur
         myFixture.configureByFile("fixtures/controlFlow/one-time-use-variables.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/controlFlow/one-time-use-variables.fixed.php");
     }

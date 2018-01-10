@@ -72,12 +72,12 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 final PsiElement context = target.getParent();
                 // case 1: if ([!]mkdir(...))
                 if (context instanceof If || OpenapiTypesUtil.isStatementImpl(context)) {
-                    final String resource = arguments[0].getText();
-                    final String binary   = searchResult.isInverted ? patternAndCondition : patternOrCondition;
-                    final String message  = (context instanceof If ? binary : patternDirectCall)
-                            .replace("%f%", resource)
-                            .replace("%f%", resource);
                     final List<String> fixerArguments = Arrays.stream(arguments).map(PsiElement::getText).collect(Collectors.toList());
+                    final String resource             = arguments[0].getText();
+                    final String binary               = searchResult.isInverted ? patternAndCondition : patternOrCondition;
+                    final String message              = (context instanceof If ? binary : patternDirectCall)
+                            .replace("%f%", String.join(", ", fixerArguments))
+                            .replace("%f%", resource);
                     holder.registerProblem(
                             context instanceof If ? target : context,
                             message,
@@ -115,15 +115,13 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
 
                     /* report when needed */
                     if (!isSecondExistenceCheckExists) {
-                        final String resource = arguments[0].getText();
-                        final String message  =
+                        final List<String> fixerArguments = Arrays.stream(arguments).map(PsiElement::getText).collect(Collectors.toList());
+                        final String resource             = arguments[0].getText();
+                        final String message              =
                             (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(binary.getOperationType()) ? patternAndCondition : patternOrCondition)
-                                .replace("%f%", resource)
+                                .replace("%f%", String.join(", ", fixerArguments))
                                 .replace("%f%", resource);
-                        final LocalQuickFix fixer = new HardenConditionFix(
-                                Arrays.stream(arguments).map(PsiElement::getText).collect(Collectors.toList())
-                        );
-                        holder.registerProblem(target, message, fixer);
+                        holder.registerProblem(target, message, new HardenConditionFix(fixerArguments));
                     }
                 }
             }

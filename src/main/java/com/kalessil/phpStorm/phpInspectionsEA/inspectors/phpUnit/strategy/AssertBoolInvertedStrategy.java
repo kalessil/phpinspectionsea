@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class AssertBoolInvertedStrategy {
@@ -24,7 +25,7 @@ public class AssertBoolInvertedStrategy {
             final PsiElement param = ExpressionSemanticUtil.getExpressionTroughParenthesis(params[0]);
             if (param instanceof UnaryExpression) {
                 final UnaryExpression not = (UnaryExpression) param;
-                if (null == not.getOperation() || PhpTokenTypes.opNOT != not.getOperation().getNode().getElementType()) {
+                if (!OpenapiTypesUtil.is(not.getOperation(), PhpTokenTypes.opNOT)) {
                     return false;
                 }
 

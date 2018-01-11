@@ -1,7 +1,6 @@
 # see https://github.com/apps/stale for more details
 daysUntilStale: 365
 daysUntilClose: 21
-# Issues with these labels will never be considered stale
 exemptLabels:
   - bug / false-positive
   - internal

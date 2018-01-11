@@ -66,20 +66,28 @@ public class AssertNotInstanceOfStrategy {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference && !project.isDisposed()) {
-                if (this.classIdentity instanceof ClassReference) {
+            final PsiElement subject    = this.subject.getElement();
+            PsiElement classIdentity    = this.classIdentity.getElement();
+            if (expression instanceof FunctionReference && classIdentity != null && subject != null && !project.isDisposed()) {
+                if (classIdentity instanceof ClassReference) {
                     final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
                     final boolean useClassConstant    = phpVersion.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST);
 
                     if (useClassConstant) {
                         /* since PHP 5.5 we can use ::class constant */
-                        final String pattern = this.classIdentity.getText() + "::class";
-                        this.classIdentity = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, pattern);
+                        classIdentity = PhpPsiElementFactory.createFromText(
+                                project,
+                                ClassConstantReference.class,
+                                classIdentity.getText() + "::class"
+                        );
                     } else {
-                        final String fqn = ((ClassReference) this.classIdentity).getFQN();
+                        final String fqn = ((ClassReference) classIdentity).getFQN();
                         if (fqn != null) {
-                            final String pattern = "'" + fqn.replaceAll("\\\\", "\\\\\\\\") + "'";
-                            this.classIdentity = PhpPsiElementFactory.createFromText(project, StringLiteralExpression.class, pattern);
+                            classIdentity = PhpPsiElementFactory.createFromText(
+                                    project,
+                                    StringLiteralExpression.class,
+                                    "'" + fqn.replaceAll("\\\\", "\\\\\\\\") + "'"
+                            );
                         }
                     }
                 }
@@ -90,14 +98,13 @@ public class AssertNotInstanceOfStrategy {
                 final String pattern                = hasCustomMessage ? "pattern(null, null, null)" : "pattern(null, null)";
                 final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, pattern);
                 final PsiElement[] replaceParams    = replacement.getParameters();
-                replaceParams[0].replace(this.classIdentity);
-                replaceParams[1].replace(this.subject);
+                replaceParams[0].replace(classIdentity);
+                replaceParams[1].replace(subject);
                 if (hasCustomMessage) {
                     replaceParams[2].replace(params[1]);
                 }
 
                 final FunctionReference call = (FunctionReference) expression;
-                //noinspection ConstantConditions I'm really sure NPE will not happen
                 call.getParameterList().replace(replacement.getParameterList());
                 call.handleElementRename("assertNotInstanceOf");
             }

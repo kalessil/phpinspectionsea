@@ -122,6 +122,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                             holder.registerProblem(nameNode, messageDepends, ProblemHighlightType.GENERIC_ERROR);
                                         }
                                     }
+                                } else {
+                                    holder.registerProblem(nameNode, messageDepends, ProblemHighlightType.GENERIC_ERROR);
                                 }
                             } else {
                                 holder.registerProblem(nameNode, messageDepends, ProblemHighlightType.GENERIC_ERROR);

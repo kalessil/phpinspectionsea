@@ -34,24 +34,16 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.configureByFile("fixtures/phpUnit/annotation-data-provider.php");
         myFixture.testHighlighting(true, false, true);
     }
-    public void testIfFindsAssetNullNotNullPatterns() {
-        myFixture.enableInspections(new PhpUnitTestsInspector());
-        myFixture.configureByFile("fixtures/phpUnit/assert-null-not-null.php");
-        myFixture.testHighlighting(true, false, true);
-    }
     public void testIfFindsAssetFileExistsNotExistsPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
         myFixture.configureByFile("fixtures/phpUnit/assert-file-exists-not-exists.php");
         myFixture.testHighlighting(true, false, true);
     }
-    public void testIfFindsAssetTrueNotTruePatterns() {
-        myFixture.enableInspections(new PhpUnitTestsInspector());
-        myFixture.configureByFile("fixtures/phpUnit/assert-true-not-true.php");
-        myFixture.testHighlighting(true, false, true);
-    }
     public void testIfFindsAssetFalseNotFalsePatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
-        myFixture.configureByFile("fixtures/phpUnit/assert-false-not-false.php");
+        myFixture.configureByFile("fixtures/phpUnit/assert-null.php");
+        myFixture.configureByFile("fixtures/phpUnit/assert-false.php");
+        myFixture.configureByFile("fixtures/phpUnit/assert-true.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testIfFindsAssertCountPatterns() {

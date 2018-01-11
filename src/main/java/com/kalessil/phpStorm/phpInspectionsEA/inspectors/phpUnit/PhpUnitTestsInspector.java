@@ -187,14 +187,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     if (PROMOTE_PHPUNIT_API) {
                         callbacks.add(() -> (new AssertCountStrategy().apply(methodName, reference, holder)));
                         callbacks.add(() -> AssertNotCountStrategy.apply(methodName, reference, holder));
-                        /* foundation cleanup */
-                        callbacks.add(() -> AssertNullStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertNotNullStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertTrueStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertNotTrueStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertFalseStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertNotFalseStrategy.apply(methodName, reference, holder));
                         /* API promotion */
+                        callbacks.add(() -> AssertConstantStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertEmptyStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertInstanceOfStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertNotInstanceOfStrategy.apply(methodName, reference, holder));

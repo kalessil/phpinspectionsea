@@ -39,7 +39,7 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.configureByFile("fixtures/phpUnit/assert-file-exists-not-exists.php");
         myFixture.testHighlighting(true, false, true);
     }
-    public void testIfFindsAssetFalseNotFalsePatterns() {
+    public void testIfFindsAssetConstantPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
         myFixture.configureByFile("fixtures/phpUnit/assert-null.php");
         myFixture.configureByFile("fixtures/phpUnit/assert-false.php");

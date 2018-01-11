@@ -5,6 +5,8 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
@@ -44,13 +46,15 @@ public class AssertNotCountStrategy {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private PsiElement expected;
-        private PsiElement provided;
+        final private SmartPsiElementPointer<PsiElement> expected;
+        final private SmartPsiElementPointer<PsiElement> provided;
 
         TheLocalFix(@NotNull PsiElement expected, @NotNull PsiElement provided) {
             super();
-            this.expected = expected;
-            this.provided = provided;
+            final SmartPointerManager manager = SmartPointerManager.getInstance(expected.getProject());
+
+            this.expected = manager.createSmartPsiElementPointer(expected);
+            this.provided = manager.createSmartPsiElementPointer(provided);
         }
 
         @NotNull
@@ -68,7 +72,7 @@ public class AssertNotCountStrategy {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference) {
+            if (expression instanceof FunctionReference && !project.isDisposed()) {
                 final PsiElement[] params      = ((FunctionReference) expression).getParameters();
                 final boolean hasCustomMessage = 3 == params.length;
 
@@ -86,10 +90,6 @@ public class AssertNotCountStrategy {
                 call.getParameterList().replace(replacement.getParameterList());
                 call.handleElementRename("assertNotCount");
             }
-
-            /* release a tree node reference */
-            this.expected = null;
-            this.provided = null;
         }
     }
 }

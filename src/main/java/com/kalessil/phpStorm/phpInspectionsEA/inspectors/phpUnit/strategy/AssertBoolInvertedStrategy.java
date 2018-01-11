@@ -5,6 +5,8 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
@@ -46,12 +48,14 @@ public class AssertBoolInvertedStrategy {
 
     private static class TheLocalFix implements LocalQuickFix {
         final private String replacementFunction;
-        private PsiElement argument;
+        final private SmartPsiElementPointer<PsiElement> argument;
 
         TheLocalFix(@NotNull String replacementFunction, @NotNull PsiElement argument) {
             super();
+            final SmartPointerManager manager = SmartPointerManager.getInstance(argument.getProject());
+
             this.replacementFunction = replacementFunction;
-            this.argument            = argument;
+            this.argument            = manager.createSmartPsiElementPointer(argument);
         }
 
         @NotNull
@@ -69,7 +73,7 @@ public class AssertBoolInvertedStrategy {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference) {
+            if (expression instanceof FunctionReference && !project.isDisposed()) {
                 final PsiElement[] params      = ((FunctionReference) expression).getParameters();
                 final boolean hasCustomMessage = 2 == params.length;
 
@@ -86,9 +90,6 @@ public class AssertBoolInvertedStrategy {
                 call.getParameterList().replace(replacement.getParameterList());
                 call.handleElementRename(this.replacementFunction);
             }
-
-            /* release a tree node reference */
-            this.argument = null;
         }
     }
 }

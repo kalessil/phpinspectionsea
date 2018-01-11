@@ -5,6 +5,8 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
@@ -38,13 +40,15 @@ public class AssertInstanceOfStrategy {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        private PsiElement classIdentity;
-        private PsiElement subject;
+        final private SmartPsiElementPointer<PsiElement> classIdentity;
+        final private SmartPsiElementPointer<PsiElement> subject;
 
         TheLocalFix(@NotNull PsiElement classIdentity, @NotNull PsiElement subject) {
             super();
-            this.classIdentity = classIdentity;
-            this.subject       = subject;
+            final SmartPointerManager manager = SmartPointerManager.getInstance(classIdentity.getProject());
+
+            this.classIdentity = manager.createSmartPsiElementPointer(classIdentity);
+            this.subject       = manager.createSmartPsiElementPointer(subject);
         }
 
         @NotNull
@@ -62,7 +66,7 @@ public class AssertInstanceOfStrategy {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference) {
+            if (expression instanceof FunctionReference && !project.isDisposed()) {
                 if (this.classIdentity instanceof ClassReference) {
                     final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
                     final boolean useClassConstant    = phpVersion.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST);
@@ -97,10 +101,6 @@ public class AssertInstanceOfStrategy {
                 call.getParameterList().replace(replacement.getParameterList());
                 call.handleElementRename("assertInstanceOf");
             }
-
-            /* release a tree node reference */
-            this.classIdentity = null;
-            this.subject       = null;
         }
     }
 }

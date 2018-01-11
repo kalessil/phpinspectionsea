@@ -69,7 +69,7 @@ public class AssertInstanceOfStrategy {
             final PsiElement subject    = this.subject.getElement();
             PsiElement classIdentity    = this.classIdentity.getElement();
             if (expression instanceof FunctionReference && classIdentity != null && subject != null && !project.isDisposed()) {
-                if (this.classIdentity instanceof ClassReference) {
+                if (classIdentity instanceof ClassReference) {
                     final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
                     final boolean useClassConstant    = phpVersion.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST);
 
@@ -81,7 +81,7 @@ public class AssertInstanceOfStrategy {
                                 classIdentity.getText() + "::class"
                         );
                     } else {
-                        final String fqn = ((ClassReference) this.classIdentity).getFQN();
+                        final String fqn = ((ClassReference) classIdentity).getFQN();
                         if (fqn != null) {
                             classIdentity = PhpPsiElementFactory.createFromText(
                                     project,

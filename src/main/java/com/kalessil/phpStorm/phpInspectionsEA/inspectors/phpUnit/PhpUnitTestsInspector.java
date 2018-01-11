@@ -77,15 +77,12 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     if (tagName.equals("@dataProvider")) {
                         final PsiElement candidate = tag.getFirstPsiChild();
                         if (candidate instanceof PhpDocRef) {
-                            /* if resolved properly, it will have 1 reference */
                             final List<PsiReference> references = Arrays.asList(candidate.getReferences());
                             if (!references.isEmpty()) {
                                 Collections.reverse(references);
                                 final PsiElement resolved = OpenapiResolveUtil.resolveReference(references.get(0));
-                                /* TODO: continue */
-
-                                if (SUGGEST_TO_USE_NAMED_DATASETS) {
-                                    if (resolved instanceof Method && !((Method) resolved).isAbstract()) {
+                                if (resolved instanceof Method) {
+                                    if (SUGGEST_TO_USE_NAMED_DATASETS && !((Method) resolved).isAbstract()) {
                                         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(resolved);
                                         final PsiElement last     = body == null ? null : ExpressionSemanticUtil.getLastStatement(body);
                                         if (last instanceof PhpReturn) {
@@ -103,6 +100,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                             }
                                         }
                                     }
+                                } else {
+                                    holder.registerProblem(nameNode, messageDataProvider, ProblemHighlightType.GENERIC_ERROR);
                                 }
                             } else {
                                 holder.registerProblem(nameNode, messageDataProvider, ProblemHighlightType.GENERIC_ERROR);

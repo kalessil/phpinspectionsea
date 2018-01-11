@@ -73,14 +73,15 @@ public class AssertBoolInvertedStrategy {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference && !project.isDisposed()) {
+            final PsiElement argument   = this.argument.getElement();
+            if (expression instanceof FunctionReference && argument != null && !project.isDisposed()) {
                 final PsiElement[] params      = ((FunctionReference) expression).getParameters();
                 final boolean hasCustomMessage = 2 == params.length;
 
                 final String pattern                = hasCustomMessage ? "pattern(null, null)" : "pattern(null)";
                 final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, pattern);
                 final PsiElement[] replaceParams    = replacement.getParameters();
-                replaceParams[0].replace(this.argument);
+                replaceParams[0].replace(argument);
                 if (hasCustomMessage) {
                     replaceParams[1].replace(params[1]);
                 }

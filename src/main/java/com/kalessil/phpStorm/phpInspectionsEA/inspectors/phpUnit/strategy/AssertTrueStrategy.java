@@ -11,7 +11,24 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 public class AssertTrueStrategy {
+
+    private final static Set<String> targetConstants       = new HashSet<>();
+    private final static Map<String, String> targetMapping = new HashMap<>();
+    static {
+        targetConstants.add("null");
+        targetConstants.add("true");
+        targetConstants.add("false");
+
+        targetMapping.put("assertSame",    "assert%s");
+        targetMapping.put("assertNotSame", "assertNot%s");
+    }
+
     private final static String message = "assertTrue should be used instead.";
 
     static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {

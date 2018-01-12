@@ -25,7 +25,7 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-public class StartsWithOnLongStringsInspector extends BasePhpInspection {
+public class FixedTimeStartWithInspector extends BasePhpInspection {
 
     private static final Map<String, String> mapping = new HashMap<>();
     static {
@@ -33,11 +33,11 @@ public class StartsWithOnLongStringsInspector extends BasePhpInspection {
         mapping.put("strpos",  "strncmp");
     }
 
-    private static final String message  = "'%e%' should be used instead.";
+    private static final String messagePattern  = "'%s(...)' would be a solution not depending on the string length.";
 
     @NotNull
     public String getShortName() {
-        return "StartsWithOnLongStringsInspection";
+        return "FixedTimeStartWithInspection";
     }
 
     @Override
@@ -57,8 +57,12 @@ public class StartsWithOnLongStringsInspector extends BasePhpInspection {
                             if (arguments.length == 2 && arguments[1] instanceof StringLiteralExpression) {
                                 final PsiElement zeroCandidate = OpenapiElementsUtil.getSecondOperand(binary, reference);
                                 if (zeroCandidate != null && zeroCandidate.getText().equals("0")) {
+                                    /* TODO: generate target expression */
 
-
+                                    holder.registerProblem(
+                                            reference,
+                                            String.format(messagePattern, mapping.get(functionName))
+                                    );
                                 }
                             }
                         }

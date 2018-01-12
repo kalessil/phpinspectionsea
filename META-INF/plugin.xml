@@ -170,6 +170,10 @@ Hot-fix release:<br/>
         shortName="ScandirUsageInspection"                        displayName="'scandir(...)' low performing usage"
         groupName="Performance"                                   enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ScandirUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="FixedTimeStartWithInspection"                  displayName="Fixed-time string starts with checks"
+        groupName="Performance"                                   enabledByDefault="false" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.FixedTimeStartWithInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

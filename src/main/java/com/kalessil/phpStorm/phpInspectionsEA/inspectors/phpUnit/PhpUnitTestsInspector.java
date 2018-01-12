@@ -177,7 +177,6 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 final String methodName = reference.getName();
                 if (methodName != null && methodName.startsWith("assert") && !methodName.equals("assert")) {
                     final List<BooleanSupplier> callbacks = new ArrayList<>();
-                    /* normalize at first place first */
                     callbacks.add(() -> AssertBoolInvertedStrategy.apply(methodName, reference, holder));
                     callbacks.add(() -> AssertBoolOfComparisonStrategy.apply(methodName, reference, holder));
                     if (SUGGEST_TO_USE_ASSERTSAME) {
@@ -190,12 +189,15 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         callbacks.add(() -> AssertInternalTypeStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertInstanceOfStrategy.apply(methodName, reference, holder));
 
-                        callbacks.add(() -> (new AssertCountStrategy().apply(methodName, reference, holder)));
-                        callbacks.add(() -> AssertNotCountStrategy.apply(methodName, reference, holder));
+                        /* TODO: merge into one */
                         callbacks.add(() -> AssertResourceExistsStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertResourceNotExistsStrategy.apply(methodName, reference, holder));
+                        /* TODO: merge into one */
+                        callbacks.add(() -> (new AssertCountStrategy().apply(methodName, reference, holder)));
+                        callbacks.add(() -> AssertNotCountStrategy.apply(methodName, reference, holder));
+
+                        /* TODO: assertFileEquals (+ assertJsonFileEqualsJsonFile) */
                         callbacks.add(() -> (new AssertStringEqualsFileStrategy().apply(methodName, reference, holder)));
-                        /* TODO: assertFileEquals */
                     }
                     for (final BooleanSupplier callback : callbacks) {
                         if (callback.getAsBoolean()) {

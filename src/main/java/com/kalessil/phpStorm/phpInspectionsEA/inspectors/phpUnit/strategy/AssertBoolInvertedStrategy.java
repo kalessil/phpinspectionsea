@@ -88,7 +88,6 @@ public class AssertBoolInvertedStrategy {
                 }
 
                 final FunctionReference call = (FunctionReference) expression;
-                //noinspection ConstantConditions I'm really sure NPE will not happen
                 call.getParameterList().replace(replacement.getParameterList());
                 call.handleElementRename(this.replacementFunction);
             }

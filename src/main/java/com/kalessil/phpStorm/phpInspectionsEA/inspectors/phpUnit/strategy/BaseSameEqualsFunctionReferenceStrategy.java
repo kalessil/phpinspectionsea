@@ -131,7 +131,6 @@ abstract class BaseSameEqualsFunctionReferenceStrategy {
                 }
 
                 /* replace tree nodes */
-                //noinspection ConstantConditions - we areworking with hard-coded structures
                 reference.getParameterList().replace(replacement.getParameterList());
                 reference.handleElementRename(this.replacement);
             }

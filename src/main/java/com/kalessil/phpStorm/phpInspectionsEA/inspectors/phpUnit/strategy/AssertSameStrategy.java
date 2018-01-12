@@ -111,7 +111,6 @@ public class AssertSameStrategy {
                 }
 
                 final FunctionReference call = (FunctionReference) expression;
-                //noinspection ConstantConditions I'm really sure NPE will not happen
                 call.getParameterList().replace(replacement.getParameterList());
                 call.handleElementRename("assertSame");
             }

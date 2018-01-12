@@ -41,9 +41,7 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
     }
     public void testIfFindsAssetConstantPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
-        myFixture.configureByFile("fixtures/phpUnit/assert-null.php");
-        myFixture.configureByFile("fixtures/phpUnit/assert-false.php");
-        myFixture.configureByFile("fixtures/phpUnit/assert-true.php");
+        myFixture.configureByFile("fixtures/phpUnit/assert-constant.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testIfFindsAssertCountPatterns() {

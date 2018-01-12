@@ -1,6 +1,6 @@
 <?php
 
-class TestCaseAssertTrueNotTrue
+class TestCaseAssertConstant
 {
     public function testNormalization()
     {

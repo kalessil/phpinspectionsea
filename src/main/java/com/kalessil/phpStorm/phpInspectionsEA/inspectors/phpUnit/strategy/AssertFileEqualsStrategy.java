@@ -30,6 +30,7 @@ public class AssertFileEqualsStrategy {
     static {
         targetAssertions.add("assertSame");
         targetAssertions.add("assertEquals");
+        targetAssertions.add("assertStringEqualsFile");
     }
 
     static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
@@ -55,22 +56,34 @@ public class AssertFileEqualsStrategy {
                     })
                     .collect(Collectors.toList());
                 /* now check if reporting is needed */
-                /* TODO: assertStringEqualsFile(..., file_get_contents()) -> assertFileEquals */
-                if (extracts.size() >= 2 && extracts.get(0) != null && extracts.get(1) != null) {
-                    final String[] suggestedArguments = new String[assertionArguments.length];
-                    suggestedArguments[0] = extracts.get(0).getText();
-                    suggestedArguments[1] = extracts.get(1).getText();
-                    if (assertionArguments.length > 2) {
-                        suggestedArguments[2] = assertionArguments[2].getText();
-                    }
-                    final String suggestedAssertion = "assertFileEquals";
-                    holder.registerProblem(
-                            reference,
-                            String.format(messagePattern, suggestedAssertion),
-                            new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
-                    );
+                if (extracts.size() > 1) {
+                    String[] suggestedArguments = null;
+                    if (methodName.equals("assertStringEqualsFile") && extracts.get(1) != null) {
+                        suggestedArguments    = new String[assertionArguments.length];
+                        suggestedArguments[0] = assertionArguments[0].getText();
+                        suggestedArguments[1] = extracts.get(1).getText();
+                        if (assertionArguments.length > 2) {
+                            suggestedArguments[2] = assertionArguments[2].getText();
+                        }
 
-                    result = true;
+                    } else if (extracts.get(0) != null && extracts.get(1) != null) {
+                        suggestedArguments    = new String[assertionArguments.length];
+                        suggestedArguments[0] = extracts.get(0).getText();
+                        suggestedArguments[1] = extracts.get(1).getText();
+                        if (assertionArguments.length > 2) {
+                            suggestedArguments[2] = assertionArguments[2].getText();
+                        }
+                    }
+
+                    if (suggestedArguments != null) {
+                        final String suggestedAssertion = "assertFileEquals";
+                        holder.registerProblem(
+                                reference,
+                                String.format(messagePattern, suggestedAssertion),
+                                new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
+                        );
+                        result = true;
+                    }
                 }
                 extracts.clear();
             }

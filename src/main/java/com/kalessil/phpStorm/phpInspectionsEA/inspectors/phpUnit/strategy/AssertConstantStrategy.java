@@ -20,7 +20,6 @@ import java.util.*;
  */
 
 final public class AssertConstantStrategy {
-
     private final static Set<String> targetConstants       = new HashSet<>();
     private final static Map<String, String> targetMapping = new HashMap<>();
     static {

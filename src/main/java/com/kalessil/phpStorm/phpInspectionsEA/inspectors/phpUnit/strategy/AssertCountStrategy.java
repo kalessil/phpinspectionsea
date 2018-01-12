@@ -21,19 +21,19 @@ import java.util.Map;
  */
 
 final public class AssertCountStrategy {
-    final static private Map<String, String> targetMethodMapping = new HashMap<>();
+    final static private Map<String, String> targetMapping = new HashMap<>();
     static {
-        targetMethodMapping.put("assertSame",      "assertCount");
-        targetMethodMapping.put("assertEquals",    "assertCount");
-        targetMethodMapping.put("assertNotSame",   "assertNotCount");
-        targetMethodMapping.put("assertNotEquals", "assertNotCount");
+        targetMapping.put("assertSame",      "assertCount");
+        targetMapping.put("assertEquals",    "assertCount");
+        targetMapping.put("assertNotSame",   "assertNotCount");
+        targetMapping.put("assertNotEquals", "assertNotCount");
     }
 
     private final static String messagePattern = "'%s(...)' would fit more here.";
 
     static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         boolean result = false;
-        if (targetMethodMapping.containsKey(methodName)) {
+        if (targetMapping.containsKey(methodName)) {
             final PsiElement[] assertionArguments = reference.getParameters();
             if (assertionArguments.length > 1 && OpenapiTypesUtil.isFunctionReference(assertionArguments[1])) {
                 final FunctionReference candidate = (FunctionReference) assertionArguments[1];
@@ -41,7 +41,7 @@ final public class AssertCountStrategy {
                 if (functionName != null && functionName.equals("count")) {
                     final PsiElement[] functionArguments = candidate.getParameters();
                     if (functionArguments.length == 1) {
-                        final String suggestedAssertion   = targetMethodMapping.get(methodName);
+                        final String suggestedAssertion   = targetMapping.get(methodName);
                         final String[] suggestedArguments = new String[assertionArguments.length];
                         suggestedArguments[0] = assertionArguments[0].getText();
                         suggestedArguments[1] = functionArguments[0].getText();

@@ -24,14 +24,14 @@ import java.util.stream.Collectors;
  */
 
 final public class AssertFileEqualsStrategy {
-    private final static String messagePattern = "'%s(...)' would fit more here.";
-
     private final static Set<String> targetAssertions = new HashSet<>();
     static {
         targetAssertions.add("assertSame");
         targetAssertions.add("assertEquals");
         targetAssertions.add("assertStringEqualsFile");
     }
+
+    private final static String messagePattern = "'%s(...)' would fit more here.";
 
     static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         boolean result = false;

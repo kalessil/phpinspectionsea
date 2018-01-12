@@ -20,25 +20,25 @@ import java.util.Map;
  */
 
 final public class AssertEmptyStrategy {
-    final static private Map<String, String> targetMethodMapping = new HashMap<>();
+    final static private Map<String, String> targetMapping = new HashMap<>();
     static {
-        targetMethodMapping.put("assertTrue",     "assertEmpty");
-        targetMethodMapping.put("assertNotFalse", "assertEmpty");
-        targetMethodMapping.put("assertFalse",    "assertNotEmpty");
-        targetMethodMapping.put("assertNotTrue",  "assertNotEmpty");
+        targetMapping.put("assertTrue",     "assertEmpty");
+        targetMapping.put("assertNotFalse", "assertEmpty");
+        targetMapping.put("assertFalse",    "assertNotEmpty");
+        targetMapping.put("assertNotTrue",  "assertNotEmpty");
     }
 
     private final static String messagePattern = "'%s(...)' would fit more here.";
 
     static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         boolean result = false;
-        if (targetMethodMapping.containsKey(methodName)) {
+        if (targetMapping.containsKey(methodName)) {
             final PsiElement[] assertionArguments = reference.getParameters();
             if (assertionArguments.length > 0 && assertionArguments[0] instanceof PhpEmpty) {
                 final PsiElement[] emptyArguments = ((PhpEmpty) assertionArguments[0]).getVariables();
                 if (emptyArguments.length == 1) {
                     /* generate QF arguments */
-                    final String suggestedAssertion   = targetMethodMapping.get(methodName);
+                    final String suggestedAssertion   = targetMapping.get(methodName);
                     final String[] suggestedArguments = new String[assertionArguments.length];
                     suggestedArguments[0] = emptyArguments[0].getText();
                     if (assertionArguments.length > 1) {

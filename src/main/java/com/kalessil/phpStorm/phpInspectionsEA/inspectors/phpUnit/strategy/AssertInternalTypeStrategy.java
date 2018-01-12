@@ -22,7 +22,7 @@ import java.util.Map;
 
 final public class AssertInternalTypeStrategy {
     final static private Map<String, String> targetFunctionMapping = new HashMap<>();
-    final static private Map<String, String> targetMethodMapping    = new HashMap<>();
+    final static private Map<String, String> targetMapping         = new HashMap<>();
     static {
         targetFunctionMapping.put("is_array",    "array");
         targetFunctionMapping.put("is_bool",     "bool");
@@ -36,17 +36,17 @@ final public class AssertInternalTypeStrategy {
         targetFunctionMapping.put("is_scalar",   "scalar");
         targetFunctionMapping.put("is_callable", "callable");
 
-        targetMethodMapping.put("assertTrue",     "assertInternalType");
-        targetMethodMapping.put("assertNotFalse", "assertInternalType");
-        targetMethodMapping.put("assertFalse",    "assertNotInternalType");
-        targetMethodMapping.put("assertNotTrue",  "assertNotInternalType");
+        targetMapping.put("assertTrue",     "assertInternalType");
+        targetMapping.put("assertNotFalse", "assertInternalType");
+        targetMapping.put("assertFalse",    "assertNotInternalType");
+        targetMapping.put("assertNotTrue",  "assertNotInternalType");
     }
 
     private final static String messagePattern = "'%s('%s', ...)' would fit more here.";
 
     static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         boolean result = false;
-        if (targetMethodMapping.containsKey(methodName)) {
+        if (targetMapping.containsKey(methodName)) {
             final PsiElement[] assertionArguments = reference.getParameters();
             if (assertionArguments.length > 0 && OpenapiTypesUtil.isFunctionReference(assertionArguments[0])) {
                 final FunctionReference functionReference = (FunctionReference) assertionArguments[0];
@@ -55,7 +55,7 @@ final public class AssertInternalTypeStrategy {
                     final PsiElement[] functionArguments = functionReference.getParameters();
                     if (functionArguments.length > 0) {
                         /* generate QF arguments */
-                        final String suggestedAssertion   = targetMethodMapping.get(methodName);
+                        final String suggestedAssertion   = targetMapping.get(methodName);
                         final String suggestedType        = targetFunctionMapping.get(functionName);
                         final String[] suggestedArguments = new String[assertionArguments.length + 1];
                         suggestedArguments[0] = String.format("'%s'", suggestedType);

@@ -21,23 +21,23 @@ import java.util.Map;
  */
 
 final public class AssertResourceExistsStrategy {
-    private final static String messagePattern = "'%s(...)' would fit more here.";
-
-    private final static Map<String, String> targetFunctions  = new HashMap<>();
-    private final static Map<String, String> targetAssertions = new HashMap<>();
+    private final static Map<String, String> targetFunctions = new HashMap<>();
+    private final static Map<String, String> targetMapping   = new HashMap<>();
     static {
         targetFunctions.put("file_exists", "File");
         targetFunctions.put("is_dir",      "Directory");
 
-        targetAssertions.put("assertTrue",     "assert%sExists");
-        targetAssertions.put("assertNotFalse", "assert%sExists");
-        targetAssertions.put("assertFalse",    "assert%sNotExists");
-        targetAssertions.put("assertNotTrue",  "assert%sNotExists");
+        targetMapping.put("assertTrue",     "assert%sExists");
+        targetMapping.put("assertNotFalse", "assert%sExists");
+        targetMapping.put("assertFalse",    "assert%sNotExists");
+        targetMapping.put("assertNotTrue",  "assert%sNotExists");
     }
+
+    private final static String messagePattern = "'%s(...)' would fit more here.";
 
     static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         boolean result = false;
-        if (targetAssertions.containsKey(methodName)) {
+        if (targetMapping.containsKey(methodName)) {
             final PsiElement[] assertionArguments = reference.getParameters();
             if (assertionArguments.length > 0 && OpenapiTypesUtil.isFunctionReference(assertionArguments[0])) {
                 final FunctionReference candidate = (FunctionReference) assertionArguments[0];
@@ -46,7 +46,7 @@ final public class AssertResourceExistsStrategy {
                     final PsiElement[] functionArguments = candidate.getParameters();
                     if (functionArguments.length == 1) {
                         final String suggestedAssertion = String.format(
-                                targetAssertions.get(methodName),
+                                targetMapping.get(methodName),
                                 targetFunctions.get(functionName)
                         );
                         final String[] suggestedArguments = new String[assertionArguments.length];

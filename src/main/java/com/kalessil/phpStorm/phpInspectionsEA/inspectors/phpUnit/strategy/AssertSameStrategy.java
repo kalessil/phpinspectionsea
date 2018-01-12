@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
  */
 
 final public class AssertSameStrategy {
-
     private final static Map<String, String> targetMapping = new HashMap<>();
     static {
         targetMapping.put("assertNotEquals", "assertNotSame");

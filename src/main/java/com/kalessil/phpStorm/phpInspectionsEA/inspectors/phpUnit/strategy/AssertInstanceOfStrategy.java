@@ -25,7 +25,6 @@ import java.util.Map;
  */
 
 final public class AssertInstanceOfStrategy {
-
     private final static Map<String, String> targetMapping = new HashMap<>();
     static {
         targetMapping.put("assertFalse",    "assertNotInstanceOf");

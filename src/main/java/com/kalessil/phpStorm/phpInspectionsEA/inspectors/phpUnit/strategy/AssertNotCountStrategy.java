@@ -72,21 +72,22 @@ public class AssertNotCountStrategy {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference && !project.isDisposed()) {
+            final PsiElement expected   = this.expected.getElement();
+            final PsiElement provided   = this.provided.getElement();
+            if (expression instanceof FunctionReference && expected != null && provided != null && !project.isDisposed()) {
                 final PsiElement[] params      = ((FunctionReference) expression).getParameters();
                 final boolean hasCustomMessage = 3 == params.length;
 
                 final String pattern                = hasCustomMessage ? "pattern(null, null, null)" : "pattern(null, null)";
                 final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, pattern);
                 final PsiElement[] replaceParams    = replacement.getParameters();
-                replaceParams[0].replace(this.expected);
-                replaceParams[1].replace(this.provided);
+                replaceParams[0].replace(expected);
+                replaceParams[1].replace(provided);
                 if (hasCustomMessage) {
                     replaceParams[2].replace(params[2]);
                 }
 
                 final FunctionReference call = (FunctionReference) expression;
-                //noinspection ConstantConditions I'm really sure NPE will not happen
                 call.getParameterList().replace(replacement.getParameterList());
                 call.handleElementRename("assertNotCount");
             }

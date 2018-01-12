@@ -4,14 +4,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitTestsInspector;
 
 final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCase {
-    public void testIfFindsSameNotSamePatterns() {
-        final PhpUnitTestsInspector inspector = new PhpUnitTestsInspector();
-        inspector.SUGGEST_TO_USE_ASSERTSAME   = true;
-        inspector.PROMOTE_PHPUNIT_API         = true;
-        myFixture.configureByFile("fixtures/phpUnit/assert-same-not-same.php");
-        myFixture.enableInspections(inspector);
-        myFixture.testHighlighting(true, false, true);
-    }
     public void testIfFindsCoversAnnotationPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
         myFixture.configureByFile("fixtures/phpUnit/annotation-covers.php");
@@ -50,6 +42,17 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.testHighlighting(true, false, true);
     }
 
+    public void testIfFindsSamePatterns() {
+        final PhpUnitTestsInspector inspector = new PhpUnitTestsInspector();
+        inspector.SUGGEST_TO_USE_ASSERTSAME   = true;
+        inspector.PROMOTE_PHPUNIT_API         = true;
+        myFixture.configureByFile("fixtures/phpUnit/assert-same.php");
+        myFixture.enableInspections(inspector);
+        myFixture.testHighlighting(true, false, true);
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/phpUnit/assert-same.fixed.php");
+    }
     public void testIfFindsAssertFileEqualsPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
         myFixture.configureByFile("fixtures/phpUnit/assert-file-equals.php");

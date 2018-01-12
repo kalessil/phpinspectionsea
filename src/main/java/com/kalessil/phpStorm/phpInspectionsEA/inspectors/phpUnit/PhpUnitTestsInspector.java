@@ -180,9 +180,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     callbacks.add(() -> AssertBoolInvertedStrategy.apply(methodName, reference, holder));
                     callbacks.add(() -> AssertBoolOfComparisonStrategy.apply(methodName, reference, holder));
                     if (SUGGEST_TO_USE_ASSERTSAME) {
-                        /* TODO: no code duplication */
                         callbacks.add(() -> AssertSameStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertNotSameStrategy.apply(methodName, reference, holder));
                     }
                     if (PROMOTE_PHPUNIT_API) {
                         callbacks.add(() -> AssertEmptyStrategy.apply(methodName, reference, holder));

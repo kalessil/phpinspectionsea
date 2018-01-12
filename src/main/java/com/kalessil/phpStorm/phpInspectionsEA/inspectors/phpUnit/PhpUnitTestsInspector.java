@@ -185,17 +185,16 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         callbacks.add(() -> AssertNotSameStrategy.apply(methodName, reference, holder));
                     }
                     if (PROMOTE_PHPUNIT_API) {
+                        callbacks.add(() -> AssertEmptyStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertConstantStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertInternalTypeStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertInstanceOfStrategy.apply(methodName, reference, holder));
+
                         callbacks.add(() -> (new AssertCountStrategy().apply(methodName, reference, holder)));
                         callbacks.add(() -> AssertNotCountStrategy.apply(methodName, reference, holder));
-                        /* API promotion */
-                        callbacks.add(() -> AssertConstantStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertEmptyStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertInstanceOfStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertNotInstanceOfStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertResourceExistsStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertResourceNotExistsStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> (new AssertStringEqualsFileStrategy().apply(methodName, reference, holder)));
-                        callbacks.add(() -> AssertInternalTypeStrategy.apply(methodName, reference, holder));
                         /* TODO: assertFileEquals */
                     }
                     for (final BooleanSupplier callback : callbacks) {

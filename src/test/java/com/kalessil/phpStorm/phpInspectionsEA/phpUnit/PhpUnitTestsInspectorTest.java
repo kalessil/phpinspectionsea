@@ -34,28 +34,9 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.configureByFile("fixtures/phpUnit/annotation-data-provider.php");
         myFixture.testHighlighting(true, false, true);
     }
-    public void testIfFindsAssetFileExistsNotExistsPatterns() {
-        myFixture.enableInspections(new PhpUnitTestsInspector());
-        myFixture.configureByFile("fixtures/phpUnit/assert-file-exists-not-exists.php");
-        myFixture.testHighlighting(true, false, true);
-    }
-    public void testIfFindsAssetConstantPatterns() {
-        myFixture.enableInspections(new PhpUnitTestsInspector());
-        myFixture.configureByFile("fixtures/phpUnit/assert-constant.php");
-        myFixture.testHighlighting(true, false, true);
-
-        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
-        myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/phpUnit/assert-constant.fixed.php");
-    }
     public void testIfFindsAssertCountPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
         myFixture.configureByFile("fixtures/phpUnit/assert-count-not-count.php");
-        myFixture.testHighlighting(true, false, true);
-    }
-    public void testIfFindsAssertInstanceofPatterns() {
-        myFixture.enableInspections(new PhpUnitTestsInspector());
-        myFixture.configureByFile("fixtures/phpUnit/assert-instanceof-not-instanceof.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testIfFindsAssertStringEqualsFilePatterns() {
@@ -63,11 +44,32 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.configureByFile("fixtures/phpUnit/assert-string-equals-file.php");
         myFixture.testHighlighting(true, false, true);
     }
-    public void testIfFindsAssertEmptyNotEmptyPatterns() {
+    public void testIfFindsNormalizationPatterns() {
+        myFixture.enableInspections(new PhpUnitTestsInspector());
+        myFixture.configureByFile("fixtures/phpUnit/assert-normalization.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+
+    public void testIfFindsAssetConstantPatterns() {
+        myFixture.enableInspections(new PhpUnitTestsInspector());
+        myFixture.configureByFile("fixtures/phpUnit/assert-constant.php");
+        myFixture.testHighlighting(true, false, true);
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/phpUnit/assert-constant.fixed.php");
+    }
+    public void testIfFindsAssertInstanceofPatterns() {
+        myFixture.enableInspections(new PhpUnitTestsInspector());
+        myFixture.configureByFile("fixtures/phpUnit/assert-instanceof.php");
+        myFixture.testHighlighting(true, false, true);
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/phpUnit/assert-instanceof.fixed.php");
+    }
+    public void testIfFindsAssertEmptyPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
         myFixture.configureByFile("fixtures/phpUnit/assert-empty.php");
         myFixture.testHighlighting(true, false, true);
-
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/phpUnit/assert-empty.fixed.php");
@@ -76,19 +78,16 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.enableInspections(new PhpUnitTestsInspector());
         myFixture.configureByFile("fixtures/phpUnit/assert-internal-type.php");
         myFixture.testHighlighting(true, false, true);
-
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/phpUnit/assert-internal-type.fixed.php");
     }
-    public void testIfFindsAssertDirectoryExistsNotExistsPatterns() {
+    public void testIfFindsAssetResourceExistsPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
-        myFixture.configureByFile("fixtures/phpUnit/assert-directory-exists-not-exists.php");
+        myFixture.configureByFile("fixtures/phpUnit/assert-resource-exists.php");
         myFixture.testHighlighting(true, false, true);
-    }
-    public void testIfFindsNormalizationPatterns() {
-        myFixture.enableInspections(new PhpUnitTestsInspector());
-        myFixture.configureByFile("fixtures/phpUnit/assert-normalization.php");
-        myFixture.testHighlighting(true, false, true);
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/phpUnit/assert-resource-exists.fixed.php");
     }
 }

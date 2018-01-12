@@ -26,7 +26,7 @@ public class DropMethodFix implements LocalQuickFix {
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
         final PsiElement expression = descriptor.getPsiElement().getParent();
-        if (expression instanceof Method) {
+        if (expression instanceof Method && !project.isDisposed()) {
             /* delete preceding PhpDoc */
             final PhpPsiElement previous = ((Method) expression).getPrevPsiSibling();
             if (previous instanceof PhpDocComment) {

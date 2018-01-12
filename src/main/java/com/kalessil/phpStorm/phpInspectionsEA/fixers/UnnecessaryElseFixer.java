@@ -31,7 +31,7 @@ public class UnnecessaryElseFixer implements LocalQuickFix {
         final PsiElement element    = descriptor.getPsiElement();
         final PsiElement expression = null == element ? null : element.getParent();
         final PsiElement newline    = PhpPsiElementFactory.createFromText(project, PsiWhiteSpace.class, "\n");
-        if (null == expression || null == newline) {
+        if (null == expression || null == newline || project.isDisposed()) {
             return;
         }
 

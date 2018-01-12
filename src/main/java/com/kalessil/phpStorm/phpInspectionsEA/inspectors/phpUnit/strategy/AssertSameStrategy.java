@@ -6,13 +6,13 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.PhpUnitAssertFixer;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /*
@@ -56,21 +56,14 @@ public class AssertSameStrategy {
     static private boolean isPrimitiveScalar(@NotNull PsiElement expression) {
         boolean result = false;
         if (expression instanceof PhpTypedElement) {
-            final PhpType resolvedType = ((PhpTypedElement) expression).getType().global(expression.getProject());
-            final Set<String> types    = resolvedType.getTypes();
-            if (!resolvedType.hasUnknown() && !types.isEmpty()) {
-                boolean isPrimitive = true;
-                for (final String type : types) {
+            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) expression, expression.getProject());
+            if (resolved != null && !resolved.hasUnknown()) {
+                result = resolved.getTypes().stream().noneMatch(type -> {
                     final String normalizedType = Types.getType(type);
-                    if (normalizedType.startsWith("\\") || normalizedType.equals(Types.strArray)) {
-                        isPrimitive = false;
-                        break;
-                    }
-                }
-                result = isPrimitive;
+                    return normalizedType.startsWith("\\") || normalizedType.equals(Types.strArray);
+                });
             }
         }
         return result;
     }
-
 }

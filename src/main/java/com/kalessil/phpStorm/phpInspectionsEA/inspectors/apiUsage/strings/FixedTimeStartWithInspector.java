@@ -8,6 +8,8 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.util.PhpStringUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
@@ -33,7 +35,7 @@ public class FixedTimeStartWithInspector extends BasePhpInspection {
         mapping.put("strpos",  "strncmp");
     }
 
-    private static final String messagePattern  = "'%s(...)' would be a solution not depending on the string length.";
+    private static final String messagePattern  = "'%s' would be a solution not depending on the string length.";
 
     @NotNull
     public String getShortName() {
@@ -57,11 +59,19 @@ public class FixedTimeStartWithInspector extends BasePhpInspection {
                             if (arguments.length == 2 && arguments[1] instanceof StringLiteralExpression) {
                                 final PsiElement zeroCandidate = OpenapiElementsUtil.getSecondOperand(binary, reference);
                                 if (zeroCandidate != null && zeroCandidate.getText().equals("0")) {
-                                    /* TODO: generate target expression */
+                                    final StringLiteralExpression literal = (StringLiteralExpression) arguments[1];
+                                    final String replacement              = String.format(
+                                            "%s(%s, %s, %s)",
+                                            mapping.get(functionName),
+                                            arguments[0].getText(),
+                                            arguments[1].getText(),
+                                            PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote()).length()
+                                    );
 
                                     holder.registerProblem(
                                             reference,
-                                            String.format(messagePattern, mapping.get(functionName))
+                                            String.format(messagePattern, replacement),
+                                            new UseFirstCharactersCompareFix(replacement)
                                     );
                                 }
                             }
@@ -70,5 +80,17 @@ public class FixedTimeStartWithInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    private class UseFirstCharactersCompareFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use fixed-time operation instead";
+        }
+
+        UseFirstCharactersCompareFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

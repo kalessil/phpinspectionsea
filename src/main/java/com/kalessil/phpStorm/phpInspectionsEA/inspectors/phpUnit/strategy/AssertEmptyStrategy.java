@@ -50,6 +50,7 @@ final public class AssertEmptyStrategy {
                             String.format(messagePattern, suggestedAssertion),
                             new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
                     );
+
                     result = true;
                 }
             }

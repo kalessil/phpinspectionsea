@@ -26,11 +26,6 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.configureByFile("fixtures/phpUnit/annotation-data-provider.php");
         myFixture.testHighlighting(true, false, true);
     }
-    public void testIfFindsAssertCountPatterns() {
-        myFixture.enableInspections(new PhpUnitTestsInspector());
-        myFixture.configureByFile("fixtures/phpUnit/assert-count-not-count.php");
-        myFixture.testHighlighting(true, false, true);
-    }
     public void testIfFindsNormalizationPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
         myFixture.configureByFile("fixtures/phpUnit/assert-normalization.php");
@@ -52,6 +47,14 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/phpUnit/assert-same.fixed.php");
+    }
+    public void testIfFindsAssertCountPatterns() {
+        myFixture.enableInspections(new PhpUnitTestsInspector());
+        myFixture.configureByFile("fixtures/phpUnit/assert-count.php");
+        myFixture.testHighlighting(true, false, true);
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/phpUnit/assert-count.fixed.php");
     }
     public void testIfFindsAssertFileEqualsPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());

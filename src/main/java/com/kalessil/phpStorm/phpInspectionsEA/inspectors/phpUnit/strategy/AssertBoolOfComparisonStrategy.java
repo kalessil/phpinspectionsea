@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class AssertBoolOfComparisonStrategy {
+final public class AssertBoolOfComparisonStrategy {
     private final static String messagePattern = "%m% would fit more here.";
 
     static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {

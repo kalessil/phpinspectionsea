@@ -20,7 +20,7 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-public class AssertResourceExistsStrategy {
+final public class AssertResourceExistsStrategy {
     private final static String messagePattern = "'%s(...)' would fit more here.";
 
     private final static Map<String, String> targetFunctions  = new HashMap<>();

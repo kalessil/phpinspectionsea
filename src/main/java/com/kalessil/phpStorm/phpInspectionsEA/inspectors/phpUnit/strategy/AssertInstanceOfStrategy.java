@@ -24,7 +24,7 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-public class AssertInstanceOfStrategy {
+final public class AssertInstanceOfStrategy {
 
     private final static Map<String, String> targetMapping = new HashMap<>();
     static {

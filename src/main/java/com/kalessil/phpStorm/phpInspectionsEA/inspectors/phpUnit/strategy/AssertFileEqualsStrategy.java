@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class AssertFileEqualsStrategy {
+final public class AssertFileEqualsStrategy {
     private final static String messagePattern = "'%s(...)' would fit more here.";
 
     private final static Set<String> targetAssertions = new HashSet<>();

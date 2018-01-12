@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class AssertSameStrategy {
+final public class AssertSameStrategy {
 
     private final static Map<String, String> targetMapping = new HashMap<>();
     static {

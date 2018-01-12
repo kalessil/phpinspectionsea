@@ -28,7 +28,7 @@ final public class AssertEmptyStrategy {
         targetMethodMapping.put("assertNotTrue",  "assertNotEmpty");
     }
 
-    private final static String messagePattern = "'%s(...)' should be used instead.";
+    private final static String messagePattern = "'%s(...)' would fit more here.";
 
     static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         boolean result = false;

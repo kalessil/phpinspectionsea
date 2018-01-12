@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  */
 
 public class AssertFileEqualsStrategy {
-    private final static String messagePattern = "'%s(...)' should be used instead.";
+    private final static String messagePattern = "'%s(...)' would fit more here.";
 
     private final static Set<String> targetAssertions = new HashSet<>();
     static {
@@ -55,6 +55,7 @@ public class AssertFileEqualsStrategy {
                     })
                     .collect(Collectors.toList());
                 /* now check if reporting is needed */
+                /* TODO: assertStringEqualsFile(..., file_get_contents()) -> assertFileEquals */
                 if (extracts.size() >= 2 && extracts.get(0) != null && extracts.get(1) != null) {
                     final String[] suggestedArguments = new String[assertionArguments.length];
                     suggestedArguments[0] = extracts.get(0).getText();

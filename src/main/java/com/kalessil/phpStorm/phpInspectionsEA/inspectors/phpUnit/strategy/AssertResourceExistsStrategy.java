@@ -21,7 +21,7 @@ import java.util.Map;
  */
 
 public class AssertResourceExistsStrategy {
-    private final static String messagePattern = "'%s(...)' should be used instead.";
+    private final static String messagePattern = "'%s(...)' would fit more here.";
 
     private final static Map<String, String> targetFunctions  = new HashMap<>();
     private final static Map<String, String> targetAssertions = new HashMap<>();

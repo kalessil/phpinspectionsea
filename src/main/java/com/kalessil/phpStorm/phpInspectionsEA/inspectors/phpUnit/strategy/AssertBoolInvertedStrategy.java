@@ -17,7 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class AssertBoolInvertedStrategy {
-    private final static String messagePattern = "'%s(...)' should be used instead.";
+    private final static String messagePattern = "'%s(...)' would fit more here.";
 
     static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();

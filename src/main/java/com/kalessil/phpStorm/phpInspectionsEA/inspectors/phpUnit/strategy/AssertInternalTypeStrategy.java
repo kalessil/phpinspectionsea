@@ -42,7 +42,7 @@ final public class AssertInternalTypeStrategy {
         targetMethodMapping.put("assertNotTrue",  "assertNotInternalType");
     }
 
-    private final static String messagePattern = "'%s('%s', ...)' should be used instead.";
+    private final static String messagePattern = "'%s('%s', ...)' would fit more here.";
 
     static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         boolean result = false;

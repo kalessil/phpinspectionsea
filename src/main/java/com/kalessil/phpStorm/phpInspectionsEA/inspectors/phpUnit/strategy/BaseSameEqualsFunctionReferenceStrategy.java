@@ -73,7 +73,7 @@ abstract class BaseSameEqualsFunctionReferenceStrategy {
                 replacement
             );
 
-            final String message = String.format("'%s(...)' should be used instead.", replacement);
+            final String message = String.format("'%s(...)' would fit more here.", replacement);
             holder.registerProblem(reference, message, fixer);
 
             return true;

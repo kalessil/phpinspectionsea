@@ -24,9 +24,6 @@ import org.jetbrains.annotations.NotNull;
 public class ArrayUniqueCanBeUsedInspector extends BasePhpInspection {
     private static final String messagePattern = "'%e%' would be more readable here (array_unique(...) was optimized in PHP 7.2-beta3+).";
 
-    /* UTing purposes, as language level 7.2 is not available in older environments */
-    public boolean FORCE_ANALYSIS = false;
-
     @NotNull
     public String getShortName() {
         return "ArrayUniqueCanBeUsedInspection";
@@ -45,7 +42,7 @@ public class ArrayUniqueCanBeUsedInspector extends BasePhpInspection {
                 }
 
                 final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
-                if (FORCE_ANALYSIS || phpVersion.compareTo(PhpLanguageLevel.PHP710) > 0) {
+                if (phpVersion.compareTo(PhpLanguageLevel.PHP710) >= 0) {
                     final PsiElement context = reference.getParent().getParent();
                     if (OpenapiTypesUtil.isFunctionReference(context)) {
                         final String parentFunctionName = ((FunctionReference) context).getName();

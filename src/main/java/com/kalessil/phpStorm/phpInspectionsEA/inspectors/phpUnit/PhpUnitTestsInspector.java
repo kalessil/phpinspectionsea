@@ -190,10 +190,10 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         callbacks.add(() -> AssertInstanceOfStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertResourceExistsStrategy.apply(methodName, reference, holder));
 
-                        /* TODO: merge into one */
+                        callbacks.add(() -> AssertFileEqualsStrategy.apply(methodName, reference, holder));
+                        /* TODO: sort this out - decouple, no code duplication */
                         callbacks.add(() -> (new AssertCountStrategy().apply(methodName, reference, holder)));
                         callbacks.add(() -> AssertNotCountStrategy.apply(methodName, reference, holder));
-                        /* TODO: assertFileEquals (+ probably assertJsonFileEqualsJsonFile) */
                         callbacks.add(() -> (new AssertStringEqualsFileStrategy().apply(methodName, reference, holder)));
                     }
                     for (final BooleanSupplier callback : callbacks) {

@@ -12,9 +12,11 @@ import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.Set;
 
 /*
@@ -27,6 +29,9 @@ import java.util.Set;
  */
 
 public class FilePutContentsRaceConditionInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean REDUCED_SCOPE = true;
+
     private static final String message  = "A race condition can corrupt the file content. It would be a good idea to use LOCK_EX flag.";
 
     @NotNull
@@ -46,8 +51,8 @@ public class FilePutContentsRaceConditionInspector extends BasePhpInspection {
                 if (functionName != null && functionName.equals("file_put_contents")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 2 && !this.isTestContext(reference)) {
-                        /* there is no solid patter, hence we are searching test fragments under the hood */
-                        if (this.match(arguments[0], ".php") || this.match(arguments[1], "<?php")) {
+                        /* there is no solid pattern, hence we are searching test fragments under the hood */
+                        if (!REDUCED_SCOPE || this.match(arguments[0], ".php") || this.match(arguments[1], "<?php")) {
                             holder.registerProblem(reference, message, new AddLockExFlagFix());
                         }
                     }
@@ -65,6 +70,13 @@ public class FilePutContentsRaceConditionInspector extends BasePhpInspection {
             }
         };
     }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component)
+            -> component.addCheckbox("Report only php-code generation", REDUCED_SCOPE, (isSelected) -> REDUCED_SCOPE = isSelected)
+        );
+    }
+
 
     private static class AddLockExFlagFix implements LocalQuickFix {
         @NotNull

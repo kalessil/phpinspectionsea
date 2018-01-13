@@ -2,9 +2,11 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy;
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
+import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.PhpUnitAssertFixer;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,20 +42,24 @@ final public class AssertStringEqualsFileStrategy {
                 if (functionName != null && functionName.equals("file_get_contents")) {
                     final PsiElement[] functionArguments = candidate.getParameters();
                     if (functionArguments.length == 1) {
-                        final String[] suggestedArguments = new String[assertionArguments.length];
-                        suggestedArguments[0] = functionArguments[0].getText();
-                        suggestedArguments[1] = assertionArguments[1].getText();
-                        if (assertionArguments.length > 2) {
-                            suggestedArguments[2] = assertionArguments[2].getText();
-                        }
-                        final String suggestedAssertion = "assertStringEqualsFile";
-                        holder.registerProblem(
-                                reference,
-                                String.format(messagePattern, suggestedAssertion),
-                                new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
-                        );
+                        final Function scope       = ExpressionSemanticUtil.getScope(reference);
+                        final boolean shouldReport = scope == null || !scope.getName().equals("assertStringEqualsFile");
+                        if (shouldReport) {
+                            final String[] suggestedArguments = new String[assertionArguments.length];
+                            suggestedArguments[0] = functionArguments[0].getText();
+                            suggestedArguments[1] = assertionArguments[1].getText();
+                            if (assertionArguments.length > 2) {
+                                suggestedArguments[2] = assertionArguments[2].getText();
+                            }
+                            final String suggestedAssertion = "assertStringEqualsFile";
+                            holder.registerProblem(
+                                    reference,
+                                    String.format(messagePattern, suggestedAssertion),
+                                    new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
+                            );
 
-                        result = true;
+                            result = true;
+                        }
                     }
                 }
             }

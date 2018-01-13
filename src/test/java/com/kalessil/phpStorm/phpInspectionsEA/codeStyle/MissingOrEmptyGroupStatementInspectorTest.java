@@ -8,7 +8,6 @@ final public class MissingOrEmptyGroupStatementInspectorTest extends PhpCodeInsi
         myFixture.enableInspections(new MissingOrEmptyGroupStatementInspector());
         myFixture.configureByFile("fixtures/codeStyle/group-statements-missing.php");
         myFixture.testHighlighting(true, false, true);
-
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/codeStyle/group-statements-missing.fixed.php");

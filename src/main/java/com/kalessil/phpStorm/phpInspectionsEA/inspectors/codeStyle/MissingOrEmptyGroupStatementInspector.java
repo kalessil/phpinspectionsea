@@ -80,7 +80,7 @@ public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
                     return;
                 }
                 /* community feedback: do not report "else if" constructions */
-                else if (construct instanceof Else && construct.getFirstPsiChild() instanceof If) {
+                else if (construct instanceof Else && construct.getLastChild() instanceof If) {
                     return;
                 }
 

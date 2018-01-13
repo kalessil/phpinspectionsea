@@ -1,6 +1,7 @@
 <?php
 
-class TestAssertStringEqualsFile {
+class TestAssertStringEqualsFile
+{
     public function test()
     {
         <weak_warning descr="'assertStringEqualsFile(...)' would fit more here.">$this->assertSame(file_get_contents(''), 'string')</weak_warning>;

@@ -191,7 +191,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         callbacks.add(() -> AssertCountStrategy.apply(methodName, reference, holder));
                         /* AssertFileEqualsStrategy and AssertStringEqualsFileStrategy order is important */
                         callbacks.add(() -> AssertFileEqualsStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> (new AssertStringEqualsFileStrategy().apply(methodName, reference, holder)));
+                        callbacks.add(() -> AssertStringEqualsFileStrategy.apply(methodName, reference, holder));
                     }
                     for (final BooleanSupplier callback : callbacks) {
                         if (callback.getAsBoolean()) {

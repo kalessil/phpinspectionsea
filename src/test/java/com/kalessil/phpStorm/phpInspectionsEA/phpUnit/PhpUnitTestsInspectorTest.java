@@ -31,11 +31,7 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.configureByFile("fixtures/phpUnit/assert-normalization.php");
         myFixture.testHighlighting(true, false, true);
     }
-    public void testIfFindsAssertStringEqualsFilePatterns() {
-        myFixture.enableInspections(new PhpUnitTestsInspector());
-        myFixture.configureByFile("fixtures/phpUnit/assert-string-equals-file.php");
-        myFixture.testHighlighting(true, false, true);
-    }
+
 
     public void testIfFindsSamePatterns() {
         final PhpUnitTestsInspector inspector = new PhpUnitTestsInspector();
@@ -47,6 +43,14 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/phpUnit/assert-same.fixed.php");
+    }
+    public void testIfFindsAssertStringEqualsFilePatterns() {
+        myFixture.enableInspections(new PhpUnitTestsInspector());
+        myFixture.configureByFile("fixtures/phpUnit/assert-string-equals-file.php");
+        myFixture.testHighlighting(true, false, true);
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/phpUnit/assert-string-equals-file.fixed.php");
     }
     public void testIfFindsAssertCountPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());

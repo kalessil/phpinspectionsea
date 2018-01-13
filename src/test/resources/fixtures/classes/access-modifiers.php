@@ -2,9 +2,9 @@
 
 class classAM1
 {
-    static <error descr="'static' should be declared with access modifier.">$static</error>;
-    var    <error descr="'member' should be declared with access modifier.">$member</error>;
-    function <error descr="'defaultVisibilityMethod' should be declared with access modifier.">defaultVisibilityMethod</error> () {}
+    static <weak_warning descr="'static' should be declared with access modifier.">$static</weak_warning>;
+    var    <weak_warning descr="'member' should be declared with access modifier.">$member</weak_warning>;
+    function <weak_warning descr="'defaultVisibilityMethod' should be declared with access modifier.">defaultVisibilityMethod</weak_warning> () {}
 
     const     A_CONSTANT = '';
     public    $publicProperty;
@@ -18,17 +18,17 @@ class classAM1
 
 abstract class classAM2
 {
-    static function <error descr="'defaultVisibilityStaticMethod' should be declared with access modifier.">defaultVisibilityStaticMethod</error> () {}
-    final function <error descr="'defaultVisibilityFinalMethod' should be declared with access modifier.">defaultVisibilityFinalMethod</error> ()  {}
-    abstract function <error descr="'defaultVisibilityAbstractMethod' should be declared with access modifier.">defaultVisibilityAbstractMethod</error> ();
+    static function <weak_warning descr="'defaultVisibilityStaticMethod' should be declared with access modifier.">defaultVisibilityStaticMethod</weak_warning> () {}
+    final function <weak_warning descr="'defaultVisibilityFinalMethod' should be declared with access modifier.">defaultVisibilityFinalMethod</weak_warning> ()  {}
+    abstract function <weak_warning descr="'defaultVisibilityAbstractMethod' should be declared with access modifier.">defaultVisibilityAbstractMethod</weak_warning> ();
 }
 
 interface interfaceAM1
 {
-    function <error descr="'defaultVisibilityMethod' should be declared with access modifier.">defaultVisibilityMethod</error> ();
+    function <weak_warning descr="'defaultVisibilityMethod' should be declared with access modifier.">defaultVisibilityMethod</weak_warning> ();
 }
 
 trait traitAM1
 {
-    function <error descr="'defaultVisibilityMethod' should be declared with access modifier.">defaultVisibilityMethod</error> () {}
+    function <weak_warning descr="'defaultVisibilityMethod' should be declared with access modifier.">defaultVisibilityMethod</weak_warning> () {}
 }

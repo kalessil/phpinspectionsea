@@ -19,6 +19,9 @@ else { c(); d(); }
 if (true === true) { c(); d(); }
 else { a(); b(); }
 
+if (expr()) { c(); d(); }
+else { a(); b(); }
+
 /* not supported: must follow PSR and use `{}` */
 if (!true){a();b();}else c();
 if (!true)a();else{b();c();}

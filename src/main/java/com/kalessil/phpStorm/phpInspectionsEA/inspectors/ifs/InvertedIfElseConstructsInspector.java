@@ -84,7 +84,7 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
                                     problemsHolder.registerProblem(
                                             elseStatement.getFirstChild(),
                                             message,
-                                            new NormalizeWorkflowFix((GroupStatement) ifBody, (GroupStatement) elseBody, binary)
+                                            new NormalizeWorkflowFix((GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition)
                                     );
                                 }
                             }
@@ -125,15 +125,24 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
             final PsiElement ifBody    = this.ifBody.getElement();
             final PsiElement elseBody  = this.elseBody.getElement();
             final PsiElement condition = this.condition.getElement();
-
             if (ifBody != null && elseBody != null && condition != null) {
-                final PsiElement unwrappedCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(condition);
-                if (unwrappedCondition != null) {
-                    condition.replace(unwrappedCondition);
+                final PsiElement donor = ExpressionSemanticUtil.getExpressionTroughParenthesis(condition);
+                if (donor != null) {
+                    PsiElement socket = condition;
+                    while (socket != null) {
+                        final PsiElement parent = socket.getParent();
+                        if (parent instanceof If || parent instanceof ElseIf) {
+                            break;
+                        }
+                        socket = parent;
+                    }
+                    if (socket != null) {
+                        socket.replace(donor);
 
-                    final PsiElement ifBodyCopy = ifBody.copy();
-                    ifBody.replace(elseBody);
-                    elseBody.replace(ifBodyCopy);
+                        final PsiElement ifBodyCopy = ifBody.copy();
+                        ifBody.replace(elseBody);
+                        elseBody.replace(ifBodyCopy);
+                    }
                 }
             }
         }

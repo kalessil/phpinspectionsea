@@ -13,10 +13,12 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,6 +33,10 @@ import java.util.Set;
  */
 
 public class ForeachSourceInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean REPORT_MIXED_TYPES        = true;
+    public boolean REPORT_UNRECOGNIZED_TYPES = true;
+
     private static final String patternNotRecognized = "Expressions' type was not recognized, please check type hints.";
     private static final String patternMixedTypes    = "Expressions' type contains '%t%', please specify possible types instead (best practices).";
     private static final String patternScalar        = "Can not iterate '%t%' (re-check type hints).";
@@ -95,8 +101,9 @@ public class ForeachSourceInspector extends BasePhpInspection {
                             return;
                         }
                     }
-
-                    holder.registerProblem(container, patternNotRecognized, ProblemHighlightType.WEAK_WARNING);
+                    if (REPORT_UNRECOGNIZED_TYPES) {
+                        holder.registerProblem(container, patternNotRecognized, ProblemHighlightType.WEAK_WARNING);
+                    }
                     return;
                 }
 
@@ -147,19 +154,18 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         final String filePath     = null == function ? null : function.getContainingFile().getVirtualFile().getCanonicalPath();
                         isStubFunction            = null != filePath && filePath.contains(".jar!") && filePath.contains("/stubs/");
                     }
-
                     /* false-positive: mixed definition from array type */
-                    if (!isStubFunction && !types.contains(Types.strArray)) {
+                    if (!isStubFunction && !types.contains(Types.strArray) && REPORT_MIXED_TYPES) {
                         final String message = patternMixedTypes.replace("%t%", Types.strMixed);
                         holder.registerProblem(container, message, ProblemHighlightType.WEAK_WARNING);
                     }
-
                     types.remove(Types.strMixed);
                 }
                 if (types.contains(Types.strObject)) {
-                    final String message = patternMixedTypes.replace("%t%", Types.strObject);
-                    holder.registerProblem(container, message, ProblemHighlightType.WEAK_WARNING);
-
+                    if (REPORT_MIXED_TYPES) {
+                        final String message = patternMixedTypes.replace("%t%", Types.strObject);
+                        holder.registerProblem(container, message, ProblemHighlightType.WEAK_WARNING);
+                    }
                     types.remove(Types.strObject);
                 }
 
@@ -228,5 +234,12 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Request better specification for 'mixed'", REPORT_MIXED_TYPES, (isSelected) -> REPORT_MIXED_TYPES = isSelected);
+            component.addCheckbox("Request missing types specification", REPORT_UNRECOGNIZED_TYPES, (isSelected) -> REPORT_UNRECOGNIZED_TYPES = isSelected);
+        });
     }
 }

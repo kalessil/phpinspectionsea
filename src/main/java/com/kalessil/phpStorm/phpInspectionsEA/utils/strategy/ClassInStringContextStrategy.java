@@ -6,10 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,7 +53,7 @@ final public class ClassInStringContextStrategy {
 
         /* check methods, error on first one violated requirements */
         for (final PhpClass clazz : listClasses) {
-            if (clazz.findMethodByName("__toString") == null) {
+            if (OpenapiResolveUtil.resolveMethod(clazz, "__toString") == null) {
                 final String message = classHasNoToStringMessage.replace("%class%", clazz.getFQN());
                 holder.registerProblem(expression, message, ProblemHighlightType.ERROR);
 

@@ -62,7 +62,7 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
                             final List<PhpClass> parents = new ArrayList<>(Arrays.asList(clazz.getImplementedInterfaces()));
                             parents.add(OpenapiResolveUtil.resolveSuperClass(clazz));
                             for (final PhpClass parent : parents) {
-                                if (parent != null && parent.findMethodByName(methodName) != null) {
+                                if (parent != null && OpenapiResolveUtil.resolveMethod(parent, methodName) != null) {
                                     return;
                                 }
                             }

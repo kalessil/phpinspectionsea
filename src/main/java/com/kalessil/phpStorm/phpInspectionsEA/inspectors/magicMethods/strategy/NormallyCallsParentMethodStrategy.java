@@ -27,7 +27,7 @@ public class NormallyCallsParentMethodStrategy {
         if (clazz != null) {
             final String methodName           = method.getName();
             final PhpClass parentClazz        = OpenapiResolveUtil.resolveSuperClass(clazz);
-            final Method   parentMethod       = parentClazz == null ? null : parentClazz.findMethodByName(methodName);
+            final Method   parentMethod       = parentClazz == null ? null : OpenapiResolveUtil.resolveMethod(parentClazz, methodName);
             final PhpClass parentMethodHolder = parentMethod == null ? null : parentMethod.getContainingClass();
             if (parentMethodHolder != null && !parentMethod.isAbstract() && !parentMethod.getAccess().isPrivate()) {
                 final boolean isUsed = PsiTreeUtil.findChildrenOfType(method, MethodReference.class).stream()

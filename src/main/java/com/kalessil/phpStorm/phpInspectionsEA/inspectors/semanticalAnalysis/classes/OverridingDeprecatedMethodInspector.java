@@ -46,7 +46,7 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
 
                 /* search for deprecated parent methods */
                 final PhpClass parent     = OpenapiResolveUtil.resolveSuperClass(clazz);
-                final Method parentMethod = null == parent ? null : parent.findMethodByName(searchMethodName);
+                final Method parentMethod = null == parent ? null : OpenapiResolveUtil.resolveMethod(parent, searchMethodName);
                 if (null != parentMethod) {
                     if (!method.isDeprecated() && parentMethod.isDeprecated()) {
                         final String message = patternNeedsDeprecation.replace("%m%", searchMethodName);
@@ -66,7 +66,7 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                 /* search for deprecated interface methods */
                 if (!method.isDeprecated()) {
                     for (PhpClass iface : clazz.getImplementedInterfaces()) {
-                        final Method ifaceMethod = iface.findMethodByName(searchMethodName);
+                        final Method ifaceMethod = OpenapiResolveUtil.resolveMethod(iface, searchMethodName);
                         if (null != ifaceMethod && ifaceMethod.isDeprecated()) {
                             final String message = patternNeedsDeprecation.replace("%m%", searchMethodName);
                             holder.registerProblem(methodName, message, ProblemHighlightType.LIKE_DEPRECATED);

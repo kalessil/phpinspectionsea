@@ -83,7 +83,7 @@ public class MissingIssetImplementationInspector extends BasePhpInspection {
                                 /* resolved class FQN might differ from what type states */
                                 if (clazz != null && !magicClasses.contains(clazz.getFQN())) {
                                     final boolean hasField = null != clazz.findFieldByName(parameter.getName(), false);
-                                    if (!hasField && null == clazz.findMethodByName("__isset")) {
+                                    if (!hasField && OpenapiResolveUtil.resolveMethod(clazz, "__isset") == null) {
                                         final String message = messagePattern.replace("%c%", normalizedType);
                                         holder.registerProblem(parameter, message, ProblemHighlightType.GENERIC_ERROR);
 

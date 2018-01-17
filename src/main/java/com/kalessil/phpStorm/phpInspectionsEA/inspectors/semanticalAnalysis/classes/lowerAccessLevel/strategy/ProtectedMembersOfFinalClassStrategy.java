@@ -41,7 +41,7 @@ final public class ProtectedMembersOfFinalClassStrategy {
             final PhpClassMember parentMember
                     = member instanceof Field
                         ? parent.findFieldByName(memberName, ((Field) member).isConstant())
-                        : parent.findMethodByName(memberName);
+                        : OpenapiResolveUtil.resolveMethod(parent, memberName);
             result = parentMember != null;
         }
         return result;

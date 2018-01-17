@@ -188,7 +188,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 boolean isOffsetFunctionsPrecessed = false;
 
                 // custom offsets management, follow annotated types
-                Method offsetSetMethod = classToCheck.findMethodByName("offsetSet");
+                Method offsetSetMethod = OpenapiResolveUtil.resolveMethod(classToCheck, "offsetSet");
                 if (null != offsetSetMethod) {
                     final PsiElement[] offsetSetParams = offsetSetMethod.getParameters();
                     if (offsetSetParams.length > 0) {
@@ -199,7 +199,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                     isOffsetFunctionsPrecessed = true;
                 }
                 // custom offsets management, follow annotated types
-                Method offsetGetMethod = classToCheck.findMethodByName("offsetGet");
+                Method offsetGetMethod = OpenapiResolveUtil.resolveMethod(classToCheck, "offsetGet");
                 if (null != offsetGetMethod) {
                     final PsiElement[] offsetGetParams = offsetGetMethod.getParameters();
                     if (offsetGetParams.length > 0) {
@@ -214,9 +214,9 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 }
 
                 // magic methods, demand regular array offset types
-                Method magicMethod = classToCheck.findMethodByName("__get");
+                Method magicMethod = OpenapiResolveUtil.resolveMethod(classToCheck, "__get");
                 if (null == magicMethod) {
-                    magicMethod = classToCheck.findMethodByName("__set");
+                    magicMethod = OpenapiResolveUtil.resolveMethod(classToCheck, "__set");
                 }
                 if (null != magicMethod) {
                     supportsOffsets = true;

@@ -47,15 +47,8 @@ Happy new year! New ultimate features for you:<br/>
 - Worked out crash-reports from December<br/>
 - Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/41946">v2.3.15</a><br/>
 <br/>
-- Insecure 'htmlentities(...)' usage: resolved false-positives (UTs)<br/>
-- Insecure 'htmlspecialchars(...)' usage: resolved false-positives (UTs)<br/>
-- 'file_put_contents(...)' race condition: resolved false-positives (UTs)<br/>
-<br/>
-- Class existence and relation check correctness: implemented<br/>
-- Exploiting unserialize: new patterns<br/>
-- Null reference: new patterns<br/>
-- Unnecessary continue statements: implemented<br/>
-- Unnecessary emptiness check: implemented<br/>
+- FilePutContentsRaceConditionInspector: added settings
+- UnnecessaryEmptinessCheckInspector: fixed NPE
 <br/>
 <hr/>
   ]]></change-notes>

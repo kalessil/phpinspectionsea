@@ -60,23 +60,20 @@ Hot-fix release:<br/>
 <br/>
 - Worked out crash reports for December<br/>
 <br/>
-- Exploiting unserialize: resolved false-positives (UTs)<br/>
-- Magic methods validity: resolved false-positives (multiple cases)<br/>
-- Phar-incompatible 'realpath(...)' usage: resolved false-positives (UTs)<br/>
-- PhpUnit: bugs and best practices: resolved false-positives (multiple cases)<br/>
-- Statement could be decoupled from foreach: resolved false-positives (compact function)<br/>
-- Variable functions usage: resolved false-positives (call_user_func suggestion in some cases)<br/>
-- 'scandir(...)' low performing usage: resolved false-positives (imported functions)<br/>
-- 'mkdir(...)' race condition: resolved false-positives (imported functions)<br/>
+- ForeachSourceInspector: added new settings
+- GetClassUsageInspector: invoke with language level 7.1+
+- MissingOrEmptyGroupStatementInspector: bug-fix (doc-block breaks analysis)
+- PhpUnitTestsInspector: resolved false-positives (multiple cases)
+- MkdirRaceConditionInspector: QF bug-fix (arguments gets lost)
+- ReturnTypeCanBeDeclaredInspector: resolved false-positives (multiple cases)
+- ArgumentEqualsDefaultValueInspector: resolved false-positives (magic constants)
+- UnnecessaryParenthesesInspector: resolved false-positives (multiple cases)
+- UnusedConstructorDependenciesInspector: resolved false-positives
+- OneTimeUseVariablesInspector:new added new settings
 <br/>
-- Exceptions handling and annotating: new patterns (methods without PhpDoc)<br/>
-- Exceptions handling and annotating: new settings (exceptions to ignore)<br/>
-- PhpUnit: bugs and best practices: new patterns<br/>
-- Return type hint can be used: use self when specified in PhpDoc<br/>
-- Security advisories for Composer packages: new packages (vfsStream)<br/>
-<br/>
-- Default value is hidden in else branch: dropped<br/>
-- PhpUnit: unnecessary assertion: implemented<br/>
+- InvertedIfElseConstructsInspector: new patterns
+- PhpUnitTestsInspector: new patterns
+- StartsWithOnLongStringsInspector: implemented (needs activation)
 <br/>
 <hr/>
   ]]></change-notes>

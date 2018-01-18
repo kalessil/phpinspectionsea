@@ -101,7 +101,7 @@ class CasesHolder {
     public function npeSafeTestCase(?CasesHolder $first, ?CasesHolder $second, ?CasesHolder $third) {
         self::assertNotNull($first);
         Assertion::notNull($second);
-        Assert::that($third)->notNull()
+        Assert::that($third)->notNull();
 
         return [
             $first->nonExistingField,

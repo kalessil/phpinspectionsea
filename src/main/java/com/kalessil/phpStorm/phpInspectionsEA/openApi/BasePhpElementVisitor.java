@@ -52,8 +52,9 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpUnset(PhpUnset unsetStatement)  {}
     @Override public void visitPhpEmpty(PhpEmpty emptyExpression) {}
 
-    @Override public void visitPhpClass(PhpClass clazz)                          {}
-    @Override public void visitPhpConstantReference(ConstantReference reference) {}
+    @Override public void visitPhpClass(PhpClass clazz)                                            {}
+    @Override public void visitPhpConstantReference(ConstantReference reference)                   {}
+    @Override public void visitPhpClassConstantReference(ClassConstantReference constantReference) {}
 
     @Override public void visitPhpArrayCreationExpression(ArrayCreationExpression expression) {}
     @Override public void visitPhpArrayAccessExpression(ArrayAccessExpression expression)     {}

@@ -44,6 +44,9 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
                 callbacks.add(() -> HardcodedConstantValuesStrategy.apply(expression, holder));
                 callbacks.add(() -> UnclearOperationsPriorityStrategy.apply(expression, holder));
 
+                /* TODO: === and !== on non-intersecting types */
+                /* TODO: === and !== on strings/numbers/constants (constant expressions) */
+
                 /* run through strategies until the first one fired something */
                 for (final BooleanSupplier strategy: callbacks) {
                     if (strategy.getAsBoolean()) {

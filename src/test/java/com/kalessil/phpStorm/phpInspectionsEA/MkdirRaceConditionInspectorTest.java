@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.raceConditions.MkdirRaceConditionInspector;
 
 final public class MkdirRaceConditionInspectorTest extends PhpCodeInsightFixtureTestCase {

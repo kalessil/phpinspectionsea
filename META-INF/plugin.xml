@@ -73,6 +73,7 @@ Hot-fix release:<br/>
 - OneTimeUseVariablesInspector:new added new settings
 - ForeachInvariantsInspector: resolved false-positives (strings iteration)
 - NullPointerExceptionInspector: resolved false-positives (beberlei/assert assertions)
+- CallableParameterUseCaseInTypeContextInspection: resolved false-positives (multiple cases around static type)
 <br/>
 - InvertedIfElseConstructsInspector: new patterns
 - PhpUnitTestsInspector: new patterns

@@ -14,10 +14,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -172,15 +169,43 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                                     .map(Types::getType)
                                                     .filter(type -> !type.equals(Types.strMixed))
                                                     .collect(Collectors.toSet());
-                                    final boolean valueIsMethodCall = value instanceof MethodReference;
                                     for (String type : resolved) {
                                         /* translate static/self into FQNs */
-                                        if (valueIsMethodCall && classReferences.contains(type)) {
-                                            final PsiElement source = OpenapiResolveUtil.resolveReference((MethodReference) value);
-                                            if (source instanceof Method) {
-                                                final PhpClass clazz = ((Method) source).getContainingClass();
-                                                if (clazz != null && !clazz.isAnonymous()) {
-                                                    type = clazz.getFQN();
+                                        if (classReferences.contains(type)) {
+                                            PsiElement valueExtract = value;
+                                            /* ` = <whatever> ?? <method call>` support */
+                                            if (valueExtract instanceof BinaryExpression) {
+                                                final BinaryExpression binary = (BinaryExpression) valueExtract;
+                                                if (binary.getOperationType() == PhpTokenTypes.opCOALESCE) {
+                                                    final PsiElement left = binary.getLeftOperand();
+                                                    if (left != null && OpeanapiEquivalenceUtil.areEqual(variable, left)) {
+                                                        final PsiElement right = binary.getRightOperand();
+                                                        if (right != null) {
+                                                            valueExtract = right;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            /* method call lookup */
+                                            if (valueExtract instanceof MethodReference) {
+                                                final PsiElement base = valueExtract.getFirstChild();
+                                                if (base instanceof ClassReference) {
+                                                    final PsiElement resolvedClass = OpenapiResolveUtil.resolveReference((ClassReference) base);
+                                                    if (resolvedClass instanceof PhpClass) {
+                                                        type = ((PhpClass) resolvedClass).getFQN();
+                                                    }
+                                                } else if (base instanceof PhpTypedElement) {
+                                                    final PhpType clazzTypes = OpenapiResolveUtil.resolveType((PhpTypedElement) base, project);
+                                                    if (clazzTypes != null) {
+                                                        final Set<String> filteredTypes = clazzTypes.filterUnknown().getTypes().stream()
+                                                                .map(Types::getType)
+                                                                .filter(t -> t.startsWith("\\"))
+                                                                .collect(Collectors.toSet());
+                                                        if (filteredTypes.size() == 1) {
+                                                            type = filteredTypes.iterator().next();
+                                                        }
+                                                        filteredTypes.clear();
+                                                    }
                                                 }
                                             }
                                         }
@@ -216,10 +241,10 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                 /* second case: inherited classes/interfaces */
                 final Set<String> possibleTypes = new HashSet<>();
                 if (type.startsWith("\\")) {
-                    index.getAnyByFQN(type).forEach(
-                            clazz -> InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream()
-                                        .map(PhpNamedElement::getFQN)
-                                        .forEach(possibleTypes::add)
+                    index.getAnyByFQN(type).forEach(clazz ->
+                            InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream()
+                                    .map(PhpNamedElement::getFQN)
+                                    .forEach(possibleTypes::add)
                     );
                 }
 

@@ -146,7 +146,10 @@ Happy new year! New ultimate features for you:<br/>
         shortName="ArrayKeysMissUseInspection"                    displayName="'array_keys(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayKeysMissUseInspector"/>
-
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="FixedTimeStartWithInspection"                  displayName="Fixed-time string starts with checks"
+        groupName="Performance"                                   enabledByDefault="false" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.FixedTimeStartWithInspector"/>
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="IsEmptyFunctionUsageInspection"                displayName="'empty(...)' usage"
@@ -536,7 +539,7 @@ Happy new year! New ultimate features for you:<br/>
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="PhpUnitTestsInspection"                        displayName="PhpUnit: bugs and best practices"
-        groupName="PhpUnit"                                       enabledByDefault="true" level="WARNING"
+        groupName="PhpUnit"                                       enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitTestsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="UnnecessaryAssertionInspection"                displayName="PhpUnit: unnecessary assertion"
@@ -622,7 +625,7 @@ Happy new year! New ultimate features for you:<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.SenselessCommaInArrayDefinitionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="AccessModifierPresentedInspection"             displayName="Access modifiers shall be defined"
-        groupName="Code Style"                                    enabledByDefault="true" level="ERROR"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.AccessModifierPresentedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="IncrementDecrementOperationEquivalentInspection" displayName="Increment/decrement operation equivalent"
@@ -690,7 +693,7 @@ Happy new year! New ultimate features for you:<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ParameterDefaultValueIsNotNullInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="DisallowWritingIntoStaticPropertiesInspection" displayName="Disallow writing into static properties"
-        groupName="Code Style"                                    enabledByDefault="false" level="WARNING"
+        groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.DisallowWritingIntoStaticPropertiesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="MisorderedModifiersInspection"                 displayName="PSR-compliant modifiers order"
@@ -706,7 +709,7 @@ Happy new year! New ultimate features for you:<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.SelfClassReferencingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ImplicitMagicMethodCallInspection"             displayName="Implicit magic method calls"
-        groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.ImplicitMagicMethodCallInspector"/>
 
 

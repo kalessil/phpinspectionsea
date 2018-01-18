@@ -50,7 +50,6 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
     static {
         /* +class/interface reference for PHP7.0+; +void for PHP7.1+ */
         returnTypes.add("self");
-        returnTypes.add("static");
         returnTypes.add("array");
         returnTypes.add("callable");
         returnTypes.add("bool");
@@ -113,20 +112,21 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
 
                 final int typesCount = normalizedTypes.size();
                 /* case 1: offer using void */
-                if (supportNullableTypes && 0 == typesCount) {
-                    final String suggestedType = Types.strVoid;
-                    final LocalQuickFix fixer  = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(suggestedType);
-                    final String message       = messagePattern
-                        .replace("%t%", suggestedType)
-                        .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "")
-                    ;
-                    holder.registerProblem(target, message, fixer);
+                if (supportNullableTypes && typesCount == 0) {
+                    final PsiElement firstReturn = PsiTreeUtil.findChildOfType(method, PhpReturn.class);
+                    if (firstReturn == null || ExpressionSemanticUtil.getScope(firstReturn) != method) {
+                        final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(Types.strVoid);
+                        final String message      = messagePattern
+                                .replace("%t%", Types.strVoid)
+                                .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "");
+                        holder.registerProblem(target, message, fixer);
+                    }
                 }
                 /* case 2: offer using type */
                 if (1 == typesCount) {
                     final String singleType    = normalizedTypes.iterator().next();
                     final String suggestedType = voidTypes.contains(singleType) ? Types.strVoid : compactType(singleType, method);
-                    final boolean isLegitBasic = singleType.startsWith("\\") || returnTypes.contains(singleType);
+                    final boolean isLegitBasic = singleType.startsWith("\\") || returnTypes.contains(singleType) || suggestedType.equals("self");
                     final boolean isLegitVoid  = supportNullableTypes && suggestedType.equals(Types.strVoid);
                     if (isLegitBasic || isLegitVoid) {
                         final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(suggestedType);
@@ -145,7 +145,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     final String suggestedType
                         = voidTypes.contains(nullableType) ? Types.strVoid : compactType(nullableType, method);
 
-                    final boolean isLegitNullable = nullableType.startsWith("\\") || returnTypes.contains(nullableType);
+                    final boolean isLegitNullable = nullableType.startsWith("\\") || returnTypes.contains(nullableType) || suggestedType.equals("self");
                     final boolean isLegitVoid     = suggestedType.equals(Types.strVoid);
                     if (isLegitNullable || isLegitVoid) {
                         final String typeHint     = isLegitVoid ? suggestedType : '?' + suggestedType;
@@ -190,6 +190,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                             result = "self";
                         }
                     }
+                    /* be sure to send back static for avoiding false-positives */
+                    result = (result == null && type.equals("static")) ? type : result;
                     /* Strategy 2: scan imports */
                     if (result == null) {
                         for (final PhpUse useItem : PsiTreeUtil.findChildrenOfType(method.getContainingFile(), PhpUse.class)) {

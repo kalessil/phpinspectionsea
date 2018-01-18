@@ -9,9 +9,7 @@ final public class MkdirRaceConditionInspectorTest extends PhpCodeInsightFixture
         myFixture.configureByFile("fixtures/pitfalls/raceCondition/mkdir-race-conditions.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/pitfalls/raceCondition/mkdir-race-conditions.fixed.php");
     }

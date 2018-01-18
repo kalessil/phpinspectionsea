@@ -54,7 +54,7 @@ Inspections Lists (PhpUnit)
 ---
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | --:  | --: |
-| PhpUnit              | PhpUnitTestsInspection                          | PhpUnit: bugs and best practices                    | yes | yes | no   | no  |
+| PhpUnit              | PhpUnitTestsInspection                          | PhpUnit: bugs and best practices                    | yes | yes | yes  | no  |
 | PhpUnit              | UnnecessaryAssertionInspection                  | PhpUnit: unnecessary assertion                      | no  | yes | no   | no  |
 
 Inspections Lists (Unused)
@@ -254,4 +254,5 @@ Inspections Lists (Performance)
 | Performance          | UnqualifiedReferenceInspection                  | Unqualified function/constant reference                                                           | yes | yes | yes  | no  |
 | Performance          | ExplodeMissUseInspection                        | 'explode(...)' misused                                                                            | yes | yes | yes  | no  |
 | Performance          | ScandirUsageInspection                          | 'scandir(...)' low performing usage                                                               | yes | yes | yes  | no  |
+| Performance          | FixedTimeStartWithInspection                    | Fixed-time string starts with checks                                                              | yes | yes | yes  | no  |
 | Performance          | ArrayKeysMissUseInspection                      | 'array_keys(...)' misused                                                                         | yes | yes | yes  | no  |

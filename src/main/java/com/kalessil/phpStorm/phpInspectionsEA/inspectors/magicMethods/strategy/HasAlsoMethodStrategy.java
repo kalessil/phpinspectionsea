@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -22,7 +23,7 @@ final public class HasAlsoMethodStrategy {
 
     static public void apply(@NotNull Method method, @NotNull String companion, @NotNull ProblemsHolder holder) {
         final PhpClass clazz = method.getContainingClass();
-        if (clazz != null && clazz.findMethodByName(companion) == null) {
+        if (clazz != null && OpenapiResolveUtil.resolveMethod(clazz, companion) == null) {
             final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
             if (nameNode != null) {
                 final String message = String.format(messagePattern, method.getName(), companion);

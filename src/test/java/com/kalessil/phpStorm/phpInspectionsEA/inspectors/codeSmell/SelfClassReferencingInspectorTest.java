@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeSmell;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.SelfClassReferencingInspector;
 
@@ -12,9 +11,7 @@ final public class SelfClassReferencingInspectorTest extends PhpCodeInsightFixtu
         myFixture.configureByFile("fixtures/codeStyle/self-class-referencing.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/codeStyle/self-class-referencing.fixed.php");
     }
@@ -26,9 +23,7 @@ final public class SelfClassReferencingInspectorTest extends PhpCodeInsightFixtu
         myFixture.configureByFile("fixtures/codeStyle/self-class-referencing.reverse.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/codeStyle/self-class-referencing.reverse.fixed.php");
     }

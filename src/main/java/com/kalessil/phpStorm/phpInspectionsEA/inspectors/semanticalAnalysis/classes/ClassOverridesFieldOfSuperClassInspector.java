@@ -4,7 +4,8 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -16,6 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Arrays;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -58,9 +60,10 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
                 if (!(ExpressionSemanticUtil.getBlockScope(ownFieldNameId) instanceof PhpClass)) {
                     return;
                 }
-                /* ensure not doctrine entity field */
-                final PhpDocComment docBlock = ownField.getDocComment();
-                if (docBlock != null && docBlock.getText().contains("@ORM\\")) {
+                /* ensure field doesn't have any user-land annotations */
+                final PhpDocTag[] tags  = PsiTreeUtil.getChildrenOfType(ownField.getDocComment(), PhpDocTag.class);
+                final boolean annotated = tags != null && Arrays.stream(tags).anyMatch(t -> !t.getName().equals(t.getName().toLowerCase()));
+                if (annotated) {
                     return;
                 }
 

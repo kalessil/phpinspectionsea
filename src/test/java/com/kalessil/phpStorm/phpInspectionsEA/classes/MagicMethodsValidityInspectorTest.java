@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.classes;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.MagicMethodsValidityInspector;
 
@@ -35,9 +34,7 @@ final public class MagicMethodsValidityInspectorTest extends PhpCodeInsightFixtu
         myFixture.configureByFile("fixtures/classes/magicMethods/magic-methods-missing-underscore.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/classes/magicMethods/magic-methods-missing-underscore.fixed.php");
     }

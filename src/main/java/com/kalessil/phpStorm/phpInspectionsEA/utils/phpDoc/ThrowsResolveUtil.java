@@ -99,14 +99,14 @@ final public class ThrowsResolveUtil {
             /* inherited methods */
             final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
             if (parent != null) {
-                final Method parentMethod = parent.findMethodByName(methodName);
+                final Method parentMethod = OpenapiResolveUtil.resolveMethod(parent, methodName);
                 if (parentMethod != null && !processedMethods.contains(parentMethod)) {
                     collectThrownAndInherited(parentMethod, exceptionsRegistry, processedMethods, false);
                 }
             }
             /* contract methods */
             for (final PhpClass implementedInterface : clazz.getImplementedInterfaces()) {
-                final Method requiredMethod = implementedInterface.findMethodByName(methodName);
+                final Method requiredMethod = OpenapiResolveUtil.resolveMethod(implementedInterface, methodName);
                 if (requiredMethod != null && !processedMethods.contains(requiredMethod)) {
                     collectThrownAndInherited(requiredMethod, exceptionsRegistry, processedMethods, false);
                 }

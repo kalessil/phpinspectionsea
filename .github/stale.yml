@@ -1,0 +1,11 @@
+# see https://github.com/apps/stale for more details
+daysUntilStale: 365
+daysUntilClose: 21
+exemptLabels:
+  - bug / false-positive
+  - internal
+staleLabel: wontfix
+markComment: >
+  Bebo beep, the StaleBot is here. For one year nothing have happened here.
+  It would be great if someone looked into details here within next 21 days when I'll close it.
+closeComment: true

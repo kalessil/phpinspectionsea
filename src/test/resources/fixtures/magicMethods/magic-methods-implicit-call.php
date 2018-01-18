@@ -2,24 +2,24 @@
 
     class ClassToString {}
     $obj = new \stdClass();
-    <warning descr="Please use '(string) $obj' instead.">$obj->__toString()</warning>;
+    <weak_warning descr="Please use '(string) $obj' instead.">$obj->__toString()</weak_warning>;
 
     class ClassImplicitMagicMethodsCall {
         public function createFromWhatever($object) {
-            <warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__construct()</warning>;
-            <warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__destruct()</warning>;
-            <warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__call()</warning>;
-            <warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__callStatic()</warning>;
-            <warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__get()</warning>;
-            <warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__set()</warning>;
-            <warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__isset()</warning>;
-            <warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__unset()</warning>;
-            <warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__sleep()</warning>;
-            <warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__wakeup()</warning>;
-            <warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__invoke()</warning>;
-            <warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__set_state()</warning>;
+            <weak_warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__construct()</weak_warning>;
+            <weak_warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__destruct()</weak_warning>;
+            <weak_warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__call()</weak_warning>;
+            <weak_warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__callStatic()</weak_warning>;
+            <weak_warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__get()</weak_warning>;
+            <weak_warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__set()</weak_warning>;
+            <weak_warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__isset()</weak_warning>;
+            <weak_warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__unset()</weak_warning>;
+            <weak_warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__sleep()</weak_warning>;
+            <weak_warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__wakeup()</weak_warning>;
+            <weak_warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__invoke()</weak_warning>;
+            <weak_warning descr="Implicit magic method calls should be avoided as these methods are used by PHP internals.">$object->__set_state()</weak_warning>;
 
-            <warning descr="Please use '(string) $object' instead.">$object->__toString()</warning>;
+            <weak_warning descr="Please use '(string) $object' instead.">$object->__toString()</weak_warning>;
 
             $this->__construct();
             $this->__toString();

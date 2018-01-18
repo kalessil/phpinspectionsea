@@ -5,10 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.ImplicitMa
 
 final public class ImplicitMagicMethodCallInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        ImplicitMagicMethodCallInspector inspector = new ImplicitMagicMethodCallInspector();
-        inspector.SUGGEST_USING_STRING_CASTING     = true;
+        final ImplicitMagicMethodCallInspector inspector = new ImplicitMagicMethodCallInspector();
+        inspector.SUGGEST_USING_STRING_CASTING           = true;
         myFixture.enableInspections(inspector);
-
         myFixture.configureByFile("fixtures/magicMethods/magic-methods-implicit-call.php");
         myFixture.testHighlighting(true, false, true);
     }

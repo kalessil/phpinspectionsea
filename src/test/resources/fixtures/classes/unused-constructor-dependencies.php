@@ -60,3 +60,14 @@ class ClassUpdComplex
         };
     }
 }
+
+/* false-positives: annotated fields */
+class ClassWithAnnotations
+{
+    /** @Id */
+    private $property;
+
+    public function __construct($property) {
+        $this->property = $property;
+    }
+}

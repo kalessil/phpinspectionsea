@@ -16,8 +16,8 @@ class BaseClass
 
         /* case with a lambda, the context is a function */
         return function () {
-            <warning descr="Static properties should be modified only inside the source class.">BaseClass::$staticProperty  = 'whatever'</warning>;
-            <warning descr="Static properties should be modified only inside the source class.">ClassAlias::$staticProperty = 'whatever'</warning>;
+            <weak_warning descr="Static properties should be modified only inside the source class.">BaseClass::$staticProperty  = 'whatever'</weak_warning>;
+            <weak_warning descr="Static properties should be modified only inside the source class.">ClassAlias::$staticProperty = 'whatever'</weak_warning>;
         };
     }
 }
@@ -32,16 +32,16 @@ class ChildClass extends BaseClass
         self::$overridden       = 'whatever';
         static::$overridden     = 'whatever';
 
-        <warning descr="Static properties should be modified only inside the source class.">ClassAlias::$overridden     = 'whatever'</warning>;
-        <warning descr="Static properties should be modified only inside the source class.">ClassAlias::$staticProperty = 'whatever'</warning>;
-        <warning descr="Static properties should be modified only inside the source class.">ChildClass::$staticProperty = 'whatever'</warning>;
+        <weak_warning descr="Static properties should be modified only inside the source class.">ClassAlias::$overridden     = 'whatever'</weak_warning>;
+        <weak_warning descr="Static properties should be modified only inside the source class.">ClassAlias::$staticProperty = 'whatever'</weak_warning>;
+        <weak_warning descr="Static properties should be modified only inside the source class.">ChildClass::$staticProperty = 'whatever'</weak_warning>;
     }
 }
 
 /* all static field writes in non-method context being reported */
 class ClassWithoutFields {}
-<warning descr="Static properties should be modified only inside the source class.">BaseClass::$staticProperty  = 'whatever'</warning>;
-<warning descr="Static properties should be modified only inside the source class.">ChildClass::$staticProperty = 'whatever'</warning>;
-<warning descr="Static properties should be modified only inside the source class.">ClassAlias::$staticProperty = 'whatever'</warning>;
-<warning descr="Static properties should be modified only inside the source class.">ClassWithoutFields::$missingField = 'whatever'</warning>;
-<warning descr="Static properties should be modified only inside the source class.">MissingClass::$missingField       = 'whatever'</warning>;
+<weak_warning descr="Static properties should be modified only inside the source class.">BaseClass::$staticProperty  = 'whatever'</weak_warning>;
+<weak_warning descr="Static properties should be modified only inside the source class.">ChildClass::$staticProperty = 'whatever'</weak_warning>;
+<weak_warning descr="Static properties should be modified only inside the source class.">ClassAlias::$staticProperty = 'whatever'</weak_warning>;
+<weak_warning descr="Static properties should be modified only inside the source class.">ClassWithoutFields::$missingField = 'whatever'</weak_warning>;
+<weak_warning descr="Static properties should be modified only inside the source class.">MissingClass::$missingField       = 'whatever'</weak_warning>;

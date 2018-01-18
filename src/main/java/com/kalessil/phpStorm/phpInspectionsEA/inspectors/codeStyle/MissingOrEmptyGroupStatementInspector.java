@@ -71,20 +71,19 @@ public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
             }
 
             private void checkBrackets(@NotNull PhpPsiElement construct) {
-                final PsiElement target   = construct.getFirstChild();
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(construct);
                 if (body != null) {
                     if (REPORT_EMPTY_BODY && ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
-                        holder.registerProblem(target, messageEmptyBody);
+                        holder.registerProblem(construct.getFirstChild(), messageEmptyBody);
                     }
                     return;
                 }
                 /* community feedback: do not report "else if" constructions */
-                else if (construct instanceof Else && construct.getFirstPsiChild() instanceof If) {
+                else if (construct instanceof Else && construct.getLastChild() instanceof If) {
                     return;
                 }
 
-                holder.registerProblem(target, messageMissingBrackets, new WrapBodyFix());
+                holder.registerProblem(construct.getFirstChild(), messageMissingBrackets, new WrapBodyFix());
             }
         };
     }

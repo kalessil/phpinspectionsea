@@ -41,3 +41,7 @@ array_search($x, $y, false);
 /* false-positives: magic around dynamic variables manipulation */
 functionWithDefaults('default', 'whatever', 'undeclared');
 $object->method('default', 'whatever', 'undeclared');
+
+/* false-positives: magic constants as defaults */
+function functionWithMagicDefault($first = __LINE__) {}
+functionWithMagicDefault(__LINE__);

@@ -1,99 +1,70 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
-import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.PhpUnitAssertFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class AssertResourceExistsStrategy {
-    private final static String messagePattern = "%s should be used instead.";
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-    private final static Map<String, String> assertionMapping = new HashMap<>();
+final public class AssertResourceExistsStrategy {
+    private final static Map<String, String> targetFunctions = new HashMap<>();
+    private final static Map<String, String> targetMapping   = new HashMap<>();
     static {
-        assertionMapping.put("file_exists", "assertFileExists");
-        assertionMapping.put("is_dir",      "assertDirectoryExists");
+        targetFunctions.put("file_exists", "File");
+        targetFunctions.put("is_dir",      "Directory");
+
+        targetMapping.put("assertTrue",     "assert%sExists");
+        targetMapping.put("assertNotFalse", "assert%sExists");
+        targetMapping.put("assertFalse",    "assert%sNotExists");
+        targetMapping.put("assertNotTrue",  "assert%sNotExists");
     }
 
-    static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
-        final PsiElement[] assertionArguments = reference.getParameters();
-        if (assertionArguments.length > 0 && (function.equals("assertTrue") || function.equals("assertNotFalse"))) {
-            final PsiElement candidate = ExpressionSemanticUtil.getExpressionTroughParenthesis(assertionArguments[0]);
-            if (OpenapiTypesUtil.isFunctionReference(candidate)) {
-                final FunctionReference functionCall = (FunctionReference) candidate;
-                final PsiElement[] functionArguments = functionCall.getParameters();
-                final String functionName            = functionCall.getName();
-                if (functionArguments.length == 1 && functionName != null && assertionMapping.containsKey(functionName)) {
-                    final String suggestedAssertion = assertionMapping.get(functionName);
-                    final String message            = String.format(messagePattern, suggestedAssertion);
-                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(suggestedAssertion, functionArguments[0]));
-                    return true;
+    private final static String messagePattern = "'%s(...)' would fit more here.";
+
+    static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
+        boolean result = false;
+        if (targetMapping.containsKey(methodName)) {
+            final PsiElement[] assertionArguments = reference.getParameters();
+            if (assertionArguments.length > 0 && OpenapiTypesUtil.isFunctionReference(assertionArguments[0])) {
+                final FunctionReference candidate = (FunctionReference) assertionArguments[0];
+                final String functionName         = candidate.getName();
+                if (functionName != null && targetFunctions.containsKey(functionName)) {
+                    final PsiElement[] functionArguments = candidate.getParameters();
+                    if (functionArguments.length == 1) {
+                        final String suggestedAssertion = String.format(
+                                targetMapping.get(methodName),
+                                targetFunctions.get(functionName)
+                        );
+                        final String[] suggestedArguments = new String[assertionArguments.length];
+                        suggestedArguments[0] = functionArguments[0].getText();
+                        if (assertionArguments.length > 1) {
+                            suggestedArguments[1] = assertionArguments[1].getText();
+                        }
+                        holder.registerProblem(
+                                reference,
+                                String.format(messagePattern, suggestedAssertion),
+                                new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
+                        );
+
+                        result = true;
+                    }
                 }
             }
         }
-        return false;
-    }
-
-    private static class TheLocalFix implements LocalQuickFix {
-        final private SmartPsiElementPointer<PsiElement> resource;
-        final private String suggestedAssertion;
-
-        TheLocalFix(@NotNull String suggestedAssertion, @NotNull PsiElement resource) {
-            super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(resource.getProject());
-
-            this.resource           = factory.createSmartPsiElementPointer(resource);
-            this.suggestedAssertion = suggestedAssertion;
-        }
-
-        @NotNull
-        @Override
-        public String getName() {
-            return "Use suggested assertion";
-        }
-
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return getName();
-        }
-
-        @Override
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement expression = descriptor.getPsiElement();
-            final PsiElement resource   = this.resource.getElement();
-            if (resource != null && expression instanceof FunctionReference && !project.isDisposed()) {
-                final FunctionReference currentAssertion = (FunctionReference) expression;
-                final PsiElement[] arguments             = currentAssertion.getParameters();
-                final boolean hasCustomMessage           = arguments.length == 2;
-
-                final String pattern                    = hasCustomMessage ? "pattern(null, null)" : "pattern(null)";
-                final FunctionReference replacement     = PhpPsiElementFactory.createFunctionReference(project, pattern);
-                final PsiElement[] replacementArguments = replacement.getParameters();
-                replacementArguments[0].replace(resource);
-                if (hasCustomMessage) {
-                    replacementArguments[1].replace(arguments[1]);
-                }
-
-                final PsiElement socket  = currentAssertion.getParameterList();
-                final PsiElement implant = replacement.getParameterList();
-                if (socket != null && implant != null) {
-                    socket.replace(implant);
-                    currentAssertion.handleElementRename(this.suggestedAssertion);
-                }
-            }
-        }
+        return result;
     }
 }

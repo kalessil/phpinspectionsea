@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.IncrementDecrementOperationEquivalentInspector;
 
@@ -15,9 +14,7 @@ final public class IncrementDecrementOperationEquivalentInspectorTest extends Ph
         myFixture.configureByFile("fixtures/codeStyle/increment-decrement-can-be-used.php");
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/codeStyle/increment-decrement-can-be-used.fixed.php");
     }

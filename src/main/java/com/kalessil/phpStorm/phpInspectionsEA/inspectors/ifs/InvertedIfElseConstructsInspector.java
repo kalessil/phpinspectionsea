@@ -13,6 +13,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -50,14 +52,42 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
 
                     final PsiElement ifBody    = ifStatement.getStatement();
                     final PsiElement condition = ifStatement.getCondition();
-                    if (ifBody instanceof GroupStatement && condition instanceof UnaryExpression) {
-                        final PsiElement operation = ((UnaryExpression) condition).getOperation();
-                        if (operation != null && operation.getNode().getElementType() == PhpTokenTypes.opNOT) {
-                            problemsHolder.registerProblem(
-                                elseStatement.getFirstChild(),
-                                message,
-                                new NormalizeWorkflowFix((GroupStatement) ifBody, (GroupStatement) elseBody, (UnaryExpression) condition)
-                            );
+                    if (ifBody instanceof GroupStatement) {
+                        if (condition instanceof UnaryExpression) {
+                            final UnaryExpression unary = (UnaryExpression) condition;
+                            if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                                final PsiElement extractedCondition = unary.getValue();
+                                if (extractedCondition != null) {
+                                    problemsHolder.registerProblem(
+                                            elseStatement.getFirstChild(),
+                                            message,
+                                            new NormalizeWorkflowFix((GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition)
+                                    );
+                                }
+                            }
+                        } else if (condition instanceof BinaryExpression) {
+                            final BinaryExpression binary = (BinaryExpression) condition;
+                            if (binary.getOperationType() == PhpTokenTypes.opIDENTICAL) {
+                                /* extract condition */
+                                final PsiElement left  = binary.getLeftOperand();
+                                final PsiElement right = binary.getRightOperand();
+                                final PsiElement extractedCondition;
+                                if (left != null && PhpLanguageUtil.isFalse(left)) {
+                                    extractedCondition = right;
+                                } else if (right != null && PhpLanguageUtil.isFalse(right)) {
+                                    extractedCondition = left;
+                                } else  {
+                                    extractedCondition = null;
+                                }
+                                /* if managed to extract condition, then proceed with reporting */
+                                if (extractedCondition != null) {
+                                    problemsHolder.registerProblem(
+                                            elseStatement.getFirstChild(),
+                                            message,
+                                            new NormalizeWorkflowFix((GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition)
+                                    );
+                                }
+                            }
                         }
                     }
                 }
@@ -68,9 +98,9 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
     private static class NormalizeWorkflowFix implements LocalQuickFix {
         private final SmartPsiElementPointer<GroupStatement> ifBody;
         private final SmartPsiElementPointer<GroupStatement> elseBody;
-        private final SmartPsiElementPointer<UnaryExpression> condition;
+        private final SmartPsiElementPointer<PsiElement> condition;
 
-        NormalizeWorkflowFix(@NotNull GroupStatement ifBody, @NotNull GroupStatement elseBody, @NotNull UnaryExpression condition) {
+        NormalizeWorkflowFix(@NotNull GroupStatement ifBody, @NotNull GroupStatement elseBody, @NotNull PsiElement condition) {
             final SmartPointerManager factory = SmartPointerManager.getInstance(condition.getProject());
 
             this.ifBody    = factory.createSmartPsiElementPointer(ifBody);
@@ -92,18 +122,27 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor problemDescriptor) {
-            final PsiElement ifBody         = this.ifBody.getElement();
-            final PsiElement elseBody       = this.elseBody.getElement();
-            final UnaryExpression condition = this.condition.getElement();
-
+            final PsiElement ifBody    = this.ifBody.getElement();
+            final PsiElement elseBody  = this.elseBody.getElement();
+            final PsiElement condition = this.condition.getElement();
             if (ifBody != null && elseBody != null && condition != null) {
-                final PsiElement unwrappedCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(condition.getValue());
-                if (unwrappedCondition != null) {
-                    condition.replace(unwrappedCondition);
+                final PsiElement donor = ExpressionSemanticUtil.getExpressionTroughParenthesis(condition);
+                if (donor != null) {
+                    PsiElement socket = condition;
+                    while (socket != null) {
+                        final PsiElement parent = socket.getParent();
+                        if (parent instanceof If || parent instanceof ElseIf) {
+                            break;
+                        }
+                        socket = parent;
+                    }
+                    if (socket != null) {
+                        socket.replace(donor);
 
-                    final PsiElement ifBodyCopy = ifBody.copy();
-                    ifBody.replace(elseBody);
-                    elseBody.replace(ifBodyCopy);
+                        final PsiElement ifBodyCopy = ifBody.copy();
+                        ifBody.replace(elseBody);
+                        elseBody.replace(ifBodyCopy);
+                    }
                 }
             }
         }

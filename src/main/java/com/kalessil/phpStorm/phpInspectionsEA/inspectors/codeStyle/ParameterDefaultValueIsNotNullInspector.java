@@ -59,7 +59,7 @@ public class ParameterDefaultValueIsNotNullInspector extends BasePhpInspection {
                         if (function instanceof Method) {
                             final PhpClass clazz      = ((Method) function).getContainingClass();
                             final PhpClass parent     = null == clazz ? null : OpenapiResolveUtil.resolveSuperClass(clazz);
-                            final Method parentMethod = null == parent ? null : parent.findMethodByName(function.getName());
+                            final Method parentMethod = null == parent ? null : OpenapiResolveUtil.resolveMethod(parent, function.getName());
                             if (parentMethod != null && !parentMethod.getAccess().isPrivate()) {
                                 violations.clear();
                                 return;

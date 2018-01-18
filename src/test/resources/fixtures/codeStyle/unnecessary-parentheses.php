@@ -41,3 +41,6 @@
 
     $x = <weak_warning descr="Unnecessary parentheses.">(!empty($x))</weak_warning>;
     $x = <weak_warning descr="Unnecessary parentheses.">(!isset($x))</weak_warning>;
+
+    $object = new stdClass();
+    (function() { })->call($object);

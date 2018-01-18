@@ -65,7 +65,7 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
                 }
 
                 final String methodName = reference.getName();
-                if (methodName != null && targetPositions.containsKey(methodName)) {
+                if (methodName != null && methodName.startsWith("assert") && targetPositions.containsKey(methodName)) {
                     final int position           = targetPositions.get(methodName);
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length >= position + 1 && arguments[position] instanceof FunctionReference) {

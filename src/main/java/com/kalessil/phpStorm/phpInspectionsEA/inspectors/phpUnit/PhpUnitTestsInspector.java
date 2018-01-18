@@ -77,12 +77,12 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                     if (tagName.equals("@dataProvider")) {
                         final PsiElement candidate = tag.getFirstPsiChild();
                         if (candidate instanceof PhpDocRef) {
-                            /* if resolved properly, it will have 1 reference */
-                            final PsiReference[] references = candidate.getReferences();
-                            if (references.length == 1) {
-                                if (SUGGEST_TO_USE_NAMED_DATASETS) {
-                                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(references[0]);
-                                    if (resolved instanceof Method && !((Method) resolved).isAbstract()) {
+                            final List<PsiReference> references = Arrays.asList(candidate.getReferences());
+                            if (!references.isEmpty()) {
+                                Collections.reverse(references);
+                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(references.get(0));
+                                if (resolved instanceof Method) {
+                                    if (SUGGEST_TO_USE_NAMED_DATASETS && !((Method) resolved).isAbstract()) {
                                         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(resolved);
                                         final PsiElement last     = body == null ? null : ExpressionSemanticUtil.getLastStatement(body);
                                         if (last instanceof PhpReturn) {
@@ -95,11 +95,13 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                                     isNamedDataset       = key instanceof StringLiteralExpression;
                                                 }
                                                 if (!isNamedDataset) {
-                                                    holder.registerProblem(nameNode, messageNamedProvider, ProblemHighlightType.WEAK_WARNING);
+                                                    holder.registerProblem(nameNode, messageNamedProvider);
                                                 }
                                             }
                                         }
                                     }
+                                } else {
+                                    holder.registerProblem(nameNode, messageDataProvider, ProblemHighlightType.GENERIC_ERROR);
                                 }
                             } else {
                                 holder.registerProblem(nameNode, messageDataProvider, ProblemHighlightType.GENERIC_ERROR);
@@ -120,6 +122,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                             holder.registerProblem(nameNode, messageDepends, ProblemHighlightType.GENERIC_ERROR);
                                         }
                                     }
+                                } else {
+                                    holder.registerProblem(nameNode, messageDepends, ProblemHighlightType.GENERIC_ERROR);
                                 }
                             } else {
                                 holder.registerProblem(nameNode, messageDepends, ProblemHighlightType.GENERIC_ERROR);
@@ -173,30 +177,21 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                 final String methodName = reference.getName();
                 if (methodName != null && methodName.startsWith("assert") && !methodName.equals("assert")) {
                     final List<BooleanSupplier> callbacks = new ArrayList<>();
-                    /* normalize at first place first */
                     callbacks.add(() -> AssertBoolInvertedStrategy.apply(methodName, reference, holder));
                     callbacks.add(() -> AssertBoolOfComparisonStrategy.apply(methodName, reference, holder));
                     if (SUGGEST_TO_USE_ASSERTSAME) {
                         callbacks.add(() -> AssertSameStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertNotSameStrategy.apply(methodName, reference, holder));
                     }
                     if (PROMOTE_PHPUNIT_API) {
-                        callbacks.add(() -> (new AssertCountStrategy().apply(methodName, reference, holder)));
-                        callbacks.add(() -> AssertNotCountStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertNullStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertNotNullStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertTrueStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertNotTrueStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertFalseStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertNotFalseStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertEmptyStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertNotEmptyStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertConstantStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertInternalTypeStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertInstanceOfStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertNotInstanceOfStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertResourceExistsStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertResourceNotExistsStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> (new AssertStringEqualsFileStrategy().apply(methodName, reference, holder)));
-                        /* TODO: assertInternalType, assertNotInternalType, assertFileEquals */
+                        callbacks.add(() -> AssertCountStrategy.apply(methodName, reference, holder));
+                        /* AssertFileEqualsStrategy and AssertStringEqualsFileStrategy order is important */
+                        callbacks.add(() -> AssertFileEqualsStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertStringEqualsFileStrategy.apply(methodName, reference, holder));
                     }
                     for (final BooleanSupplier callback : callbacks) {
                         if (callback.getAsBoolean()) {

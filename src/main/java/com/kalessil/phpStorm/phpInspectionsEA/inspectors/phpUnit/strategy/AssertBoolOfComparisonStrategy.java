@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -27,8 +26,8 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class AssertBoolOfComparisonStrategy {
-    private final static String messagePattern = "%m% should be used instead.";
+final public class AssertBoolOfComparisonStrategy {
+    private final static String messagePattern = "%m% would fit more here.";
 
     static public boolean apply(@NotNull String function, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         final PsiElement[] params = reference.getParameters();
@@ -52,7 +51,7 @@ public class AssertBoolOfComparisonStrategy {
                     final String replacementMethod = "assert" +
                         (isMethodInverting == isOperationInverting ? "" : "Not") + (isTypeStrict ? "Same" : "Equals");
                     final String message = messagePattern.replace("%m%", replacementMethod);
-                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(replacementMethod, left, right));
+                    holder.registerProblem(reference, message, new TheLocalFix(replacementMethod, left, right));
 
                     return true;
                 }
@@ -107,7 +106,6 @@ public class AssertBoolOfComparisonStrategy {
                 }
 
                 final FunctionReference call = (FunctionReference) expression;
-                //noinspection ConstantConditions I'm really sure NPE will not happen
                 call.getParameterList().replace(replacement.getParameterList());
                 call.handleElementRename(this.replacementFunction);
             }

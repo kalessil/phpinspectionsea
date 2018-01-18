@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.classes;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
@@ -15,9 +14,7 @@ final public class AccessModifierPresentedInspectorTest extends PhpCodeInsightFi
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/classes/access-modifiers.fixed.php");
     }
@@ -31,9 +28,7 @@ final public class AccessModifierPresentedInspectorTest extends PhpCodeInsightFi
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
 
-        for (final IntentionAction fix : myFixture.getAllQuickFixes()) {
-            myFixture.launchAction(fix);
-        }
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/classes/access-modifiers.710.fixed.php");
     }

@@ -8,10 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.Parameter;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
@@ -35,11 +32,21 @@ import java.util.Set;
 public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
     private static final String message = "The argument can be safely dropped, as it's identical to the default value.";
 
-    private static final Set<String> exceptions = new HashSet<>();
+    private static final Set<String> specialFunctions = new HashSet<>();
+    private static final Set<String> specialConstants = new HashSet<>();
     static {
         /* in exceptions die to conflict with strict types inspection, which requires argument specification */
-        exceptions.add("array_search");
-        exceptions.add("in_array");
+        specialFunctions.add("array_search");
+        specialFunctions.add("in_array");
+
+        specialConstants.add("__LINE__");
+        specialConstants.add("__FILE__");
+        specialConstants.add("__DIR__");
+        specialConstants.add("__FUNCTION__");
+        specialConstants.add("__CLASS__");
+        specialConstants.add("__TRAIT__");
+        specialConstants.add("__METHOD__");
+        specialConstants.add("__NAMESPACE__");
     }
 
     @NotNull
@@ -64,7 +71,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
             private void analyze(@NotNull FunctionReference reference) {
                 final PsiElement[] arguments = reference.getParameters();
                 final String functionName    = reference.getName();
-                if (arguments.length > 0 && functionName != null && !exceptions.contains(functionName)) {
+                if (arguments.length > 0 && functionName != null && !specialFunctions.contains(functionName)) {
                     PsiElement reportFrom = null;
                     PsiElement reportTo   = null;
 
@@ -74,7 +81,12 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                             final Parameter[] parameters = ((Function) resolved).getParameters();
                             if (arguments.length <= parameters.length) {
                                 for (int index = Math.min(parameters.length, arguments.length) - 1; index >= 0; --index) {
-                                    final PsiElement value    = parameters[index].getDefaultValue();
+                                    final PsiElement value = parameters[index].getDefaultValue();
+                                    /* false-positives: magic constants */
+                                    if (value instanceof ConstantReference && specialConstants.contains(value.getText())) {
+                                        break;
+                                    }
+                                    /* false-positives: unmatched values */
                                     final PsiElement argument = arguments[index];
                                     if (value == null || !OpeanapiEquivalenceUtil.areEqual(value, argument)) {
                                         break;

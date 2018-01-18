@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.jetbrains.php.PhpIndex;
+import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
@@ -76,6 +77,18 @@ final public class OpenapiResolveUtil {
     static public PhpClass resolveSuperClass(@NotNull PhpClass clazz) {
         try {
             return clazz.getSuperClass();
+        } catch (Throwable error) {
+            if (error instanceof ProcessCanceledException) {
+                throw error;
+            }
+            return null;
+        }
+    }
+
+    @Nullable
+    static public Method resolveMethod(@NotNull PhpClass clazz, @NotNull String methodName) {
+        try {
+            return clazz.findMethodByName(methodName);
         } catch (Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;

@@ -1,8 +1,11 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
@@ -36,16 +39,20 @@ public class GetClassUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final String functionName = reference.getName();
-                if (functionName != null && functionName.equals("get_class")) {
-                    final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length == 1 && arguments[0] instanceof PhpTypedElement) {
-                        final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) arguments[0], reference.getProject());
-                        if (resolved != null) {
-                            final boolean hasNull = resolved.filterUnknown().getTypes().stream()
-                                    .anyMatch(t -> Types.getType(t).equals(Types.strNull));
-                            if (hasNull) {
-                                holder.registerProblem(reference, message);
+                final Project project      = holder.getProject();
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
+                if (php.compareTo(PhpLanguageLevel.PHP710) >= 0) {
+                    final String functionName = reference.getName();
+                    if (functionName != null && functionName.equals("get_class")) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length == 1 && arguments[0] instanceof PhpTypedElement) {
+                            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) arguments[0], project);
+                            if (resolved != null) {
+                                final boolean hasNull = resolved.filterUnknown().getTypes().stream()
+                                        .anyMatch(t -> Types.getType(t).equals(Types.strNull));
+                                if (hasNull) {
+                                    holder.registerProblem(reference, message);
+                                }
                             }
                         }
                     }

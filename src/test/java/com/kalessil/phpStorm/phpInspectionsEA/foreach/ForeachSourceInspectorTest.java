@@ -5,7 +5,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachSourceIn
 
 final public class ForeachSourceInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(new ForeachSourceInspector());
+        final ForeachSourceInspector inspector = new ForeachSourceInspector();
+        inspector.REPORT_MIXED_TYPES           = true;
+        inspector.REPORT_UNRECOGNIZED_TYPES    = true;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("fixtures/foreach/foreach-source.php");
         myFixture.testHighlighting(true, false, true);
     }

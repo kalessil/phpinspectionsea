@@ -91,6 +91,9 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     } else if (argument instanceof AssignmentExpression) {
                         /* ( = )->...: allow method/property access on assigned variable */
                         knowsLegalCases = true;
+                    } else if (OpenapiTypesUtil.isLambda(argument)) {
+                        /* (function(){ ... })->call(...): allow invoking lambdas on objects */
+                        knowsLegalCases = true;
                     }
                 }
 

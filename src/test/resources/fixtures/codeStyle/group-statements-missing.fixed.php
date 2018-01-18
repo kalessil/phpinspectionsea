@@ -20,6 +20,9 @@ function cases_holder() {
     else if ($c) {
         ;
     }
+    else /** doc block */ if ($d) {
+        ;
+    }
 
     foreach ($x as $v) {
         ;

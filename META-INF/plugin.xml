@@ -58,7 +58,8 @@ the implementation.
   <change-notes><![CDATA[
 Hot-fix release:<br/>
 <br/>
-- Worked out crash reports for December<br/>
+- Worked out crash reports for January<br/>
+- Worked out regressions in PhpStorm 2017.3<br/>
 <br/>
 - ForeachSourceInspector: added new settings
 - GetClassUsageInspector: invoke with language level 7.1+

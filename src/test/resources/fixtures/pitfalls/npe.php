@@ -98,9 +98,16 @@ class CasesHolder {
         if ($this->npeReportingChainedCalls())          { return $this->npeReportingChainedCalls()->npeReportingChainedCalls(); }
     }
 
-    public function npeSafeTestCase(?CasesHolder $object) {
-        self::assertNotNull($object);
-        return $object->nonExistingField;
+    public function npeSafeTestCase(?CasesHolder $first, ?CasesHolder $second, ?CasesHolder $third) {
+        self::assertNotNull($first);
+        Assertion::notNull($second);
+        Assert::that($third)->notNull()
+
+        return [
+            $first->nonExistingField,
+            $second->nonExistingField,
+            $third->nonExistingField,
+        ];
     }
 
     public function npeSafeCatchCase() {

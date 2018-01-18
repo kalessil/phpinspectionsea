@@ -70,6 +70,7 @@ Hot-fix release:<br/>
 - UnnecessaryParenthesesInspector: resolved false-positives (multiple cases)
 - UnusedConstructorDependenciesInspector: resolved false-positives
 - OneTimeUseVariablesInspector:new added new settings
+- ForeachInvariantsInspector: resolved false-positives (strings iteration)
 <br/>
 - InvertedIfElseConstructsInspector: new patterns
 - PhpUnitTestsInspector: new patterns

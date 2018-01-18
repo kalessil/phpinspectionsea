@@ -58,12 +58,10 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                 final PsiElement argument   = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
                 final PsiElement operation  = expression.getOperation();
                 final IElementType operator = operation == null ? null : operation.getNode().getElementType();
-                if (argument instanceof PhpTypedElement && typesMapping.containsKey(operator)) {
-                    final PhpType resolved  = this.resolveStrictly((PhpTypedElement) argument);
-                    final Set<String> types = resolved.hasUnknown() ? new HashSet<>() : resolved.getTypes();
+                if (argument instanceof PhpTypedElement && operator != null && typesMapping.containsKey(operator)) {
+                    final Set<String> types = this.resolveStrictly((PhpTypedElement) argument).getTypes();
                     if (types.size() == 1 && typesMapping.get(operator).equals(Types.getType(types.iterator().next()))) {
                         if (!(argument instanceof Variable) || !this.isWeakTypedParameter((Variable) argument)) {
-                            //noinspection ConstantConditions ; at this point operation is not null
                             holder.registerProblem(
                                 operation,
                                 message,
@@ -127,7 +125,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                 } else {
                     result = OpenapiResolveUtil.resolveType(expression, project);
                 }
-                return result == null ? PhpType.EMPTY : result;
+                return result == null ? PhpType.EMPTY : result.filterUnknown();
             }
 
             private boolean isWeakTypedParameter(@NotNull Variable variable) {
@@ -163,7 +161,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement().getParent();
-            if (expression instanceof UnaryExpression) {
+            if (expression instanceof UnaryExpression && !project.isDisposed()) {
                 final PsiElement argument = ((UnaryExpression) expression).getValue();
                 if (argument != null) {
                     expression.replace(argument.copy());

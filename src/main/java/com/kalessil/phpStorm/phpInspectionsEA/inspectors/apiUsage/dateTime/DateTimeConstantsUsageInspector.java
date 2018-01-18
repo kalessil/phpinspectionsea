@@ -85,9 +85,9 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target instanceof ConstantReference) {
+            if (target instanceof ConstantReference && !project.isDisposed()) {
                 ((ConstantReference) target).handleElementRename("DATE_ATOM");
-            } else if (target instanceof ClassConstantReference){
+            } else if (target instanceof ClassConstantReference && !project.isDisposed()){
                 ((ClassConstantReference) target).handleElementRename("ATOM");
             }
         }

@@ -1,7 +1,5 @@
 <?php
 
-    $arr = array();
-
     function cases_holder($arr) {
         /* case: invariant */
         foreach ($arr as $i => $iValue) {
@@ -46,5 +44,11 @@
         $col = array();
         for ($i = 0, $max = count($arr); $i < $max; $i++, $z = 0) {
             echo $arr[$i], $col[$i];
+        }
+
+        /* false-positives: string */
+        $string = '...';
+        for ($i = 0, $max = strlen($string); $i < $max; ++$i) {
+            echo $string[$i];
         }
     }

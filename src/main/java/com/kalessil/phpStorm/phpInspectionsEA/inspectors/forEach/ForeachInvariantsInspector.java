@@ -13,11 +13,10 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +34,7 @@ import java.util.Map;
  */
 
 public class ForeachInvariantsInspector extends BasePhpInspection {
-    private static final String foreachInvariant = "Foreach can probably be used instead (easier to read and support; ensure a string is not iterated).";
+    private static final String foreachInvariant = "Foreach can probably be used instead (easier to read and support).";
     private static final String eachFunctionUsed = "Foreach should be used instead (8x faster).";
 
     @NotNull
@@ -58,7 +57,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         this.isCheckedAsExpected(forExpression, indexVariable)
                     ) {
                         final PsiElement container = this.getContainerByIndex(body, indexVariable);
-                        if (container != null) {
+                        if (container != null && this.isIterableContainer(container)) {
                             holder.registerProblem(
                                     forExpression.getFirstChild(),
                                     foreachInvariant,
@@ -67,6 +66,18 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         }
                     }
                 }
+            }
+
+            private boolean isIterableContainer(@NotNull PsiElement container) {
+                boolean result = false;
+                if (container instanceof PhpTypedElement) {
+                    final Project project       = holder.getProject();
+                    final PhpType containerType = OpenapiResolveUtil.resolveType((PhpTypedElement) container, project);
+                    if (containerType != null && !containerType.hasUnknown()) {
+                        result = containerType.getTypes().stream().noneMatch(t -> Types.getType(t).equals(Types.strString));
+                    }
+                }
+                return result;
             }
 
             @Override
@@ -152,7 +163,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         }
                     }
                 }
-                final PsiElement result = containers.size() == 1 ? containers.values().iterator().next().copy(): null;
+                final PsiElement result = containers.size() == 1 ? containers.values().iterator().next(): null;
                 containers.clear();
                 return result;
             }

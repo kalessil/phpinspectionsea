@@ -71,6 +71,7 @@ Hot-fix release:<br/>
 - UnusedConstructorDependenciesInspector: resolved false-positives
 - OneTimeUseVariablesInspector:new added new settings
 - ForeachInvariantsInspector: resolved false-positives (strings iteration)
+- NullPointerExceptionInspector: resolved false-positives (beberlei/assert assertions)
 <br/>
 - InvertedIfElseConstructsInspector: new patterns
 - PhpUnitTestsInspector: new patterns

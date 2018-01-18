@@ -62,8 +62,8 @@ final public class NullableVariablesStrategy {
         /* check if the variable has been written only once, inspect when null/void values are possible */
         final PhpEntryPointInstruction controlFlowStart = function.getControlFlow().getEntryPoint();
         final Project project                           = holder.getProject();
-        for (final String variableName : assignments.keySet()) {
-            final List<AssignmentExpression> variableAssignments = assignments.get(variableName);
+        for (final Map.Entry<String, List<AssignmentExpression>> knownAssignment : assignments.entrySet()) {
+            final List<AssignmentExpression> variableAssignments = knownAssignment.getValue();
             if (variableAssignments.size() == 1) {
                 final AssignmentExpression assignment = variableAssignments.iterator().next();
                 final PsiElement assignmentValue      = assignment.getValue();
@@ -77,7 +77,7 @@ final public class NullableVariablesStrategy {
                             types.remove(Types.strNull);
                             types.remove(Types.strVoid);
                             if (types.stream().filter(t -> !t.startsWith("\\") && !objectTypes.contains(t)).count() == 0) {
-                                apply(variableName, assignment, controlFlowStart, holder);
+                                apply(knownAssignment.getKey(), assignment, controlFlowStart, holder);
                             }
                         }
                     }

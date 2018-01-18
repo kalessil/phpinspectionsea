@@ -52,11 +52,11 @@ final public class ChainedCallsStrategy {
                         final String type = Types.getType(resolvedType);
                         if (type.equals(Types.strNull) || type.equals(Types.strVoid)) {
                             boolean isNullTested = false;
-                            for (final MethodReference nullTestedReference : nullTestedReferences.keySet()) {
-                                final String nullTestedMethodName = nullTestedReferences.get(nullTestedReference);
+                            for (final Map.Entry<MethodReference, String> knownReference : nullTestedReferences.entrySet()) {
+                                final String nullTestedMethodName = knownReference.getValue();
                                 if (
                                     nullTestedMethodName != null && nullTestedMethodName.equals(methodName) &&
-                                    OpeanapiEquivalenceUtil.areEqual(nullTestedReference, baseCall)
+                                    OpeanapiEquivalenceUtil.areEqual(knownReference.getKey(), baseCall)
                                 ) {
                                     isNullTested = true;
                                     break;

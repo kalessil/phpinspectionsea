@@ -49,6 +49,7 @@ Happy new year! New ultimate features for you:<br/>
 <br/>
 - FilePutContentsRaceConditionInspector: added settings
 - UnnecessaryEmptinessCheckInspector: fixed NPE
+- MissingElseKeywordInspector: implemented
 <br/>
 <hr/>
   ]]></change-notes>
@@ -457,6 +458,10 @@ Happy new year! New ultimate features for you:<br/>
         shortName="ClassExistenceCheckInspection"                 displayName="Class existence and relation check correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassExistenceCheckInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="MissingElseKeywordInspection"                  displayName="Missing else keyword"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.MissingElseKeywordInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

@@ -4,7 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
-import com.jetbrains.php.lang.psi.elements.ElseIf;
+import com.jetbrains.php.lang.psi.elements.Else;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.If;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -38,13 +38,12 @@ public class MissingElseKeywordInspector extends BasePhpInspection {
                 if (previous instanceof PsiWhiteSpace && previous.getText().equals(" ")) {
                     final PsiElement candidate = previous.getPrevSibling();
                     if (candidate instanceof If) {
-                        final If ifStatement = (If) candidate;
-                        if (ifStatement.getElseBranch() == null) {
-                            final PsiElement last           = ifStatement.getLastChild();
-                            final PsiElement groupStatement = last instanceof ElseIf ? last.getLastChild() : last;
-                            if (groupStatement instanceof GroupStatement) {
-                                holder.registerProblem(expression.getFirstChild(), message);
-                            }
+                        PsiElement last = candidate;
+                        while (last != null && !(last instanceof GroupStatement)) {
+                            last = last.getLastChild();
+                        }
+                        if (last != null && !(last.getParent() instanceof Else)) {
+                            holder.registerProblem(expression.getFirstChild(), message);
                         }
                     }
                 }

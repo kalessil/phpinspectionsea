@@ -6,7 +6,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessaryCa
 final public class UnnecessaryCastingInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new UnnecessaryCastingInspector());
-
         myFixture.configureByFile("fixtures/types/unnecessary-casting.php");
         myFixture.testHighlighting(true, false, true);
 

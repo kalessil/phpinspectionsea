@@ -15,7 +15,7 @@ trap 'handle_error $LINENO' ERR
 
 ideUrl="IU-2017.3"
 if [ "$IDE_ID" == "IU-2017.3" ]; then
-    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.tar.gz"
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.3.tar.gz"
 elif [ "$IDE_ID" == "IU-2017.2" ]; then
     ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.6.tar.gz"
 elif [ "$IDE_ID" == "IU-2017.1" ]; then
@@ -73,8 +73,8 @@ fi
 mkdir plugins
 
 if [ "$IDE_ID" == "IU-2017.3" ]; then
-    download "http://plugins.jetbrains.com/files/6610/41019/php-173.3727.138.zip" "php-173.3727.138-2017.3.zip"
-    unzip -qo $travisCache/php-173.3727.138.zip -d ./plugins
+    download "http://plugins.jetbrains.com/files/6610/42364/php-173.4301.34.zip" "php-173.4301.34-2017.3.zip"
+    unzip -qo $travisCache/php-173.4301.34.zip -d ./plugins
 elif [ "$IDE_ID" == "IU-2017.2" ]; then
     download "http://plugins.jetbrains.com/files/6610/38775/php-172.4155.41.zip" "php-172.4155.41-2017.2.zip"
     unzip -qo $travisCache/php-172.4155.41.zip -d ./plugins

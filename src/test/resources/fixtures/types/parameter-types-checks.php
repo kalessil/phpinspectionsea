@@ -89,8 +89,12 @@
     }
     abstract class IndirectClassReferenceTest implements IndirectClassReference {
         public function method(IndirectClassReference $parameter) {
+            $parameter = $parameter ?? $this->returnSelf();
             $parameter = $this->returnSelf();
+
+            $parameter = $parameter ?? $this->returnStatic();
             $parameter = $this->returnStatic();
+
             $parameter = <warning descr="New value type (null) is not in annotated types.">null</warning>;
         }
     }

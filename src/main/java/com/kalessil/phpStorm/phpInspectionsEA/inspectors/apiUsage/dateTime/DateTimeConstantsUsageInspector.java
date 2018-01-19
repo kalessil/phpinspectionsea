@@ -14,6 +14,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -24,8 +27,14 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class DateTimeConstantsUsageInspector extends BasePhpInspection {
-    private static final String message
-        = "The format is not compatible with ISO-8601. Use DateTime::ATOM/DATE_ATOM for compatibility with ISO-8601 instead.";
+    private static final String messageClassConstant = "The format is not compatible with ISO-8601. Use DateTime::ATOM for compatibility with ISO-8601 instead.";
+    private static final String messageConstant      = "The format is not compatible with ISO-8601. Use DATE_ATOM for compatibility with ISO-8601 instead.";
+
+    private static final Set<String> targetClassConstants = new HashSet<>();
+    static {
+        targetClassConstants.add("\\DateTime.ISO8601");
+        targetClassConstants.add("\\DateTimeInterface.ISO8601");
+    }
 
     @NotNull
     public String getShortName() {
@@ -36,23 +45,25 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpClassConstantReference(ClassConstantReference constantReference) {
+            @Override
+            public void visitPhpClassConstantReference(@NotNull ClassConstantReference constantReference) {
                 final String constantName = constantReference.getName();
                 if (constantName != null && constantName.equals("ISO8601")) {
                     final PsiElement resolved = OpenapiResolveUtil.resolveReference(constantReference);
                     if (resolved instanceof Field) {
                         final Field constant = (Field) resolved;
-                        if (constant.isConstant() && constant.getFQN().equals("\\DateTime.ISO8601")) {
-                            holder.registerProblem(constantReference, message, new TheLocalFix());
+                        if (constant.isConstant() && targetClassConstants.contains(constant.getFQN())) {
+                            holder.registerProblem(constantReference, messageClassConstant, new TheLocalFix());
                         }
                     }
                 }
             }
 
-            public void visitPhpConstantReference(ConstantReference reference) {
+            @Override
+            public void visitPhpConstantReference(@NotNull ConstantReference reference) {
                 final String constantName = reference.getName();
                 if (constantName != null && constantName.equals("DATE_ISO8601")) {
-                    holder.registerProblem(reference, message, new TheLocalFix());
+                    holder.registerProblem(reference, messageConstant, new TheLocalFix());
                 }
             }
         };
@@ -74,9 +85,9 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target instanceof ConstantReference) {
+            if (target instanceof ConstantReference && !project.isDisposed()) {
                 ((ConstantReference) target).handleElementRename("DATE_ATOM");
-            } else if (target instanceof ClassConstantReference){
+            } else if (target instanceof ClassConstantReference && !project.isDisposed()){
                 ((ClassConstantReference) target).handleElementRename("ATOM");
             }
         }

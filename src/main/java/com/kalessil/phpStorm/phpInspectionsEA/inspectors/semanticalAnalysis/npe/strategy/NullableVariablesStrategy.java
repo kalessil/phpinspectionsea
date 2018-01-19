@@ -156,12 +156,9 @@ final public class NullableVariablesStrategy {
             else if (parent instanceof Catch) {
                 return;
             }
-            /* PhpUnit-specific null check */
-            else if (parent instanceof ParameterList && parent.getParent() instanceof MethodReference) {
-                final String methodName = ((MethodReference) parent.getParent()).getName();
-                if (methodName != null && methodName.equals("assertNotNull")) {
-                    return;
-                }
+            /* test and business logic assertions */
+            else if (parent instanceof ParameterList && isAssertion(parent.getParent())) {
+                return;
             }
 
             /* show stoppers: overriding the variable; except the variable declarations of course */
@@ -238,5 +235,30 @@ final public class NullableVariablesStrategy {
                 }
             }
         }
+    }
+
+    private static boolean isAssertion(@NotNull PsiElement reference) {
+        boolean result = false;
+        if (reference instanceof MethodReference) {
+            final String methodName = ((MethodReference) reference).getName();
+            if (methodName != null) {
+                if (methodName.equals("assertNotNull") || methodName.equals("notNull")) {
+                    /* PHPUnit or beberlei/assert assertion */
+                    result = true;
+                } else if (methodName.equals("that")) {
+                    /* another beberlei/assert assertion: `Assert::that($g)->notNull()` */
+                    PsiElement parent = reference.getParent();
+                    while (parent instanceof MethodReference) {
+                        final String parentMethodName = ((MethodReference) parent).getName();
+                        if (parentMethodName != null && parentMethodName.equals("notNull")) {
+                            result = true;
+                            break;
+                        }
+                        parent = parent.getParent();
+                    }
+                }
+            }
+        }
+        return result;
     }
 }

@@ -2,7 +2,7 @@
 
 ## Foreach source to iterate over
 
-Analyzes foreach expression's data sources, which are expected to be arrays, traversable objects, or strings.
+Analyzes foreach expression's data sources, which are expected to be arrays or traversable objects.
 When analysis can not be performed (e.g. some methods are not annotated properly), additional
 warnings are generated to resolve annotation issues:
 

@@ -50,6 +50,7 @@ Happy new year! New ultimate features for you:<br/>
 - FilePutContentsRaceConditionInspector: added settings
 - UnnecessaryEmptinessCheckInspector: fixed NPE
 - MissingElseKeywordInspector: implemented
+- NullPointerExceptionInspector: resolved false positives (core functions arguments)
 <br/>
 <hr/>
   ]]></change-notes>

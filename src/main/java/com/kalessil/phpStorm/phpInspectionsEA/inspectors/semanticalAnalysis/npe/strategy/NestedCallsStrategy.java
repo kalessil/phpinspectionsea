@@ -5,7 +5,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -38,7 +37,7 @@ final public class NestedCallsStrategy {
 
     public static void apply(@NotNull Function function, @NotNull ProblemsHolder holder) {
         final Project project = holder.getProject();
-        for (final FunctionReference reference : PsiTreeUtil.findChildrenOfType(function, FunctionReference.class)) {
+        for (final MethodReference reference : PsiTreeUtil.findChildrenOfType(function, MethodReference.class)) {
             for (final PsiElement argument : reference.getParameters()) {
                  if (argument instanceof MethodReference) {
                     final PhpType resolvedTypes = OpenapiResolveUtil.resolveType((MethodReference) argument, project);
@@ -49,7 +48,7 @@ final public class NestedCallsStrategy {
                         if (types.contains(Types.strNull) || types.contains(Types.strVoid)) {
                             types.remove(Types.strNull);
                             types.remove(Types.strVoid);
-                            if (types.stream().filter(t -> !t.startsWith("\\") && !objectTypes.contains(t)).count() == 0) {
+                            if (types.stream().noneMatch(t -> !t.startsWith("\\") && !objectTypes.contains(t))) {
                                 holder.registerProblem(argument, message);
                             }
                         }

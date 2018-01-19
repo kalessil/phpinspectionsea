@@ -147,7 +147,7 @@ Happy new year! New ultimate features for you:<br/>
         shortName="ArrayKeysMissUseInspection"                    displayName="'array_keys(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayKeysMissUseInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="FixedTimeStartWithInspection"                  displayName="Fixed-time string starts with checks"
         groupName="Performance"                                   enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.FixedTimeStartWithInspector"/>

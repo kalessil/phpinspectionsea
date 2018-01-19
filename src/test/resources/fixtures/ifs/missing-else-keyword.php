@@ -1,6 +1,9 @@
 <?php
 
     if ($condition) {
+    }<error descr="It's probably was intended to use 'else if' or 'elseif' here.">if</error> ($condition) ;
+
+    if ($condition) {
     } <error descr="It's probably was intended to use 'else if' or 'elseif' here.">if</error> ($condition) ;
 
     if ($condition) {

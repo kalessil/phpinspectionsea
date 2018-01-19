@@ -34,17 +34,22 @@ public class MissingElseKeywordInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpIf(@NotNull If expression) {
-                final PsiElement previous = expression.getPrevSibling();
-                if (previous instanceof PsiWhiteSpace && previous.getText().equals(" ")) {
-                    final PsiElement candidate = previous.getPrevSibling();
-                    if (candidate instanceof If) {
-                        PsiElement last = candidate;
-                        while (last != null && !(last instanceof GroupStatement)) {
-                            last = last.getLastChild();
-                        }
-                        if (last != null && !(last.getParent() instanceof Else)) {
-                            holder.registerProblem(expression.getFirstChild(), message);
-                        }
+                /* get through previous space to if-statement */
+                PsiElement previous = expression.getPrevSibling();
+                if (previous instanceof PsiWhiteSpace) {
+                    final String spacing = previous.getText();
+                    if (spacing.isEmpty() || spacing.equals(" ")) {
+                        previous = previous.getPrevSibling();
+                    }
+                }
+                /* analyze previous statement */
+                if (previous instanceof If) {
+                    PsiElement last = previous;
+                    while (last != null && !(last instanceof GroupStatement)) {
+                        last = last.getLastChild();
+                    }
+                    if (last != null && !(last.getParent() instanceof Else)) {
+                        holder.registerProblem(expression.getFirstChild(), message);
                     }
                 }
             }

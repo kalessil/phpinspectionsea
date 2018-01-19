@@ -75,6 +75,7 @@ Hot-fix release:<br/>
 - NullPointerExceptionInspector: resolved false-positives (beberlei/assert assertions)
 - CallableParameterUseCaseInTypeContextInspection: resolved false-positives (multiple cases around static type)
 <br/>
+- GetClassUsageInspector: new patterns
 - InvertedIfElseConstructsInspector: new patterns
 - PhpUnitTestsInspector: new patterns
 - StartsWithOnLongStringsInspector: implemented (needs activation)

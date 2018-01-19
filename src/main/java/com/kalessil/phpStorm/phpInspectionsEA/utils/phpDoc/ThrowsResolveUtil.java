@@ -105,7 +105,7 @@ final public class ThrowsResolveUtil {
                 }
             }
             /* contract methods */
-            for (final PhpClass implementedInterface : clazz.getImplementedInterfaces()) {
+            for (final PhpClass implementedInterface : OpenapiResolveUtil.resolveImplementedInterfaces(clazz)) {
                 final Method requiredMethod = OpenapiResolveUtil.resolveMethod(implementedInterface, methodName);
                 if (requiredMethod != null && !processedMethods.contains(requiredMethod)) {
                     collectThrownAndInherited(requiredMethod, exceptionsRegistry, processedMethods, false);

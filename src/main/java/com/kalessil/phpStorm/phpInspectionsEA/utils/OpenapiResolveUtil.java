@@ -13,9 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
-        /*
+/*
  * This file is part of the Php Inspections (EA Extended) package.
  *
  * (c) Vladimir Reznichenko <kalessil@gmail.com>
@@ -82,6 +84,19 @@ final public class OpenapiResolveUtil {
                 throw error;
             }
             return null;
+        }
+    }
+
+    @NotNull
+    static public List<PhpClass> resolveImplementedInterfaces(@NotNull PhpClass clazz) {
+        try {
+            final PhpClass[] interfaces = clazz.getImplementedInterfaces();
+            return interfaces == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(interfaces));
+        } catch (Throwable error) {
+            if (error instanceof ProcessCanceledException) {
+                throw error;
+            }
+            return new ArrayList<>();
         }
     }
 

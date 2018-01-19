@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.15.1</version>
+  <version>2.3.16</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -56,29 +56,29 @@ the implementation.
     ]]></description>
 
   <change-notes><![CDATA[
-Hot-fix release:<br/>
+Bug-fixes. BTW, it would be awesome to get more supporters on <a href="https://www.patreon.com/kalessil">Patreon</a>.<br/>
 <br/>
 - Worked out crash reports for January<br/>
 - Worked out regressions in PhpStorm 2017.3<br/>
 <br/>
-- ForeachSourceInspector: added new settings
-- GetClassUsageInspector: invoke with language level 7.1+
-- MissingOrEmptyGroupStatementInspector: bug-fix (doc-block breaks analysis)
-- PhpUnitTestsInspector: resolved false-positives (multiple cases)
-- MkdirRaceConditionInspector: QF bug-fix (arguments gets lost)
-- ReturnTypeCanBeDeclaredInspector: resolved false-positives (multiple cases)
-- ArgumentEqualsDefaultValueInspector: resolved false-positives (magic constants)
-- UnnecessaryParenthesesInspector: resolved false-positives (multiple cases)
-- UnusedConstructorDependenciesInspector: resolved false-positives
-- OneTimeUseVariablesInspector:new added new settings
-- ForeachInvariantsInspector: resolved false-positives (strings iteration)
-- NullPointerExceptionInspector: resolved false-positives (beberlei/assert assertions)
-- CallableParameterUseCaseInTypeContextInspection: resolved false-positives (multiple cases around static type)
+- Callable parameter usage violates definition: resolved false-positives (multiple cases around static type)<br/>
+- Foreach source to iterate over: added new settings<br/>
+- Foreach usage possible: resolved false-positives (strings iteration)<br/>
+- Missing or empty conditionals group statement: bug-fix (doc-block breaks analysis)<br/>
+- Null reference: resolved false-positives (beberlei/assert assertions)<br/>
+- One-time use variables:new added new settings<br/>
+- PhpUnit: bugs and best practices: resolved false-positives (multiple cases)<br/>
+- Return type hint can be used: resolved false-positives (multiple cases)<br/>
+- Unnecessary call arguments specification: resolved false-positives (magic constants)<br/>
+- Unnecessary parentheses: resolved false-positives (multiple cases)<br/>
+- Unused constructor dependencies: resolved false-positives (multiple cases)<br/>
+- 'get_class(...)' usage correctness: invoke with language level 7.1+<br/>
+- 'mkdir(...)' race condition: QF bug-fix (arguments gets lost)<br/>
 <br/>
-- GetClassUsageInspector: new patterns
-- InvertedIfElseConstructsInspector: new patterns
-- PhpUnitTestsInspector: new patterns
-- StartsWithOnLongStringsInspector: implemented (needs activation)
+- Fixed-time string starts with checks: implemented (needs activation)<br/>
+- Inverted 'if-else' constructs: new patterns<br/>
+- PhpUnit: bugs and best practices: new patterns<br/>
+- 'get_class(...)' usage correctness: new patterns<br/>
 <br/>
 <hr/>
   ]]></change-notes>

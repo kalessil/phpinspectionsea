@@ -2,13 +2,17 @@
 
 ## Foreach source to iterate over
 
-Ensures that the value which `foreach` iterates has proper type. Following cases are considered:
+Analyzes foreach expression's data sources, which are expected to be arrays, traversable objects, or strings.
+When analysis can not be performed (e.g. some methods are not annotated properly), additional
+warnings are generated to resolve annotation issues:
 
 - Types can not be checked (requests adding types information; check settings to disable this)
 - Types contains `mixed` or `object` (requests re-specification of types information; check settings to disable this)
 - Value can not be iterated (scalar types and classes without Iterator interface)
 
-Since adding type information can be tricky, please check these hints as well:
+Risk-free refactoring involves proper annotation, but if it is truly a datasource issue, this inspection 
+may reveal new bugs or dead code. Also, here are some hints how to add types information:
+
 ```php
     /* Case 1: `$items[1]` reported with `Expressions' type was not recognized, please check type hints.` message */
     

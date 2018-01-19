@@ -2,10 +2,13 @@
 
 ## Foreach source to iterate over
 
-Checks foreach value, takes into account classes supporting iteration operations.
+Ensures that the value which `foreach` iterates has proper type. Following cases are considered:
 
-Here documented how to fix some of reported cases:
+- Types can not be checked (requests adding types information; check settings to disable this)
+- Types contains `mixed` or `object` (requests re-specification of types information; check settings to disable this)
+- Value can not be iterated (scalar types and classes without Iterator interface)
 
+Since adding type information can be tricky, please check these hints as well:
 ```php
     /* Case 1: `$items[1]` reported with `Expressions' type was not recognized, please check type hints.` message */
     

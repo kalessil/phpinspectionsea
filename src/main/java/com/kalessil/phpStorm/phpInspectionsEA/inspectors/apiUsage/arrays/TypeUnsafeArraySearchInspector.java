@@ -48,26 +48,31 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null && targetFunctions.contains(functionName)) {
                     final PsiElement[] arguments =  reference.getParameters();
-                    if (arguments.length == 2 && arguments[0] instanceof PhpTypedElement && arguments[1] instanceof PhpTypedElement) {
-                        final Project project        = reference.getProject();
-                        final PhpType arrayType      = OpenapiResolveUtil.resolveType((PhpTypedElement) arguments[1], project);
-                        final Set<String> arrayTypes = arrayType == null ? null : arrayType.filterUnknown().getTypes();
-                        if (arrayTypes != null && arrayTypes.size() == 1) {
-                            final PhpType itemType      = OpenapiResolveUtil.resolveType((PhpTypedElement) arguments[0], project);
-                            final Set<String> itemTypes = itemType == null ? null : itemType.filterUnknown().getTypes();
-                            if (itemTypes != null && itemTypes.size() == 1) {
-                                final boolean isTarget = !this.areTypesMatching(itemTypes.iterator().next(), arrayTypes.iterator().next());
-                                if (isTarget) {
-                                    final String replacement = String.format(
-                                            "%s(%s, %s, true)",
-                                            functionName,
-                                            arguments[0].getText(),
-                                            arguments[1].getText()
-                                    );
-                                    holder.registerProblem(reference, message, new MakeSearchTypeSensitiveFix(replacement));
+                    if (arguments.length == 2) {
+                        /* false-positives: array and item types are complimentary */
+                        if (arguments[0] instanceof PhpTypedElement && arguments[1] instanceof PhpTypedElement) {
+                            final Project project        = reference.getProject();
+                            final PhpType arrayType      = OpenapiResolveUtil.resolveType((PhpTypedElement) arguments[1], project);
+                            final Set<String> arrayTypes = arrayType == null ? null : arrayType.filterUnknown().getTypes();
+                            if (arrayTypes != null && arrayTypes.size() == 1) {
+                                final PhpType itemType      = OpenapiResolveUtil.resolveType((PhpTypedElement) arguments[0], project);
+                                final Set<String> itemTypes = itemType == null ? null : itemType.filterUnknown().getTypes();
+                                if (itemTypes != null && itemTypes.size() == 1) {
+                                    final boolean matching = this.areTypesMatching(itemTypes.iterator().next(), arrayTypes.iterator().next());
+                                    if (matching) {
+                                        return;
+                                    }
                                 }
                             }
                         }
+                        /* general case: we need the third argument */
+                        final String replacement = String.format(
+                                "%s(%s, %s, true)",
+                                functionName,
+                                arguments[0].getText(),
+                                arguments[1].getText()
+                        );
+                        holder.registerProblem(reference, message, new MakeSearchTypeSensitiveFix(replacement));
                     }
                 }
             }

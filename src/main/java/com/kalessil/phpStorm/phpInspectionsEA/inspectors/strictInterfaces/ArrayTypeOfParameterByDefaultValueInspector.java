@@ -16,7 +16,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -59,7 +58,7 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
                         final PhpClass clazz = ((Method) callable).getContainingClass();
                         if (clazz != null && !clazz.isInterface()) {
                             final String methodName      = callable.getName();
-                            final List<PhpClass> parents = new ArrayList<>(Arrays.asList(clazz.getImplementedInterfaces()));
+                            final List<PhpClass> parents = OpenapiResolveUtil.resolveImplementedInterfaces(clazz);
                             parents.add(OpenapiResolveUtil.resolveSuperClass(clazz));
                             for (final PhpClass parent : parents) {
                                 if (parent != null && OpenapiResolveUtil.resolveMethod(parent, methodName) != null) {

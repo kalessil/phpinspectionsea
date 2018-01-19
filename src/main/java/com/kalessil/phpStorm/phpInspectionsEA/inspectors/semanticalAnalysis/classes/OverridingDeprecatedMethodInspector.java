@@ -65,9 +65,9 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
 
                 /* search for deprecated interface methods */
                 if (!method.isDeprecated()) {
-                    for (PhpClass iface : clazz.getImplementedInterfaces()) {
+                    for (final PhpClass iface : OpenapiResolveUtil.resolveImplementedInterfaces(clazz)) {
                         final Method ifaceMethod = OpenapiResolveUtil.resolveMethod(iface, searchMethodName);
-                        if (null != ifaceMethod && ifaceMethod.isDeprecated()) {
+                        if (ifaceMethod != null && ifaceMethod.isDeprecated()) {
                             final String message = patternNeedsDeprecation.replace("%m%", searchMethodName);
                             holder.registerProblem(methodName, message, ProblemHighlightType.LIKE_DEPRECATED);
 

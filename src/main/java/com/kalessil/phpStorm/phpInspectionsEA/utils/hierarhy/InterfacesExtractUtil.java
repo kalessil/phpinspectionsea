@@ -28,9 +28,8 @@ final public class InterfacesExtractUtil {
             }
 
             /* re-delegate interface handling */
-            for (final PhpClass interfacee : clazz.getImplementedInterfaces()) {
-                processInterface(interfacee, processedItems);
-            }
+            OpenapiResolveUtil.resolveImplementedInterfaces(clazz)
+                    .forEach(interfacee -> processInterface(interfacee, processedItems));
 
             /* handle parent class */
             final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
@@ -42,9 +41,8 @@ final public class InterfacesExtractUtil {
 
     private static void processInterface(@NotNull PhpClass clazz, @NotNull Set<PhpClass> processedItems) {
         if (clazz.isInterface() && processedItems.add(clazz)) {
-            for (final PhpClass parentInterface : clazz.getImplementedInterfaces()) {
-                processInterface(parentInterface, processedItems);
-            }
+            OpenapiResolveUtil.resolveImplementedInterfaces(clazz)
+                    .forEach(parentInterface -> processInterface(parentInterface, processedItems));
         }
     }
 }

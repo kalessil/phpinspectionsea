@@ -78,11 +78,21 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                         } else if (typeNormalized.equals(Types.strCallable)) {
                             paramTypes.add(Types.strArray);
                             paramTypes.add(Types.strString);
+                            paramTypes.add("\\Closure");
                         }
                         paramTypes.add(typeNormalized);
                     }
                     if (paramTypes.isEmpty()) {
                         continue;
+                    } else {
+                        /* in some case PhpStorm is not recognizing default value as parameter type */
+                        final PsiElement defaultValue = parameter.getDefaultValue();
+                        if (defaultValue instanceof PhpTypedElement) {
+                            final PhpType defaultType = OpenapiResolveUtil.resolveType((PhpTypedElement) defaultValue, project);
+                            if (defaultType != null) {
+                                defaultType.filterUnknown().getTypes().forEach(t -> paramTypes.add(Types.getType(t)));
+                            }
+                        }
                     }
 
                     /* false-positive: type is not resolved correctly, default null is taken */
@@ -134,7 +144,24 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 case "is_resource":
                                     isTypeAnnounced = paramTypes.contains(Types.strResource);
                                     break;
-
+                                case "is_numeric":
+                                    isTypeAnnounced =
+                                        paramTypes.contains(Types.strNumber) || paramTypes.contains(Types.strString) ||
+                                        paramTypes.contains(Types.strFloat) || paramTypes.contains(Types.strInteger);
+                                    break;
+                                case "is_callable":
+                                    isTypeAnnounced =
+                                        paramTypes.contains(Types.strCallable) || paramTypes.contains(Types.strArray) ||
+                                        paramTypes.contains(Types.strString)   || paramTypes.contains("\\Closure");
+                                    break;
+                                case "is_object":
+                                case "is_a":
+                                    isTypeAnnounced =
+                                        paramTypes.contains(Types.strObject) ||
+                                        paramTypes.stream()
+                                            .filter(t -> !t.equals("\\Closure"))
+                                            .anyMatch(t -> t.startsWith("\\") || classReferences.contains(t));
+                                    break;
                                 default:
                                     continue;
                             }
@@ -149,7 +176,6 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 }
                                 holder.registerProblem(functionCall, isReversedCheck ? messageNoSense : messageViolationInCheck);
                             }
-
                             continue;
                         }
 

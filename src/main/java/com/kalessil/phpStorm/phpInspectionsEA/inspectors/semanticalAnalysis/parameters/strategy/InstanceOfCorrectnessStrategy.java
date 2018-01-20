@@ -38,9 +38,8 @@ final public class InstanceOfCorrectnessStrategy {
                 if (isObject) {
                     final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) right);
                     if (resolved instanceof PhpClass) {
-                        final int typesCount     = parameterTypes.size();
-                        final String checkedType = ((PhpClass) resolved).getFQN();
-                        if (parameterTypes.contains(checkedType)) {
+                        final int typesCount = parameterTypes.size();
+                        if (parameterTypes.contains(((PhpClass) resolved).getFQN())) {
                             if (typesCount == 1) {
                                 holder.registerProblem(context, "It seems to be always true (same object type).");
                                 result = true;
@@ -58,7 +57,7 @@ final public class InstanceOfCorrectnessStrategy {
                                 );
                                 if (classes.size() == 1) {
                                     final Set<PhpClass> parents = InterfacesExtractUtil.getCrawlInheritanceTree(classes.iterator().next(), true);
-                                    if (parents.contains(resolved)) {
+                                    if (!parents.contains(resolved)) {
                                         holder.registerProblem(context, "It seems to be always false (classes are not related).");
                                         result = true;
                                     }

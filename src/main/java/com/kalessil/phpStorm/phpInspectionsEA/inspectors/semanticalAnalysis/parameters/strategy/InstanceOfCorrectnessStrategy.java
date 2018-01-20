@@ -16,6 +16,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Set;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 final public class InstanceOfCorrectnessStrategy {
 
     public static boolean apply(@NotNull ProblemsHolder holder, @NotNull Set<String> parameterTypes, @NotNull PsiElement context) {
@@ -37,7 +46,7 @@ final public class InstanceOfCorrectnessStrategy {
                                 result = true;
                             } else if (typesCount == 2 && parameterTypes.contains(Types.strNull)) {
                                 final PsiElement target  = context.getParent() instanceof UnaryExpression ? context.getParent() : context;
-                                final String replacement = String.format("%s %s null", left.getText(), context == target ? "===" : "!==");
+                                final String replacement = String.format("%s %s null", left.getText(), context == target ? "!==" : "===");
                                 holder.registerProblem(target, String.format("'%s' can be used instead.", replacement));
                                 result = true;
                             }

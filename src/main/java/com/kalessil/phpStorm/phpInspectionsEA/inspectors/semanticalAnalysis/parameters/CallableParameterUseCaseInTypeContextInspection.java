@@ -12,6 +12,7 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstr
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.parameters.strategy.InstanceOfCorrectnessStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -55,12 +56,16 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                this.inspectUsages(method.getParameters(), method);
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    this.inspectUsages(method.getParameters(), method);
+                }
             }
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
-                this.inspectUsages(function.getParameters(), function);
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    this.inspectUsages(function.getParameters(), function);
+                }
             }
 
             private void inspectUsages(@NotNull Parameter[] parameters, @NotNull PhpScopeHolder scopeHolder) {
@@ -70,7 +75,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                 for (final Parameter parameter : parameters) {
                     /* normalize parameter types, skip analysis when mixed or object appears */
-                    final Set<String> paramTypes = new HashSet<>();
+                    final Set<String> paramTypes  = new HashSet<>();
                     for (final String type : parameter.getType().global(project).filterUnknown().getTypes()) {
                         final String typeNormalized = Types.getType(type);
                         if (typeNormalized.equals(Types.strMixed) || typeNormalized.equals(Types.strObject)) {
@@ -84,6 +89,15 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     }
                     if (paramTypes.isEmpty()) {
                         continue;
+                    } else {
+                        /* in some case PhpStorm is not recognizing default value as parameter type */
+                        final PsiElement defaultValue = parameter.getDefaultValue();
+                        if (defaultValue instanceof PhpTypedElement) {
+                            final PhpType defaultType = OpenapiResolveUtil.resolveType((PhpTypedElement) defaultValue, project);
+                            if (defaultType != null) {
+                                defaultType.filterUnknown().getTypes().forEach(t -> paramTypes.add(Types.getType(t)));
+                            }
+                        }
                     }
 
                     /* false-positive: type is not resolved correctly, default null is taken */

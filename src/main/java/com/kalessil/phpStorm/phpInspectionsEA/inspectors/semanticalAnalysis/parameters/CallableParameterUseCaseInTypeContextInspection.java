@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.parameters;
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
@@ -12,6 +12,7 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstr
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.parameters.strategy.InstanceofChecksCorrectnessStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
@@ -135,6 +136,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     isTypeAnnounced = paramTypes.contains(Types.strResource);
                                     break;
 
+                                /* TODO: is_a, is_object */
+
                                 default:
                                     continue;
                             }
@@ -149,7 +152,6 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 }
                                 holder.registerProblem(functionCall, isReversedCheck ? messageNoSense : messageViolationInCheck);
                             }
-
                             continue;
                         }
 
@@ -219,6 +221,11 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     }
                                 }
                             }
+                            continue;
+                        }
+
+                        if (parent != null && InstanceofChecksCorrectnessStrategy.apply(parameter, parent)) {
+                            continue;
                         }
 
                         /* TODO: analyze comparison operations */

@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.types;
 
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.CallableParameterUseCaseInTypeContextInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.parameters.CallableParameterUseCaseInTypeContextInspection;
 
 final public class CallableParameterUseCaseInTypeContextInspectionTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

@@ -1,6 +1,9 @@
 <html>
 <body>
-Substr invokes additional memory allocation, which is not needed in the context.
-Strpos will do the same job, but without any overhead (it's just searching a string).
+'substr(...)' invokes additional memory allocation (more work for GC), which is not needed in the context.
+'strpos(...)' will do the same job with CPU resources only.<br/>
+<br/>
+If you are eager for performance in your project this inspection in combination with
+"Fixed-time string starts with checks" (which is disabled by default) would be a good option.
 </body>
 </html>

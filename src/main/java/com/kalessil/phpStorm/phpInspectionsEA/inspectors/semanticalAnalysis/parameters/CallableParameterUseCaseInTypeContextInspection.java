@@ -84,6 +84,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                         } else if (typeNormalized.equals(Types.strCallable)) {
                             paramTypes.add(Types.strArray);
                             paramTypes.add(Types.strString);
+                            paramTypes.add("\\Closure");
                         }
                         paramTypes.add(typeNormalized);
                     }
@@ -150,7 +151,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     isTypeAnnounced = paramTypes.contains(Types.strResource);
                                     break;
 
-                                /* TODO: is_a, is_object */
+                                /* TODO: is_a, is_object, is_callable */
 
                                 default:
                                     continue;

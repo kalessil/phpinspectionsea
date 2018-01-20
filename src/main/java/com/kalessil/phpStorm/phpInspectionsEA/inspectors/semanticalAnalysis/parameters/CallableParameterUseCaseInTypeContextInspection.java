@@ -162,8 +162,6 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     break;
                                 case "is_object":
                                 case "is_a":
-                                case "get_class":
-                                case "get_object_vars":
                                     isTypeAnnounced =
                                         paramTypes.contains(Types.strObject) ||
                                         paramTypes.stream()

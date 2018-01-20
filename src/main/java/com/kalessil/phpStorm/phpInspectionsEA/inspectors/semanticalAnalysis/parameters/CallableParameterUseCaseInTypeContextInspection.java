@@ -150,9 +150,26 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 case "is_resource":
                                     isTypeAnnounced = paramTypes.contains(Types.strResource);
                                     break;
-
-                                /* TODO: is_a, is_object, is_callable */
-
+                                case "is_numeric":
+                                    isTypeAnnounced =
+                                        paramTypes.contains(Types.strNumber) || paramTypes.contains(Types.strString) ||
+                                        paramTypes.contains(Types.strFloat) || paramTypes.contains(Types.strInteger);
+                                    break;
+                                case "is_callable":
+                                    isTypeAnnounced =
+                                        paramTypes.contains(Types.strCallable) || paramTypes.contains(Types.strArray) ||
+                                        paramTypes.contains(Types.strString)   || paramTypes.contains("\\Closure");
+                                    break;
+                                case "is_object":
+                                case "is_a":
+                                case "get_class":
+                                case "get_object_vars":
+                                    isTypeAnnounced =
+                                        paramTypes.contains(Types.strObject) ||
+                                        paramTypes.stream()
+                                            .filter(t -> !t.equals("\\Closure"))
+                                            .anyMatch(t -> t.startsWith("\\") || classReferences.contains(t));
+                                    break;
                                 default:
                                     continue;
                             }

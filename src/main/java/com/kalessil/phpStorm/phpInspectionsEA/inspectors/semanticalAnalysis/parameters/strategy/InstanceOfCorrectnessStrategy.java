@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
@@ -26,6 +27,10 @@ import java.util.Set;
  */
 
 final public class InstanceOfCorrectnessStrategy {
+    final private static String messageNotObject      = "It seems to be always false (no object types).";
+    final private static String messageSameClass      = "It seems to be always true (same object type).";
+    final private static String messageUnrelatedClass = "It seems to be always false (classes are not related).";
+    final private static String patternCompareNull    = "'%s' can be used instead.";
 
     public static boolean apply(@NotNull ProblemsHolder holder, @NotNull Set<String> parameterTypes, @NotNull PsiElement context) {
         boolean result = false;
@@ -42,12 +47,16 @@ final public class InstanceOfCorrectnessStrategy {
                         final PhpClass resolvedClass = (PhpClass) resolved;
                         if (parameterTypes.contains(resolvedClass.getFQN())) {
                             if (typesCount == 1) {
-                                holder.registerProblem(context, "It seems to be always true (same object type).");
+                                holder.registerProblem(context, messageSameClass);
                                 result = true;
                             } else if (typesCount == 2 && parameterTypes.contains(Types.strNull)) {
                                 final PsiElement target  = context.getParent() instanceof UnaryExpression ? context.getParent() : context;
                                 final String replacement = String.format("%s %s null", left.getText(), context == target ? "!==" : "===");
-                                holder.registerProblem(target, String.format("'%s' can be used instead.", replacement));
+                                holder.registerProblem(
+                                        target,
+                                        String.format(patternCompareNull, replacement),
+                                        new CompareToNullFix(replacement)
+                                );
                                 result = true;
                             }
                         } else {
@@ -59,7 +68,7 @@ final public class InstanceOfCorrectnessStrategy {
                                 if (classes.size() == 1) {
                                     final Set<PhpClass> parents = InterfacesExtractUtil.getCrawlInheritanceTree(resolvedClass, true);
                                     if (!parents.contains(classes.iterator().next())) {
-                                        holder.registerProblem(context, "It seems to be always false (classes are not related).");
+                                        holder.registerProblem(context, messageUnrelatedClass);
                                         result = true;
                                     }
                                 }
@@ -67,12 +76,24 @@ final public class InstanceOfCorrectnessStrategy {
                         }
                     }
                 } else {
-                    holder.registerProblem(context, "It seems to be always false (no object types).");
+                    holder.registerProblem(context, messageNotObject);
                     result = true;
                 }
             }
         }
         return result;
+    }
+
+    private static class CompareToNullFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use null comparison instead";
+        }
+
+        CompareToNullFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 
 }

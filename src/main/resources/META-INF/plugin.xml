@@ -51,6 +51,7 @@ Happy new year! New ultimate features for you:<br/>
 - UnnecessaryEmptinessCheckInspector: fixed NPE
 - MissingElseKeywordInspector: implemented
 - NullPointerExceptionInspector: resolved false positives (core functions arguments)
+- CallableParameterUseCaseInTypeContextInspection: new patterns (instanceof, is_*())
 <br/>
 <hr/>
   ]]></change-notes>

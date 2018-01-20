@@ -13,5 +13,9 @@ final public class CallableParameterUseCaseInTypeContextInspectionTest extends P
         myFixture.enableInspections(new CallableParameterUseCaseInTypeContextInspection());
         myFixture.configureByFile("fixtures/types/parameter-types-checks.instanceof.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/types/parameter-types-checks.instanceof.fixed.php");
     }
 }

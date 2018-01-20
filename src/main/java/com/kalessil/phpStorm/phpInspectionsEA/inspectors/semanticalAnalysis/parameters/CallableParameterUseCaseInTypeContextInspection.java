@@ -238,8 +238,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             continue;
                         }
 
-                        if (parent != null && InstanceOfCorrectnessStrategy.apply(holder, paramTypes, parent)) {
-                            continue;
+                        if (parent != null && !parameter.getDeclaredType().isEmpty()) {
+                            InstanceOfCorrectnessStrategy.apply(holder, paramTypes, parent);
                         }
 
                         /* TODO: analyze comparison operations */

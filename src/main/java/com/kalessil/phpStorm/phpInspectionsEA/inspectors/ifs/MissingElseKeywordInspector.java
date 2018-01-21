@@ -7,6 +7,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.psi.elements.Else;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.If;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +35,8 @@ public class MissingElseKeywordInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpIf(@NotNull If expression) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
                 /* get through previous space to if-statement */
                 PsiElement previous = expression.getPrevSibling();
                 if (previous instanceof PsiWhiteSpace) {

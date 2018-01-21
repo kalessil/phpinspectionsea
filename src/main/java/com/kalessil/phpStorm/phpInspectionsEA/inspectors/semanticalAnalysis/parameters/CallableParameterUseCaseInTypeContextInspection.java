@@ -75,7 +75,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                 for (final Parameter parameter : parameters) {
                     /* normalize parameter types, skip analysis when mixed or object appears */
-                    final Set<String> paramTypes  = new HashSet<>();
+                    final Set<String> paramTypes = new HashSet<>();
                     for (final String type : parameter.getType().global(project).filterUnknown().getTypes()) {
                         final String typeNormalized = Types.getType(type);
                         if (typeNormalized.equals(Types.strMixed) || typeNormalized.equals(Types.strObject)) {
@@ -165,7 +165,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     isTypeAnnounced =
                                         paramTypes.contains(Types.strObject) ||
                                         paramTypes.stream()
-                                            .filter(t -> !t.equals("\\Closure"))
+                                            .filter(t   -> !t.equals("\\Closure"))
                                             .anyMatch(t -> t.startsWith("\\") || classReferences.contains(t));
                                     break;
                                 default:

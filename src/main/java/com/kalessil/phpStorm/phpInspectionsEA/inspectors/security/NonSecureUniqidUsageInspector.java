@@ -108,7 +108,7 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference) {
+            if (expression instanceof FunctionReference && !project.isDisposed()) {
                 final FunctionReference call = (FunctionReference) expression;
                 final PsiElement[] params    = call.getParameters();
 
@@ -120,8 +120,11 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
                 }
 
                 /* replace parameters list */
-                //noinspection ConstantConditions I'm really sure NPE will not happen
-                call.getParameterList().replace(replacement.getParameterList());
+                final PsiElement implant = replacement.getParameterList();
+                final PsiElement socket  = call.getParameterList();
+                if (implant != null && socket != null) {
+                    socket.replace(implant);
+                }
             }
         }
     }

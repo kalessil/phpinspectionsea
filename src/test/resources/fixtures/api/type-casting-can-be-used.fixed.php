@@ -16,4 +16,11 @@ function cases_holder() {
 
     settype($x, $x);
     settype($x, 'whatever');
+
+    $x = (string)$y;
+    $x = (string)$y;
+
+    $x = " $y";
+    $x = "$y ";
+    $x = "{$y}{$y}";
 }

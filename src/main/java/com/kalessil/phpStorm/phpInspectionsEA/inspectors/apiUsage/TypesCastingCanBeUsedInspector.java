@@ -4,11 +4,13 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,6 +92,26 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
                                     reference,
                                     String.format(messagePattern, replacement),
                                     ProblemHighlightType.LIKE_DEPRECATED,
+                                    new UseTypeCastingFix(replacement)
+                            );
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void visitPhpStringLiteralExpression(@NotNull StringLiteralExpression literal) {
+                if (!literal.isHeredoc() && !(ExpressionSemanticUtil.getBlockScope(literal) instanceof PhpDocComment)) {
+                    final PsiElement[] children = literal.getChildren();
+                    if (children.length == 1) {
+                        final boolean isTarget =
+                                children[0].getPrevSibling() == literal.getFirstChild() &&
+                                children[0].getNextSibling() == literal.getLastChild();
+                        if (isTarget) {
+                            final String replacement = String.format("(string) %s", children[0].getText());
+                            holder.registerProblem(
+                                    literal,
+                                    String.format(messagePattern, replacement),
                                     new UseTypeCastingFix(replacement)
                             );
                         }

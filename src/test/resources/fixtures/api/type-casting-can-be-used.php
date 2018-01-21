@@ -16,4 +16,11 @@ function cases_holder() {
 
     settype($x, $x);
     settype($x, 'whatever');
+
+    $x = <warning descr="'(string) $y' should be used instead (up to 6x times faster).">"{$y}"</warning>;
+    $x = <warning descr="'(string) $y' should be used instead (up to 6x times faster).">"$y"</warning>;
+
+    $x = " $y";
+    $x = "$y ";
+    $x = "{$y}{$y}";
 }

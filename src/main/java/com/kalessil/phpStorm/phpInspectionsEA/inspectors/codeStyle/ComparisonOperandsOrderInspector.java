@@ -93,7 +93,7 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target instanceof BinaryExpression) {
+            if (target instanceof BinaryExpression && !project.isDisposed()) {
                 final BinaryExpression expression = (BinaryExpression) target;
                 final PsiElement left             = expression.getLeftOperand();
                 final PsiElement right            = expression.getRightOperand();

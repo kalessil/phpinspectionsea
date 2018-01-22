@@ -45,11 +45,14 @@ public class ExcessiveMethodCallsInspector extends BasePhpInspection {
                         } else if (OpenapiTypesUtil.isStatementImpl(previous)) {
                             /* case: sequential calls */
                             final PsiElement candidate = previous.getFirstChild();
-                            if (candidate instanceof MethodReference && candidate.getFirstChild() instanceof MethodReference) {
-                                final MethodReference previousBase = (MethodReference) candidate.getFirstChild();
-                                final MethodReference currentBase  = (MethodReference) reference.getFirstChild();
+                            if (candidate instanceof MethodReference) {
+                                final PsiElement previousBase = candidate.getFirstChild();
+                                final PsiElement currentBase  = reference.getFirstChild();
                                 if (OpeanapiEquivalenceUtil.areEqual(currentBase, previousBase)) {
-                                    holder.registerProblem(currentBase, messageSequential);
+                                    final boolean shouldReport = !this.isTestContext(parent);
+                                    if (shouldReport) {
+                                        holder.registerProblem(currentBase, messageSequential);
+                                    }
                                 }
                             }
                         }

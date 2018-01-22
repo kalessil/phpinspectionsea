@@ -68,6 +68,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("composer/composer");
         developmentPackages.add("satooshi/php-coveralls");
         developmentPackages.add("mikey179/vfsStream");
+        developmentPackages.add("filp/whoops");
 
         /* SCA tools */
         developmentPackages.add("friendsofphp/php-cs-fixer");

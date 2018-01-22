@@ -185,7 +185,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         final PhpDocComment phpDoc      = method.getDocComment();
                         final PhpDocReturnTag phpReturn = phpDoc == null ? null : phpDoc.getReturnTag();
                         final boolean hasSelfReference  = PsiTreeUtil.findChildrenOfType(phpReturn, PhpDocType.class).stream()
-                                .anyMatch(docType -> docType.getText().equals("self"));
+                                .map(PsiElement::getText)
+                                .anyMatch(t -> t.equals("self") || t.equals("$this"));
                         if (hasSelfReference) {
                             result = "self";
                         }

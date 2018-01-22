@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
@@ -108,7 +109,12 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
                                 children[0].getPrevSibling() == literal.getFirstChild() &&
                                 children[0].getNextSibling() == literal.getLastChild();
                         if (isTarget) {
-                            final String replacement = String.format("(string) %s", children[0].getText());
+                            final PsiElement candidate = children[0].getFirstChild();
+                            final boolean isWrapped    = OpenapiTypesUtil.is(candidate, PhpTokenTypes.chLBRACE);
+                            final String replacement   = String.format(
+                                    isWrapped ? "(string) (%s)" : "(string) %s",
+                                    (isWrapped ? candidate.getNextSibling() : children[0]).getText()
+                            );
                             holder.registerProblem(
                                     literal,
                                     String.format(messagePattern, replacement),

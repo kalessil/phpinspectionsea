@@ -151,6 +151,10 @@ Bug-fixes and new inspections:<br/>
         shortName="FixedTimeStartWithInspection"                  displayName="Fixed-time string starts with checks"
         groupName="Performance"                                   enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.FixedTimeStartWithInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="ExcessiveMethodCallsInspection"                displayName="Excessive method calls"
+        groupName="Performance"                                   enabledByDefault="false" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ExcessiveMethodCallsInspector"/>
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="IsEmptyFunctionUsageInspection"                displayName="'empty(...)' usage"

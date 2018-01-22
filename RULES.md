@@ -257,3 +257,4 @@ Inspections Lists (Performance)
 | Performance          | ScandirUsageInspection                          | 'scandir(...)' low performing usage                                                               | yes | yes | yes  | no  |
 | Performance          | FixedTimeStartWithInspection                    | Fixed-time string starts with checks                                                              | yes | yes | yes  | no  |
 | Performance          | ArrayKeysMissUseInspection                      | 'array_keys(...)' misused                                                                         | yes | yes | yes  | no  |
+| Performance          | ExcessiveMethodCallsInspection                  | Excessive method calls                                                                            | n/a | yes | n/a  | no  |

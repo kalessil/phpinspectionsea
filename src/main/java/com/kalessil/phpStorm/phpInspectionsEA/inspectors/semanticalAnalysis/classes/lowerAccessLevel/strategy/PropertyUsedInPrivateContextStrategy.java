@@ -58,7 +58,7 @@ final public class PropertyUsedInPrivateContextStrategy {
                 if (field.getModifier().isProtected()) {
                     /* ensure overrides are skipped */
                     final String fieldName = field.getName();
-                    if (parent == null || parent.findFieldByName(fieldName, false) == null) {
+                    if (parent == null || OpenapiResolveUtil.resolveField(parent, fieldName) == null) {
                         fields.put(fieldName, field);
                     }
                 }

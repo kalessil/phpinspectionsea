@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.jetbrains.php.PhpIndex;
+import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
@@ -104,6 +105,18 @@ final public class OpenapiResolveUtil {
     static public Method resolveMethod(@NotNull PhpClass clazz, @NotNull String methodName) {
         try {
             return clazz.findMethodByName(methodName);
+        } catch (Throwable error) {
+            if (error instanceof ProcessCanceledException) {
+                throw error;
+            }
+            return null;
+        }
+    }
+
+    @Nullable
+    static public Field resolveField(@NotNull PhpClass clazz, @NotNull String fieldName) {
+        try {
+            return clazz.findFieldByName(fieldName, false);
         } catch (Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;

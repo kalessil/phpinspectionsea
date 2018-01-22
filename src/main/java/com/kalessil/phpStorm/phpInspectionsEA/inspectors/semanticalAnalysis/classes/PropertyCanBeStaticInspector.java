@@ -53,7 +53,7 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
                         continue;
                     }
                     /* do not process overriding, there is an inspection for this */
-                    if (parent != null && parent.findFieldByName(field.getName(), false) != null) {
+                    if (parent != null && OpenapiResolveUtil.resolveField(parent, field.getName()) != null) {
                         continue;
                     }
 

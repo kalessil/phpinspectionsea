@@ -69,7 +69,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
 
                 final PhpClass parent     = OpenapiResolveUtil.resolveSuperClass(clazz);
                 final String ownFieldName = ownField.getName();
-                final Field parentField   = parent == null ? null : parent.findFieldByName(ownFieldName, false);
+                final Field parentField   = parent == null ? null : OpenapiResolveUtil.resolveField(parent, ownFieldName);
                 if (parentField != null) {
                     final PhpClass parentFieldHolder = parentField.getContainingClass();
                     final PsiElement fieldNameNode   = NamedElementUtil.getNameIdentifier(ownField);

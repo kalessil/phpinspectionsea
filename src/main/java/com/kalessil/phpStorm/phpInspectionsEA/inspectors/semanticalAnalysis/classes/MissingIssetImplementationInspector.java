@@ -61,8 +61,12 @@ public class MissingIssetImplementationInspector extends BasePhpInspection {
                 for (final PhpExpression parameter : parameters) {
                     if (parameter instanceof FieldReference) {
                         final FieldReference reference = (FieldReference) parameter;
+                        final String parameterName     = parameter.getName();
                         /* if the field name is not implicit or the field resolved, continue */
-                        if (null == reference.getNameNode() || null != OpenapiResolveUtil.resolveReference(reference)) {
+                        if (
+                            reference.getNameNode() == null || parameterName == null ||
+                            OpenapiResolveUtil.resolveReference(reference) != null
+                        ) {
                             continue;
                         }
 
@@ -82,7 +86,7 @@ public class MissingIssetImplementationInspector extends BasePhpInspection {
                                 final PhpClass clazz               = classes.isEmpty() ? null : classes.iterator().next();
                                 /* resolved class FQN might differ from what type states */
                                 if (clazz != null && !magicClasses.contains(clazz.getFQN())) {
-                                    final boolean hasField = null != clazz.findFieldByName(parameter.getName(), false);
+                                    final boolean hasField = OpenapiResolveUtil.resolveField(clazz, parameterName) != null;
                                     if (!hasField && OpenapiResolveUtil.resolveMethod(clazz, "__isset") == null) {
                                         final String message = messagePattern.replace("%c%", normalizedType);
                                         holder.registerProblem(parameter, message, ProblemHighlightType.GENERIC_ERROR);

@@ -608,7 +608,7 @@ Bug-fixes and new inspections:<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnusedGotoLabelInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ArgumentEqualsDefaultValueInspection"          displayName="Unnecessary call arguments specification"
-        groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
+        groupName="Unused"                                        enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ArgumentEqualsDefaultValueInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="UnnecessaryIssetArgumentsInspection"           displayName="Unnecessary isset arguments specification"

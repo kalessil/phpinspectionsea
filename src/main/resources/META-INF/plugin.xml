@@ -731,9 +731,9 @@ Bug-fixes and new inspections:<br/>
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.NullCoalescingOperatorCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="TypesCastingWithFunctionsInspection"           displayName="Type casting can be used"
-        groupName="Language level migration"                      enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.TypesCastingWithFunctionsInspector"/>
+        shortName="TypesCastingCanBeUsedInspection"               displayName="Type casting can be used"
+        groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.TypesCastingCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="dirnameCallOnFileConstantInspection"           displayName="__DIR__ constant can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"

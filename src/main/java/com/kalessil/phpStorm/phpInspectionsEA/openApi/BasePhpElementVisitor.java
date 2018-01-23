@@ -63,6 +63,7 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
 
     @Override public void visitPhpArrayCreationExpression(ArrayCreationExpression expression) {}
     @Override public void visitPhpArrayAccessExpression(ArrayAccessExpression expression)     {}
+    @Override public void visitPhpStringLiteralExpression(StringLiteralExpression expression) {}
 
     @Override public void visitPhpTry(Try tryStatement)          {}
     @Override public void visitPhpCatch(Catch phpCatch)          {}

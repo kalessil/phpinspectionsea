@@ -242,7 +242,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             final PsiElement assignment = this.assignment.getElement();
             final Variable variable     = this.variable.getElement();
             final PsiElement value      = this.value.getElement();
-            if (null == assignment || null == variable || null == value) {
+            if (null == assignment || null == variable || null == value || project.isDisposed()) {
                 return;
             }
 

@@ -46,7 +46,7 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                     final PsiElement ownFieldDefault = ownField.getDefaultValue();
 
                     for (final PhpClass trait : traits) {
-                        final Field traitField = trait.findFieldByName(ownFieldName, false);
+                        final Field traitField = OpenapiResolveUtil.resolveField(trait, ownFieldName);
                         if (null != traitField) {
                             final PsiElement traitFieldDefault = traitField.getDefaultValue();
 
@@ -101,7 +101,7 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                     final PsiElement parentFieldDefault = parentField.getDefaultValue();
 
                     for (final PhpClass trait : traits) {
-                        final Field traitField = trait.findFieldByName(parentFieldName, false);
+                        final Field traitField = OpenapiResolveUtil.resolveField(trait, parentFieldName);
                         if (traitField != null) {
                             final PsiElement traitFieldDefault = traitField.getDefaultValue();
 

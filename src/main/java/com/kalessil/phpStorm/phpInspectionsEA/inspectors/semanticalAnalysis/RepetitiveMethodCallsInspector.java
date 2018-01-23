@@ -25,13 +25,13 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class ExcessiveMethodCallsInspector extends BasePhpInspection {
+public class RepetitiveMethodCallsInspector extends BasePhpInspection {
     private static final String messageSequential = "Same as in the previous call, consider introducing a local variable instead.";
     private static final String messageLoop       = "Repetitive call, consider introducing a local variable instead outside of loop.";
 
     @NotNull
     public String getShortName() {
-        return "ExcessiveMethodCallsInspection";
+        return "RepetitiveMethodCallsInspection";
     }
 
     @Override

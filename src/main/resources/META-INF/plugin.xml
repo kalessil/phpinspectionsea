@@ -152,9 +152,9 @@ Bug-fixes and new inspections:<br/>
         groupName="Performance"                                   enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.FixedTimeStartWithInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="ExcessiveMethodCallsInspection"                displayName="Excessive method calls"
+        shortName="RepetitiveMethodCallsInspection"               displayName="Repetitive method calls"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.ExcessiveMethodCallsInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.RepetitiveMethodCallsInspector"/>
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="IsEmptyFunctionUsageInspection"                displayName="'empty(...)' usage"

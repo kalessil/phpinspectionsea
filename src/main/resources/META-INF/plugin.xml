@@ -581,7 +581,7 @@ Bug-fixes and new inspections:<br/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="OnlyWritesOnParameterInspection"               displayName="Parameter/variable is not used"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.parameters.OnlyWritesOnParameterInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OnlyWritesOnParameterInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="PropertyInitializationFlawsInspection"         displayName="Class property initialization flaws"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"

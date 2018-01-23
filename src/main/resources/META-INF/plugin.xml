@@ -49,6 +49,7 @@ Bug-fixes and new inspections:<br/>
 - Callable parameter usage violates definition: new patterns (instanceof, is_*())<br/>
 - Null reference: resolved false positives (core functions arguments)<br/>
 - Missing else keyword: implemented<br/>
+- Repetitive method calls: implemented<br/>
 - 'file_put_contents(...)' race condition: new settings<br/>
 <br/>
 <hr/>

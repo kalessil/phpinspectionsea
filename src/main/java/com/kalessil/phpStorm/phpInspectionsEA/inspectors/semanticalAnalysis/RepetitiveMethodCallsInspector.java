@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 public class RepetitiveMethodCallsInspector extends BasePhpInspection {
     private static final String messageSequential = "Same as in the previous call, consider introducing a local variable instead.";
-    private static final String messageLoop       = "Repetitive call, consider introducing a local variable instead outside of loop.";
+    private static final String messageLoop       = "Repetitive call, consider introducing a local variable outside of the loop.";
 
     @NotNull
     public String getShortName() {

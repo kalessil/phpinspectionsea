@@ -4,7 +4,7 @@
     <warning descr="Same as in the previous call, consider introducing a local variable instead.">$object->method()</warning>->method();
 
     for ($i = 0; $i < $max; ++$i) {
-         <warning descr="Repetitive call, consider introducing a local variable instead outside of loop.">$object->method()</warning>->method();
+         <warning descr="Repetitive call, consider introducing a local variable outside of the loop.">$object->method()</warning>->method();
     }
 
     /* false-positives: variable being used */
@@ -13,7 +13,7 @@
     }
 
     foreach ([] as $value) {
-        <warning descr="Repetitive call, consider introducing a local variable instead outside of loop.">$object->method()</warning>->method();
+        <warning descr="Repetitive call, consider introducing a local variable outside of the loop.">$object->method()</warning>->method();
     }
 
     /* false-positives: variable being used */

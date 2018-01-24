@@ -32,13 +32,12 @@ public class NonSecureParseStrUsageInspector  extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final String strFunction  = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (
-                    1 == params.length && strFunction != null &&
-                    (strFunction.equals("parse_str") || strFunction.equals("mb_parse_str"))
-                ) {
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                final String functionName = reference.getName();
+                if (functionName != null && (functionName.equals("parse_str") || functionName.equals("mb_parse_str"))) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 1) {
+                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                    }
                 }
             }
         };

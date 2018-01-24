@@ -42,7 +42,7 @@ public class IncorrectRandomRangeInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final String functionName    = reference.getName();
+                final String functionName = reference.getName();
                 if (functionName != null && functions.contains(functionName)) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 2) {

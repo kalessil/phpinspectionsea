@@ -36,16 +36,18 @@ public class SimpleXmlLoadFileUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final String functionName    = reference.getName();
-                final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length > 0 && functionName != null && functionName.equals("simplexml_load_file")) {
-                    final List<String> fragments = Arrays.stream(arguments)
-                            .map(PsiElement::getText)
-                            .collect(Collectors.toList());
-                    final String file         = fragments.remove(0);
-                    final String xmlArguments = fragments.isEmpty() ? "" : ", " + String.join(", ", fragments);
-                    final String replacement  = String.format("simplexml_load_string(file_get_contents(%s)%s)", file, xmlArguments);
-                    holder.registerProblem(reference, message, new LoadStringFix(replacement));
+                final String functionName = reference.getName();
+                if (functionName != null && functionName.equals("simplexml_load_file")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length > 0) {
+                        final List<String> fragments = Arrays.stream(arguments)
+                                .map(PsiElement::getText)
+                                .collect(Collectors.toList());
+                        final String file         = fragments.remove(0);
+                        final String xmlArguments = fragments.isEmpty() ? "" : ", " + String.join(", ", fragments);
+                        final String replacement  = String.format("simplexml_load_string(file_get_contents(%s)%s)", file, xmlArguments);
+                        holder.registerProblem(reference, message, new LoadStringFix(replacement));
+                    }
                 }
             }
         };

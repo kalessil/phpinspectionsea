@@ -67,7 +67,6 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("humbug/humbug");
         developmentPackages.add("infection/infection");
         developmentPackages.add("mockery/mockery");
-        developmentPackages.add("composer/composer");
         developmentPackages.add("satooshi/php-coveralls");
         developmentPackages.add("mikey179/vfsStream");
         developmentPackages.add("filp/whoops");
@@ -86,8 +85,9 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("phan/phan");
         developmentPackages.add("phpro/grumphp");
 
-        /* build tools */
+        /* build and package management tools */
         developmentPackages.add("phing/phing");
+        developmentPackages.add("composer/composer");
 
         return developmentPackages;
     }

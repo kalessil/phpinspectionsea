@@ -31,14 +31,15 @@ public class PregQuoteUsageInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (1 != params.length || StringUtils.isEmpty(functionName) || !functionName.equals("preg_quote")) {
-                    return;
+                if (functionName != null && functionName.equals("preg_quote")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 1) {
+                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                    }
                 }
-
-                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
             }
         };
     }

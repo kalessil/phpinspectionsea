@@ -42,20 +42,22 @@ public class IncorrectRandomRangeInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* check call structure */
-                final PsiElement[] arguments = reference.getParameters();
-                final String functionName    = reference.getName();
-                if (functionName != null && arguments.length == 2 && functions.contains(functionName)) {
-                    final PsiElement from = arguments[0];
-                    final PsiElement to   = arguments[1];
-                    if (OpenapiTypesUtil.isNumber(to) && OpenapiTypesUtil.isNumber(from)) {
-                        try {
-                            if (Integer.parseInt(to.getText()) < Integer.parseInt(from.getText())) {
+                final String functionName = reference.getName();
+                if (functionName != null && functions.contains(functionName)) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 2) {
+                        final PsiElement from = arguments[0];
+                        final PsiElement to   = arguments[1];
+                        if (OpenapiTypesUtil.isNumber(to) && OpenapiTypesUtil.isNumber(from)) {
+                            boolean isTarget;
+                            try {
+                                isTarget = Integer.parseInt(to.getText()) < Integer.parseInt(from.getText());
+                            } catch (final NumberFormatException wrongFormat) {
+                                isTarget = false;
+                            }
+                            if (isTarget) {
                                 holder.registerProblem(reference, message);
                             }
-                        } catch (NumberFormatException wrongFormat) {
-                            //noinspection UnnecessaryReturnStatement
-                            return;
                         }
                     }
                 }

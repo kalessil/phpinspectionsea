@@ -24,7 +24,6 @@ final public class ReturnTypeCanBeDeclaredInspectorTest extends PhpCodeInsightFi
             false
         );
     }
-
     public void testReturnTypeGeneration() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         final ReturnTypeCanBeDeclaredInspector inspector = new ReturnTypeCanBeDeclaredInspector();
@@ -33,4 +32,10 @@ final public class ReturnTypeCanBeDeclaredInspectorTest extends PhpCodeInsightFi
         myFixture.configureByFile("fixtures/lang/typeHints/return-type-hints.replacement-generation.php");
         myFixture.testHighlighting(true, false, true);
     }
+     public void testReturnTypeInfluencedByInterfaces() {
+        PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
+        myFixture.enableInspections(new ReturnTypeCanBeDeclaredInspector());
+        myFixture.configureByFile("fixtures/lang/typeHints/return-type-hints.inheritance-influence.php");
+        myFixture.testHighlighting(true, false, true);
+     }
 }

@@ -106,10 +106,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     /* adding class interface leading to promise-type for interface method */
                     boolean isPrimitiveInfluencedByInterface = false;
                     if (resolvedReturnType.size() == 2) {
-                        final PhpType filtered = resolvedReturnType.filterUnknown();
-                        if (filtered.size() == 1 && filtered.filterPrimitives().size() == 0) {
-                            isPrimitiveInfluencedByInterface = true;
-                        }
+                        final PhpType filtered           = resolvedReturnType.filterUnknown();
+                        isPrimitiveInfluencedByInterface = filtered.size() == 1 && filtered.filterPrimitives().size() == 0;
                     }
                     if (!isPrimitiveInfluencedByInterface) {
                         return;
@@ -121,7 +119,6 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         map(Types::getType).collect(Collectors.toSet());
                 checkNonImplicitNullReturn(method, normalizedTypes);
                 checkUnrecognizedGenerator(method, normalizedTypes);
-//holder.registerProblem(target, normalizedTypes.toString());
 
                 final int typesCount = normalizedTypes.size();
                 /* case 1: offer using void */
@@ -141,7 +138,6 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     final String suggestedType = voidTypes.contains(singleType) ? Types.strVoid : compactType(singleType, method);
                     final boolean isLegitBasic = singleType.startsWith("\\") || returnTypes.contains(singleType) || suggestedType.equals("self");
                     final boolean isLegitVoid  = supportNullableTypes && suggestedType.equals(Types.strVoid);
-//holder.registerProblem(target, String.format("%s || %s", isLegitBasic, isLegitVoid));
                     if (isLegitBasic || isLegitVoid) {
                         final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(suggestedType);
                         final String message      = messagePattern

@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
 public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     // Inspection options.
     public boolean IMPORT_CLASSES_ON_QF = true;
-    public boolean USE_RELATIVE_QF      = true;
+    public boolean USE_RELATIVE_QF      = false;
     public boolean LOOK_ROOT_NS_UP      = false;
 
     private static final String messagePattern   = "Perhaps this can be replaced with %c%::class.";

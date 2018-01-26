@@ -44,10 +44,13 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     public static Collection<String> optionConfigurationDefaults() {
         final Collection<String> developmentPackages = new TreeSet<>();
 
+        /* Not included: webmozart/assert, beberlei/assert - can be used in production */
+
         /* PhpUnit */
         developmentPackages.add("phpunit/phpunit");
         developmentPackages.add("phpunit/dbunit");
         developmentPackages.add("johnkary/phpunit-speedtrap");
+        developmentPackages.add("brianium/paratest");
 
         /* frameworks: Symfony, ZF2, Yii2 */
         developmentPackages.add("symfony/phpunit-bridge");
@@ -59,13 +62,13 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("yiisoft/yii2-debug");
 
         /* more dev-packages  */
+        developmentPackages.add("codeception/codeception");
         developmentPackages.add("behat/behat");
         developmentPackages.add("phpspec/prophecy");
         developmentPackages.add("phpspec/phpspec");
         developmentPackages.add("humbug/humbug");
         developmentPackages.add("infection/infection");
         developmentPackages.add("mockery/mockery");
-        developmentPackages.add("composer/composer");
         developmentPackages.add("satooshi/php-coveralls");
         developmentPackages.add("mikey179/vfsStream");
         developmentPackages.add("filp/whoops");
@@ -84,8 +87,9 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("phan/phan");
         developmentPackages.add("phpro/grumphp");
 
-        /* build tools */
+        /* build and package management tools */
         developmentPackages.add("phing/phing");
+        developmentPackages.add("composer/composer");
 
         return developmentPackages;
     }

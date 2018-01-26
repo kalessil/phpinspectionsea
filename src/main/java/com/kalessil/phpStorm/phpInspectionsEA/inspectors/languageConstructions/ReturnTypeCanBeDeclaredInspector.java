@@ -100,8 +100,18 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             private void handleMethod(@NotNull Method method, @NotNull PsiElement target, boolean supportNullableTypes) {
                 /* suggest nothing when the type is only partially resolved */
                 final PhpType resolvedReturnType = OpenapiResolveUtil.resolveType(method, holder.getProject());
-                if (resolvedReturnType == null || resolvedReturnType.hasUnknown()) {
+                if (resolvedReturnType == null) {
                     return;
+                } else if (resolvedReturnType.hasUnknown()) {
+                    /* adding class interface leading to promise-type for interface method */
+                    boolean isPrimitiveInfluencedByInterface = false;
+                    if (resolvedReturnType.size() == 2) {
+                        final PhpType filtered           = resolvedReturnType.filterUnknown();
+                        isPrimitiveInfluencedByInterface = filtered.size() == 1 && filtered.filterPrimitives().size() == 0;
+                    }
+                    if (!isPrimitiveInfluencedByInterface) {
+                        return;
+                    }
                 }
 
                 /* ignore DocBlock, resolve and normalize types instead (DocBlock is involved, but nevertheless) */

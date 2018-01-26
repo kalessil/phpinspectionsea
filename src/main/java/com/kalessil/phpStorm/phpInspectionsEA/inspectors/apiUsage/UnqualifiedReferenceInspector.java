@@ -133,9 +133,9 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                     final String functionName = reference.getName();
                     if (functionName != null) {
                         if (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(functionName)) {
-                            analyzeReference(reference);
+                            this.analyzeReference(reference);
                         }
-                        analyzeCallback(reference, functionName);
+                        this.analyzeCallback(reference, functionName);
                     }
                 }
             }

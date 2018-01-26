@@ -44,6 +44,8 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     public static Collection<String> optionConfigurationDefaults() {
         final Collection<String> developmentPackages = new TreeSet<>();
 
+        /* Not included: webmozart/assert, beberlei/assert - can be used in production */
+
         /* PhpUnit */
         developmentPackages.add("phpunit/phpunit");
         developmentPackages.add("phpunit/dbunit");

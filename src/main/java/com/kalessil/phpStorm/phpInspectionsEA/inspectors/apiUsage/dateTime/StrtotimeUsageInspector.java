@@ -40,26 +40,26 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
                 if (functionName == null || !functionName.equals("strtotime")) {
                     return;
                 }
-                final PsiElement[] params = reference.getParameters();
-                if (params.length == 0 || params.length > 2) {
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length == 0 || arguments.length > 2) {
                     return;
                 }
 
                 /* handle case: strtotime("now") -> time() */
-                if (params.length == 1) {
-                    if (params[0] instanceof StringLiteralExpression) {
-                        final StringLiteralExpression pattern = (StringLiteralExpression) params[0];
+                if (arguments.length == 1) {
+                    if (arguments[0] instanceof StringLiteralExpression) {
+                        final StringLiteralExpression pattern = (StringLiteralExpression) arguments[0];
                         if (pattern.getContents().equalsIgnoreCase("now")) {
                             holder.registerProblem(reference, messageUseTime, new UseTimeFunctionLocalFix("time()"));
                         }
                     }
                 }
                 /* handle case: strtotime(..., time()) -> date(...) */
-                else if (params.length == 2) {
-                    if (OpenapiTypesUtil.isFunctionReference(params[1])) {
-                        final String callName = ((FunctionReference) params[1]).getName();
+                else if (arguments.length == 2) {
+                    if (OpenapiTypesUtil.isFunctionReference(arguments[1])) {
+                        final String callName = ((FunctionReference) arguments[1]).getName();
                         if (callName != null && callName.equals("time")) {
-                            final String replacement = "strtotime(%a%)".replace("%a%", params[0].getText());
+                            final String replacement = "strtotime(%a%)".replace("%a%", arguments[0].getText());
                             holder.registerProblem(
                                     reference,
                                     messageDropTime,

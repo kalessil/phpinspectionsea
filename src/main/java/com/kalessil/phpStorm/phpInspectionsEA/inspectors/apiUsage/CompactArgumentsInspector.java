@@ -9,13 +9,24 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class CompactArgumentsInspector extends BasePhpInspection {
-    private static final String messagePattern = "$%v% might not be defined in the scope.";
+    private static final String messagePattern = "'$%s' might not be defined in the scope.";
 
     @NotNull
     public String getShortName() {
@@ -26,59 +37,54 @@ public class CompactArgumentsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
-                /* check requirements */
-                final PsiElement[] params = reference.getParameters();
-                final String function     = reference.getName();
-                if (0 == params.length || StringUtils.isEmpty(function) || !function.equals("compact")) {
-                    return;
-                }
-                final Function scope = ExpressionSemanticUtil.getScope(reference);
-                if (null == scope) {
-                    return;
-                }
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                final String functionName = reference.getName();
+                if (functionName != null && functionName.equals("compact")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length > 0) {
+                        final Function scope = ExpressionSemanticUtil.getScope(reference);
+                        if (scope != null) {
+                            /* extract variables names needed */
+                            final Set<String> compactedVariables = new HashSet<>();
+                            for (final PsiElement callArgument : arguments) {
+                                if (callArgument instanceof StringLiteralExpression) {
+                                    final StringLiteralExpression expression = (StringLiteralExpression) callArgument;
+                                    final String name                        = expression.getContents();
+                                    if (name.length() > 0 && expression.getFirstPsiChild() == null) {
+                                        compactedVariables.add(name);
+                                    }
+                                }
+                            }
+                            /* if we have something to analyze, collect what scope provides */
+                            if (!compactedVariables.isEmpty()) {
+                                /* parameters and local variables can be compacted, just ensure the order is correct */
+                                final Set<String> declaredVariables = Arrays.stream(scope.getParameters())
+                                        .map(Parameter::getName)
+                                        .collect(Collectors.toSet());
+                                for (final PhpReference entry : PsiTreeUtil.findChildrenOfAnyType(scope, Variable.class, FunctionReference.class)) {
+                                    if (entry == reference) {
+                                        break;
+                                    } else if (entry instanceof Variable) {
+                                        declaredVariables.add(entry.getName());
+                                    }
+                                }
 
-                /* extract variables names needed */
-                final HashSet<String> variablesCompacted = new HashSet<>();
-                for (PsiElement compactParameter : params) {
-                    if (!(compactParameter instanceof StringLiteralExpression)) {
-                        continue;
-                    }
-
-                    final StringLiteralExpression expression = (StringLiteralExpression) compactParameter;
-                    final String name                        = expression.getContents();
-                    if (name.length() > 0 && null == expression.getFirstPsiChild()) {
-                        variablesCompacted.add(name);
-                    }
-                }
-
-                /* if we have something to analyze, collect what scope provides */
-                if (variablesCompacted.size() > 0) {
-                    final HashSet<String> variablesDeclared = new HashSet<>();
-                    /* parameters can be compacted */
-                    for (Parameter scopeParameter : scope.getParameters()) {
-                        variablesDeclared.add(scopeParameter.getName());
-                    }
-                    /* local variables can be compacted, just ensure the order is correct */
-                    //noinspection unchecked - want to keep the code clean from castings
-                    for (PhpReference entry : PsiTreeUtil.findChildrenOfAnyType(scope, Variable.class, FunctionReference.class)) {
-                        if (entry instanceof Variable) {
-                            variablesDeclared.add(entry.getName());
+                                /* analyze and report suspicious parameters, release refs afterwards */
+                                compactedVariables.forEach(subject -> {
+                                    if (!declaredVariables.contains(subject)) {
+                                        holder.registerProblem(
+                                                reference,
+                                                String.format(messagePattern, subject),
+                                                ProblemHighlightType.GENERIC_ERROR
+                                        );
+                                    }
+                                });
+                                declaredVariables.clear();
+                                compactedVariables.clear();
+                            }
                         }
-                        if (entry == reference) {
-                            break;
-                        }
                     }
-
-                    /* analyze and report suspicious parameters, release refs afterwards */
-                    variablesCompacted.stream()
-                            .filter(subject -> !variablesDeclared.contains(subject))
-                            .forEach(subject -> {
-                                final String message = messagePattern.replace("%v%", subject);
-                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
-                            });
-                    variablesDeclared.clear();
-                    variablesCompacted.clear();
                 }
             }
         };

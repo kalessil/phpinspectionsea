@@ -28,12 +28,12 @@ public class PdoApiUsageInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMethodReference(MethodReference reference) {
+            @Override
+            public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 QueryUsageStrategy.apply(reference, holder);
                 ExecUsageStrategy.apply(reference, holder);
             }
         };
     }
-
 }
 

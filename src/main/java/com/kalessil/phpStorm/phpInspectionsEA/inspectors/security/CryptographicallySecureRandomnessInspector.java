@@ -67,7 +67,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
 
 
                 /* Case 2: report missing 2nd argument */
-                final boolean hasSecondArgument = 2 == arguments.length;
+                final boolean hasSecondArgument = arguments.length == 2;
                 if (!hasSecondArgument) {
                     final String message = isOpenSSL ? messageOpenssl2ndArgumentNotDefined : messageMcrypt2ndArgumentNotDefined;
                     holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);

@@ -60,7 +60,6 @@ public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
                             }
                         }
                     }
-
                 }
                 // TODO: if (isContainerValid && params[0] instanceof ArrayCreationExpression) {
                 // TODO: call_user_func_array([...], ...); string method name must not contain ::

@@ -48,7 +48,7 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
                     return;
                 }
                 final PsiElement[] arguments = reference.getParameters();
-                if ((arguments.length != 1&& arguments.length != 2) || !this.isFromRootNamespace(reference)) {
+                if ((arguments.length != 1 && arguments.length != 2) || !this.isFromRootNamespace(reference)) {
                     return;
                 }
 

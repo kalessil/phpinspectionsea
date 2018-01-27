@@ -89,8 +89,8 @@ public class InArrayMissUseInspector extends BasePhpInspection {
                         boolean checkExists = true;
                         PsiElement target   = reference;
                         if (parent instanceof UnaryExpression) {
-                            final PsiElement operation = ((UnaryExpression) parent).getOperation();
-                            if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opNOT)) {
+                            final UnaryExpression unary = (UnaryExpression) parent;
+                            if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
                                 checkExists = false;
                                 target      = parent;
                             }

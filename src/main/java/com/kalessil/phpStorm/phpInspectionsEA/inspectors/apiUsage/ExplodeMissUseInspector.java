@@ -74,8 +74,8 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                         if (innerFunctionName == null || !innerFunctionName.equals("explode")) {
                             return;
                         }
-                        final PsiElement[] innerParams = innerCall.getParameters();
-                        if (innerParams.length != 2) {
+                        final PsiElement[] innerArguments = innerCall.getParameters();
+                        if (innerArguments.length != 2) {
                             return;
                         }
 
@@ -97,8 +97,8 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                         }
 
                         final String replacement = semanticMapping.get(functionName)
-                                .replace("%f%", innerParams[0].getText())
-                                .replace("%s%", innerParams[1].getText());
+                                .replace("%f%", innerArguments[0].getText())
+                                .replace("%s%", innerArguments[1].getText());
                         final String message = messagePattern.replace("%e%", replacement);
                         if (arguments[0] == value) {
                             holder.registerProblem(reference, message, new UseAlternativeFix(replacement));

@@ -73,7 +73,7 @@ Inspections Lists (Compatibility)
 ---
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
-| Compatibility        | DeprecatedIniOptionsInspection                  | Deprecated configuration options                    | n/a | yes | n/a  | np  |
+| Compatibility        | DeprecatedIniOptionsInspection                  | Deprecated configuration options                    | n/a | yes | n/a  | no  |
 | Compatibility        | RandomApiMigrationInspection                    | Random API migration                                | yes | yes | yes  | no  |
 | Compatibility        | MktimeUsageInspection                           | 'gmmktime(...)'/'mktime(...)' usage                 | yes | yes | yes  | no  |
 | Compatibility        | FopenBinaryUnsafeUsageInspection                | Binary-unsafe 'fopen(...)' usage                    | yes | yes | yes  | no  |

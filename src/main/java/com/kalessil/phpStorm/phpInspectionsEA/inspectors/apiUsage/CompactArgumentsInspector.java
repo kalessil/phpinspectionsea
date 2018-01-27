@@ -51,7 +51,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                                 if (callArgument instanceof StringLiteralExpression) {
                                     final StringLiteralExpression expression = (StringLiteralExpression) callArgument;
                                     final String name                        = expression.getContents();
-                                    if (name.length() > 0 && expression.getFirstPsiChild() == null) {
+                                    if (!name.isEmpty() && expression.getFirstPsiChild() == null) {
                                         compactedVariables.add(name);
                                     }
                                 }

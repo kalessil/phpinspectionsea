@@ -9,7 +9,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -41,7 +40,7 @@ public class StrTrUsageAsStrReplaceInspector extends BasePhpInspection {
                     if (arguments.length == 3) {
                         /* ensure multiple search-replace are not packed into strings */
                         final StringLiteralExpression search = ExpressionSemanticUtil.resolveAsStringLiteral(arguments[1]);
-                        if (search != null && !StringUtils.isEmpty(search.getContents())) {
+                        if (search != null && !search.getContents().isEmpty()) {
                             final String searchContent = search.getContents().replaceAll("\\\\(.)", "$1");
                             if (searchContent.length() == 1) {
                                 final String replacement = "str_replace(%s%, %r%, %t%)"

@@ -47,10 +47,12 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* check parameters amount and name */
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (1 != params.length || null == functionName || !functionName.equals("is_null")) {
+                if (functionName == null || !functionName.equals("is_null")) {
+                    return;
+                }
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length != 1) {
                     return;
                 }
 
@@ -83,11 +85,11 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                 }
 
                 /* report the issue */
-                final boolean wrapArgument = PREFER_REGULAR_STYLE && params[0] instanceof AssignmentExpression;
+                final boolean wrapArgument = PREFER_REGULAR_STYLE && arguments[0] instanceof AssignmentExpression;
                 final String replacement   = (PREFER_YODA_STYLE ? "null %o% %a%" : "%a% %o% null")
                         .replace("%o%", checksIsNull ? "===" : "!==")
                         .replace("%a%", wrapArgument ? "(%a%)" : "%a%")
-                        .replace("%a%", params[0].getText());
+                        .replace("%a%", arguments[0].getText());
                 final String message       = messagePattern.replace("%e%", replacement);
                 holder.registerProblem(target, message, new CompareToNullFix(replacement));
             }
@@ -97,7 +99,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> component.delegateRadioCreation((radioComponent) -> {
             radioComponent.addOption("Regular fix style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
-            radioComponent.addOption("Yoda fix style",    PREFER_YODA_STYLE,    (isSelected) -> PREFER_YODA_STYLE = isSelected);
+            radioComponent.addOption("Yoda fix style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
         }));
     }
 

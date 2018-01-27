@@ -48,18 +48,18 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (
-                    (2 != params.length && 3 != params.length) ||
-                    null == functionName || !mapping.containsKey(functionName)
-                ) {
+                if (functionName == null || !mapping.containsKey(functionName)) {
+                    return;
+                }
+                final PsiElement[] arguments = reference.getParameters();
+                if (2 != arguments.length && 3 != arguments.length) {
                     return;
                 }
 
                 // resolve second parameter
-                final StringLiteralExpression pattern = ExpressionSemanticUtil.resolveAsStringLiteral(params[1]);
+                final StringLiteralExpression pattern = ExpressionSemanticUtil.resolveAsStringLiteral(arguments[1]);
                 // might be not available - in another file (PhpStorm limitations)
-                if (null == pattern || pattern.getContainingFile() != params[1].getContainingFile()) {
+                if (pattern == null || pattern.getContainingFile() != arguments[1].getContainingFile()) {
                     return;
                 }
 

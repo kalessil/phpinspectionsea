@@ -15,6 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,13 +48,12 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* genera and function name requirements */
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if ((1 != params.length && 2 != params.length) || functionName == null) {
+                if (functionName == null || (!functionName.equals("openssl_random_pseudo_bytes") && !functionName.equals("mcrypt_create_iv"))) {
                     return;
                 }
-                if (!functionName.equals("openssl_random_pseudo_bytes") && !functionName.equals("mcrypt_create_iv")) {
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length != 1 && arguments.length != 2) {
                     return;
                 }
                 final boolean isOpenSSL = functionName.equals("openssl_random_pseudo_bytes");
@@ -67,7 +67,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
 
 
                 /* Case 2: report missing 2nd argument */
-                final boolean hasSecondArgument = 2 == params.length;
+                final boolean hasSecondArgument = 2 == arguments.length;
                 if (!hasSecondArgument) {
                     final String message = isOpenSSL ? messageOpenssl2ndArgumentNotDefined : messageMcrypt2ndArgumentNotDefined;
                     holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
@@ -80,8 +80,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                 PsiElement parent = reference.getParent();
                 if (parent instanceof UnaryExpression) {
                     final UnaryExpression unary = (UnaryExpression) parent;
-                    final PsiElement operation  = unary.getOperation();
-                    if (null != operation && PhpTokenTypes.opSILENCE == operation.getNode().getElementType()) {
+                    if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opSILENCE)) {
                         parent = parent.getParent();
                     }
                 }
@@ -98,19 +97,19 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                 /* Case 4: is 2nd argument verified/strong enough */
                 if (hasSecondArgument && !isOpenSSL) {
                     boolean reliableSource = true; /* we'll check expected constant below */
-                    if (params[1] instanceof ConstantReference) {
-                        final ConstantReference secondArgument = (ConstantReference) params[1];
+                    if (arguments[1] instanceof ConstantReference) {
+                        final ConstantReference secondArgument = (ConstantReference) arguments[1];
                         final String constant                  = secondArgument.getName();
                         reliableSource = constant != null && constant.equals("MCRYPT_DEV_RANDOM");
                     }
                     if (!reliableSource) {
-                        holder.registerProblem(params[1], messageMcrypt2ndArgumentNotSecure, ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(arguments[1], messageMcrypt2ndArgumentNotSecure, ProblemHighlightType.GENERIC_ERROR);
                         return;
                     }
                 }
                 if (hasSecondArgument && isOpenSSL) {
-                    if (!isCheckedForFalse(params[1]) && params[1].getTextLength() > 0) {
-                        holder.registerProblem(params[1], messageOpenssl2ndArgumentNotVerified, ProblemHighlightType.GENERIC_ERROR);
+                    if (!isCheckedForFalse(arguments[1]) && arguments[1].getTextLength() > 0) {
+                        holder.registerProblem(arguments[1], messageOpenssl2ndArgumentNotVerified, ProblemHighlightType.GENERIC_ERROR);
                     }
                 }
             }

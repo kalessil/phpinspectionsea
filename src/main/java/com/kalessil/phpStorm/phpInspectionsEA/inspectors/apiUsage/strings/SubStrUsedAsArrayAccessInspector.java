@@ -36,13 +36,16 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(FunctionReference reference) {
                 /* check if it's the target function */
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (params.length < 3 || null == functionName || !functionName.equals("substr")) {
+                if (functionName == null || !functionName.equals("substr")) {
+                    return;
+                }
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length < 3) {
                     return;
                 }
 
                 /* false-positive: PHP 5.3 is not supporting `call()[index]` constructs */
-                if (params[0] instanceof FunctionReference) {
+                if (arguments[0] instanceof FunctionReference) {
                     final PhpLanguageLevel php
                             = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                     if (php == PhpLanguageLevel.PHP530) {
@@ -50,12 +53,12 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
                     }
                 }
 
-                if (OpenapiTypesUtil.isNumber(params[2]) && params[2].getText().equals("1")) {
-                    final boolean isNegativeOffset = params[1].getText().startsWith("-");
+                if (OpenapiTypesUtil.isNumber(arguments[2]) && arguments[2].getText().equals("1")) {
+                    final boolean isNegativeOffset = arguments[1].getText().startsWith("-");
                     final String expression        = (isNegativeOffset ? "%c%[strlen(%c%) %i%]" : "%c%[%i%]")
-                        .replace("%c%", params[0].getText())
-                        .replace("%c%", params[0].getText())
-                        .replace("%i%", params[1].getText());
+                        .replace("%c%", arguments[0].getText())
+                        .replace("%c%", arguments[0].getText())
+                        .replace("%i%", arguments[1].getText());
 
                     final String message = messagePattern.replace("%e%", expression);
                     holder.registerProblem(reference, message, new TheLocalFix(expression));

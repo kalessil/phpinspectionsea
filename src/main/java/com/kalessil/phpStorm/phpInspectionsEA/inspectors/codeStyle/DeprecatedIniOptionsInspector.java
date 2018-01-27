@@ -85,7 +85,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                     if (arguments.length > 0 && arguments[0] instanceof StringLiteralExpression) {
                         final String option = ((StringLiteralExpression) arguments[0]).getContents();
                         if (targetOptions.containsKey(option)) {
-                            holder.registerProblem(reference, targetOptions.get(option), ProblemHighlightType.LIKE_DEPRECATED);
+                            holder.registerProblem(arguments[0], targetOptions.get(option), ProblemHighlightType.LIKE_DEPRECATED);
                         }
                     }
                 }

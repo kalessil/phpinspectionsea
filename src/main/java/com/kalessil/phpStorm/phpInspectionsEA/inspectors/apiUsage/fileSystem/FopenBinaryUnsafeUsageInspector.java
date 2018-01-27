@@ -41,31 +41,33 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* verify expected structure */
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (params.length < 2 || functionName == null || !functionName.equals("fopen")) {
+                if (functionName == null || !functionName.equals("fopen")) {
+                    return;
+                }
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length < 2) {
                     return;
                 }
 
                 /* verify if mode provided and has no 'b' already */
-                final StringLiteralExpression mode = ExpressionSemanticUtil.resolveAsStringLiteral(params[1]);
+                final StringLiteralExpression mode = ExpressionSemanticUtil.resolveAsStringLiteral(arguments[1]);
                 final String modeText              = mode == null ? null : mode.getContents();
                 if (!StringUtils.isEmpty(modeText)) {
                     if (modeText.indexOf('b') != -1) {
                         final boolean isCorrectlyPlaced = modeText.endsWith("b") || modeText.endsWith("b+");
                         if (!isCorrectlyPlaced) {
                             holder.registerProblem(
-                                params[1],
+                                arguments[1],
                                 messageMisplacedBinaryMode,
                                 ProblemHighlightType.GENERIC_ERROR,
                                 new TheLocalFix()
                             );
                         }
                     } else if (modeText.indexOf('t') != -1) {
-                        holder.registerProblem(params[1], messageReplaceWithBinaryMode, new TheLocalFix());
+                        holder.registerProblem(arguments[1], messageReplaceWithBinaryMode, new TheLocalFix());
                     } else {
-                        holder.registerProblem(params[1], messageUseBinaryMode, new TheLocalFix());
+                        holder.registerProblem(arguments[1], messageUseBinaryMode, new TheLocalFix());
                     }
                 }
             }

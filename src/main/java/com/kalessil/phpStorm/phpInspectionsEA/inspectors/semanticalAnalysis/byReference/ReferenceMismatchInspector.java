@@ -27,6 +27,15 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class ReferenceMismatchInspector extends BasePhpInspection {
     final static private String strErrorForeachIntoReference = "Probable bug: variable should be renamed to prevent writing into already existing reference.";
 
@@ -166,13 +175,10 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* PHP7 seems to be ref mismatch free */
-                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (phpVersion.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
-                    return;
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (!php.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) {
+                    this.checkReferenceReturnedByCallable(reference);
                 }
-
-                /* older versions are still affected */
-                this.checkReferenceReturnedByCallable(reference);
             }
 
             /* aggressive foreach optimization when value is reference */
@@ -328,14 +334,15 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                 }
             }
 
-            private void checkReferenceReturnedByCallable(FunctionReference reference) {
+            private void checkReferenceReturnedByCallable(@NotNull FunctionReference reference) {
                 /* check context before resolving anything  */
-                if (reference.getParent() instanceof AssignmentExpression) {
+                final PsiElement parent = reference.getParent();
+                if (parent instanceof AssignmentExpression) {
                     /* assignment structure verify */
-                    AssignmentExpression assignment = (AssignmentExpression) reference.getParent();
+                    final AssignmentExpression assignment = (AssignmentExpression) parent;
                     if (assignment.getValue() == reference) {
                         /* try resolving now */
-                        PsiElement callable = OpenapiResolveUtil.resolveReference(reference);
+                        final PsiElement callable = OpenapiResolveUtil.resolveReference(reference);
                         if (callable instanceof Function) {
                             /* ensure name discoverable */
                             final Function function   = (Function) callable;

@@ -44,15 +44,14 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* verify general requirements to the call */
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (5 != params.length || null == params[4] || 0 == params[4].getTextLength() || functionName == null) {
-                    return;
-                }
-
                 /* variable functions are not supported, as we are checking 2 different extensions functions */
-                if (functionName.equals("openssl_encrypt") || functionName.equals("mcrypt_encrypt")) {
+                if (functionName != null && (functionName.equals("openssl_encrypt") || functionName.equals("mcrypt_encrypt"))) {
+                    final PsiElement[] params = reference.getParameters();
+                    if (params.length != 5 || params[4] == null || params[4].getText().isEmpty()) {
+                        return;
+                    }
+
                     /* discover and inspect possible values */
                     final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(params[4]);
                     if (values.size() > 0) {

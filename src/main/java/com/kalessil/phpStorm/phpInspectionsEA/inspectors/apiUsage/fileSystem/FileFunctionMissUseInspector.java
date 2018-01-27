@@ -42,10 +42,12 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* validate parameters amount and function name (file) */
-                final PsiElement[] params = reference.getParameters();
                 final String functionName = reference.getName();
-                if (params.length != 1 || functionName == null || !functionName.equals("file")) {
+                if (functionName == null || !functionName.equals("file")) {
+                    return;
+                }
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length != 1) {
                     return;
                 }
 
@@ -63,11 +65,12 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
 
                 /* validate parent functions' name (implode or join) and amount of arguments */
                 final FunctionReference parentReference = (FunctionReference) parent.getParent();
-                final PsiElement[] parentParams         = parentReference.getParameters();
-                final String parentFunctionName         = parentReference.getName();
-                if (
-                    parentParams.length != 2 || parentFunctionName == null ||
-                    (!parentFunctionName.equals("implode") && !parentFunctionName.equals("join"))) {
+                final String parentName                 = parentReference.getName();
+                if (parentName == null || (!parentName.equals("implode") && !parentName.equals("join"))) {
+                    return;
+                }
+                final PsiElement[] parentParams = parentReference.getParameters();
+                if (parentParams.length != 2) {
                     return;
                 }
 
@@ -77,7 +80,7 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
                     return;
                 }
 
-                final String message = String.format(messagePattern, params[0].getText());
+                final String message = String.format(messagePattern, arguments[0].getText());
                 holder.registerProblem(parentReference, message, ProblemHighlightType.GENERIC_ERROR, new TheLocalFix());
             }
         };
@@ -112,10 +115,7 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
                 }
 
                 final FunctionReference fileFunctionReference = (FunctionReference) fileFunction;
-                //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here and below
                 fileGetContents.getParameters()[0].replace(fileFunctionReference.getParameters()[0].copy());
-
-                //noinspection ConstantConditions
                 expression.replace(replacement);
             }
         }

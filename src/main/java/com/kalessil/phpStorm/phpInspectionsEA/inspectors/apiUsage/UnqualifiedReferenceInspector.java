@@ -135,7 +135,9 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                         if (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(functionName)) {
                             this.analyzeReference(reference);
                         }
-                        this.analyzeCallback(reference, functionName);
+                        if (callbacksPositions.containsKey(functionName)) {
+                            this.analyzeCallback(reference, functionName);
+                        }
                     }
                 }
             }
@@ -152,21 +154,19 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
             }
 
             private void analyzeCallback(@NotNull FunctionReference reference, @NotNull String functionName) {
-                if (callbacksPositions.containsKey(functionName)) {
-                    final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length >= 2) {
-                        final Integer callbackPosition = callbacksPositions.get(functionName);
-                        if (arguments[callbackPosition] instanceof StringLiteralExpression) {
-                            final StringLiteralExpression callback = (StringLiteralExpression) arguments[callbackPosition];
-                            if (callback.getFirstPsiChild() == null) {
-                                final String function     = callback.getContents();
-                                final boolean isCandidate = !function.startsWith("\\") && !function.contains("::");
-                                if (isCandidate && (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(function))) {
-                                    final PhpIndex index = PhpIndex.getInstance(holder.getProject());
-                                    if (!index.getFunctionsByFQN('\\' + functionName).isEmpty()) {
-                                        final String message = String.format(messagePattern, function);
-                                        holder.registerProblem(callback, message, new TheLocalFix());
-                                    }
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length >= 2) {
+                    final Integer callbackPosition = callbacksPositions.get(functionName);
+                    if (arguments[callbackPosition] instanceof StringLiteralExpression) {
+                        final StringLiteralExpression callback = (StringLiteralExpression) arguments[callbackPosition];
+                        if (callback.getFirstPsiChild() == null) {
+                            final String function     = callback.getContents();
+                            final boolean isCandidate = !function.startsWith("\\") && !function.contains("::");
+                            if (isCandidate && (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(function))) {
+                                final PhpIndex index = PhpIndex.getInstance(holder.getProject());
+                                if (!index.getFunctionsByFQN('\\' + functionName).isEmpty()) {
+                                    final String message = String.format(messagePattern, function);
+                                    holder.registerProblem(callback, message, new TheLocalFix());
                                 }
                             }
                         }

@@ -34,13 +34,14 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
-                final PsiElement[] params = reference.getParameters();
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (
-                    params.length == 0 || params.length > 2 ||
-                    functionName == null || !functionName.equals("strtotime")
-                ) {
+                if (functionName == null || !functionName.equals("strtotime")) {
+                    return;
+                }
+                final PsiElement[] params = reference.getParameters();
+                if (params.length == 0 || params.length > 2) {
                     return;
                 }
 
@@ -52,17 +53,14 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
                             holder.registerProblem(reference, messageUseTime, new UseTimeFunctionLocalFix("time()"));
                         }
                     }
-                    return;
                 }
-
                 /* handle case: strtotime(..., time()) -> date(...) */
-                if (params.length == 2) {
+                else if (params.length == 2) {
                     if (OpenapiTypesUtil.isFunctionReference(params[1])) {
                         final String callName = ((FunctionReference) params[1]).getName();
                         if (callName != null && callName.equals("time")) {
                             final String replacement = "strtotime(%a%)".replace("%a%", params[0].getText());
-                            holder.registerProblem
-                            (
+                            holder.registerProblem(
                                     reference,
                                     messageDropTime,
                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
@@ -70,7 +68,6 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
                             );
                         }
                     }
-                    // return;
                 }
             }
         };

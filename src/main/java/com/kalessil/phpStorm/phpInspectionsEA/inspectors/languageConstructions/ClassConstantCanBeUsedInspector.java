@@ -270,7 +270,6 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                                     importMarker.getParent().addAfter(use, importMarker);
                                 }
 
-                                //noinspection ConstantConditions as we have hardcoded expression creation here
                                 classForReplacement = use.getFirstPsiChild().getName();
                             }
                         }

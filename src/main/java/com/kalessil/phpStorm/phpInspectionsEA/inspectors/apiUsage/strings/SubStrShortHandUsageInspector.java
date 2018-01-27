@@ -140,7 +140,6 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                     replaceParams[3].replace(params[3]);
                 }
 
-                //noinspection ConstantConditions I'm really sure NPE will not happen due to hardcoded expression
                 call.getParameterList().replace(replacement.getParameterList());
             }
         }

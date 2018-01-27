@@ -128,7 +128,6 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof MethodReference) {
                 final PsiElement replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "(string) null");
-                //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here
                 ((UnaryExpression) replacement).getValue().replace(expression.getFirstChild().copy());
 
                 expression.replace(replacement);

@@ -112,7 +112,6 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
             if (null != expression) {
                 final PhpThrow throwExpression = PhpPsiElementFactory.createFromText(project, PhpThrow.class, "throw $x;");
                 if (null != throwExpression) {
-                    //noinspection ConstantConditions as we dealing with hard-coded expressions here
                     throwExpression.getArgument().replace(expression.copy());
                     expression.getParent().replace(throwExpression);
                 }

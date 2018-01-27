@@ -116,7 +116,6 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
                 }
 
                 final String pattern = "'" + modeFlags + "'";
-                //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here
                 mode.replace(PhpPsiElementFactory.createFromText(project, StringLiteralExpression.class, pattern));
             }
         }

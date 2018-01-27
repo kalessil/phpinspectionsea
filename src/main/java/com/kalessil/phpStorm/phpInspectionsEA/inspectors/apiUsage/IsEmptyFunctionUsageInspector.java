@@ -113,7 +113,6 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
 
             /** check if nullable int, float, resource */
             private boolean isNullableCoreType(@NotNull Set<String> resolvedTypesSet) {
-                //noinspection SimplifiableIfStatement
                 if (resolvedTypesSet.size() != 2 || !resolvedTypesSet.contains(Types.strNull)) {
                     return false;
                 }

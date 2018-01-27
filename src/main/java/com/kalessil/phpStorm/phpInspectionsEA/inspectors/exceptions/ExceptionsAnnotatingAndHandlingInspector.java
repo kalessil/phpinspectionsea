@@ -263,7 +263,6 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 final String newCommentText = String.join("\n", newCommentLines);
                 newCommentLines.clear();
 
-                //noinspection ConstantConditions I' sure NPE will not happen as we get valid structure for input
                 phpDoc.replace(PhpPsiElementFactory.createFromText(project, PhpDocComment.class, newCommentText));
             }
         }

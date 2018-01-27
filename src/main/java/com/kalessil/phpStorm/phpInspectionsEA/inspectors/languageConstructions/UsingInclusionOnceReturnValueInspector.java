@@ -70,7 +70,6 @@ public class UsingInclusionOnceReturnValueInspector extends BasePhpInspection {
                 final String pattern    = isInclude ? "include ''" : "require ''";
                 final PhpPsiElement replacement
                         = PhpPsiElementFactory.createPhpPsiFromText(project, Include.class, pattern);
-                //noinspection ConstantConditions pattern hardcoded and arg is checked - safe
                 ((Include) replacement).getArgument().replace(((Include) target).getArgument());
                 target.replace(replacement);
             }

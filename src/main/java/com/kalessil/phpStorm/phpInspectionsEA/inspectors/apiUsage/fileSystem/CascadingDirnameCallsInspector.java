@@ -75,8 +75,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                 PsiElement argument           = null;
                 final List<PsiElement> levels = new ArrayList<>();
 
-                FunctionReference current     = reference;
-                //noinspection ConstantConditions - due to better readability
+                FunctionReference current = reference;
                 while (current instanceof FunctionReference) {
                     final String currentName = current.getName();
                     if (currentName == null || !currentName.equals("dirname")) {

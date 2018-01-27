@@ -80,7 +80,6 @@ public class SwitchContinuationInLoopInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof PhpContinue) {
-                //noinspection ConstantConditions I' sure that NPE will not happen as we have hardcoded pattern
                 expression.replace(PhpPsiElementFactory.createFromText(project, PhpContinue.class, "continue 2;"));
             }
         }

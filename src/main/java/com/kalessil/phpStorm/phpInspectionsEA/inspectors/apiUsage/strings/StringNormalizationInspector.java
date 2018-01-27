@@ -59,39 +59,31 @@ public class StringNormalizationInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* general structure expectation */
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (null == functionName || 0 == params.length || !OpenapiTypesUtil.isFunctionReference(params[0])) {
-                    return;
-                }
-
-                /* general inner structure expectation */
-                final FunctionReference innerCall = (FunctionReference) params[0];
-                final String innerFunctionName    = innerCall.getName();
-                final PsiElement[] innerParams    = innerCall.getParameters();
-                if (null == innerFunctionName || 0 == innerParams.length) {
-                    return;
-                }
-
-                if (lengthManipulation.contains(functionName) && caseManipulation.contains(innerFunctionName)) {
-                    final String theString    = innerParams[0].getText();
-                    final String newInnerCall = reference.getText().replace(params[0].getText(), theString);
-                    final String replacement  = innerCall.getText().replace(theString, newInnerCall);
-
-                    final String message      = patternInvertedNesting.replace("%e%", replacement);
-                    holder.registerProblem(reference, message, new NormalizationFix(replacement));
-
-                    return;
-                }
-
-                if (caseManipulation.contains(functionName) && caseManipulation.contains(innerFunctionName)) {
-                    if (!functionName.equals(innerFunctionName) && innerCaseManipulation.contains(innerFunctionName)) {
-                        return;
+                if (functionName != null) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length > 0 && OpenapiTypesUtil.isFunctionReference(arguments[0])) {
+                        final FunctionReference innerCall = (FunctionReference) arguments[0];
+                        final String innerCallName        = innerCall.getName();
+                        if (innerCallName != null) {
+                            final PsiElement[] innerArguments = innerCall.getParameters();
+                            if (innerArguments.length > 0) {
+                                if (lengthManipulation.contains(functionName) && caseManipulation.contains(innerCallName)) {
+                                    final String theString    = innerArguments[0].getText();
+                                    final String newInnerCall = reference.getText().replace(arguments[0].getText(), theString);
+                                    final String replacement  = innerCall.getText().replace(theString, newInnerCall);
+                                    final String message      = patternInvertedNesting.replace("%e%", replacement);
+                                    holder.registerProblem(reference, message, new NormalizationFix(replacement));
+                                } else if (caseManipulation.contains(functionName) && caseManipulation.contains(innerCallName)) {
+                                    if (!functionName.equals(innerCallName) && innerCaseManipulation.contains(innerCallName)) {
+                                        return;
+                                    }
+                                    final String message = patternSenselessNesting.replace("%i%", innerCallName);
+                                    holder.registerProblem(innerCall, message, new NormalizationFix(innerArguments[0].getText()));
+                                }
+                            }
+                        }
                     }
-
-                    final String message = patternSenselessNesting.replace("%i%", innerFunctionName);
-                    holder.registerProblem(innerCall, message, new NormalizationFix(innerParams[0].getText()));
                 }
             }
         };

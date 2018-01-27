@@ -22,18 +22,18 @@ import org.jetbrains.annotations.NotNull;
 final public class ExecUsageStrategy {
     private static final String message = "'PDO::exec(...)' should be used instead (consumes less resources).";
 
-    public static void apply(@NotNull MethodReference reference, @NotNull final ProblemsHolder holder) {
-        final PsiElement[] params = reference.getParameters();
-        final String methodName   = reference.getName();
-        if (params.length != 1 || methodName == null || !methodName.equals("query")) {
-            return;
-        }
-
-        if (
-            OpenapiTypesUtil.isStatementImpl(reference.getParent()) &&
-            MethodIdentityUtil.isReferencingMethod(reference, "\\PDO", "query")
-        ) {
-            holder.registerProblem(reference, message, new UseExecFix());
+    public static void apply(@NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
+        final String methodName = reference.getName();
+        if (methodName != null && methodName.equals("query")) {
+            final PsiElement[] arguments = reference.getParameters();
+            if (arguments.length == 1) {
+                final boolean isTarget =
+                    OpenapiTypesUtil.isStatementImpl(reference.getParent()) &&
+                    MethodIdentityUtil.isReferencingMethod(reference, "\\PDO", "query");
+                if (isTarget) {
+                    holder.registerProblem(reference, message, new UseExecFix());
+                }
+            }
         }
     }
 

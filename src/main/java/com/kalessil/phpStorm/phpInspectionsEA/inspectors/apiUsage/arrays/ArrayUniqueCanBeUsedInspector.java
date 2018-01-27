@@ -35,26 +35,26 @@ public class ArrayUniqueCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final PsiElement[] arguments = reference.getParameters();
-                final String functionName    = reference.getName();
-                if (arguments.length != 1 || functionName == null || !functionName.equals("array_count_values")) {
-                    return;
-                }
-
-                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
-                if (phpVersion.compareTo(PhpLanguageLevel.PHP710) >= 0) {
-                    final PsiElement context = reference.getParent().getParent();
-                    if (OpenapiTypesUtil.isFunctionReference(context)) {
-                        final String parentFunctionName = ((FunctionReference) context).getName();
-                        if (parentFunctionName != null) {
-                            if (parentFunctionName.equals("array_keys")) {
-                                final String replacement = "array_values(array_unique(%a%))".replace("%a%", arguments[0].getText());
-                                final String message     = messagePattern.replace("%e%", replacement);
-                                holder.registerProblem(context, message, new ReplaceFix(replacement));
-                            } else if (parentFunctionName.equals("count")) {
-                                final String replacement = "count(array_unique(%a%))".replace("%a%", arguments[0].getText());
-                                final String message     = messagePattern.replace("%e%", replacement);
-                                holder.registerProblem(context, message, new ReplaceFix(replacement));
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (php.compareTo(PhpLanguageLevel.PHP710) >= 0) {
+                    final String functionName = reference.getName();
+                    if (functionName != null && functionName.equals("array_count_values")) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length == 1) {
+                            final PsiElement context = reference.getParent().getParent();
+                            if (OpenapiTypesUtil.isFunctionReference(context)) {
+                                final String parentFunctionName = ((FunctionReference) context).getName();
+                                if (parentFunctionName != null) {
+                                    if (parentFunctionName.equals("array_keys")) {
+                                        final String replacement = "array_values(array_unique(%a%))".replace("%a%", arguments[0].getText());
+                                        final String message     = messagePattern.replace("%e%", replacement);
+                                        holder.registerProblem(context, message, new ReplaceFix(replacement));
+                                    } else if (parentFunctionName.equals("count")) {
+                                        final String replacement = "count(array_unique(%a%))".replace("%a%", arguments[0].getText());
+                                        final String message     = messagePattern.replace("%e%", replacement);
+                                        holder.registerProblem(context, message, new ReplaceFix(replacement));
+                                    }
+                                }
                             }
                         }
                     }

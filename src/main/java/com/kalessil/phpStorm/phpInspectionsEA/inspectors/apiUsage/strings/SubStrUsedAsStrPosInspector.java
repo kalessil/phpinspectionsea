@@ -41,7 +41,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                     return;
                 }
                 final PsiElement[] arguments = reference.getParameters();
-                if ((3 != arguments.length && 4 != arguments.length)) {
+                if (arguments.length != 3 && arguments.length != 4) {
                     return;
                 }
 

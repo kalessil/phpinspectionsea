@@ -211,11 +211,11 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null && customFunctions.contains(functionName)) {
                     final Integer paramsNeeded = functionsRequirements.get(functionName);
-                    if (paramsNeeded != null && reference.getParameters().length == paramsNeeded) {
-                        return;
-                    }
-                    if (!this.isBuffered(reference) && !this.isInDebugFunction(reference)) {
-                        holder.registerProblem(reference, message);
+                    if (paramsNeeded == null || reference.getParameters().length != paramsNeeded) {
+                        final boolean isValidContext = this.isBuffered(reference) || this.isInDebugFunction(reference);
+                        if (!isValidContext) {
+                            holder.registerProblem(reference, message);
+                        }
                     }
                 }
             }

@@ -360,7 +360,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
 
                                     /* report if not */
                                     if (null != operation && !operation.getText().replaceAll("\\s+","").equals("=&")) {
-                                        holder.registerProblem(reference.getParent(), "Reference mismatch, copy will be stored (for non-objects)", ProblemHighlightType.WEAK_WARNING);
+                                        holder.registerProblem(parent, "Reference mismatch, copy will be stored (for non-objects)", ProblemHighlightType.WEAK_WARNING);
                                     }
                                 }
                             }

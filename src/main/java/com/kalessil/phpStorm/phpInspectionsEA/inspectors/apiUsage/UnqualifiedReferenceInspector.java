@@ -128,7 +128,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
-                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
                     final String functionName = reference.getName();
                     if (functionName != null) {

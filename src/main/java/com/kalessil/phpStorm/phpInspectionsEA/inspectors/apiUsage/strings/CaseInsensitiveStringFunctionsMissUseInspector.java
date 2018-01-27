@@ -52,7 +52,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
                     return;
                 }
                 final PsiElement[] arguments = reference.getParameters();
-                if (2 != arguments.length && 3 != arguments.length) {
+                if (arguments.length != 2 && arguments.length != 3) {
                     return;
                 }
 

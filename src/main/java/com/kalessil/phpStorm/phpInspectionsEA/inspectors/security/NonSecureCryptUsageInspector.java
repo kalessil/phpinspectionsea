@@ -47,19 +47,19 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
                 if (functionName == null || !functionName.equals("crypt")) {
                     return;
                 }
-                final PsiElement[] params = reference.getParameters();
-                if ((1 != params.length && 2 != params.length) || !this.isFromRootNamespace(reference)) {
+                final PsiElement[] arguments = reference.getParameters();
+                if ((arguments.length != 1&& arguments.length != 2) || !this.isFromRootNamespace(reference)) {
                     return;
                 }
 
                 /* Case 1: suggest providing blowfish as the 2nd parameter*/
-                if (1 == params.length) {
+                if (arguments.length == 1) {
                     holder.registerProblem(reference, messageWeakSalt);
                     return;
                 }
 
                 /* try resolving 2nd parameter, skip if failed, it contains injections or length is not as expected */
-                final String saltValue = this.resolveSalt(params[1]);
+                final String saltValue = this.resolveSalt(arguments[1]);
                 if (null == saltValue || saltValue.length() < 4) {
                     return;
                 }

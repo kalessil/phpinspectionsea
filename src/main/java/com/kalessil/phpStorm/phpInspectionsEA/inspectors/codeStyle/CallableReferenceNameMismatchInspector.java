@@ -41,18 +41,18 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
-                inspectCaseIdentity(reference, false);
+                this.inspectCaseIdentity(reference, false);
             }
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* invoke caching as (assumption) in 99% of cases functions are global; assumption was right ;) */
-                inspectCaseIdentity(reference, true);
+                this.inspectCaseIdentity(reference, true);
             }
 
             private void inspectCaseIdentity(@NotNull FunctionReference reference, boolean useCache) {
                 /* StringUtil is not used due to performance optimization */
                 final String usedName = reference.getName();
-                if (null == usedName || 0 == usedName.length() || (useCache && cache.containsKey(usedName))) {
+                if (usedName == null || usedName.isEmpty() || (useCache && cache.containsKey(usedName))) {
                     return;
                 }
 

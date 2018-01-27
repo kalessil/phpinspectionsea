@@ -84,13 +84,10 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 /* PHP7 seems to be ref mismatch free */
-                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (phpVersion.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
-                    return;
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (!php.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) {
+                    this.checkParameters(method.getParameters(), method);
                 }
-
-                /* older versions are still affected */
-                this.checkParameters(method.getParameters(), method);
             }
 
             @Override
@@ -104,6 +101,7 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                 /* older versions are still affected */
                 this.checkParameters(function.getParameters(), function);
             }
+
             private void checkParameters(Parameter[] arrParameters, Function objScopeHolder) {
                 PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
 

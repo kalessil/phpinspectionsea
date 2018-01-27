@@ -45,10 +45,12 @@ public class InArrayMissUseInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* general structure requirements */
+                final String functionName = reference.getName();
+                if (functionName == null || !functionName.equals("in_array")) {
+                    return;
+                }
                 final PsiElement[] arguments = reference.getParameters();
-                final String functionName   = reference.getName();
-                if ((2 != arguments.length && 3 != arguments.length) || functionName == null || !functionName.equals("in_array")) {
+                if (arguments.length != 2 && arguments.length != 3) {
                     return;
                 }
 
@@ -81,14 +83,14 @@ public class InArrayMissUseInspector extends BasePhpInspection {
 
                     lastItem = lastItem instanceof ArrayHashElement ? ((ArrayHashElement) lastItem).getValue() : lastItem;
                     if (itemsCount <= 1 && null != lastItem) {
-                        final PsiElement parent   = reference.getParent();
+                        final PsiElement parent = reference.getParent();
 
                         /* find out what what intended to happen */
                         boolean checkExists = true;
                         PsiElement target   = reference;
                         if (parent instanceof UnaryExpression) {
                             final PsiElement operation = ((UnaryExpression) parent).getOperation();
-                            if (null != operation && PhpTokenTypes.opNOT == operation.getNode().getElementType()) {
+                            if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opNOT)) {
                                 checkExists = false;
                                 target      = parent;
                             }
@@ -127,7 +129,7 @@ public class InArrayMissUseInspector extends BasePhpInspection {
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> component.delegateRadioCreation((radioComponent) -> {
             radioComponent.addOption("Regular fix style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
-            radioComponent.addOption("Yoda fix style",    PREFER_YODA_STYLE,    (isSelected) -> PREFER_YODA_STYLE = isSelected);
+            radioComponent.addOption("Yoda fix style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
         }));
     }
 

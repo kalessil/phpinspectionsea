@@ -705,9 +705,9 @@ Bug-fixes. BTW, it would be awesome to get more supporters on <a href="https://w
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.TypesCastingCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="dirnameCallOnFileConstantInspection"           displayName="__DIR__ constant can be used"
+        shortName="DirectoryConstantCanBeUsedInspection"          displayName="__DIR__ constant can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.DirnameCallOnFileConstantInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.DirectoryConstantCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ConstantCanBeUsedInspection"                   displayName="A constant can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"

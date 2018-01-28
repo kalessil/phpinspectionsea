@@ -23,12 +23,12 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
-    private static final String message = "__DIR__ should be used instead.";
+public class DirectoryConstantCanBeUsedInspector extends BasePhpInspection {
+    private static final String message = "'__DIR__' should be used instead.";
 
     @NotNull
     public String getShortName() {
-        return "dirnameCallOnFileConstantInspection";
+        return "DirectoryConstantCanBeUsedInspection";
     }
 
     @Override

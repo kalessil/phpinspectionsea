@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -67,18 +66,15 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                /* ensure selected language level supports the ::class feature*/
-                final Project project             = holder.getProject();
-                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
-                if (!phpVersion.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST)) {
-                    return;
-                }
-
-                final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (0 == params.length && null != functionName && functionName.equals("get_called_class")) {
-                    final String replacement = "static::class";
-                    holder.registerProblem(reference, messageUseStatic, ProblemHighlightType.WEAK_WARNING, new UseStaticFix(replacement));
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (php.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST)) {
+                    final String functionName = reference.getName();
+                    if (functionName != null && functionName.equals("get_called_class")) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length == 0) {
+                            holder.registerProblem(reference, messageUseStatic, new UseStaticFix("static::class"));
+                        }
+                    }
                 }
             }
 
@@ -274,7 +270,6 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                                     importMarker.getParent().addAfter(use, importMarker);
                                 }
 
-                                //noinspection ConstantConditions as we have hardcoded expression creation here
                                 classForReplacement = use.getFirstPsiChild().getName();
                             }
                         }

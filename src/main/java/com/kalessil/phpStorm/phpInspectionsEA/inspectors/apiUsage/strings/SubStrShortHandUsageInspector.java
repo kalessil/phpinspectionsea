@@ -45,13 +45,12 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* check if it's the target function: amount of parameters and name */
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (
-                    (3 != params.length && 4 != params.length) || !(params[2] instanceof BinaryExpression) ||
-                    functionName == null || (!functionName.equals("substr") && !functionName.equals("mb_substr"))
-                ) {
+                if (functionName == null || (!functionName.equals("substr") && !functionName.equals("mb_substr"))) {
+                    return;
+                }
+                final PsiElement[] arguments = reference.getParameters();
+                if ((3 != arguments.length && 4 != arguments.length) || !(arguments[2] instanceof BinaryExpression)) {
                     return;
                 }
 
@@ -59,7 +58,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                 /* Check if 3rd argument is "[mb_]strlen($search) - [mb_]strlen(...)"
                  *  - "[mb_]strlen($search)" is not needed
                  */
-                final BinaryExpression candidate = (BinaryExpression) params[2];
+                final BinaryExpression candidate = (BinaryExpression) arguments[2];
                 final PsiElement operation       = candidate.getOperation();
                 if (null == operation || null == operation.getNode()) {
                     return;
@@ -79,12 +78,12 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                     if (
                         1 == leftCallParams.length && leftCallName != null &&
                         (leftCallName.equals("strlen") || leftCallName.equals("mb_strlen")) &&
-                        OpeanapiEquivalenceUtil.areEqual(leftCallParams[0], params[0])
+                        OpeanapiEquivalenceUtil.areEqual(leftCallParams[0], arguments[0])
                     ) {
-                        if (OpeanapiEquivalenceUtil.areEqual(candidate.getRightOperand(), params[1])) {
+                        if (OpeanapiEquivalenceUtil.areEqual(candidate.getRightOperand(), arguments[1])) {
                             /* 3rd parameter not needed at all */
-                            final String message = patternDropLength.replace("%l%", params[2].getText());
-                            holder.registerProblem(params[2], message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new Drop3rdParameterLocalFix(reference));
+                            final String message = patternDropLength.replace("%l%", arguments[2].getText());
+                            holder.registerProblem(arguments[2], message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new Drop3rdParameterLocalFix(reference));
                         } else {
                             /* 3rd parameter can be simplified */
                             final String replacement;
@@ -141,7 +140,6 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                     replaceParams[3].replace(params[3]);
                 }
 
-                //noinspection ConstantConditions I'm really sure NPE will not happen due to hardcoded expression
                 call.getParameterList().replace(replacement.getParameterList());
             }
         }

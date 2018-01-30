@@ -47,10 +47,12 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* general requirements for calls */
-                final String functionName    = reference.getName();
+                final String functionName = reference.getName();
+                if (functionName == null || !functionName.startsWith("call_user_func")) {
+                    return;
+                }
                 final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length == 0 || functionName == null || !functionName.startsWith("call_user_func")) {
+                if (arguments.length == 0) {
                     return;
                 }
 

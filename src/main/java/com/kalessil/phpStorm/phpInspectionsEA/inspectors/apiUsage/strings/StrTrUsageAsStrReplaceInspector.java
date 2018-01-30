@@ -9,7 +9,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -36,19 +35,21 @@ public class StrTrUsageAsStrReplaceInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length == 3 && functionName != null && functionName.equals("strtr")) {
-                    /* ensure multiple search-replace are not packed into strings */
-                    final StringLiteralExpression search = ExpressionSemanticUtil.resolveAsStringLiteral(arguments[1]);
-                    if (search != null && !StringUtils.isEmpty(search.getContents())) {
-                        final String searchContent = search.getContents().replaceAll("\\\\(.)", "$1");
-                        if (searchContent.length() == 1) {
-                            final String replacement = "str_replace(%s%, %r%, %t%)"
-                                    .replace("%t%", arguments[0].getText())
-                                    .replace("%r%", arguments[2].getText())
-                                    .replace("%s%", arguments[1].getText());
-                            final String message = messagePattern.replace("%e%", replacement);
-                            holder.registerProblem(reference, message, new UseStringReplaceFix(replacement));
+                if (functionName != null && functionName.equals("strtr")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 3) {
+                        /* ensure multiple search-replace are not packed into strings */
+                        final StringLiteralExpression search = ExpressionSemanticUtil.resolveAsStringLiteral(arguments[1]);
+                        if (search != null && !search.getContents().isEmpty()) {
+                            final String searchContent = search.getContents().replaceAll("\\\\(.)", "$1");
+                            if (searchContent.length() == 1) {
+                                final String replacement = "str_replace(%s%, %r%, %t%)"
+                                        .replace("%t%", arguments[0].getText())
+                                        .replace("%r%", arguments[2].getText())
+                                        .replace("%s%", arguments[1].getText());
+                                final String message = messagePattern.replace("%e%", replacement);
+                                holder.registerProblem(reference, message, new UseStringReplaceFix(replacement));
+                            }
                         }
                     }
                 }

@@ -39,19 +39,22 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (params.length == 1 && functionName != null && functionName.equals("is_callable")) {
-                    final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(params[0]);
-                    final PsiElement callable    = values.size() == 1 ? values.iterator().next() : null;
-                    if (callable != null && this.isTarget(callable)) {
-                        final PsiReference resolver = this.buildResolver(callable);
-                        if (resolver != null) {
-                            this.analyzeValidity(resolver.resolve(), params[0], callable);
+                if (functionName != null && functionName.equals("is_callable")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 1) {
+                        final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(arguments[0]);
+                        final PsiElement callable    = values.size() == 1 ? values.iterator().next() : null;
+                        if (callable != null && this.isTarget(callable)) {
+                            final PsiReference resolver = this.buildResolver(callable);
+                            if (resolver != null) {
+                                this.analyzeValidity(resolver.resolve(), arguments[0], callable);
+                            }
                         }
+                        values.clear();
                     }
-                    values.clear();
                 }
             }
 

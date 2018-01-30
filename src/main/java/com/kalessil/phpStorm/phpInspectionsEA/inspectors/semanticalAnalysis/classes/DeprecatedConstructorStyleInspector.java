@@ -63,7 +63,6 @@ public class DeprecatedConstructorStyleInspector extends BasePhpInspection {
             final PsiElement expression      = reportingTarget.getParent();
             if (expression instanceof Method) {
                 PsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "__construct");
-                //noinspection ConstantConditions I'm sure NPE will not happen here
                 reportingTarget.replace(replacement);
             }
         }

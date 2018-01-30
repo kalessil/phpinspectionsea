@@ -12,7 +12,6 @@ import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -24,34 +23,29 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class DirnameCallOnFileConstantInspector extends BasePhpInspection {
-    private static final String message = "__DIR__ should be used instead.";
+public class DirectoryConstantCanBeUsedInspector extends BasePhpInspection {
+    private static final String message = "'__DIR__' should be used instead.";
 
     @NotNull
     public String getShortName() {
-        return "dirnameCallOnFileConstantInspection";
+        return "DirectoryConstantCanBeUsedInspection";
     }
 
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
-                /* check requirements */
-                final PsiElement[] params = reference.getParameters();
-                final String name         = reference.getName();
-                if (1 != params.length || StringUtils.isEmpty(name) || !name.equals("dirname")) {
-                    return;
-                }
-                final PsiElement firstParameter = params[0];
-                if (!(firstParameter instanceof ConstantReference)) {
-                    return;
-                }
-
-                /* inspect given construct */
-                final String constant = ((ConstantReference) firstParameter).getName();
-                if (!StringUtils.isEmpty(constant) && constant.equals("__FILE__")) {
-                    holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                final String functionName = reference.getName();
+                if (functionName != null && functionName.equals("dirname")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 1 && arguments[0] instanceof ConstantReference) {
+                        final String constantName = ((ConstantReference) arguments[0]).getName();
+                        if (constantName != null && constantName.equals("__FILE__")) {
+                            holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
+                        }
+                    }
                 }
             }
         };

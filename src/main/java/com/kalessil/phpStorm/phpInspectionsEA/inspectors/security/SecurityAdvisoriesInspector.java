@@ -120,10 +120,8 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     public void readSettings(@NotNull final Element node) throws InvalidDataException {
         super.readSettings(node);
 
-        if (!optionConfigurationMigrated) {
-            optionConfiguration.clear();
+        if (!optionConfigurationMigrated || optionConfiguration.isEmpty()) {
             optionConfiguration.addAll(optionConfigurationDefaults());
-
             optionConfigurationMigrated = true;
         }
     }

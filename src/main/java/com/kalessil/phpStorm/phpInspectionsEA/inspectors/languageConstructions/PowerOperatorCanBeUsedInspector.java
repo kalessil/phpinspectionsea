@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class PowerOperatorCanBeUsedInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%e%' can be used instead";
+    private static final String messagePattern = "'%s' can be used instead";
 
     @NotNull
     public String getShortName() {
@@ -35,21 +35,24 @@ public class PowerOperatorCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* the operator was introduced in PHP 5.6 */
-                final PhpLanguageLevel phpVersion
-                        = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
-                if (phpVersion.compareTo(PhpLanguageLevel.PHP560) >= 0) {
-                    final PsiElement[] params = reference.getParameters();
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (php.compareTo(PhpLanguageLevel.PHP560) >= 0) {
                     final String functionName = reference.getName();
-                    if (functionName != null && params.length == 2 && functionName.equals("pow")) {
-                        final String replacement =
-                                (reference.getParent() instanceof BinaryExpression ? "(%b% ** %p%)" : "%b% ** %p%")
-                                        .replace("%p%", params[1] instanceof BinaryExpression ? "(%p%)" : "%p%" )
-                                        .replace("%b%", params[0] instanceof BinaryExpression ? "(%b%)" : "%b%")
-                                        .replace("%p%", params[1].getText())
-                                        .replace("%b%", params[0].getText());
-                        final String message = messagePattern.replace("%e%", replacement);
-                        holder.registerProblem(reference, message, new UseTheOperatorFix(replacement));
+                    if (functionName != null && functionName.equals("pow")) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length == 2) {
+                            final String replacement =
+                                    (reference.getParent() instanceof BinaryExpression ? "(%b% ** %p%)" : "%b% ** %p%")
+                                            .replace("%p%", arguments[1] instanceof BinaryExpression ? "(%p%)" : "%p%" )
+                                            .replace("%b%", arguments[0] instanceof BinaryExpression ? "(%b%)" : "%b%")
+                                            .replace("%p%", arguments[1].getText())
+                                            .replace("%b%", arguments[0].getText());
+                            holder.registerProblem(
+                                    reference,
+                                    String.format(messagePattern, replacement),
+                                    new UseTheOperatorFix(replacement)
+                            );
+                        }
                     }
                 }
             }

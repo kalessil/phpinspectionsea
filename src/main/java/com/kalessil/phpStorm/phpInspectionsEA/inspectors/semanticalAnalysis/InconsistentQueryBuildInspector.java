@@ -15,14 +15,19 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class InconsistentQueryBuildInspector extends BasePhpInspection {
-    private static final String strProblemDescription = "'ksort(%a%, SORT_STRING)' should be used instead, " +
-            "so http_build_query() produces result independent from key types.";
+    private static final String messagePattern = "'ksort(%a%, SORT_STRING)' should be used instead, so http_build_query() produces result independent from key types.";
 
     @NotNull
     public String getShortName() {
@@ -33,41 +38,38 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
-                final PsiElement[] parameters = reference.getParameters();
-                final String function         = reference.getName();
-                if (1 == parameters.length && !StringUtils.isEmpty(function) && function.equals("ksort")) {
-                    // pre-condition satisfied, now check if http_build_query used in the scope
-
-                    final Function scope = ExpressionSemanticUtil.getScope(reference);
-                    if (null != scope) {
-                        Collection<FunctionReference> calls = PsiTreeUtil.findChildrenOfType(scope, FunctionReference.class);
-                        if (calls.size() > 0) {
-                            for (final FunctionReference oneCall : calls) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                final String function = reference.getName();
+                if (function != null && function.equals("ksort")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 1) {
+                        /* pre-condition satisfied, now check if http_build_query used in the scope */
+                        final Function scope = ExpressionSemanticUtil.getScope(reference);
+                        if (scope != null) {
+                            for (final FunctionReference call : PsiTreeUtil.findChildrenOfType(scope, FunctionReference.class)) {
                                 /* skip inspected call and calls without arguments */
-                                if (
-                                    oneCall == reference || !OpenapiTypesUtil.isFunctionReference(oneCall) ||
-                                    oneCall.getParameters().length == 0
-                                ) {
+                                if (call == reference || !OpenapiTypesUtil.isFunctionReference(call)) {
                                     continue;
                                 }
-
                                 /* skip non-target function */
-                                final String currentFunction = oneCall.getName();
-                                if (currentFunction == null || !currentFunction.equals("http_build_query")) {
+                                final String callFunctionName = call.getName();
+                                if (callFunctionName == null || !callFunctionName.equals("http_build_query")) {
+                                    continue;
+                                }
+                                final PsiElement[] callArguments = call.getParameters();
+                                if (callArguments.length == 0) {
                                     continue;
                                 }
 
                                 /* pattern match: ksort and http_build_query operating on the same expression */
-                                if (OpeanapiEquivalenceUtil.areEqual(oneCall.getParameters()[0], parameters[0])) {
-                                    final String message = strProblemDescription.replace("%a%", parameters[0].getText());
+                                if (OpeanapiEquivalenceUtil.areEqual(callArguments[0], arguments[0])) {
+                                    final String message = messagePattern.replace("%a%", arguments[0].getText());
                                     holder.registerProblem(reference, message, new TheLocalFix());
 
                                     break;
                                 }
                             }
-
-                            calls.clear();
                         }
                     }
                 }
@@ -100,7 +102,6 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
                 replacement.getParameters()[0].replace(params[0]);
 
                 /* replace parameters list */
-                //noinspection ConstantConditions I'm really sure NPE will not happen
                 call.getParameterList().replace(replacement.getParameterList());
             }
         }

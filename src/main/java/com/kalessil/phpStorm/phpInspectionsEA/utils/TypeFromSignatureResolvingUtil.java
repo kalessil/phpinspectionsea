@@ -183,7 +183,6 @@ final class TypeFromSignatureResolvingUtil {
                 }
 
                 /* break looking up if pair is not resolved */
-                //noinspection ConstantConditions
                 if (strClassResolved.equals(Types.strClassNotResolved)) {
                     typesOfSlotSet.add(Types.strClassNotResolved);
                     return;

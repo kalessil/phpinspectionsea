@@ -53,27 +53,28 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                 PsiElement warningTarget = null;
 
                 /* check explicit numbers comparisons */
-                if (reference.getParent() instanceof BinaryExpression) {
-                    final BinaryExpression parent  = (BinaryExpression) reference.getParent();
-                    final PsiElement left          = parent.getLeftOperand();
-                    final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(parent, reference);
+                final PsiElement parent = reference.getParent();
+                if (parent instanceof BinaryExpression) {
+                    final BinaryExpression binary  = (BinaryExpression) parent;
+                    final PsiElement left          = binary.getLeftOperand();
+                    final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(binary, reference);
                     /* second operand should be a number */
                     if (OpenapiTypesUtil.isNumber(secondOperand)) {
                         final String strNumber = secondOperand.getText();
 
                         /* check cases when comparing with 1 */
-                        final IElementType operationType = parent.getOperationType();
+                        final IElementType operationType = binary.getOperationType();
                         if (operationType == PhpTokenTypes.opLESS || operationType == PhpTokenTypes.opGREATER_OR_EQUAL) {
                             /* comparison with 1 supported currently in NON-yoda style TODO: yoda style support */
                             isMatchedPattern = left == reference && strNumber.equals("1");
-                            warningTarget    = parent;
+                            warningTarget    = binary;
                             isEmptyString    = operationType == PhpTokenTypes.opLESS;
                         }
 
                         /* check cases when comparing with 0 */
                         if (!isMatchedPattern && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operationType)) {
                             isMatchedPattern = strNumber.equals("0");
-                            warningTarget    = parent;
+                            warningTarget    = binary;
                             isEmptyString    = operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opEQUAL;
                         }
                     }
@@ -81,26 +82,23 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
 
                 /* checks NON-implicit boolean comparison patterns */
                 if (!isMatchedPattern && ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
-                    isMatchedPattern = true;
-                    warningTarget    = reference;
-
-                    final PsiElement parent = reference.getParent();
-                    final PsiElement operation
-                            = parent instanceof UnaryExpression ? ((UnaryExpression) parent).getOperation() : null;
+                    isMatchedPattern           = true;
+                    warningTarget              = reference;
+                    final PsiElement operation = parent instanceof UnaryExpression ? ((UnaryExpression) parent).getOperation() : null;
                     if (operation != null) {
-                        isEmptyString = operation.getNode().getElementType() == PhpTokenTypes.opNOT;
+                        isEmptyString = OpenapiTypesUtil.is(operation, PhpTokenTypes.opNOT);
                         warningTarget = parent;
                     }
                 }
 
                 /* investigate possible issues */
-                final PsiElement[] params = reference.getParameters();
-                if (isMatchedPattern && params.length > 0) {
+                final PsiElement[] arguments = reference.getParameters();
+                if (isMatchedPattern && arguments.length > 0) {
                     final boolean isStrict
-                        = !ClassInStringContextStrategy.apply(params[0], holder, warningTarget, patternMissingToStringMethod);
+                        = !ClassInStringContextStrategy.apply(arguments[0], holder, warningTarget, patternMissingToStringMethod);
 
                     final String replacement = "'' %o% %a%"
-                            .replace("%a%", params[0].getText())
+                            .replace("%a%", arguments[0].getText())
                             .replace("%o%", (isEmptyString ? "=" : "!") + (isStrict ? "==" : "="));
                     final String message = messagePattern.replace("%e%", replacement);
                     holder.registerProblem(warningTarget, message, ProblemHighlightType.WEAK_WARNING, new CompareToEmptyStringFix(replacement));

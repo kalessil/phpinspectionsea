@@ -8,51 +8,64 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class DeprecatedIniOptionsInspector extends BasePhpInspection {
-    private static final List<String> INI_FUNCTIONS = Arrays.asList(
-            "ini_set", "ini_get", "ini_alter", "ini_restore"
-    );
-    private static final Map<String, String> INI_OPTIONS = new HashMap<>();
+    private static final List<String> targetFunctions = new ArrayList<>();
     static {
-        INI_OPTIONS.put("asp_tags", "'asp_tags' is a deprecated option since PHP 7.0.0.");
-        INI_OPTIONS.put("always_populate_raw_post_data", "'always_populate_raw_post_data' is a deprecated option since PHP 7.0.0.");
+        targetFunctions.add("ini_set");
+        targetFunctions.add("ini_get");
+        targetFunctions.add("ini_alter");
+        targetFunctions.add("ini_restore");
+    }
 
-        INI_OPTIONS.put("iconv.input_encoding", "'iconv.input_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        INI_OPTIONS.put("iconv.output_encoding", "'iconv.output_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        INI_OPTIONS.put("iconv.internal_encoding", "'iconv.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        INI_OPTIONS.put("mbstring.http_input", "'mbstring.http_input' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        INI_OPTIONS.put("mbstring.http_output", "'mbstring.http_output' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        INI_OPTIONS.put("mbstring.internal_encoding", "'mbstring.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+    private static final Map<String, String> targetOptions = new HashMap<>();
+    static {
+        targetOptions.put("asp_tags", "'asp_tags' is a deprecated option since PHP 7.0.0.");
+        targetOptions.put("always_populate_raw_post_data", "'always_populate_raw_post_data' is a deprecated option since PHP 7.0.0.");
 
-        INI_OPTIONS.put("xsl.security_prefs", "'xsl.security_prefs' is a deprecated option since PHP 5.4.0 (removed in PHP 7.0.0). Use XsltProcessor->setSecurityPrefs() instead.");
+        targetOptions.put("iconv.input_encoding", "'iconv.input_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+        targetOptions.put("iconv.output_encoding", "'iconv.output_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+        targetOptions.put("iconv.internal_encoding", "'iconv.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+        targetOptions.put("mbstring.http_input", "'mbstring.http_input' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+        targetOptions.put("mbstring.http_output", "'mbstring.http_output' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+        targetOptions.put("mbstring.internal_encoding", "'mbstring.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
 
-        INI_OPTIONS.put("allow_call_time_pass_reference", "'allow_call_time_pass_reference' is a deprecated option since PHP 5.4.0.");
-        INI_OPTIONS.put("highlight.bg", "'highlight.bg' is a deprecated option since PHP 5.4.0.");
-        INI_OPTIONS.put("zend.ze1_compatibility_mode", "'zend.ze1_compatibility_mode' is a deprecated option since PHP 5.4.0.");
-        INI_OPTIONS.put("session.bug_compat_42", "'session.bug_compat_42' is a deprecated option since PHP 5.4.0.");
-        INI_OPTIONS.put("session.bug_compat_warn", "'session.bug_compat_warn' is a deprecated option since PHP 5.4.0.");
-        INI_OPTIONS.put("y2k_compliance", "'y2k_compliance' is a deprecated option since PHP 5.4.0.");
+        targetOptions.put("xsl.security_prefs", "'xsl.security_prefs' is a deprecated option since PHP 5.4.0 (removed in PHP 7.0.0). Use XsltProcessor->setSecurityPrefs() instead.");
 
-        INI_OPTIONS.put("define_syslog_variables", "'define_syslog_variables' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        INI_OPTIONS.put("magic_quotes_gpc", "'magic_quotes_gpc' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        INI_OPTIONS.put("magic_quotes_runtime", "'magic_quotes_runtime' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        INI_OPTIONS.put("magic_quotes_sybase", "'magic_quotes_sybase' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        INI_OPTIONS.put("register_globals", "'register_globals' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        INI_OPTIONS.put("register_long_arrays", "'register_long_arrays' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        INI_OPTIONS.put("safe_mode", "'safe_mode' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        INI_OPTIONS.put("safe_mode_gid", "'safe_mode_gid' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        INI_OPTIONS.put("safe_mode_include_dir", "'safe_mode_include_dir' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        INI_OPTIONS.put("safe_mode_exec_dir", "'safe_mode_exec_dir' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        INI_OPTIONS.put("safe_mode_allowed_env_vars", "'safe_mode_allowed_env_vars' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        INI_OPTIONS.put("safe_mode_protected_env_vars", "'safe_mode_protected_env_vars' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        targetOptions.put("allow_call_time_pass_reference", "'allow_call_time_pass_reference' is a deprecated option since PHP 5.4.0.");
+        targetOptions.put("highlight.bg", "'highlight.bg' is a deprecated option since PHP 5.4.0.");
+        targetOptions.put("zend.ze1_compatibility_mode", "'zend.ze1_compatibility_mode' is a deprecated option since PHP 5.4.0.");
+        targetOptions.put("session.bug_compat_42", "'session.bug_compat_42' is a deprecated option since PHP 5.4.0.");
+        targetOptions.put("session.bug_compat_warn", "'session.bug_compat_warn' is a deprecated option since PHP 5.4.0.");
+        targetOptions.put("y2k_compliance", "'y2k_compliance' is a deprecated option since PHP 5.4.0.");
+
+        targetOptions.put("define_syslog_variables", "'define_syslog_variables' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        targetOptions.put("magic_quotes_gpc", "'magic_quotes_gpc' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        targetOptions.put("magic_quotes_runtime", "'magic_quotes_runtime' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        targetOptions.put("magic_quotes_sybase", "'magic_quotes_sybase' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        targetOptions.put("register_globals", "'register_globals' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        targetOptions.put("register_long_arrays", "'register_long_arrays' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        targetOptions.put("safe_mode", "'safe_mode' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        targetOptions.put("safe_mode_gid", "'safe_mode_gid' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        targetOptions.put("safe_mode_include_dir", "'safe_mode_include_dir' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        targetOptions.put("safe_mode_exec_dir", "'safe_mode_exec_dir' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        targetOptions.put("safe_mode_allowed_env_vars", "'safe_mode_allowed_env_vars' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        targetOptions.put("safe_mode_protected_env_vars", "'safe_mode_protected_env_vars' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
     }
 
     @NotNull
@@ -64,23 +77,18 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(final FunctionReference reference) {
-                final String strFunctionName  = reference.getName();
-                final PsiElement[] parameters = reference.getParameters();
-                if (
-                    parameters.length == 0 || StringUtils.isEmpty(strFunctionName) ||
-                    !INI_FUNCTIONS.contains(strFunctionName) || !(parameters[0] instanceof StringLiteralExpression)
-                ) {
-                    return;
+            @Override
+            public void visitPhpFunctionCall(@NotNull final FunctionReference reference) {
+                final String functionName = reference.getName();
+                if (functionName != null && targetFunctions.contains(functionName)) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length > 0 && arguments[0] instanceof StringLiteralExpression) {
+                        final String option = ((StringLiteralExpression) arguments[0]).getContents();
+                        if (targetOptions.containsKey(option)) {
+                            holder.registerProblem(arguments[0], targetOptions.get(option), ProblemHighlightType.LIKE_DEPRECATED);
+                        }
+                    }
                 }
-
-                final String optionName = ((StringLiteralExpression) parameters[0]).getContents();
-                if (StringUtils.isEmpty(optionName) || !INI_OPTIONS.containsKey(optionName)) {
-                    return;
-                }
-
-                String message = INI_OPTIONS.get(optionName);
-                holder.registerProblem(parameters[0], message, ProblemHighlightType.LIKE_DEPRECATED);
             }
         };
     }

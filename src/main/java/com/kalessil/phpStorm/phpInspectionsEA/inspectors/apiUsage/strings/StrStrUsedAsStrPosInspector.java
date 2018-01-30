@@ -47,10 +47,12 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* check if it's the target function */
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (params.length < 2 || functionName == null || !mapping.containsKey(functionName)) {
+                if (functionName == null || !mapping.containsKey(functionName)) {
+                    return;
+                }
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length < 2) {
                     return;
                 }
 
@@ -66,8 +68,8 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                         if (operationNode != null && PhpLanguageUtil.isBoolean(secondOperand)) {
                             final String operator    = operationNode.getText();
                             final String replacement = "false %o% %f%(%s%, %p%)"
-                                .replace("%p%", params[1].getText())
-                                .replace("%s%", params[0].getText())
+                                .replace("%p%", arguments[1].getText())
+                                .replace("%s%", arguments[0].getText())
                                 .replace("%f%", mapping.get(functionName))
                                 .replace("%o%", operator.length() == 2 ? operator + '=' : operator);
                             final String message     = messagePattern.replace("%e%", replacement);
@@ -84,8 +86,8 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                     final PsiElement target = parent instanceof UnaryExpression ? parent : reference;
 
                     final String replacement = "false %o% %f%(%s%, %p%)"
-                        .replace("%p%", params[1].getText())
-                        .replace("%s%", params[0].getText())
+                        .replace("%p%", arguments[1].getText())
+                        .replace("%s%", arguments[0].getText())
                         .replace("%f%", mapping.get(functionName))
                         .replace("%o%", reference.getParent() instanceof UnaryExpression ? "===": "!==");
                     final String message     = messagePattern.replace("%e%", replacement);

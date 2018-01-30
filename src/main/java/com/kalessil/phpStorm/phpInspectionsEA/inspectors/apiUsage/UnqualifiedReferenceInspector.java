@@ -128,14 +128,16 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
-                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
                     final String functionName = reference.getName();
                     if (functionName != null) {
                         if (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(functionName)) {
-                            analyzeReference(reference);
+                            this.analyzeReference(reference);
                         }
-                        analyzeCallback(reference, functionName);
+                        if (callbacksPositions.containsKey(functionName)) {
+                            this.analyzeCallback(reference, functionName);
+                        }
                     }
                 }
             }
@@ -152,12 +154,12 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
             }
 
             private void analyzeCallback(@NotNull FunctionReference reference, @NotNull String functionName) {
-                final PsiElement[] params = reference.getParameters();
-                if (params.length >= 2 && callbacksPositions.containsKey(functionName)) {
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length >= 2) {
                     final Integer callbackPosition = callbacksPositions.get(functionName);
-                    if (params[callbackPosition] instanceof StringLiteralExpression) {
-                        final StringLiteralExpression callback = (StringLiteralExpression) params[callbackPosition];
-                        if (null == callback.getFirstPsiChild()) {
+                    if (arguments[callbackPosition] instanceof StringLiteralExpression) {
+                        final StringLiteralExpression callback = (StringLiteralExpression) arguments[callbackPosition];
+                        if (callback.getFirstPsiChild() == null) {
                             final String function     = callback.getContents();
                             final boolean isCandidate = !function.startsWith("\\") && !function.contains("::");
                             if (isCandidate && (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(function))) {

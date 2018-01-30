@@ -29,11 +29,13 @@ import org.jetbrains.annotations.NotNull;
 final public class QueryUsageStrategy {
     private static final String message = "'PDO::query(...)' should be used instead of 'prepare-execute' calls chain.";
 
-    public static void apply(@NotNull MethodReference reference, @NotNull final ProblemsHolder holder) {
-        /* check requirements */
-        final PsiElement[] params = reference.getParameters();
-        final String methodName   = reference.getName();
-        if (params.length > 0 || methodName == null || !methodName.equals("execute")) {
+    public static void apply(@NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
+        final String methodName = reference.getName();
+        if (methodName == null || !methodName.equals("execute")) {
+            return;
+        }
+        final PsiElement[] arguments = reference.getParameters();
+        if (arguments.length > 0) {
             return;
         }
 

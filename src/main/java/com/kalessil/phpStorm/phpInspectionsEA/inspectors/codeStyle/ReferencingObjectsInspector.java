@@ -141,7 +141,6 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
             final PsiElement assignOperator = this.assignOperator.getElement();
             if (assignOperator != null) {
                 LeafPsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "=");
-                //noinspection ConstantConditions - expression is hardcoded so we safe from NPE here
                 assignOperator.replace(replacement);
             }
         }

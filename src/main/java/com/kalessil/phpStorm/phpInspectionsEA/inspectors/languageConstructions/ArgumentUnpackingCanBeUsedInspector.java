@@ -35,49 +35,35 @@ public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
-                /* the feature was introduced in PHP 5.6 */
-                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
-                if (phpVersion.compareTo(PhpLanguageLevel.PHP560) < 0) {
-                    return;
-                }
-
-                /* general structure expectation */
-                final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (2 != params.length || null== functionName || !functionName.equals("call_user_func_array")) {
-                    return;
-                }
-
-                final boolean isContainerValid = params[1] instanceof Variable ||
-                        params[1] instanceof ArrayCreationExpression || params[1] instanceof FunctionReference;
-                if (isContainerValid && params[0] instanceof StringLiteralExpression) {
-                    /* do not process strings with injections */
-                    final StringLiteralExpression targetFunction = (StringLiteralExpression) params[0];
-                    if (null != targetFunction.getFirstPsiChild()){
-                        return;
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (php.compareTo(PhpLanguageLevel.PHP560) >= 0) {
+                    final String functionName = reference.getName();
+                    if (functionName != null && functionName.equals("call_user_func_array")) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length == 2) {
+                            final boolean isContainerValid =
+                                    arguments[1] instanceof Variable ||
+                                    arguments[1] instanceof ArrayCreationExpression ||
+                                    arguments[1] instanceof FunctionReference;
+                            if (isContainerValid && arguments[0] instanceof StringLiteralExpression) {
+                                /* do not process strings with injections */
+                                final StringLiteralExpression targetFunction = (StringLiteralExpression) arguments[0];
+                                if (targetFunction.getFirstPsiChild() == null){
+                                    final String replacement = "%f%(...%a%)"
+                                            .replace("%a%", arguments[1].getText())
+                                            .replace("%f%", targetFunction.getContents());
+                                    final String message = messagePattern.replace("%e%", replacement);
+                                    holder.registerProblem(reference, message, new UnpackFix(replacement));
+                                }
+                            }
+                        }
                     }
-
-                    final String replacement = "%f%(...%a%)"
-                        .replace("%a%", params[1].getText())
-                        .replace("%f%", targetFunction.getContents());
-                    final String message = messagePattern.replace("%e%", replacement);
-                    holder.registerProblem(reference, message, new UnpackFix(replacement));
                 }
-
                 // TODO: if (isContainerValid && params[0] instanceof ArrayCreationExpression) {
                 // TODO: call_user_func_array([...], ...); string method name must not contain ::
             }
-
-            //@Nullable
-            //private PsiElement getVariablesHolder() {
-            //    return null;
-            //}
-
-            //@Nullable
-            //private String getCallable() {
-            //    return null;
-            //}
         };
     }
 

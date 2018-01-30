@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
+/*
  * This file is part of the Php Inspections (EA Extended) package.
  *
  * (c) David Rodrigues <david.proweb@gmail.com>
@@ -69,49 +69,50 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
             }
 
             private void analyze(@NotNull FunctionReference reference) {
-                final PsiElement[] arguments = reference.getParameters();
-                final String functionName    = reference.getName();
-                if (arguments.length > 0 && functionName != null && !specialFunctions.contains(functionName)) {
-                    PsiElement reportFrom = null;
-                    PsiElement reportTo   = null;
+                final String functionName = reference.getName();
+                if (functionName != null && !specialFunctions.contains(functionName)) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length > 0) {
+                        PsiElement reportFrom = null;
+                        PsiElement reportTo   = null;
 
-                    if (OpenapiTypesUtil.DEFAULT_VALUES.contains(arguments[arguments.length - 1].getNode().getElementType())) {
-                        final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                        if (resolved instanceof Function) {
-                            final Parameter[] parameters = ((Function) resolved).getParameters();
-                            if (arguments.length <= parameters.length) {
-                                for (int index = Math.min(parameters.length, arguments.length) - 1; index >= 0; --index) {
-                                    final PsiElement value = parameters[index].getDefaultValue();
-                                    /* false-positives: magic constants */
-                                    if (value instanceof ConstantReference && specialConstants.contains(value.getText())) {
-                                        break;
-                                    }
-                                    /* false-positives: unmatched values */
-                                    final PsiElement argument = arguments[index];
-                                    if (value == null || !OpeanapiEquivalenceUtil.areEqual(value, argument)) {
-                                        break;
-                                    }
+                        final IElementType valueType = arguments[arguments.length - 1].getNode().getElementType();
+                        if (OpenapiTypesUtil.DEFAULT_VALUES.contains(valueType)) {
+                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                            if (resolved instanceof Function) {
+                                final Parameter[] parameters = ((Function) resolved).getParameters();
+                                if (arguments.length <= parameters.length) {
+                                    for (int index = Math.min(parameters.length, arguments.length) - 1; index >= 0; --index) {
+                                        final PsiElement value = parameters[index].getDefaultValue();
+                                        /* false-positives: magic constants */
+                                        if (value instanceof ConstantReference && specialConstants.contains(value.getText())) {
+                                            break;
+                                        }
+                                        /* false-positives: unmatched values */
+                                        final PsiElement argument = arguments[index];
+                                        if (value == null || !OpeanapiEquivalenceUtil.areEqual(value, argument)) {
+                                            break;
+                                        }
 
-                                    reportFrom = argument;
-                                    if (reportTo == null) {
-                                        reportTo = argument;
+                                        reportFrom = argument;
+                                        reportTo   = reportTo == null ? argument : reportTo;
                                     }
                                 }
                             }
                         }
-                    }
 
-                    if (reportFrom != null) {
-                        problemsHolder.registerProblem(
-                                problemsHolder.getManager().createProblemDescriptor(
-                                        reportFrom,
-                                        reportTo,
-                                        message,
-                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                        onTheFly,
-                                        new TheLocalFix(reportFrom, reportTo)
-                                )
-                        );
+                        if (reportFrom != null) {
+                            problemsHolder.registerProblem(
+                                    problemsHolder.getManager().createProblemDescriptor(
+                                            reportFrom,
+                                            reportTo,
+                                            message,
+                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                            onTheFly,
+                                            new TheLocalFix(reportFrom, reportTo)
+                                    )
+                            );
+                        }
                     }
                 }
             }

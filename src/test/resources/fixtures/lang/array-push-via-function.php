@@ -1,7 +1,7 @@
 <?php
 
     $arr = array();
-    <warning descr="'$arr[] = ...' should be used instead (2x faster).">array_push($arr, '')</warning>;
+    <warning descr="'$arr[] = ''' should be used instead (2x faster).">array_push($arr, '')</warning>;
 
     /* valid cases */
     array_push($arr, '', '', '');

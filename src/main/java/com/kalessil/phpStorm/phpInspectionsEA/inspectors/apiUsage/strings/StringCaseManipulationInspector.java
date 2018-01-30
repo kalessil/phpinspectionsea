@@ -54,21 +54,18 @@ public class StringCaseManipulationInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName != null && functions.containsKey(functionName)) {
-                    final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length == 2) {
-                        final PsiElement first  = this.getSubject(arguments[0]);
-                        final PsiElement second = this.getSubject(arguments[1]);
-                        if (first != null || second != null) {
-                            final String replacement = "%f%(%a1%, %a2%)"
-                                    .replace("%a2%", (second == null ? arguments[1] : second).getText())
-                                    .replace("%a1%", (first == null ? arguments[0] : first).getText())
-                                    .replace("%f%", functions.get(functionName));
-                            holder.registerProblem(
-                                    reference,
-                                    String.format(messagePattern, replacement),
-                                    new SimplifyFix(replacement)
-                            );
+                if (functionName != null && functions.containsKey(functionName)) {final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length == 2 ) {
+                    final PsiElement first  = this.getSubject(arguments[0]);
+                    final PsiElement second = this.getSubject(arguments[1]);
+                    if (first != null || second != null) {
+                        final String replacement = "%f%(%a1%, %a2%)"
+                            .replace("%a2%", (second == null ? arguments[1] : second).getText())
+                            .replace("%a1%", (first == null ? arguments[0] : first).getText())
+                            .replace("%f%", functions.get(functionName));
+                        holder.registerProblem(
+                                    reference, String .format( messagePattern, replacement),
+                         new SimplifyFix(replacement));
                         }
                     }
                 }

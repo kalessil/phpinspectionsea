@@ -34,14 +34,13 @@ public class MktimeUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final String functionName       = reference.getName();
-                final PsiElement[] params       = reference.getParameters();
-                final boolean neededParamsCount = params.length == 0 || (params.length == 7 && !params[6].getText().isEmpty());
-                if (neededParamsCount && functionName != null && (functionName.equals("mktime") || functionName.equals("gmmktime"))) {
-                    if (params.length == 0) {
+                final String functionName = reference.getName();
+                if (functionName != null && (functionName.equals("mktime") || functionName.equals("gmmktime"))) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 0) {
                         holder.registerProblem(reference, messageUseTime, ProblemHighlightType.WEAK_WARNING, new UseTimeFunctionLocalFix("time()"));
-                    } else {
-                        holder.registerProblem(params[6], messageParameterDeprecated, ProblemHighlightType.LIKE_DEPRECATED);
+                    } else if (arguments.length == 7 && !arguments[6].getText().isEmpty()) {
+                        holder.registerProblem(arguments[6], messageParameterDeprecated, ProblemHighlightType.LIKE_DEPRECATED);
                     }
                 }
             }

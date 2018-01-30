@@ -42,13 +42,12 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* general requirements */
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (
-                    (1 != params.length && 2 != params.length) ||
-                    functionName == null || !functionName.equals("dirname")
-                ) {
+                if (functionName == null || !functionName.equals("dirname")) {
+                    return;
+                }
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length != 1 && arguments.length != 2) {
                     return;
                 }
 
@@ -62,13 +61,12 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                 final PsiElement parent = reference.getParent();
                 if (parent instanceof ParameterList && parent.getParent() instanceof FunctionReference) {
                     final FunctionReference parentReference = (FunctionReference) parent.getParent();
-                    final String parentName         = parentReference.getName();
-                    final PsiElement[] parentParams = parentReference.getParameters();
-                    if (
-                        (1 == parentParams.length || 2 == parentParams.length) &&
-                        parentName != null && parentName.equals("dirname")
-                    ) {
-                        return;
+                    final String parentName                 = parentReference.getName();
+                    if (parentName != null && parentName.equals("dirname")) {
+                        final PsiElement[] parentArguments = parentReference.getParameters();
+                        if (parentArguments.length == 1 || parentArguments.length == 2) {
+                            return;
+                        }
                     }
                 }
 
@@ -77,8 +75,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                 PsiElement argument           = null;
                 final List<PsiElement> levels = new ArrayList<>();
 
-                FunctionReference current     = reference;
-                //noinspection ConstantConditions - due to better readability
+                FunctionReference current = reference;
                 while (current instanceof FunctionReference) {
                     final String currentName = current.getName();
                     if (currentName == null || !currentName.equals("dirname")) {
@@ -108,7 +105,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                 }
 
                 /* if we have 1+ nested call (top-level one is not considered) */
-                if (null != argument && reference.getParameters()[0] != argument) {
+                if (argument != null && arguments[0] != argument) {
                     /* process extracted level expressions: numbers to sum-up, expressions to stay */
                     final List<String> reported = new ArrayList<>();
                     for (PsiElement levelEntry : levels) {

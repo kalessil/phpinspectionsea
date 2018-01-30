@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class FilePutContentsMissUseInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%e%' would consume less cpu and memory resources here.";
+    private static final String messagePattern = "'%s' would consume less cpu and memory resources here.";
 
     @NotNull
     public String getShortName() {
@@ -34,35 +34,39 @@ public class FilePutContentsMissUseInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
-                /* validate parameters amount and function name (file) */
-                final PsiElement[] params = reference.getParameters();
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (2 != params.length || null == functionName || !functionName.equals("file_put_contents")) {
-                    return;
-                }
-
-                /* inner call can be silenced, un-wrap it */
-                PsiElement innerCandidate = params[1];
-                if (innerCandidate instanceof UnaryExpression) {
-                    final PsiElement operator = ((UnaryExpression) innerCandidate).getOperation();
-                    if (null != operator && PhpTokenTypes.opSILENCE == operator.getNode().getElementType()) {
-                        innerCandidate = ((UnaryExpression) innerCandidate).getValue();
-                    }
-                }
-
-                /* analyze the call */
-                if (OpenapiTypesUtil.isFunctionReference(innerCandidate)) {
-                    final FunctionReference innerReference = (FunctionReference) innerCandidate;
-                    final String innerName                 = innerReference.getName();
-                    final PsiElement[] innerParams         = innerReference.getParameters();
-                    /* check if matches the target pattern */
-                    if (1 == innerParams.length && null != innerName && innerName.equals("file_get_contents")) {
-                        final String pattern = "copy(%s%, %d%)"
-                                .replace("%s%", innerParams[0].getText())
-                                .replace("%d%", params[0].getText());
-                        final String message = messagePattern.replace("%e%", pattern);
-                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new UseCopyFix(pattern));
+                if (functionName != null && functionName.equals("file_put_contents")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 2) {
+                        /* inner call can be silenced, un-wrap it */
+                        PsiElement innerCandidate = arguments[1];
+                        if (innerCandidate instanceof UnaryExpression) {
+                            final UnaryExpression unary = (UnaryExpression) innerCandidate;
+                            if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opSILENCE)) {
+                                innerCandidate = unary.getValue();
+                            }
+                        }
+                        /* analyze the call */
+                        if (OpenapiTypesUtil.isFunctionReference(innerCandidate)) {
+                            final FunctionReference innerReference = (FunctionReference) innerCandidate;
+                            final String innerName                 = innerReference.getName();
+                            if (innerName != null && innerName.equals("file_get_contents")) {
+                                final PsiElement[] innerArguments = innerReference.getParameters();
+                                if (innerArguments.length == 1) {
+                                    final String replacement = "copy(%s%, %d%)"
+                                            .replace("%s%", innerArguments[0].getText())
+                                            .replace("%d%", arguments[0].getText());
+                                    holder.registerProblem(
+                                            reference,
+                                            String.format(messagePattern, replacement),
+                                            ProblemHighlightType.GENERIC_ERROR,
+                                            new UseCopyFix(replacement)
+                                    );
+                                }
+                            }
+                        }
                     }
                 }
             }

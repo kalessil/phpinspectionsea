@@ -50,9 +50,12 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* general structure expectations */
-                final String functionName    = reference.getName();
+                final String functionName = reference.getName();
+                if (functionName == null || !semanticMapping.containsKey(functionName)) {
+                    return;
+                }
                 final PsiElement[] arguments = reference.getParameters();
-                if (null == functionName || 1 != arguments.length || !semanticMapping.containsKey(functionName)) {
+                if (arguments.length != 1) {
                     return;
                 }
 
@@ -68,8 +71,11 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                         /* inner call must be explode() */
                         final FunctionReference innerCall = (FunctionReference) value;
                         final String innerFunctionName    = innerCall.getName();
-                        final PsiElement[] innerParams    = innerCall.getParameters();
-                        if (null == innerFunctionName || 2 != innerParams.length || !innerFunctionName.equals("explode")) {
+                        if (innerFunctionName == null || !innerFunctionName.equals("explode")) {
+                            return;
+                        }
+                        final PsiElement[] innerArguments = innerCall.getParameters();
+                        if (innerArguments.length != 2) {
                             return;
                         }
 
@@ -91,8 +97,8 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                         }
 
                         final String replacement = semanticMapping.get(functionName)
-                                .replace("%f%", innerParams[0].getText())
-                                .replace("%s%", innerParams[1].getText());
+                                .replace("%f%", innerArguments[0].getText())
+                                .replace("%s%", innerArguments[1].getText());
                         final String message = messagePattern.replace("%e%", replacement);
                         if (arguments[0] == value) {
                             holder.registerProblem(reference, message, new UseAlternativeFix(replacement));

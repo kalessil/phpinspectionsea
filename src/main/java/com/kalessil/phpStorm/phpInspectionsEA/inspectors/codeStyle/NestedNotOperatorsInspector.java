@@ -103,7 +103,6 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
             final PsiElement expression = descriptor.getPsiElement();
             final PsiElement value      = this.value.getElement();
             if (null != value && expression instanceof UnaryExpression) {
-                //noinspection ConstantConditions I'm sure that NPE will not happen as inspection reports only finished structures
                 ((UnaryExpression) expression).getValue().replace(value);
             }
         }
@@ -136,7 +135,6 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
             final PsiElement value = this.value.getElement();
             if (null != value) {
                 UnaryExpression replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "(bool) null");
-                //noinspection ConstantConditions I'm sure that NPE will not happen as we have hardcoded expression
                 replacement.getValue().replace(value);
                 descriptor.getPsiElement().replace(replacement);
             }

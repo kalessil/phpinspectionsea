@@ -38,24 +38,23 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final String strFunctionName = reference.getName();
-                if (strFunctionName == null || !functionsSet.contains(strFunctionName)) {
+                final String functionName = reference.getName();
+                if (functionName == null || !functionsSet.contains(functionName)) {
                     return;
                 }
-
-                PsiElement objParent = reference.getParent();
-                if (!(objParent instanceof AssignmentExpression)) {
+                PsiElement parent = reference.getParent();
+                if (!(parent instanceof AssignmentExpression)) {
                     /* let's focus on assignment expressions */
                     return;
                 }
 
-                while (null != objParent && !(objParent instanceof PhpFile)) {
+                while (parent != null && !(parent instanceof PhpFile)) {
                     /* terminate if reached callable */
-                    if (objParent instanceof Function) {
+                    if (parent instanceof Function) {
                         return;
                     }
 
-                    if (OpenapiTypesUtil.isLoop(objParent)) {
+                    if (OpenapiTypesUtil.isLoop(parent)) {
                         /* loop test is positive, check pattern */
                         final PhpPsiElement objContainer = ((AssignmentExpression) reference.getParent()).getVariable();
                         if (null == objContainer) {
@@ -65,7 +64,7 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
                         /* pattern itself: container overridden */
                         for (final PsiElement objParameter : reference.getParameters()) {
                             if (OpeanapiEquivalenceUtil.areEqual(objContainer, objParameter)) {
-                                final String message = messagePattern.replace("%s%", strFunctionName);
+                                final String message = messagePattern.replace("%s%", functionName);
                                 holder.registerProblem(reference, message);
 
                                 return;
@@ -73,7 +72,7 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
                         }
                     }
 
-                    objParent = objParent.getParent();
+                    parent = parent.getParent();
                 }
             }
         };

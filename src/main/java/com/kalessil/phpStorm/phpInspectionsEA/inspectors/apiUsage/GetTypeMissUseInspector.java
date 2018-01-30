@@ -63,10 +63,12 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* verify amount of parameters at first */
+                final String functionName = reference.getName();
+                if (functionName == null || !functionName.equals("gettype")) {
+                    return;
+                }
                 final PsiElement[] arguments = reference.getParameters();
-                final String functionName    = reference.getName();
-                if (arguments.length != 1 || functionName == null || !functionName.equals("gettype")) {
+                if (arguments.length != 1) {
                     return;
                 }
 

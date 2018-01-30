@@ -85,15 +85,11 @@ public class UnnecessaryElseFixer implements LocalQuickFix {
 
             /* back up original if */
             final If newIf = PhpPsiElementFactory.createPhpPsiFromText(project, If.class, "if (true) {\n}");
-            //noinspection ConstantConditions as structures guaranted
             newIf.getCondition().replace(parentIfExpression.getCondition());
-            //noinspection ConstantConditions as structures guaranted
             ExpressionSemanticUtil.getGroupStatement(newIf).replace(ExpressionSemanticUtil.getGroupStatement(parentIfExpression));
 
             /* drop the elseif, backup resulted construct */
-            //noinspection ConstantConditions as structures guaranted
             parentIfExpression.getCondition().replace(elseIfStatement.getCondition().copy());
-            //noinspection ConstantConditions as structures guaranted
             ExpressionSemanticUtil.getGroupStatement(parentIfExpression).replace(ExpressionSemanticUtil.getGroupStatement(elseIfStatement).copy());
             elseIfStatement.delete();
             final PsiElement followUpIf = parentIfExpression.copy();

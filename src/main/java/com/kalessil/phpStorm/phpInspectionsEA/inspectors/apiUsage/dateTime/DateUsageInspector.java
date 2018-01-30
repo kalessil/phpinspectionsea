@@ -38,20 +38,22 @@ public class DateUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final PsiElement[] arguments = reference.getParameters();
-                final String functionName    = reference.getName();
-                if (arguments.length == 2 && functionName != null && functionName.equals("date")) {
-                    final PsiElement candidate = arguments[1];
-                    if (OpenapiTypesUtil.isFunctionReference(candidate)) {
-                        final FunctionReference inner = (FunctionReference) candidate;
-                        final String innerName        = inner.getName();
-                        if (innerName != null && innerName.equals("time") && inner.getParameters().length == 0) {
-                            holder.registerProblem(
-                                inner,
-                                messageDropTime,
-                                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                new DropTimeFunctionCallLocalFix(arguments[0], arguments[1])
-                            );
+                final String functionName = reference.getName();
+                if (functionName != null && functionName.equals("date")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 2) {
+                        final PsiElement candidate = arguments[1];
+                        if (OpenapiTypesUtil.isFunctionReference(candidate)) {
+                            final FunctionReference inner = (FunctionReference) candidate;
+                            final String innerName        = inner.getName();
+                            if (innerName != null && innerName.equals("time") && inner.getParameters().length == 0) {
+                                holder.registerProblem(
+                                    inner,
+                                    messageDropTime,
+                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                    new DropTimeFunctionCallLocalFix(arguments[0], arguments[1])
+                                );
+                            }
                         }
                     }
                 }

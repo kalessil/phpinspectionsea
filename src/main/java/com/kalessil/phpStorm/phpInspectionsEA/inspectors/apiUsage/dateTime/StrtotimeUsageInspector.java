@@ -34,35 +34,33 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
-                final PsiElement[] params = reference.getParameters();
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (
-                    params.length == 0 || params.length > 2 ||
-                    functionName == null || !functionName.equals("strtotime")
-                ) {
+                if (functionName == null || !functionName.equals("strtotime")) {
+                    return;
+                }
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length == 0 || arguments.length > 2) {
                     return;
                 }
 
                 /* handle case: strtotime("now") -> time() */
-                if (params.length == 1) {
-                    if (params[0] instanceof StringLiteralExpression) {
-                        final StringLiteralExpression pattern = (StringLiteralExpression) params[0];
+                if (arguments.length == 1) {
+                    if (arguments[0] instanceof StringLiteralExpression) {
+                        final StringLiteralExpression pattern = (StringLiteralExpression) arguments[0];
                         if (pattern.getContents().equalsIgnoreCase("now")) {
                             holder.registerProblem(reference, messageUseTime, new UseTimeFunctionLocalFix("time()"));
                         }
                     }
-                    return;
                 }
-
                 /* handle case: strtotime(..., time()) -> date(...) */
-                if (params.length == 2) {
-                    if (OpenapiTypesUtil.isFunctionReference(params[1])) {
-                        final String callName = ((FunctionReference) params[1]).getName();
+                else if (arguments.length == 2) {
+                    if (OpenapiTypesUtil.isFunctionReference(arguments[1])) {
+                        final String callName = ((FunctionReference) arguments[1]).getName();
                         if (callName != null && callName.equals("time")) {
-                            final String replacement = "strtotime(%a%)".replace("%a%", params[0].getText());
-                            holder.registerProblem
-                            (
+                            final String replacement = "strtotime(%a%)".replace("%a%", arguments[0].getText());
+                            holder.registerProblem(
                                     reference,
                                     messageDropTime,
                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
@@ -70,7 +68,6 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
                             );
                         }
                     }
-                    // return;
                 }
             }
         };

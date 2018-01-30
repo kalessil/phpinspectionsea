@@ -36,13 +36,12 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* check if it's the target function: amount of parameters and name */
-                final String functionName    = reference.getName();
+                final String functionName = reference.getName();
+                if (functionName == null || (!functionName.equals("substr") && !functionName.equals("mb_substr"))) {
+                    return;
+                }
                 final PsiElement[] arguments = reference.getParameters();
-                if (
-                    (3 != arguments.length && 4 != arguments.length) || functionName == null ||
-                    (!functionName.equals("substr") && !functionName.equals("mb_substr"))
-                ) {
+                if (arguments.length != 3 && arguments.length != 4) {
                     return;
                 }
 

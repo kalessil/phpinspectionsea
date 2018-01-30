@@ -45,9 +45,12 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final PsiElement[] params = reference.getParameters();
                 final String functionName = reference.getName();
-                if (params.length < 2 || functionName == null || !functionName.equals("array_search")) {
+                if (functionName == null || !functionName.equals("array_search")) {
+                    return;
+                }
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length < 2) {
                     return;
                 }
 
@@ -58,11 +61,12 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                 }
 
                 /* inspect implicit booleans comparison */
-                if (reference.getParent() instanceof BinaryExpression) {
-                    final BinaryExpression parent = (BinaryExpression) reference.getParent();
-                    final IElementType operation  = parent.getOperationType();
+                final PsiElement parent = reference.getParent();
+                if (parent instanceof BinaryExpression) {
+                    final BinaryExpression binary = (BinaryExpression) parent;
+                    final IElementType operation  = binary.getOperationType();
                     if (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
-                        final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(parent, reference);
+                        final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(binary, reference);
                         if (PhpLanguageUtil.isBoolean(secondOperand)) {
                             /* should not compare with true: makes no sense as it never returned */
                             if (PhpLanguageUtil.isTrue(secondOperand)) {
@@ -70,7 +74,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                                 return;
                             }
 
-                            holder.registerProblem(parent, messageUseInArray, new TheLocalFix());
+                            holder.registerProblem(binary, messageUseInArray, new TheLocalFix());
                         }
                     }
                 }
@@ -112,7 +116,6 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                         if (PhpTokenTypes.opIDENTICAL == operation.getNode().getElementType()) {
                             /* we want false, hence need invert the call */
                             UnaryExpression inverted = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "!$x");
-                            //noinspection ConstantConditions - as we are safe from NPE here due to hardcoded pattern
                             inverted.getValue().replace(call);
                             expression.replace(inverted);
                         } else {

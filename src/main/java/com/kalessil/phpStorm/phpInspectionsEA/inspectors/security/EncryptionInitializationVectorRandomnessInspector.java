@@ -44,17 +44,16 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* verify general requirements to the call */
                 final String functionName = reference.getName();
-                final PsiElement[] params = reference.getParameters();
-                if (5 != params.length || null == params[4] || 0 == params[4].getTextLength() || functionName == null) {
-                    return;
-                }
-
                 /* variable functions are not supported, as we are checking 2 different extensions functions */
-                if (functionName.equals("openssl_encrypt") || functionName.equals("mcrypt_encrypt")) {
+                if (functionName != null && (functionName.equals("openssl_encrypt") || functionName.equals("mcrypt_encrypt"))) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length != 5 || arguments[4] == null || arguments[4].getText().isEmpty()) {
+                        return;
+                    }
+
                     /* discover and inspect possible values */
-                    final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(params[4]);
+                    final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(arguments[4]);
                     if (values.size() > 0) {
                         final List<String> reporting = new ArrayList<>();
 
@@ -80,7 +79,7 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
                             final String message    = messagePattern
                                     .replace("%e%", String.join(", ", reporting))
                                     .replace("%f%", ivFunction);
-                            holder.registerProblem(params[4], message, ProblemHighlightType.GENERIC_ERROR);
+                            holder.registerProblem(arguments[4], message, ProblemHighlightType.GENERIC_ERROR);
 
                             reporting.clear();
                         }

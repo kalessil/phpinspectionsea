@@ -76,7 +76,7 @@ Inspections Lists (Compatibility)
 ---
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
-| Compatibility        | DeprecatedIniOptionsInspection                  | Deprecated configuration options                    | n/a |
+| Compatibility        | DeprecatedIniOptionsInspection                  | Deprecated configuration options                    | n/a | yes | n/a  | no  |
 | Compatibility        | RandomApiMigrationInspection                    | Random API migration                                | yes | yes | yes  | no  |
 | Compatibility        | MktimeUsageInspection                           | 'gmmktime(...)'/'mktime(...)' usage                 | yes | yes | yes  | no  |
 | Compatibility        | FopenBinaryUnsafeUsageInspection                | Binary-unsafe 'fopen(...)' usage                    | yes | yes | yes  | no  |
@@ -128,7 +128,7 @@ Inspections Lists (Language level migration)
 | Language level migration | ElvisOperatorCanBeUsedInspection                | Elvis operator can be used                          | yes | yes | no   | no  |
 | Language level migration | NullCoalescingOperatorCanBeUsedInspection       | Null coalescing operator can be used                | yes | yes | no   | no  |
 | Language level migration | TypesCastingCanBeUsedInspection                 | Type casting can be used                            | yes | yes | yes  | no  |
-| Language level migration | dirnameCallOnFileConstantInspection             | __DIR__ constant can be used                        | yes | yes | no   | no  |
+| Language level migration | DirectoryConstantCanBeUsedInspection            | __DIR__ constant can be used                        | yes | yes | yes  | no  |
 | Language level migration | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes | yes | yes  | no  |
 | Language level migration | ShortListSyntaxCanBeUsedInspection              | Short list syntax can be used                       | yes | yes | no   | no  |
 | Language level migration | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | yes | yes | no   | no  |

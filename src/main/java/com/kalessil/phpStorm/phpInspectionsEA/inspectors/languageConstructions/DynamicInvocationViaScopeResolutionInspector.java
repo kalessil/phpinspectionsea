@@ -113,7 +113,6 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement operator = this.operator.getElement();
             final PsiElement arrow    = PhpPsiElementFactory.createArrow(project);
-            //noinspection ConstantConditions - createArrow CAN return null
             if (null == operator || null == arrow) {
                 return;
             }
@@ -122,7 +121,6 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
 
             final PsiElement object       = null == this.object ? null : this.object.getElement();
             final PsiElement thisVariable = PhpPsiElementFactory.createVariable(project, "this", true);
-            //noinspection ConstantConditions - let's secureourselves here as well
             if (null != object && null != thisVariable) {
                 object.replace(thisVariable);
             }

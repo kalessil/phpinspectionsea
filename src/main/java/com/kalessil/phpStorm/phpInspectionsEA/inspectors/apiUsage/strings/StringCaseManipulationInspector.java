@@ -26,7 +26,7 @@ import java.util.Set;
  */
 
 public class StringCaseManipulationInspector extends BasePhpInspection {
-    private static final String messagePattern  = "'%e%' should be used instead.";
+    private static final String messagePattern  = "'%s' should be used instead.";
 
     private static final Map<String, String> functions = new HashMap<>();
     private static final Set<String> innerFunctions    = new HashSet<>();
@@ -64,8 +64,11 @@ public class StringCaseManipulationInspector extends BasePhpInspection {
                                     .replace("%a2%", (second == null ? arguments[1] : second).getText())
                                     .replace("%a1%", (first == null ? arguments[0] : first).getText())
                                     .replace("%f%", functions.get(functionName));
-                            final String message = messagePattern.replace("%e%", replacement);
-                            holder.registerProblem(reference, message, new SimplifyFix(replacement));
+                            holder.registerProblem(
+                                    reference,
+                                    String.format(messagePattern, replacement),
+                                    new SimplifyFix(replacement)
+                            );
                         }
                     }
                 }
@@ -77,9 +80,11 @@ public class StringCaseManipulationInspector extends BasePhpInspection {
                 if (OpenapiTypesUtil.isFunctionReference(expression)) {
                     final FunctionReference reference = (FunctionReference) expression;
                     final String functionName         = reference.getName();
-                    final PsiElement[] params         = reference.getParameters();
-                    if (params.length == 1 && functionName != null && innerFunctions.contains(functionName)) {
-                        result = params[0];
+                    if (functionName != null && innerFunctions.contains(functionName)) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length == 1) {
+                            result = arguments[0];
+                        }
                     }
                 }
                 return result;

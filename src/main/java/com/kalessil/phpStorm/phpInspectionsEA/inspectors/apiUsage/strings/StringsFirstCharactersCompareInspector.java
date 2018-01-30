@@ -36,35 +36,33 @@ public class StringsFirstCharactersCompareInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName    = reference.getName();
-                final PsiElement[] arguments = reference.getParameters();
-                if (
-                    functionName != null && arguments.length == 3 &&
-                    (functionName.equals("strncmp") || functionName.equals("strncasecmp")) &&
-                    OpenapiTypesUtil.isNumber(arguments[2])
-                ) {
-                    /* find out if we have a string literal in arguments */
-                    final StringLiteralExpression literal;
-                    if (arguments[1] instanceof StringLiteralExpression) {
-                        literal = (StringLiteralExpression) arguments[1];
-                    } else if (arguments[0] instanceof StringLiteralExpression) {
-                        literal = (StringLiteralExpression) arguments[0];
-                    } else {
-                        literal = null;
-                    }
-                    /* if so, do deeper inspection */
-                    if (literal != null) {
-                        boolean isTarget;
-                        int stringLength;
-                        try {
-                            final String string = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
-                            stringLength        = string.length();
-                            isTarget            = stringLength != Integer.parseInt(arguments[2].getText());
-                        } catch (NumberFormatException lengthParsingHasFailed) {
-                            isTarget     = false;
-                            stringLength = -1;
+                if (functionName != null && (functionName.equals("strncmp") || functionName.equals("strncasecmp"))) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 3 && OpenapiTypesUtil.isNumber(arguments[2])) {
+                        /* find out if we have a string literal in arguments */
+                        final StringLiteralExpression literal;
+                        if (arguments[1] instanceof StringLiteralExpression) {
+                            literal = (StringLiteralExpression) arguments[1];
+                        } else if (arguments[0] instanceof StringLiteralExpression) {
+                            literal = (StringLiteralExpression) arguments[0];
+                        } else {
+                            literal = null;
                         }
-                        if (isTarget && stringLength != -1) {
-                            holder.registerProblem(arguments[2], message, new LengthFix(String.valueOf(stringLength)));
+                        /* if so, do deeper inspection */
+                        if (literal != null) {
+                            boolean isTarget;
+                            int stringLength;
+                            try {
+                                final String string = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
+                                stringLength        = string.length();
+                                isTarget            = stringLength != Integer.parseInt(arguments[2].getText());
+                            } catch (NumberFormatException lengthParsingHasFailed) {
+                                isTarget     = false;
+                                stringLength = -1;
+                            }
+                            if (isTarget && stringLength != -1) {
+                                holder.registerProblem(arguments[2], message, new LengthFix(String.valueOf(stringLength)));
+                            }
                         }
                     }
                 }

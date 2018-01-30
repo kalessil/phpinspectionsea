@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  */
 
 public class CompactArgumentsInspector extends BasePhpInspection {
-    private static final String patternUnknownVariable = "$%s might not be defined in the scope.";
+    private static final String patternUnknownVariable = "'$%s' might not be defined in the scope.";
     private static final String patternStringExpected  = "There is chance that it should be '%s' here.";
 
     @NotNull

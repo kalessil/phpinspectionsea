@@ -255,16 +255,23 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             }
                             continue;
                         } else if (parent instanceof BinaryExpression) {
-                            final BinaryExpression binary = (BinaryExpression) parent;
-                            if (PhpLanguageUtil.isNull(OpenapiElementsUtil.getSecondOperand(binary, expression))) {
-                                final IElementType operator = binary.getOperationType();
+                            final BinaryExpression binary  = (BinaryExpression) parent;
+                            final IElementType operator    = binary.getOperationType();
+                            final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(binary, expression);
+                            if (PhpLanguageUtil.isNull(secondOperand)) {
                                 if (operator == PhpTokenTypes.opIDENTICAL && !paramTypes.contains(Types.strNull)) {
                                     holder.registerProblem(binary, messageViolationInCheck);
                                 } else if (operator == PhpTokenTypes.opNOT_IDENTICAL&& !paramTypes.contains(Types.strNull)) {
                                     holder.registerProblem(binary, messageNoSense);
                                 }
-                                /* TODO: other types can lead to true/false as well */
+                            } else if (PhpLanguageUtil.isBoolean(secondOperand)) {
+                                if (operator == PhpTokenTypes.opIDENTICAL && !paramTypes.contains(Types.strBoolean)) {
+                                    holder.registerProblem(binary, messageViolationInCheck);
+                                } else if (operator == PhpTokenTypes.opNOT_IDENTICAL&& !paramTypes.contains(Types.strBoolean)) {
+                                    holder.registerProblem(binary, messageNoSense);
+                                }
                             }
+                            /* TODO: string, array, number types can lead to true/false as well */
                         }
 
                         if (parent != null && !parameter.getDeclaredType().isEmpty()) {

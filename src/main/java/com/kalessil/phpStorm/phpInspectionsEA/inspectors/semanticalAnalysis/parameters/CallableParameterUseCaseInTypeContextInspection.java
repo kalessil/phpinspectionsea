@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
@@ -114,7 +115,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     final PhpAccessVariableInstruction[] usages
                         = PhpControlFlowUtil.getFollowingVariableAccessInstructions(entryPoint, parameterName, false);
                     for (final PhpAccessVariableInstruction instruction : usages) {
-                        final PsiElement parent        = instruction.getAnchor().getParent();
+                        final PsiElement expression    = instruction.getAnchor();
+                        final PsiElement parent        = expression.getParent();
                         final PsiElement callCandidate = null == parent ? null : parent.getParent();
 
                         /* check if is_* functions being used according to definitions */
@@ -252,13 +254,22 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 }
                             }
                             continue;
+                        } else if (parent instanceof BinaryExpression) {
+                            final BinaryExpression binary = (BinaryExpression) parent;
+                            if (PhpLanguageUtil.isNull(OpenapiElementsUtil.getSecondOperand(binary, expression))) {
+                                final IElementType operator = binary.getOperationType();
+                                if (operator == PhpTokenTypes.opIDENTICAL && !paramTypes.contains(Types.strNull)) {
+                                    holder.registerProblem(binary, messageViolationInCheck);
+                                } else if (operator == PhpTokenTypes.opNOT_IDENTICAL&& !paramTypes.contains(Types.strNull)) {
+                                    holder.registerProblem(binary, messageNoSense);
+                                }
+                                /* TODO: other types can lead to true/false as well */
+                            }
                         }
 
                         if (parent != null && !parameter.getDeclaredType().isEmpty()) {
                             InstanceOfCorrectnessStrategy.apply(holder, paramTypes, parent);
                         }
-
-                        /* TODO: analyze comparison operations */
                     }
 
                     paramTypes.clear();

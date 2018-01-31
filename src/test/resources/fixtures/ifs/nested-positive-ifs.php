@@ -20,7 +20,6 @@ function cases_holder() {
        }
     }
 
-    /* false-positives: mixed out operators */
     if ($a || $b) {
         <weak_warning descr="If statement can be merged into parent.">if</weak_warning> ($c) {
         }

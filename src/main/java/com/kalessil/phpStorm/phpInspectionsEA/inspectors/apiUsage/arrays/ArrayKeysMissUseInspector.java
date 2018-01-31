@@ -38,20 +38,22 @@ public class ArrayKeysMissUseInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
 
-                final String functionName    = reference.getName();
-                final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length == 1 && functionName != null && functionName.equals("array_keys")) {
-                    final PsiElement parent = reference.getParent();
-                    if (parent instanceof ParameterList) {
-                        final PsiElement grandParent = parent.getParent();
-                        if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
-                            final FunctionReference parentCall = (FunctionReference) grandParent;
-                            final String parentCallName        = parentCall.getName();
-                            if (parentCallName != null) {
-                                if (parentCallName.equals("array_unique")) {
-                                    holder.registerProblem(parentCall, messageArrayUnique, new ReplaceFix(reference.getText()));
-                                } else if (parentCallName.equals("count")) {
-                                    holder.registerProblem(reference, messageCount, new ReplaceFix(arguments[0].getText()));
+                final String functionName = reference.getName();
+                if (functionName != null && functionName.equals("array_keys")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 1) {
+                        final PsiElement parent = reference.getParent();
+                        if (parent instanceof ParameterList) {
+                            final PsiElement grandParent = parent.getParent();
+                            if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
+                                final FunctionReference parentCall = (FunctionReference) grandParent;
+                                final String parentCallName        = parentCall.getName();
+                                if (parentCallName != null) {
+                                    if (parentCallName.equals("array_unique")) {
+                                        holder.registerProblem(parentCall, messageArrayUnique, new ReplaceFix(reference.getText()));
+                                    } else if (parentCallName.equals("count")) {
+                                        holder.registerProblem(reference, messageCount, new ReplaceFix(arguments[0].getText()));
+                                    }
                                 }
                             }
                         }

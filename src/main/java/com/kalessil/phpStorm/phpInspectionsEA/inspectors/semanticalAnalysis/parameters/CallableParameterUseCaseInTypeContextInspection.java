@@ -120,7 +120,6 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                         final PsiElement callCandidate = null == parent ? null : parent.getParent();
 
                         /* check if is_* functions being used according to definitions */
-                        /* TODO: method/strategy 1 */
                         if (OpenapiTypesUtil.isFunctionReference(callCandidate)) {
                             final FunctionReference functionCall = (FunctionReference) callCandidate;
                             final String functionName            = functionCall.getName();
@@ -188,7 +187,6 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                         }
 
                         /* case: assignments violating parameter definition */
-                        /* TODO: method/strategy 2 */
                         if (OpenapiTypesUtil.isAssignment(parent)) {
                             final AssignmentExpression assignment = (AssignmentExpression) parent;
                             final PhpPsiElement variable          = assignment.getVariable();
@@ -253,7 +251,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     }
                                 }
                             }
-                            continue;
+                            //continue;
                         } else if (parent instanceof BinaryExpression) {
                             final BinaryExpression binary = (BinaryExpression) parent;
                             final IElementType operator   = binary.getOperationType();
@@ -295,12 +293,12 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                         }
                                     }
                                 }
+                            } else if (operator == PhpTokenTypes.kwINSTANCEOF) {
+                                if (!parameter.getDeclaredType().isEmpty()) {
+                                    InstanceOfCorrectnessStrategy.apply(holder, paramTypes, binary);
+                                }
                             }
-                            /* TODO: number types can lead to true/false as well */
-                        }
-
-                        if (parent != null && !parameter.getDeclaredType().isEmpty()) {
-                            InstanceOfCorrectnessStrategy.apply(holder, paramTypes, parent);
+                            //continue;
                         }
                     }
 

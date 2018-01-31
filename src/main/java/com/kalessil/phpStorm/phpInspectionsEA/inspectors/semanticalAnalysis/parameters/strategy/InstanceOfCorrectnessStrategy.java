@@ -3,7 +3,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.par
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.PhpIndex;
-import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
@@ -32,53 +31,51 @@ final public class InstanceOfCorrectnessStrategy {
     final private static String messageUnrelatedClass = "It seems to be always false (classes are not related).";
     final private static String patternCompareNull    = "'%s' can be used instead.";
 
-    public static boolean apply(@NotNull ProblemsHolder holder, @NotNull Set<String> parameterTypes, @NotNull PsiElement context) {
-        boolean result = false;
-        if (context instanceof BinaryExpression) {
-            final BinaryExpression binary = (BinaryExpression) context;
-            final PsiElement left         = binary.getLeftOperand();
-            final PsiElement right        = binary.getRightOperand();
-            if (left != null && right instanceof ClassReference && binary.getOperationType() == PhpTokenTypes.kwINSTANCEOF) {
-                final boolean isObject = parameterTypes.stream().anyMatch(t -> t.startsWith("\\") || t.equals(Types.strObject));
-                if (isObject) {
-                    final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) right);
-                    if (resolved instanceof PhpClass) {
-                        final int typesCount         = parameterTypes.size();
-                        final PhpClass resolvedClass = (PhpClass) resolved;
-                        if (parameterTypes.contains(resolvedClass.getFQN())) {
-                            if (typesCount == 1) {
-                                holder.registerProblem(context, messageSameClass);
-                                result = true;
-                            } else if (typesCount == 2 && parameterTypes.contains(Types.strNull)) {
-                                final PsiElement target  = context.getParent() instanceof UnaryExpression ? context.getParent() : context;
-                                final String replacement = String.format("%s %s null", left.getText(), context == target ? "!==" : "===");
-                                holder.registerProblem(
-                                        target,
-                                        String.format(patternCompareNull, replacement),
-                                        new CompareToNullFix(replacement)
-                                );
-                                result = true;
-                            }
-                        } else {
-                            if (typesCount == 1) {
-                                final Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(
-                                        parameterTypes.iterator().next(),
-                                        PhpIndex.getInstance(holder.getProject())
-                                );
-                                if (classes.size() == 1) {
-                                    final Set<PhpClass> parents = InterfacesExtractUtil.getCrawlInheritanceTree(resolvedClass, true);
-                                    if (!parents.contains(classes.iterator().next())) {
-                                        holder.registerProblem(context, messageUnrelatedClass);
-                                        result = true;
-                                    }
+    public static boolean apply(@NotNull ProblemsHolder holder, @NotNull Set<String> parameterTypes, @NotNull BinaryExpression binary) {
+        boolean result         = false;
+        final PsiElement left  = binary.getLeftOperand();
+        final PsiElement right = binary.getRightOperand();
+        if (left != null && right instanceof ClassReference) {
+            final boolean isObject = parameterTypes.stream().anyMatch(t -> t.startsWith("\\") || t.equals(Types.strObject));
+            if (isObject) {
+                final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) right);
+                if (resolved instanceof PhpClass) {
+                    final int typesCount         = parameterTypes.size();
+                    final PhpClass resolvedClass = (PhpClass) resolved;
+                    if (parameterTypes.contains(resolvedClass.getFQN())) {
+                        if (typesCount == 1) {
+                            holder.registerProblem(binary, messageSameClass);
+                            result = true;
+                        } else if (typesCount == 2 && parameterTypes.contains(Types.strNull)) {
+                            final PsiElement parent  = binary.getParent();
+                            final PsiElement target  = parent instanceof UnaryExpression ? parent : binary;
+                            final String replacement = String.format("%s %s null", left.getText(), binary == target ? "!==" : "===");
+                            holder.registerProblem(
+                                    target,
+                                    String.format(patternCompareNull, replacement),
+                                    new CompareToNullFix(replacement)
+                            );
+                            result = true;
+                        }
+                    } else {
+                        if (typesCount == 1) {
+                            final Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(
+                                    parameterTypes.iterator().next(),
+                                    PhpIndex.getInstance(holder.getProject())
+                            );
+                            if (classes.size() == 1) {
+                                final Set<PhpClass> parents = InterfacesExtractUtil.getCrawlInheritanceTree(resolvedClass, true);
+                                if (!parents.contains(classes.iterator().next())) {
+                                    holder.registerProblem(binary, messageUnrelatedClass);
+                                    result = true;
                                 }
                             }
                         }
                     }
-                } else {
-                    holder.registerProblem(context, messageNotObject);
-                    result = true;
                 }
+            } else {
+                holder.registerProblem(binary, messageNotObject);
+                result = true;
             }
         }
         return result;
@@ -95,5 +92,4 @@ final public class InstanceOfCorrectnessStrategy {
             super(expression);
         }
     }
-
 }

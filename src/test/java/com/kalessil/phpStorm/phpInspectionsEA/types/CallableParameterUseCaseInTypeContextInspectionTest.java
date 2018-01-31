@@ -19,6 +19,16 @@ final public class CallableParameterUseCaseInTypeContextInspectionTest extends P
         myFixture.configureByFile("fixtures/types/parameter-types-checks.boolean.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testIfFindsArrayPatterns() {
+        myFixture.enableInspections(new CallableParameterUseCaseInTypeContextInspection());
+        myFixture.configureByFile("fixtures/types/parameter-types-checks.array.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+    public void testIfFindsStringPatterns() {
+        myFixture.enableInspections(new CallableParameterUseCaseInTypeContextInspection());
+        myFixture.configureByFile("fixtures/types/parameter-types-checks.string.php");
+        myFixture.testHighlighting(true, false, true);
+    }
     public void testIfFindsInstanceofPatterns() {
         myFixture.enableInspections(new CallableParameterUseCaseInTypeContextInspection());
         myFixture.configureByFile("fixtures/types/parameter-types-checks.instanceof.php");

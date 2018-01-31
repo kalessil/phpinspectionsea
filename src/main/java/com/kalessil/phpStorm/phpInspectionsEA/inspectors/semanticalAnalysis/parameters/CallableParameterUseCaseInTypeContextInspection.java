@@ -255,23 +255,35 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             }
                             continue;
                         } else if (parent instanceof BinaryExpression) {
-                            final BinaryExpression binary  = (BinaryExpression) parent;
-                            final IElementType operator    = binary.getOperationType();
-                            final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(binary, expression);
-                            if (PhpLanguageUtil.isNull(secondOperand)) {
-                                if (operator == PhpTokenTypes.opIDENTICAL && !paramTypes.contains(Types.strNull)) {
-                                    holder.registerProblem(binary, messageViolationInCheck);
-                                } else if (operator == PhpTokenTypes.opNOT_IDENTICAL&& !paramTypes.contains(Types.strNull)) {
-                                    holder.registerProblem(binary, messageNoSense);
-                                }
-                            } else if (PhpLanguageUtil.isBoolean(secondOperand)) {
-                                if (operator == PhpTokenTypes.opIDENTICAL && !paramTypes.contains(Types.strBoolean)) {
-                                    holder.registerProblem(binary, messageViolationInCheck);
-                                } else if (operator == PhpTokenTypes.opNOT_IDENTICAL&& !paramTypes.contains(Types.strBoolean)) {
-                                    holder.registerProblem(binary, messageNoSense);
+                            final BinaryExpression binary = (BinaryExpression) parent;
+                            final IElementType operator   = binary.getOperationType();
+                            if (operator == PhpTokenTypes.opIDENTICAL || operator == PhpTokenTypes.opNOT_IDENTICAL) {
+                                final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(binary, expression);
+                                if (secondOperand != null) {
+                                    final String requiredType;
+                                    /* identify the required type */
+                                    if (secondOperand instanceof StringLiteralExpression) {
+                                        requiredType = Types.strString;
+                                    } else if (secondOperand instanceof ArrayCreationExpression) {
+                                        requiredType = Types.strArray;
+                                    } else if (PhpLanguageUtil.isNull(secondOperand)) {
+                                        requiredType = Types.strNull;
+                                    } else if (PhpLanguageUtil.isBoolean(secondOperand)) {
+                                        requiredType = Types.strBoolean;
+                                    } else {
+                                        requiredType = null;
+                                    }
+                                    /* ensure type expectations are met */
+                                    if (requiredType != null) {
+                                        if (operator == PhpTokenTypes.opIDENTICAL && !paramTypes.contains(requiredType)) {
+                                            holder.registerProblem(binary, messageViolationInCheck);
+                                        } else if (operator == PhpTokenTypes.opNOT_IDENTICAL && !paramTypes.contains(requiredType)) {
+                                            holder.registerProblem(binary, messageNoSense);
+                                        }
+                                    }
                                 }
                             }
-                            /* TODO: string, array, number types can lead to true/false as well */
+                            /* TODO: number types can lead to true/false as well */
                         }
 
                         if (parent != null && !parameter.getDeclaredType().isEmpty()) {

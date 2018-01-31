@@ -273,12 +273,25 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     } else {
                                         requiredType = null;
                                     }
-                                    /* ensure type expectations are met */
                                     if (requiredType != null) {
+                                        /* ensure generic types expectations are met */
                                         if (operator == PhpTokenTypes.opIDENTICAL && !paramTypes.contains(requiredType)) {
                                             holder.registerProblem(binary, messageViolationInCheck);
                                         } else if (operator == PhpTokenTypes.opNOT_IDENTICAL && !paramTypes.contains(requiredType)) {
                                             holder.registerProblem(binary, messageNoSense);
+                                        }
+                                    } else if (OpenapiTypesUtil.isNumber(secondOperand)) {
+                                        /* ensure numeric types expectations are met */
+                                        final boolean isNumber =
+                                                paramTypes.contains(Types.strFloat) ||
+                                                paramTypes.contains(Types.strInteger) ||
+                                                paramTypes.contains(Types.strNumber);
+                                        if (!isNumber) {
+                                            if (operator == PhpTokenTypes.opIDENTICAL) {
+                                                holder.registerProblem(binary, messageViolationInCheck);
+                                            } else if (operator == PhpTokenTypes.opNOT_IDENTICAL) {
+                                                holder.registerProblem(binary, messageNoSense);
+                                            }
                                         }
                                     }
                                 }

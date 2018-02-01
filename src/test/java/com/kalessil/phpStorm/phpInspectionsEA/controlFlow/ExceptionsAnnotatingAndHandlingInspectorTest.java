@@ -20,6 +20,10 @@ final public class ExceptionsAnnotatingAndHandlingInspectorTest extends PhpCodeI
         myFixture.enableInspections(new ExceptionsAnnotatingAndHandlingInspector());
         myFixture.configureByFile("fixtures/controlFlow/exception-workflow/missing-phpdoc.php");
         myFixture.testHighlighting(true, false, true);
-
+    }
+    public void testCatchExceptionAndThrowable() {
+        myFixture.enableInspections(new ExceptionsAnnotatingAndHandlingInspector());
+        myFixture.configureByFile("fixtures/controlFlow/exception-workflow/catch-exception-throwable.php");
+        myFixture.testHighlighting(true, false, true);
     }
 }

@@ -4,9 +4,6 @@ function cases_holder() {
     if ($a && $b) {
     }
 
-    if ($a && $b) {
-    }
-
     if ($a && $b && $c) {
     }
 

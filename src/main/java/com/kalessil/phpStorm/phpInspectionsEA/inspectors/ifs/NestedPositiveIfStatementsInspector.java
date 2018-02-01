@@ -10,7 +10,10 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.GroupStatement;
+import com.jetbrains.php.lang.psi.elements.If;
+import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -38,30 +41,21 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpIf(@NotNull If ifStatement) {
-                PsiElement parent = ifStatement.getParent();
-                if (parent instanceof GroupStatement) {
-                    parent = parent.getParent();
-                }
-                /* ensure parent if and the expression has no alternative branches */
-                if (
-                    parent instanceof If &&
-                    !ExpressionSemanticUtil.hasAlternativeBranches(ifStatement) &&
-                    !ExpressionSemanticUtil.hasAlternativeBranches((If) parent)
-                ) {
-                    /* ensure that if is single expression in group */
-                    final PsiElement directParent = ifStatement.getParent();
-                    if (directParent instanceof If || (
-                            directParent instanceof GroupStatement &&
-                            ExpressionSemanticUtil.countExpressionsInGroup((GroupStatement) directParent) == 1
-                    )) {
-                        /* ensure that the same logical operator being used (to not increase the visual complexity) */
-                        final PhpPsiElement ifCondition = ifStatement.getCondition();
-                        if (ifCondition != null) {
+            public void visitPhpIf(@NotNull If expression) {
+                final PsiElement parentIfBodyCandidate = expression.getParent();
+                if (parentIfBodyCandidate instanceof GroupStatement) {
+                    final PsiElement parentIfCandidate = parentIfBodyCandidate.getParent();
+                    if (parentIfCandidate instanceof If) {
+                        final If parentIf      = (If) parentIfCandidate;
+                        final boolean isTarget =
+                            !ExpressionSemanticUtil.hasAlternativeBranches(expression) &&
+                            !ExpressionSemanticUtil.hasAlternativeBranches(parentIf) &&
+                            ExpressionSemanticUtil.countExpressionsInGroup((GroupStatement) parentIfBodyCandidate) == 1;
+                        if (isTarget && expression.getCondition() != null) {
                             holder.registerProblem(
-                                ifStatement.getFirstChild(),
-                                message,
-                                new MergeIfsFix(ifStatement, (If) parent)
+                                    expression.getFirstChild(),
+                                    message,
+                                    new MergeIfsFix(expression, parentIf)
                             );
                         }
                     }
@@ -89,9 +83,8 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
         MergeIfsFix(@NotNull If target, @NotNull If parent) {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(target.getProject());
-
-            this.target = factory.createSmartPsiElementPointer(target);
-            this.parent = factory.createSmartPsiElementPointer(parent);
+            this.target                       = factory.createSmartPsiElementPointer(target);
+            this.parent                       = factory.createSmartPsiElementPointer(parent);
         }
 
         @Override
@@ -107,10 +100,10 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                     if (body != null && parentBody != null) {
                         final boolean escapeFirst =
                                 parentCondition instanceof BinaryExpression &&
-                                ((BinaryExpression) parentCondition).getOperationType() != PhpTokenTypes.opAND;
+                                ((BinaryExpression) parentCondition).getOperationType() == PhpTokenTypes.opOR;
                         final boolean escapeSecond =
                                 condition instanceof BinaryExpression &&
-                                ((BinaryExpression) condition).getOperationType() != PhpTokenTypes.opAND;
+                                ((BinaryExpression) condition).getOperationType() == PhpTokenTypes.opOR;
                         final String code = String.format(
                                 "(%s && %s)",
                                 String.format(escapeFirst  ? "(%s)" : "%s", parentCondition.getText()),

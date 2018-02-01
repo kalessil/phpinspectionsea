@@ -16,13 +16,19 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 final public class ExpressionSemanticUtil {
-    /**
-     * @param ifStatement if expression to check
-     * @return boolean
-     */
-    public static boolean hasAlternativeBranches(If ifStatement) {
-        return (null != ifStatement.getElseBranch() || ifStatement.getElseIfBranches().length > 0);
+
+    public static boolean hasAlternativeBranches(@NotNull If ifStatement) {
+        return (ifStatement.getElseBranch() != null || ifStatement.getElseIfBranches().length > 0);
     }
 
     /**
@@ -38,10 +44,6 @@ final public class ExpressionSemanticUtil {
         return null;
     }
 
-    /**
-     * @param groupStatement group expression to check
-     * @return integer
-     */
     public static int countExpressionsInGroup(@NotNull GroupStatement groupStatement) {
         return (int) Stream.of(groupStatement.getChildren())
                 .filter(statement -> statement instanceof PhpPsiElement)
@@ -61,10 +63,6 @@ final public class ExpressionSemanticUtil {
         return null;
     }
 
-    /**
-     * @param expression expression to scan for group definition
-     * @return null|GroupStatement
-     */
     @Nullable
     public static GroupStatement getGroupStatement(@NotNull PsiElement expression) {
         PsiElement child = expression.getLastChild();
@@ -77,10 +75,6 @@ final public class ExpressionSemanticUtil {
         return null;
     }
 
-    /**
-     * @param expression to process
-     * @return inner expression
-     */
     @Nullable
     public static PsiElement getExpressionTroughParenthesis(@Nullable PsiElement expression) {
         PsiElement innerExpression = expression;
@@ -90,10 +84,6 @@ final public class ExpressionSemanticUtil {
         return innerExpression;
     }
 
-    /**
-     * @param objCondition to process
-     * @return list of extracted conditions
-     */
     @Nullable
     public static List<PsiElement> getConditions(@Nullable PsiElement objCondition, @Nullable IElementType[] arrOperationHolder) {
         /* get through unary and parenthesis wrappers */
@@ -134,13 +124,6 @@ final public class ExpressionSemanticUtil {
         return ExpressionSemanticUtil.getConditions((BinaryExpression) objCondition, operationType);
     }
 
-    /**
-     * Extracts conditions into naturally ordered list
-     *
-     * @param expression expression for extracting sub-conditions
-     * @param operation operator to take in consideration
-     * @return list of sub-conditions in native order
-     */
     private static List<PsiElement> getConditions(@NotNull BinaryExpression expression, @NotNull IElementType operation) {
         final LinkedList<PsiElement> result = new LinkedList<>();
 

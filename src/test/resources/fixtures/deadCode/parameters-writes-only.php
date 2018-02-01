@@ -22,7 +22,7 @@ class Container {
         $out []= '';
     }
 
-    public function method3($a, $b, $c, &$d) {
+    public function method3($a, $b, $c, &$d, stdClass $object) {
         $local = 0;
 
         foreach ([] as $i => $v) {
@@ -33,6 +33,11 @@ class Container {
 
             ++$d;
         }
+
+        /* false-positives: objects */
+        $object[0] = 0;
+        $object[]  = 0;
+        ++$object;
 
         /* false-positives: by reference manipulations */
         $array = [0, 0];

@@ -118,6 +118,10 @@ class CasesHolder {
         }
     }
 
+    public function npeSafeNullCoalescingCase(?CasesHolder $first) {
+        return ($first ?? new CaseHolder())->nonExistingField;
+    }
+
     public function npeSafeChecks(?CasesHolder $first, ?CasesHolder $second) {
         if ($first) {
             return $first->nonExistingField;

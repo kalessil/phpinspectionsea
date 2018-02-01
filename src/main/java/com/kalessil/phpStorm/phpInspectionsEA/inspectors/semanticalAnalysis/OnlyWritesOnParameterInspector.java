@@ -12,11 +12,13 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessInstructi
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -47,20 +49,29 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                Arrays.stream(method.getParameters())
-                        .filter(parameter  -> !parameter.getName().isEmpty() && !parameter.isPassByRef())
-                        .forEach(parameter -> this.analyzeAndReturnUsagesCount(parameter.getName(), method));
+               this.visitPhpFunction(method);
             }
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
                 Arrays.stream(function.getParameters())
                         .filter(parameter  -> !parameter.getName().isEmpty() && !parameter.isPassByRef())
+                        .filter(parameter  -> {
+                            final PhpType declaredType = parameter.getDeclaredType().filterUnknown().filterNull();
+                            final boolean isObject     =
+                                !declaredType.isEmpty() &&
+                                declaredType.getTypes().stream().anyMatch(t -> {
+                                    final String type = Types.getType(t);
+                                    return type.equals(Types.strObject) || type.startsWith("\\");
+                                });
+                            return !isObject;
+                        })
                         .forEach(parameter -> this.analyzeAndReturnUsagesCount(parameter.getName(), function));
 
                 final List<Variable> variables = ExpressionSemanticUtil.getUseListVariables(function);
                 if (variables != null) {
                     this.checkUseVariables(variables, function);
+                    variables.clear();
                 }
             }
 

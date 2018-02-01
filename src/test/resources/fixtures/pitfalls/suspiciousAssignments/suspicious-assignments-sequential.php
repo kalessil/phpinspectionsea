@@ -65,7 +65,7 @@ function immediateOverrides()
     $y12 = null;
     if ($x) {
         $y13 = null;
-        return $y13;
+        $y13 = (string)$y13;
     }
     $y13 = null;
 

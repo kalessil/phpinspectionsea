@@ -57,7 +57,19 @@ function immediateOverrides()
     $y11 = '';
     $y11 = "$y11";
 
-    return [$y1, $y2, $y3, $y4, $y5, $y6, $y7, $y8, $y9, $y10, $y10, $y11];
+    /* false-positive: conditional write-consume cycle */
+    if ($x) {
+        $y12 = null;
+        if ($y12 === null) { return; }
+    }
+    $y12 = null;
+    if ($x) {
+        $y13 = null;
+        return $y13;
+    }
+    $y13 = null;
+
+    return [$y1, $y2, $y3, $y4, $y5, $y6, $y7, $y8, $y9, $y10, $y10, $y11, $y12, $y13];
 }
 
 function increments_decrements_cases_holder ()

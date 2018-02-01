@@ -10,6 +10,7 @@ import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -22,6 +23,7 @@ import javax.swing.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -91,8 +93,12 @@ public class ForeachSourceInspector extends BasePhpInspection {
             }
 
             private void analyseContainer(@NotNull PsiElement container) {
-                final HashSet<String> types = new HashSet<>();
-                TypeFromPlatformResolverUtil.resolveExpressionType(container, types);
+                final PhpType resolvedType = OpenapiResolveUtil.resolveType((PhpTypedElement) container, container.getProject());
+                if (resolvedType == null) {
+                    return;
+                }
+                final Set<String> types = resolvedType.filterUnknown().getTypes().stream()
+                        .map(Types::getType).collect(Collectors.toSet());
                 if (types.isEmpty()) {
                     /* false-positives: pre-defined variables */
                     if (container instanceof Variable) {

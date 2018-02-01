@@ -63,3 +63,8 @@
             foreach ($array as $string) {}
         }
     }
+
+    /* false-positive: IDE doesn't handle null-coalescing operator properly */
+    function foo(?\Traversable $traversable) {
+        foreach ($traversable ?? [] as $value) {}
+    }

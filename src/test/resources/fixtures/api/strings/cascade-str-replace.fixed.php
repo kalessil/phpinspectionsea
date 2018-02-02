@@ -7,11 +7,11 @@
     /** multiple dock-blocks should not break inspection */
 /** dock-block should not break inspection */
     /** multiple dock-blocks should not break inspection */
-    $str = str_replace(array('-', ' ', ' '), array('_', '-', '-'), '...');
+    $str = str_replace(['-', ' ', ' '], ['_', '-', '-'], '...');
 
     /* nested calls pattern */
     $nested = str_replace(
-        array(' ', ' '), '-',
+        [' ', ' '], '-',
         '...'
     );
 
@@ -28,7 +28,7 @@
     );
 
     function return_case_holder($x) {
-        return str_replace(array('...', '...'), '', $x);
+        return str_replace(['...', '...'], '', $x);
     }
 
     /* false-positives: source and result storage containers are not matching */
@@ -38,20 +38,20 @@
     /* QF correctness cases */
     function fix_correctness($x, $y, $z, $t)
     {
-        $one = str_replace(array('1', '2', '3'), array('.', '.', '_'), '...');
+        $one = str_replace(['1', '2', '3'], ['.', '.', '_'], '...');
 
-        $two = str_replace(array('2', '3'), array('.', '_'), str_replace('1', '.', '...'));
+        $two = str_replace(['2', '3'], ['.', '_'], str_replace('1', '.', '...'));
 
-        $three = str_replace(array('2', '1'), '.', '...');
-        $four  = str_replace(array('2', '1'), '.', '...');
-        $five  = str_replace(array('2', '1'), '.', '...');
-        $six   = str_replace(array('2', '1'), '.', '...');
+        $three = str_replace(['2', '1'], '.', '...');
+        $four  = str_replace(['2', '1'], '.', '...');
+        $five  = str_replace(['2', '1'], '.', '...');
+        $six   = str_replace(['2', '1'], '.', '...');
 
-        $seven = str_replace(array('2', '1'), array('y', 'x'), '...');
-        $eight = str_replace(['3', '1', '2'], array('y', 'x', 'x'), '...');
+        $seven = str_replace(['2', '1'], ['y', 'x'], '...');
+        $eight = str_replace(['3', '1', '2'], ['y', 'x', 'x'], '...');
 
-        $ten    = str_replace(array('x', $x), array('y', $y), '...');
-        $eleven = str_replace(array($z, 'x'), array($t, 'y'), '...');
+        $ten    = str_replace(['x', $x], ['y', $y], '...');
+        $eleven = str_replace([$z, 'x'], [$t, 'y'], '...');
 
-        $thirteen = str_replace(array($one, $two, $three), array($one, $two, $three), '___');
+        $thirteen = str_replace([$one, $two, $three], [$one, $two, $three], '___');
     }

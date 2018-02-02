@@ -23,8 +23,8 @@ import org.jetbrains.annotations.Nullable;
  */
 
 final public class SequentialAssignmentsStrategy {
-    private static final String patternProbableElse = "%s is immediately overridden, perhaps it was intended to use 'else' here.";
-    private static final String patternGeneral      = "%s is immediately overridden, please check this code fragment.";
+    private static final String patternConditional = "%s is immediately overridden, perhaps it was intended to use 'else' here.";
+    private static final String patternGeneral     = "%s is immediately overridden, please check this code fragment.";
 
     static public void apply(@NotNull AssignmentExpression expression, @NotNull ProblemsHolder holder) {
         final PsiElement parent    = expression.getParent();
@@ -37,8 +37,11 @@ final public class SequentialAssignmentsStrategy {
             if (previous != null) {
                 if (previous instanceof If) {
                     handlePrecedingIf(container, (If) previous, holder);
-                } else if (previous.getFirstChild() instanceof AssignmentExpression) {
-                    handlePrecedingAssignment(container, (AssignmentExpression) previous.getFirstChild(), holder);
+                } else {
+                    final PsiElement assignmentCandidate = previous.getFirstChild();
+                    if (assignmentCandidate instanceof AssignmentExpression) {
+                        handlePrecedingAssignment(container, (AssignmentExpression) assignmentCandidate, holder);
+                    }
                 }
             }
         }
@@ -82,19 +85,32 @@ final public class SequentialAssignmentsStrategy {
         final PsiElement lastStatement = body == null ? null : ExpressionSemanticUtil.getLastStatement(body);
         if (lastStatement != null) {
             final boolean isReturnPoint =
-                    lastStatement.getFirstChild() instanceof PhpExit ||
                     lastStatement instanceof PhpReturn   || lastStatement instanceof PhpThrow ||
-                    lastStatement instanceof PhpContinue || lastStatement instanceof PhpBreak;
+                    lastStatement instanceof PhpContinue || lastStatement instanceof PhpBreak ||
+                    lastStatement.getFirstChild() instanceof PhpExit;
             if (!isReturnPoint) {
+                PhpPsiElement found = null;
+                /* identify conditional assignment */
                 for (final PsiElement bodyStatement : body.getChildren()) {
                     final PsiElement candidateExpression = bodyStatement.getFirstChild();
                     if (candidateExpression instanceof AssignmentExpression) {
                         final PsiElement candidate = ((AssignmentExpression) candidateExpression).getVariable();
                         if (candidate != null && OpeanapiEquivalenceUtil.areEqual(candidate, container)) {
-                            final String message = String.format(patternProbableElse, container.getText());
-                            holder.registerProblem(container.getParent(), message, ProblemHighlightType.GENERIC_ERROR);
+                            found = (PhpPsiElement) bodyStatement;
                             break;
                         }
+                    }
+                }
+                /* check read context and do reporting */
+                if (found != null) {
+                    final PsiElement next              = found.getNextPsiSibling();
+                    final PsiElement consumerCandidate = next instanceof If ? ((If) next).getCondition() : next;
+                    final boolean isUsed               = consumerCandidate != null &&
+                            PsiTreeUtil.findChildrenOfType(consumerCandidate, container.getClass()).stream()
+                                    .anyMatch(candidate -> OpeanapiEquivalenceUtil.areEqual(candidate, container));
+                    if (!isUsed) {
+                        final String message = String.format(patternConditional, container.getText());
+                        holder.registerProblem(container.getParent(), message, ProblemHighlightType.GENERIC_ERROR);
                     }
                 }
             }

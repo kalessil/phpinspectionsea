@@ -52,4 +52,6 @@
 
         $ten    = str_replace(array('x', $x), array('y', $y), '...');
         $eleven = str_replace(array($z, 'x'), array($t, 'y'), '...');
+
+        $thirteen = str_replace(array($one, $two, $three), array($one, $two, $three), '___');
     }

@@ -154,7 +154,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 return result;
             }
 
-                        @Nullable
+            @Nullable
             private FunctionReference getFunctionReference(@NotNull PhpReturn phpReturn) {
                 FunctionReference result = null;
                 final PsiElement value
@@ -167,8 +167,6 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 }
                 return result;
             }
-
-
 
             @Nullable
             private AssignmentExpression getPreviousAssignment(@NotNull PsiElement returnOrAssignment) {
@@ -248,7 +246,24 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
 
         private void mergeArguments(@NotNull PsiElement to, @NotNull PsiElement from) {
             final Project project  = to.getProject();
-            if (to instanceof StringLiteralExpression) {
+            if (to instanceof ArrayCreationExpression) {
+                final PsiElement comma      = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
+                final PsiElement firstValue = ((ArrayCreationExpression) to).getFirstPsiChild();
+                final PsiElement marker     = firstValue == null ? null : firstValue.getPrevSibling();
+                if (comma != null && marker != null) {
+                    if (from instanceof ArrayCreationExpression) {
+                        final PsiElement[] values = from.getChildren();
+                        ArrayUtils.reverse(values);
+                        Arrays.stream(values).forEach(value -> {
+                            to.addAfter(comma, marker);
+                            to.addAfter(value.copy(), marker);
+                        });
+                    } else {
+                        to.addAfter(comma, marker);
+                        to.addAfter(from.copy(), marker);
+                    }
+                }
+            } else {
                 if (from instanceof ArrayCreationExpression) {
                     final PsiElement comma       = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
                     final String pattern         = "array(%1%)".replace("%1%", to.getText());
@@ -268,26 +283,6 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     final String pattern = "array(%1%, %2%)".replace("%2%", to.getText()).replace("%1%", from.getText());
                     to.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern));
                 }
-            } else if (to instanceof ArrayCreationExpression) {
-                final PsiElement comma      = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
-                final PsiElement firstValue = ((ArrayCreationExpression) to).getFirstPsiChild();
-                final PsiElement marker     = firstValue == null ? null : firstValue.getPrevSibling();
-                if (comma != null && marker != null) {
-                    if (from instanceof ArrayCreationExpression) {
-                        final PsiElement[] values = from.getChildren();
-                        ArrayUtils.reverse(values);
-                        Arrays.stream(values).forEach(value -> {
-                            to.addAfter(comma, marker);
-                            to.addAfter(value.copy(), marker);
-                        });
-                    } else {
-                        to.addAfter(comma, marker);
-                        to.addAfter(from.copy(), marker);
-                    }
-                }
-            } else {
-                final String pattern = "array(%1%, %2%)".replace("%2%", to.getText()).replace("%1%", from.getText());
-                to.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern));
             }
         }
 

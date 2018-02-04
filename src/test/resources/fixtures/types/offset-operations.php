@@ -70,3 +70,13 @@
                 = "This is a message";
         }
     }
+
+    class FalsePositivesHolder {
+        foreach ([] as $key => $value) {} /* -> string|integer */
+        $string = substr('', -1);         /* -> string|false   */
+
+        return [
+            $key[0],
+            $string[0],
+        ];
+    }

@@ -139,11 +139,13 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             containerTypes.clear();
             return true;
         }
-        if (2 == containerTypes.size() &&
-            containerTypes.contains(Types.strInteger) && containerTypes.contains(Types.strString)
-        ) {                                                 // foreach loops keys are recognized this way
-            containerTypes.clear();
-            return true;
+        if (containerTypes.size() == 2 && containerTypes.contains(Types.strString)) {
+            final boolean isForeachKeyType    = containerTypes.contains(Types.strInteger);
+            final boolean isCoreApiStringType = containerTypes.contains(Types.strBoolean);
+            if (isForeachKeyType || isCoreApiStringType) {
+                containerTypes.clear();
+                return true;
+            }
         }
         if (containerTypes.contains(Types.strCallable)) {   // treat callable as array
             containerTypes.remove(Types.strCallable);

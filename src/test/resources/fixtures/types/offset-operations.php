@@ -71,7 +71,7 @@
         }
     }
 
-    function false_positives_holder {
+    function false_positives_holder() {
         foreach ([] as $key => $value) {} /* -> string|integer */
         $string = substr('', -1);         /* -> string|false   */
 

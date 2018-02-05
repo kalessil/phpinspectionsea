@@ -114,6 +114,8 @@ final public class NullableVariablesStrategy {
         @Nullable GroupStatement body,
         @NotNull ProblemsHolder holder
     ) {
+        final boolean skipToDeclarationNeeded = variableDeclaration != null;
+        boolean skipPerformed                 = false;
         /* find variable usages, control flow is not our friend here */
         final List<Variable> variables = new ArrayList<>();
         PsiTreeUtil.findChildrenOfType(body, Variable.class).stream()
@@ -136,6 +138,12 @@ final public class NullableVariablesStrategy {
         /* analyze collected variable usages */
         for (final Variable variable : variables){
             final PsiElement parent = variable.getParent();
+
+            /* for local variables we need to skip usages until assignment performed */
+            if (skipToDeclarationNeeded && !skipPerformed) {
+                skipPerformed = variableDeclaration == parent;
+                continue;
+            }
 
             /* instanceof, implicit null comparisons */
             if (parent instanceof BinaryExpression) {

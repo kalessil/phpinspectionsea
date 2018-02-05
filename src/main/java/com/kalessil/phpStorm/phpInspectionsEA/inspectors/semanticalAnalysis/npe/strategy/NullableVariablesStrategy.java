@@ -56,12 +56,11 @@ final public class NullableVariablesStrategy {
         }
 
         /* check if the variable has been written only once, inspect when null/void values are possible */
-        final Project project = holder.getProject();
         for (final Map.Entry<String, List<AssignmentExpression>> pair : assignments.entrySet()) {
             final List<AssignmentExpression> variableAssignments = pair.getValue();
             if (!variableAssignments.isEmpty()) {
                 final AssignmentExpression assignment = variableAssignments.iterator().next();
-                if (isNullableResult(assignment, project)) {
+                if (isNullableResult(assignment, holder.getProject())) {
                     apply(pair.getKey(), assignment, body, holder);
                 }
                 variableAssignments.clear();
@@ -122,13 +121,14 @@ final public class NullableVariablesStrategy {
         @Nullable GroupStatement body,
         @NotNull ProblemsHolder holder
     ) {
-        final Project project                     = holder.getProject();final boolean skipToDeclarationNeeded = variableDeclaration != null;
+        final Project project                 = holder.getProject();
+        final boolean skipToDeclarationNeeded = variableDeclaration != null;
         boolean skipPerformed                 = false;
-        final List<Variable> uses= PsiTreeUtil.findChildrenOfType(body, Variable.class).stream()
-            .filter(variable -> variableName.equals(variable.getName()))
+        final List<Variable> uses             = PsiTreeUtil.findChildrenOfType(body, Variable.class).stream()
+                .filter(variable -> variableName.equals(variable.getName()))
                 .collect(Collectors.toList());
         for (final Variable variable : uses){
-            final PsiElement parent      = variable.getParent();
+            final PsiElement parent = variable.getParent();
 
             /* for local variables we need to skip usages until assignment performed */
             if (skipToDeclarationNeeded && !skipPerformed) {

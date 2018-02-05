@@ -1,11 +1,13 @@
 <?php
 
-function nullable(Clazz $parameter): ?Clazz {}
-function not_null(Clazz $parameter): Clazz  {}
+class CasesHolder {
+    function canBeNull(stdClass $parameter): ?stdClass    {}
+    function canNotBeNull(stdClass $parameter): stdClass  {}
 
-function cases_holder() {
-    $var = nullable(new Clazz());
-    $var = nullable(<warning descr="Null pointer exception may occur here.">$var</warning>);
-    $var = not_null(<warning descr="Null pointer exception may occur here.">$var</warning>);
-    $var = not_null($var);
+    function cases_holder() {
+        $var = $this->canBeNull(new stdClass());
+        $var = $this->canBeNull(<warning descr="Null pointer exception may occur here.">$var</warning>);
+        $var = $this->canNotBeNull(<warning descr="Null pointer exception may occur here.">$var</warning>);
+        $var = $this->canNotBeNull($var);
+    }
 }

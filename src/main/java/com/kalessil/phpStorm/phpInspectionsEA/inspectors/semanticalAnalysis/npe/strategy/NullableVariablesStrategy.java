@@ -126,9 +126,24 @@ final public class NullableVariablesStrategy {
         final Project project                 = holder.getProject();
         final boolean skipToDeclarationNeeded = variableDeclaration != null;
         boolean skipPerformed                 = false;
-        final List<Variable> uses             = PsiTreeUtil.findChildrenOfType(body, Variable.class).stream()
-                .filter(variable -> variableName.equals(variable.getName()))
-                .collect(Collectors.toList());
+
+        /* find variable usages, control flow is not our friend here */
+        final List<Variable> uses = new ArrayList<>();
+        PsiTreeUtil.findChildrenOfType(body, Variable.class).stream()
+                .filter(variable  -> variableName.equals(variable.getName()))
+                .forEach(variable -> {
+                    final PsiElement parent = variable.getParent();
+                    if (parent instanceof AssignmentExpression) {
+                        final AssignmentExpression assignment = (AssignmentExpression) parent;
+                        PsiTreeUtil.findChildrenOfType(assignment.getValue(), Variable.class).stream()
+                                .filter(v -> variableName.equals(variable.getName()))
+                                .forEach(uses::add);
+                    }
+                    PsiTreeUtil.findChildrenOfType(parent, Variable.class).stream()
+                            .filter(v -> variableName.equals(variable.getName()) && !uses.contains(v))
+                            .forEach(uses::add);
+                });
+        /* analyze collected variable usages */
         for (final Variable variable : uses){
             final PsiElement parent = variable.getParent();
 
@@ -177,7 +192,6 @@ final public class NullableVariablesStrategy {
                 final PsiElement candidate            = assignment.getVariable();
                 if (candidate instanceof Variable && ((Variable) candidate).getName().equals(variableName)) {
                     if (!isNullableResult(assignment, project)) {
-/* TODO: the value may use the variable as well - we need to process it first*/
                         return;
                     }
                 }

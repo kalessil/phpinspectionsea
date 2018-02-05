@@ -57,4 +57,7 @@
 
         $ten    = str_replace($x, $y, <warning descr="This str_replace(...) call can be merged with its parent.">str_replace('x', 'y', '...')</warning>);
         $eleven = str_replace('x', 'y', <warning descr="This str_replace(...) call can be merged with its parent.">str_replace($z, $t, '...')</warning>);
+
+        $thirteen = str_replace([$one, $two], [$one, $two], '___');
+        $thirteen = <warning descr="This str_replace(...) call can be merged with the previous.">str_replace($three, $three, $thirteen)</warning>;
     }

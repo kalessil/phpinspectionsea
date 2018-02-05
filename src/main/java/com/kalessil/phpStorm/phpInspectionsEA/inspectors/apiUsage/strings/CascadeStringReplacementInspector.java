@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -20,6 +21,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.*;
 
 /*
@@ -32,6 +34,9 @@ import java.util.*;
  */
 
 public class CascadeStringReplacementInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean USE_SHORT_ARRAYS_SYNTAX = false;
+
     private static final String messageNesting      = "This str_replace(...) call can be merged with its parent.";
     private static final String messageCascading    = "This str_replace(...) call can be merged with the previous.";
     private static final String messageReplacements = "Can be replaced with the string from the array.";
@@ -154,7 +159,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 return result;
             }
 
-                        @Nullable
+            @Nullable
             private FunctionReference getFunctionReference(@NotNull PhpReturn phpReturn) {
                 FunctionReference result = null;
                 final PsiElement value
@@ -167,8 +172,6 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 }
                 return result;
             }
-
-
 
             @Nullable
             private AssignmentExpression getPreviousAssignment(@NotNull PsiElement returnOrAssignment) {
@@ -197,6 +200,12 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         };
     }
 
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+            component.addCheckbox("Use short arrays syntax", USE_SHORT_ARRAYS_SYNTAX, (isSelected) -> USE_SHORT_ARRAYS_SYNTAX = isSelected)
+        );
+    }
+
     private class SimplifyReplacementFix extends UseSuggestedReplacementFixer {
         @NotNull
         @Override
@@ -209,7 +218,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         }
     }
 
-    private static class MergeStringReplaceCallsFix implements LocalQuickFix {
+    private class MergeStringReplaceCallsFix implements LocalQuickFix {
         final private SmartPsiElementPointer<FunctionReference> patch;
         final private SmartPsiElementPointer<FunctionReference> eliminate;
 
@@ -248,27 +257,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
 
         private void mergeArguments(@NotNull PsiElement to, @NotNull PsiElement from) {
             final Project project  = to.getProject();
-            if (to instanceof StringLiteralExpression) {
-                if (from instanceof ArrayCreationExpression) {
-                    final PsiElement comma       = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
-                    final String pattern         = "array(%1%)".replace("%1%", to.getText());
-                    final PsiElement replacement = PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern);
-                    final PsiElement firstValue  = ((ArrayCreationExpression) replacement).getFirstPsiChild();
-                    final PsiElement marker      = firstValue == null ? null : firstValue.getPrevSibling();
-                    if (comma != null && marker != null) {
-                        final PsiElement[] values = from.getChildren();
-                        ArrayUtils.reverse(values);
-                        Arrays.stream(values).forEach(value -> {
-                            replacement.addAfter(comma, marker);
-                            replacement.addAfter(value.copy(), marker);
-                        });
-                        to.replace(replacement);
-                    }
-                } else {
-                    final String pattern = "array(%1%, %2%)".replace("%2%", to.getText()).replace("%1%", from.getText());
-                    to.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern));
-                }
-            } else if (to instanceof ArrayCreationExpression) {
+            if (to instanceof ArrayCreationExpression) {
                 final PsiElement comma      = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
                 final PsiElement firstValue = ((ArrayCreationExpression) to).getFirstPsiChild();
                 final PsiElement marker     = firstValue == null ? null : firstValue.getPrevSibling();
@@ -286,8 +275,27 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     }
                 }
             } else {
-                final String pattern = "array(%1%, %2%)".replace("%2%", to.getText()).replace("%1%", from.getText());
-                to.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern));
+                if (from instanceof ArrayCreationExpression) {
+                    final PsiElement comma       = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
+                    final String pattern         = (USE_SHORT_ARRAYS_SYNTAX ? "[%1%]" : "array(%1%)").replace("%1%", to.getText());
+                    final PsiElement replacement = PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern);
+                    final PsiElement firstValue  = ((ArrayCreationExpression) replacement).getFirstPsiChild();
+                    final PsiElement marker      = firstValue == null ? null : firstValue.getPrevSibling();
+                    if (comma != null && marker != null) {
+                        final PsiElement[] values = from.getChildren();
+                        ArrayUtils.reverse(values);
+                        Arrays.stream(values).forEach(value -> {
+                            replacement.addAfter(comma, marker);
+                            replacement.addAfter(value.copy(), marker);
+                        });
+                        to.replace(replacement);
+                    }
+                } else {
+                    final String pattern = (USE_SHORT_ARRAYS_SYNTAX ? "[%1%, %2%]" : "array(%1%, %2%)")
+                            .replace("%2%", to.getText())
+                            .replace("%1%", from.getText());
+                    to.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern));
+                }
             }
         }
 
@@ -339,9 +347,12 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 final int searchesCount = search.getChildren().length;
                 if (searchesCount > 1) {
                     final List<String> replaces = Collections.nCopies(searchesCount, replace.getText());
-                    final String pattern        = "array(%a%)".replace("%a%", String.join(", ", replaces));
                     replace.replace(
-                        PhpPsiElementFactory.createPhpPsiFromText(call.getProject(), ArrayCreationExpression.class, pattern)
+                        PhpPsiElementFactory.createPhpPsiFromText(
+                            call.getProject(),
+                            ArrayCreationExpression.class,
+                            (USE_SHORT_ARRAYS_SYNTAX ? "[%a%]" : "array(%a%)").replace("%a%", String.join(", ", replaces))
+                        )
                     );
                 }
             }

@@ -5,7 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.Cascad
 
 final public class CascadeStringReplacementInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(new CascadeStringReplacementInspector());
+        final CascadeStringReplacementInspector inspector = new CascadeStringReplacementInspector();
+        inspector.USE_SHORT_ARRAYS_SYNTAX                 = true;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("fixtures/api/strings/cascade-str-replace.php");
         myFixture.testHighlighting(true, false, true);
 

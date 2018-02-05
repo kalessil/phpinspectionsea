@@ -62,7 +62,7 @@ final public class NullableVariablesStrategy {
             if (!variableAssignments.isEmpty()) {
                 final AssignmentExpression assignment = variableAssignments.iterator().next();
                 if (isNullableResult(assignment, project)) {
-                    apply(pair.getKey(), assignment, controlFlowStart, holder);
+                    apply(pair.getKey(), assignment, body, holder);
                 }
                 variableAssignments.clear();
             }

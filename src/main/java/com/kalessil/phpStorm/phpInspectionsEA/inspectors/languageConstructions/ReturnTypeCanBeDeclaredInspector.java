@@ -23,6 +23,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -74,8 +75,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                final Project project      = holder.getProject();
-                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.hasFeature(PhpLanguageFeature.RETURN_TYPES) && OpenapiElementsUtil.getReturnType(method) == null) {
                     final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
                     final boolean isMagicFunction   = method.getName().startsWith("__");
@@ -175,11 +175,21 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 final PhpClass clazz = method.getContainingClass();
                 if (clazz != null && !clazz.isFinal() && !method.isFinal() && !method.getAccess().isPrivate()) {
                     final String methodName = method.getName();
-                    final PhpIndex index    = PhpIndex.getInstance(method.getProject());
+                    /* check sub-classes */
+                    final PhpIndex index = PhpIndex.getInstance(method.getProject());
                     for (final PhpClass childClass : index.getAllSubclasses(clazz.getFQN())) {
                         if (childClass.findOwnMethodByName(methodName) != null) {
                             result = true;
                             break;
+                        }
+                    }
+                    /* check parent classes */
+                    if (!result) {
+                        for (final PhpClass parentClass : InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true)) {
+                            if (parentClass.findOwnMethodByName(methodName) != null) {
+                                result = true;
+                                break;
+                            }
                         }
                     }
                 }

@@ -23,7 +23,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -175,23 +174,12 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 final PhpClass clazz = method.getContainingClass();
                 if (clazz != null && !clazz.isFinal() && !method.isFinal() && !method.getAccess().isPrivate()) {
                     final String methodName = method.getName();
-                    /* check sub-classes */
-                    final PhpIndex index = PhpIndex.getInstance(method.getProject());
-                    for (final PhpClass childClass : index.getAllSubclasses(clazz.getFQN())) {
-                        if (childClass.findOwnMethodByName(methodName) != null) {
-                            result = true;
-                            break;
-                        }
-                    }
-                    /* check parent classes */
-                    if (!result) {
-                        for (final PhpClass parentClass : InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true)) {
-                            if (parentClass.findOwnMethodByName(methodName) != null) {
-                                result = true;
-                                break;
-                            }
-                        }
-                    }
+                    final PhpIndex index    = PhpIndex.getInstance(method.getProject());
+                    result =
+                        index.getAllSubclasses(clazz.getFQN()).stream()
+                                .anyMatch(c -> c.findOwnMethodByName(methodName) != null) /*||
+                        InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream()
+                                .anyMatch(c -> c.findOwnMethodByName(methodName) != null)*/;
                 }
                 return result;
             }

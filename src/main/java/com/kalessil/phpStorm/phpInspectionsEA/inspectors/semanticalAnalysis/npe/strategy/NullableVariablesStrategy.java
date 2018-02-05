@@ -56,11 +56,13 @@ final public class NullableVariablesStrategy {
         }
 
         /* check if the variable has been written only once, inspect when null/void values are possible */
+        final Project project = holder.getProject();
         for (final Map.Entry<String, List<AssignmentExpression>> pair : assignments.entrySet()) {
             final List<AssignmentExpression> variableAssignments = pair.getValue();
             if (!variableAssignments.isEmpty()) {
                 final AssignmentExpression assignment = variableAssignments.iterator().next();
-                if (isNullableResult(assignment, holder.getProject())) {
+                if (isNullableResult(assignment, project)) {
+                    /* find first nullable assignments, invoke analyzing statements after it */
                     apply(pair.getKey(), assignment, body, holder);
                 }
                 variableAssignments.clear();
@@ -175,6 +177,7 @@ final public class NullableVariablesStrategy {
                 final PsiElement candidate            = assignment.getVariable();
                 if (candidate instanceof Variable && ((Variable) candidate).getName().equals(variableName)) {
                     if (!isNullableResult(assignment, project)) {
+/* TODO: the value may use the variable as well - we need to process it first*/
                         return;
                     }
                 }

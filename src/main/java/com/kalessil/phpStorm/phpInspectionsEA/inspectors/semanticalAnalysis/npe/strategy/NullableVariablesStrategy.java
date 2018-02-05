@@ -121,19 +121,23 @@ final public class NullableVariablesStrategy {
         PsiTreeUtil.findChildrenOfType(body, Variable.class).stream()
                 .filter(variable  -> variableName.equals(variable.getName()))
                 .forEach(variable -> {
-                    final List<Variable> currentUsages = new ArrayList<>();
-                    final PsiElement parent            = variable.getParent();
+                    final PsiElement parent = variable.getParent();
                     if (parent instanceof AssignmentExpression) {
+                        final List<Variable> currentUsages    = new ArrayList<>();
                         final AssignmentExpression assignment = (AssignmentExpression) parent;
                         PsiTreeUtil.findChildrenOfType(assignment.getValue(), Variable.class).stream()
-                                .filter(v -> variableName.equals(variable.getName()))
+                                .filter(v -> variableName.equals(v.getName()))
                                 .forEach(currentUsages::add);
+                        PsiTreeUtil.findChildrenOfType(assignment, Variable.class).stream()
+                                .filter(v -> variableName.equals(v.getName()) && !currentUsages.contains(v))
+                                .forEach(currentUsages::add);
+                        variables.addAll(currentUsages);
+                        currentUsages.clear();
+                    } else {
+                        PsiTreeUtil.findChildrenOfType(parent, Variable.class).stream()
+                                .filter(v -> variableName.equals(v.getName()))
+                                .forEach(variables::add);
                     }
-                    PsiTreeUtil.findChildrenOfType(parent, Variable.class).stream()
-                            .filter(v -> variableName.equals(variable.getName()) && !currentUsages.contains(v))
-                            .forEach(currentUsages::add);
-                    variables.addAll(currentUsages);
-                    currentUsages.clear();
                 });
         /* analyze collected variable usages */
         for (final Variable variable : variables){

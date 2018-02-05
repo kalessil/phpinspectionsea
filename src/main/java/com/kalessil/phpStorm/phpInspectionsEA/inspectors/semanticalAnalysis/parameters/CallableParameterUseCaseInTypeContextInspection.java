@@ -319,11 +319,11 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                 /* second case: inherited classes/interfaces */
                 final Set<String> possibleTypes = new HashSet<>();
                 if (type.startsWith("\\")) {
-                    index.getAnyByFQN(type).forEach(clazz ->
-                            InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream()
-                                    .map(PhpNamedElement::getFQN)
-                                    .forEach(possibleTypes::add)
-                    );
+                    index.getAnyByFQN(type)
+                        .forEach(clazz ->
+                            InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true)
+                                .forEach(c -> possibleTypes.add(c.getFQN()))
+                        );
                 }
 
                 return !possibleTypes.isEmpty() && allowedTypes.stream().anyMatch(possibleTypes::contains);

@@ -5,9 +5,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
-import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
-import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
@@ -59,8 +56,7 @@ final public class NullableVariablesStrategy {
         }
 
         /* check if the variable has been written only once, inspect when null/void values are possible */
-        final PhpEntryPointInstruction controlFlowStart = function.getControlFlow().getEntryPoint();
-        final Project project                           = holder.getProject();
+        final Project project = holder.getProject();
         for (final Map.Entry<String, List<AssignmentExpression>> pair : assignments.entrySet()) {
             final List<AssignmentExpression> variableAssignments = pair.getValue();
             if (!variableAssignments.isEmpty()) {
@@ -96,7 +92,7 @@ final public class NullableVariablesStrategy {
     }
 
     public static void applyToParameters(@NotNull Function function, @NotNull ProblemsHolder holder) {
-        final PhpEntryPointInstruction controlFlowStart = function.getControlFlow().getEntryPoint();
+        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
         for (final Parameter parameter : function.getParameters()) {
             final Set<String> declaredTypes = parameter.getDeclaredType().getTypes().stream()
                     .map(Types::getType)
@@ -113,7 +109,7 @@ final public class NullableVariablesStrategy {
                 }
 
                 if (isObject) {
-                    apply(parameter.getName(), null, controlFlowStart, holder);
+                    apply(parameter.getName(), null, body, holder);
                 }
             }
             declaredTypes.clear();
@@ -123,14 +119,22 @@ final public class NullableVariablesStrategy {
     private static void apply(
         @NotNull String variableName,
         @Nullable AssignmentExpression variableDeclaration,
-        @NotNull PhpEntryPointInstruction controlFlowStart,
+        @Nullable GroupStatement body,
         @NotNull ProblemsHolder holder
     ) {
-        final Project project                     = holder.getProject();
-        final PhpAccessVariableInstruction[] uses = PhpControlFlowUtil.getFollowingVariableAccessInstructions(controlFlowStart, variableName, false);
-        for (final PhpAccessVariableInstruction instruction : uses) {
-            final PhpPsiElement variable = instruction.getAnchor();
+        final Project project                     = holder.getProject();final boolean skipToDeclarationNeeded = variableDeclaration != null;
+        boolean skipPerformed                 = false;
+        final List<Variable> uses= PsiTreeUtil.findChildrenOfType(body, Variable.class).stream()
+            .filter(variable -> variableName.equals(variable.getName()))
+                .collect(Collectors.toList());
+        for (final Variable variable : uses){
             final PsiElement parent      = variable.getParent();
+
+            /* for local variables we need to skip usages until assignment performed */
+            if (skipToDeclarationNeeded && !skipPerformed) {
+                skipPerformed = variableDeclaration == parent;
+                continue;
+            }
 
             /* instanceof, implicit null comparisons */
             if (parent instanceof BinaryExpression) {

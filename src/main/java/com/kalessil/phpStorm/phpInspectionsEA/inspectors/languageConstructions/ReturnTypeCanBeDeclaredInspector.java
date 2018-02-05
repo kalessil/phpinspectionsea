@@ -23,6 +23,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -177,9 +178,9 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     final PhpIndex index    = PhpIndex.getInstance(method.getProject());
                     result =
                         index.getAllSubclasses(clazz.getFQN()).stream()
-                                .anyMatch(c -> c.findOwnMethodByName(methodName) != null) /*||
+                                .anyMatch(c -> c.findOwnMethodByName(methodName) != null) ||
                         InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream()
-                                .anyMatch(c -> c.findOwnMethodByName(methodName) != null)*/;
+                                .anyMatch(c -> c != clazz && c.findOwnMethodByName(methodName) != null);
                 }
                 return result;
             }

@@ -67,7 +67,7 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
                 final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                 if (resolved instanceof PhpClass) {
                     final Set<PhpClass> inheritanceChain = InterfacesExtractUtil.getCrawlInheritanceTree((PhpClass) resolved, true);
-                    for (PhpClass clazz : inheritanceChain) {
+                    for (final PhpClass clazz : inheritanceChain) {
                         if (clazz.getFQN().equals("\\Exception")) {
                             inheritanceChain.clear();
                             return true;

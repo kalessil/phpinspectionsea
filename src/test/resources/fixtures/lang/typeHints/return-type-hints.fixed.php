@@ -100,8 +100,7 @@ abstract class ClassCasesHolder {
 }
 
 class ClassCasesHolderImplementation extends ClassCasesHolder {
-    public function overriddenReturnString($x): string
-    { return $x; }
+    public function overriddenReturnString($x) { return $x; }
 }
 
 class GeneratorCaseHolder {

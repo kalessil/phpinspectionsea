@@ -134,3 +134,11 @@ class CasesHolder {
 function cases_holder(?CasesHolder $object) {
     <warning descr="Null pointer exception may occur here.">$object</warning>->npeCheckLocalVariables();
 }
+
+/* @var stdClass[] $array */
+function skip_before_assignment_case_holder(array $array) {
+    foreach($array as $item) {
+       $item->property = '...';
+    }
+    $item = null;
+}

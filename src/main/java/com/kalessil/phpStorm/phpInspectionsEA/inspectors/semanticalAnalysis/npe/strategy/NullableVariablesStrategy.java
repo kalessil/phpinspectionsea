@@ -128,23 +128,26 @@ final public class NullableVariablesStrategy {
         boolean skipPerformed                 = false;
 
         /* find variable usages, control flow is not our friend here */
-        final List<Variable> uses = new ArrayList<>();
+        final List<Variable> variables = new ArrayList<>();
         PsiTreeUtil.findChildrenOfType(body, Variable.class).stream()
                 .filter(variable  -> variableName.equals(variable.getName()))
                 .forEach(variable -> {
-                    final PsiElement parent = variable.getParent();
+                    final List<Variable> currentUsages = new ArrayList<>();
+                    final PsiElement parent            = variable.getParent();
                     if (parent instanceof AssignmentExpression) {
                         final AssignmentExpression assignment = (AssignmentExpression) parent;
                         PsiTreeUtil.findChildrenOfType(assignment.getValue(), Variable.class).stream()
                                 .filter(v -> variableName.equals(variable.getName()))
-                                .forEach(uses::add);
+                                .forEach(currentUsages::add);
                     }
                     PsiTreeUtil.findChildrenOfType(parent, Variable.class).stream()
-                            .filter(v -> variableName.equals(variable.getName()) && !uses.contains(v))
-                            .forEach(uses::add);
+                            .filter(v -> variableName.equals(variable.getName()) && !currentUsages.contains(v))
+                            .forEach(currentUsages::add);
+                    variables.addAll(currentUsages);
+                    currentUsages.clear();
                 });
         /* analyze collected variable usages */
-        for (final Variable variable : uses){
+        for (final Variable variable : variables){
             final PsiElement parent = variable.getParent();
 
             /* for local variables we need to skip usages until assignment performed */

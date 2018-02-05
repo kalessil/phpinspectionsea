@@ -7,11 +7,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,9 +52,18 @@ public class UnsupportedStringOffsetOperationsInspector extends BasePhpInspectio
                             while (target.getParent() instanceof ArrayAccessExpression) {
                                 target = target.getParent();
                             }
-                            /* check context and container type */
-                            final PsiElement context = target.getParent();
-                            if (context instanceof AssignmentExpression && ((AssignmentExpression) context).getValue() != target) {
+                            PsiElement context      = target.getParent();
+                            boolean isTargetContext = false;
+                            if (context instanceof AssignmentExpression) {
+                                isTargetContext = ((AssignmentExpression) context).getValue() != target;
+                            } else if (OpenapiTypesUtil.is(context, PhpElementTypes.ARRAY_VALUE)) {
+                                final PsiElement array = context.getParent();
+                                if ((context = array.getParent()) instanceof AssignmentExpression) {
+                                    isTargetContext = ((AssignmentExpression) context).getValue() != array;
+                                }
+                            }
+                            /* check types if context identified as target one */
+                            if (isTargetContext) {
                                 final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) candidate, project);
                                 if (type != null) {
                                     final boolean isTarget = type.filterUnknown().getTypes().stream()

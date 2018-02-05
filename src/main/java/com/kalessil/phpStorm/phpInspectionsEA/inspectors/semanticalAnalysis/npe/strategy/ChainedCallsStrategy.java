@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
@@ -75,8 +74,7 @@ final public class ChainedCallsStrategy {
             final PsiElement parent = reference.getParent();
             if (parent instanceof BinaryExpression) {
                 final BinaryExpression parentExpression = (BinaryExpression) parent;
-                final IElementType parentOperation      = parentExpression.getOperationType();
-                if (PhpTokenTypes.tsCOMPARE_OPS.contains(parentOperation)) {
+                if (PhpTokenTypes.tsCOMPARE_OPS.contains(parentExpression.getOperationType())) {
                     final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(parentExpression, reference);
                     if (PhpLanguageUtil.isNull(secondOperand)) {
                         nullTestedReferences.put(reference, reference.getName());

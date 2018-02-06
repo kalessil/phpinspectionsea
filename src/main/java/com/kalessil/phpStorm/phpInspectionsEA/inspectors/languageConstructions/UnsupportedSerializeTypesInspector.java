@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  */
 
 public class UnsupportedSerializeTypesInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s' doesn't support serialization (caused serialization is not allowed error).";
+    private static final String messagePattern = "'%s' doesn't support serialization (causes serialization is not allowed error).";
 
     private static final Set<String> targetClasses = new HashSet<>();
     static {

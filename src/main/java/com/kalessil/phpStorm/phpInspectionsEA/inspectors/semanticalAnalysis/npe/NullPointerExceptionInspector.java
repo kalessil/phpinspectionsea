@@ -40,9 +40,9 @@ public class NullPointerExceptionInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
-                    NullableVariablesStrategy.applyToParameters(function, holder);
-                    ChainedCallsStrategy.apply(function, holder);
-                    NullableVariablesStrategy.applyToLocalVariables(function, holder);
+                NullableVariablesStrategy.applyToParameters(function, holder);
+                ChainedCallsStrategy.apply(function, holder);
+                NullableVariablesStrategy.applyToLocalVariables(function, holder);
             }
         };
     }

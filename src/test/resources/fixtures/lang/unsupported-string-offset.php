@@ -14,5 +14,5 @@ function cases_holder(string $string)
 
     /* gets reported too, but PS 2016.2 parser fails the test cases */
     //[$string[0]['...']] = ['...'];
-    //array($string[0]['...']) = array('...');
+    list($string[0]['...']) = $one;
 }

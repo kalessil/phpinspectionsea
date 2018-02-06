@@ -21,7 +21,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -76,34 +75,22 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                 for (final Parameter parameter : parameters) {
                     /* normalize parameter types, skip analysis when mixed or object appears */
-                    final Set<String> paramTypes = new HashSet<>();
-                    for (final String type : parameter.getType().global(project).filterUnknown().getTypes()) {
-                        final String typeNormalized = Types.getType(type);
-                        if (typeNormalized.equals(Types.strMixed) || typeNormalized.equals(Types.strObject)) {
-                            paramTypes.clear();
-                            break;
-                        } else if (typeNormalized.equals(Types.strCallable)) {
-                            paramTypes.add(Types.strArray);
-                            paramTypes.add(Types.strString);
-                            paramTypes.add("\\Closure");
-                        }
-                        paramTypes.add(typeNormalized);
-                    }
-                    if (paramTypes.isEmpty()) {
+                    final Set<String> parameterTypes = this.getParameterType(parameter, project);
+                    if (parameterTypes.isEmpty()) {
                         continue;
                     } else {
-                        /* in some case PhpStorm is not recognizing default value as parameter type */
+                        /* in some cases PhpStorm is not recognizing default value as parameter type */
                         final PsiElement defaultValue = parameter.getDefaultValue();
                         if (defaultValue instanceof PhpTypedElement) {
                             final PhpType defaultType = OpenapiResolveUtil.resolveType((PhpTypedElement) defaultValue, project);
                             if (defaultType != null) {
-                                defaultType.filterUnknown().getTypes().forEach(t -> paramTypes.add(Types.getType(t)));
+                                defaultType.filterUnknown().getTypes().forEach(t -> parameterTypes.add(Types.getType(t)));
                             }
                         }
                     }
 
                     /* false-positive: type is not resolved correctly, default null is taken */
-                    if (paramTypes.size() == 1 && paramTypes.contains(Types.strNull)) {
+                    if (parameterTypes.size() == 1 && parameterTypes.contains(Types.strNull)) {
                         final PsiElement defaultValue = parameter.getDefaultValue();
                         if (defaultValue != null && PhpLanguageUtil.isNull(defaultValue)) {
                             continue;
@@ -132,40 +119,40 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             switch (functionName) {
                                 case "is_array":
                                     isTypeAnnounced =
-                                        paramTypes.contains(Types.strArray) || paramTypes.contains(Types.strIterable);
+                                        parameterTypes.contains(Types.strArray) || parameterTypes.contains(Types.strIterable);
                                     break;
                                 case "is_string":
-                                    isTypeAnnounced = paramTypes.contains(Types.strString);
+                                    isTypeAnnounced = parameterTypes.contains(Types.strString);
                                     break;
                                 case "is_bool":
-                                    isTypeAnnounced = paramTypes.contains(Types.strBoolean);
+                                    isTypeAnnounced = parameterTypes.contains(Types.strBoolean);
                                     break;
                                 case "is_int":
                                     isTypeAnnounced =
-                                        paramTypes.contains(Types.strInteger) || paramTypes.contains(Types.strNumber);
+                                        parameterTypes.contains(Types.strInteger) || parameterTypes.contains(Types.strNumber);
                                     break;
                                 case "is_float":
                                     isTypeAnnounced =
-                                        paramTypes.contains(Types.strFloat) || paramTypes.contains(Types.strNumber);
+                                        parameterTypes.contains(Types.strFloat) || parameterTypes.contains(Types.strNumber);
                                     break;
                                 case "is_resource":
-                                    isTypeAnnounced = paramTypes.contains(Types.strResource);
+                                    isTypeAnnounced = parameterTypes.contains(Types.strResource);
                                     break;
                                 case "is_numeric":
                                     isTypeAnnounced =
-                                        paramTypes.contains(Types.strNumber) || paramTypes.contains(Types.strString) ||
-                                        paramTypes.contains(Types.strFloat) || paramTypes.contains(Types.strInteger);
+                                        parameterTypes.contains(Types.strNumber) || parameterTypes.contains(Types.strString) ||
+                                        parameterTypes.contains(Types.strFloat) || parameterTypes.contains(Types.strInteger);
                                     break;
                                 case "is_callable":
                                     isTypeAnnounced =
-                                        paramTypes.contains(Types.strCallable) || paramTypes.contains(Types.strArray) ||
-                                        paramTypes.contains(Types.strString)   || paramTypes.contains("\\Closure");
+                                        parameterTypes.contains(Types.strCallable) || parameterTypes.contains(Types.strArray) ||
+                                        parameterTypes.contains(Types.strString)   || parameterTypes.contains("\\Closure");
                                     break;
                                 case "is_object":
                                 case "is_a":
                                     isTypeAnnounced =
-                                        paramTypes.contains(Types.strObject) ||
-                                        paramTypes.stream()
+                                        parameterTypes.contains(Types.strObject) ||
+                                        parameterTypes.stream()
                                             .filter(t   -> !t.equals("\\Closure"))
                                             .anyMatch(t -> t.startsWith("\\") || classReferences.contains(t));
                                     break;
@@ -242,7 +229,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                             }
                                         }
 
-                                        final boolean isViolation = !this.isTypeCompatibleWith(type, paramTypes, index);
+                                        final boolean isViolation = !this.isTypeCompatibleWith(type, parameterTypes, index);
                                         if (isViolation) {
                                             final String message = patternViolationInAssignment.replace("%s%", type);
                                             holder.registerProblem(value, message);
@@ -273,17 +260,17 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     }
                                     if (requiredType != null) {
                                         /* ensure generic types expectations are met */
-                                        if (operator == PhpTokenTypes.opIDENTICAL && !paramTypes.contains(requiredType)) {
+                                        if (operator == PhpTokenTypes.opIDENTICAL && !parameterTypes.contains(requiredType)) {
                                             holder.registerProblem(binary, messageViolationInCheck);
-                                        } else if (operator == PhpTokenTypes.opNOT_IDENTICAL && !paramTypes.contains(requiredType)) {
+                                        } else if (operator == PhpTokenTypes.opNOT_IDENTICAL && !parameterTypes.contains(requiredType)) {
                                             holder.registerProblem(binary, messageNoSense);
                                         }
                                     } else if (OpenapiTypesUtil.isNumber(secondOperand)) {
                                         /* ensure numeric types expectations are met */
                                         final boolean isNumber =
-                                                paramTypes.contains(Types.strFloat) ||
-                                                paramTypes.contains(Types.strInteger) ||
-                                                paramTypes.contains(Types.strNumber);
+                                                parameterTypes.contains(Types.strFloat) ||
+                                                parameterTypes.contains(Types.strInteger) ||
+                                                parameterTypes.contains(Types.strNumber);
                                         if (!isNumber) {
                                             if (operator == PhpTokenTypes.opIDENTICAL) {
                                                 holder.registerProblem(binary, messageViolationInCheck);
@@ -295,38 +282,54 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 }
                             } else if (operator == PhpTokenTypes.kwINSTANCEOF) {
                                 if (!parameter.getDeclaredType().isEmpty()) {
-                                    InstanceOfCorrectnessStrategy.apply(holder, paramTypes, binary);
+                                    InstanceOfCorrectnessStrategy.apply(holder, parameterTypes, binary);
                                 }
                             }
                             //continue;
                         }
                     }
 
-                    paramTypes.clear();
+                    parameterTypes.clear();
                 }
             }
 
-            private boolean isTypeCompatibleWith(
-                    @NotNull String type,
-                    @NotNull Collection<String> allowedTypes,
-                    @NotNull PhpIndex index
-            ) {
+            private boolean isTypeCompatibleWith(@NotNull String given, @NotNull Set<String> allowed, @NotNull PhpIndex index) {
                 /* first case: implicit match */
-                if (allowedTypes.contains(type)) {
+                if (allowed.contains(given)) {
                     return true;
                 }
 
                 /* second case: inherited classes/interfaces */
                 final Set<String> possibleTypes = new HashSet<>();
-                if (type.startsWith("\\")) {
-                    index.getAnyByFQN(type)
+                if (given.startsWith("\\")) {
+                    index.getAnyByFQN(given)
                         .forEach(clazz ->
                             InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true)
                                 .forEach(c -> possibleTypes.add(c.getFQN()))
                         );
                 }
+                return !possibleTypes.isEmpty() && allowed.stream().anyMatch(possibleTypes::contains);
+            }
 
-                return !possibleTypes.isEmpty() && allowedTypes.stream().anyMatch(possibleTypes::contains);
+            @NotNull
+            private Set<String> getParameterType(@NotNull Parameter parameter, @NotNull Project project) {
+                PhpType result = new PhpType();
+                final PhpType resolved = OpenapiResolveUtil.resolveType(parameter, project);
+                if (resolved != null) {
+                    for (final String type : resolved.getTypes()) {
+                        result.add(type);
+                        final String normalizedType = Types.getType(type);
+                        if (normalizedType.equals(Types.strCallable)) {
+                            result.add(PhpType.ARRAY).add(PhpType.STRING).add(PhpType._CLOSURE);
+                        } else if (normalizedType.equals(Types.strMixed) || normalizedType.equals(Types.strObject)) {
+                            result = new PhpType();
+                            break;
+                        }
+                    }
+                }
+                return result.isEmpty()
+                        ? new HashSet<>()
+                        : result.filterUnknown().getTypes().stream().map(Types::getType).collect(Collectors.toSet());
             }
         };
     }

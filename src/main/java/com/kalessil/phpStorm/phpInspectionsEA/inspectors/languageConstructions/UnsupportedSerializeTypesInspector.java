@@ -52,7 +52,7 @@ public class UnsupportedSerializeTypesInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("serialize")) {
                     final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length > 0 && arguments[0] instanceof PhpTypedElement && isFromRootNamespace(reference)) {
+                    if (arguments.length == 1 && arguments[0] instanceof PhpTypedElement && isFromRootNamespace(reference)) {
                         final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) arguments[0], holder.getProject());
                         if (type != null) {
                             final List<String> foundTypes = type.filterUnknown().getTypes().stream()

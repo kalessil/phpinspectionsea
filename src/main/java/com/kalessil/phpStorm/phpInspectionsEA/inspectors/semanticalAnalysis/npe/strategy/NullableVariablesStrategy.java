@@ -5,6 +5,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocVariable;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
@@ -74,6 +78,7 @@ final public class NullableVariablesStrategy {
     static private boolean isNullableResult(@NotNull AssignmentExpression assignment, @NotNull Project project) {
         boolean result                   = false;
         final PsiElement assignmentValue = assignment.getValue();
+        /* primary strategy: resolve types and check nullability */
         if (assignmentValue instanceof PhpTypedElement) {
             final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) assignmentValue, project);
             if (resolved != null) {
@@ -83,8 +88,25 @@ final public class NullableVariablesStrategy {
                 if (types.contains(Types.strNull) || types.contains(Types.strVoid)) {
                     types.remove(Types.strNull);
                     types.remove(Types.strVoid);
-                    if (types.stream().noneMatch(t -> !t.startsWith("\\") && !objectTypes.contains(t))) {
-                        result = true;
+                    result = types.stream().noneMatch(t -> !t.startsWith("\\") && !objectTypes.contains(t));
+                }
+                types.clear();
+            }
+        }
+        /* secondary strategy: support type specification with `@var <type> <variable>` */
+        if (result) {
+            final PhpPsiElement variable = assignment.getVariable();
+            final PsiElement parent      = assignment.getParent();
+            if (variable != null && OpenapiTypesUtil.isStatementImpl(parent) && OpenapiTypesUtil.isAssignment(assignment)) {
+                final PsiElement previous = ((PhpPsiElement) parent).getPrevPsiSibling();
+                if (previous instanceof PhpDocComment) {
+                    final PhpDocTag[] hints = ((PhpDocComment) previous).getTagElementsByName("@var");
+                    if (hints.length == 1) {
+                        final PhpDocVariable specifiedVariable = PsiTreeUtil.findChildOfType(hints[0], PhpDocVariable.class);
+                        if (specifiedVariable != null && specifiedVariable.getName().equals(variable.getName())) {
+                            result = Arrays.stream(hints[0].getChildren())
+                                .anyMatch(t -> t instanceof PhpDocType && Types.getType(t.getText()).equals(Types.strNull));
+                        }
                     }
                 }
             }

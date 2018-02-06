@@ -10,7 +10,6 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -57,12 +56,12 @@ public class UnsupportedSerializeTypesInspector extends BasePhpInspection {
                         final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) arguments[0], holder.getProject());
                         if (type != null) {
                             final List<String> foundTypes = type.filterUnknown().getTypes().stream()
-                                    .filter(t -> targetClasses.contains(Types.getType(t)))
+                                    .filter(targetClasses::contains)
                                     .collect(Collectors.toList());
                             if (!foundTypes.isEmpty()) {
                                 holder.registerProblem(
-                                        reference,
-                                        String.format(messagePattern, Types.getType(foundTypes.get(0))),
+                                        arguments[0],
+                                        String.format(messagePattern, foundTypes.get(0)),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
                                 foundTypes.clear();

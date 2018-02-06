@@ -9,11 +9,11 @@ function cases_holder() {
     /* @var \stdClass         $stdClass         */
 
     return [
-        <error descr="'\SimpleXMLElement' doesn't support serialization (caused serialization is not allowed error).">serialize($simpleXmlElement)</error>,
-        <error descr="'\HashContext' doesn't support serialization (caused serialization is not allowed error).">serialize($hashContext)</error>,
-        <error descr="'\Closure' doesn't support serialization (caused serialization is not allowed error).">serialize($closure)</error>,
-        <error descr="'\SplFileInfo' doesn't support serialization (caused serialization is not allowed error).">serialize($splFileInfo)</error>,
-        <error descr="'\Generator' doesn't support serialization (caused serialization is not allowed error).">serialize($generator)</error>,
+        serialize(<error descr="'\SimpleXMLElement' doesn't support serialization (caused serialization is not allowed error).">$simpleXmlElement</error>),
+        serialize(<error descr="'\HashContext' doesn't support serialization (caused serialization is not allowed error).">$hashContext</error>),
+        serialize(<error descr="'\Closure' doesn't support serialization (caused serialization is not allowed error).">$closure</error>),
+        serialize(<error descr="'\SplFileInfo' doesn't support serialization (caused serialization is not allowed error).">$splFileInfo</error>),
+        serialize(<error descr="'\Generator' doesn't support serialization (caused serialization is not allowed error).">$generator</error>),
         serialize($stdClass),
     ];
 }

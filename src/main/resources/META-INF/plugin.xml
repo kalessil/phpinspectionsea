@@ -787,7 +787,7 @@ Bug-fixes and new inspections:<br/>
         shortName="GetClassUsageInspection"                       displayName="'get_class(...)' usage correctness"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.GetClassUsageInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="UnsupportedStringOffsetOperationsInspection"   displayName="Unsupported string offset operations"
         groupName="Language level migration"                      enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnsupportedStringOffsetOperationsInspector"/>

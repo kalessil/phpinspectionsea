@@ -467,6 +467,10 @@ Bug-fixes and new inspections:<br/>
         shortName="MissingElseKeywordInspection"                  displayName="Missing else keyword"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.MissingElseKeywordInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="UnsupportedSerializeTypesInspection"           displayName="Unsupported serialize types"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnsupportedSerializeTypesInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

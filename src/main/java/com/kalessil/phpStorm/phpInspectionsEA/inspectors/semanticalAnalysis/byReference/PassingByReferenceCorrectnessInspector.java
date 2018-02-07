@@ -47,11 +47,11 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
 
             private void analyze(@NotNull FunctionReference reference) {
                 final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length != 0) {
+                if (arguments.length > 0) {
                     /* lazy analysis: if all args are valid, not even bother resolving the reference */
                     boolean doAnalyze = false;
-                    for (final PsiElement parameter : arguments) {
-                        boolean isRefCompatible = parameter instanceof Variable || parameter instanceof NewExpression;
+                    for (final PsiElement argument : arguments) {
+                        boolean isRefCompatible = argument instanceof Variable || argument instanceof NewExpression;
                         if (!isRefCompatible) {
                             doAnalyze = true;
                             break;

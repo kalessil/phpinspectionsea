@@ -4,19 +4,16 @@ class Clazz
 {
     public $property;
 
-    public function & method(&$parameter)
-    {
+    public function & method(&$parameter) {
         $parameter = 'modified';
         return $parameter;
     }
 
-    public function x()
-    {
+    public function x() {
         return '';
     }
 
-    public static function y()
-    {
+    public static function y() {
         return '';
     }
 }
@@ -30,3 +27,5 @@ $obj->method(<warning descr="Emits a notice (only variable references should be 
 $array = [0];
 $obj->method($array[0]);
 
+current($obj->x());
+key($obj->x());

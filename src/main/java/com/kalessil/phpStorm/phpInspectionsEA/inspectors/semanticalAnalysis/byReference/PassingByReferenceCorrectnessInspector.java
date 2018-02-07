@@ -37,7 +37,16 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                this.analyze(reference);
+                final String functionName = reference.getName();
+                if (functionName != null) {
+                    /* workaround for https://youtrack.jetbrains.com/issue/WI-37984 */
+                    final boolean shouldSkip =
+                            (functionName.equals("current") || functionName.equals("key")) &&
+                            this.isFromRootNamespace(reference);
+                    if (!shouldSkip) {
+                        this.analyze(reference);
+                    }
+                }
             }
 
             @Override
@@ -47,11 +56,11 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
 
             private void analyze(@NotNull FunctionReference reference) {
                 final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length != 0) {
+                if (arguments.length > 0) {
                     /* lazy analysis: if all args are valid, not even bother resolving the reference */
                     boolean doAnalyze = false;
-                    for (final PsiElement parameter : arguments) {
-                        boolean isRefCompatible = parameter instanceof Variable || parameter instanceof NewExpression;
+                    for (final PsiElement argument : arguments) {
+                        boolean isRefCompatible = argument instanceof Variable || argument instanceof NewExpression;
                         if (!isRefCompatible) {
                             doAnalyze = true;
                             break;

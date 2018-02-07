@@ -52,13 +52,8 @@ final public class NullableVariablesStrategy {
                 if (assignment.getVariable() == variable && OpenapiTypesUtil.isStatementImpl(assignment.getParent())) {
                     /* skip unsupported assignments */
                     final PsiElement value = assignment.getValue(); /* TODO: strict method reference type check */
-                    if (value instanceof FieldReference) {
+                    if (value instanceof FieldReference || value instanceof UnaryExpression) {
                         continue;
-                    } if (value instanceof UnaryExpression) {
-                        final PsiElement operation = ((UnaryExpression) value).getOperation();
-                        if (OpenapiTypesUtil.is(operation, PhpTokenTypes.kwCLONE)) {
-                            continue;
-                        }
                     }
                     /* pick up the assignment */
                     assignments.computeIfAbsent(variableName, v -> new ArrayList<>()).add(assignment);

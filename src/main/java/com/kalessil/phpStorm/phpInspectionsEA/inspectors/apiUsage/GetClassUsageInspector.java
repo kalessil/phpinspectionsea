@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -72,7 +71,7 @@ public class GetClassUsageInspector extends BasePhpInspection {
                 if (scope != null) {
                     final GroupStatement body        = ExpressionSemanticUtil.getGroupStatement(scope);
                     final List<PsiElement> allUsages = PsiTreeUtil.findChildrenOfType(body, expression.getClass()).stream()
-                            .filter(e -> PsiEquivalenceUtil.areElementsEquivalent(e, expression))
+                            .filter(e -> OpeanapiEquivalenceUtil.areEqual(e, expression))
                             .collect(Collectors.toList());
                     for (final PsiElement candidate : allUsages.subList(0, allUsages.indexOf(expression))) {
                         final PsiElement parent = candidate.getParent();
@@ -106,7 +105,7 @@ public class GetClassUsageInspector extends BasePhpInspection {
                     final Function scope = ExpressionSemanticUtil.getScope(expression);
                     if (scope != null) {
                         final String name = ((Variable) expression).getName();
-                        result = Arrays.stream(scope.getParameters()).anyMatch(parameter ->
+                        result            = Arrays.stream(scope.getParameters()).anyMatch(parameter ->
                                 name.equals(parameter.getName()) && PhpLanguageUtil.isNull(parameter.getDefaultValue())
                         );
                     }

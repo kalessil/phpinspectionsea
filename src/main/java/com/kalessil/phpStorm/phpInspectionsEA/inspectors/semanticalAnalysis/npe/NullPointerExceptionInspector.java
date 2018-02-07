@@ -35,7 +35,7 @@ public class NullPointerExceptionInspector extends BasePhpInspection {
             public void visitPhpMethod(@NotNull Method method) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
 
-                if (!method.isAbstract()) {
+                if (!method.isAbstract() && !this.isTestContext(method)) {
                     NullableVariablesStrategy.applyToParameters(method, holder);
                     NullableVariablesStrategy.applyToLocalVariables(method, holder);
                     ChainedCallsStrategy.apply(method, holder);

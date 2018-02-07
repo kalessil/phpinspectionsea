@@ -59,7 +59,7 @@ class CasesHolder {
 
     public function npeCheckConstraints(\InvokableClass $first = null) {
         $first = $first ?: null;
-        $first->property = 'Obviously NPE, but we stop at re-assigning. No solution as of April 2017.';
+        <warning descr="Null pointer exception may occur here.">$first</warning>->property = '...';
     }
 
     public function npeCheckClone(?\stdClass $one) {

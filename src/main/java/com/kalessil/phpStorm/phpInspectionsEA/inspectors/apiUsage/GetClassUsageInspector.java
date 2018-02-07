@@ -66,6 +66,7 @@ public class GetClassUsageInspector extends BasePhpInspection {
             }
 
             private boolean isNullabilityChecked(@NotNull PsiElement expression) {
+                /* workaround for https://youtrack.jetbrains.com/issue/WI-38622 */
                 boolean result      = false;
                 final Function scope = ExpressionSemanticUtil.getScope(expression);
                 if (scope != null) {

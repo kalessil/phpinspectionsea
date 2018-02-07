@@ -49,11 +49,18 @@ final public class NullableVariablesStrategy {
             final PsiElement parent   = variable.getParent();
             if (parent instanceof AssignmentExpression && !parameters.contains(variableName)) {
                 final AssignmentExpression assignment = (AssignmentExpression) parent;
-                if (
-                    assignment.getVariable() == variable &&
-                    OpenapiTypesUtil.isStatementImpl(assignment.getParent()) &&
-                    !(assignment.getValue() instanceof FieldReference) /* TODO: strict method reference type check */
-                ) {
+                if (assignment.getVariable() == variable && OpenapiTypesUtil.isStatementImpl(assignment.getParent())) {
+                    /* skip unsupported assignments */
+                    final PsiElement value = assignment.getValue(); /* TODO: strict method reference type check */
+                    if (value instanceof FieldReference) {
+                        continue;
+                    } if (value instanceof UnaryExpression) {
+                        final PsiElement operation = ((UnaryExpression) value).getOperation();
+                        if (OpenapiTypesUtil.is(operation, PhpTokenTypes.kwCLONE)) {
+                            continue;
+                        }
+                    }
+                    /* pick up the assignment */
                     assignments.computeIfAbsent(variableName, v -> new ArrayList<>()).add(assignment);
                 }
             }

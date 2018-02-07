@@ -31,7 +31,7 @@ public class NullPointerExceptionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                if (!method.isAbstract()) {
+                if (!method.isAbstract() && !this.isTestContext(method)) {
                     NullableVariablesStrategy.applyToParameters(method, holder);
                     ChainedCallsStrategy.apply(method, holder);
                     NullableVariablesStrategy.applyToLocalVariables(method, holder);

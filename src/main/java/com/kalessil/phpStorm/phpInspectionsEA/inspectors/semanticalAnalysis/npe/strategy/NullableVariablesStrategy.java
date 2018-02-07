@@ -65,14 +65,14 @@ final public class NullableVariablesStrategy {
         final Project project = holder.getProject();
         for (final Map.Entry<String, List<AssignmentExpression>> pair : assignments.entrySet()) {
             final List<AssignmentExpression> variableAssignments = pair.getValue();
-            if (variableAssignments.size() == 1) {
+            if (!variableAssignments.isEmpty()) {
                 final AssignmentExpression assignment = variableAssignments.iterator().next();
                 if (isNullableResult(assignment, project)) {
                     /* find first nullable assignments, invoke analyzing statements after it */
                     apply(pair.getKey(), assignment, body, holder);
                 }
+                variableAssignments.clear();
             }
-            variableAssignments.clear();
         }
         assignments.clear();
     }
@@ -147,6 +147,7 @@ final public class NullableVariablesStrategy {
         @Nullable GroupStatement body,
         @NotNull ProblemsHolder holder
     ) {
+        final Project project                 = holder.getProject();
         final boolean skipToDeclarationNeeded = variableDeclaration != null;
         boolean skipPerformed                 = false;
         /* find variable usages, control flow is not our friend here */
@@ -220,7 +221,9 @@ final public class NullableVariablesStrategy {
                 final AssignmentExpression assignment = (AssignmentExpression) parent;
                 final PsiElement candidate            = assignment.getVariable();
                 if (candidate instanceof Variable && ((Variable) candidate).getName().equals(variableName)) {
-                    return;
+                    if (!isNullableResult(assignment, project)) {
+                        return;
+                    }
                 }
             }
             /* cases when NPE can be introduced: array access */

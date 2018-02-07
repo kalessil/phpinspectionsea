@@ -72,16 +72,12 @@ final public class NestedCallsStrategy {
                     final Parameter[] parameters = ((Method) resolvedReference).getParameters();
                     nullableArguments.forEach((index, argument) -> {
                         if (argument != null && index < parameters.length) {
-                            final Parameter parameter = parameters[index];
-                            final boolean canBeNull;
-                            if (PhpLanguageUtil.isNull(parameter.getDefaultValue())) {
-                                canBeNull = true;
-                            } else {
-                                final PhpType declaredType = parameter.getDeclaredType();
-                                canBeNull                  =
-                                    declaredType.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strNull)) ||
-                                    declaredType.filterPrimitives().isEmpty();
-                            }
+                            final Parameter parameter  = parameters[index];
+                            final PhpType declaredType = parameter.getDeclaredType();
+                            final boolean canBeNull    =
+                                PhpLanguageUtil.isNull(parameter.getDefaultValue()) ||
+                                declaredType.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strNull)) ||
+                                declaredType.filterPrimitives().isEmpty();
                             if (!canBeNull) {
                                 holder.registerProblem(argument, message);
                             }

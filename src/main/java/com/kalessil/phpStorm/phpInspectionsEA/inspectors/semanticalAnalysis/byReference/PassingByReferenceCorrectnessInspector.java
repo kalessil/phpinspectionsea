@@ -37,7 +37,16 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                this.analyze(reference);
+                final String functionName = reference.getName();
+                if (functionName != null) {
+                    /* workaround for https://youtrack.jetbrains.com/issue/WI-37984 */
+                    final boolean shouldSkip =
+                            (functionName.equals("current") || functionName.equals("key")) &&
+                            this.isFromRootNamespace(reference);
+                    if (!shouldSkip) {
+                        this.analyze(reference);
+                    }
+                }
             }
 
             @Override

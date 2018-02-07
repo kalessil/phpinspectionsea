@@ -471,6 +471,10 @@ Bug-fixes and new inspections:<br/>
         shortName="UnsupportedSerializeTypesInspection"           displayName="Unsupported serialize types"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnsupportedSerializeTypesInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="SuspiciousArrayElementInspection"              displayName="Suspicious array element"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SuspiciousArrayElementInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

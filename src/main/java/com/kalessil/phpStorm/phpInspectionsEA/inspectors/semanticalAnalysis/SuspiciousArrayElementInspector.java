@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
 import com.jetbrains.php.lang.psi.elements.Variable;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -35,6 +36,8 @@ public class SuspiciousArrayElementInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpArrayCreationExpression(@NotNull ArrayCreationExpression expression) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
                 for (final ArrayHashElement element : expression.getHashElements()) {
                     final PsiElement key = element.getKey();
                     if (key instanceof Variable) {

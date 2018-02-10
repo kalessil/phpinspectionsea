@@ -8,9 +8,9 @@ class ChildClass extends ParentClass {}
 function cases_holder($object) {
     return [
         $object instanceof \stdClass,
-        ! $object instanceof \stdClass,
+        !$object instanceof \stdClass,
         $object instanceof \stdClass,
-        ! $object instanceof \stdClass,
+        !$object instanceof \stdClass,
 
         $object instanceof \FinalClass,
         $object instanceof \ChildClass,

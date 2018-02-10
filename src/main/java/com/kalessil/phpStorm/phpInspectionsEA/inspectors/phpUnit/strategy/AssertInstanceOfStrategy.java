@@ -1,7 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy;
 
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
@@ -52,10 +51,10 @@ final public class AssertInstanceOfStrategy {
                     final PsiElement clazz   = binary.getRightOperand();
                     if (subject != null && clazz != null) {
                         /* prepare class definition which can be used for QF-ing */
-                        final Project project  = reference.getProject();
                         String classDefinition = clazz.getText();
                         if (clazz instanceof ClassReference) {
-                            final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
+                            final PhpLanguageLevel php
+                                    = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                             if (php.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST)) {
                                 classDefinition = clazz.getText() + "::class";
                             } else {
@@ -66,17 +65,18 @@ final public class AssertInstanceOfStrategy {
                             }
                         }
                         /* report and provide QF */
+                        final String suggestedAssertion   = binaryTargetMapping.get(methodName);
                         final String[] suggestedArguments = new String[arguments.length + 1];
                         suggestedArguments[0]             = classDefinition;
                         suggestedArguments[1]             = subject.getText();
                         if (arguments.length > 1) {
                             suggestedArguments[2] = arguments[1].getText();
                         }
-
-                        final String suggestedAssertion = binaryTargetMapping.get(methodName);
-                        final String message            = String.format(messagePattern, suggestedAssertion);
-                        holder.registerProblem(reference, message, new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments));
-
+                        holder.registerProblem(
+                                reference,
+                                String.format(messagePattern, suggestedAssertion),
+                                new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
+                        );
                         result = true;
                     }
                 }
@@ -97,18 +97,28 @@ final public class AssertInstanceOfStrategy {
                                 final PsiElement[] innerArguments = candidate.getParameters();
                                 if (innerArguments.length == 1) {
                                     /* prepare class definition which can be used for QF-ing */
+                                    final String fqn = '\\' + contents.replaceAll("\\\\\\\\", "\\\\");
+                                    final PhpLanguageLevel php
+                                            = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                                    final String classDefinition;
+                                    if (php.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST)) {
+                                        classDefinition = fqn + "::class";
+                                    } else {
+                                        classDefinition = '\'' + fqn.replaceAll("\\\\", "\\\\\\\\") + '\'';
+                                    }
                                     /* report and provide QF */
+                                    final String suggestedAssertion   = binaryTargetMapping.get(methodName);
                                     final String[] suggestedArguments = new String[arguments.length + 1];
                                     suggestedArguments[0]             = classDefinition;
                                     suggestedArguments[1]             = innerArguments[0].getText();
                                     if (arguments.length > 2) {
                                         suggestedArguments[2] = arguments[2].getText();
                                     }
-
-                                    final String suggestedAssertion = binaryTargetMapping.get(methodName);
-                                    final String message            = String.format(messagePattern, suggestedAssertion);
-                                    holder.registerProblem(reference, message, new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments));
-
+                                    holder.registerProblem(
+                                            reference,
+                                            String.format(messagePattern, suggestedAssertion),
+                                            new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
+                                    );
                                     result = true;
                                 }
                             }

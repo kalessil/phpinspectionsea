@@ -107,7 +107,7 @@ final public class AssertInstanceOfStrategy {
                                         classDefinition = '\'' + fqn.replaceAll("\\\\", "\\\\\\\\") + '\'';
                                     }
                                     /* report and provide QF */
-                                    final String suggestedAssertion   = binaryTargetMapping.get(methodName);
+                                    final String suggestedAssertion   = getClassTargetMapping.get(methodName);
                                     final String[] suggestedArguments = new String[arguments.length + 1];
                                     suggestedArguments[0]             = classDefinition;
                                     suggestedArguments[1]             = innerArguments[0].getText();

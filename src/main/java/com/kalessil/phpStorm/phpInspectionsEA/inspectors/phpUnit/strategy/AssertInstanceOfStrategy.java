@@ -108,7 +108,7 @@ final public class AssertInstanceOfStrategy {
                                     }
                                     /* report and provide QF */
                                     final String suggestedAssertion   = getClassTargetMapping.get(methodName);
-                                    final String[] suggestedArguments = new String[arguments.length + 1];
+                                    final String[] suggestedArguments = new String[arguments.length];
                                     suggestedArguments[0]             = classDefinition;
                                     suggestedArguments[1]             = innerArguments[0].getText();
                                     if (arguments.length > 2) {

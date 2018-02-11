@@ -40,11 +40,11 @@ public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection 
             public void visitPhpMethod(@NotNull Method method) {
                 final PhpClass clazz = method.getContainingClass();
                 if (clazz != null && !clazz.isInterface()) {
-                    final Field field         = OpenapiResolveUtil.resolveField(clazz, method.getName());
-                    final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
-                    if (field != null && nameNode != null) {
+                    final Field field = OpenapiResolveUtil.resolveField(clazz, method.getName());
+                    if (field != null) {
+                        final PsiElement nameNode  = NamedElementUtil.getNameIdentifier(method);
                         final PhpType resolvedType = OpenapiResolveUtil.resolveType(field, holder.getProject());
-                        if (resolvedType != null) {
+                        if (resolvedType != null && nameNode != null) {
                             final PhpType knownType = resolvedType.filterUnknown();
                             if (knownType.isEmpty()) {
                                 holder.registerProblem(nameNode, messageFieldType);

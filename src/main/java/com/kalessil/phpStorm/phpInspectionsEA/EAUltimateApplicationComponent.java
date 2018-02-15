@@ -97,21 +97,23 @@ public class EAUltimateApplicationComponent implements ApplicationComponent {
         AnalyticsUtil.registerPluginEvent(settings, "run", settings.getOldestVersion());
 
         /* collect exceptions */
-        final FileAppender appender = new FileAppender() {
-            @Override
-            public void append(@NotNull LoggingEvent event) {
-                final ThrowableInformation exceptionDetails = event.getThrowableInformation();
-                if (exceptionDetails != null) {
-                    AnalyticsUtil.registerLoggedException(
-                        settings.getVersion(),
-                        settings.getUuid(),
-                        exceptionDetails.getThrowable()
-                    );
+        if (!ApplicationManager.getApplication().isUnitTestMode()) {
+            final FileAppender appender = new FileAppender() {
+                @Override
+                public void append(@NotNull LoggingEvent event) {
+                    final ThrowableInformation exceptionDetails = event.getThrowableInformation();
+                    if (exceptionDetails != null) {
+                        AnalyticsUtil.registerLoggedException(
+                            settings.getVersion(),
+                            settings.getUuid(),
+                            exceptionDetails.getThrowable()
+                        );
+                    }
                 }
-            }
-        };
-        appender.setName("ea-exceptions-tracker");
-        Logger.getRootLogger().addAppender(appender);
+            };
+            appender.setName("ea-exceptions-tracker");
+            Logger.getRootLogger().addAppender(appender);
+        }
 
         this.initLicensing();
     }

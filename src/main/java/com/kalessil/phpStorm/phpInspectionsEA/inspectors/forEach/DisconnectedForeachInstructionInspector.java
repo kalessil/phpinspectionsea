@@ -175,7 +175,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                 /* we are modifying the variable */
                                 allModifiedVariables.add(variableName);
                                 /* self-assignment and field assignment makes the variable dependent on itself  */
-                                if (parent instanceof SelfAssignmentExpression || valueContainer instanceof FieldReference) {
+                                if (assignment instanceof SelfAssignmentExpression || valueContainer instanceof FieldReference) {
                                     individualDependencies.add(variableName);
                                 }
                                 continue;

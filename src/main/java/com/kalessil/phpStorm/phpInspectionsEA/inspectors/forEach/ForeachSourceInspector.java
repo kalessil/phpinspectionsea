@@ -42,7 +42,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
     private static final String patternNotRecognized = "Expressions' type was not recognized, please check type hints.";
     private static final String patternMixedTypes    = "Expressions' type contains '%t%', please specify possible types instead (best practices).";
     private static final String patternScalar        = "Can not iterate '%t%' (re-check type hints).";
-    private static final String patternObject        = "Can not iterate '%t%' (must implement one of Iterator interfaces).";
+    private static final String patternObject        = "Iterates over '%t%' properties (probably should implement one of Iterator interfaces).";
 
     @NotNull
     public String getShortName() {
@@ -219,21 +219,10 @@ public class ForeachSourceInspector extends BasePhpInspection {
                             classes.clear();
                         }
 
-                        /* analyze classes for having \Traversable in parents */
-                        boolean hasTraversable = false;
-                        if (!poolToCheck.isEmpty()) {
-                            for (final PhpClass clazz : poolToCheck) {
-                                if (clazz.getFQN().equals("\\Traversable")) {
-                                    hasTraversable = true;
-                                    break;
-                                }
-                            }
-                            poolToCheck.clear();
+                        if (foundClass && poolToCheck.stream().noneMatch(c -> c.getFQN().equals("\\Traversable"))) {
+                            holder.registerProblem(container, patternObject.replace("%t%", type));
                         }
-                        if (foundClass && !hasTraversable) {
-                            final String message = patternObject.replace("%t%", type);
-                            holder.registerProblem(container, message, ProblemHighlightType.GENERIC_ERROR);
-                        }
+                        poolToCheck.clear();
                     }
 
                     types.clear();

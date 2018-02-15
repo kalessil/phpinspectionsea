@@ -21,6 +21,13 @@ may reveal new bugs or dead code. Also, here are some hints how to add types inf
     foreach ($items[1] as $string) {
         ...
     }
+    
+    /* Case 2: intended iteration over object properties */
+    
+    /* @var $object \stdClass */
+    foreach ((array) $object as $property => $value) { /* implicit casting expresses the intention */
+        ...
+    }
 ```
 
 ## 'empty(...)' usage

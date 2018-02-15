@@ -2,6 +2,7 @@
 <body>
 'array_filter(...)' preserves original keys set while skipping key-value pairs.<br />
 E.g. [ 0 => null, 1 => '...', 2 => null ] after filtering null values becomes [ 1 => '...' ].<br />
-We are reporting when implicit numeric index used for accessing such result.
+We are reporting when implicit numeric index used for accessing such result and json-encoding applied
+(the you can get hash-map instead of expected array).
 </body>
 </html>

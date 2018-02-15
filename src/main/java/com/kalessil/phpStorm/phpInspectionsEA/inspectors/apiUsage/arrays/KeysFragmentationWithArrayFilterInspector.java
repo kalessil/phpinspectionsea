@@ -41,30 +41,51 @@ public class KeysFragmentationWithArrayFilterInspector extends BasePhpInspection
                 if (functionName != null && functionName.equals("array_filter")) {
                     final PsiElement[] arguments = reference.getParameters();
                     final PsiElement parent      = reference.getParent();
-                    if (arguments.length > 0 && OpenapiTypesUtil.isAssignment(parent)) {
-                        final PsiElement candidate = ((AssignmentExpression) parent).getVariable();
-                        if (candidate instanceof Variable) {
-                            final Function scope      = ExpressionSemanticUtil.getScope(reference);
-                            final GroupStatement body = scope == null ? null : ExpressionSemanticUtil.getGroupStatement(scope);
-                            if (body != null) {
-                                final String variableName = ((Variable) candidate).getName();
-                                for (final ArrayAccessExpression access : PsiTreeUtil.findChildrenOfType(body, ArrayAccessExpression.class)) {
-                                    final PsiElement container = access.getValue();
-                                    if (container instanceof Variable) {
-                                        final String containerName = ((Variable) container).getName();
-                                        if (containerName.equals(variableName)) {
-                                            final ArrayIndex index = access.getIndex();
-                                            if (index != null && OpenapiTypesUtil.isNumber(index.getValue())) {
-                                                holder.registerProblem(reference.getFirstChild(), message);
-                                                break;
+                    if (arguments.length > 0) {
+                        if (OpenapiTypesUtil.isAssignment(parent)) {
+                            final PsiElement candidate = ((AssignmentExpression) parent).getVariable();
+                            if (candidate instanceof Variable) {
+                                final Function scope      = ExpressionSemanticUtil.getScope(reference);
+                                final GroupStatement body = scope == null ? null : ExpressionSemanticUtil.getGroupStatement(scope);
+                                if (body != null) {
+                                    final String variableName = ((Variable) candidate).getName();
+                                    for (final PsiElement usage : PsiTreeUtil.findChildrenOfAnyType(body, ArrayAccessExpression.class, FunctionReference.class)) {
+                                        if (usage instanceof ArrayAccessExpression) {
+                                            final ArrayAccessExpression access = (ArrayAccessExpression) usage;
+                                            final PsiElement container         = access.getValue();
+                                            if (container instanceof Variable) {
+                                                final String containerName = ((Variable) container).getName();
+                                                if (containerName.equals(variableName)) {
+                                                    final ArrayIndex index = access.getIndex();
+                                                    if (index != null && OpenapiTypesUtil.isNumber(index.getValue())) {
+                                                        holder.registerProblem(reference.getFirstChild(), message);
+                                                        break;
+                                                    }
+                                                }
                                             }
+                                        } else if (this.isInPotentiallyBuggyCall(usage.getParent())) {
+                                            holder.registerProblem(reference.getFirstChild(), message);
                                         }
                                     }
                                 }
                             }
+                        } else if (this.isInPotentiallyBuggyCall(parent)) {
+                            holder.registerProblem(reference.getFirstChild(), message);
                         }
                     }
                 }
+            }
+
+            private boolean isInPotentiallyBuggyCall(@NotNull PsiElement parent) {
+                boolean result = false;
+                if (parent instanceof ParameterList) {
+                    final PsiElement grandParent = parent.getParent();
+                    if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
+                        final String parentCallName = ((FunctionReference) grandParent).getName();
+                        result = parentCallName != null && parentCallName.equals("json_encode");
+                    }
+                }
+                return result;
             }
         };
     }

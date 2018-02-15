@@ -162,19 +162,24 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
                     /* writing into variable */
                     if (parent instanceof AssignmentExpression) {
-                        final AssignmentExpression assignment = (AssignmentExpression) parent;
-                        if (assignment.getVariable() == valueContainer) {
-                            /* we are modifying the variable */
-                            allModifiedVariables.add(variableName);
-                            /* self-assignment and field assignment makes the variable dependent on itself  */
-                            if (
-                                parent instanceof SelfAssignmentExpression ||
-                                valueContainer instanceof FieldReference
-                            ) {
-                                individualDependencies.add(variableName);
+                        /* php-specific `list(...) =` , `[...] =` construction */
+                        if (parent instanceof MultiassignmentExpression) {
+                            final MultiassignmentExpression assignment = (MultiassignmentExpression) parent;
+                            if (assignment.getVariables().contains(variable)) {
+                                allModifiedVariables.add(variableName);
+                                continue;
                             }
-
-                            continue;
+                        } else {
+                            final AssignmentExpression assignment = (AssignmentExpression) parent;
+                            if (assignment.getVariable() == valueContainer) {
+                                /* we are modifying the variable */
+                                allModifiedVariables.add(variableName);
+                                /* self-assignment and field assignment makes the variable dependent on itself  */
+                                if (parent instanceof SelfAssignmentExpression || valueContainer instanceof FieldReference) {
+                                    individualDependencies.add(variableName);
+                                }
+                                continue;
+                            }
                         }
                     }
 
@@ -182,20 +187,6 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     if (parent instanceof ArrayAccessExpression && valueContainer == ((ArrayAccessExpression) parent).getValue()) {
                         allModifiedVariables.add(variableName);
                         individualDependencies.add(variableName);
-                    }
-
-                    /* php-specific `list(...) =` , `[...] =` construction */
-                    if (parent instanceof MultiassignmentExpression) {
-                        final List<PhpPsiElement> variables = ((MultiassignmentExpression) parent).getVariables();
-                        if (!variables.isEmpty()) {
-                            if (variables.contains(variable)) {
-                                allModifiedVariables.add(variableName);
-
-                                variables.clear();
-                                continue;
-                            }
-                            variables.clear();
-                        }
                     }
 
                     /* php will create variable, if it is by reference */

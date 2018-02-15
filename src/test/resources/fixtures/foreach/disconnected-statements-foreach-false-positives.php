@@ -39,9 +39,10 @@ foreach ($files as & $file5) {
 
 /* list will introduce new variables in the loop */
 foreach ($files as & $file7) {
-    preg_match('pattern', $file7, $matched);
-    list ($first, $second) = $matched;
-    unset($first, $second, $matched);
+    list ($first, $second) = explode('...', '...');
+    [$third, $fourth]      = explode('...', '...');
+
+    unset($first, $second, $third, $fourth);
 }
 
 /* different assignments: clone, reassigning variables with variables; control statements */

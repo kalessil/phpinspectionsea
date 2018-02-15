@@ -12,6 +12,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -63,8 +65,16 @@ public class KeysFragmentationWithArrayFilterInspector extends BasePhpInspection
                                                     }
                                                 }
                                             }
-                                        } else if (this.isInPotentiallyBuggyCall(usage.getParent())) {
-                                            holder.registerProblem(reference.getFirstChild(), message);
+                                        } else if (OpenapiTypesUtil.isFunctionReference(usage)) {
+                                            final PsiElement[] usedArguments = ((FunctionReference) usage).getParameters();
+                                            if (usedArguments.length > 0) {
+                                                final boolean isTarget = Arrays.stream(usedArguments)
+                                                        .filter(a   -> a instanceof Variable)
+                                                        .anyMatch(a -> ((Variable) a).getName().equals(variableName));
+                                                if (isTarget && this.isInPotentiallyBuggyCall(usedArguments[0].getParent())) {
+                                                    holder.registerProblem(reference.getFirstChild(), message);
+                                                }
+                                            }
                                         }
                                     }
                                 }

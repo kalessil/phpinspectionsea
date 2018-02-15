@@ -59,7 +59,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 final List<Variable> variables   = foreach.getVariables();
                 final GroupStatement foreachBody = ExpressionSemanticUtil.getGroupStatement(foreach);
                 /* ensure foreach structure is ready for inspection */
-                if (null != foreachBody && variables.size() > 0) {
+                if (null != foreachBody && !variables.isEmpty()) {
                     /* pre-collect introduced and internally used variables */
                     final Set<String> allModifiedVariables
                             = variables.stream().map(PhpNamedElement::getName).collect(Collectors.toSet());
@@ -165,8 +165,9 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                         /* php-specific `list(...) =` , `[...] =` construction */
                         if (parent instanceof MultiassignmentExpression) {
                             final MultiassignmentExpression assignment = (MultiassignmentExpression) parent;
-                            if (assignment.getVariables().contains(variable)) {
+                            if (assignment.getValue() != variable) {
                                 allModifiedVariables.add(variableName);
+                                individualDependencies.add(variableName);
                                 continue;
                             }
                         } else {
@@ -189,31 +190,32 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                         individualDependencies.add(variableName);
                     }
 
-                    /* php will create variable, if it is by reference */
-                    if (parent instanceof ParameterList && OpenapiTypesUtil.isFunctionReference(grandParent)) {
-                        final FunctionReference call = (FunctionReference) grandParent;
-                        final int position           = ArrayUtils.indexOf(call.getParameters(), variable);
-                        if (position != -1) {
-                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(call);
-                            if (resolved instanceof Function) {
-                                final Parameter[] parameters = ((Function) resolved).getParameters();
-                                if (parameters.length > position && parameters[position].isPassByRef()) {
-                                    allModifiedVariables.add(variableName);
+                    if (parent instanceof ParameterList) {
+                        if (grandParent instanceof MethodReference) {
+                            /* an object consumes the variable, perhaps modification takes place */
+                            final MethodReference reference    = (MethodReference) grandParent;
+                            final PsiElement referenceOperator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
+                            if (OpenapiTypesUtil.is(referenceOperator, PhpTokenTypes.ARROW)) {
+                                final PsiElement variableCandidate = reference.getFirstPsiChild();
+                                if (variableCandidate instanceof Variable) {
+                                    allModifiedVariables.add(((Variable) variableCandidate).getName());
                                     continue;
                                 }
                             }
-                        }
-                    }
-
-                    /* an object consumes the variable, perhaps modification takes place */
-                    if (parent instanceof ParameterList && grandParent instanceof MethodReference) {
-                        final MethodReference reference    = (MethodReference) grandParent;
-                        final PsiElement referenceOperator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
-                        if (OpenapiTypesUtil.is(referenceOperator, PhpTokenTypes.ARROW)) {
-                            final PsiElement variableCandidate = reference.getFirstPsiChild();
-                            if (variableCandidate instanceof Variable) {
-                                allModifiedVariables.add(((Variable) variableCandidate).getName());
-                                continue;
+                        } else if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
+                            /* php will create variable, if it is by reference */
+                            final FunctionReference reference = (FunctionReference) grandParent;
+                            final int position                = ArrayUtils.indexOf(reference.getParameters(), variable);
+                            if (position != -1) {
+                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                if (resolved instanceof Function) {
+                                    final Parameter[] parameters = ((Function) resolved).getParameters();
+                                    if (parameters.length > position && parameters[position].isPassByRef()) {
+                                        allModifiedVariables.add(variableName);
+                                        individualDependencies.add(variableName);
+                                        continue;
+                                    }
+                                }
                             }
                         }
                     }

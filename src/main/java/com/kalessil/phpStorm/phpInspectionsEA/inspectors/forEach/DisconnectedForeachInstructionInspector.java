@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -197,19 +198,19 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                         }
                     }
 
-                    /* php-specific variables introduction: preg_match[_all] exporting results into 3rd argument */
+                    /* php will create variable, if it is by reference */
                     if (parent instanceof ParameterList && OpenapiTypesUtil.isFunctionReference(grandParent)) {
-                        final FunctionReference call  = (FunctionReference) grandParent;
-                        final String functionName     = call.getName();
-                        final PsiElement[] parameters = call.getParameters();
-
-                        // TODO: array_pop, array_shift, next, current, fwrite... -> use mapping function => argument modified
-                        if (
-                            3 == parameters.length && parameters[2] == variable &&
-                            functionName != null && functionName.startsWith("preg_match")
-                        ) {
-                            allModifiedVariables.add(variableName);
-                            continue;
+                        final FunctionReference call = (FunctionReference) grandParent;
+                        final int position           = ArrayUtils.indexOf(call.getParameters(), variable);
+                        if (position != -1) {
+                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(call);
+                            if (resolved instanceof Function) {
+                                final Parameter[] parameters = ((Function) resolved).getParameters();
+                                if (parameters.length > position && parameters[position].isPassByRef()) {
+                                    allModifiedVariables.add(variableName);
+                                    continue;
+                                }
+                            }
                         }
                     }
 

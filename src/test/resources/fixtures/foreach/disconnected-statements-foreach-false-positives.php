@@ -37,13 +37,6 @@ foreach ($files as & $file5) {
     --$processed; $processed--;
 }
 
-/* preg_match|preg_match will introduce new variables in the loop */
-foreach ($files as & $file6) {
-    preg_match('pattern', $file6, $matched);
-    preg_match_all('pattern', $file6, $matchedAll);
-    unset($matched, $matchedAll);
-}
-
 /* list will introduce new variables in the loop */
 foreach ($files as & $file7) {
     preg_match('pattern', $file7, $matched);
@@ -109,4 +102,13 @@ foreach ([] as $item) {
 /* false-positives: compact function usage */
 foreach ([] as $variable) {
     $object->method(compact('variable'));
+}
+
+/* false-positive: variables by reference */
+foreach ([] as $innerArray) {
+    array_shift($unknownVariable);
+    preg_match('...', $innerArray[0], $matched);
+    preg_match_all('...', $innerArray[0], $matchedAll);
+
+    unset($unknownVariable, $matched, $matchedAll);
 }

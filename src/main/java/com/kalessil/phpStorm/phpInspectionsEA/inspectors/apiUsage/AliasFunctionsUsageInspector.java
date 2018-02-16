@@ -7,12 +7,9 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.ResolveResult;
-import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -28,52 +25,58 @@ import java.util.Map;
  */
 
 public class AliasFunctionsUsageInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%a%(...)' is an alias function. Use '%f%(...)' instead.";
+    private static final String messagePattern = "'%s(...)' is an alias function, consider using '%s(...)' instead.";
 
     @NotNull
     public String getShortName() {
         return "AliasFunctionsUsageInspection";
     }
 
-    private static final Map<String, String> mapping = new HashMap<>();
+    private static final Map<String, String> relevantAliases   = new HashMap<>();
+    private static final Map<String, String> deprecatedAliases = new HashMap<>();
     static {
-        mapping.put("is_double",              "is_float");
-        mapping.put("is_integer",             "is_int");
-        mapping.put("is_long",                "is_int");
-        mapping.put("is_real",                "is_float");
-        mapping.put("sizeof",                 "count");
-        mapping.put("doubleval",              "floatval");
-        mapping.put("fputs",                  "fwrite");
-        mapping.put("join",                   "implode");
-        mapping.put("key_exists",             "array_key_exists");
-        mapping.put("chop",                   "rtrim");
-        mapping.put("ini_alter",              "ini_set");
-        mapping.put("is_writeable",           "is_writable");
-        mapping.put("magic_quotes_runtime",   "set_magic_quotes_runtime");
-        mapping.put("pos",                    "current");
-        mapping.put("show_source",            "highlight_file");
-        mapping.put("strchr",                 "strstr");
-        mapping.put("set_file_buffer",        "stream_set_write_buffer");
-        mapping.put("session_commit",         "session_write_close");
-        mapping.put("mysqli_escape_string",   "mysqli_real_escape_string");
-        mapping.put("ocifreecursor",          "oci_free_statement");
-        mapping.put("recode",                 "recode_string");
-        mapping.put("imap_listmailbox",       "imap_list");
-        mapping.put("socket_getopt",          "socket_get_option");
-        mapping.put("socket_setopt",          "socket_set_option");
-        mapping.put("openssl_get_privatekey", "openssl_pkey_get_private");
-        mapping.put("posix_errno",            "posix_get_last_error");
-        mapping.put("ldap_close",             "ldap_unbind");
-        mapping.put("pcntl_errno",            "pcntl_get_last_error");
-        mapping.put("ftp_quit",               "ftp_close");
-        mapping.put("odbc_do",                "odbc_exec");
+        relevantAliases.put("is_double",              "is_float");
+        relevantAliases.put("is_integer",             "is_int");
+        relevantAliases.put("is_long",                "is_int");
+        relevantAliases.put("is_real",                "is_float");
+        relevantAliases.put("sizeof",                 "count");
+        relevantAliases.put("doubleval",              "floatval");
+        relevantAliases.put("fputs",                  "fwrite");
+        relevantAliases.put("join",                   "implode");
+        relevantAliases.put("key_exists",             "array_key_exists");
+        relevantAliases.put("chop",                   "rtrim");
+        relevantAliases.put("ini_alter",              "ini_set");
+        relevantAliases.put("is_writeable",           "is_writable");
+        relevantAliases.put("pos",                    "current");
+        relevantAliases.put("show_source",            "highlight_file");
+        relevantAliases.put("strchr",                 "strstr");
+        relevantAliases.put("set_file_buffer",        "stream_set_write_buffer");
+        relevantAliases.put("session_commit",         "session_write_close");
+        relevantAliases.put("mysqli_escape_string",   "mysqli_real_escape_string");
+        relevantAliases.put("recode",                 "recode_string");
+        relevantAliases.put("imap_listmailbox",       "imap_list");
+        relevantAliases.put("socket_getopt",          "socket_get_option");
+        relevantAliases.put("socket_setopt",          "socket_set_option");
+        relevantAliases.put("openssl_get_privatekey", "openssl_pkey_get_private");
+        relevantAliases.put("posix_errno",            "posix_get_last_error");
+        relevantAliases.put("ldap_close",             "ldap_unbind");
+        relevantAliases.put("pcntl_errno",            "pcntl_get_last_error");
+        relevantAliases.put("ftp_quit",               "ftp_close");
+        relevantAliases.put("odbc_do",                "odbc_exec");
 
-        /* also aliases, but original naming is so ugly, that I'm not going to promote it */
-        //mapping.put("close", "closedir");
-        //mapping.put("rewind", "rewinddir");
-        //mapping.put("odbc_field_precision", "odbc_field_len");
-        //mapping.put("mysqli_execute", "mysqli_stmt_execute");
-        //mapping.put("imap_header", "imap_headerinfo");
+        /* aliases affected by backward-incompatible changes */
+        deprecatedAliases.put("magic_quotes_runtime",   "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 7.0.0.");
+        deprecatedAliases.put("ocifreecursor",          "This alias has been DEPRECATED as of PHP 5.4.0. Relying on this alias is highly discouraged.");
+        deprecatedAliases.put("mysqli_bind_param",      "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.");
+        deprecatedAliases.put("mysqli_bind_result",     "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.");
+        deprecatedAliases.put("mysqli_client_encoding", "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.");
+        deprecatedAliases.put("mysqli_fetch",           "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.");
+        deprecatedAliases.put("mysqli_param_count",     "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.");
+        deprecatedAliases.put("mysqli_get_metadata",    "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.");
+        deprecatedAliases.put("mysqli_send_long_data",  "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.");
+
+        /* also aliases, but original naming is ugly and I'm not going to promote it: odbc_field_precision, mysqli_execute, imap_header */
+        /* aliases covered by other inspections: rand -> mt_rand, srand -> mt_srand */
     }
 
     @Override
@@ -83,29 +86,13 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (null != functionName && mapping.containsKey(functionName)) {
-                    /* avoid complaining to imported functions */
-                    PsiElement function = OpenapiResolveUtil.resolveReference(reference);
-                    if (function == null) {
-                        /* handle multiply resolved functions - we need one unique FQN */
-                        final Map<String, Function> resolvedFunctions = new HashMap<>();
-                        for (final ResolveResult resolve : reference.multiResolve(true)) {
-                            final PsiElement resolved = resolve.getElement();
-                            if (resolved instanceof Function) {
-                                resolvedFunctions.put(((Function) resolved).getFQN(), (Function) resolved);
-                            }
-                        }
-                        if (1 == resolvedFunctions.size()) {
-                            function = resolvedFunctions.values().iterator().next();
-                        }
-                        resolvedFunctions.clear();
-                    }
-                    if (function instanceof Function && ((Function) function).getFQN().equals('\\' + functionName)) {
-                        final String suggestedName = mapping.get(functionName);
-                        final String message       = messagePattern
-                                .replace("%a%", functionName)
-                                .replace("%f%", suggestedName);
-                        holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(suggestedName));
+                if (functionName != null) {
+                    if (relevantAliases.containsKey(functionName) && this.isFromRootNamespace(reference)) {
+                        final String original = relevantAliases.get(functionName);
+                        final String message  = String.format(messagePattern, functionName, original);
+                        holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix(original));
+                    } else if (deprecatedAliases.containsKey(functionName) && this.isFromRootNamespace(reference)) {
+                        holder.registerProblem(reference, deprecatedAliases.get(functionName));
                     }
                 }
             }
@@ -135,7 +122,7 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference) {
+            if (expression instanceof FunctionReference && !project.isDisposed()) {
                 ((FunctionReference) expression).handleElementRename(this.suggestedName);
             }
         }

@@ -28,7 +28,7 @@
     echo pcntl_get_last_error();
     echo ftp_close();
     echo odbc_exec();
-    echo stream_set_blocking();        
+    echo stream_set_blocking();
     echo stream_wrapper_register();
     echo stream_set_timeout();
     echo stream_get_meta_data();

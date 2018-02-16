@@ -22,7 +22,7 @@
     echo recode_string();
     echo imap_list();
     echo socket_get_option();
-    echo socket_set_optionsocket_setopt();
+    echo socket_set_option();
     echo openssl_pkey_get_private();
     echo posix_get_last_error();
     echo ldap_unbind();

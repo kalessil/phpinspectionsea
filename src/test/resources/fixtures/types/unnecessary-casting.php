@@ -55,3 +55,8 @@
         (string) $instance->withWeakReturn(),
         <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string)</weak_warning> $instance->withStrictReturn()
     ];
+
+    /* false-positives: globals entries are not resolved as strings */
+    function cases_holder_globals() {
+        $optional = (int)($_GET['parameter'] ?? -1);
+    }

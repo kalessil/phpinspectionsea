@@ -31,7 +31,7 @@
     echo stream_set_blocking();        
     echo stream_wrapper_register();
     echo stream_set_timeout();
-    echo stream_get_meta_datasocket_get_status();
+    echo stream_get_meta_data();
     echo disk_free_space();
 
     echo magic_quotes_runtime();

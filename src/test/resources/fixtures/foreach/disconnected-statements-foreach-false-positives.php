@@ -40,7 +40,7 @@ foreach ($files as & $file5) {
 /* list will introduce new variables in the loop */
 foreach ($files as & $file7) {
     list ($first, $second) = explode('...', '...');
-    // [$third, $fourth]      = explode('...', '...'); <- needs to be fixed, currently gets reported
+    [$third, $fourth]      = explode('...', '...');
 
     unset($first, $second, $third, $fourth);
 }

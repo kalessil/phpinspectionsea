@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -157,6 +158,10 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     while (parent instanceof FieldReference) {
                         valueContainer = parent;
                         parent         = parent.getParent();
+                    }
+                    /* a special case: `[] = ` and `array() = ` unboxing */
+                    if (OpenapiTypesUtil.is(parent, PhpElementTypes.ARRAY_VALUE)) {
+                        parent = parent.getParent().getParent();
                     }
                     final PsiElement grandParent = parent.getParent();
 

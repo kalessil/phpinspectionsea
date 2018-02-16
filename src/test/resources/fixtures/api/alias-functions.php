@@ -33,6 +33,9 @@
     echo <warning descr="'socket_set_timeout(...)' is an alias function, consider using 'stream_set_timeout(...)' instead.">socket_set_timeout()</warning>;
     echo <warning descr="'socket_get_status(...)' is an alias function, consider using 'stream_get_meta_data(...)' instead.">socket_get_status()</warning>;
     echo <warning descr="'diskfreespace(...)' is an alias function, consider using 'disk_free_space(...)' instead.">diskfreespace()</warning>;
+    echo <warning descr="'odbc_field_precision(...)' is an alias function, consider using 'odbc_field_len(...)' instead.">odbc_field_precision()</warning>;
+    echo <warning descr="'mysqli_execute(...)' is an alias function, consider using 'mysqli_stmt_execute(...)' instead.">mysqli_execute()</warning>;
+    echo <warning descr="'imap_header(...)' is an alias function, consider using 'imap_headerinfo(...)' instead.">imap_header()</warning>;
 
     echo <warning descr="This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 7.0.0.">magic_quotes_runtime()</warning>;
     echo <warning descr="This alias has been DEPRECATED as of PHP 5.4.0. Relying on this alias is highly discouraged.">ocifreecursor()</warning>;

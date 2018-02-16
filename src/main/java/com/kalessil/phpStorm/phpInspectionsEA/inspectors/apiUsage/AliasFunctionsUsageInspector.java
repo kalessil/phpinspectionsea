@@ -68,10 +68,12 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         relevantAliases.put("socket_set_timeout",     "stream_set_timeout");
         relevantAliases.put("socket_get_status",      "stream_get_meta_data");
         relevantAliases.put("diskfreespace",          "disk_free_space");
+        relevantAliases.put("odbc_field_precision",   "odbc_field_len");
+        relevantAliases.put("mysqli_execute",         "mysqli_stmt_execute");
+        relevantAliases.put("imap_header",            "imap_headerinfo");
+        /* aliases covered by other inspections: rand -> mt_rand, srand -> mt_srand */
 
         /* aliases affected by backward-incompatible changes */
-        deprecatedAliases.put("magic_quotes_runtime",   "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 7.0.0.");
-        deprecatedAliases.put("ocifreecursor",          "This alias has been DEPRECATED as of PHP 5.4.0. Relying on this alias is highly discouraged.");
         deprecatedAliases.put("mysqli_bind_param",      "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.");
         deprecatedAliases.put("mysqli_bind_result",     "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.");
         deprecatedAliases.put("mysqli_client_encoding", "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.");
@@ -79,9 +81,8 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         deprecatedAliases.put("mysqli_param_count",     "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.");
         deprecatedAliases.put("mysqli_get_metadata",    "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.");
         deprecatedAliases.put("mysqli_send_long_data",  "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.");
-
-        /* also aliases, but original naming is ugly and I'm not going to promote it: odbc_field_precision, mysqli_execute, imap_header */
-        /* aliases covered by other inspections: rand -> mt_rand, srand -> mt_srand */
+        deprecatedAliases.put("ocifreecursor",          "This alias has been DEPRECATED as of PHP 5.4.0. Relying on this alias is highly discouraged.");
+        deprecatedAliases.put("magic_quotes_runtime",   "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 7.0.0.");
     }
 
     @Override

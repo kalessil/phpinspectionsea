@@ -33,6 +33,9 @@
     echo stream_set_timeout();
     echo stream_get_meta_data();
     echo disk_free_space();
+    echo odbc_field_len();
+    echo mysqli_stmt_execute();
+    echo imap_headerinfo();
 
     echo magic_quotes_runtime();
     echo ocifreecursor();

@@ -40,7 +40,7 @@ foreach ($files as & $file5) {
 /* list will introduce new variables in the loop */
 foreach ($files as & $file7) {
     list ($first, $second) = explode('...', '...');
-    [$third, $fourth]      = explode('...', '...');
+    // [$third, $fourth]      = explode('...', '...'); <- PS 2016.2 parser doesn't support this
 
     unset($first, $second, $third, $fourth);
 }

@@ -63,6 +63,11 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         relevantAliases.put("pcntl_errno",            "pcntl_get_last_error");
         relevantAliases.put("ftp_quit",               "ftp_close");
         relevantAliases.put("odbc_do",                "odbc_exec");
+        relevantAliases.put("socket_set_blocking",    "stream_set_blocking");
+        relevantAliases.put("stream_register_wrapper","stream_wrapper_register");
+        relevantAliases.put("socket_set_timeout",     "stream_set_timeout");
+        relevantAliases.put("socket_get_status",      "stream_get_meta_data");
+        relevantAliases.put("diskfreespace",          "disk_free_space");
 
         /* aliases affected by backward-incompatible changes */
         deprecatedAliases.put("magic_quotes_runtime",   "This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 7.0.0.");

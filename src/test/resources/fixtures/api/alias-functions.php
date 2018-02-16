@@ -28,6 +28,11 @@
     echo <warning descr="'pcntl_errno(...)' is an alias function, consider using 'pcntl_get_last_error(...)' instead.">pcntl_errno()</warning>;
     echo <warning descr="'ftp_quit(...)' is an alias function, consider using 'ftp_close(...)' instead.">ftp_quit()</warning>;
     echo <warning descr="'odbc_do(...)' is an alias function, consider using 'odbc_exec(...)' instead.">odbc_do()</warning>;
+    echo <warning descr="'socket_set_blocking(...)' is an alias function, consider using 'stream_set_blocking(...)' instead.">socket_set_blocking()</warning>;
+    echo <warning descr="'stream_register_wrapper(...)' is an alias function, consider using 'stream_wrapper_register(...)' instead.">stream_register_wrapper()</warning>;
+    echo <warning descr="'socket_set_timeout(...)' is an alias function, consider using 'stream_set_timeout(...)' instead.">socket_set_timeout()</warning>;
+    echo <warning descr="'socket_get_status(...)' is an alias function, consider using 'stream_get_meta_data(...)' instead.">socket_get_status()</warning>;
+    echo <warning descr="'diskfreespace(...)' is an alias function, consider using 'disk_free_space(...)' instead.">diskfreespace()</warning>;
 
     echo <warning descr="This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 7.0.0.">magic_quotes_runtime()</warning>;
     echo <warning descr="This alias has been DEPRECATED as of PHP 5.4.0. Relying on this alias is highly discouraged.">ocifreecursor()</warning>;

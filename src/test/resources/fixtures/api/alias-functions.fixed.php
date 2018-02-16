@@ -28,6 +28,11 @@
     echo pcntl_get_last_error();
     echo ftp_close();
     echo odbc_exec();
+    echo stream_set_blocking();        
+    echo stream_wrapper_register();
+    echo stream_set_timeout();
+    echo stream_get_meta_datasocket_get_status();
+    echo disk_free_space();
 
     echo magic_quotes_runtime();
     echo ocifreecursor();

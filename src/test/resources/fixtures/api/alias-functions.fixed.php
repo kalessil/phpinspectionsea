@@ -12,7 +12,6 @@
     echo rtrim();
     echo ini_set();
     echo is_writable();
-    echo set_magic_quotes_runtime();
     echo current();
     echo highlight_file();
     echo strstr();

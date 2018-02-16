@@ -12,7 +12,6 @@
     echo <warning descr="'chop(...)' is an alias function, consider using 'rtrim(...)' instead.">chop()</warning>;
     echo <warning descr="'ini_alter(...)' is an alias function, consider using 'ini_set(...)' instead.">ini_alter()</warning>;
     echo <warning descr="'is_writeable(...)' is an alias function, consider using 'is_writable(...)' instead.">is_writeable()</warning>;
-    echo <warning descr="'magic_quotes_runtime(...)' is an alias function, consider using 'set_magic_quotes_runtime(...)' instead.">magic_quotes_runtime()</warning>;
     echo <warning descr="'pos(...)' is an alias function, consider using 'current(...)' instead.">pos()</warning>;
     echo <warning descr="'show_source(...)' is an alias function, consider using 'highlight_file(...)' instead.">show_source()</warning>;
     echo <warning descr="'strchr(...)' is an alias function, consider using 'strstr(...)' instead.">strchr()</warning>;

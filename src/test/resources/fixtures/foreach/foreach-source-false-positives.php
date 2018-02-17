@@ -68,3 +68,10 @@
     function foo(?\Traversable $traversable) {
         foreach ($traversable ?? [] as $value) {}
     }
+
+    /** @param \stdClass[] $array */
+    function issue800(array $array)
+    {
+        foreach (array_reverse($array) as $item) {
+        }
+    }

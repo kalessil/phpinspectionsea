@@ -150,7 +150,6 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     }
                 }
 
-
                 /* gracefully request to specify exact types which can appear (mixed, object) */
                 if (types.contains(Types.strMixed)) {
                     /* false-positive: mixed definitions from stub functions */
@@ -181,8 +180,12 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     types.remove(Types.strNull);
                 }
 
+                /* if contains an array, then it is iterable */
+                if (types.contains(Types.strArray)) {
+                    return;
+                }
+
                 /* do not process foreach-compatible types */
-                types.remove(Types.strArray);
                 types.remove(Types.strIterable);
                 types.remove("\\Traversable");
                 types.remove("\\Iterator");

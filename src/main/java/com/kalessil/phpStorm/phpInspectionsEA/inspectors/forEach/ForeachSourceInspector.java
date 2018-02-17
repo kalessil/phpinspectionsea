@@ -40,9 +40,9 @@ public class ForeachSourceInspector extends BasePhpInspection {
     public boolean REPORT_UNRECOGNIZED_TYPES = true;
 
     private static final String patternNotRecognized = "Expressions' type was not recognized, please check type hints.";
-    private static final String patternMixedTypes    = "Expressions' type contains '%t%', please specify possible types instead (best practices).";
-    private static final String patternScalar        = "Can not iterate '%t%' (re-check type hints).";
-    private static final String patternObject        = "Iterates over '%t%' properties (probably should implement one of Iterator interfaces).";
+    private static final String patternMixedTypes    = "Expressions' type contains '%s', please specify possible types instead (best practices).";
+    private static final String patternScalar        = "Can not iterate '%s' (re-check type hints).";
+    private static final String patternObject        = "Iterates over '%s' properties (probably should implement one of Iterator interfaces).";
 
     @NotNull
     public String getShortName() {
@@ -57,7 +57,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
             public void visitPhpForeach(@NotNull ForeachStatement foreach) {
                 final PsiElement source = ExpressionSemanticUtil.getExpressionTroughParenthesis(foreach.getArray());
                 if (source instanceof PhpTypedElement && !isEnsuredByPyParentIf(foreach, source)) {
-                    this.analyseContainer(source);
+                    analyseContainer(source);
                 }
             }
 
@@ -98,7 +98,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     return;
                 }
                 final Set<String> types = resolvedType.filterUnknown().getTypes().stream()
-                        .map(Types::getType).collect(Collectors.toSet());
+                                                      .map(Types::getType).collect(Collectors.toSet());
                 if (types.isEmpty()) {
                     /* false-positives: pre-defined variables */
                     if (container instanceof Variable) {
@@ -121,10 +121,10 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 }
                 /* false-positives: mixed parameter type, parameter overridden before foreach */
                 if (types.size() > 1 && scope instanceof Function && container instanceof Variable) {
-                    final String parameter               = ((Variable) container).getName();
-                    final PhpEntryPointInstruction start = ((Function) scope).getControlFlow().getEntryPoint();
+                    final String                   parameter = ((Variable) container).getName();
+                    final PhpEntryPointInstruction start     = ((Function) scope).getControlFlow().getEntryPoint();
                     final PhpAccessVariableInstruction[] uses
-                            = PhpControlFlowUtil.getFollowingVariableAccessInstructions(start, parameter, false);
+                        = PhpControlFlowUtil.getFollowingVariableAccessInstructions(start, parameter, false);
                     for (final PhpAccessVariableInstruction instruction : uses) {
                         final PhpPsiElement expression = instruction.getAnchor();
                         /* when matched itself, stop processing */
@@ -135,7 +135,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         final PsiElement parent = expression.getParent();
                         if (parent instanceof AssignmentExpression) {
                             final PsiElement matchCandidate = ((AssignmentExpression) parent).getVariable();
-                            if (null != matchCandidate && OpeanapiEquivalenceUtil.areEqual(matchCandidate, container)) {
+                            if (matchCandidate != null && OpeanapiEquivalenceUtil.areEqual(matchCandidate, container)) {
                                 types.clear();
                                 return;
                             }
@@ -157,26 +157,26 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     boolean isStubFunction = false;
                     if (OpenapiTypesUtil.isFunctionReference(container)) {
                         final PsiElement function = OpenapiResolveUtil.resolveReference((FunctionReference) container);
-                        final String filePath     = null == function ? null : function.getContainingFile().getVirtualFile().getCanonicalPath();
-                        isStubFunction            = null != filePath && filePath.contains(".jar!") && filePath.contains("/stubs/");
+                        final String     filePath = function == null ? null : function.getContainingFile().getVirtualFile().getCanonicalPath();
+                        isStubFunction = filePath != null && filePath.contains(".jar!") && filePath.contains("/stubs/");
                     }
                     /* false-positive: mixed definition from array type */
                     if (!isStubFunction && !types.contains(Types.strArray) && REPORT_MIXED_TYPES) {
-                        final String message = patternMixedTypes.replace("%t%", Types.strMixed);
+                        final String message = String.format(patternMixedTypes, Types.strMixed);
                         holder.registerProblem(container, message, ProblemHighlightType.WEAK_WARNING);
                     }
                     types.remove(Types.strMixed);
                 }
                 if (types.contains(Types.strObject)) {
                     if (REPORT_MIXED_TYPES) {
-                        final String message = patternMixedTypes.replace("%t%", Types.strObject);
+                        final String message = String.format(patternMixedTypes, Types.strObject);
                         holder.registerProblem(container, message, ProblemHighlightType.WEAK_WARNING);
                     }
                     types.remove(Types.strObject);
                 }
 
                 /* respect patter when returned array and bool|null for indicating failures*/
-                if (2 == types.size() && types.contains(Types.strArray)) {
+                if (types.size() == 2 && types.contains(Types.strArray)) {
                     types.remove(Types.strBoolean);
                     types.remove(Types.strNull);
                 }
@@ -197,16 +197,16 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         /* analyze scalar types */
                         final boolean isClassType = type.startsWith("\\");
                         if (!isClassType) {
-                            final String message = patternScalar.replace("%t%", type);
+                            final String message = String.format(patternScalar, type);
                             holder.registerProblem(container, message, ProblemHighlightType.GENERIC_ERROR);
 
                             continue;
                         }
 
                         /* check classes: collect hierarchy of possible classes */
-                        final Set<PhpClass> poolToCheck    = new HashSet<>();
-                        final Collection<PhpClass> classes = PhpIndexUtil.getObjectInterfaces(type, index, true);
-                        final boolean foundClass           = !classes.isEmpty();
+                        final Set<PhpClass>        poolToCheck = new HashSet<>();
+                        final Collection<PhpClass> classes     = PhpIndexUtil.getObjectInterfaces(type, index, true);
+                        final boolean              foundClass  = !classes.isEmpty();
                         if (!classes.isEmpty()) {
                             /* collect all interfaces*/
                             for (final PhpClass clazz : classes) {
@@ -220,7 +220,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         }
 
                         if (foundClass && poolToCheck.stream().noneMatch(c -> c.getFQN().equals("\\Traversable"))) {
-                            holder.registerProblem(container, patternObject.replace("%t%", type));
+                            holder.registerProblem(container, String.format(patternObject, type));
                         }
                         poolToCheck.clear();
                     }

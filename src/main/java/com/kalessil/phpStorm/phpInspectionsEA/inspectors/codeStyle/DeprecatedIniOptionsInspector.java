@@ -37,12 +37,17 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
     private static final Map<String, String> removals     = new HashMap<>();
     static {
 
+        /* TODO: http://php.net/manual/en/network.configuration.php */
+        /* TODO: http://php.net/manual/en/info.configuration.php */
+        /* TODO: http://php.net/manual/en/misc.configuration.php */
         deprecations.put("xsl.security_prefs", "'xsl.security_prefs' is a deprecated option since PHP 5.4.0 (removed in PHP 7.0.0). Use XsltProcessor->setSecurityPrefs() instead.");
         deprecations.put("highlight.bg", "'highlight.bg' is a deprecated option since PHP 5.4.0.");
         deprecations.put("define_syslog_variables", "'define_syslog_variables' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
         deprecations.put("magic_quotes_gpc", "'magic_quotes_gpc' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
         deprecations.put("magic_quotes_runtime", "'magic_quotes_runtime' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        /* TODO: http://php.net/manual/en/sybase.configuration.php */
         deprecations.put("magic_quotes_sybase", "'magic_quotes_sybase' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        /* TODO: http://php.net/manual/en/ini.sect.safe-mode.php */
         deprecations.put("safe_mode", "'safe_mode' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
         deprecations.put("safe_mode_gid", "'safe_mode_gid' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
         deprecations.put("safe_mode_include_dir", "'safe_mode_include_dir' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");

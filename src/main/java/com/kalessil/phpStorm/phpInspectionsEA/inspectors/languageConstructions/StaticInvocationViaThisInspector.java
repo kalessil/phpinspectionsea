@@ -72,10 +72,13 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                 /* now analyze: contexts are valid  */
                 final PsiElement resolved = OpenapiResolveUtil.resolveReference(psiReference);
                 if (resolved instanceof Method) {
-                    final Method method  = (Method) resolved;
-                    final PhpClass clazz = method.getContainingClass();
+                    final Method method = (Method) resolved;
                     /* non-static methods and contract interfaces must not be reported */
-                    if (null == clazz || clazz.isInterface() || !method.isStatic() || method.isAbstract()) {
+                    if (!method.isStatic() || method.isAbstract()) {
+                        return;
+                    }
+                    final PhpClass clazz = method.getContainingClass();
+                    if (clazz == null || clazz.isInterface()) {
                         return;
                     }
 
@@ -89,13 +92,15 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
 
                     /* Case 1: $this-><static method>() */
                     if (contextOfThis) {
-                        final String message = messageThisUsed.replace("%m%", methodName);
-                        holder.registerProblem(thisCandidate, message, new TheLocalFix(thisCandidate, operator));
+                        holder.registerProblem(
+                                thisCandidate,
+                                messageThisUsed.replace("%m%", methodName),
+                                new TheLocalFix(thisCandidate, operator)
+                        );
                     }
                     /* Case 2: <expression>-><static method>(); no chained calls; no QF - needs looking into cases */
                     else {
-                        final String message = messageExpressionUsed.replace("%m%", methodName);
-                        holder.registerProblem(reference, message);
+                        holder.registerProblem(reference, messageExpressionUsed.replace("%m%", methodName));
                     }
                 }
             }

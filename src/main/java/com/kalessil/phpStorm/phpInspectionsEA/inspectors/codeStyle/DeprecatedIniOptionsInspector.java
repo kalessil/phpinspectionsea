@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import org.apache.commons.lang3.tuple.Triple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -34,22 +35,21 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         targetFunctions.add("ini_restore");
     }
 
-    private static final Map<String, PhpLanguageLevel> deprecations = new HashMap<>();
+    private static final Map<String, Triple<PhpLanguageLevel, PhpLanguageLevel, String>> options = new HashMap<>();
     private static final Map<String, PhpLanguageLevel> removals     = new HashMap<>();
     private static final Map<String, String> alternatives           = new HashMap<>();
     static {
+        options.put("", Triple.of(, ,));
+
         /* http://php.net/manual/en/network.configuration.php */
-        deprecations.put("define_syslog_variables", PhpLanguageLevel.PHP530);
-        removals.put("define_syslog_variables",     PhpLanguageLevel.PHP540);
+        options.put("define_syslog_variables", Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
 
         /* http://php.net/manual/en/info.configuration.php */
-        deprecations.put("magic_quotes_gpc",     PhpLanguageLevel.PHP530);
-        deprecations.put("magic_quotes_runtime", PhpLanguageLevel.PHP530);
-        removals.put("magic_quotes_gpc",         PhpLanguageLevel.PHP540);
-        removals.put("magic_quotes_runtime",     PhpLanguageLevel.PHP540);
+        options.put("magic_quotes_gpc",     Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("magic_quotes_runtime", Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
 
         /* http://php.net/manual/en/misc.configuration.php */
-        removals.put("highlight.bg", PhpLanguageLevel.PHP540);
+        options.put("highlight.bg", Triple.of(null, PhpLanguageLevel.PHP540, null));
 
         /* http://php.net/manual/en/xsl.configuration.php */
         deprecations.put("xsl.security_prefs", PhpLanguageLevel.PHP540);

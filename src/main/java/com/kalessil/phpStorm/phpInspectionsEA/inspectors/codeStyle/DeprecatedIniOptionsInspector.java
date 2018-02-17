@@ -66,22 +66,17 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         options.put("always_populate_raw_post_data",  Triple.of(PhpLanguageLevel.PHP560, PhpLanguageLevel.PHP700, null));
 
         /* http://php.net/manual/en/session.configuration.php */
-        options.put("", Triple.of(, ,));
-        removals.put("session.hash_function",           PhpLanguageLevel.PHP710);
-        removals.put("session.hash_bits_per_character", PhpLanguageLevel.PHP710);
-        removals.put("session.entropy_file",            PhpLanguageLevel.PHP710);
-        removals.put("session.entropy_length",          PhpLanguageLevel.PHP710);
-        removals.put("session.bug_compat_42",           PhpLanguageLevel.PHP540);
-        removals.put("session.bug_compat_warn",         PhpLanguageLevel.PHP540);
+        options.put("session.hash_function",           Triple.of(null, PhpLanguageLevel.PHP710, null));
+        options.put("session.hash_bits_per_character", Triple.of(null, PhpLanguageLevel.PHP710, null));
+        options.put("session.entropy_file",            Triple.of(null, PhpLanguageLevel.PHP710, null));
+        options.put("session.entropy_length",          Triple.of(null, PhpLanguageLevel.PHP710, null));
+        options.put("session.bug_compat_42",           Triple.of(null, PhpLanguageLevel.PHP540, null));
+        options.put("session.bug_compat_warn",         Triple.of(null, PhpLanguageLevel.PHP540, null));
 
         /* http://php.net/manual/en/iconv.configuration.php */
-        options.put("", Triple.of(, ,));
-        deprecations.put("iconv.input_encoding",    PhpLanguageLevel.PHP540);
-        deprecations.put("iconv.output_encoding",   PhpLanguageLevel.PHP540);
-        deprecations.put("iconv.internal_encoding", PhpLanguageLevel.PHP540);
-        alternatives.put("iconv.input_encoding",    "default_charset");
-        alternatives.put("iconv.output_encoding",   "default_charset");
-        alternatives.put("iconv.internal_encoding", "default_charset");
+        options.put("iconv.input_encoding",    Triple.of(PhpLanguageLevel.PHP540, null, "default_charset"));
+        options.put("iconv.output_encoding",   Triple.of(PhpLanguageLevel.PHP540, null, "default_charset"));
+        options.put("iconv.internal_encoding", Triple.of(PhpLanguageLevel.PHP540, null, "default_charset"));
 
         /* http://php.net/manual/en/mbstring.configuration.php */
         options.put("", Triple.of(, ,));

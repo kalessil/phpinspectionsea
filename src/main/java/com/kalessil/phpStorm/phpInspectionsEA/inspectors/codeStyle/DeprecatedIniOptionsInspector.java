@@ -70,9 +70,9 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         options.put("session.bug_compat_42",           Triple.of(null, PhpLanguageLevel.PHP540, null));
         options.put("session.bug_compat_warn",         Triple.of(null, PhpLanguageLevel.PHP540, null));
         /* http://php.net/manual/en/iconv.configuration.php */
-        options.put("iconv.input_encoding",            Triple.of(PhpLanguageLevel.PHP540, null, "default_charset"));
-        options.put("iconv.output_encoding",           Triple.of(PhpLanguageLevel.PHP540, null, "default_charset"));
-        options.put("iconv.internal_encoding",         Triple.of(PhpLanguageLevel.PHP540, null, "default_charset"));
+        options.put("iconv.input_encoding",            Triple.of(PhpLanguageLevel.PHP560, null, "default_charset"));
+        options.put("iconv.output_encoding",           Triple.of(PhpLanguageLevel.PHP560, null, "default_charset"));
+        options.put("iconv.internal_encoding",         Triple.of(PhpLanguageLevel.PHP560, null, "default_charset"));
         /* http://php.net/manual/en/mbstring.configuration.php */
         options.put("mbstring.script_encoding",        Triple.of(null, PhpLanguageLevel.PHP540, "zend.script_encoding"));
         //options.put("mbstring.func_overload",          Triple.of(PhpLanguageLevel.PHP720, null, null));

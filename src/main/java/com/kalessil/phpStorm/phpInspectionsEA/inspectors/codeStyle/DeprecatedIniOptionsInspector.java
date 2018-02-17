@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -33,10 +34,10 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         targetFunctions.add("ini_restore");
     }
 
-    private static final Map<String, String> deprecations = new HashMap<>();
-    private static final Map<String, String> removals     = new HashMap<>();
+    private static final Map<String, PhpLanguageLevel> deprecations = new HashMap<>();
+    private static final Map<String, PhpLanguageLevel> removals     = new HashMap<>();
+    private static final Map<String, String> alternatives           = new HashMap<>();
     static {
-
         /* http://php.net/manual/en/network.configuration.php */
         deprecations.put("define_syslog_variables", "'define_syslog_variables' is a deprecated option since PHP 5.3.0.");
         removals.put("define_syslog_variables", "'define_syslog_variables' was removed in PHP 5.4.0.");
@@ -53,6 +54,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         /* http://php.net/manual/en/xsl.configuration.php */
         deprecations.put("xsl.security_prefs", "'xsl.security_prefs' is a deprecated option since PHP 5.4.0. Use XsltProcessor->setSecurityPrefs() instead.");
         removals.put("xsl.security_prefs", "'xsl.security_prefs' was removed in PHP 7.0.0. Use XsltProcessor->setSecurityPrefs() instead.");
+        alternatives.put("xsl.security_prefs", "XsltProcessor->setSecurityPrefs()");
 
         /* http://php.net/manual/en/ini.sect.safe-mode.php */
         deprecations.put("safe_mode",                    "'safe_mode' is a deprecated option since PHP 5.3.0.");
@@ -94,6 +96,9 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         deprecations.put("iconv.input_encoding",    "'iconv.input_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
         deprecations.put("iconv.output_encoding",   "'iconv.output_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
         deprecations.put("iconv.internal_encoding", "'iconv.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+        alternatives.put("iconv.input_encoding",    "default_charset");
+        alternatives.put("iconv.output_encoding",   "default_charset");
+        alternatives.put("iconv.internal_encoding", "default_charset");
 
         /* http://php.net/manual/en/mbstring.configuration.php */
         deprecations.put("mbstring.func_overload",     "'mbstring.func_overload' is a deprecated option since PHP 7.2.0.");
@@ -101,6 +106,10 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         deprecations.put("mbstring.http_output",       "'mbstring.http_output' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
         deprecations.put("mbstring.internal_encoding", "'mbstring.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
         removals.put("mbstring.script_encoding", "'mbstring.script_encoding' was removed in PHP 5.4.0. Use 'zend.script_encoding' instead.");
+        alternatives.put("mbstring.func_overload",   "default_charset");
+        alternatives.put("mbstring.http_input",      "default_charset");
+        alternatives.put("mbstring.http_output",     "default_charset");
+        alternatives.put("mbstring.script_encoding", "zend.script_encoding");
 
         /* http://php.net/manual/en/sybase.configuration.php */
         deprecations.put("magic_quotes_sybase", "'magic_quotes_sybase' is a deprecated option since PHP 5.3.0.");

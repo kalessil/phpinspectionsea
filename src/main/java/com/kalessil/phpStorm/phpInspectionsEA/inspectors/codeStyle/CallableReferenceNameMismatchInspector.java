@@ -41,36 +41,34 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
-                this.inspectCaseIdentity(reference, false);
+                final String methodName = reference.getName();
+                if (methodName != null && !methodName.isEmpty()) {
+                    this.inspectCaseIdentity(reference, methodName, false);
+                }
             }
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* invoke caching as (assumption) in 99% of cases functions are global; assumption was right ;) */
-                this.inspectCaseIdentity(reference, true);
+                final String functionName = reference.getName();
+                if (functionName != null && !functionName.isEmpty() && !cache.containsKey(functionName)) {
+                    this.inspectCaseIdentity(reference, functionName, true);
+                }
             }
 
-            private void inspectCaseIdentity(@NotNull FunctionReference reference, boolean useCache) {
-                /* StringUtil is not used due to performance optimization */
-                final String usedName = reference.getName();
-                if (usedName == null || usedName.isEmpty() || (useCache && cache.containsKey(usedName))) {
-                    return;
-                }
-
+            private void inspectCaseIdentity(@NotNull FunctionReference reference, @NotNull String referenceName, boolean useCache) {
                 /* resolve callable and ensure the case matches */
                 final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                 if (resolved instanceof Function) {
                     final Function function = (Function) resolved;
                     final String realName   = function.getName();
-
-                    /* cache root NS functions if caching was requested */
                     if (useCache && function.getFQN().equals('\\' + realName)) {
                         cache.putIfAbsent(realName, realName);
                     }
-
-                    if (!realName.equals(usedName) && realName.equalsIgnoreCase(usedName)) {
-                        /* report issues found */
-                        final String message = messagePattern.replace("%n%", realName);
-                        holder.registerProblem(reference, message, new CallableReferenceNameMismatchQuickFix());
+                    if (!realName.equals(referenceName) && realName.equalsIgnoreCase(referenceName)) {
+                        holder.registerProblem(
+                                reference,
+                                messagePattern.replace("%n%", realName),
+                                new CallableReferenceNameMismatchQuickFix()
+                        );
                     }
                 }
             }

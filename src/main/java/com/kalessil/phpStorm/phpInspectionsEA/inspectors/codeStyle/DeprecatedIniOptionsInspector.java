@@ -36,55 +36,37 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
     }
 
     private static final Map<String, Triple<PhpLanguageLevel, PhpLanguageLevel, String>> options = new HashMap<>();
-    private static final Map<String, PhpLanguageLevel> removals     = new HashMap<>();
-    private static final Map<String, String> alternatives           = new HashMap<>();
     static {
-        options.put("", Triple.of(, ,));
-
         /* http://php.net/manual/en/network.configuration.php */
         options.put("define_syslog_variables", Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
-
         /* http://php.net/manual/en/info.configuration.php */
-        options.put("magic_quotes_gpc",     Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
-        options.put("magic_quotes_runtime", Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
-
+        options.put("magic_quotes_gpc",        Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("magic_quotes_runtime",    Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
         /* http://php.net/manual/en/misc.configuration.php */
-        options.put("highlight.bg", Triple.of(null, PhpLanguageLevel.PHP540, null));
-
+        options.put("highlight.bg",            Triple.of(null, PhpLanguageLevel.PHP540, null));
         /* http://php.net/manual/en/xsl.configuration.php */
-        deprecations.put("xsl.security_prefs", PhpLanguageLevel.PHP540);
-        removals.put("xsl.security_prefs",     PhpLanguageLevel.PHP700);
-        alternatives.put("xsl.security_prefs", "XsltProcessor->setSecurityPrefs()");
+        options.put("xsl.security_prefs",      Triple.of(PhpLanguageLevel.PHP540, PhpLanguageLevel.PHP700, "XsltProcessor->setSecurityPrefs()"));
 
         /* http://php.net/manual/en/ini.sect.safe-mode.php */
-        deprecations.put("safe_mode",                    PhpLanguageLevel.PHP530);
-        deprecations.put("safe_mode_gid",                PhpLanguageLevel.PHP530);
-        deprecations.put("safe_mode_include_dir",        PhpLanguageLevel.PHP530);
-        deprecations.put("safe_mode_exec_dir",           PhpLanguageLevel.PHP530);
-        deprecations.put("safe_mode_allowed_env_vars",   PhpLanguageLevel.PHP530);
-        deprecations.put("safe_mode_protected_env_vars", PhpLanguageLevel.PHP530);
-        removals.put("safe_mode",                        PhpLanguageLevel.PHP540);
-        removals.put("safe_mode_gid",                    PhpLanguageLevel.PHP540);
-        removals.put("safe_mode_include_dir",            PhpLanguageLevel.PHP540);
-        removals.put("safe_mode_exec_dir",               PhpLanguageLevel.PHP540);
-        removals.put("safe_mode_allowed_env_vars",       PhpLanguageLevel.PHP540);
-        removals.put("safe_mode_protected_env_vars",     PhpLanguageLevel.PHP540);
+        options.put("safe_mode",                    Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("safe_mode_gid",                Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("safe_mode_include_dir",        Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("safe_mode_exec_dir",           Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("safe_mode_allowed_env_vars",   Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("safe_mode_protected_env_vars", Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
 
         /* http://php.net/manual/en/ini.core.php */
-        deprecations.put("allow_call_time_pass_reference", PhpLanguageLevel.PHP530);
-        deprecations.put("register_globals",               PhpLanguageLevel.PHP530);
-        deprecations.put("register_long_arrays",           PhpLanguageLevel.PHP530);
-        deprecations.put("always_populate_raw_post_data",  PhpLanguageLevel.PHP560);
-        removals.put("sql.safe_mode",                      PhpLanguageLevel.PHP720);
-        removals.put("always_populate_raw_post_data",      PhpLanguageLevel.PHP700);
-        removals.put("asp_tags",                           PhpLanguageLevel.PHP700);
-        removals.put("allow_call_time_pass_reference",     PhpLanguageLevel.PHP540);
-        removals.put("register_globals",                   PhpLanguageLevel.PHP540);
-        removals.put("register_long_arrays",               PhpLanguageLevel.PHP540);
-        removals.put("y2k_compliance",                     PhpLanguageLevel.PHP540);
-        removals.put("zend.ze1_compatibility_mode",        PhpLanguageLevel.PHP530);
+        options.put("sql.safe_mode",                  Triple.of(null, PhpLanguageLevel.PHP720, null));
+        options.put("asp_tags",                       Triple.of(null, PhpLanguageLevel.PHP700, null));
+        options.put("y2k_compliance",                 Triple.of(null, PhpLanguageLevel.PHP540, null));
+        options.put("zend.ze1_compatibility_mode",    Triple.of(null, PhpLanguageLevel.PHP530, null));
+        options.put("allow_call_time_pass_reference", Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("register_globals",               Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("register_long_arrays",           Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("always_populate_raw_post_data",  Triple.of(PhpLanguageLevel.PHP560, PhpLanguageLevel.PHP700, null));
 
         /* http://php.net/manual/en/session.configuration.php */
+        options.put("", Triple.of(, ,));
         removals.put("session.hash_function",           PhpLanguageLevel.PHP710);
         removals.put("session.hash_bits_per_character", PhpLanguageLevel.PHP710);
         removals.put("session.entropy_file",            PhpLanguageLevel.PHP710);
@@ -93,6 +75,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         removals.put("session.bug_compat_warn",         PhpLanguageLevel.PHP540);
 
         /* http://php.net/manual/en/iconv.configuration.php */
+        options.put("", Triple.of(, ,));
         deprecations.put("iconv.input_encoding",    PhpLanguageLevel.PHP540);
         deprecations.put("iconv.output_encoding",   PhpLanguageLevel.PHP540);
         deprecations.put("iconv.internal_encoding", PhpLanguageLevel.PHP540);
@@ -101,6 +84,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         alternatives.put("iconv.internal_encoding", "default_charset");
 
         /* http://php.net/manual/en/mbstring.configuration.php */
+        options.put("", Triple.of(, ,));
         deprecations.put("mbstring.func_overload",     PhpLanguageLevel.PHP720);
         deprecations.put("mbstring.http_input",        PhpLanguageLevel.PHP560);
         deprecations.put("mbstring.http_output",       PhpLanguageLevel.PHP560);
@@ -112,6 +96,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         alternatives.put("mbstring.script_encoding",   "zend.script_encoding");
 
         /* http://php.net/manual/en/sybase.configuration.php */
+        options.put("", Triple.of(, ,));
         deprecations.put("magic_quotes_sybase", PhpLanguageLevel.PHP530);
         removals.put("magic_quotes_sybase",     PhpLanguageLevel.PHP540);
     }

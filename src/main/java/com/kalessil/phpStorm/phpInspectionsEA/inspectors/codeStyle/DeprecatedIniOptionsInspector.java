@@ -45,22 +45,26 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         deprecations.put("define_syslog_variables", "'define_syslog_variables' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
         deprecations.put("magic_quotes_gpc", "'magic_quotes_gpc' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
         deprecations.put("magic_quotes_runtime", "'magic_quotes_runtime' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        /* TODO: http://php.net/manual/en/sybase.configuration.php */
-        deprecations.put("magic_quotes_sybase", "'magic_quotes_sybase' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        /* TODO: http://php.net/manual/en/ini.sect.safe-mode.php */
-        deprecations.put("safe_mode", "'safe_mode' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        deprecations.put("safe_mode_gid", "'safe_mode_gid' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        deprecations.put("safe_mode_include_dir", "'safe_mode_include_dir' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        deprecations.put("safe_mode_exec_dir", "'safe_mode_exec_dir' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        deprecations.put("safe_mode_allowed_env_vars", "'safe_mode_allowed_env_vars' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        deprecations.put("safe_mode_protected_env_vars", "'safe_mode_protected_env_vars' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+
+        /* http://php.net/manual/en/ini.sect.safe-mode.php */
+        deprecations.put("safe_mode",                    "'safe_mode' is a deprecated option since PHP 5.3.0.");
+        deprecations.put("safe_mode_gid",                "'safe_mode_gid' is a deprecated option since PHP 5.3.0.");
+        deprecations.put("safe_mode_include_dir",        "'safe_mode_include_dir' is a deprecated option since PHP 5.3.0.");
+        deprecations.put("safe_mode_exec_dir",           "'safe_mode_exec_dir' is a deprecated option since PHP 5.3.0.");
+        deprecations.put("safe_mode_allowed_env_vars",   "'safe_mode_allowed_env_vars' is a deprecated option since PHP 5.3.0.");
+        deprecations.put("safe_mode_protected_env_vars", "'safe_mode_protected_env_vars' is a deprecated option since PHP 5.3.0.");
+        removals.put("safe_mode",                    "'safe_mode' was removed in PHP 5.4.0.");
+        removals.put("safe_mode_gid",                "'safe_mode_gid' was removed in PHP 5.4.0.");
+        removals.put("safe_mode_include_dir",        "'safe_mode_include_dir' was removed in PHP 5.4.0.");
+        removals.put("safe_mode_exec_dir",           "'safe_mode_exec_dir' was removed in PHP 5.4.0.");
+        removals.put("safe_mode_allowed_env_vars",   "'safe_mode_allowed_env_vars' was removed in PHP 5.4.0.");
+        removals.put("safe_mode_protected_env_vars", "'safe_mode_protected_env_vars' was removed in PHP 5.4.0.");
 
         /* http://php.net/manual/en/ini.core.php */
         deprecations.put("allow_call_time_pass_reference", "'allow_call_time_pass_reference' is a deprecated option since PHP 5.3.0.");
         deprecations.put("register_globals",               "'register_globals' is a deprecated option since PHP 5.3.0.");
         deprecations.put("register_long_arrays",           "'register_long_arrays' is a deprecated option since PHP 5.3.0.");
         deprecations.put("always_populate_raw_post_data",  "'always_populate_raw_post_data' is a deprecated option since PHP 5.6.0.");
-
         removals.put("sql.safe_mode",                  "'sql.safe_mode' was removed in PHP 7.2.0.");
         removals.put("always_populate_raw_post_data",  "'always_populate_raw_post_data' was removed in PHP 7.0.0.");
         removals.put("asp_tags",                       "'asp_tags' was removed in PHP 7.0.0.");
@@ -88,8 +92,11 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         deprecations.put("mbstring.http_input",        "'mbstring.http_input' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
         deprecations.put("mbstring.http_output",       "'mbstring.http_output' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
         deprecations.put("mbstring.internal_encoding", "'mbstring.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-
         removals.put("mbstring.script_encoding", "'mbstring.script_encoding' was removed in PHP 5.4.0. Use 'zend.script_encoding' instead.");
+
+        /* http://php.net/manual/en/sybase.configuration.php */
+        deprecations.put("magic_quotes_sybase", "'magic_quotes_sybase' is a deprecated option since PHP 5.3.0.");
+        removals.put("magic_quotes_sybase", "'magic_quotes_sybase' was removed in PHP 5.4.0.");
     }
 
     @NotNull

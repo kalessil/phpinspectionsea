@@ -57,7 +57,7 @@ final public class OpenapiResolveUtil {
                             if (globalCandidate instanceof Variable) {
                                 final String variableName = ((Variable) globalCandidate).getName();
                                 if (ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
-                                    leftType = PhpType.STRING;
+                                    leftType = new PhpType().add(PhpType.STRING).add(PhpType.ARRAY);
                                 }
                             }
                         }

@@ -50,30 +50,28 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         deprecations.put("safe_mode_allowed_env_vars", "'safe_mode_allowed_env_vars' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
         deprecations.put("safe_mode_protected_env_vars", "'safe_mode_protected_env_vars' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
 
-        /*
-            http://php.net/manual/en/ini.core.php
-                allow_call_time_pass_reference - Removed in PHP 5.4.0. Deprecated in 5.0.0
-                register_globals - DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.
-                register_long_arrays - DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.
-                always_populate_raw_post_data - DEPRECATED in PHP 5.6.0, and REMOVED as of PHP 7.0.0.
-         */
-        deprecations.put("allow_call_time_pass_reference", "'allow_call_time_pass_reference' is a deprecated option since PHP 5.4.0.");
-        deprecations.put("register_globals",               "'register_globals' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        deprecations.put("register_long_arrays",           "'register_long_arrays' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        deprecations.put("always_populate_raw_post_data",  "'always_populate_raw_post_data' is a deprecated option since PHP 7.0.0.");
+        /* http://php.net/manual/en/ini.core.php */
+        deprecations.put("allow_call_time_pass_reference", "'allow_call_time_pass_reference' is a deprecated option since PHP 5.3.0.");
+        deprecations.put("register_globals",               "'register_globals' is a deprecated option since PHP 5.3.0.");
+        deprecations.put("register_long_arrays",           "'register_long_arrays' is a deprecated option since PHP 5.3.0.");
+        deprecations.put("always_populate_raw_post_data",  "'always_populate_raw_post_data' is a deprecated option since PHP 5.6.0.");
 
-        removals.put("sql.safe_mode",               "'sql.safe_mode' was removed in PHP 7.2.0.");
-        removals.put("asp_tags",                    "'asp_tags' was removed in PHP 7.0.0.");
-        removals.put("zend.ze1_compatibility_mode", "'zend.ze1_compatibility_mode' was removed in PHP 5.3.0.");
-        removals.put("y2k_compliance",              "'y2k_compliance' was removed in PHP 5.4.0.");
+        removals.put("sql.safe_mode",                  "'sql.safe_mode' was removed in PHP 7.2.0.");
+        removals.put("always_populate_raw_post_data",  "'always_populate_raw_post_data' was removed in PHP 7.0.0.");
+        removals.put("asp_tags",                       "'asp_tags' was removed in PHP 7.0.0.");
+        removals.put("allow_call_time_pass_reference", "'allow_call_time_pass_reference' was removed in PHP PHP 5.4.0.");
+        removals.put("register_globals",               "'register_globals' was removed in PHP 5.4.0.");
+        removals.put("register_long_arrays",           "'register_long_arrays' was removed in PHP 5.4.0.");
+        removals.put("y2k_compliance",                 "'y2k_compliance' was removed in PHP 5.4.0.");
+        removals.put("zend.ze1_compatibility_mode",    "'zend.ze1_compatibility_mode' was removed in PHP 5.3.0.");
 
         /* http://php.net/manual/en/session.configuration.php */
-        removals.put("session.bug_compat_42",           "'session.bug_compat_42' was removed in PHP 5.4.0.");
-        removals.put("session.bug_compat_warn",         "'session.bug_compat_warn' was removed in PHP 5.4.0.");
         removals.put("session.hash_function",           "'session.hash_function' was removed in PHP 7.1.0.");
         removals.put("session.hash_bits_per_character", "'session.hash_bits_per_character' was removed in PHP 7.1.0.");
         removals.put("session.entropy_file",            "'session.entropy_file' was removed in PHP 7.1.0.");
         removals.put("session.entropy_length",          "'session.entropy_length' was removed in PHP 7.1.0.");
+        removals.put("session.bug_compat_42",           "'session.bug_compat_42' was removed in PHP 5.4.0.");
+        removals.put("session.bug_compat_warn",         "'session.bug_compat_warn' was removed in PHP 5.4.0.");
 
         /* http://php.net/manual/en/iconv.configuration.php */
         deprecations.put("iconv.input_encoding",    "'iconv.input_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
@@ -81,10 +79,10 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         deprecations.put("iconv.internal_encoding", "'iconv.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
 
         /* http://php.net/manual/en/mbstring.configuration.php */
+        deprecations.put("mbstring.func_overload",     "'mbstring.func_overload' is a deprecated option since PHP 7.2.0.");
         deprecations.put("mbstring.http_input",        "'mbstring.http_input' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
         deprecations.put("mbstring.http_output",       "'mbstring.http_output' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
         deprecations.put("mbstring.internal_encoding", "'mbstring.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        deprecations.put("mbstring.func_overload",     "'mbstring.func_overload' is a deprecated option since PHP 7.2.0.");
 
         removals.put("mbstring.script_encoding", "'mbstring.script_encoding' was removed in PHP 5.4.0. Use 'zend.script_encoding' instead.");
     }

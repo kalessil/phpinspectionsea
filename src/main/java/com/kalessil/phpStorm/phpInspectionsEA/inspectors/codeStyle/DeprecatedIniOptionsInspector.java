@@ -37,14 +37,22 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
     private static final Map<String, String> removals     = new HashMap<>();
     static {
 
-        /* TODO: http://php.net/manual/en/network.configuration.php */
-        /* TODO: http://php.net/manual/en/info.configuration.php */
-        /* TODO: http://php.net/manual/en/misc.configuration.php */
-        deprecations.put("xsl.security_prefs", "'xsl.security_prefs' is a deprecated option since PHP 5.4.0 (removed in PHP 7.0.0). Use XsltProcessor->setSecurityPrefs() instead.");
-        deprecations.put("highlight.bg", "'highlight.bg' is a deprecated option since PHP 5.4.0.");
-        deprecations.put("define_syslog_variables", "'define_syslog_variables' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        deprecations.put("magic_quotes_gpc", "'magic_quotes_gpc' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        deprecations.put("magic_quotes_runtime", "'magic_quotes_runtime' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        /* http://php.net/manual/en/network.configuration.php */
+        deprecations.put("define_syslog_variables", "'define_syslog_variables' is a deprecated option since PHP 5.3.0.");
+        removals.put("define_syslog_variables", "'define_syslog_variables' was removed in PHP 5.4.0.");
+
+        /* http://php.net/manual/en/info.configuration.php */
+        deprecations.put("magic_quotes_gpc",     "'magic_quotes_gpc' is a deprecated option since PHP 5.3.0.");
+        deprecations.put("magic_quotes_runtime", "'magic_quotes_runtime' is a deprecated option since PHP 5.3.0.");
+        removals.put("magic_quotes_gpc",     "'magic_quotes_gpc' was removed in PHP 5.4.0.");
+        removals.put("magic_quotes_runtime", "'magic_quotes_runtime' was removed in PHP 5.4.0.");
+
+        /* http://php.net/manual/en/misc.configuration.php */
+        removals.put("highlight.bg", "'highlight.bg' is a deprecated option since PHP 5.4.0.");
+
+        /* http://php.net/manual/en/xsl.configuration.php */
+        deprecations.put("xsl.security_prefs", "'xsl.security_prefs' is a deprecated option since PHP 5.4.0. Use XsltProcessor->setSecurityPrefs() instead.");
+        removals.put("xsl.security_prefs", "'xsl.security_prefs' was removed in PHP 7.0.0. Use XsltProcessor->setSecurityPrefs() instead.");
 
         /* http://php.net/manual/en/ini.sect.safe-mode.php */
         deprecations.put("safe_mode",                    "'safe_mode' is a deprecated option since PHP 5.3.0.");

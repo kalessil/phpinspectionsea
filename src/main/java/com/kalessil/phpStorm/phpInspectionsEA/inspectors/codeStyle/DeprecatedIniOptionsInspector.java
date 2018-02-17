@@ -33,43 +33,60 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         targetFunctions.add("ini_restore");
     }
 
-    private static final Map<String, String> targetOptions = new HashMap<>();
+    private static final Map<String, String> deprecations = new HashMap<>();
+    private static final Map<String, String> removals     = new HashMap<>();
     static {
-        // -> http://php.net/manual/en/migration72.incompatible.php#migration72.incompatible.sqlsafe_mode-ini-setting
-        // -> http://php.net/manual/en/migration72.deprecated.php#migration72.deprecated.track_errors-and-php_errormsg
-        // -> http://php.net/manual/en/migration72.deprecated.php#migration72.deprecated.mbstringfunc_overload-ini-setting
-        // -> http://php.net/manual/en/migration71.incompatible.php#migration71.incompatible.removed-ini-directives
-        // -> http://php.net/manual/en/migration70.incompatible.php#migration70.incompatible.removed-ini-directives
-        // -> http://php.net/manual/en/migration56.deprecated.php#migration56.deprecated.iconv-mbstring-encoding
-        // -> http://php.net/manual/en/migration54.ini.php#migration54.ini
 
-        targetOptions.put("asp_tags", "'asp_tags' is a deprecated option since PHP 7.0.0.");
-        targetOptions.put("always_populate_raw_post_data", "'always_populate_raw_post_data' is a deprecated option since PHP 7.0.0.");
-        targetOptions.put("iconv.input_encoding", "'iconv.input_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        targetOptions.put("iconv.output_encoding", "'iconv.output_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        targetOptions.put("iconv.internal_encoding", "'iconv.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        targetOptions.put("mbstring.http_input", "'mbstring.http_input' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        targetOptions.put("mbstring.http_output", "'mbstring.http_output' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        targetOptions.put("mbstring.internal_encoding", "'mbstring.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        targetOptions.put("xsl.security_prefs", "'xsl.security_prefs' is a deprecated option since PHP 5.4.0 (removed in PHP 7.0.0). Use XsltProcessor->setSecurityPrefs() instead.");
-        targetOptions.put("allow_call_time_pass_reference", "'allow_call_time_pass_reference' is a deprecated option since PHP 5.4.0.");
-        targetOptions.put("highlight.bg", "'highlight.bg' is a deprecated option since PHP 5.4.0.");
-        targetOptions.put("zend.ze1_compatibility_mode", "'zend.ze1_compatibility_mode' is a deprecated option since PHP 5.4.0.");
-        targetOptions.put("session.bug_compat_42", "'session.bug_compat_42' is a deprecated option since PHP 5.4.0.");
-        targetOptions.put("session.bug_compat_warn", "'session.bug_compat_warn' is a deprecated option since PHP 5.4.0.");
-        targetOptions.put("y2k_compliance", "'y2k_compliance' is a deprecated option since PHP 5.4.0.");
-        targetOptions.put("define_syslog_variables", "'define_syslog_variables' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("magic_quotes_gpc", "'magic_quotes_gpc' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("magic_quotes_runtime", "'magic_quotes_runtime' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("magic_quotes_sybase", "'magic_quotes_sybase' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("register_globals", "'register_globals' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("register_long_arrays", "'register_long_arrays' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("safe_mode", "'safe_mode' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("safe_mode_gid", "'safe_mode_gid' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("safe_mode_include_dir", "'safe_mode_include_dir' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("safe_mode_exec_dir", "'safe_mode_exec_dir' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("safe_mode_allowed_env_vars", "'safe_mode_allowed_env_vars' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("safe_mode_protected_env_vars", "'safe_mode_protected_env_vars' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        deprecations.put("xsl.security_prefs", "'xsl.security_prefs' is a deprecated option since PHP 5.4.0 (removed in PHP 7.0.0). Use XsltProcessor->setSecurityPrefs() instead.");
+        deprecations.put("highlight.bg", "'highlight.bg' is a deprecated option since PHP 5.4.0.");
+        deprecations.put("define_syslog_variables", "'define_syslog_variables' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        deprecations.put("magic_quotes_gpc", "'magic_quotes_gpc' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        deprecations.put("magic_quotes_runtime", "'magic_quotes_runtime' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        deprecations.put("magic_quotes_sybase", "'magic_quotes_sybase' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        deprecations.put("safe_mode", "'safe_mode' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        deprecations.put("safe_mode_gid", "'safe_mode_gid' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        deprecations.put("safe_mode_include_dir", "'safe_mode_include_dir' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        deprecations.put("safe_mode_exec_dir", "'safe_mode_exec_dir' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        deprecations.put("safe_mode_allowed_env_vars", "'safe_mode_allowed_env_vars' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        deprecations.put("safe_mode_protected_env_vars", "'safe_mode_protected_env_vars' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+
+        /*
+            http://php.net/manual/en/ini.core.php
+                allow_call_time_pass_reference - Removed in PHP 5.4.0. Deprecated in 5.0.0
+                register_globals - DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.
+                register_long_arrays - DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0.
+                always_populate_raw_post_data - DEPRECATED in PHP 5.6.0, and REMOVED as of PHP 7.0.0.
+         */
+        deprecations.put("allow_call_time_pass_reference", "'allow_call_time_pass_reference' is a deprecated option since PHP 5.4.0.");
+        deprecations.put("register_globals",               "'register_globals' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        deprecations.put("register_long_arrays",           "'register_long_arrays' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        deprecations.put("always_populate_raw_post_data",  "'always_populate_raw_post_data' is a deprecated option since PHP 7.0.0.");
+
+        removals.put("sql.safe_mode",               "'sql.safe_mode' was removed in PHP 7.2.0.");
+        removals.put("asp_tags",                    "'asp_tags' was removed in PHP 7.0.0.");
+        removals.put("zend.ze1_compatibility_mode", "'zend.ze1_compatibility_mode' was removed in PHP 5.3.0.");
+        removals.put("y2k_compliance",              "'y2k_compliance' was removed in PHP 5.4.0.");
+
+        /* http://php.net/manual/en/session.configuration.php */
+        removals.put("session.bug_compat_42",           "'session.bug_compat_42' was removed in PHP 5.4.0.");
+        removals.put("session.bug_compat_warn",         "'session.bug_compat_warn' was removed in PHP 5.4.0.");
+        removals.put("session.hash_function",           "'session.hash_function' was removed in PHP 7.1.0.");
+        removals.put("session.hash_bits_per_character", "'session.hash_bits_per_character' was removed in PHP 7.1.0.");
+        removals.put("session.entropy_file",            "'session.entropy_file' was removed in PHP 7.1.0.");
+        removals.put("session.entropy_length",          "'session.entropy_length' was removed in PHP 7.1.0.");
+
+        /* http://php.net/manual/en/iconv.configuration.php */
+        deprecations.put("iconv.input_encoding",    "'iconv.input_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+        deprecations.put("iconv.output_encoding",   "'iconv.output_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+        deprecations.put("iconv.internal_encoding", "'iconv.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+
+        /* http://php.net/manual/en/mbstring.configuration.php */
+        deprecations.put("mbstring.http_input",        "'mbstring.http_input' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+        deprecations.put("mbstring.http_output",       "'mbstring.http_output' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+        deprecations.put("mbstring.internal_encoding", "'mbstring.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
+        deprecations.put("mbstring.func_overload",     "'mbstring.func_overload' is a deprecated option since PHP 7.2.0.");
+
+        removals.put("mbstring.script_encoding", "'mbstring.script_encoding' was removed in PHP 5.4.0. Use 'zend.script_encoding' instead.");
     }
 
     @NotNull
@@ -88,8 +105,10 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length > 0 && arguments[0] instanceof StringLiteralExpression) {
                         final String option = ((StringLiteralExpression) arguments[0]).getContents();
-                        if (targetOptions.containsKey(option)) {
-                            holder.registerProblem(arguments[0], targetOptions.get(option), ProblemHighlightType.LIKE_DEPRECATED);
+                        if (removals.containsKey(option)) {
+                            holder.registerProblem(arguments[0], removals.get(option));
+                        } else if (deprecations.containsKey(option)) {
+                            holder.registerProblem(arguments[0], deprecations.get(option), ProblemHighlightType.LIKE_DEPRECATED);
                         }
                     }
                 }

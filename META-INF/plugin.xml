@@ -810,7 +810,7 @@ Bug-fixes. BTW, it would be awesome to get more supporters on <a href="https://w
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DeprecatedIniOptionsInspection"                  displayName="Deprecated configuration options"
-        groupName="Compatibility"                                   enabledByDefault="true" level="ERROR"
+        groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.DeprecatedIniOptionsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="RandomApiMigrationInspection"                    displayName="Random API migration"

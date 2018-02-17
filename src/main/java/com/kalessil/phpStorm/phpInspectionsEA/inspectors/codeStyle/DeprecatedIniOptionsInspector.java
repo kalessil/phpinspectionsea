@@ -79,21 +79,14 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         options.put("iconv.internal_encoding", Triple.of(PhpLanguageLevel.PHP540, null, "default_charset"));
 
         /* http://php.net/manual/en/mbstring.configuration.php */
-        options.put("", Triple.of(, ,));
-        deprecations.put("mbstring.func_overload",     PhpLanguageLevel.PHP720);
-        deprecations.put("mbstring.http_input",        PhpLanguageLevel.PHP560);
-        deprecations.put("mbstring.http_output",       PhpLanguageLevel.PHP560);
-        deprecations.put("mbstring.internal_encoding", PhpLanguageLevel.PHP560);
-        removals.put("mbstring.script_encoding",       PhpLanguageLevel.PHP540);
-        alternatives.put("mbstring.func_overload",     "default_charset");
-        alternatives.put("mbstring.http_input",        "default_charset");
-        alternatives.put("mbstring.http_output",       "default_charset");
-        alternatives.put("mbstring.script_encoding",   "zend.script_encoding");
+        options.put("mbstring.script_encoding",   Triple.of(null, PhpLanguageLevel.PHP540, "zend.script_encoding"));
+        options.put("mbstring.func_overload",     Triple.of(PhpLanguageLevel.PHP720, null, null));
+        options.put("mbstring.internal_encoding", Triple.of(PhpLanguageLevel.PHP560, null, "default_charset"));
+        options.put("mbstring.http_input",        Triple.of(PhpLanguageLevel.PHP560, null, "default_charset"));
+        options.put("mbstring.http_output",       Triple.of(PhpLanguageLevel.PHP560, null, "default_charset"));
 
         /* http://php.net/manual/en/sybase.configuration.php */
-        options.put("", Triple.of(, ,));
-        deprecations.put("magic_quotes_sybase", PhpLanguageLevel.PHP530);
-        removals.put("magic_quotes_sybase",     PhpLanguageLevel.PHP540);
+        options.put("magic_quotes_sybase", Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
     }
 
     @NotNull

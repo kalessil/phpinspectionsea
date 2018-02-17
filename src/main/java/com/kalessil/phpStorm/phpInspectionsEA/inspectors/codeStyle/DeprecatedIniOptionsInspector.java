@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -27,6 +28,9 @@ import java.util.Map;
  */
 
 public class DeprecatedIniOptionsInspector extends BasePhpInspection {
+    private static final String patternRemoved    = "'%s' is a deprecated since PHP %s.";
+    private static final String patternDeprecated = "'%s' was removed in PHP %s.";
+
     private static final List<String> targetFunctions = new ArrayList<>();
     static {
         targetFunctions.add("ini_set");
@@ -98,11 +102,27 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                 if (functionName != null && targetFunctions.contains(functionName)) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length > 0 && arguments[0] instanceof StringLiteralExpression) {
-                        final String option = ((StringLiteralExpression) arguments[0]).getContents();
-                        if (removals.containsKey(option)) {
-                            holder.registerProblem(arguments[0], removals.get(option));
-                        } else if (deprecations.containsKey(option)) {
-                            holder.registerProblem(arguments[0], deprecations.get(option), ProblemHighlightType.LIKE_DEPRECATED);
+                        final String directive = ((StringLiteralExpression) arguments[0]).getContents();
+                        if (options.containsKey(directive)) {
+                            final PhpLanguageLevel php
+                                    = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                            final Triple<PhpLanguageLevel, PhpLanguageLevel, String> details = options.get(directive);
+                            final PhpLanguageLevel removalVersion                            = details.getMiddle();
+                            final PhpLanguageLevel deprecationVersion                        = details.getLeft();
+                            if (removalVersion != null && php.compareTo(removalVersion) >= 0) {
+                                // TODO: final String alternative = details.getRight();
+                                holder.registerProblem(
+                                        arguments[0],
+                                        String.format(patternRemoved, directive, php.getVersionString())
+                                );
+                            } else if (deprecationVersion != null && php.compareTo(deprecationVersion) >= 0) {
+                                // TODO: final String alternative = details.getRight();
+                                holder.registerProblem(
+                                        arguments[0],
+                                        String.format(patternDeprecated, directive, php.getVersionString()),
+                                        ProblemHighlightType.LIKE_DEPRECATED
+                                );
+                            }
                         }
                     }
                 }

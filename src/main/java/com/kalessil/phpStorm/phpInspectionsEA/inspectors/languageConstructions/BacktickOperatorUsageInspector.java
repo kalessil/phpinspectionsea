@@ -21,15 +21,15 @@ import java.util.regex.Pattern;
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
- * (c) Vladimir Reznichenko <kalessil@gmail.com>
  * (c) David Rodrigues <david.proweb@gmail.com>
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
 public class BacktickOperatorUsageInspector extends BasePhpInspection {
-    static final String message = "Prefer shell_exec() function instead of this backtick operator";
+    static final String message = "Prefer using 'shell_exec(...)' instead (security analysis friendly).";
 
     @NotNull
     public String getShortName() {

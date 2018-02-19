@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations;
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;

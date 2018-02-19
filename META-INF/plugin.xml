@@ -727,7 +727,7 @@ Bug-fixes. BTW, it would be awesome to get more supporters on <a href="https://w
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="AliasFunctionsUsageInspection"                 displayName="Alias functions usage"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.AliasFunctionsUsageInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.AliasFunctionsUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ClassConstantCanBeUsedInspection"              displayName="::class can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
@@ -751,7 +751,7 @@ Bug-fixes. BTW, it would be awesome to get more supporters on <a href="https://w
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="GetClassUsageInspection"                       displayName="'get_class(...)' usage correctness"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.GetClassUsageInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.GetClassUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnsupportedStringOffsetOperationsInspection"   displayName="Unsupported string offset operations"
         groupName="Language level migration"                      enabledByDefault="true" level="ERROR"
@@ -819,7 +819,7 @@ Bug-fixes. BTW, it would be awesome to get more supporters on <a href="https://w
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="RandomApiMigrationInspection"                    displayName="Random API migration"
         groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RandomApiMigrationInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.RandomApiMigrationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MktimeUsageInspection"                           displayName="'gmmktime(...)'/'mktime(...)' usage"
         groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"

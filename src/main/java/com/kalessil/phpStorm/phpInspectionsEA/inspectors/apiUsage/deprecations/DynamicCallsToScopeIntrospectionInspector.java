@@ -36,6 +36,7 @@ public class DynamicCallsToScopeIntrospectionInspector extends BasePhpInspection
         targetCalls.put("mb_parse_str",     1);
         targetCalls.put("parse_str",        1);
         callbacksPositions.put("call_user_func",       0);
+        callbacksPositions.put("call_user_func_array", 0);
         callbacksPositions.put("array_filter",         1);
         callbacksPositions.put("array_map",            0);
         callbacksPositions.put("array_walk",           1);

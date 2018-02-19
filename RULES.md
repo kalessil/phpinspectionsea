@@ -139,7 +139,6 @@ Inspections Lists (Language level migration)
 | Language level migration | GetClassUsageInspection                         | 'get_class(...)' usage correctness                  | n/a | yes | n/a  | no  |
 | Language level migration | UnsupportedStringOffsetOperationsInspection     | Unsupported string offset operations                | n/a | yes | n/a  | no  |
 | Language level migration | InstanceofCanBeUsedInspection                   | Instanceof can be used                              | yes | yes | yes  | no  |
-| Language level migration | BacktickOperatorUsageInspection                 | Avoid backtick operator                             | yes | yes | yes  | no  |
 
 Inspections Lists (Architecture)
 ---
@@ -218,6 +217,7 @@ Inspections Lists (Security)
 | Security             | CryptographicallySecureAlgorithmsInspection        | Cryptographically secure algorithms                               | n/a | yes | n/a  | no  |
 | Security             | HostnameSubstitutionInspection                     | Hostname substitution                                             | n/a | yes | n/a  | no  |
 | Security             | RsaOraclePaddingAttacksInspection                  | RSA oracle padding vulnerability                                  | n/a | yes | n/a  | no  |
+| Security             | BacktickOperatorUsageInspection                    | Backtick operator usage                                           | yes | yes | yes  | no  |
 
 Inspections Lists (Performance)
 ---

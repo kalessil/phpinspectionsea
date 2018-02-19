@@ -28,8 +28,10 @@ import java.util.Map;
  */
 
 public class DeprecatedIniOptionsInspector extends BasePhpInspection {
-    private static final String patternDeprecated = "'%s' is a deprecated since PHP %s.";
-    private static final String patternRemoved    = "'%s' was removed in PHP %s.";
+    private static final String patternDeprecated                = "'%s' is a deprecated since PHP %s.";
+    private static final String patternDeprecatedWithAlternative = "'%s' is a deprecated since PHP %s. Use %s instead.";
+    private static final String patternRemoved                   = "'%s' was removed in PHP %s.";
+    private static final String patternRemovedWithAlternative    = "'%s' was removed in PHP %s. Use %s instead.";
 
     private static final List<String> targetFunctions = new ArrayList<>();
     static {
@@ -110,16 +112,26 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                             final PhpLanguageLevel removalVersion                            = details.getMiddle();
                             final PhpLanguageLevel deprecationVersion                        = details.getLeft();
                             if (removalVersion != null && php.compareTo(removalVersion) >= 0) {
-                                // TODO: final String alternative = details.getRight();
+                                final String alternative = details.getRight();
                                 holder.registerProblem(
                                         arguments[0],
-                                        String.format(patternRemoved, directive, removalVersion.getVersionString())
+                                        String.format(
+                                                alternative == null ? patternRemoved : patternRemovedWithAlternative,
+                                                directive,
+                                                removalVersion.getVersionString(),
+                                                alternative
+                                        )
                                 );
                             } else if (deprecationVersion != null && php.compareTo(deprecationVersion) >= 0) {
-                                // TODO: final String alternative = details.getRight();
+                                final String alternative = details.getRight();
                                 holder.registerProblem(
                                         arguments[0],
-                                        String.format(patternDeprecated, directive, deprecationVersion.getVersionString()),
+                                        String.format(
+                                                alternative == null ? patternDeprecated : patternDeprecatedWithAlternative,
+                                                directive,
+                                                deprecationVersion.getVersionString(),
+                                                alternative
+                                        ),
                                         ProblemHighlightType.LIKE_DEPRECATED
                                 );
                             }

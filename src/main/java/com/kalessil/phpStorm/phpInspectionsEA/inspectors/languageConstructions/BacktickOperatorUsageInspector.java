@@ -35,7 +35,7 @@ public class BacktickOperatorUsageInspector extends BasePhpInspection {
             public void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {
                 final String raw         = expression.getText();
                 final String command     = raw.substring(1, raw.length() - 1).replaceAll("\\\\`", "`");
-                final String replacement = String.format("shell_exec('%s')", PhpStringUtil.escapeText(command, false));
+                final String replacement = String.format("shell_exec(\"%s\")", PhpStringUtil.escapeText(command, false));
                 holder.registerProblem(expression, message, new UseShellExecFix(replacement));
             }
         };

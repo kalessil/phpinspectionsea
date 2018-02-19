@@ -1,12 +1,16 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -22,7 +26,7 @@ import java.util.Map;
  */
 
 public class DynamicCallsToScopeIntrospectionInspector extends BasePhpInspection {
-    private static final String messagePattern = "Produces runtime warning (Cannot call %s() dynamically).";
+    private static final String messagePattern = "Produces runtime warning (cannot call %s() dynamically).";
 
     final private static Map<String, Integer> targetCalls        = new HashMap<>();
     final private static Map<String, Integer> callbacksPositions = new HashMap<>();
@@ -57,8 +61,24 @@ public class DynamicCallsToScopeIntrospectionInspector extends BasePhpInspection
                 /* http://php.net/manual/en/migration71.incompatible.php#migration71.incompatible.forbid-dynamic-calls-to-scope-introspection-functions */
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.compareTo(PhpLanguageLevel.PHP710) >= 0) {
-                    // callback          -> [\]targetCall
-                    // variable function -> [\]targetCall + arguments count
+                    final String functionName = reference.getName();
+                    if (functionName != null && callbacksPositions.containsKey(functionName)) {
+                        final int callbackPosition   = callbacksPositions.get(functionName);
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length >= callbackPosition + 1) {
+                            final PsiElement argument             = arguments[callbackPosition];
+                            final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(argument);
+                            if (literal != null) {
+                                /* TODO: replicate to uniqid */
+                                final String raw      = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
+                                final String callback = raw.startsWith("\\") ? raw.substring(1) : raw;
+                                if (targetCalls.containsKey(callback)) {
+                                    /* TODO: report */
+                                }
+                            }
+                        }
+                    }
+                    /* TODO: variable function -> [\]targetCall + arguments count */
                 }
             }
         };

@@ -28,8 +28,8 @@ import java.util.Map;
  */
 
 public class DeprecatedIniOptionsInspector extends BasePhpInspection {
-    private static final String patternRemoved    = "'%s' is a deprecated since PHP %s.";
-    private static final String patternDeprecated = "'%s' was removed in PHP %s.";
+    private static final String patternDeprecated = "'%s' is a deprecated since PHP %s.";
+    private static final String patternRemoved    = "'%s' was removed in PHP %s.";
 
     private static final List<String> targetFunctions = new ArrayList<>();
     static {
@@ -113,13 +113,13 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                                 // TODO: final String alternative = details.getRight();
                                 holder.registerProblem(
                                         arguments[0],
-                                        String.format(patternRemoved, directive, php.getVersionString())
+                                        String.format(patternRemoved, directive, removalVersion.getVersionString())
                                 );
                             } else if (deprecationVersion != null && php.compareTo(deprecationVersion) >= 0) {
                                 // TODO: final String alternative = details.getRight();
                                 holder.registerProblem(
                                         arguments[0],
-                                        String.format(patternDeprecated, directive, php.getVersionString()),
+                                        String.format(patternDeprecated, directive, deprecationVersion.getVersionString()),
                                         ProblemHighlightType.LIKE_DEPRECATED
                                 );
                             }

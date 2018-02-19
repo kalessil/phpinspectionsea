@@ -39,6 +39,7 @@ public class NonSecureExtractUsageInspector extends BasePhpInspection {
                         holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
                     }
                 }
+                /* TODO: call_user_func, array_walk - dynamic contexts */
             }
         };
     }

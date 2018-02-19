@@ -51,6 +51,7 @@ public class NonSecureArrayRandUsageInspector extends BasePhpInspection {
                         }
                     }
                 }
+                /* TODO: call_user_func, array_walk - dynamic contexts */
             }
         };
     }

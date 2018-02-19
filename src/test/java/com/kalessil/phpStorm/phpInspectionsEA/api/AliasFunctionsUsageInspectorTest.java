@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.AliasFunctionsUsageInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.AliasFunctionsUsageInspector;
 
 final public class AliasFunctionsUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.MktimeUsageInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.MktimeUsageInspector;
 
 final public class MktimeUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {

@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.api;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RandomApiMigrationInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.RandomApiMigrationInspector;
 
 final public class RandomApiMigrationInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsMtPatterns() {

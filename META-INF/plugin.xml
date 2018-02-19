@@ -823,7 +823,7 @@ Bug-fixes. BTW, it would be awesome to get more supporters on <a href="https://w
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MktimeUsageInspection"                           displayName="'gmmktime(...)'/'mktime(...)' usage"
         groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.MktimeUsageInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.MktimeUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="FopenBinaryUnsafeUsageInspection"                displayName="Binary-unsafe 'fopen(...)' usage"
         groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"

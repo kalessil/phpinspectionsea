@@ -61,11 +61,8 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
                     if (arguments.length >= 2 && callbacksPositions.containsKey(functionName)) {
                         final int neededIndex = callbacksPositions.get(functionName);
                         if (arguments[neededIndex] instanceof StringLiteralExpression) {
-                            String callback = ((StringLiteralExpression) arguments[neededIndex]).getContents();
-                            if (callback.startsWith("\\")) {
-                                callback = callback.substring(1);
-                            }
-                            if (callback.equals("uniqid")) {
+                            final String callback = ((StringLiteralExpression) arguments[neededIndex]).getContents();
+                            if (callback.equals("uniqid") || callback.equals("\\uniqid")) {
                                 holder.registerProblem(arguments[neededIndex], message, ProblemHighlightType.GENERIC_ERROR, new UseLambdaFix());
                             }
                         }

@@ -10,7 +10,6 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import org.apache.commons.lang3.tuple.Triple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -140,5 +139,33 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    private static final class Triple<L, M, R> {
+        private final L left;
+        private final M middle;
+        private final R right;
+
+        static <L, M, R> Triple<L, M, R> of(L left, M middle, R right) {
+            return new Triple<>(left, middle, right);
+        }
+
+        private Triple(L left, M middle, R right) {
+            this.left   = left;
+            this.middle = middle;
+            this.right  = right;
+        }
+
+        L getLeft() {
+            return this.left;
+        }
+
+        M getMiddle() {
+            return this.middle;
+        }
+
+        R getRight() {
+            return this.right;
+        }
     }
 }

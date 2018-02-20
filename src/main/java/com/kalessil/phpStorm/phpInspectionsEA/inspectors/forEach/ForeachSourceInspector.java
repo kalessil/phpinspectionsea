@@ -20,8 +20,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUt
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -193,38 +192,32 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 if (!types.isEmpty()) {
                     final PhpIndex index = PhpIndex.getInstance(holder.getProject());
                     for (final String type : types) {
-                        /* analyze scalar types */
-                        final boolean isClassType = type.startsWith("\\");
-                        if (!isClassType) {
-                            final String message = String.format(patternScalar, type);
-                            holder.registerProblem(container, message, ProblemHighlightType.GENERIC_ERROR);
-
+                        /* report if scalar type is met */
+                        if (!type.startsWith("\\")) {
+                            holder.registerProblem(container, String.format(patternScalar, type), ProblemHighlightType.GENERIC_ERROR);
                             continue;
                         }
 
-                        /* check classes: collect hierarchy of possible classes */
-                        final Set<PhpClass> poolToCheck    = new HashSet<>();
-                        final Collection<PhpClass> classes = PhpIndexUtil.getObjectInterfaces(type, index, true);
-                        /* TODO: refactor `!classes.isEmpty()` dependent logic */
-                        final boolean foundClass           = !classes.isEmpty();
+                        /* check classes for the Traversable interface in the inheritance chain */
+                        final List<PhpClass> classes = PhpIndexUtil.getObjectInterfaces(type, index, true);
                         if (!classes.isEmpty()) {
-                            /* collect all interfaces*/
+                            boolean hasTraversable = false;
                             for (final PhpClass clazz : classes) {
                                 final Set<PhpClass> interfaces = InterfacesExtractUtil.getCrawlInheritanceTree(clazz, false);
                                 if (!interfaces.isEmpty()) {
-                                    poolToCheck.addAll(interfaces);
+                                    hasTraversable = interfaces.stream().anyMatch(i -> i.getFQN().equals("\\Traversable"));
                                     interfaces.clear();
+                                    if (hasTraversable) {
+                                        break;
+                                    }
                                 }
                             }
                             classes.clear();
+                            if (!hasTraversable) {
+                                holder.registerProblem(container, String.format(patternObject, type));
+                            }
                         }
-
-                        if (foundClass && poolToCheck.stream().noneMatch(c -> c.getFQN().equals("\\Traversable"))) {
-                            holder.registerProblem(container, String.format(patternObject, type));
-                        }
-                        poolToCheck.clear();
                     }
-
                     types.clear();
                 }
             }

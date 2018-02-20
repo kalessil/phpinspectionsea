@@ -32,7 +32,6 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
 
     final private static Map<String, Integer> callbacksPositions = new HashMap<>();
     static {
-        /* TODO: review what's relevant here */
         callbacksPositions.put("call_user_func", 0);
         callbacksPositions.put("call_user_func_array", 0);
         callbacksPositions.put("array_filter", 1);

@@ -43,6 +43,7 @@ public class DynamicCallsToScopeIntrospectionInspector extends BasePhpInspection
         callbacksPositions.put("call_user_func_array", 0);
         callbacksPositions.put("array_filter",         1);
         callbacksPositions.put("array_map",            0);
+        callbacksPositions.put("array_reduce",         1);
         callbacksPositions.put("array_walk",           1);
         callbacksPositions.put("array_walk_recursive", 1);
     }
@@ -62,23 +63,31 @@ public class DynamicCallsToScopeIntrospectionInspector extends BasePhpInspection
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.compareTo(PhpLanguageLevel.PHP710) >= 0) {
                     final String functionName = reference.getName();
-                    if (functionName != null && callbacksPositions.containsKey(functionName)) {
-                        final int callbackPosition   = callbacksPositions.get(functionName);
-                        final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length >= callbackPosition + 1) {
-                            final PsiElement argument             = arguments[callbackPosition];
-                            final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(argument);
+                    if (functionName != null) {
+                        /* discover target element to be discovered */
+                        final PsiElement target;
+                        if (functionName.isEmpty()) {
+                            final PsiElement[] children = reference.getChildren();
+                            target = children.length == 2 ? children[0] : null;
+                        } else if (callbacksPositions.containsKey(functionName)) {
+                            final int callbackPosition   = callbacksPositions.get(functionName);
+                            final PsiElement[] arguments = reference.getParameters();
+                            target = arguments.length >= callbackPosition + 1 ? arguments[callbackPosition] : null;
+                        } else {
+                            target = null;
+                        }
+                        /* discover and report */
+                        if (target != null) {
+                            final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(target);
                             if (literal != null) {
-                                /* TODO: replicate to uniqid */
                                 final String raw      = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
                                 final String callback = raw.startsWith("\\") ? raw.substring(1) : raw;
                                 if (targetCalls.containsKey(callback)) {
-                                    holder.registerProblem(argument, String.format(messagePattern, callback));
+                                    holder.registerProblem(target, String.format(messagePattern, callback));
                                 }
                             }
                         }
                     }
-                    /* TODO: variable function -> [\]targetCall + arguments count */
                 }
             }
         };

@@ -156,6 +156,9 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                             .filter(t   -> !t.equals("\\Closure"))
                                             .anyMatch(t -> t.startsWith("\\") || classReferences.contains(t));
                                     break;
+                                    /* TODO: is_subclass_of, is_a (argument position dependent)*/
+                                    /* TODO: is_iterable (array or object) */
+                                    /* TODO: is_scalar (integer, float, string or boolean) */
                                 default:
                                     continue;
                             }

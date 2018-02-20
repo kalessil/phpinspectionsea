@@ -57,7 +57,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
             public void visitPhpForeach(@NotNull ForeachStatement foreach) {
                 final PsiElement source = ExpressionSemanticUtil.getExpressionTroughParenthesis(foreach.getArray());
                 if (source instanceof PhpTypedElement && !isEnsuredByPyParentIf(foreach, source)) {
-                    analyseContainer(source);
+                    this.analyseContainer(source);
                 }
             }
 
@@ -98,7 +98,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     return;
                 }
                 final Set<String> types = resolvedType.filterUnknown().getTypes().stream()
-                                                      .map(Types::getType).collect(Collectors.toSet());
+                        .map(Types::getType).collect(Collectors.toSet());
                 if (types.isEmpty()) {
                     /* false-positives: pre-defined variables */
                     if (container instanceof Variable) {
@@ -121,8 +121,8 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 }
                 /* false-positives: mixed parameter type, parameter overridden before foreach */
                 if (types.size() > 1 && scope instanceof Function && container instanceof Variable) {
-                    final String                   parameter = ((Variable) container).getName();
-                    final PhpEntryPointInstruction start     = ((Function) scope).getControlFlow().getEntryPoint();
+                    final String parameter               = ((Variable) container).getName();
+                    final PhpEntryPointInstruction start = ((Function) scope).getControlFlow().getEntryPoint();
                     final PhpAccessVariableInstruction[] uses
                         = PhpControlFlowUtil.getFollowingVariableAccessInstructions(start, parameter, false);
                     for (final PhpAccessVariableInstruction instruction : uses) {
@@ -156,8 +156,8 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     boolean isStubFunction = false;
                     if (OpenapiTypesUtil.isFunctionReference(container)) {
                         final PsiElement function = OpenapiResolveUtil.resolveReference((FunctionReference) container);
-                        final String     filePath = function == null ? null : function.getContainingFile().getVirtualFile().getCanonicalPath();
-                        isStubFunction = filePath != null && filePath.contains(".jar!") && filePath.contains("/stubs/");
+                        final String filePath     = function == null ? null : function.getContainingFile().getVirtualFile().getCanonicalPath();
+                        isStubFunction            = filePath != null && filePath.contains(".jar!") && filePath.contains("/stubs/");
                     }
                     /* false-positive: mixed definition from array type */
                     if (!isStubFunction && !types.contains(Types.strArray) && REPORT_MIXED_TYPES) {
@@ -180,12 +180,8 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     types.remove(Types.strNull);
                 }
 
-                /* if contains an array, then it is iterable */
-                if (types.contains(Types.strArray)) {
-                    return;
-                }
-
                 /* do not process foreach-compatible types */
+                types.remove(Types.strArray);
                 types.remove(Types.strIterable);
                 types.remove("\\Traversable");
                 types.remove("\\Iterator");
@@ -207,9 +203,10 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         }
 
                         /* check classes: collect hierarchy of possible classes */
-                        final Set<PhpClass>        poolToCheck = new HashSet<>();
-                        final Collection<PhpClass> classes     = PhpIndexUtil.getObjectInterfaces(type, index, true);
-                        final boolean              foundClass  = !classes.isEmpty();
+                        final Set<PhpClass> poolToCheck    = new HashSet<>();
+                        final Collection<PhpClass> classes = PhpIndexUtil.getObjectInterfaces(type, index, true);
+                        /* TODO: refactor `!classes.isEmpty()` dependent logic */
+                        final boolean foundClass           = !classes.isEmpty();
                         if (!classes.isEmpty()) {
                             /* collect all interfaces*/
                             for (final PhpClass clazz : classes) {

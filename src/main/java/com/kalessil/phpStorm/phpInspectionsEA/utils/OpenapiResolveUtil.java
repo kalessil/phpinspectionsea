@@ -69,6 +69,10 @@ final public class OpenapiResolveUtil {
                         }
                     }
                 }
+            } else if (expression instanceof FunctionReference) {
+                /* resolve function and get it's type or fallback to empty type */
+                final PsiElement function = resolveReference((FunctionReference) expression);
+                result = function instanceof Function ? ((Function) function).getType().global(project) : new PhpType();
             }
             /* default behaviour */
             result = result == null ? expression.getType().global(project) : result;

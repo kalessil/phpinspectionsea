@@ -70,6 +70,6 @@
     }
 
     /** @param \stdClass[]|array $array */
-    function function buggy_array_parameter_processing_resolving(array $array) {
+    function buggy_array_parameter_processing_resolving(array $array) {
         foreach (array_reverse($array) as $item) {}
     }

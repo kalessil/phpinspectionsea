@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.api;
+package com.kalessil.phpStorm.phpInspectionsEA.api.deprecations;
 
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
@@ -11,22 +11,22 @@ final public class RandomApiMigrationInspectorTest extends PhpCodeInsightFixture
         inspector.SUGGEST_USING_RANDOM_INT    = false;
         myFixture.enableInspections(inspector);
 
-        myFixture.configureByFile("fixtures/api/random-api-mt.php");
+        myFixture.configureByFile("fixtures/api/deprecations/random-api-mt.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/random-api-mt.fixed.php");
+        myFixture.checkResultByFile("fixtures/api/deprecations/random-api-mt.fixed.php");
     }
 
     public void testIfFindsEdgePatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new RandomApiMigrationInspector());
-        myFixture.configureByFile("fixtures/api/random-api-edge.php");
+        myFixture.configureByFile("fixtures/api/deprecations/random-api-edge.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/random-api-edge.fixed.php");
+        myFixture.checkResultByFile("fixtures/api/deprecations/random-api-edge.fixed.php");
     }
 }

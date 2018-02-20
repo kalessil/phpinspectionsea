@@ -8,6 +8,7 @@ namespace OtherNamespace {
 }
 
 namespace CasesHolder {
+
     use function OtherNamespace\join;
 
     echo join();

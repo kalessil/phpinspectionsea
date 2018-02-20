@@ -64,7 +64,7 @@ public class DynamicCallsToScopeIntrospectionInspector extends BasePhpInspection
                 if (php.compareTo(PhpLanguageLevel.PHP710) >= 0) {
                     final String functionName = reference.getName();
                     if (functionName != null) {
-                        /* discover target element to be discovered */
+                        /* discover target element */
                         final PsiElement target;
                         if (functionName.isEmpty()) {
                             final PsiElement[] children = reference.getChildren();
@@ -76,7 +76,7 @@ public class DynamicCallsToScopeIntrospectionInspector extends BasePhpInspection
                         } else {
                             target = null;
                         }
-                        /* discover and report */
+                        /* discover the target function */
                         if (target != null) {
                             final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(target);
                             if (literal != null) {

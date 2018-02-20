@@ -26,7 +26,7 @@ import java.util.Map;
  */
 
 public class DynamicCallsToScopeIntrospectionInspector extends BasePhpInspection {
-    private static final String messagePattern = "Produces runtime warning (cannot call %s() dynamically).";
+    private static final String messagePattern = "Emits a runtime warning (cannot call %s() dynamically).";
 
     final private static Map<String, Integer> targetCalls        = new HashMap<>();
     final private static Map<String, Integer> callbacksPositions = new HashMap<>();
@@ -73,7 +73,7 @@ public class DynamicCallsToScopeIntrospectionInspector extends BasePhpInspection
                                 final String raw      = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
                                 final String callback = raw.startsWith("\\") ? raw.substring(1) : raw;
                                 if (targetCalls.containsKey(callback)) {
-                                    /* TODO: report */
+                                    holder.registerProblem(argument, String.format(messagePattern, callback));
                                 }
                             }
                         }

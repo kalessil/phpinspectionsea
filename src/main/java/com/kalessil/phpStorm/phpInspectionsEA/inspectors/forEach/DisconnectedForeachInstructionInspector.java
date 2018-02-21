@@ -70,7 +70,6 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     for (final PsiElement oneInstruction : foreachBody.getStatements()) {
                         if (oneInstruction instanceof PhpPsiElement && !(oneInstruction instanceof PsiComment)) {
                             final Set<String> individualDependencies = new HashSet<>();
-
                             instructionDependencies.put(oneInstruction, individualDependencies);
                             investigateInfluence((PhpPsiElement) oneInstruction, individualDependencies, allModifiedVariables);
                         }
@@ -79,22 +78,17 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     /* iteration 2 - analyse dependencies */
                     for (final PsiElement oneInstruction : foreachBody.getStatements()) {
                         if (oneInstruction instanceof PhpPsiElement && !(oneInstruction instanceof PsiComment)) {
-                            boolean isDependOnModifiedVariables = false;
+                            boolean isDependOnModified = false;
 
                             /* check if any dependency is overridden */
                             final Set<String> individualDependencies = instructionDependencies.get(oneInstruction);
-                            if (null != individualDependencies && individualDependencies.size() > 0) {
-                                /* contains not only this */
-                                for (final String dependencyName : individualDependencies) {
-                                    if (allModifiedVariables.contains(dependencyName)) {
-                                        isDependOnModifiedVariables = true;
-                                        break;
-                                    }
-                                }
+                            if (individualDependencies != null && !individualDependencies.isEmpty()) {
+                                isDependOnModified = individualDependencies.stream().anyMatch(allModifiedVariables::contains);
+                                individualDependencies.clear();
                             }
 
                             /* verify and report if violation detected */
-                            if (!isDependOnModifiedVariables) {
+                            if (!isDependOnModified) {
                                 final ExpressionType target = getExpressionType(oneInstruction);
                                 if (
                                     ExpressionType.NEW                 != target &&
@@ -133,11 +127,6 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                 if (SUGGEST_USING_CLONE && (ExpressionType.DOM_ELEMENT_CREATE == target || ExpressionType.NEW == target)) {
                                     holder.registerProblem(oneInstruction, messageUseClone);
                                 }
-                            }
-
-                            /* cleanup dependencies details */
-                            if (null != individualDependencies) {
-                                individualDependencies.clear();
                             }
                         }
                     }

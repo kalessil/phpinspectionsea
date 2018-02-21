@@ -113,3 +113,12 @@ foreach ([] as $innerArray) {
 
     unset($unknownVariable, $matched, $matchedAll);
 }
+
+/* false-positive: variable introduced in call arguments */
+foreach ([] as $item) {
+    $object->method($first = new Clazz());
+    $first->method();
+
+    call($second = new Clazz());
+    $second->method();
+}

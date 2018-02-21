@@ -194,6 +194,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                         resolvedType.filterUnknown().getTypes().forEach(t -> resolved.add(Types.getType(t)));
                                     }
 
+                                    /* TODO: same for nullable objects */
                                     /* false-positives: core functions returning string|false */
                                     if (resolved.size() == 2 && resolved.contains(Types.strString) && resolved.contains(Types.strBoolean)) {
                                         final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);

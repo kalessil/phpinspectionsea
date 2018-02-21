@@ -189,12 +189,20 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 final String variableName = variable.getName();
                                 if (variableName != null && variableName.equals(parameterName)) {
                                     final PhpType resolvedType = OpenapiResolveUtil.resolveType((PhpTypedElement) value, project);
-                                    final Set<String> resolved = resolvedType == null
-                                            ? new HashSet<>()
-                                            : resolvedType.filterUnknown().getTypes().stream()
-                                                    .map(Types::getType)
-                                                    .filter(type -> !type.equals(Types.strMixed))
-                                                    .collect(Collectors.toSet());
+                                    final Set<String> resolved = new HashSet<>();
+                                    if (resolvedType != null) {
+                                        resolvedType.filterUnknown().getTypes().forEach(t -> resolved.add(Types.getType(t)));
+                                    }
+
+                                    /* false-positives: core functions returning string|false */
+                                    if (resolved.size() == 2 && resolved.contains(Types.strString) && resolved.contains(Types.strBoolean)) {
+                                        final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);
+                                        if (isFunctionCall) {
+                                            resolved.remove(Types.strBoolean);
+                                        }
+                                    }
+
+                                    resolved.remove(Types.strMixed);
                                     for (String type : resolved) {
                                         /* translate static/self into FQNs */
                                         if (classReferences.contains(type)) {
@@ -243,11 +251,10 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                             break;
                                         }
                                     }
+                                    resolved.clear();
                                 }
                             }
                         }
-
-                        /* TODO: analyze comparison operations */
                     }
 
                     paramTypes.clear();

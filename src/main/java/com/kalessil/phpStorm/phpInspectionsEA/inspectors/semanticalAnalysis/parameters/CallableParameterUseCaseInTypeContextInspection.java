@@ -113,7 +113,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             if (functionName == null) {
                                 continue;
                             }
-                            final boolean isTargetParameter = functionCall.getParameters()[0] == expression;
+                            final PsiElement[] arguments    = functionCall.getParameters();
+                            final boolean isTargetParameter = arguments.length > 0 && arguments[0] == expression;
                             if (!isTargetParameter) {
                                 continue;
                             }

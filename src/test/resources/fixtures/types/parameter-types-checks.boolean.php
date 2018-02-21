@@ -1,7 +1,7 @@
 <?php
 
 class CasesHolder {
-    public function method(?bool $first, bool $second = null, string $third) {
+    public function method(?bool $first, bool $second = null, stdClass $third) {
         return [
             /* correct usage */
             $first === true,
@@ -16,6 +16,10 @@ class CasesHolder {
             /* weakly typed comparison is not handled */
             $third == false,
             $third != false,
+
+            is_bool($first),
+            is_bool($second),
+            <warning descr="Makes no sense, because this type is not defined in annotations.">is_bool($third)</warning>,
         ];
     }
 }

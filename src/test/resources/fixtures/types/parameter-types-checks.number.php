@@ -1,7 +1,7 @@
 <?php
 
 class CasesHolder {
-    public function method(?int $first, float $second = null, string $third) {
+    public function method(?int $first, float $second = null, stdClass $third) {
         return [
             /* correct usage */
             $first === 0,
@@ -21,6 +21,16 @@ class CasesHolder {
             /* weakly typed comparison is not handled */
             $third == 0,
             $third != 0,
+
+            is_int($first),
+            <warning descr="Makes no sense, because this type is not defined in annotations.">is_int($second)</warning>,
+
+            is_float($second),
+            <warning descr="Makes no sense, because this type is not defined in annotations.">is_float($third)</warning>,
+
+            is_numeric($first),
+            is_numeric($second),
+            <warning descr="Makes no sense, because this type is not defined in annotations.">is_numeric($third)</warning>,
         ];
     }
 }

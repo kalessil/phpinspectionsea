@@ -113,6 +113,10 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             if (functionName == null) {
                                 continue;
                             }
+                            final boolean isTargetParameter = functionCall.getParameters()[0] == expression;
+                            if (!isTargetParameter) {
+                                continue;
+                            }
 
                             /* we expect that aliases usage has been fixed already */
                             final boolean isTypeAnnounced;
@@ -156,14 +160,21 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     break;
                                 case "is_object":
                                 case "is_a":
+                                case "is_subclass_of":
                                     isTypeAnnounced =
                                         parameterTypes.contains(Types.strObject) ||
-                                        parameterTypes.stream()
-                                            .filter(t   -> !t.equals("\\Closure"))
-                                            .anyMatch(t -> t.startsWith("\\") || classReferences.contains(t));
+                                        parameterTypes.stream().anyMatch(t ->
+                                            (t.startsWith("\\") && !t.equals("\\Closure")) || classReferences.contains(t)
+                                        );
                                     break;
-                                    /* TODO: is_subclass_of, is_a (argument position dependent)*/
-                                    /* TODO: is_iterable (array or object) */
+                                case "is_iterable":
+                                    isTypeAnnounced =
+                                        parameterTypes.contains(Types.strArray) ||parameterTypes.contains(Types.strObject) ||
+                                        parameterTypes.stream().anyMatch(t ->
+                                            (t.startsWith("\\") && !t.equals("\\Closure")) || classReferences.contains(t)
+                                        );
+                                    break;
+
                                 default:
                                     continue;
                             }

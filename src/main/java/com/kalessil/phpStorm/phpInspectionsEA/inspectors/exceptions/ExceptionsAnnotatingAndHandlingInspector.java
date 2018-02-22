@@ -55,7 +55,8 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFinally(Finally element) {
+            @Override
+            public void visitPhpFinally(@NotNull Finally element) {
                 PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (!phpVersion.hasFeature(PhpLanguageFeature.FINALLY)) {
                     return;
@@ -70,9 +71,13 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     final Set<PsiElement> reportedExpressions = new HashSet<>();
                     for (final Set<PsiElement> pool : exceptions.values()) {
                         pool.stream()
-                                .filter(expression -> !reportedExpressions.contains(expression))
+                                .filter(expression  -> !reportedExpressions.contains(expression))
                                 .forEach(expression -> {
-                                    holder.registerProblem(expression, messageFinallyExceptions, ProblemHighlightType.GENERIC_ERROR);
+                                    holder.registerProblem(
+                                            this.getReportingTarget(expression),
+                                            messageFinallyExceptions,
+                                            ProblemHighlightType.GENERIC_ERROR
+                                    );
                                     reportedExpressions.add(expression);
                                 });
                         pool.clear();
@@ -84,20 +89,25 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 /* report try-blocks */
                 if (processedRegistry.size() > 0) {
                     processedRegistry.stream()
-                        .filter(statement -> statement instanceof Try)
-                        .forEach(statement -> holder.registerProblem(statement.getFirstChild(), messageFinallyExceptions, ProblemHighlightType.GENERIC_ERROR));
+                        .filter(statement  -> statement instanceof Try).forEach(statement ->
+                                holder.registerProblem(
+                                statement.getFirstChild(),
+                                messageFinallyExceptions,
+                                ProblemHighlightType.GENERIC_ERROR
+                        ));
                     processedRegistry.clear();
                 }
             }
 
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 if (method.isAbstract() || this.isTestContext(method)) {
                     return;
                 }
 
                 // __toString has magic methods validation, must not raise exceptions
-                final PsiElement objMethodName = NamedElementUtil.getNameIdentifier(method);
-                if (null == objMethodName || method.getName().equals("__toString")) {
+                final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
+                if (null == methodName || method.getName().equals("__toString")) {
                     return;
                 }
 
@@ -117,7 +127,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                 final Set<PhpClass> annotatedButNotThrownExceptions = new HashSet<>(annotatedExceptions);
                 /* release bundled expressions *//* actualize un-thrown exceptions registry */
                 annotatedExceptions.stream()
-                        .filter(key -> hasPhpDoc && throwsExceptions.containsKey(key))
+                        .filter(key        -> hasPhpDoc && throwsExceptions.containsKey(key))
                         .forEach(annotated -> {
                             /* release bundled expressions */
                             throwsExceptions.get(annotated).clear();
@@ -134,7 +144,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                                     .collect(Collectors.toList());
 
                     final String message = messagePatternUnthrown.replace("%c%", String.join(", ", toReport));
-                    holder.registerProblem(objMethodName, message, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING);
 
                     toReport.clear();
                 }
@@ -185,7 +195,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                                 final String message = messagePattern.replace("%c%", thrown);
                                 for (final PsiElement blame : blamedExpressions) {
                                     final LocalQuickFix fix = hasPhpDoc ? new MissingThrowAnnotationLocalFix(method, thrown) : null;
-                                    holder.registerProblem(blame, message, ProblemHighlightType.WEAK_WARNING, fix);
+                                    holder.registerProblem(this.getReportingTarget(blame), message, ProblemHighlightType.WEAK_WARNING, fix);
                                 }
                             }
                             blamedExpressions.clear();
@@ -195,6 +205,26 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                     throwsExceptions.clear();
                 }
                 annotatedExceptions.clear();
+            }
+
+            @NotNull
+            private PsiElement getReportingTarget(@NotNull PsiElement expression) {
+                PsiElement result = expression;
+                if (expression instanceof FunctionReference) {
+                    final PsiElement nameNode = (PsiElement) ((FunctionReference) expression).getNameNode();
+                    if (nameNode != null) {
+                        result = nameNode;
+                    }
+                } else if (expression instanceof PhpThrow) {
+                    final PsiElement subject = ((PhpThrow) expression).getArgument();
+                    if (subject instanceof NewExpression) {
+                        final PsiElement reference = ((NewExpression) subject).getClassReference();
+                        if (reference != null) {
+                            result = reference;
+                        }
+                    }
+                }
+                return result;
             }
         };
     }

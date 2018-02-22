@@ -28,9 +28,9 @@
     {
         public function flow() {
             $strContainer = '';
-            echo <weak_warning descr="Using [ ] instead of { } makes possible to analyze this expression.">$strContainer{0}</weak_warning>;
+            echo $strContainer{0};
             $strContainer[0] = 'a';
-            <weak_warning descr="Using [ ] instead of { } makes possible to analyze this expression.">$strContainer{0}</weak_warning> = 'a';
+            $strContainer{0} = 'a';
             $strContainer
                 [<error descr="Resolved index type ([array]) is incompatible with possible [string, int]. Probably just proper type hinting needed.">explode('', '')</error>] = 'a';
             $strContainer[]= 'a';

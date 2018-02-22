@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptions.ExceptionsAn
 final public class ExceptionsAnnotatingAndHandlingInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testAnnotationsProcessing() {
         final ExceptionsAnnotatingAndHandlingInspector inspector = new ExceptionsAnnotatingAndHandlingInspector();
-        inspector.REPORT_NON_THROWN_EXCEPTIONS = true;
+        inspector.REPORT_NON_THROWN_EXCEPTIONS                   = true;
         inspector.configuration.clear();
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("fixtures/controlFlow/exception-workflow/exceptions-workflow.php");
@@ -19,6 +19,11 @@ final public class ExceptionsAnnotatingAndHandlingInspectorTest extends PhpCodeI
     public void testMissingPhpDoc() {
         myFixture.enableInspections(new ExceptionsAnnotatingAndHandlingInspector());
         myFixture.configureByFile("fixtures/controlFlow/exception-workflow/missing-phpdoc.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+    public void testFinally() {
+        myFixture.enableInspections(new ExceptionsAnnotatingAndHandlingInspector());
+        myFixture.configureByFile("fixtures/controlFlow/exception-workflow/finally.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testCatchExceptionAndThrowable() {

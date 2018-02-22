@@ -30,7 +30,7 @@ import java.util.*;
 
 public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection {
     private static final String patternIndirectDuplication = "'%s' is already announced in '%s'.";
-    private static final String messageImplicitDuplication = "Class cannot implement previously implemented interface.";
+    private static final String messageImplicitDuplication = "Class cannot implement same interface multiple times.";
 
     @NotNull
     public String getShortName() {

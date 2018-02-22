@@ -87,7 +87,6 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                                 new TheLocalFix()
                                         );
-                                        break;
                                     }
                                 }
                                 inherited.clear();

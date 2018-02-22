@@ -46,7 +46,7 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                 final List<ClassReference> implemented = clazz.getImplementsList().getReferenceElements();
                 if (!implemented.isEmpty()) {
                     /* resolve own interfaces an maintain relation to original element */
-                    final HashMap<PsiElement, PhpClass> ownInterfaces = new HashMap<>();
+                    final Map<PsiElement, PhpClass> ownInterfaces = new LinkedHashMap<>(implemented.size());
                     for (final ClassReference reference : implemented) {
                         final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                         if (resolved instanceof PhpClass) {

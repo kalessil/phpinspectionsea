@@ -48,8 +48,8 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 }
 
                 // ensure offsets operations are supported, do nothing if no types were resolved
-                final HashSet<String> allowedIndexTypes = new HashSet<>();
-                if (!isContainerSupportsArrayAccess(expression, allowedIndexTypes) && allowedIndexTypes.size() > 0) {
+                final Set<String> allowedIndexTypes = new HashSet<>();
+                if (!isContainerSupportsArrayAccess(expression, allowedIndexTypes) && !allowedIndexTypes.isEmpty()) {
                     final String message = patternNoOffsetSupport
                             .replace("%t%", allowedIndexTypes.toString())
                             .replace("%c%", expression.getValue().getText());
@@ -90,7 +90,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean isContainerSupportsArrayAccess(@NotNull ArrayAccessExpression expression, @NotNull HashSet<String> indexTypesSupported) {
+    private boolean isContainerSupportsArrayAccess(@NotNull ArrayAccessExpression expression, @NotNull Set<String> indexTypesSupported) {
 
         // ok JB parses `$var[]= ...` always as array, lets make it working properly and report them later
         final PsiElement container = expression.getValue();
@@ -218,7 +218,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             @NotNull Set<String> possibleIndexTypes,
             @NotNull Set<String> allowedIndexTypes
     ) {
-        final HashSet<String> secureIterator = new HashSet<>();
+        final Set<String> secureIterator = new HashSet<>();
 
         final boolean isAnyObjectAllowed = allowedIndexTypes.contains(Types.strObject);
         final boolean isAnyScalarAllowed = allowedIndexTypes.contains(Types.strMixed);

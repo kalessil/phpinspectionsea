@@ -109,3 +109,9 @@
     function core_api_functions_consistency(string $string) {
         $string = substr($string, -1);
     }
+
+    /* false-positive: nullable objects */
+    function returns_nullable_object(): ?stdClass {}
+    function assigning_nullable_objects(stdClass $object) {
+        $object = returns_nullable_object();
+    }

@@ -39,8 +39,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
     private static final Set<String> classReferences = new HashSet<>();
     static {
-        classReferences.add("self");
-        classReferences.add("static");
+        classReferences.add(Types.strSelf);
+        classReferences.add(Types.strStatic);
     }
 
     @NotNull
@@ -111,8 +111,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                         final PsiElement parent        = instruction.getAnchor().getParent();
                         final PsiElement callCandidate = null == parent ? null : parent.getParent();
 
-                        /* check if is_* functions being used according to definitions */
-                        /* TODO: method/strategy 1 */
+                        /* Case 1: check if is_* functions being used according to definitions */
                         if (OpenapiTypesUtil.isFunctionReference(callCandidate)) {
                             final FunctionReference functionCall = (FunctionReference) callCandidate;
                             final String functionName            = functionCall.getName();
@@ -158,9 +157,9 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 case "is_a":
                                     isTypeAnnounced =
                                         paramTypes.contains(Types.strObject) ||
-                                        paramTypes.stream()
-                                            .filter(t -> !t.equals("\\Closure"))
-                                            .anyMatch(t -> t.startsWith("\\") || classReferences.contains(t));
+                                        paramTypes.stream().anyMatch(t ->
+                                            (t.startsWith("\\") && !t.equals("\\Closure")) || classReferences.contains(t)
+                                        );
                                     break;
                                 default:
                                     continue;
@@ -179,8 +178,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             continue;
                         }
 
-                        /* case: assignments violating parameter definition */
-                        /* TODO: method/strategy 2 */
+                        /* Case 2: assignments violating parameter definition */
                         if (OpenapiTypesUtil.isAssignment(parent)) {
                             final AssignmentExpression assignment = (AssignmentExpression) parent;
                             final PhpPsiElement variable          = assignment.getVariable();
@@ -194,12 +192,22 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                         resolvedType.filterUnknown().getTypes().forEach(t -> resolved.add(Types.getType(t)));
                                     }
 
-                                    /* TODO: same for nullable objects */
-                                    /* false-positives: core functions returning string|false */
-                                    if (resolved.size() == 2 && resolved.contains(Types.strString) && resolved.contains(Types.strBoolean)) {
-                                        final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);
-                                        if (isFunctionCall) {
-                                            resolved.remove(Types.strBoolean);
+                                    if (resolved.size() == 2) {
+                                        /* false-positives: nullable objects */
+                                        if (resolved.contains(Types.strNull)) {
+                                            final boolean isNullableObject = paramTypes.stream().anyMatch(t ->
+                                                t.startsWith("\\") && !t.equals("\\Closure") || classReferences.contains(t)
+                                            );
+                                            if (isNullableObject) {
+                                                resolved.remove(Types.strNull);
+                                            }
+                                        }
+                                        /* false-positives: core functions returning string|false */
+                                        else if (resolved.contains(Types.strString) && resolved.contains(Types.strBoolean)) {
+                                            final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);
+                                            if (isFunctionCall) {
+                                                resolved.remove(Types.strBoolean);
+                                            }
                                         }
                                     }
 

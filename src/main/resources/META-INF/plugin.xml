@@ -557,7 +557,7 @@ Bug-fixes and new inspections:<br/>
          shortName="NonSecureShuffleUsageInspection"               displayName="Insecure 'shuffle(...)' usage (Insufficient Entropy Vulnerability)"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureShuffleUsageInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
          shortName="BacktickOperatorUsageInspection"               displayName="Backtick operator usage"
          groupName="Security"                                      enabledByDefault="true" level="WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.BacktickOperatorUsageInspector"/>
@@ -802,7 +802,14 @@ Bug-fixes and new inspections:<br/>
         shortName="UnsupportedStringOffsetOperationsInspection"   displayName="Unsupported string offset operations"
         groupName="Language level migration"                      enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnsupportedStringOffsetOperationsInspector"/>
-
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="InstanceofCanBeUsedInspection"                 displayName="Instanceof can be used"
+        groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.InstanceofCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="DynamicCallsToScopeIntrospectionInspection"    displayName="Deprecated dynamic calls to scope introspection"
+        groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.DynamicCallsToScopeIntrospectionInspector"/>
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="BadExceptionsProcessingInspection"               displayName="Badly organized exception handling"
@@ -856,7 +863,7 @@ Bug-fixes and new inspections:<br/>
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="DeprecatedIniOptionsInspection"                  displayName="Deprecated configuration options"
-        groupName="Compatibility"                                   enabledByDefault="true" level="ERROR"
+        groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.DeprecatedIniOptionsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="RandomApiMigrationInspection"                    displayName="Random API migration"
@@ -870,7 +877,6 @@ Bug-fixes and new inspections:<br/>
         shortName="FopenBinaryUnsafeUsageInspection"                displayName="Binary-unsafe 'fopen(...)' usage"
         groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FopenBinaryUnsafeUsageInspector"/>
-
 
 
     <applicationService

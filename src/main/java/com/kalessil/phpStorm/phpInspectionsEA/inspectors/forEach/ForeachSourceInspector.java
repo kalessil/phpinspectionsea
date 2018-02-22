@@ -20,8 +20,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUt
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,9 +39,9 @@ public class ForeachSourceInspector extends BasePhpInspection {
     public boolean REPORT_UNRECOGNIZED_TYPES = true;
 
     private static final String patternNotRecognized = "Expressions' type was not recognized, please check type hints.";
-    private static final String patternMixedTypes    = "Expressions' type contains '%t%', please specify possible types instead (best practices).";
-    private static final String patternScalar        = "Can not iterate '%t%' (re-check type hints).";
-    private static final String patternObject        = "Can not iterate '%t%' (must implement one of Iterator interfaces).";
+    private static final String patternMixedTypes    = "Expressions' type contains '%s', please specify possible types instead (best practices).";
+    private static final String patternScalar        = "Can not iterate '%s' (re-check type hints).";
+    private static final String patternObject        = "Iterates over '%s' properties (probably should implement one of Iterator interfaces).";
 
     @NotNull
     public String getShortName() {
@@ -124,7 +123,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     final String parameter               = ((Variable) container).getName();
                     final PhpEntryPointInstruction start = ((Function) scope).getControlFlow().getEntryPoint();
                     final PhpAccessVariableInstruction[] uses
-                            = PhpControlFlowUtil.getFollowingVariableAccessInstructions(start, parameter, false);
+                        = PhpControlFlowUtil.getFollowingVariableAccessInstructions(start, parameter, false);
                     for (final PhpAccessVariableInstruction instruction : uses) {
                         final PhpPsiElement expression = instruction.getAnchor();
                         /* when matched itself, stop processing */
@@ -135,7 +134,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         final PsiElement parent = expression.getParent();
                         if (parent instanceof AssignmentExpression) {
                             final PsiElement matchCandidate = ((AssignmentExpression) parent).getVariable();
-                            if (null != matchCandidate && OpeanapiEquivalenceUtil.areEqual(matchCandidate, container)) {
+                            if (matchCandidate != null && OpeanapiEquivalenceUtil.areEqual(matchCandidate, container)) {
                                 types.clear();
                                 return;
                             }
@@ -150,33 +149,32 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     }
                 }
 
-
                 /* gracefully request to specify exact types which can appear (mixed, object) */
                 if (types.contains(Types.strMixed)) {
                     /* false-positive: mixed definitions from stub functions */
                     boolean isStubFunction = false;
                     if (OpenapiTypesUtil.isFunctionReference(container)) {
                         final PsiElement function = OpenapiResolveUtil.resolveReference((FunctionReference) container);
-                        final String filePath     = null == function ? null : function.getContainingFile().getVirtualFile().getCanonicalPath();
-                        isStubFunction            = null != filePath && filePath.contains(".jar!") && filePath.contains("/stubs/");
+                        final String filePath     = function == null ? null : function.getContainingFile().getVirtualFile().getCanonicalPath();
+                        isStubFunction            = filePath != null && filePath.contains(".jar!") && filePath.contains("/stubs/");
                     }
                     /* false-positive: mixed definition from array type */
                     if (!isStubFunction && !types.contains(Types.strArray) && REPORT_MIXED_TYPES) {
-                        final String message = patternMixedTypes.replace("%t%", Types.strMixed);
+                        final String message = String.format(patternMixedTypes, Types.strMixed);
                         holder.registerProblem(container, message, ProblemHighlightType.WEAK_WARNING);
                     }
                     types.remove(Types.strMixed);
                 }
                 if (types.contains(Types.strObject)) {
                     if (REPORT_MIXED_TYPES) {
-                        final String message = patternMixedTypes.replace("%t%", Types.strObject);
+                        final String message = String.format(patternMixedTypes, Types.strObject);
                         holder.registerProblem(container, message, ProblemHighlightType.WEAK_WARNING);
                     }
                     types.remove(Types.strObject);
                 }
 
                 /* respect patter when returned array and bool|null for indicating failures*/
-                if (2 == types.size() && types.contains(Types.strArray)) {
+                if (types.size() == 2 && types.contains(Types.strArray)) {
                     types.remove(Types.strBoolean);
                     types.remove(Types.strNull);
                 }
@@ -194,48 +192,32 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 if (!types.isEmpty()) {
                     final PhpIndex index = PhpIndex.getInstance(holder.getProject());
                     for (final String type : types) {
-                        /* analyze scalar types */
-                        final boolean isClassType = type.startsWith("\\");
-                        if (!isClassType) {
-                            final String message = patternScalar.replace("%t%", type);
-                            holder.registerProblem(container, message, ProblemHighlightType.GENERIC_ERROR);
-
+                        /* report if scalar type is met */
+                        if (!type.startsWith("\\")) {
+                            holder.registerProblem(container, String.format(patternScalar, type), ProblemHighlightType.GENERIC_ERROR);
                             continue;
                         }
 
-                        /* check classes: collect hierarchy of possible classes */
-                        final Set<PhpClass> poolToCheck    = new HashSet<>();
-                        final Collection<PhpClass> classes = PhpIndexUtil.getObjectInterfaces(type, index, true);
-                        final boolean foundClass           = !classes.isEmpty();
+                        /* check classes for the Traversable interface in the inheritance chain */
+                        final List<PhpClass> classes = PhpIndexUtil.getObjectInterfaces(type, index, true);
                         if (!classes.isEmpty()) {
-                            /* collect all interfaces*/
+                            boolean hasTraversable = false;
                             for (final PhpClass clazz : classes) {
                                 final Set<PhpClass> interfaces = InterfacesExtractUtil.getCrawlInheritanceTree(clazz, false);
                                 if (!interfaces.isEmpty()) {
-                                    poolToCheck.addAll(interfaces);
+                                    hasTraversable = interfaces.stream().anyMatch(i -> i.getFQN().equals("\\Traversable"));
                                     interfaces.clear();
+                                    if (hasTraversable) {
+                                        break;
+                                    }
                                 }
                             }
                             classes.clear();
-                        }
-
-                        /* analyze classes for having \Traversable in parents */
-                        boolean hasTraversable = false;
-                        if (!poolToCheck.isEmpty()) {
-                            for (final PhpClass clazz : poolToCheck) {
-                                if (clazz.getFQN().equals("\\Traversable")) {
-                                    hasTraversable = true;
-                                    break;
-                                }
+                            if (!hasTraversable) {
+                                holder.registerProblem(container, String.format(patternObject, type));
                             }
-                            poolToCheck.clear();
-                        }
-                        if (foundClass && !hasTraversable) {
-                            final String message = patternObject.replace("%t%", type);
-                            holder.registerProblem(container, message, ProblemHighlightType.GENERIC_ERROR);
                         }
                     }
-
                     types.clear();
                 }
             }

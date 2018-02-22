@@ -104,3 +104,14 @@
         $one = '';
         $two = <warning descr="New value type (string) is not in annotated types.">''</warning>;
     }
+
+    /* false-positive: core functions returning string|false */
+    function core_api_functions_consistency(string $string) {
+        $string = substr($string, -1);
+    }
+
+    /* false-positive: nullable objects */
+    function returns_nullable_object(): ?stdClass {}
+    function assigning_nullable_objects(stdClass $object) {
+        $object = returns_nullable_object();
+    }

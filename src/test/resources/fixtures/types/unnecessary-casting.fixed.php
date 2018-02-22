@@ -55,3 +55,8 @@
         (string) $instance->withWeakReturn(),
         $instance->withStrictReturn()
     ];
+
+    /* false-positives: globals entries are not resolved as strings */
+    function cases_holder_globals() {
+        $optional = (int)($_GET['parameter'] ?? -1);
+    }

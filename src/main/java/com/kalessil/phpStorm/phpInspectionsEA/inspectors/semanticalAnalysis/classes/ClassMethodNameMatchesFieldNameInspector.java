@@ -6,14 +6,22 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection {
     private static final String messageMatches   = "There is a field with the same name, please give the method another name like is*, get*, set* and etc.";
@@ -28,32 +36,27 @@ public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection 
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMethod(Method method) {
-                /* TODO: stick to class */
-                final PhpClass clazz      = method.getContainingClass();
-                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
-                if (null == clazz || null == nameNode || clazz.isInterface() || clazz.isTrait()) {
-                    return;
-                }
-
-                final String methodName = method.getName();
-                for (final Field field : clazz.getFields()) {
-                    if (field.isConstant() || !field.getName().equals(methodName)) {
-                        continue;
-                    }
-
-                    final HashSet<String> resolvedTypes = new HashSet<>();
-                    TypeFromPlatformResolverUtil.resolveExpressionType(field, resolvedTypes);
-                    if (!resolvedTypes.isEmpty()) {
-                        if (resolvedTypes.contains(Types.strCallable)) {
-                            holder.registerProblem(nameNode, messageMatches);
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
+                final PhpClass clazz = method.getContainingClass();
+                if (clazz != null && !clazz.isInterface()) {
+                    final Field field = OpenapiResolveUtil.resolveField(clazz, method.getName());
+                    if (field != null) {
+                        final PsiElement nameNode  = NamedElementUtil.getNameIdentifier(method);
+                        final PhpType resolvedType = OpenapiResolveUtil.resolveType(field, holder.getProject());
+                        if (resolvedType != null && nameNode != null) {
+                            final PhpType knownType = resolvedType.filterUnknown();
+                            if (knownType.isEmpty()) {
+                                holder.registerProblem(nameNode, messageFieldType);
+                            } else {
+                                final boolean isCallable = knownType.getTypes().stream()
+                                        .anyMatch(t -> Types.getType(t).equals(Types.strCallable));
+                                if (isCallable) {
+                                    holder.registerProblem(nameNode, messageMatches);
+                                }
+                            }
                         }
-                        resolvedTypes.clear();
-                    } else {
-                        holder.registerProblem(nameNode, messageFieldType);
                     }
-
-                    break;
                 }
             }
         };

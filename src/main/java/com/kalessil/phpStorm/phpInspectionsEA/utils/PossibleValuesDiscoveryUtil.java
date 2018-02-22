@@ -3,7 +3,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -73,25 +72,29 @@ public class PossibleValuesDiscoveryUtil {
     }
 
     static private void handleVariable(
-            @NotNull Variable variable, @NotNull Set<PsiElement> result, @NotNull Set<PsiElement> processed
+            @NotNull Variable variable,
+            @NotNull Set<PsiElement> result,
+            @NotNull Set<PsiElement> processed
     ) {
         final String variableName = variable.getName();
-        final Function callable   = StringUtils.isEmpty(variableName) ? null : ExpressionSemanticUtil.getScope(variable);
-        if (null == callable) {
+        final Function callable   = variableName.isEmpty() ? null : ExpressionSemanticUtil.getScope(variable);
+        if (callable == null) {
             return;
         }
 
         /* collect default value if variable is a parameter */
-        for (Parameter parameter : callable.getParameters()) {
-            final PsiElement defaultValue = parameter.getDefaultValue();
-            if (null != defaultValue && parameter.getName().equals(variableName)) {
-                result.add(defaultValue);
+        for (final Parameter parameter : callable.getParameters()) {
+            if (parameter.getName().equals(variableName)) {
+                final PsiElement defaultValue = parameter.getDefaultValue();
+                if (defaultValue != null) {
+                    result.add(defaultValue);
+                }
                 break;
             }
         }
 
         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(callable);
-        for (AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
+        for (final AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
             /* TODO: probable bug - self-assignment does not override instance of */
             if (expression instanceof SelfAssignmentExpression) {
                 continue;
@@ -116,10 +119,10 @@ public class PossibleValuesDiscoveryUtil {
             @NotNull ClassConstantReference reference,
             @NotNull Set<PsiElement> result
     ) {
-        final PsiElement resolvedReference
-                = StringUtils.isEmpty(reference.getName()) ? null : OpenapiResolveUtil.resolveReference(reference);
-        if (resolvedReference instanceof Field) {
-            final PsiElement value = ((Field) resolvedReference).getDefaultValue();
+        final String name      = reference.getName();
+        final PsiElement field = (name == null || name.isEmpty()) ? null : OpenapiResolveUtil.resolveReference(reference);
+        if (field instanceof Field) {
+            final PsiElement value = ((Field) field).getDefaultValue();
             if (value != null) {
                 result.add(value);
             }
@@ -127,15 +130,17 @@ public class PossibleValuesDiscoveryUtil {
     }
 
     static private void handleClassFieldReference(
-            @NotNull FieldReference reference, @NotNull Set<PsiElement> result, @NotNull Set<PsiElement> processed
+            @NotNull FieldReference reference,
+            @NotNull Set<PsiElement> result,
+            @NotNull Set<PsiElement> processed
     ) {
-        final String fieldName             = reference.getName();
-        final PsiElement resolvedReference = StringUtils.isEmpty(fieldName) ? null : OpenapiResolveUtil.resolveReference(reference);
-        if (resolvedReference instanceof Field) {
+        final String name      = reference.getName();
+        final PsiElement field = (name == null || name.isEmpty()) ? null : OpenapiResolveUtil.resolveReference(reference);
+        if (field instanceof Field) {
             /* TODO: properties without defaults returning variable as default are difficult to identify */
             /* TODO: multi-assignments */
-            final PsiElement defaultValue = ((Field) resolvedReference).getDefaultValue();
-            if (null != defaultValue && !defaultValue.getText().endsWith(fieldName)) {
+            final PsiElement defaultValue = ((Field) field).getDefaultValue();
+            if (defaultValue != null && !defaultValue.getText().endsWith(name)) {
                 result.add(defaultValue);
             }
         }
@@ -156,11 +161,11 @@ public class PossibleValuesDiscoveryUtil {
                 if (null != storedValue && container instanceof FieldReference) {
                     final String containerName = ((FieldReference) container).getName();
                     if (
-                        null != containerName && containerName.equals(fieldName) &&
+                        null != containerName && containerName.equals(name) &&
                         OpeanapiEquivalenceUtil.areEqual(container, reference)
                     ) {
                         final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
-                        if (discoveredWrites.size() > 0) {
+                        if (!discoveredWrites.isEmpty()) {
                             result.addAll(discoveredWrites);
                             discoveredWrites.clear();
                         }
@@ -171,7 +176,9 @@ public class PossibleValuesDiscoveryUtil {
     }
 
     static private void handleTernary(
-            @NotNull TernaryExpression ternary, @NotNull Set<PsiElement> result, @NotNull Set<PsiElement> processed
+            @NotNull TernaryExpression ternary,
+            @NotNull Set<PsiElement> result,
+            @NotNull Set<PsiElement> processed
     ) {
         final PsiElement trueVariant  = ternary.getTrueVariant();
         final PsiElement falseVariant = ternary.getFalseVariant();

@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime;
+package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;

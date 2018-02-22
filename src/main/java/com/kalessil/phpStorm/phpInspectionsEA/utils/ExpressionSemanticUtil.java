@@ -8,7 +8,6 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -207,50 +206,41 @@ final public class ExpressionSemanticUtil {
         if (null == expression) {
             return null;
         }
-        expression = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression);
+        expression                     = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression);
+        StringLiteralExpression result = null;
 
         if (expression instanceof StringLiteralExpression) {
-            return (StringLiteralExpression) expression;
-        }
-
-        if (expression instanceof FieldReference || expression instanceof ClassConstantReference) {
+            result = (StringLiteralExpression) expression;
+        } else if (expression instanceof FieldReference || expression instanceof ClassConstantReference) {
             final Field fieldOrConstant = (Field) OpenapiResolveUtil.resolveReference((MemberReference) expression);
             if (fieldOrConstant != null && fieldOrConstant.getDefaultValue() instanceof StringLiteralExpression) {
-                return (StringLiteralExpression) fieldOrConstant.getDefaultValue();
+                result = (StringLiteralExpression) fieldOrConstant.getDefaultValue();
             }
-        }
-
-        if (expression instanceof Variable) {
+        } else if (expression instanceof Variable) {
             final String variable = ((Variable) expression).getName();
-            if (!StringUtils.isEmpty(variable)) {
+            if (!variable.isEmpty()) {
                 final Function scope = ExpressionSemanticUtil.getScope(expression);
-                if (null != scope) {
-                    final Set<AssignmentExpression> matched = new HashSet<>();
-
-                    Collection<AssignmentExpression> assignments
-                            = PsiTreeUtil.findChildrenOfType(scope, AssignmentExpression.class);
-                    /* collect self-assignments as well */
+                if (scope != null) {
+                    final Set<StringLiteralExpression> matched         = new HashSet<>();
+                    final Collection<AssignmentExpression> assignments = PsiTreeUtil.findChildrenOfType(scope, AssignmentExpression.class);
                     for (final AssignmentExpression assignment : assignments) {
                         final PhpPsiElement container = assignment.getVariable();
-                        if (container instanceof Variable && assignment.getValue() instanceof StringLiteralExpression) {
-                            final String name = container.getName();
-                            if (name != null && name.equals(variable)) {
-                                matched.add(assignment);
+                        if (container instanceof Variable && variable.equals(container.getName())) {
+                            final PsiElement value = assignment.getValue();
+                            if (value instanceof StringLiteralExpression) {
+                                matched.add((StringLiteralExpression) value);
                             }
                         }
                     }
                     assignments.clear();
-
                     if (matched.size() == 1) {
-                        StringLiteralExpression result = (StringLiteralExpression) matched.iterator().next().getValue();
-                        matched.clear();
-                        return result;
+                        result = matched.iterator().next();
                     }
                     matched.clear();
                 }
             }
         }
 
-        return null;
+        return result;
     }
 }

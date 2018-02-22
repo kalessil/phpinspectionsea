@@ -141,6 +141,8 @@ Inspections Lists (Language level migration)
 | Language level migration | ReturnTypeCanBeDeclaredInspection               | Return type hint can be used                        | yes | yes | yes  | no  |
 | Language level migration | GetClassUsageInspection                         | 'get_class(...)' usage correctness                  | n/a | yes | n/a  | no  |
 | Language level migration | UnsupportedStringOffsetOperationsInspection     | Unsupported string offset operations                | n/a | yes | n/a  | no  |
+| Language level migration | InstanceofCanBeUsedInspection                   | Instanceof can be used                              | yes | yes | yes  | no  |
+| Language level migration | DynamicCallsToScopeIntrospectionInspection      | Deprecated dynamic calls to scope introspection     | n/a | yes | n/a  | no  |
 
 Inspections Lists (Architecture)
 ---
@@ -232,6 +234,7 @@ Inspections Lists (Security)
 | Security             | NonSecureHtmlentitiesUsageInspection               | Insecure 'htmlentities(...)' usage (XSS attacks)                       | yes | yes | yes  | no  |
 | Security             | NonSecureHtmlspecialcharsUsageInspection           | Insecure 'htmlspecialchars(...)' usage (XSS attacks)                   | yes | yes | yes  | no  |
 | Security             | NonSecureShuffleUsageInspection                    | Insecure 'shuffle(...)' usage (Insufficient Entropy Vulnerability)     | n/a | yes | n/a  | no  |
+| Security             | BacktickOperatorUsageInspection                    | Backtick operator usage                                                | yes | yes | yes  | no  |
 
 Inspections Lists (Performance)
 ---

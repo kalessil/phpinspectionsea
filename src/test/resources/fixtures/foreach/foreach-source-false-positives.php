@@ -65,6 +65,11 @@
     }
 
     /* false-positive: IDE doesn't handle null-coalescing operator properly */
-    function foo(?\Traversable $traversable) {
+    function buggy_null_coalescing_resolving(?\Traversable $traversable) {
         foreach ($traversable ?? [] as $value) {}
+    }
+
+    /** @param \stdClass[]|array $array */
+    function buggy_array_parameter_processing_resolving(array $array) {
+        foreach (array_reverse($array) as $item) {}
     }

@@ -40,7 +40,7 @@
 
     /* @var $stdClass stdClass */
     foreach (
-         <error descr="Can not iterate '\stdClass' (must implement one of Iterator interfaces).">$stdClass</error> as $value
+         <warning descr="Iterates over '\stdClass' properties (probably should implement one of Iterator interfaces).">$stdClass</warning> as $value
     ) {
         is_int($value);
     }

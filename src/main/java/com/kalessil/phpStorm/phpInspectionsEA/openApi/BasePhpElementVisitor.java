@@ -28,6 +28,8 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
             this.visitPhpDocTag((PhpDocTag) element);
         } else if (element instanceof Declare) {
             this.visitPhpDeclare((Declare) element);
+        } else if (element instanceof PhpShellCommandExpression) {
+            this.visitPhpShellCommand((PhpShellCommandExpression) element);
         } else {
             this.visitElement(element);
         }
@@ -36,6 +38,8 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     public void visitPhpDeclare(@NotNull Declare declare) {}
     public void visitPhpEval(@NotNull PhpEval eval)       {}
     public void visitPhpDocTag(@NotNull PhpDocTag tag)    {}
+
+    public void visitPhpShellCommand(final PhpShellCommandExpression shellCommandExpression) {}
 
     /* overrides to reduce amount of 'com.jetbrains.php.lang.psi.visitors.PhpElementVisitor.visitElement' calls */
     @Override public void visitPhpFile(PhpFile PhpFile) {}

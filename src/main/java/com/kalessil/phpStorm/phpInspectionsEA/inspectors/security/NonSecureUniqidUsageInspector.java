@@ -10,9 +10,11 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -32,12 +34,13 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
 
     final private static Map<String, Integer> callbacksPositions = new HashMap<>();
     static {
-        callbacksPositions.put("call_user_func", 0);
+        callbacksPositions.put("call_user_func",       0);
         callbacksPositions.put("call_user_func_array", 0);
-        callbacksPositions.put("array_filter", 1);
-        callbacksPositions.put("array_map", 0);
-        callbacksPositions.put("array_walk", 1);
-        callbacksPositions.put("array_reduce", 1);
+        callbacksPositions.put("array_filter",         1);
+        callbacksPositions.put("array_map",            0);
+        callbacksPositions.put("array_reduce",         1);
+        callbacksPositions.put("array_walk",           1);
+        callbacksPositions.put("array_walk_recursive", 1);
     }
 
     @NotNull
@@ -63,14 +66,13 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
                         /* calling in callbacks */
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length >= 2) {
-                            final int neededIndex = callbacksPositions.get(functionName);
-                            if (arguments[neededIndex] instanceof StringLiteralExpression) {
-                                String callback = ((StringLiteralExpression) arguments[neededIndex]).getContents();
-                                if (callback.startsWith("\\")) {
-                                    callback = callback.substring(1);
-                                }
+                            final int callbackPosition            = callbacksPositions.get(functionName);
+                            final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(arguments[callbackPosition]);
+                            if (literal != null) {
+                                final String raw      = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
+                                final String callback = raw.startsWith("\\") ? raw.substring(1) : raw;
                                 if (callback.equals("uniqid")) {
-                                    holder.registerProblem(arguments[neededIndex], message, ProblemHighlightType.GENERIC_ERROR, new UseLambdaFix());
+                                    holder.registerProblem(arguments[callbackPosition], message, ProblemHighlightType.GENERIC_ERROR, new UseLambdaFix());
                                 }
                             }
                         }

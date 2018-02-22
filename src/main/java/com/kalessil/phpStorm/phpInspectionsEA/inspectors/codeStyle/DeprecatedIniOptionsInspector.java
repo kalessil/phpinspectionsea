@@ -4,6 +4,8 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -25,6 +27,11 @@ import java.util.Map;
  */
 
 public class DeprecatedIniOptionsInspector extends BasePhpInspection {
+    private static final String patternDeprecated                = "'%s' is a deprecated since PHP %s.";
+    private static final String patternDeprecatedWithAlternative = "'%s' is a deprecated since PHP %s. Use %s instead.";
+    private static final String patternRemoved                   = "'%s' was removed in PHP %s.";
+    private static final String patternRemovedWithAlternative    = "'%s' was removed in PHP %s. Use %s instead.";
+
     private static final List<String> targetFunctions = new ArrayList<>();
     static {
         targetFunctions.add("ini_set");
@@ -33,39 +40,52 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         targetFunctions.add("ini_restore");
     }
 
-    private static final Map<String, String> targetOptions = new HashMap<>();
+    private static final Map<String, Triple<PhpLanguageLevel, PhpLanguageLevel, String>> options = new HashMap<>();
     static {
-        targetOptions.put("asp_tags", "'asp_tags' is a deprecated option since PHP 7.0.0.");
-        targetOptions.put("always_populate_raw_post_data", "'always_populate_raw_post_data' is a deprecated option since PHP 7.0.0.");
-
-        targetOptions.put("iconv.input_encoding", "'iconv.input_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        targetOptions.put("iconv.output_encoding", "'iconv.output_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        targetOptions.put("iconv.internal_encoding", "'iconv.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        targetOptions.put("mbstring.http_input", "'mbstring.http_input' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        targetOptions.put("mbstring.http_output", "'mbstring.http_output' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-        targetOptions.put("mbstring.internal_encoding", "'mbstring.internal_encoding' is a deprecated option since PHP 5.6.0. Use 'default_charset' instead.");
-
-        targetOptions.put("xsl.security_prefs", "'xsl.security_prefs' is a deprecated option since PHP 5.4.0 (removed in PHP 7.0.0). Use XsltProcessor->setSecurityPrefs() instead.");
-
-        targetOptions.put("allow_call_time_pass_reference", "'allow_call_time_pass_reference' is a deprecated option since PHP 5.4.0.");
-        targetOptions.put("highlight.bg", "'highlight.bg' is a deprecated option since PHP 5.4.0.");
-        targetOptions.put("zend.ze1_compatibility_mode", "'zend.ze1_compatibility_mode' is a deprecated option since PHP 5.4.0.");
-        targetOptions.put("session.bug_compat_42", "'session.bug_compat_42' is a deprecated option since PHP 5.4.0.");
-        targetOptions.put("session.bug_compat_warn", "'session.bug_compat_warn' is a deprecated option since PHP 5.4.0.");
-        targetOptions.put("y2k_compliance", "'y2k_compliance' is a deprecated option since PHP 5.4.0.");
-
-        targetOptions.put("define_syslog_variables", "'define_syslog_variables' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("magic_quotes_gpc", "'magic_quotes_gpc' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("magic_quotes_runtime", "'magic_quotes_runtime' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("magic_quotes_sybase", "'magic_quotes_sybase' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("register_globals", "'register_globals' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("register_long_arrays", "'register_long_arrays' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("safe_mode", "'safe_mode' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("safe_mode_gid", "'safe_mode_gid' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("safe_mode_include_dir", "'safe_mode_include_dir' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("safe_mode_exec_dir", "'safe_mode_exec_dir' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("safe_mode_allowed_env_vars", "'safe_mode_allowed_env_vars' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
-        targetOptions.put("safe_mode_protected_env_vars", "'safe_mode_protected_env_vars' is a deprecated option since PHP 5.3.0 (removed in PHP 5.4.0).");
+        /* http://php.net/manual/en/network.configuration.php */
+        options.put("define_syslog_variables",         Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        /* http://php.net/manual/en/info.configuration.php */
+        options.put("magic_quotes_gpc",                Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("magic_quotes_runtime",            Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        /* http://php.net/manual/en/misc.configuration.php */
+        options.put("highlight.bg",                    Triple.of(null, PhpLanguageLevel.PHP540, null));
+        /* http://php.net/manual/en/xsl.configuration.php */
+        options.put("xsl.security_prefs",              Triple.of(PhpLanguageLevel.PHP540, PhpLanguageLevel.PHP700, "XsltProcessor->setSecurityPrefs()"));
+        /* http://php.net/manual/en/ini.sect.safe-mode.php */
+        options.put("safe_mode",                       Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("safe_mode_gid",                   Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("safe_mode_include_dir",           Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("safe_mode_exec_dir",              Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("safe_mode_allowed_env_vars",      Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("safe_mode_protected_env_vars",    Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        /* http://php.net/manual/en/ini.core.php */
+        //options.put("sql.safe_mode",                   Triple.of(null, PhpLanguageLevel.PHP720, null));
+        options.put("asp_tags",                        Triple.of(null, PhpLanguageLevel.PHP700, null));
+        options.put("always_populate_raw_post_data",   Triple.of(PhpLanguageLevel.PHP560, PhpLanguageLevel.PHP700, null));
+        options.put("y2k_compliance",                  Triple.of(null, PhpLanguageLevel.PHP540, null));
+        options.put("zend.ze1_compatibility_mode",     Triple.of(null, PhpLanguageLevel.PHP530, null));
+        options.put("allow_call_time_pass_reference",  Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("register_globals",                Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        options.put("register_long_arrays",            Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        /* http://php.net/manual/en/session.configuration.php */
+        options.put("session.hash_function",           Triple.of(null, PhpLanguageLevel.PHP710, null));
+        options.put("session.hash_bits_per_character", Triple.of(null, PhpLanguageLevel.PHP710, null));
+        options.put("session.entropy_file",            Triple.of(null, PhpLanguageLevel.PHP710, null));
+        options.put("session.entropy_length",          Triple.of(null, PhpLanguageLevel.PHP710, null));
+        options.put("session.bug_compat_42",           Triple.of(null, PhpLanguageLevel.PHP540, null));
+        options.put("session.bug_compat_warn",         Triple.of(null, PhpLanguageLevel.PHP540, null));
+        /* http://php.net/manual/en/iconv.configuration.php */
+        options.put("iconv.input_encoding",            Triple.of(PhpLanguageLevel.PHP560, null, "default_charset"));
+        options.put("iconv.output_encoding",           Triple.of(PhpLanguageLevel.PHP560, null, "default_charset"));
+        options.put("iconv.internal_encoding",         Triple.of(PhpLanguageLevel.PHP560, null, "default_charset"));
+        /* http://php.net/manual/en/mbstring.configuration.php */
+        options.put("mbstring.script_encoding",        Triple.of(null, PhpLanguageLevel.PHP540, "zend.script_encoding"));
+        //options.put("mbstring.func_overload",          Triple.of(PhpLanguageLevel.PHP720, null, null));
+        options.put("mbstring.internal_encoding",      Triple.of(PhpLanguageLevel.PHP560, null, "default_charset"));
+        options.put("mbstring.http_input",             Triple.of(PhpLanguageLevel.PHP560, null, "default_charset"));
+        options.put("mbstring.http_output",            Triple.of(PhpLanguageLevel.PHP560, null, "default_charset"));
+        /* http://php.net/manual/en/sybase.configuration.php */
+        options.put("magic_quotes_sybase",             Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
     }
 
     @NotNull
@@ -83,13 +103,69 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                 if (functionName != null && targetFunctions.contains(functionName)) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length > 0 && arguments[0] instanceof StringLiteralExpression) {
-                        final String option = ((StringLiteralExpression) arguments[0]).getContents();
-                        if (targetOptions.containsKey(option)) {
-                            holder.registerProblem(arguments[0], targetOptions.get(option), ProblemHighlightType.LIKE_DEPRECATED);
+                        final String directive = ((StringLiteralExpression) arguments[0]).getContents();
+                        if (options.containsKey(directive)) {
+                            final PhpLanguageLevel php
+                                    = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                            final Triple<PhpLanguageLevel, PhpLanguageLevel, String> details = options.get(directive);
+                            final PhpLanguageLevel removalVersion                            = details.getMiddle();
+                            final PhpLanguageLevel deprecationVersion                        = details.getLeft();
+                            if (removalVersion != null && php.compareTo(removalVersion) >= 0) {
+                                final String alternative = details.getRight();
+                                holder.registerProblem(
+                                        arguments[0],
+                                        String.format(
+                                                alternative == null ? patternRemoved : patternRemovedWithAlternative,
+                                                directive,
+                                                removalVersion.getVersionString(),
+                                                alternative
+                                        )
+                                );
+                            } else if (deprecationVersion != null && php.compareTo(deprecationVersion) >= 0) {
+                                final String alternative = details.getRight();
+                                holder.registerProblem(
+                                        arguments[0],
+                                        String.format(
+                                                alternative == null ? patternDeprecated : patternDeprecatedWithAlternative,
+                                                directive,
+                                                deprecationVersion.getVersionString(),
+                                                alternative
+                                        ),
+                                        ProblemHighlightType.LIKE_DEPRECATED
+                                );
+                            }
                         }
                     }
                 }
             }
         };
+    }
+
+    private static final class Triple<L, M, R> {
+        private final L left;
+        private final M middle;
+        private final R right;
+
+        static <L, M, R> Triple<L, M, R> of(L left, M middle, R right) {
+            return new Triple<>(left, middle, right);
+        }
+
+        private Triple(L left, M middle, R right) {
+            this.left   = left;
+            this.middle = middle;
+            this.right  = right;
+        }
+
+        L getLeft() {
+            return this.left;
+        }
+
+        M getMiddle() {
+            return this.middle;
+        }
+
+        R getRight() {
+            return this.right;
+        }
     }
 }

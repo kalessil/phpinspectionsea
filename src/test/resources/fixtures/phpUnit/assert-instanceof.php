@@ -8,6 +8,11 @@ class TestAssertInstanceof
         <weak_warning descr="'assertInstanceOf(...)' would fit more here.">$this->assertNotFalse($x instanceof \stdClass)</weak_warning>;
         <weak_warning descr="'assertNotInstanceOf(...)' would fit more here.">$this->assertFalse($x instanceof \stdClass)</weak_warning>;
         <weak_warning descr="'assertNotInstanceOf(...)' would fit more here.">$this->assertNotTrue($x instanceof \stdClass)</weak_warning>;
+
+        <weak_warning descr="'assertInstanceOf(...)' would fit more here.">$this->assertSame(get_class($x), 'stdClass')</weak_warning>;
+        <weak_warning descr="'assertInstanceOf(...)' would fit more here.">$this->assertEquals(get_class($x), 'stdClass')</weak_warning>;
+        <weak_warning descr="'assertNotInstanceOf(...)' would fit more here.">$this->assertNotSame(get_class($x), 'stdClass')</weak_warning>;
+        <weak_warning descr="'assertNotInstanceOf(...)' would fit more here.">$this->assertNotEquals(get_class($x), 'stdClass')</weak_warning>;
     }
 
     public function testWithMessages()
@@ -16,5 +21,10 @@ class TestAssertInstanceof
         <weak_warning descr="'assertInstanceOf(...)' would fit more here.">$this->assertNotFalse($x instanceof \stdClass, '')</weak_warning>;
         <weak_warning descr="'assertNotInstanceOf(...)' would fit more here.">$this->assertFalse($x instanceof \stdClass, '')</weak_warning>;
         <weak_warning descr="'assertNotInstanceOf(...)' would fit more here.">$this->assertNotTrue($x instanceof \stdClass, '')</weak_warning>;
+
+        <weak_warning descr="'assertInstanceOf(...)' would fit more here.">$this->assertSame(get_class($x), 'stdClass', '')</weak_warning>;
+        <weak_warning descr="'assertInstanceOf(...)' would fit more here.">$this->assertEquals(get_class($x), 'stdClass', '')</weak_warning>;
+        <weak_warning descr="'assertNotInstanceOf(...)' would fit more here.">$this->assertNotSame(get_class($x), 'stdClass', '')</weak_warning>;
+        <weak_warning descr="'assertNotInstanceOf(...)' would fit more here.">$this->assertNotEquals(get_class($x), 'stdClass', '')</weak_warning>;
     }
 }

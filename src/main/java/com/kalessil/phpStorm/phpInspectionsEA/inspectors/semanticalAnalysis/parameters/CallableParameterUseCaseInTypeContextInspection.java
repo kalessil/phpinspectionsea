@@ -41,8 +41,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
     private static final Set<String> classReferences = new HashSet<>();
     static {
-        classReferences.add("self");
-        classReferences.add("static");
+        classReferences.add(Types.strSelf);
+        classReferences.add(Types.strStatic);
     }
 
     @NotNull
@@ -106,7 +106,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                         final PsiElement parent        = expression.getParent();
                         final PsiElement callCandidate = null == parent ? null : parent.getParent();
 
-                        /* check if is_* functions being used according to definitions */
+                        /* Case 1: check if is_* functions being used according to definitions */
                         if (OpenapiTypesUtil.isFunctionReference(callCandidate)) {
                             final FunctionReference functionCall = (FunctionReference) callCandidate;
                             final String functionName            = functionCall.getName();
@@ -193,7 +193,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             continue;
                         }
 
-                        /* case: assignments violating parameter definition */
+                        /* Case 2: assignments violating parameter definition */
                         if (OpenapiTypesUtil.isAssignment(parent)) {
                             final AssignmentExpression assignment = (AssignmentExpression) parent;
                             final PhpPsiElement variable          = assignment.getVariable();
@@ -202,12 +202,31 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 final String variableName = variable.getName();
                                 if (variableName != null && variableName.equals(parameterName)) {
                                     final PhpType resolvedType = OpenapiResolveUtil.resolveType((PhpTypedElement) value, project);
-                                    final Set<String> resolved = resolvedType == null
-                                            ? new HashSet<>()
-                                            : resolvedType.filterUnknown().getTypes().stream()
-                                                    .map(Types::getType)
-                                                    .filter(type -> !type.equals(Types.strMixed))
-                                                    .collect(Collectors.toSet());
+                                    final Set<String> resolved = new HashSet<>();
+                                    if (resolvedType != null) {
+                                        resolvedType.filterUnknown().getTypes().forEach(t -> resolved.add(Types.getType(t)));
+                                    }
+
+                                    if (resolved.size() == 2) {
+                                        /* false-positives: nullable objects */
+                                        if (resolved.contains(Types.strNull)) {
+                                            final boolean isNullableObject = paramTypes.stream().anyMatch(t ->
+                                                t.startsWith("\\") && !t.equals("\\Closure") || classReferences.contains(t)
+                                            );
+                                            if (isNullableObject) {
+                                                resolved.remove(Types.strNull);
+                                            }
+                                        }
+                                        /* false-positives: core functions returning string|false */
+                                        else if (resolved.contains(Types.strString) && resolved.contains(Types.strBoolean)) {
+                                            final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);
+                                            if (isFunctionCall) {
+                                                resolved.remove(Types.strBoolean);
+                                            }
+                                        }
+                                    }
+
+                                    resolved.remove(Types.strMixed);
                                     for (String type : resolved) {
                                         /* translate static/self into FQNs */
                                         if (classReferences.contains(type)) {
@@ -256,6 +275,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                             break;
                                         }
                                     }
+                                    resolved.clear();
                                 }
                             }
                             //continue;

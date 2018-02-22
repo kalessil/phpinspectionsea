@@ -8,6 +8,7 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,20 +43,36 @@ final public class OpenapiResolveUtil {
     static public PhpType resolveType(@NotNull PhpTypedElement expression, @NotNull Project project) {
         PhpType result = null;
         try {
-            /* workaround for https://youtrack.jetbrains.com/issue/WI-37013 */
+            /* workaround for https://youtrack.jetbrains.com/issue/WI-37013 & co */
             if (expression instanceof BinaryExpression) {
                 final BinaryExpression binary = (BinaryExpression) expression;
                 if (binary.getOperationType() == PhpTokenTypes.opCOALESCE) {
                     final PsiElement left  = binary.getLeftOperand();
                     final PsiElement right = binary.getRightOperand();
                     if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
-                        final PhpType leftType  = resolveType((PhpTypedElement) left, project);
+                        PhpType leftType = null;
+                        /* `_GET[...] ?? ...` gets resolved with missing string type */
+                        if (left instanceof ArrayAccessExpression) {
+                            final PsiElement globalCandidate = ((ArrayAccessExpression) left).getValue();
+                            if (globalCandidate instanceof Variable) {
+                                final String variableName = ((Variable) globalCandidate).getName();
+                                if (ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
+                                    leftType = new PhpType().add(PhpType.STRING).add(PhpType.ARRAY);
+                                }
+                            }
+                        }
+                        /* fallback resolving left operand to regular resolving */
+                        leftType                = leftType == null ? resolveType((PhpTypedElement) left, project) : leftType;
                         final PhpType rightType = resolveType((PhpTypedElement) right, project);
                         if (leftType != null && rightType != null) {
                             result = new PhpType().add(leftType.filterNull()).add(rightType);
                         }
                     }
                 }
+            } else if (expression instanceof FunctionReference) {
+                /* resolve function and get it's type or fallback to empty type */
+                final PsiElement function = resolveReference((FunctionReference) expression);
+                result = function instanceof Function ? ((Function) function).getType().global(project) : new PhpType();
             }
             /* default behaviour */
             result = result == null ? expression.getType().global(project) : result;

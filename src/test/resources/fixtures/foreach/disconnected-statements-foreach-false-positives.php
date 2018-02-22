@@ -37,18 +37,12 @@ foreach ($files as & $file5) {
     --$processed; $processed--;
 }
 
-/* preg_match|preg_match will introduce new variables in the loop */
-foreach ($files as & $file6) {
-    preg_match('pattern', $file6, $matched);
-    preg_match_all('pattern', $file6, $matchedAll);
-    unset($matched, $matchedAll);
-}
-
 /* list will introduce new variables in the loop */
 foreach ($files as & $file7) {
-    preg_match('pattern', $file7, $matched);
-    list ($first, $second) = $matched;
-    unset($first, $second, $matched);
+    list ($first, $second) = explode('...', '...');
+    // [$third, $fourth]      = explode('...', '...'); <- PS 2016.2 parser doesn't support this
+
+    unset($first, $second, $third, $fourth);
 }
 
 /* different assignments: clone, reassigning variables with variables; control statements */
@@ -109,4 +103,22 @@ foreach ([] as $item) {
 /* false-positives: compact function usage */
 foreach ([] as $variable) {
     $object->method(compact('variable'));
+}
+
+/* false-positive: variables by reference */
+foreach ([] as $innerArray) {
+    array_shift($unknownVariable);
+    preg_match('...', $innerArray[0], $matched);
+    preg_match_all('...', $innerArray[0], $matchedAll);
+
+    unset($unknownVariable, $matched, $matchedAll);
+}
+
+/* false-positive: variable introduced in call arguments */
+foreach ([] as $item) {
+    $object->method($first = new Clazz());
+    $first->method();
+
+    call($second = new Clazz());
+    $second->method();
 }

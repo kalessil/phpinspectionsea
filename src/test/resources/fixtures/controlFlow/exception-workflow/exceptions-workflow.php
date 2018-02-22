@@ -28,8 +28,8 @@ class CasesHolder {
      * PhpDoc with missing exceptions annotation
      */
     public function one(_ClassWithInterface $one, _ClassWithTrait $two) {
-        <weak_warning descr="Throws a non-annotated/unhandled exception: '\Exception1'.">$one->method()</weak_warning>;
-        <weak_warning descr="Throws a non-annotated/unhandled exception: '\Exception2'.">$two->method()</weak_warning>;
+        $one-><weak_warning descr="Throws a non-annotated/unhandled exception: '\Exception1'.">method</weak_warning>();
+        $two-><weak_warning descr="Throws a non-annotated/unhandled exception: '\Exception2'.">method</weak_warning>();
     }
 
     /**
@@ -38,6 +38,6 @@ class CasesHolder {
      */
     public function two(_ClassWithInterface $one, _ClassWithTrait $two) {
         $one->method();
-        <weak_warning descr="Throws a non-annotated/unhandled exception: '\Exception2'.">$two->method()</weak_warning>;
+        $two-><weak_warning descr="Throws a non-annotated/unhandled exception: '\Exception2'.">method</weak_warning>();
     }
 }

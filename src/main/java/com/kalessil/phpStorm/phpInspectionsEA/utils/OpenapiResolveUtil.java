@@ -31,7 +31,7 @@ final public class OpenapiResolveUtil {
     static public PsiElement resolveReference(@NotNull PsiReference reference) {
         try {
             return reference.resolve();
-        } catch (Throwable error) {
+        } catch (final Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;
             }
@@ -76,7 +76,7 @@ final public class OpenapiResolveUtil {
             }
             /* default behaviour */
             result = result == null ? expression.getType().global(project) : result;
-        } catch (Throwable error) {
+        } catch (final Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;
             }
@@ -89,7 +89,7 @@ final public class OpenapiResolveUtil {
     static public Collection<PhpClass> resolveClassesByFQN(@NotNull String name, @NotNull PhpIndex index) {
         try {
             return index.getClassesByFQN(name);
-        } catch (Throwable error) {
+        } catch (final Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;
             }
@@ -101,7 +101,7 @@ final public class OpenapiResolveUtil {
     static public Collection<PhpClass> resolveInterfacesByFQN(@NotNull String name, @NotNull PhpIndex index) {
         try {
             return index.getInterfacesByFQN(name);
-        } catch (Throwable error) {
+        } catch (final Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;
             }
@@ -113,7 +113,7 @@ final public class OpenapiResolveUtil {
     static public PhpClass resolveSuperClass(@NotNull PhpClass clazz) {
         try {
             return clazz.getSuperClass();
-        } catch (Throwable error) {
+        } catch (final Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;
             }
@@ -126,7 +126,7 @@ final public class OpenapiResolveUtil {
         try {
             final PhpClass[] interfaces = clazz.getImplementedInterfaces();
             return interfaces == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(interfaces));
-        } catch (Throwable error) {
+        } catch (final Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;
             }
@@ -138,7 +138,7 @@ final public class OpenapiResolveUtil {
     static public Method resolveMethod(@NotNull PhpClass clazz, @NotNull String methodName) {
         try {
             return clazz.findMethodByName(methodName);
-        } catch (Throwable error) {
+        } catch (final Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;
             }
@@ -150,7 +150,7 @@ final public class OpenapiResolveUtil {
     static public Field resolveField(@NotNull PhpClass clazz, @NotNull String fieldName) {
         try {
             return clazz.findFieldByName(fieldName, false);
-        } catch (Throwable error) {
+        } catch (final Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;
             }

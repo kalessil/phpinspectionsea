@@ -557,7 +557,10 @@ Bug-fixes and new inspections:<br/>
          shortName="NonSecureShuffleUsageInspection"               displayName="Insecure 'shuffle(...)' usage (Insufficient Entropy Vulnerability)"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureShuffleUsageInspector"/>
-
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+         shortName="BacktickOperatorUsageInspection"               displayName="Backtick operator usage"
+         groupName="Security"                                      enabledByDefault="true" level="WARNING"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.BacktickOperatorUsageInspector"/>
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="PhpUnitTestsInspection"                        displayName="PhpUnit: bugs and best practices"
@@ -770,7 +773,7 @@ Bug-fixes and new inspections:<br/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="AliasFunctionsUsageInspection"                 displayName="Alias functions usage"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.AliasFunctionsUsageInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.AliasFunctionsUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ClassConstantCanBeUsedInspection"              displayName="::class can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
@@ -794,7 +797,7 @@ Bug-fixes and new inspections:<br/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="GetClassUsageInspection"                       displayName="'get_class(...)' usage correctness"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.GetClassUsageInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.GetClassUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="UnsupportedStringOffsetOperationsInspection"   displayName="Unsupported string offset operations"
         groupName="Language level migration"                      enabledByDefault="true" level="ERROR"
@@ -858,11 +861,11 @@ Bug-fixes and new inspections:<br/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="RandomApiMigrationInspection"                    displayName="Random API migration"
         groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.RandomApiMigrationInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.RandomApiMigrationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="MktimeUsageInspection"                           displayName="'gmmktime(...)'/'mktime(...)' usage"
         groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.MktimeUsageInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.MktimeUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="FopenBinaryUnsafeUsageInspection"                displayName="Binary-unsafe 'fopen(...)' usage"
         groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"

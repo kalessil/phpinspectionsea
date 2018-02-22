@@ -30,7 +30,7 @@ import java.util.*;
 
 public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection {
     private static final String patternIndirectDuplication = "'%s' is already announced in '%s'.";
-    private static final String messageImplicitDuplication = "Class cannot implement same interface multiple times.";
+    private static final String messageImplicitDuplication = "Class cannot implement previously implemented interface";
 
     @NotNull
     public String getShortName() {
@@ -58,9 +58,9 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                     if (!ownInterfaces.isEmpty()) {
                         /* Case 1: own duplicate declaration (runtime error gets raised) */
                         if (ownInterfaces.size() > 1) {
-                            final Collection<PhpClass> classes = ownInterfaces.values();
+                            final Set<PhpClass> processed = new HashSet<>(ownInterfaces.size());
                             for (final Map.Entry<PsiElement, PhpClass> entry : ownInterfaces.entrySet()) {
-                                if (Collections.frequency(classes, entry.getValue()) > 1) {
+                                if (!processed.add(entry.getValue())) {
                                     holder.registerProblem(
                                             entry.getKey(),
                                             messageImplicitDuplication,
@@ -70,7 +70,7 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                                     break;
                                 }
                             }
-                            classes.clear();
+                            processed.clear();
                         }
 
                         /* Case 2: indirect declaration duplication (parent already implements) */

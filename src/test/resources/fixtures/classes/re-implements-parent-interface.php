@@ -19,6 +19,6 @@ class CParent2 extends AParent2
 
 class ClassImplementsSameInterfaceTwice
     implements
-        <error descr="Class cannot implement same interface multiple times.">IParent2</error>,
-        IParent2
+        IParent2,
+        <error descr="Class cannot implement previously implemented interface">IParent2</error>
 {}

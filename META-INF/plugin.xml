@@ -60,21 +60,17 @@ Bug-fixes. BTW, it would be awesome to get more supporters on <a href="https://w
 <br/>
 - Worked out crash reports for January and February<br/>
 <br/>
-- Array and string offset validity: resolved false-positives (core string functions result)<br/>
-- Cascading 'str_replace(...)' calls: QF bug-fix, new settings<br/>
-- Foreach source to iterate over: resolved false-positives (multiple cases)<br/>
-- Nested positive ifs: QF bug-fix<br/>
-- Null reference: resolved false-positives (multiple cases)<br/>
-- Parameter/variable is not used: resolved false-positives (object parameters)<br/>
-- Passing arguments by reference correctness: resolved false-positives (key/current functions)<br/>
-- Return type hint can be used: resolved false-positives (multiple cases)<br/>
-- Suspicious assignments: resolved false-positives (multiple cases)<br/>
-- 'get_class(...)' usage correctness: resolved false-positives (IDE types resolving)<br/>
+- CallableParameterUseCaseInTypeContextInspection: resolved false-positives (multiple cases)<br/>
+- UnnecessaryCastingInspector: resolved false-positives (null coalesce + globals)<br/>
+- DisconnectedForeachInstructionInspector: resolved false-positives (multiple cases)<br/>
+- ForeachSourceInspector: resolved false-positives (multiple cases)<br/>
 <br/>
-- Callable parameter usage violates definition: new patterns<br/>
-- Security advisories for Composer packages: new dev-packages<br/>
-- Type casting can be used: new patterns<br/>
-- Unsupported string offset operations: implemented<br/>
+- DynamicCallsToScopeIntrospectionInspector: implemented<br/>
+- BacktickOperatorUsageInspector: implemented (thank you David Rodrigues)<br/>
+- InstanceofCanBeUsedInspector: implemented<br/>
+- AliasFunctionsUsageInspector: new patterns<br/>
+- PhpUnitTestsInspector: new patterns<br/>
+- DeprecatedIniOptionsInspector: new patterns<br/>
 <br/>
 <hr/>
   ]]></change-notes>

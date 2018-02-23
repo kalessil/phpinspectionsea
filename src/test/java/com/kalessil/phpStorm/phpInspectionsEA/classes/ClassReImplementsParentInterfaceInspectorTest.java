@@ -8,6 +8,10 @@ final public class ClassReImplementsParentInterfaceInspectorTest extends PhpCode
         myFixture.enableInspections(new ClassReImplementsParentInterfaceInspector());
         myFixture.configureByFile("fixtures/classes/re-implements-parent-interface.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/classes/re-implements-parent-interface.fixed.php");
     }
 }
 

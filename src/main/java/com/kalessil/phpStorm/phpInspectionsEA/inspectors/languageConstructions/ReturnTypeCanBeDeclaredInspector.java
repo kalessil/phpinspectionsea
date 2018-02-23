@@ -177,7 +177,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     final String methodName = method.getName();
                     final PhpIndex index    = PhpIndex.getInstance(method.getProject());
                     result =
-                        index.getAllSubclasses(clazz.getFQN()).stream()
+                        OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), index).stream()
                                 .anyMatch(c -> c.findOwnMethodByName(methodName) != null) ||
                         InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream()
                                 .anyMatch(c -> c != clazz && c.findOwnMethodByName(methodName) != null);

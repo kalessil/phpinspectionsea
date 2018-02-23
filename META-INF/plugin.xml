@@ -62,6 +62,7 @@ Bug-fixes. BTW, it would be awesome to get more supporters on <a href="https://w
 -- ClassMethodNameMatchesFieldNameInspector.java:40<br/>
 -- ClassReImplementsParentInterfaceInspector.java:63<br/>
 -- ReturnTypeCanBeDeclaredInspector.java:180<br/>
+-- MockingFinalClassesInspector.java:105<br/>
 <br/>
 - CallableParameterUseCaseInTypeContextInspection: resolved false-positives (multiple cases)<br/>
 - UnnecessaryCastingInspector: resolved false-positives (null coalesce + globals)<br/>

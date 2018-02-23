@@ -21,13 +21,13 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class ArrayKeysMissUseInspector extends BasePhpInspection {
-    private static final String messageArrayUnique = "'array_unique(...)' is not making any sense here (array keys are unique).";
-    private static final String messageCount       = "'array_keys(...)' is not making any sense here (just count it's argument).";
+public class ArrayValuesMissUseInspector extends BasePhpInspection {
+    private static final String messageInArray = "'array_keys(...)' is not making any sense here (just search in it's argument).";
+    private static final String messageCount   = "'array_keys(...)' is not making any sense here (just count it's argument).";
 
     @NotNull
     public String getShortName() {
-        return "ArrayKeysMissUseInspection";
+        return "ArrayValuesMissUseInspection";
     }
 
     @Override
@@ -39,7 +39,7 @@ public class ArrayKeysMissUseInspector extends BasePhpInspection {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
 
                 final String functionName = reference.getName();
-                if (functionName != null && functionName.equals("array_keys")) {
+                if (functionName != null && functionName.equals("array_values")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 1) {
                         final PsiElement parent = reference.getParent();
@@ -51,8 +51,8 @@ public class ArrayKeysMissUseInspector extends BasePhpInspection {
                                 if (parentCallName != null) {
                                     if (parentCallName.equals("count")) {
                                         holder.registerProblem(reference, messageCount, new ReplaceFix(arguments[0].getText()));
-                                    } else if (parentCallName.equals("array_unique")) {
-                                        holder.registerProblem(parentCall, messageArrayUnique, new ReplaceFix(reference.getText()));
+                                    } else if (parentCallName.equals("in_array")) {
+                                        holder.registerProblem(reference, messageInArray, new ReplaceFix(arguments[0].getText()));
                                     }
                                 }
                             }

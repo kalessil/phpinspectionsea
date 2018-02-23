@@ -156,6 +156,11 @@ Bug-fixes and new inspections:<br/>
         shortName="RepetitiveMethodCallsInspection"               displayName="Repetitive method calls"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.RepetitiveMethodCallsInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="ArrayValuesMissUseInspection"                  displayName="'array_values(...)' misused"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayValuesMissUseInspector"/>
+
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="IsEmptyFunctionUsageInspection"                displayName="'empty(...)' usage"

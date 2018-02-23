@@ -265,3 +265,4 @@ Inspections Lists (Performance)
 | Performance          | FixedTimeStartWithInspection                    | Fixed-time string starts with checks                                                              | yes | yes | yes  | no  |
 | Performance          | ArrayKeysMissUseInspection                      | 'array_keys(...)' misused                                                                         | yes | yes | yes  | no  |
 | Performance          | RepetitiveMethodCallsInspection                 | Repetitive method calls                                                                           | n/a | yes | n/a  | no  |
+| Performance          | ArrayValuesMissUseInspection                    | 'array_values(...)' misused                                                                       | yes | yes | yes  | no  |

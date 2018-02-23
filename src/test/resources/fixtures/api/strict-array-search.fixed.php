@@ -18,3 +18,11 @@
     /* @var int $needle */
     /* @var int[] $array */
     in_array($needle, $array);
+
+    /* false-positives: implicitly declared array search */
+    array_search($status, ['20x', '30x']);
+    in_array($status, array('20x', '30x'));
+
+    in_array($status, ['200', '302'], true);
+    in_array($status, [''], true);
+    in_array($status, ['OK' => '200x'], true);

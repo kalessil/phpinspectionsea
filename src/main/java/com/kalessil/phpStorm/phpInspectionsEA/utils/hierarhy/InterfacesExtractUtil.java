@@ -7,29 +7,35 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 final public class InterfacesExtractUtil {
     @NotNull
     public static HashSet<PhpClass> getCrawlInheritanceTree(@NotNull PhpClass clazz, boolean withClasses) {
-        final HashSet<PhpClass> processedItems = new HashSet<>();
-
+        final HashSet<PhpClass> processed = new HashSet<>();
         if (clazz.isInterface()) {
-            processInterface(clazz, processedItems);
+            processInterface(clazz, processed);
         } else {
-            processClass(clazz, processedItems, withClasses);
+            processClass(clazz, processed, withClasses);
         }
-
-        return processedItems;
+        return processed;
     }
 
     private static void processClass(@NotNull PhpClass clazz, @NotNull Set<PhpClass> processedItems, boolean withClasses) {
         if (!clazz.isInterface()) {
-            if (withClasses) {
-                processedItems.add(clazz);
+            if (withClasses && !processedItems.add(clazz)) {
+                return;
             }
 
             /* re-delegate interface handling */
-            OpenapiResolveUtil.resolveImplementedInterfaces(clazz)
-                    .forEach(interfacee -> processInterface(interfacee, processedItems));
+            OpenapiResolveUtil.resolveImplementedInterfaces(clazz).forEach(i -> processInterface(i, processedItems));
 
             /* handle parent class */
             final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
@@ -41,8 +47,7 @@ final public class InterfacesExtractUtil {
 
     private static void processInterface(@NotNull PhpClass clazz, @NotNull Set<PhpClass> processedItems) {
         if (clazz.isInterface() && processedItems.add(clazz)) {
-            OpenapiResolveUtil.resolveImplementedInterfaces(clazz)
-                    .forEach(parentInterface -> processInterface(parentInterface, processedItems));
+            OpenapiResolveUtil.resolveImplementedInterfaces(clazz).forEach(i -> processInterface(i, processedItems));
         }
     }
 }

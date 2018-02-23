@@ -1,28 +1,36 @@
 <?php
 
-interface IParent1
-{ }
-interface IParent2 extends IParent1
-{ }
+namespace BasicCasesHolder {
+    interface ParentInterface                                             {}
+    interface ChildInterface extends ParentInterface                      {}
+    abstract class AbstractOne implements ParentInterface                 {}
+    abstract class AbstractTwo implements ParentInterface, ChildInterface {}
 
-abstract class AParent1 implements IParent1
-{ private $x; }
-abstract class AParent2 implements IParent1, IParent2
-{ private $y; }
+    class ClassOne extends AbstractOne
+        implements
+            <error descr="'\BasicCasesHolder\ParentInterface' is already announced in '\BasicCasesHolder\AbstractOne'.">ParentInterface</error> {}
 
-class CParent1 extends AParent1
-    implements <error descr="IParent1 is already announced in \AParent1.">IParent1</error>
-{ private $xx; }
+    class ClassTwo extends AbstractTwo
+        implements
+            <error descr="'\BasicCasesHolder\ParentInterface' is already announced in '\BasicCasesHolder\AbstractTwo'.">ParentInterface</error>,
+            <error descr="'\BasicCasesHolder\ChildInterface' is already announced in '\BasicCasesHolder\AbstractTwo'.">ChildInterface</error> {}
 
-class CParent2 extends AParent2
-    implements
-        <error descr="IParent1 is already announced in \AParent2.">IParent1</error>,
-        <error descr="IParent2 is already announced in \AParent2.">IParent2</error>
-{ private $xx; }
+    class ClassImplementsSameInterfaceTwice
+        implements
+            ChildInterface,
+            <error descr="Class cannot implement previously implemented interface">ChildInterface</error> {}
+}
 
-class ClassImplementsSameInterfaceTwice
-    implements
-        IParent2,
-        <error descr="Class cannot implement previously implemented interface">IParent2</error>
-{
+namespace AliasingCasesHolder {
+    use \Traversable as ForeachSupport;
+
+    class ClassImplementsSameInterfaceTwice
+        implements
+            \Traversable,
+            <error descr="Class cannot implement previously implemented interface">ForeachSupport</error> {}
+
+    abstract class AbstractClass implements \Traversable {}
+    class RegularClass extends AbstractClass
+        implements
+            <error descr="'\Traversable' is already announced in '\AliasingCasesHolder\AbstractClass'.">ForeachSupport</error> {}
 }

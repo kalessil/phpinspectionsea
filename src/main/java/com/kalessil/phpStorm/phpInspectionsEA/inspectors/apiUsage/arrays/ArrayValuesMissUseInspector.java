@@ -22,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ArrayValuesMissUseInspector extends BasePhpInspection {
-    private static final String messageInArray = "'array_keys(...)' is not making any sense here (just search in it's argument).";
-    private static final String messageCount   = "'array_keys(...)' is not making any sense here (just count it's argument).";
+    private static final String messageInArray = "'array_values(...)' is not making any sense here (just search in it's argument).";
+    private static final String messageCount   = "'array_values(...)' is not making any sense here (just count it's argument).";
 
     @NotNull
     public String getShortName() {

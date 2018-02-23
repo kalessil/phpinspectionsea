@@ -4,15 +4,20 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.parser.PhpElementTypes;
+import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,6 +54,23 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
                 if (functionName != null && targetFunctions.contains(functionName)) {
                     final PsiElement[] arguments =  reference.getParameters();
                     if (arguments.length == 2) {
+                        /* false-positives: array of string literals */
+                        if (arguments[1] instanceof ArrayCreationExpression) {
+                            final PsiElement[] elements = arguments[1].getChildren();
+                            if (elements.length > 0) {
+                                final long validElementsCount = Arrays.stream(elements)
+                                    .filter(element -> OpenapiTypesUtil.is(element, PhpElementTypes.ARRAY_VALUE))
+                                        .map(PsiElement::getFirstChild)
+                                    .filter(element -> element instanceof StringLiteralExpression)
+                                        .map(literal -> ((StringLiteralExpression) literal).getContents().trim())
+                                    .filter(content -> !content.isEmpty() && !content.matches("^\\d+$"))
+                                        .count();
+                                if (validElementsCount == elements.length) {
+                                    return;
+                                }
+                            }
+                        }
+
                         /* false-positives: array and item types are complimentary */
                         if (arguments[0] instanceof PhpTypedElement && arguments[1] instanceof PhpTypedElement) {
                             final Project project        = reference.getProject();
@@ -65,6 +87,7 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
                                 }
                             }
                         }
+
                         /* general case: we need the third argument */
                         final String replacement = String.format(
                                 "%s(%s, %s, true)",

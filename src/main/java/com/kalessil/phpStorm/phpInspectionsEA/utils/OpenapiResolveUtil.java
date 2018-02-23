@@ -109,6 +109,18 @@ final public class OpenapiResolveUtil {
         }
     }
 
+    @NotNull
+    static public Collection<PhpClass> resolveChildClasses(@NotNull String clazz, @NotNull PhpIndex index) {
+        try {
+            return index.getAllSubclasses(clazz);
+        } catch (final Throwable error) {
+            if (error instanceof ProcessCanceledException) {
+                throw error;
+            }
+            return new ArrayList<>();
+        }
+    }
+
     @Nullable
     static public PhpClass resolveSuperClass(@NotNull PhpClass clazz) {
         try {

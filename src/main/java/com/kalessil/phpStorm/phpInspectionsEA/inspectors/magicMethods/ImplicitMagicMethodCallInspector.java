@@ -71,7 +71,7 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
                 if (methodName != null && methods.contains(methodName)) {
                     /* Pattern 1: direct calls ob objects */
                     final String referenceObject = reference.getFirstChild().getText().trim();
-                    if (!referenceObject.equals("$this")) {
+                    if (!referenceObject.equals("$this") && !this.isTestContext(reference)) {
                         if (!(reference.getFirstChild() instanceof ClassReference) && !referenceObject.equals("parent")) {
                             /* __toString is a special case */
                             if (SUGGEST_USING_STRING_CASTING && methodName.equals("__toString")) {

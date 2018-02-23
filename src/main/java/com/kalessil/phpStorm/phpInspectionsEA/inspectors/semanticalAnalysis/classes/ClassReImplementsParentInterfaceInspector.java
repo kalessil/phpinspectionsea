@@ -13,16 +13,24 @@ import com.jetbrains.php.lang.psi.elements.ImplementsList;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection {
-    private static final String patternReImplementsParent = "%i% is already announced in %c%.";
-    private static final String messageAlreadyImplements  = "Class cannot implement previously implemented interface";
+    private static final String patternIndirectDuplication = "'%s' is already announced in '%s'.";
+    private static final String messageImplicitDuplication = "Class cannot implement previously implemented interface";
 
     @NotNull
     public String getShortName() {
@@ -33,67 +41,60 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpClass(PhpClass clazz) {
-                /* skip classes which we cannot report */
-                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
-                if (null == nameNode) {
-                    return;
-                }
+            @Override
+            public void visitPhpClass(@NotNull PhpClass clazz) {
+                final List<ClassReference> implemented = clazz.getImplementsList().getReferenceElements();
+                if (!implemented.isEmpty()) {
+                    /* resolve own interfaces an maintain relation to original element */
+                    final Map<PsiElement, PhpClass> ownInterfaces = new LinkedHashMap<>(implemented.size());
+                    for (final ClassReference reference : implemented) {
+                        final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                        if (resolved instanceof PhpClass) {
+                            ownInterfaces.put(reference, (PhpClass) resolved);
+                        }
+                    }
+                    implemented.clear();
 
-                /* check if parent class and own implements are available */
-                final List<ClassReference> listImplements = clazz.getImplementsList().getReferenceElements();
-
-                /* case 1 (older PS compatibility): duplicate interfaces in implements - runtime error will be caused */
-                if (listImplements.size() > 1) {
-                    /* match parents interfaces against class we checking */
-                    final Set<String> interfaces = new HashSet<>();
-                    for (final ClassReference anInterface : listImplements) {
-                        final String interfaceFQN = anInterface.getFQN();
-                        if (interfaceFQN != null) {
-                            if (interfaces.contains(interfaceFQN)) {
-                                holder.registerProblem(anInterface, messageAlreadyImplements, ProblemHighlightType.ERROR, new TheLocalFix());
+                    if (!ownInterfaces.isEmpty()) {
+                        /* Case 1: own duplicate declaration (runtime error gets raised) */
+                        if (ownInterfaces.size() > 1) {
+                            final Set<PhpClass> processed = new HashSet<>(ownInterfaces.size());
+                            for (final Map.Entry<PsiElement, PhpClass> entry : ownInterfaces.entrySet()) {
+                                if (!processed.add(entry.getValue())) {
+                                    holder.registerProblem(
+                                            entry.getKey(),
+                                            messageImplicitDuplication,
+                                            ProblemHighlightType.GENERIC_ERROR,
+                                            new TheLocalFix()
+                                    );
+                                    break;
+                                }
                             }
-                            interfaces.add(interfaceFQN);
-                        }
-                    }
-                    interfaces.clear();
-                }
-
-                /* case 2: re-implementation of parent interfaces */
-                for (final PhpClass parent : clazz.getSupers()) {
-                    /* do not process parent interfaces */
-                    if (parent.isInterface()) {
-                        continue;
-                    }
-
-                    /* ensure implements some interfaces and discoverable properly */
-                    final List<ClassReference> listImplementsParents = parent.getImplementsList().getReferenceElements();
-                    final String parentClassFQN                      = parent.getFQN();
-                    for (final ClassReference parentInterfaceRef : listImplementsParents) {
-                        /* ensure we have all identities valid, or skip analyzing */
-                        final String parentInterfaceFQN  = parentInterfaceRef.getFQN();
-                        final String parentInterfaceName = parentInterfaceRef.getName();
-                        if (parentInterfaceFQN == null || parentInterfaceName == null) {
-                            continue;
+                            processed.clear();
                         }
 
-                        /* match parents interfaces against class we checking */
-                        for (final ClassReference ownInterface : listImplements) {
-                            /* ensure FQNs matches */
-                            final String ownInterfaceFQN = ownInterface.getFQN();
-                            if (ownInterfaceFQN != null && ownInterfaceFQN.equals(parentInterfaceFQN)) {
-                                final String message = patternReImplementsParent
-                                        .replace("%i%", parentInterfaceName)
-                                        .replace("%c%", parentClassFQN);
-
-                                holder.registerProblem(ownInterface, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new TheLocalFix());
-                                break;
+                        /* Case 2: indirect declaration duplication (parent already implements) */
+                        final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
+                        if (parent != null) {
+                            final Set<PhpClass> inherited = InterfacesExtractUtil.getCrawlInheritanceTree(parent, false);
+                            if (!inherited.isEmpty()) {
+                                for (final Map.Entry<PsiElement, PhpClass> entry : ownInterfaces.entrySet()) {
+                                    final PhpClass ownInterface = entry.getValue();
+                                    if (inherited.contains(ownInterface)) {
+                                        holder.registerProblem(
+                                                entry.getKey(),
+                                                String.format(patternIndirectDuplication, ownInterface.getFQN(), parent.getFQN()),
+                                                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                                new TheLocalFix()
+                                        );
+                                    }
+                                }
+                                inherited.clear();
                             }
                         }
+                        ownInterfaces.clear();
                     }
-                    listImplementsParents.clear();
                 }
-                listImplements.clear();
             }
         };
     }
@@ -114,15 +115,17 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression.getParent() instanceof ImplementsList) {
-                final ImplementsList implementsList = (ImplementsList) expression.getParent();
-                if (1 == implementsList.getReferenceElements().size()) {
+            final PsiElement parent     = expression.getParent();
+            if (parent instanceof ImplementsList && !project.isDisposed()) {
+                final ImplementsList implementsList   = (ImplementsList) parent;
+                final List<ClassReference> references = implementsList.getReferenceElements();
+                if (references.size() == 1) {
                     /* drop implements section completely; implementsList.delete() breaks further SCA */
                     expression.delete();                     // <- interface
                     implementsList.getFirstChild().delete(); // <- implements keyword
                 } else {
-                    final boolean cleanupLeftHand = implementsList.getReferenceElements().get(0) != expression;
-                    PsiElement commaCandidate = cleanupLeftHand ? expression.getPrevSibling() : expression.getNextSibling();
+                    final boolean cleanupLeftHand = references.get(0) != expression;
+                    PsiElement commaCandidate     = cleanupLeftHand ? expression.getPrevSibling() : expression.getNextSibling();
                     if (commaCandidate instanceof PsiWhiteSpace) {
                         commaCandidate = cleanupLeftHand ? commaCandidate.getPrevSibling() : commaCandidate.getNextSibling();
                     }

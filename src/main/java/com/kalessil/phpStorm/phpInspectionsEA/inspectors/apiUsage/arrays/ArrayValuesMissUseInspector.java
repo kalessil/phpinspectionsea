@@ -22,8 +22,9 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ArrayValuesMissUseInspector extends BasePhpInspection {
-    private static final String messageInArray = "'array_values(...)' is not making any sense here (just search in it's argument).";
-    private static final String messageCount   = "'array_values(...)' is not making any sense here (just count it's argument).";
+    private static final String messageStringReplace = "'array_values(...)' is not making any sense here (just use it's argument).";
+    private static final String messageInArray       = "'array_values(...)' is not making any sense here (just search in it's argument).";
+    private static final String messageCount         = "'array_values(...)' is not making any sense here (just count it's argument).";
 
     @NotNull
     public String getShortName() {
@@ -49,10 +50,21 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                                 final FunctionReference parentCall = (FunctionReference) grandParent;
                                 final String parentCallName        = parentCall.getName();
                                 if (parentCallName != null) {
-                                    if (parentCallName.equals("count")) {
-                                        holder.registerProblem(reference, messageCount, new ReplaceFix(arguments[0].getText()));
-                                    } else if (parentCallName.equals("in_array")) {
-                                        holder.registerProblem(reference, messageInArray, new ReplaceFix(arguments[0].getText()));
+                                    switch (parentCallName) {
+                                        case "count":
+                                            holder.registerProblem(reference, messageCount, new ReplaceFix(arguments[0].getText()));
+                                            break;
+                                        case "in_array":
+                                            holder.registerProblem(reference, messageInArray, new ReplaceFix(arguments[0].getText()));
+                                            break;
+                                        case "str_replace":
+                                            final PsiElement[] parentArguments = parentCall.getParameters();
+                                            if (parentArguments.length == 3 && parentArguments[1] == reference) {
+                                                holder.registerProblem(reference, messageStringReplace, new ReplaceFix(arguments[0].getText()));
+                                            }
+                                            break;
+                                        default:
+                                            break;
                                     }
                                 }
                             }

@@ -7,5 +7,8 @@ function cases_holder() {
 
         count([]),
         count(array_values()),
+
+        str_replace(array_keys([]), [], '...'),
+        str_replace(array_values([]), array_keys([]), '...'),
     ];
 }

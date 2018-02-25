@@ -3,7 +3,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
@@ -55,8 +54,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                         final PsiElement parent = reference.getParent();
                         if (parent instanceof BinaryExpression) {
                             final BinaryExpression binary = (BinaryExpression) parent;
-                            final IElementType operator   = binary.getOperationType();
-                            if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
+                            if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(binary.getOperationType())) {
                                 final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(binary, reference);
                                 if (PhpLanguageUtil.isFalse(secondOperand)) {
                                     final PsiElement operationNode = binary.getOperation();
@@ -90,10 +88,8 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                                     new UseStrposFix(replacement)
                             );
                         }
-
                     }
                 }
-
             }
         };
     }

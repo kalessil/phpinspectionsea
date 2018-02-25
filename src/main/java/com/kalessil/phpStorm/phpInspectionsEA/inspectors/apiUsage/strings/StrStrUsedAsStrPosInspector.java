@@ -28,7 +28,7 @@ import java.util.HashMap;
  */
 
 public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%e%' should be used instead (saves memory).";
+    private static final String messagePattern = "'%s' should be used instead (saves memory).";
 
     @NotNull
     public String getShortName() {
@@ -48,53 +48,52 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName == null || !mapping.containsKey(functionName)) {
-                    return;
-                }
-                final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length < 2) {
-                    return;
-                }
-
-                /* checks implicit boolean comparison pattern */
-                if (reference.getParent() instanceof BinaryExpression) {
-                    final BinaryExpression parent    = (BinaryExpression) reference.getParent();
-                    final IElementType operationType = parent.getOperationType();
-                    if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operationType)) {
-                        /* get second operand */
-                        final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(parent, reference);
-                        /* verify if operand is a boolean and report an issue */
-                        final PsiElement operationNode = parent.getOperation();
-                        if (operationNode != null && PhpLanguageUtil.isBoolean(secondOperand)) {
-                            final String operator    = operationNode.getText();
+                if (functionName != null && mapping.containsKey(functionName)) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length >= 2) {
+                        /* checks implicit boolean comparison pattern */
+                        final PsiElement parent = reference.getParent();
+                        if (parent instanceof BinaryExpression) {
+                            final BinaryExpression binary = (BinaryExpression) parent;
+                            final IElementType operator   = binary.getOperationType();
+                            if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
+                                final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                                if (PhpLanguageUtil.isFalse(secondOperand)) {
+                                    final PsiElement operationNode = binary.getOperation();
+                                    if (operationNode != null) {
+                                        final String operation   = operationNode.getText();
+                                        final String replacement = "false %o% %f%(%s%, %p%)"
+                                                .replace("%p%", arguments[1].getText())
+                                                .replace("%s%", arguments[0].getText())
+                                                .replace("%f%", mapping.get(functionName))
+                                                .replace("%o%", operation.length() == 2 ? operation + '=' : operation);
+                                        holder.registerProblem(
+                                                binary,
+                                                String.format(messagePattern, replacement),
+                                                new UseStrposFix(replacement)
+                                        );
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                        /* checks non-implicit boolean comparison patternS */
+                        if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
                             final String replacement = "false %o% %f%(%s%, %p%)"
                                 .replace("%p%", arguments[1].getText())
                                 .replace("%s%", arguments[0].getText())
                                 .replace("%f%", mapping.get(functionName))
-                                .replace("%o%", operator.length() == 2 ? operator + '=' : operator);
-                            final String message     = messagePattern.replace("%e%", replacement);
-                            holder.registerProblem(parent, message, new UseStrposFix(replacement));
-
-                            return;
+                                .replace("%o%", parent instanceof UnaryExpression ? "===": "!==");
+                            holder.registerProblem(
+                                    parent instanceof UnaryExpression ? parent : reference,
+                                    String.format(messagePattern, replacement),
+                                    new UseStrposFix(replacement)
+                            );
                         }
+
                     }
                 }
 
-                /* checks NON-implicit boolean comparison patternS */
-                if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
-                    final PsiElement parent = reference.getParent();
-                    final PsiElement target = parent instanceof UnaryExpression ? parent : reference;
-
-                    final String replacement = "false %o% %f%(%s%, %p%)"
-                        .replace("%p%", arguments[1].getText())
-                        .replace("%s%", arguments[0].getText())
-                        .replace("%f%", mapping.get(functionName))
-                        .replace("%o%", reference.getParent() instanceof UnaryExpression ? "===": "!==");
-                    final String message     = messagePattern.replace("%e%", replacement);
-                    holder.registerProblem(target, message, new UseStrposFix(replacement));
-
-                    //return;
-                }
             }
         };
     }

@@ -6,10 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -44,36 +41,71 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName != null && functionName.equals("get_class")) {
+                if (functionName != null) {
+                    final PsiElement parent = reference.getParent();
+                    if (functionName.equals("get_class")) {
+                        if (parent instanceof BinaryExpression) {
+                            this.checkGetClass(reference, (BinaryExpression) parent);
+                        }
+                    } else if (functionName.equals("class_parents") || functionName.equals("class_implements")) {
+                        if (parent instanceof ParameterList) {
+                            final PsiElement grandParent = parent.getParent();
+                            if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
+                                this.checkHierarhyLookup(reference, (FunctionReference) grandParent);
+                            }
+                        }
+                    }
+                }
+            }
+
+            private void checkHierarhyLookup(@NotNull FunctionReference reference, @NotNull FunctionReference context) {
+                final String functionName = context.getName();
+                if (functionName != null && functionName.equals("in_array")) {
                     final PsiElement[] arguments = reference.getParameters();
-                    final PsiElement parent      = reference.getParent();
-                    if (arguments.length == 1 && parent instanceof BinaryExpression) {
-                        final BinaryExpression binary = (BinaryExpression) parent;
-                        final IElementType operator   = binary.getOperationType();
-                        if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
-                            final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
-                            if (second instanceof StringLiteralExpression) {
-                                final StringLiteralExpression string = (StringLiteralExpression) second;
-                                final String contents                = string.getContents();
-                                if (string.getFirstPsiChild() == null && contents.length() > 3) {
-                                    final PhpIndex index               = PhpIndex.getInstance(holder.getProject());
-                                    final String fqn                   = '\\' + contents.replaceAll("\\\\\\\\", "\\\\");
-                                    final Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(fqn, index);
-                                    if (!classes.isEmpty() && index.getDirectSubclasses(fqn).isEmpty()) {
-                                        final boolean isInverted =
-                                                operator == PhpTokenTypes.opNOT_IDENTICAL ||
-                                                operator == PhpTokenTypes.opNOT_EQUAL;
-                                        final String replacement = String.format(
-                                                isInverted ? "! %s instanceof %s" : "%s instanceof %s",
-                                                arguments[0].getText(),
-                                                fqn
-                                        );
-                                        holder.registerProblem(
-                                                binary,
-                                                String.format(messagePattern, replacement),
-                                                new UseInstanceofFix(replacement)
-                                        );
-                                    }
+                    if (arguments.length == 1) {
+                        final PsiElement[] contextArguments = context.getParameters();
+                        if (contextArguments.length > 0 && contextArguments[0] instanceof StringLiteralExpression) {
+                            final StringLiteralExpression literal  = (StringLiteralExpression) contextArguments[0];
+                            final String contents                  = literal.getContents();
+                            if (literal.getFirstPsiChild() == null && contents.length() > 3) {
+                                final PhpIndex index               = PhpIndex.getInstance(holder.getProject());
+                                final String fqn                   = '\\' + contents.replaceAll("\\\\\\\\", "\\\\");
+                                final Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(fqn, index);
+                                if (!classes.isEmpty() && index.getDirectSubclasses(fqn).isEmpty()) {
+                                    /* TODO: arguments[0] must not be mixer|string */
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            private void checkGetClass(@NotNull FunctionReference reference, @NotNull BinaryExpression context) {
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length == 1) {
+                    final IElementType operator = context.getOperationType();
+                    if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
+                        final PsiElement second = OpenapiElementsUtil.getSecondOperand(context, reference);
+                        if (second instanceof StringLiteralExpression) {
+                            final StringLiteralExpression literal  = (StringLiteralExpression) second;
+                            final String contents                  = literal.getContents();
+                            if (literal.getFirstPsiChild() == null && contents.length() > 3) {
+                                final PhpIndex index               = PhpIndex.getInstance(holder.getProject());
+                                final String fqn                   = '\\' + contents.replaceAll("\\\\\\\\", "\\\\");
+                                final Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(fqn, index);
+                                if (!classes.isEmpty() && index.getDirectSubclasses(fqn).isEmpty()) {
+                                    final boolean isInverted =
+                                            operator == PhpTokenTypes.opNOT_IDENTICAL || operator == PhpTokenTypes.opNOT_EQUAL;
+                                    final String replacement = String.format(
+                                            isInverted ? "! %s instanceof %s" : "%s instanceof %s",
+                                            arguments[0].getText(),
+                                            fqn
+                                    );
+                                    holder.registerProblem(
+                                            context,
+                                            String.format(messagePattern, replacement),
+                                            new UseInstanceofFix(replacement)
+                                    );
                                 }
                             }
                         }

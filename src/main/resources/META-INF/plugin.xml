@@ -44,7 +44,7 @@ the implementation.
   <change-notes><![CDATA[
 Bug-fixes and new inspections:<br/>
 <br/>
-- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/43147">v2.3.18</a><br/>
+- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/43664">v2.3.18</a><br/>
 <br/>
 - InstanceofCanBeUsedInspector: new patterns<br/>
 - ArrayValuesMissUseInspector: implemented<br/>

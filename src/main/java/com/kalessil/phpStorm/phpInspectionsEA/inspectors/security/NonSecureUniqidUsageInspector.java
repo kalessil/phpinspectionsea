@@ -59,7 +59,7 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
                     if (functionName.equals("uniqid")) {
                         /* direct call */
                         final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length < 2) {
+                        if (arguments.length < 2 && this.isFromRootNamespace(reference)) {
                             holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new AddMissingParametersFix());
                         }
                     } else if (callbacksPositions.containsKey(functionName)) {

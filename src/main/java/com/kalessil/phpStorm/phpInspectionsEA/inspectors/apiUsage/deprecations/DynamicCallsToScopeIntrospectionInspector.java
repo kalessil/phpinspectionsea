@@ -59,7 +59,6 @@ public class DynamicCallsToScopeIntrospectionInspector extends BasePhpInspection
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* http://php.net/manual/en/migration71.incompatible.php#migration71.incompatible.forbid-dynamic-calls-to-scope-introspection-functions */
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.compareTo(PhpLanguageLevel.PHP710) >= 0) {
                     final String functionName = reference.getName();

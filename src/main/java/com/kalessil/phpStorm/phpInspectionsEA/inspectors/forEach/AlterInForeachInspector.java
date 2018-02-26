@@ -215,8 +215,8 @@ public class AlterInForeachInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) -> {
-            component.addCheckbox("Suggest using value by reference", SUGGEST_USING_VALUE_BY_REF, (isSelected) -> SUGGEST_USING_VALUE_BY_REF = isSelected);
-        });
+        return OptionsComponent.create((component) ->
+            component.addCheckbox("Suggest using value by reference", SUGGEST_USING_VALUE_BY_REF, (isSelected) -> SUGGEST_USING_VALUE_BY_REF = isSelected)
+        );
     }
 }

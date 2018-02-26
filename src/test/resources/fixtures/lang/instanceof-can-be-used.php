@@ -5,7 +5,11 @@ final class FinalClass               {}
 class ParentClass                    {}
 class ChildClass extends ParentClass {}
 
-function cases_holder($object) {
+/**
+ * @param mixed $mixed
+ * @param string $string
+ */
+function cases_holder($object, $mixed, $string) {
     return [
         <warning descr="'$object instanceof \stdClass' can be used instead.">get_class($object) == 'stdClass'</warning>,
         <warning descr="'! $object instanceof \stdClass' can be used instead.">get_class($object) != 'stdClass'</warning>,
@@ -17,5 +21,12 @@ function cases_holder($object) {
 
         /* false-positives: has child classes */
         get_class($object) == 'ParentClass',
+
+        <warning descr="'$object instanceof \stdClass' can be used instead.">in_array('stdClass', class_parents($object))</warning>,
+        <warning descr="'$object instanceof \stdClass' can be used instead.">in_array('stdClass', class_implements($object), true)</warning>,
+
+        /* false-positives: string or mixed */
+        in_array('stdClass', class_parents($mixed)),
+        in_array('stdClass', class_parents($string)),
     ];
 }

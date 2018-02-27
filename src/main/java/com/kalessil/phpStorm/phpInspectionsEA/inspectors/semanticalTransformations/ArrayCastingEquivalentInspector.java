@@ -12,10 +12,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -130,9 +127,9 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
                         valuesSet.clear();
                         /* ensure the subject type is array casting safe */
                         if (result) {
-                            final Project project      = trueExpression.getProject();
-                            final PhpType resolvedType = ((PhpTypedElement) trueExpression).getType().global(project);
-                            if (resolvedType.hasUnknown() || resolvedType.getTypes().isEmpty()) {
+                            final PhpType resolvedType
+                                    = OpenapiResolveUtil.resolveType((PhpTypedElement) trueExpression, trueExpression.getProject());
+                            if (resolvedType == null || resolvedType.hasUnknown() || resolvedType.getTypes().isEmpty()) {
                                 /* well, types resolved partially - do not report */
                                 result = false;
                             } else {

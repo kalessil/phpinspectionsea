@@ -23,7 +23,6 @@ import javax.swing.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.

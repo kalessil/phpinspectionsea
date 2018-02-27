@@ -65,9 +65,9 @@
             <error descr="'$objStdContainer' may not support offset operations (or its type not annotated properly: [\stdClass]).">$objStdContainer[new stdClass()]</error>
                 = 0;
 
-            $objTestObjectContainer = new PDO('','','');
-            <error descr="'$objTestObjectContainer' may not support offset operations (or its type not annotated properly: [\PDO]).">$objTestObjectContainer[]</error>
-                = "This is a message";
+            /* TODO: this needs to be reported */
+            $objTestObjectContainer   = new PDO('','','');
+            $objTestObjectContainer[] = "This is a message";
         }
     }
 

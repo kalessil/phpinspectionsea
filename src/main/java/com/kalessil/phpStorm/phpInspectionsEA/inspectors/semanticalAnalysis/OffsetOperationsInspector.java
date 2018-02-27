@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -68,9 +67,8 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                     if (indexValue instanceof PhpTypedElement) {
                         final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) indexValue, indexValue.getProject());
                         if (resolved != null) {
-                            final Set<String> indexTypes = resolved.filterUnknown().getTypes().stream()
-                                    .map(Types::getType)
-                                    .collect(Collectors.toSet());
+                            final Set<String> indexTypes = new HashSet<>();
+                            resolved.filterUnknown().getTypes().forEach(t -> indexTypes.add(Types.getType(t)));
                             if (!indexTypes.isEmpty()) {
                                 filterPossibleTypesWhichAreNotAllowed(indexTypes, allowedIndexTypes);
                                 if (!indexTypes.isEmpty()) {
@@ -104,7 +102,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         if (container instanceof PhpTypedElement) {
             final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) container, container.getProject());
             if (type != null && !type.hasUnknown()) {
-                type.getTypes().stream().map(Types::getType).forEach(containerTypes::add);
+                type.getTypes().forEach(t -> containerTypes.add(Types.getType(t)));
             }
         }
 
@@ -138,10 +136,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
 
         final PhpIndex objIndex = PhpIndex.getInstance(container.getProject());
         boolean supportsOffsets = false;
-        for (String typeToCheck : containerTypes) {
-            /* FIXME: appeared e.g. \array, see #65  */
-            typeToCheck = Types.getType(typeToCheck);
-
+        for (final String typeToCheck : containerTypes) {
             // commonly used case: string and array
             if (typeToCheck.equals(Types.strArray) || typeToCheck.equals(Types.strString)) {
                 supportsOffsets = true;

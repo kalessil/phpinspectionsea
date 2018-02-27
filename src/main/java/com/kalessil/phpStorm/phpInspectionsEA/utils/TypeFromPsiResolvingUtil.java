@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+/** @deprecated use platform OpenapiResolveUtil instead */
 final public class TypeFromPsiResolvingUtil {
 
     /** adds type, handling | and #, invoking signatures resolving */
